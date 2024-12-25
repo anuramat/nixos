@@ -1,4 +1,4 @@
-# Example markdownlint configuration with all properties set to their default value
+# https://github.com/DavidAnson/markdownlint
 
 # Default state for all rules
 default: true
@@ -11,7 +11,7 @@ MD001: true
 
 # MD003/heading-style : Heading style : https://github.com/DavidAnson/markdownlint/blob/v0.37.2/doc/md003.md
 MD003:
-  style: "atx_closed"
+  style: "atx"
 
 # MD004/ul-style : Unordered list style : https://github.com/DavidAnson/markdownlint/blob/v0.37.2/doc/md004.md
 MD004:
