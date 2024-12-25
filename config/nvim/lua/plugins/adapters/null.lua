@@ -34,26 +34,27 @@ end
 
 local null_sources = function()
   local null_ls = require('null-ls')
-  local nlf = null_ls.builtins.formatting
-  local nld = null_ls.builtins.diagnostics
-  local nla = null_ls.builtins.code_actions
-  local nlh = null_ls.builtins.hover
+  local f = null_ls.builtins.formatting
+  local d = null_ls.builtins.diagnostics
+  local a = null_ls.builtins.code_actions
+  local h = null_ls.builtins.hover
 
   return {
-    -- ~~~~~~~~~~~~~~~~~~~ formatting ~~~~~~~~~~~~~~~~~~~ --
-    nlf.stylua,
-    nlf.black,
-    nlf.nixfmt,
-    nlf.markdownlint,
+    -- formatting
+    f.stylua,
+    f.black,
+    f.nixfmt,
+    f.markdownlint,
     cbfmt,
     -- diagnostics
-    nld.deadnix,
-    nld.statix,
-    nld.protolint,
+    d.deadnix,
+    d.statix,
+    d.protolint,
+    d.markdownlint,
     -- actions
-    nla.statix,
+    a.statix,
     -- hovers
-    nlh.printenv,
+    h.printenv,
   }
 end
 

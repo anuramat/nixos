@@ -36,7 +36,6 @@
     gofumpt # strict(er) go
     html-tidy
     markdownlint-cli
-    mdformat
     nixfmt-rfc-style # nix (OFFICIAL)
     nodePackages.prettier # formatting
     shfmt # posix/bash/mksh
