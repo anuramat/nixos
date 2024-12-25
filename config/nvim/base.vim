@@ -80,7 +80,7 @@ se report=0 shortmess=CFISTWacqst " notification settings, I for intro
 se cursorline cursorlineopt=both
 se matchtime=1 showmatch " highlight matching bracket (deciseconds)
 se signcolumn=yes " gutter
-let g:border="solid" " read this from plugin configs; `:he nvim_open_win`
+let g:border="rounded" " none/single/double/rounded/solid/shadow/array; used in plug cfgs; `:he nvim_open_win`
 let g:nonfiles=['NeogitStatus', 'NeogitPopup', 'oil', 'lazy', 'lspinfo', 'null-ls-info', 'NvimTree', 'neo-tree', 'alpha', 'help']
 se ph=20 " popup max height
 

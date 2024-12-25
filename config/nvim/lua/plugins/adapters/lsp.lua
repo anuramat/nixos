@@ -148,16 +148,13 @@ return {
   },
   config = function()
     local lspconfig = require('lspconfig')
-    -- ~~~~~~~~~~~~~~~~ Borders styling ~~~~~~~~~~~~~~~~~ --
-    -- add border to `:LspInfo` menu
-    require('lspconfig.ui.windows').default_options.border = vim.g.border
     -- -- add border to default hover handler
     vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, { border = vim.g.border })
-    -- -- add border to default signature help (replaced with ray-x/lsp_signature.nvim)
+    -- -- add border to default signature help (replaced with ray-x/lsp_signature.nvim for now)
+    -- -- maybe we can use nvim built in thin later
     -- vim.lsp.handlers['textDocument/signatureHelp'] =
     --   vim.lsp.with(vim.lsp.handlers.signature_help, { border = vim.g.border })
-    -- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ --
-    -- Register capabilities for CMP
+    -- register capabilities for CMP
     local capabilities = vim.lsp.protocol.make_client_capabilities()
     capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
     -- ~~~~~~~~~~~~~~~~ Set up servers ~~~~~~~~~~~~~~~~~ --
@@ -172,8 +169,7 @@ return {
     require('lsp_signature').setup({
       handler_opts = { border = vim.g.border },
       always_trigger = true,
-      hint_enable = false, -- virtual hint enable
-      hint_prefix = '🐼 ', -- Panda for parameter (hehe)
+      hint_enable = false, -- virtual hint, gets fucked by diagnostics hint
     })
   end,
 }

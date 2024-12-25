@@ -72,6 +72,7 @@ return {
       },
     }
     if vim.g.border == 'solid' then
+      -- TODO support other border values
       opts.defaults.borderchars = {
         prompt = { '' },
         results = { '' },
