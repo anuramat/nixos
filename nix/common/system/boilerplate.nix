@@ -3,6 +3,7 @@
   documentation.man.generateCaches = true; # apropos
   # hardware.enableAllFirmware = true; # regardless of license # TODO figure out if I need this and how to fix it
   hardware.enableRedistributableFirmware = true;
+  nix.channel.enable = false;
   nix.settings = {
     experimental-features = [
       "nix-command"
