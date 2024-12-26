@@ -66,15 +66,17 @@ gc() {
 		local prefix_length="$1"
 		while IFS= read -r -d '' path; do
 			(
-				cd "$path" || exit
-				[ -z "$(git status --porcelain)" ] && [ -z "$(git cherry)" ] && exit
-				[ -n "$prefix_length" ] && printf '\t%s\n' "${path:prefix_length}" && exit
+				cd "$path" || return
+				[ -z "$(git status --porcelain)" ] && [ -z "$(git cherry)" ] && return
+				[ -n "$prefix_length" ] && printf '\t%s\n' "${path:prefix_length}" && return
 				printf '\t%s\n' "$(basename $path)"
 			)
 		done
 	}
-	dirty=$(printf '%s\0' "${repos[@]}" | get_dirty)
-	dirty+=$(ghq list -p | tr '\n' '\0' | get_dirty ${#root})
+	dirty=$(
+		printf '%s\0' "${__free_repos[@]}" | get_dirty
+		ghq list -p | tr '\n' '\0' | get_dirty ${#root}
+	)
 	[ -z "$dirty" ] && {
 		echo "all clean!"
 		return
