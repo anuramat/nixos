@@ -24,9 +24,8 @@
           disabled = false;
           format = "[$time]($style) ";
         };
-        username = {
-          disabled = true;
-        };
+        username.disabled = true;
+        battery.disabled = true;
       };
     };
 
