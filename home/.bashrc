@@ -99,12 +99,12 @@ beep() {
 		sleep $((period * 60))
 	done
 }
-naidite() {
+nai() {
 	path=$(realpath "$(command -v $1)")
-	for _ in $(seq "${2:-1}"); do
-		path=$(realpath -m $path/..)
-	done
-	cd $path || return
+	cd "$(echo "$path" | cut -d / -f 1-4)" || {
+		echo "not found"
+		return 1
+	}
 }
 
 # vim: fdl=0

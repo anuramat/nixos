@@ -2,10 +2,22 @@
 
 main() {
 	# reads .vim themes, writes terminal-sexy jsons to specified directory
-	target_dir="$1"
+	target_dir="$XDG_CONFIG_HOME/wallust/colorschemes"
 	mkdir -p "$target_dir"
 
-	vimdir=$(dirname "$(dirname "$(realpath "$(command -v nvim)")")")
+	binpath=$(realpath "$(command -v nvim)")
+	vimdir="$(echo "$binpath" | cut -d / -f 1-4)"
+
+	[ -d "$vimdir" ] || {
+		echo "somehow the path doesn't exist"
+		return 1
+	}
+
+	[ "$(echo "$vimdir" | cut -d / -f 2-3)" == "nix/store" ] || {
+		echo "binary not in nix store"
+		return 1
+	}
+
 	colordir="$vimdir/share/nvim/runtime/colors"
 
 	while IFS= read -r -d '' filepath; do
@@ -41,4 +53,4 @@ main() {
 	done < <(find "$colordir" -mindepth 1 -name '*.vim' -print0)
 }
 
-main "colorschemes"
+main
