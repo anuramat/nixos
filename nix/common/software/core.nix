@@ -43,6 +43,7 @@
     pciutils
     procps # info from /proc
     smartmontools # storage
+    nvme-cli
     smem # ram usage
     usbutils
     v4l-utils
