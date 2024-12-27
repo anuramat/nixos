@@ -29,20 +29,18 @@
     python311Packages.debugpy
 
     # Formatters {{{1
-    alejandra # nix
-    black # Python
-    cbfmt # code block formatter for markdown
+    black # python
+    cbfmt # md code blocks
     formatjson5
-    gofumpt # strict(er) go
+    gofumpt # stricter go
     html-tidy
-    markdownlint-cli
-    # remark sounds promising
-    nixfmt-rfc-style # nix (OFFICIAL)
-    nodePackages.prettier # formatting
+    markdownlint-cli # also, remark sounds promising
+    nixfmt-rfc-style
+    nodePackages.prettier # just in case
     shfmt # posix/bash/mksh
-    stylua # Lua
-    treefmt
-    yamlfmt # YAML
+    stylua # lua
+    treefmt # combined
+    yamlfmt
 
     # Servers {{{1
     bash-language-server
@@ -64,11 +62,13 @@
     golangci-lint # go
     deadnix # nix dead code
     statix # nix
+    yamllint
     shellcheck # *sh
     checkmake # makefile
 
     # Misc {{{1
     jq # json processor
+    markdown-link-check
     yq # basic yaml, json, xml, csv, toml processor
     htmlq
     tidy-viewer # csv viewer

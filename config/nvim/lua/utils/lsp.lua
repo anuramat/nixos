@@ -1,7 +1,7 @@
 local M = {}
 
 local function set_lsp_keys(buffer)
-        local function set(keys, func, desc)
+  local function set(keys, func, desc)
     vim.keymap.set('n', keys, func, { buffer = buffer, desc = 'LSP: ' .. desc })
   end
   local function set_prefixed(keys, func, desc)

@@ -38,3 +38,10 @@ shfmt:
 sh: shfmt
 	@ ./scripts/heading.sh "Checking shell scripts"
 	@ ./scripts/shrun.sh 'verbose' 'shellcheck --color=always -o all'
+
+# misc {{{1
+.PHONY: misc miscfmt
+miscfmt:
+	# @ yaml
+misc:
+	@ yamllint . || true
