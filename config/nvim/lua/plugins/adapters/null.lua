@@ -76,6 +76,7 @@ return {
       sources = null_sources(),
       on_attach = on_attach,
       border = vim.g.border,
+      temp_dir = '/tmp',
     })
   end,
 }

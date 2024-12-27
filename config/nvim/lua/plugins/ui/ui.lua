@@ -62,7 +62,7 @@ return {
     event = 'VeryLazy',
     dependencies = { 'nvim-lua/plenary.nvim', 'nvim-telescope/telescope.nvim' },
     opts = {
-      sign_priority = -1000,
+      signs = false,
       highlight = {
         keyword = 'bg', -- only highlight the word
         pattern = [[<(KEYWORDS)>]], -- vim regex
@@ -92,5 +92,15 @@ return {
         },
       }
     end,
+  },
+  -- lightbulb - code action indicator
+  {
+    'kosayoda/nvim-lightbulb',
+    lazy = false,
+    -- event = 'LspAttach',
+    config = {
+      autocmd = { enabled = true },
+      code_lenses = true,
+    },
   },
 }
