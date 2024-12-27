@@ -142,21 +142,19 @@ return {
   'neovim/nvim-lspconfig',
   event = { 'BufReadPre', 'BufNewFile' },
   dependencies = {
-    'hrsh7th/nvim-cmp',
+    -- 'hrsh7th/nvim-cmp',
     'ray-x/lsp_signature.nvim',
     'b0o/schemastore.nvim',
   },
   config = function()
     local lspconfig = require('lspconfig')
-    -- -- add border to default hover handler
+    -- borders
     vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, { border = vim.g.border })
-    -- -- add border to default signature help (replaced with ray-x/lsp_signature.nvim for now)
-    -- -- maybe we can use nvim built in thin later
-    -- vim.lsp.handlers['textDocument/signatureHelp'] =
-    --   vim.lsp.with(vim.lsp.handlers.signature_help, { border = vim.g.border })
-    -- register capabilities for CMP
+    vim.lsp.handlers['textDocument/signatureHelp'] =
+      vim.lsp.with(vim.lsp.handlers.signature_help, { border = vim.g.border })
+    -- completion
     local capabilities = vim.lsp.protocol.make_client_capabilities()
-    capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+    capabilities = require('blink.cmp').get_lsp_capabilities(capabilities)
     -- ~~~~~~~~~~~~~~~~ Set up servers ~~~~~~~~~~~~~~~~~ --
     for name, cfg in pairs(configs()) do
       cfg.capabilities = capabilities
@@ -166,6 +164,8 @@ return {
       lspconfig[name].setup(cfg)
     end
 
+    -- TODO maybe replace with native stuff:
+    -- inoremap <c-k> <cmd>lua vim.lsp.buf.signature_help()<cr>
     require('lsp_signature').setup({
       handler_opts = { border = vim.g.border },
       always_trigger = true,

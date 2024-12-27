@@ -39,29 +39,17 @@ return {
   -- treesj - splits/joins code using TS
   {
     'Wansmer/treesj',
-    enabled = false,
-    opts = {
-      use_default_keymaps = false,
-      max_join_length = 500,
-    },
+    enabled = true,
+    opts = { use_default_keymaps = false },
     keys = {
       {
         '<leader>j',
         function()
           require('treesj').toggle()
         end,
-        desc = 'Split/Join TS node',
+        desc = 'TreeSJ: Split/Join a Treesitter node',
       },
     },
-  },
-  -- splitjoin.vim - splits/joins code using special per-language rules
-  {
-    'AndrewRadev/splitjoin.vim',
-    lazy = false,
-    init = function()
-      vim.g.splitjoin_split_mapping = '<leader>J'
-      vim.g.splitjoin_join_mapping = '<leader>j'
-    end,
   },
   -- neogen - annotation generation
   {

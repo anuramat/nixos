@@ -30,7 +30,6 @@ local function set_lsp_keys(buffer)
   set('go', vim.lsp.buf.type_definition, 'Goto Type Definition') -- shadows: go to nth byte
   set('gr', references, 'Quickfix References') -- shadows: virtual replace single char
   set('gs', vim.lsp.buf.signature_help, 'Signature Help') -- shadows: sleep
-  set('gl', vim.diagnostic.open_float, 'Show Diagnostic') -- new
   set('[d', vim.diagnostic.goto_prev, 'Previous Diagnostic') -- shadows: goto first macro definition
   set(']d', vim.diagnostic.goto_next, 'Next Diagnostic') -- shadows: goto next macro definition
 
