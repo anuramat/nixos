@@ -9,18 +9,29 @@ return {
   event = 'VeryLazy',
   opts = {},
   keys = u.wrap_lazy_keys('<leader>f', {
+    -- :he fzf-lua-commands
+
     { 'o', 'files' },
+    { 'O', 'oldfiles' },
+    { 'a', 'args' },
+    { 'b', 'buffers' },
+    { 'm', 'marks' },
+
+    { '/', 'curbuf' },
     { 'g', 'live_grep' },
+    { 'G', 'grep_last' },
+    -- { 'G', 'grep' }, -- useful on large projects
+
     { 'd', 'diagnostics_document' },
     { 'D', 'diagnostics_workspace' },
-    { 't', 'treesitter' },
     { 's', 'lsp_document_symbols' },
-    { 'k', 'keymaps' },
-    { 'm', 'diagnostics_workspace' },
+    { 'S', 'lsp_workspace_symbols' },
+    { 't', 'treesitter' },
+
+    { 'r', 'resume' },
     { 'h', 'helptags' },
-    { 'b', 'builtin' },
-    { 'm', 'marks' },
-    -- todo harpoon,buffers, more grep, git, lsp symbols
+    { 'k', 'keymaps' },
+    { 'p', 'builtin' },
   }, 'fuzzy: ', 'FzfLua '),
 }
 

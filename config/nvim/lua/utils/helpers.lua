@@ -5,7 +5,7 @@ local M = {}
 --- @class lazy_keys
 --- @field [1] string LHS
 --- @field [2] string|function RHS
---- @field desc string Command description
+--- @field desc string? Command description
 
 --- Wraps lazy specs
 --- @param lhs_prefix string Prefix to add to mappings
