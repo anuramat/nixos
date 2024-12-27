@@ -1,4 +1,13 @@
 { user, ... }:
+let
+  subs = [
+    "https://cache.nixos.org"
+    "https://cuda-maintainers.cachix.org"
+    "https://devenv.cachix.org"
+    "https://nix-community.cachix.org"
+    "https://nixpkgs-python.cachix.org"
+  ];
+in
 {
   documentation.man.generateCaches = true; # apropos
   # hardware.enableAllFirmware = true; # regardless of license # TODO figure out if I need this and how to fix it
@@ -11,13 +20,8 @@
         "nix-command"
         "flakes"
       ];
-      substituters = [
-        "https://cache.nixos.org"
-        "https://cuda-maintainers.cachix.org"
-        "https://devenv.cachix.org"
-        "https://nix-community.cachix.org"
-        "https://nixpkgs-python.cachix.org"
-      ];
+      substituters = subs; # used by default
+      trusted-substituters = subs; # merely allowed
       trusted-public-keys = [
         "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
         "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="

@@ -1,7 +1,26 @@
--- vim: fdl=2
+-- vim: fdl=3
 
 local u = require('utils.helpers')
 return {
+  -- autocomplete and signature
+  {
+    'saghen/blink.cmp',
+    dependencies = {
+      'anuramat/friendly-snippets',
+    },
+    version = '*', -- on nightly - add `build = 'nix run .#build-plugin'`
+    opts = {
+      keymap = {
+        preset = 'default',
+      },
+      signature = { enabled = true },
+      -- TODO maybe replace with native stuff:
+      -- inoremap <c-k> <cmd>lua vim.lsp.buf.signature_help()<cr>
+      appearance = {
+        nerd_font_variant = 'mono', -- 'normal' adds spacing between the icon and the name
+      },
+    },
+  },
   -- fuzzy finder
   {
     'ibhagwan/fzf-lua',

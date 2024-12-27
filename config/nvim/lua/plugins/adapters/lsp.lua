@@ -163,13 +163,5 @@ return {
       end
       lspconfig[name].setup(cfg)
     end
-
-    -- TODO maybe replace with native stuff:
-    -- inoremap <c-k> <cmd>lua vim.lsp.buf.signature_help()<cr>
-    require('lsp_signature').setup({
-      handler_opts = { border = vim.g.border },
-      always_trigger = true,
-      hint_enable = false, -- virtual hint, gets fucked by diagnostics hint
-    })
   end,
 }
