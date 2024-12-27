@@ -62,6 +62,7 @@
   "rainbow-delimiters.nvim": { "branch": "master", "commit": "dc788723f717bdd3041838b8db34cce53c9aa920" },
   "schemastore.nvim": { "branch": "main", "commit": "bb03860b59f17dfada46d6d9563c48b7b12fecaf" },
   "sniprun": { "branch": "master", "commit": "c9f0a37736a90997a3868735ede0d33e49f79182" },
+  "splitjoin.vim": { "branch": "main", "commit": "95a700875530a1ad87232e472fab307ee2a553ba" },
   "telescope.nvim": { "branch": "master", "commit": "a0bbec21143c7bc5f8bb02e0005fa0b982edc026" },
   "todo-comments.nvim": { "branch": "main", "commit": "ae0a2afb47cf7395dc400e5dc4e05274bf4fb9e0" },
   "treesj": { "branch": "main", "commit": "94f6df623f2d15630b1b617abff39962024cb501" },

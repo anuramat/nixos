@@ -1,19 +1,45 @@
 -- vim: fdl=2
 
--- -- splitjoin.vim - splits/joins code using special per-language rules
--- {
---   'AndrewRadev/splitjoin.vim',
---   lazy = false,
---   config = function()
---     vim.g.splitjoin_split_mapping = '<leader>J'
---     vim.g.splitjoin_join_mapping = '<leader>j'
---   end,
--- },
-
+local u = require('utils.helpers')
 return {
+  -- fuzzy finder
+  {
+    'ibhagwan/fzf-lua',
+    dependencies = {
+      'nvim-tree/nvim-web-devicons',
+    },
+    event = 'VeryLazy',
+    opts = {},
+    keys = u.wrap_lazy_keys('<leader>f', {
+      -- :he fzf-lua-commands
+
+      { 'o', 'files' },
+      { 'O', 'oldfiles' },
+      { 'a', 'args' },
+      { 'b', 'buffers' },
+      { 'm', 'marks' },
+
+      { '/', 'curbuf' },
+      { 'g', 'live_grep' },
+      { 'G', 'grep_last' },
+      -- { 'G', 'grep' }, -- useful on large projects
+
+      { 'd', 'diagnostics_document' },
+      { 'D', 'diagnostics_workspace' },
+      { 's', 'lsp_document_symbols' },
+      { 'S', 'lsp_workspace_symbols' },
+      { 't', 'treesitter' },
+
+      { 'r', 'resume' },
+      { 'h', 'helptags' },
+      { 'k', 'keymaps' },
+      { 'p', 'builtin' },
+    }, 'fuzzy: ', 'FzfLua '),
+  },
   -- treesj - splits/joins code using TS
   {
     'Wansmer/treesj',
+    enabled = false,
     opts = {
       use_default_keymaps = false,
       max_join_length = 500,
@@ -28,10 +54,19 @@ return {
       },
     },
   },
+  -- splitjoin.vim - splits/joins code using special per-language rules
+  {
+    'AndrewRadev/splitjoin.vim',
+    lazy = false,
+    init = function()
+      vim.g.splitjoin_split_mapping = '<leader>J'
+      vim.g.splitjoin_join_mapping = '<leader>j'
+    end,
+  },
   -- neogen - annotation generation
   {
     'danymat/neogen',
-    config = true,
+    opts = {},
     event = 'BufEnter',
   },
   -- neotest
@@ -45,7 +80,7 @@ return {
       'antoinemadec/FixCursorHold.nvim',
       'nvim-treesitter/nvim-treesitter',
     },
-    config = function()
+    opts = function()
       -- get neotest namespace (api call creates or returns namespace)
       local neotest_ns = vim.api.nvim_create_namespace('neotest')
       vim.diagnostic.config({
@@ -56,12 +91,12 @@ return {
           end,
         },
       }, neotest_ns)
-      require('neotest').setup({
+      return {
         -- your neotest config here
         adapters = {
           require('neotest-go'),
         },
-      })
+      }
     end,
   },
   -- oil.nvim - file manager
@@ -232,7 +267,7 @@ return {
   {
     'Zeioth/compiler.nvim',
     cmd = { 'CompilerOpen', 'CompilerToggleResults', 'CompilerRedo' },
-    dependencies = { 'stevearc/overseer.nvim', 'nvim-telescope/telescope.nvim' },
+    dependencies = { 'stevearc/overseer.nvim' },
     opts = {},
     -- TODO steal more shit from https://github.com/Zeioth/compiler.nvim
   },

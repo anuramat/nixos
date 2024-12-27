@@ -3,7 +3,7 @@ return {
     -- uses cscope/gtags-cscope
     'dhananjaylatkar/cscope_maps.nvim',
     dependencies = {
-      'nvim-telescope/telescope.nvim',
+      'ibhagwan/fzf-lua',
     },
     opts = {},
   },

@@ -10,7 +10,6 @@ return {
   'mrcjkb/haskell-tools.nvim',
   dependencies = {
     'nvim-lua/plenary.nvim',
-    'nvim-telescope/telescope.nvim',
   },
   ft = { 'haskell', 'lhaskell', 'cabal', 'cabalproject' },
   config = function()
@@ -37,6 +36,5 @@ return {
         end,
       },
     }
-    require('telescope').load_extension('ht')
   end,
 }
