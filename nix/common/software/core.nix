@@ -169,6 +169,7 @@
     nomacs # image viewer # TODO remove?
     xfig # vector graphics, old as FUCK
     swayimg # image viewer
+    chafa # shat its pants but somehow popular? used by fzf-lua
     timg # sixel, kitty, iterm2, unicode half blocks
     ueberzugpp # terminal images + native overlay
     unstable.lsix # sixel ls

@@ -2,41 +2,38 @@
 
 local M = {}
 
---- Adds prefix to lazy.nvim keymap spec
+--- @class lazy_keys
+--- @field [1] string LHS
+--- @field [2] string|function RHS
+--- @field desc string Command description
+
+--- Wraps lazy specs
 --- @param lhs_prefix string Prefix to add to mappings
---- @param keys table Lazy.nvim keysmap spec without prefixes
+--- @param keys lazy_keys[] Lazy.nvim key spec without prefixes
 --- @param desc_prefix string Prefix to add to description
---- @return table keys Lazy.nvim keymap spec with prefixes
-function M.lazy_prefix(lhs_prefix, keys, desc_prefix)
-  for k, _ in pairs(keys) do
+--- @param cmd_prefix string|nil !nil => rhs -> '<cmd>'..prefix..rhs..'<cr>'
+--- @return lazy_keys[] keys Lazy.nvim keymap spec with prefixes
+function M.wrap_lazy_keys(lhs_prefix, keys, desc_prefix, cmd_prefix)
+  for k = 1, #keys do
+    local rhs = keys[k][2]
+
+    -- add key prefix
     keys[k][1] = lhs_prefix .. keys[k][1]
-    keys[k].desc = desc_prefix .. ': ' .. keys[k].desc
+
+    -- set fallback desc
+    if keys[k].desc == nil and type(rhs) == 'string' then
+      keys[k].desc = rhs
+    end
+
+    -- add desc prefix
+    keys[k].desc = desc_prefix .. keys[k].desc
+
+    -- wrap cmd
+    if type(rhs) == 'string' and type(cmd_prefix) == 'string' then
+      keys[k][2] = '<cmd>' .. cmd_prefix .. rhs .. '<cr>'
+    end
   end
   return keys
-end
-
---- Generate a random [a-zA-Z0-9] string
-function M.random_string(length)
-  local res = ''
-  for _ = 1, length do
-    local gen = math.random(10 + 2 * 26)
-    local num = 47
-    if gen > 36 then
-      num = num + 6
-    end
-    if gen > 10 then
-      num = num + 7
-    end
-    num = num + gen
-    res = res .. string.char(num)
-  end
-  return res
-end
-
---- Simulates keypresses
-function M.press(rawkey)
-  local key = vim.api.nvim_replace_termcodes(rawkey, true, true, true)
-  vim.api.nvim_feedkeys(key, 'n', false)
 end
 
 return M
