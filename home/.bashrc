@@ -41,7 +41,7 @@ pandoc-md() {
 	# md to pdf
 	# usage: c i.md o.pdf
 	__markdown=markdown+lists_without_preceding_blankline+mark+wikilinks_title_after_pipe+citations
-	pandoc -H "$XDG_CONFIG_HOME/latex/preamble.tex" "$1" --citeproc -f "$__markdown" -t pdf -o "$2"
+	pandoc --pdf-engine xelatex -H "$XDG_CONFIG_HOME/latex/preamble.tex" "$1" --citeproc -f "$__markdown" -t pdf -o "$2"
 }
 hotdoc() {
 	# renders $1.md to pdf, opens in zathura, rerenders on save
