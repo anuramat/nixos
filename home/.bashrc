@@ -37,39 +37,6 @@ random() {
 	# usage: random $n
 	shuf -er -n "$1" {a..z} {0..9} | tr -d '\n'
 }
-pandoc-md() {
-	# md to pdf
-	# usage: c i.md o.pdf
-	__markdown=markdown+lists_without_preceding_blankline+mark+wikilinks_title_after_pipe+citations
-	pandoc --pdf-engine xelatex -H "$XDG_CONFIG_HOME/latex/preamble.tex" "$1" --citeproc -f "$__markdown" -t pdf -o "$2"
-}
-hotdoc() {
-	# renders $1.md to pdf, opens in zathura, rerenders on save
-	# usage: hotdoc target.md
-
-	__markdown=markdown+lists_without_preceding_blankline+mark+wikilinks_title_after_pipe+citations
-
-	# create file
-	local -r path="$(mktemp -p /tmp XXXXXX.pdf)"
-	# initialize it with a basic pdf so that zathura doesn't shit itself
-	echo 'JVBERi0xLgoxIDAgb2JqPDwvUGFnZXMgMiAwIFI+PmVuZG9iagoyIDAgb2JqPDwvS2lkc1szIDAgUl0vQ291bnQgMT4+ZW5kb2JqCjMgMCBvYmo8PC9QYXJlbnQgMiAwIFI+PmVuZG9iagp0cmFpbGVyIDw8L1Jvb3QgMSAwIFI+Pg==' \
-		| base64 -d > "$path"
-
-	# open zathura
-	zathura "$path" &> /dev/null &
-	local -r zathura_pid="$!"
-
-	# start watching for changes
-	(export -f pandoc-md && echo "$1" | entr -cns "pandoc-md \"$1\" \"$path\"") &
-	local -r entr_pid="$!"
-
-	# kill entr if zathura is closed
-	wait "$zathura_pid"
-	kill "$entr_pid"
-
-	# clean up
-	rm "$path"
-}
 z() {
 	# uhhh TODO unugly
 	zathura "$1" &> /dev/null &
