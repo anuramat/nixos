@@ -309,12 +309,7 @@ return {
     opts = {},
     event = 'VeryLazy',
   },
-  -- autopairs
-  {
-    'echasnovski/mini.pairs',
-    event = 'VeryLazy',
-    opts = {},
-  },
+  -- project wide find and replace
   {
     'MagicDuck/grug-far.nvim',
     opts = {},
