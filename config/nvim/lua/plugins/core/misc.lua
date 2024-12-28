@@ -247,8 +247,19 @@ return {
     'folke/flash.nvim',
     opts = {
       modes = {
-        search = { enabled = false },
-        char = { enabled = false },
+        char = {
+          enable = true,
+          label = {
+            rainbow = { enabled = false },
+          },
+        },
+        treesitter = {},
+      },
+      label = {
+        before = true,
+        after = false,
+        reuse = 'none',
+        rainbow = { enabled = true },
       },
     },
     keys = {
@@ -291,5 +302,23 @@ return {
         default_detail = 1,
       },
     },
+  },
+  -- some fixed for native comments
+  {
+    'folke/ts-comments.nvim',
+    opts = {},
+    event = 'VeryLazy',
+  },
+  -- autopairs
+  {
+    'echasnovski/mini.pairs',
+    event = 'VeryLazy',
+    opts = {},
+  },
+  {
+    'MagicDuck/grug-far.nvim',
+    opts = {},
+    cmd = 'GrugFar',
+    keys = {},
   },
 }

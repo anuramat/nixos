@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
-ours=$(sort -u "$1")
-before=$(sort -u "$2")
-theirs=$(sort -u "$3")
+fst=$(sort -u "$1")
+root=$(sort -u "$2")
+snd=$(sort -u "$3")
 
-common=$(printf '%s\n' "$ours" "$theirs" | sort -u)
-removed=$(printf '%s' "$before" | comm -23 - <(comm -12 <(printf '%s' "$ours") <(printf '%s' "$theirs")))
-printf '%s' "$removed" | grep -vxF -f - <(printf '%s' "$common") | sort -u > "$1"
+all=$(printf "%s\n" "$fst" "$snd" | sort -u)
+common=$(comm -12 <(echo "$fst") <(echo "$snd") | sort -u)
+deleted=$(comm -23 <(echo "$root") <(echo $common))
+
+echo "$deleted" | grep -vxF -f - <(printf '%s' "$all") | awk NF | sort -u > "$1"

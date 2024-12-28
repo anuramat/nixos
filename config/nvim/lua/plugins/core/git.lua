@@ -76,4 +76,9 @@ return {
       -- :ConflictMarker*
     end,
   },
+  -- file tree
+  {
+    'nvim-neo-tree/neo-tree.nvim',
+    cmd = 'Neotree',
+  },
 }

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+[ "$1" = usage ] && {
+	echo -e "\t$(basename "$0")"
+	echo -e '\t\tSorts, removes duplicates and empty lines.'
+	exit
+}
+
+< "$TODO_FILE" sort -u | awk NF | sponge "$TODO_FILE"
