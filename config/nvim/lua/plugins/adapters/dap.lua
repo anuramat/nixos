@@ -6,6 +6,8 @@ local function log_point()
   require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: '))
 end
 
+local wrapper_opts = { desc_prefix = 'DAP: ', lhs_prefix = '<leader>d' }
+
 return {
   -- nvim-dap
   {
@@ -27,7 +29,7 @@ return {
       -- sign('DapBreakpointRejected', { text = 'R', texthl = 'DapBreakpointRejected', linehl = '', numhl = '' })
     end,
   -- stylua: ignore
-  keys = u.wrap_lazy_keys('<leader>d', {
+  keys = u.wrap_lazy_keys( {
     { 'c', function() require('dap').continue() end,          desc = 'Continue' },
     { 'o', function() require('dap').step_out() end,          desc = 'Step Out' },
     { 'n', function() require('dap').step_over() end,         desc = 'Step Over' },
@@ -36,17 +38,17 @@ return {
     { 'l', log_point,                                         desc = 'Set Log Point' },
     { 'r', function() require('dap').repl.open() end,         desc = 'Open Debug REPL' },
     { 'd', function() require('dap').run_last() end,          desc = 'Run Last Debug Session' },
-  }, "DAP: "),
+  }, wrapper_opts ),
   },
   -- nvim-dap-ui
   {
     'rcarriga/nvim-dap-ui',
     dependencies = { 'mfussenegger/nvim-dap', 'nvim-neotest/nvim-nio' },
   -- stylua: ignore
-  keys = u.wrap_lazy_keys('<leader>d', {
+  keys = u.wrap_lazy_keys( {
     { "u", function() require("dapui").toggle() end, desc = "Dap UI" },
     { "e", function() require("dapui").eval() end, desc = "Eval", mode = {"n", "v"} },
-  }, "DAP: "),
+  }, wrapper_opts),
     opts = {
       -- setting up default settings explicitly just in case
       floating = {

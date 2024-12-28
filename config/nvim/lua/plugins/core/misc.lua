@@ -28,22 +28,30 @@ return {
       'nvim-tree/nvim-web-devicons',
     },
     event = 'VeryLazy',
-    opts = {
-      render_markdown = { enabled = true, filetypes = { ['markdown'] = true } },
-      grep = {
-        fd_opts = '--color=never --type f --hidden --follow --exclude .git',
-        RIPGREP_CONFIG_PATH = vim.env.RIPGREP_CONFIG_PATH,
-      },
-      extensions = {
-        -- neovim terminal only supports `viu` block output
-        ['png'] = { 'viu', '-b' },
-        -- by default the filename is added as last argument
-        -- if required, use `{file}` for argument positioning
-        ['svg'] = { 'chafa', '{file}' },
-        ['jpg'] = { 'ueberzug' },
-      },
-    },
-    keys = u.wrap_lazy_keys('<leader>f', {
+    opts = function()
+      vim.keymap.set({ 'i' }, '<C-x><C-f>', function()
+        require('fzf-lua').complete_file({
+          cmd = 'rg --files',
+          winopts = { preview = { hidden = 'nohidden' } },
+        })
+      end, { silent = true, desc = 'Fuzzy complete file' })
+      return {
+        render_markdown = { enabled = true, filetypes = { ['markdown'] = true } },
+        grep = {
+          fd_opts = '--color=never --type f --hidden --follow --exclude .git',
+          RIPGREP_CONFIG_PATH = vim.env.RIPGREP_CONFIG_PATH,
+        },
+        extensions = {
+          -- neovim terminal only supports `viu` block output
+          ['png'] = { 'viu', '-b' },
+          -- by default the filename is added as last argument
+          -- if required, use `{file}` for argument positioning
+          ['svg'] = { 'chafa', '{file}' },
+          ['jpg'] = { 'ueberzug' },
+        },
+      }
+    end,
+    keys = u.wrap_lazy_keys({
       -- :he fzf-lua-commands
 
       { 'o', 'files' },
@@ -67,7 +75,7 @@ return {
       { 'h', 'helptags' },
       { 'k', 'keymaps' },
       { 'p', 'builtin' },
-    }, 'fuzzy: ', 'FzfLua '),
+    }, { lhs_prefix = '<leader>f', desc_prefix = 'fuzzy: ', cmd_prefix = 'FzfLua ' }),
   },
   -- treesj - splits/joins code using TS
   {
@@ -293,6 +301,8 @@ return {
         end,
         desc = 'TS node',
       },
+      'f',
+      't',
     },
   },
   -- compiler.nvim
