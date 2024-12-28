@@ -40,3 +40,4 @@ sudo tailscale up "--operator=$(whoami)" # set up tailscale
 - Personal data (`nixos/user.nix`, `rg -i 'anuramat|arsen'`, maybe `.bashrc`)
 - todo.sh, ~/notes
 - XDG basedir spec - `rg XDGBDSV`
+- wmenu books in sway config searches for files in ~/books

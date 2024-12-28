@@ -30,6 +30,7 @@ $bind {
     $mod+$mod2+q exec $lock
     $mod+$mod3+q exec systemctl suspend
     $mod+space exec $drun
+    $mod+b exec $books
     $mod+t exec $todo_add
     $mod+$mod2+t exec $todo_done
     $mod+y sticky toggle
