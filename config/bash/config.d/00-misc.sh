@@ -26,7 +26,7 @@ alias ip='ip -c=auto'
 
 # etc
 # TODO move this shit
-alias fd="fd -HI --exclude .git" # everything but .git
+alias fd="fd -u --exclude .git/" # everything but .git
 alias info="info --init-file $XDG_CONFIG_HOME/infokey"
 export GRIM_DEFAULT_DIR="$SCREENSHOT_DIR"
 export VIRTUAL_ENV_DISABLE_PROMPT="1" # TODO maybe we don't need this either? # Don't let python venvs change the PS1
