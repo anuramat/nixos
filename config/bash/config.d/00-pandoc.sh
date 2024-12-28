@@ -6,7 +6,8 @@ pandoc-md() {
 	local __markdown=markdown+wikilinks_title_after_pipe+short_subsuperscripts+mark+alerts
 	# mark: ==highlighted text==
 	# short_superscripts: x^2, O~2
-	# alerts: > [!TIP]
+	# alerts: > [!TIP] -- not supported for "markdown" yet, <https://github.com/jgm/pandoc/issues/9716>
+	# even if they were, pdf output is ugly
 	# --citeproc might be useful TODO document
 	# also maybe switch to --pdf-engine xelatex
 	pandoc -H "$XDG_CONFIG_HOME/latex/preamble.tex" "$1" -f "$__markdown" -t pdf -o "$2"
