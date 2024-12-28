@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
-# mark: ==highlighted text==
-# short_superscripts: x^2, O~2
-# --citeproc might be useful TODO document
-# also maybe switch to --pdf-engine xelatex
-
 pandoc-md() {
 	# md -> pdf
 	# usage: $0 $input $output
-	local __markdown=markdown+wikilinks_title_after_pipe+short_subsuperscripts+mark
+	local __markdown=markdown+wikilinks_title_after_pipe+short_subsuperscripts+mark+alerts
+	# mark: ==highlighted text==
+	# short_superscripts: x^2, O~2
+	# alerts: > [!TIP]
+	# --citeproc might be useful TODO document
+	# also maybe switch to --pdf-engine xelatex
 	pandoc -H "$XDG_CONFIG_HOME/latex/preamble.tex" "$1" -f "$__markdown" -t pdf -o "$2"
 }
 
