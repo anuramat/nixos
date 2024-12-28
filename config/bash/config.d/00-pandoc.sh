@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 
-__markdown=markdown+wikilinks_title_after_pipe+short_subsuperscripts+mark
 # mark: ==highlighted text==
 # short_superscripts: x^2, O~2
+# --citeproc might be useful TODO document
+# also maybe switch to --pdf-engine xelatex
 
 pandoc-md() {
 	# md -> pdf
 	# usage: $0 $input $output
-	pandoc --pdf-engine xelatex -H "$XDG_CONFIG_HOME/latex/preamble.tex" "$1" --citeproc -f "$__markdown" -t pdf -o "$2"
+	local __markdown=markdown+wikilinks_title_after_pipe+short_subsuperscripts+mark
+	pandoc -H "$XDG_CONFIG_HOME/latex/preamble.tex" "$1" -f "$__markdown" -t pdf -o "$2"
 }
 
 hotdoc() {
@@ -16,6 +18,7 @@ hotdoc() {
 
 	# create file
 	local -r path="$(mktemp -p /tmp XXXXXXXX.pdf)"
+	echo $path
 	# initialize it with a basic pdf so that zathura doesn't shit itself
 	echo 'JVBERi0xLgoxIDAgb2JqPDwvUGFnZXMgMiAwIFI+PmVuZG9iagoyIDAgb2JqPDwvS2lkc1szIDAgUl0vQ291bnQgMT4+ZW5kb2JqCjMgMCBvYmo8PC9QYXJlbnQgMiAwIFI+PmVuZG9iagp0cmFpbGVyIDw8L1Jvb3QgMSAwIFI+Pg==' \
 		| base64 -d > "$path"
@@ -26,7 +29,8 @@ hotdoc() {
 
 	# start watching, recompile on change
 	export -f pandoc-md
-	(echo "$1" | entr -cns "pandoc-md \"$1\" \"$path\"") &
+	cmd=$(printf 'pandoc-md "%s" "%s"' "$1" "$path")
+	(echo "$1" | entr -s "$cmd") &
 	local -r entr_pid="$!"
 
 	# stop watching if zathura is closed
