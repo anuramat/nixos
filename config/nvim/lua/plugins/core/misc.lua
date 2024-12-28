@@ -34,20 +34,18 @@ return {
           cmd = 'rg --files',
           winopts = { preview = { hidden = 'nohidden' } },
         })
-      end, { silent = true, desc = 'Fuzzy complete file' })
+      end, { silent = true, desc = 'Fuzzy path picker' })
       return {
         render_markdown = { enabled = true, filetypes = { ['markdown'] = true } },
         grep = {
-          fd_opts = '--color=never --type f --hidden --follow --exclude .git',
+          fd_opts = '--color=never --type f -u --follow --exclude .git',
           RIPGREP_CONFIG_PATH = vim.env.RIPGREP_CONFIG_PATH,
         },
-        extensions = {
-          -- neovim terminal only supports `viu` block output
-          ['png'] = { 'viu', '-b' },
-          -- by default the filename is added as last argument
-          -- if required, use `{file}` for argument positioning
-          ['svg'] = { 'chafa', '{file}' },
-          ['jpg'] = { 'ueberzug' },
+        actions = {
+          files = {
+            true,
+            ['ctrl-q'] = { fn = require('fzf-lua').actions.file_sel_to_qf, prefix = 'select-all' },
+          },
         },
       }
     end,
@@ -267,6 +265,7 @@ return {
   -- flash.nvim - jump around
   {
     'folke/flash.nvim',
+    event = 'VeryLazy',
     opts = {
       modes = {
         char = {
@@ -301,8 +300,6 @@ return {
         end,
         desc = 'TS node',
       },
-      'f',
-      't',
     },
   },
   -- compiler.nvim
