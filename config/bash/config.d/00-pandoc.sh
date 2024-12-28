@@ -30,7 +30,7 @@ hotdoc() {
 	# start watching, recompile on change
 	export -f pandoc-md
 	cmd=$(printf 'pandoc-md "%s" "%s"' "$1" "$path")
-	(echo "$1" | entr -s "$cmd") &
+	(echo "$1" | entr -crs "$cmd") &
 	local -r entr_pid="$!"
 
 	# stop watching if zathura is closed
