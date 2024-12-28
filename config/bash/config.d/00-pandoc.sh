@@ -3,7 +3,7 @@
 pandoc-md() {
 	# md -> pdf
 	# usage: $0 $input $output
-	local __markdown=markdown+wikilinks_title_after_pipe+short_subsuperscripts+mark+alerts
+	local __markdown=markdown+wikilinks_title_after_pipe+short_subsuperscripts+mark
 	# mark: ==highlighted text==
 	# short_superscripts: x^2, O~2
 	# alerts: > [!TIP] -- not supported for "markdown" yet, <https://github.com/jgm/pandoc/issues/9716>
