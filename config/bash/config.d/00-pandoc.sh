@@ -19,7 +19,6 @@ hotdoc() {
 
 	# create file
 	local -r path="$(mktemp -p /tmp XXXXXXXX.pdf)"
-	echo $path
 	# initialize it with a basic pdf so that zathura doesn't shit itself
 	echo 'JVBERi0xLgoxIDAgb2JqPDwvUGFnZXMgMiAwIFI+PmVuZG9iagoyIDAgb2JqPDwvS2lkc1szIDAgUl0vQ291bnQgMT4+ZW5kb2JqCjMgMCBvYmo8PC9QYXJlbnQgMiAwIFI+PmVuZG9iagp0cmFpbGVyIDw8L1Jvb3QgMSAwIFI+Pg==' \
 		| base64 -d > "$path"
@@ -30,8 +29,9 @@ hotdoc() {
 
 	# start watching, recompile on change
 	export -f pandoc-md
-	cmd=$(printf 'pandoc-md "%s" "%s"' "$1" "$path")
-	(echo "$1" | entr -crs "$cmd") &
+	cmd=$(printf 'pandoc-md "%s" "%s"' "$(realpath $1)" "$path")
+	(echo "$1" | entr -cs "$cmd") &
+	# for some reason -r flag for entr breaks stuff!!! XXX
 	local -r entr_pid="$!"
 
 	# stop watching if zathura is closed
