@@ -28,7 +28,21 @@ return {
       'nvim-tree/nvim-web-devicons',
     },
     event = 'VeryLazy',
-    opts = {},
+    opts = {
+      render_markdown = { enabled = true, filetypes = { ['markdown'] = true } },
+      grep = {
+        fd_opts = '--color=never --type f --hidden --follow --exclude .git',
+        RIPGREP_CONFIG_PATH = vim.env.RIPGREP_CONFIG_PATH,
+      },
+      extensions = {
+        -- neovim terminal only supports `viu` block output
+        ['png'] = { 'viu', '-b' },
+        -- by default the filename is added as last argument
+        -- if required, use `{file}` for argument positioning
+        ['svg'] = { 'chafa', '{file}' },
+        ['jpg'] = { 'ueberzug' },
+      },
+    },
     keys = u.wrap_lazy_keys('<leader>f', {
       -- :he fzf-lua-commands
 

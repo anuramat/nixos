@@ -25,9 +25,10 @@ alias grep='grep --color=auto'
 alias ip='ip -c=auto'
 
 # etc
-alias fd="fd -HI" # show Hidden and Ignored
+# TODO move this shit
+alias fd="fd -HI --exclude .git" # everything but .git
 alias info="info --init-file $XDG_CONFIG_HOME/infokey"
 export GRIM_DEFAULT_DIR="$SCREENSHOT_DIR"
-export VIRTUAL_ENV_DISABLE_PROMPT="1" # Don't let python venvs change the PS1
+export VIRTUAL_ENV_DISABLE_PROMPT="1" # TODO maybe we don't need this either? # Don't let python venvs change the PS1
 export VIMTEX_OUTPUT_DIRECTORY="/tmp/"
-export NO_AT_BRIDGE=1 # hides gnomeWARNING **: Couldn't connect to accessibility bus:
+export NO_AT_BRIDGE=1 # TODO do we still need this # hides gnomeWARNING **: Couldn't connect to accessibility bus:

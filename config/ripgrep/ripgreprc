@@ -1,24 +1,19 @@
-# Search (almost) all files
+# search over working tree, with exceptions
+
+# include .*
 --hidden
+# ignore gitignore
 # --no-ignore-vcs
 
-# Except these
 # VCS
 --glob=!{.git,.svn}
-# Codegen
+# codegen
 --glob=!*.pb.go
-# Lock files
+# lock files
 --glob=!go.sum
---glob=!*.{lock,lock.json}
+--glob=!*{.lock,lock.json}
 
-# Follow symbolic links.
+# symlinks
 --follow
-
-# Truncate long lines
-# fucks up scripts, use --no-config
---max-columns=200
---max-columns-preview
-
-# Misc
-# --smart-case
---sort=path
+# revert with -s for sensitive
+--smart-case
