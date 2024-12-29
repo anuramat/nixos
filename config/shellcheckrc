@@ -1,6 +1,9 @@
-# here we go
 enable=all
 # quote even if not necessary
 disable=SC2250
-# masked return value
+# this masks return value
 disable=SC2312
+# prefer [[]] over
+disable=SC2292
+# variable referenced but not assigned
+disable=SC2154
