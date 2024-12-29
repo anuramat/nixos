@@ -11,37 +11,39 @@ links:
 code: nix lua sh
 
 # nix {{{1
-.PHONY: nix nixfmt
+.PHONY: nix nixlint nixfmt
 nixfmt:
 	@ ./scripts/heading.sh "Formatting Nix files"
 	@ nixfmt $(shell fd -e nix)
-
-nix: nixfmt
+nixlint:
 	@ ./scripts/heading.sh "Checking Nix files"
 	@ statix check . || true
 	@ deadnix || true
+nix: nixfmt nixlint
 
 # lua {{{1
-.PHONY: lua luafmt
+.PHONY: lua lualint luafmt
 luafmt:
 	@ ./scripts/heading.sh "Formatting Lua files"
 	@ stylua .
-lua: luafmt
+lualint:
 	@ ./scripts/heading.sh "Checking Lua files"
 	@ luacheck . --globals=vim | ghead -n -2
+lua: luafmt lualint
 
 # shell {{{1
-.PHONY: sh shfmt
+.PHONY: sh shlint shfmt
 shfmt:
 	@ ./scripts/heading.sh "Formatting shell scripts"
 	@ ./scripts/shrun.sh 'silent' 'shfmt --write --simplify --case-indent --binary-next-line --space-redirects'
-sh: shfmt
+shlint:
 	@ ./scripts/heading.sh "Checking shell scripts"
 	@ ./scripts/shrun.sh 'verbose' 'shellcheck --color=always -o all'
+sh: shfmt shlint
 
-# misc {{{1
-.PHONY: misc miscfmt
-miscfmt:
-	# @ yaml
-misc:
-	@ yamllint . || true
+# # misc {{{1
+# .PHONY: misc miscfmt
+# miscfmt:
+# 	# @ yaml
+# misc:
+# 	@ yamllint . || true

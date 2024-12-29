@@ -67,7 +67,7 @@ beep() {
 	done
 }
 nai() {
-	path=$(realpath "$(command -v $1)")
+	path=$(realpath "$(command -v "$1")")
 	cd "$(echo "$path" | cut -d / -f 1-4)" || {
 		echo "not found"
 		return 1
