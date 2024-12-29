@@ -1,44 +1,52 @@
-" nvi 
+" vim: ft=vimscript fdm=marker
 
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~ ui ~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+" written for nvi 
+
+" vi {{{1
 " show cursor position at the bottom of the screen
 se ruler
 se number
 se showmode
 " show e v e r y t h i n g
 se nolist
-"~~~~~~~~~~~~~~~~~~~~~~~~~~ keys ~~~~~~~~~~~~~~~~~~~~~~~~~~"
+
+" keys {{{1
 " command history key
 se cedit=
 " file completion key
 se filec=
-"~~~~~~~~~~~~~~~~~~~~~~~~~~ misc ~~~~~~~~~~~~~~~~~~~~~~~~~~"
+
+" misc {{{1
 se tildeop
 " skip comment block at the top when opening a file
 se comment
-" doesn't work in nvi
-" se modelines
-"~~~~~~~~~~~~~~~~~~~~~~~~ brackets ~~~~~~~~~~~~~~~~~~~~~~~~"
+" not allowed in nvi
+se nomodelines
+
+" brackets {{{1
 " highlight matching bracket on insert
 se showmatch
 se matchtime=1
-"~~~~~~~~~~~~~~~~~~~~~~~~ wrapping ~~~~~~~~~~~~~~~~~~~~~~~~"
+
+" wrapping {{{1
 " soft wrapping
 se noleftright
 " hard wrap (max line length)
 se wraplen=80
-"~~~~~~~~~~~~~~~~~~~~~~~~~ search ~~~~~~~~~~~~~~~~~~~~~~~~~"
+
+" search {{{1
 " egrep style regexes
 se noextended 
 " ignore case
 se ignorecase
 " wrap searches
 se wrapscan
-" smart case regex
+" smart case regex, incompatible with vim
 se iclower
 " incremental search
 se searchincr
-"~~~~~~~~~~~~~~~~~~~~~~~~~~ tabs ~~~~~~~~~~~~~~~~~~~~~~~~~~"
+
+" tabs {{{1
 se autoindent
 " indentation width for autoindent and </>
 se shiftwidth=4
@@ -46,4 +54,3 @@ se shiftwidth=4
 se tabstop=4
 " real tab visual size
 se hardtabs=4
-
