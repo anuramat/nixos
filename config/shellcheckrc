@@ -1,18 +1,6 @@
 # here we go
 enable=all
-# TODO list those explicitly
-disable=SC1091,SC1090,SC2250,SC2089,SC2090,SC2139,SC2292,SC2154,SC2244,SC2310,SC2312,SC2059,SC2243
-# Expressions don't expand in single quotes, use double quotes for that.
-disable=SC2016
-# local is not posix
-disable=SC3043
-# "$var" != $var
-disable=SC2086
-# declare local/export/readonly and assign separately to avoid masking return values
-disable=SC2155
-# ignored non-zero return codes
-disable=SC2311
-# 'this is how it'\''s done'
-disable=SC1003
-# a && b || c is NOT if-then-else
-disable=SC2015
+# quote even if not necessary
+disable=SC2250
+# masked return value
+disable=SC2312
