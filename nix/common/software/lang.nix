@@ -40,7 +40,8 @@
     shfmt # posix/bash/mksh
     stylua # lua
     treefmt # combined
-    yamlfmt
+    yamlfmt # google
+    yamlfix # but I like this more
 
     # Servers {{{1
     bash-language-server
