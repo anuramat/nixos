@@ -9,5 +9,5 @@ __dot() {
 }
 
 deps() {
-	make ${1:-root} -Bnd | make2graph | __dot | swayimg - -s fit
+	make "$1" -Bnd | make2graph | __dot | swayimg - -s fit
 }

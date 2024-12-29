@@ -7,3 +7,13 @@ disable=SC2312
 disable=SC2292
 # variable referenced but not assigned
 disable=SC2154
+# incorrect attempt at escaping a single quote?
+disable=SC1003
+# incorrect attempt at expansion?
+disable=SC2016
+# A && B || C is not an if-then-else
+disable=SC2015
+# "local" masks return values
+disable=SC2155
+# unintended? expansion in an alias (alias a="$test" instead of '$test')
+disable=SC2139

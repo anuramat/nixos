@@ -9,11 +9,11 @@ shrun() {
 	local -r command="$1"
 
 	# find all shell scripts
-	fd -t f -H0 . | while IFS= read -r -d '' filename; do
+	fd -u --exclude ./git -t f -0 . | while IFS= read -r -d '' filename; do
 		head -n 1 "$filename" | grep -q "^#!.*sh" || echo "$filename" | grep -iq "sh$" && printf '%s\0' "$filename"
 	done | while IFS= read -r -d '' filename; do
 		# print the filename
-		printf "$filename"
+		printf %s "$filename"
 		# run the command, outputting status to the right of the filename
 		result="$($command "$filename")" \
 			&& printf "$ok_color%$(($(tput cols) - 2 - ${#filename}))s\r$normal_color" "OK" \

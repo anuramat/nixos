@@ -12,6 +12,7 @@ code: nix lua sh
 
 # nix {{{1
 .PHONY: nix nixlint nixfmt
+nix: nixfmt nixlint
 nixfmt:
 	@ ./scripts/heading.sh "Formatting Nix files"
 	@ nixfmt $(shell fd -e nix)
@@ -19,27 +20,26 @@ nixlint:
 	@ ./scripts/heading.sh "Checking Nix files"
 	@ statix check . || true
 	@ deadnix || true
-nix: nixfmt nixlint
 
 # lua {{{1
 .PHONY: lua lualint luafmt
+lua: luafmt lualint
 luafmt:
 	@ ./scripts/heading.sh "Formatting Lua files"
 	@ stylua .
 lualint:
 	@ ./scripts/heading.sh "Checking Lua files"
 	@ luacheck . --globals=vim | ghead -n -2
-lua: luafmt lualint
 
 # shell {{{1
 .PHONY: sh shlint shfmt
+sh: shfmt shlint
 shfmt:
 	@ ./scripts/heading.sh "Formatting shell scripts"
 	@ ./scripts/shrun.sh 'silent' 'shfmt --write --simplify --case-indent --binary-next-line --space-redirects'
 shlint:
 	@ ./scripts/heading.sh "Checking shell scripts"
 	@ ./scripts/shrun.sh 'verbose' 'shellcheck --color=always -o all'
-sh: shfmt shlint
 
 # # misc {{{1
 # .PHONY: misc miscfmt

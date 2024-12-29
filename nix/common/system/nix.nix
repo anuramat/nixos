@@ -31,4 +31,5 @@ in
     # cudaSupport = true; # breaks nomacs, mathematica takes a lot of time to compile
     # cudnnSupoprt = true;
   };
+  programs.nix-index.enable = true;
 }
