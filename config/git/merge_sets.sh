@@ -11,4 +11,4 @@ intersection=$(comm -12 <(echo "$fst") <(echo "$snd") | sort -u)
 deleted=$(comm -23 <(echo "$root") <(echo "$intersection") | sort -u)
 res=$(comm -23 <(echo "$all") <(echo "$deleted"))
 
-echo "$res" | awk NF | sort -u
+echo "$res" | awk NF | sort -u > "$1"
