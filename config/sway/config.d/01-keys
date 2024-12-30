@@ -8,7 +8,6 @@ set {
     $screenshot_key p
     $notification_key n
 
-    $resize_key r
     $float_key m
     $scratchpad_key u
 
@@ -30,7 +29,7 @@ $bind {
     $mod+$mod2+q exec $lock
     $mod+$mod3+q exec systemctl suspend
     $mod+space exec $drun
-    $mod+b exec $books
+    $mod+r exec $books
     $mod+t exec $todo_add
     $mod+$mod2+t exec $todo_done
     $mod+y sticky toggle
@@ -47,9 +46,8 @@ $bind {
     $mod+$mod2+f fullscreen toggle global
 
     $mod+z split none
-    $mod+x split horizontal
-    $mod+v split vertical
-    $mod+c split toggle
+    $mod+v split horizontal
+    $mod+c split vertical
     # Floats {{{1
     $mod+$float_key focus mode_toggle
     $mod+$mod2+$float_key floating toggle
