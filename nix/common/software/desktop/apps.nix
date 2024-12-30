@@ -25,7 +25,8 @@
 
     # Opening stuff {{{1
     desktop-file-utils # update-desktop-database etc
-    wmenu # dmenu
+    wmenu # dmenu 1to1
+    bemenu # slightly better
     j4-dmenu-desktop # .desktop wrapper for dmenus
     xdg-utils # xdg-open etc
     xdragon # drag and drop from terminal
