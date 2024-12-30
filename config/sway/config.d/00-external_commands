@@ -5,7 +5,7 @@ set {
     $menu bemenu -i --fn "Hack Nerd Font 16" -l 5
     $books pkill wmenu || swaymsg exec "book=~/books/$(cd ~/books/ && fd -t f | $menu -p read -l 20) && [ -f \$book ] && zathura \$book"
     $drun pkill wmenu || swaymsg exec "$(j4-dmenu-desktop -d '$menu -p drun' -t $term -x --no-generic)"
-    $todo_add pkill wmenu || swaymsg exec "$(echo '' | $menu -p task | xargs -I{} todo.sh add "{}")"
+    $todo_add pkill wmenu || swaymsg exec "$(echo '' | $menu -p task -l 0 | xargs -I{} todo.sh add "{}")"
     $todo_done pkill wmenu || swaymsg exec "$(TODOTXT_VERBOSE=0 todo.sh -p ls | tac | $menu -p done | cut -d ' ' -f 1 | xargs todo.sh done)"
     $lock loginctl lock-session
 
