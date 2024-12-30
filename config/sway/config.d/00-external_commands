@@ -3,7 +3,7 @@ set {
     # usage: $term_exec tui_app
     $term_exec foot
     $menu wmenu -i -f "Hack Nerd Font 16"
-    $books pkill wmenu || swaymsg exec "zathura ~/books/$(cd ~/books; fd | $menu -p books -l 5)"
+    $books pkill wmenu || swaymsg exec "book=~/books/$(cd ~/books/ && fd -t f | $menu -p books -l 5) && [ -f \$book ] && zathura \$book"
     $drun pkill wmenu || swaymsg exec "$(j4-dmenu-desktop -d '$menu -p run -l 5' -t $term -x --no-generic)"
     $todo_add pkill wmenu || swaymsg exec "$(echo '' | $menu -p task | xargs -I{} todo.sh add "{}")"
     $todo_done pkill wmenu || swaymsg exec "$(TODOTXT_VERBOSE=0 todo.sh -p ls | tac | $menu -p done -l 5 | cut -d ' ' -f 1 | xargs todo.sh done)"
