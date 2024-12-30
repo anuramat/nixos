@@ -53,7 +53,9 @@ return {
         use_wallust = true,
         transparent_background = true,
       })
-      vim.cmd.colorscheme('neopywal')
+      -- vim.cmd.colorscheme('neopywal')
+      -- TODO figure out codelenses and switch back
+      vim.cmd.colorscheme('elflord')
     end,
   },
   -- todo-comments.nvim - highlights "todo", "hack", etc
