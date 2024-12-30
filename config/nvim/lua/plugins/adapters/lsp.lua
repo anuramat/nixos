@@ -123,9 +123,6 @@ local configs = function()
           format = {
             enable = false, -- using stylua instead
           },
-          -- hint = {
-          --   enable = true, -- kinda annoying
-          -- },
           telemetry = {
             enable = false,
           },
