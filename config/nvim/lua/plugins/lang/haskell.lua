@@ -1,4 +1,4 @@
-local on_attach = require('utils.lsp').on_attach
+local ul = require('utils.lsp')
 
 local function repl_toggler(ht, buffer)
   return function()
@@ -13,14 +13,11 @@ return {
   },
   ft = { 'haskell', 'lhaskell', 'cabal', 'cabalproject' },
   config = function()
-    local capabilities = vim.lsp.protocol.make_client_capabilities()
-    capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
-
     vim.g.haskell_tools = {
       hls = {
-        capabilities = capabilities,
+        capabilities = ul.capabilities(),
         on_attach = function(client, buffer, ht)
-          on_attach(client, buffer)
+          ul.on_attach(client, buffer)
 
           local s = function(lhs, rhs, desc)
             vim.keymap.set('n', '<localleader>' .. lhs, rhs, { buffer = buffer, desc = 'Haskell: ' .. desc })

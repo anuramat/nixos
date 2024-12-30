@@ -1,4 +1,4 @@
--- vim: fdl=3
+-- vim: fdl=1
 
 local u = require('utils.helpers')
 return {
@@ -324,7 +324,7 @@ return {
       },
     },
   },
-  -- some fixed for native comments
+  -- native comments ++
   {
     'folke/ts-comments.nvim',
     opts = {},

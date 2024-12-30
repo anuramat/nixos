@@ -1,6 +1,6 @@
 -- vim: fdl=2
 
-local on_attach = require('utils.lsp').on_attach
+local ul = require('utils.lsp')
 
 --- Root directory function with a fallback
 --- @param opts { primary: string[], fallback: string[] }
@@ -70,7 +70,7 @@ local configs = function()
           '<cmd>ClangdSwitchSourceHeader<cr>',
           { silent = true, desc = 'clangd: Switch between .c/.h' }
         )
-        on_attach(client, buffer)
+        ul.on_attach(client, buffer)
         require('clangd_extensions.inlay_hints').setup_autocmd()
         require('clangd_extensions.inlay_hints').set_inlay_hints()
       end,
@@ -120,9 +120,6 @@ local configs = function()
           runtime = {
             version = 'LuaJIT',
           },
-          -- workspace = {
-          --   checkThirdParty = 'Disable', -- already in .luarc.json
-          -- },
           format = {
             enable = false, -- using stylua instead
           },
@@ -142,24 +139,16 @@ return {
   'neovim/nvim-lspconfig',
   event = { 'BufReadPre', 'BufNewFile' },
   dependencies = {
-    -- 'hrsh7th/nvim-cmp',
-    'ray-x/lsp_signature.nvim',
-    'b0o/schemastore.nvim',
+    'saghen/blink.cmp',
+    'b0o/schemastore.nvim', -- yamlls, jsonls dependency
   },
   config = function()
+    ul.apply_settings()
     local lspconfig = require('lspconfig')
-    -- borders
-    vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, { border = vim.g.border })
-    vim.lsp.handlers['textDocument/signatureHelp'] =
-      vim.lsp.with(vim.lsp.handlers.signature_help, { border = vim.g.border })
-    -- completion
-    local capabilities = vim.lsp.protocol.make_client_capabilities()
-    capabilities = require('blink.cmp').get_lsp_capabilities(capabilities)
-    -- ~~~~~~~~~~~~~~~~ Set up servers ~~~~~~~~~~~~~~~~~ --
     for name, cfg in pairs(configs()) do
-      cfg.capabilities = capabilities
+      cfg.capabilities = ul.capabilities()
       if cfg.on_attach == nil then
-        cfg.on_attach = on_attach
+        cfg.on_attach = ul.on_attach
       end
       lspconfig[name].setup(cfg)
     end
