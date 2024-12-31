@@ -1,0 +1,5 @@
+.git
+*.pb.go
+go.sum
+*.lock
+*lock.json
