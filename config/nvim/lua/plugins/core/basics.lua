@@ -38,6 +38,7 @@ return {
   {
     'tpope/vim-sleuth',
     lazy = false,
+    enabled = false,
   },
   -- mini.ai - new textobjects
   {
