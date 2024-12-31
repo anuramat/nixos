@@ -32,6 +32,22 @@ local function cbfmt()
   })
 end
 
+-- haskell formatter
+local function ormolu()
+  local null_ls = require('null-ls')
+  local helpers = require('null-ls.helpers')
+  null_ls.register({
+    name = 'ormolu',
+    method = null_ls.methods.FORMATTING,
+    filetypes = { 'haskell' },
+    generator = helpers.formatter_factory({
+      to_stdin = true,
+      command = 'ormolu',
+      args = { '--stdin-input-file', '.' },
+    }),
+  })
+end
+
 local null_sources = function()
   local null_ls = require('null-ls')
   local f = null_ls.builtins.formatting
@@ -46,6 +62,7 @@ local null_sources = function()
     f.nixfmt,
     f.markdownlint,
     cbfmt,
+    ormolu,
     -- diagnostics
     d.deadnix,
     d.statix,

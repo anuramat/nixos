@@ -34,6 +34,7 @@
     cbfmt # md code blocks
     formatjson5
     gofumpt # stricter go
+    haskellPackages.ormolu
     html-tidy
     markdownlint-cli # also, remark sounds promising
     nixfmt-rfc-style
