@@ -1,9 +1,13 @@
-# search over working tree, with exceptions
+# search over working tree
 
 # include .*
 --hidden
-# ignore gitignore
-# --no-ignore-vcs
+# symlinks
+--follow
+# revert with -s for sensitive
+--smart-case
+
+# with exceptions:
 
 # VCS
 --glob=!{.git,.svn}
@@ -12,8 +16,3 @@
 # lock files
 --glob=!go.sum
 --glob=!*{.lock,lock.json}
-
-# symlinks
---follow
-# revert with -s for sensitive
---smart-case
