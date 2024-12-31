@@ -6,8 +6,10 @@
 {
   environment.systemPackages = with pkgs; [
     # Compilers {{{1
+    cabal-install
     cargo
     clang
+    ghc
     go
     julia
     llvm
@@ -17,10 +19,9 @@
     python3
     ruby
     rustc
+    sageWithDoc # computer algebra system
+    stack
     texliveFull
-    unstable.cabal-install
-    unstable.ghc
-    unstable.stack
     yarn
 
     # Debuggers {{{1
@@ -40,50 +41,48 @@
     shfmt # posix/bash/mksh
     stylua # lua
     treefmt # combined
+    yamlfix # I like this more
     yamlfmt # google
-    yamlfix # but I like this more
 
     # Servers {{{1
+    (haskell-language-server.override { supportedGhcVersions = [ "927" ]; })
     bash-language-server
-    yaml-language-server
-    nodePackages_latest.vscode-json-languageserver
-    lua-language-server
-    texlab
-    unstable.haskell-language-server
-    unstable.nixd
     ccls
-    nil
-    pyright
-    gopls
-    marksman
     clang-tools
+    gopls
+    lua-language-server
+    marksman
+    nil
+    nodePackages_latest.vscode-json-languageserver
+    pyright
+    texlab
+    unstable.nixd
+    yaml-language-server
 
     # Linters {{{1
-    luajitPackages.luacheck # lua
-    golangci-lint # go
+    checkmake # makefile
     deadnix # nix dead code
+    golangci-lint # go
+    luajitPackages.luacheck # lua
+    shellcheck # *sh
     statix # nix
     yamllint
-    shellcheck # *sh
-    checkmake # makefile
 
     # Misc {{{1
-    jq # json processor
-    markdown-link-check
-    yq # basic yaml, json, xml, csv, toml processor
-    htmlq
-    tidy-viewer # csv viewer
-    pup # html
-    bats # Bash testing
-    universal-ctags # maintained ctags
-    bear # Compilation database generator for clangd
-    luajitPackages.luarocks
+    bats # bash testing
+    bear # compilation database generator for clangd
     haskellPackages.hoogle
-    sageWithDoc # computer algebra system
+    htmlq
+    jq # json processor
+    luajitPackages.luarocks
+    markdown-link-check
+    pup # html
+    tidy-viewer # csv viewer
+    universal-ctags # maintained ctags
+    yq # basic yaml, json, xml, csv, toml processor
     # mathematica requires the .sh installer to be in the nix store
     # `nix-store --add-fixed sha256 Mathematica_14.0.0_BNDL_LINUX.sh`
-    # will probably need to get commented out on the first install
-    # TODO maybe make optional later somehow? through a separate flake probably
+    # TODO move to notes
     # mathematica
     # }}}
   ];
