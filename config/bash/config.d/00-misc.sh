@@ -26,7 +26,7 @@ alias ip='ip -c=auto'
 
 # etc
 # TODO move this shit
-alias fd="fd -H" # working tree minus junk
+alias fd="fd -HL" # working tree minus junk
 alias info="info --init-file $XDG_CONFIG_HOME/infokey"
 export GRIM_DEFAULT_DIR="$SCREENSHOT_DIR"
 export VIRTUAL_ENV_DISABLE_PROMPT="1" # TODO maybe we don't need this either? # Don't let python venvs change the PS1

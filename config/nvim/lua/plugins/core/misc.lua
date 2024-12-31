@@ -29,16 +29,9 @@ return {
     },
     event = 'VeryLazy',
     opts = function()
-      vim.keymap.set({ 'i' }, '<C-x><C-f>', function()
-        require('fzf-lua').complete_file({
-          cmd = 'rg --files',
-          winopts = { preview = { hidden = 'nohidden' } },
-        })
-      end, { silent = true, desc = 'Fuzzy path picker' })
       return {
-        render_markdown = { enabled = true, filetypes = { ['markdown'] = true } },
         grep = {
-          fd_opts = '--color=never --type f -u --follow --exclude .git',
+          fd_opts = '-c never -t f -HL',
           RIPGREP_CONFIG_PATH = vim.env.RIPGREP_CONFIG_PATH,
         },
         actions = {
@@ -73,7 +66,25 @@ return {
       { 'h', 'helptags' },
       { 'k', 'keymaps' },
       { 'p', 'builtin' },
-    }, { lhs_prefix = '<leader>f', desc_prefix = 'fuzzy: ', cmd_prefix = 'FzfLua ' }),
+    }, {
+      lhs_prefix = '<leader>f',
+      desc_prefix = 'FzfLua: ',
+      cmd_prefix = 'FzfLua ',
+      wrapped = {
+        {
+          '<C-x><C-f>',
+          function()
+            require('fzf-lua').complete_file({
+              cmd = 'fd -t f -HL',
+              winopts = { preview = { hidden = 'nohidden' } },
+            })
+          end,
+          mode = 'i',
+          silent = true,
+          desc = 'FzfLua: path completion',
+        },
+      },
+    }),
   },
   -- treesj - splits/joins code using TS
   {
