@@ -24,6 +24,7 @@ ssh-keygen # then add the public key to `user.nix`
 gh auth login # github cli
 git remote set-url origin git@github.com:anuramat/nixos # switch to ssh
 sudo tailscale up "--operator=$(whoami)" # set up tailscale
+
 # etc: proton pass, web browser, cache, telegram, spotify
 ```
 
@@ -36,8 +37,10 @@ sudo nix-store --generate-binary-cache-key $(hostname) cache.pem cache.pem.pub
 sudo chown nix-serve cache-priv-key.pem
 sudo chmod 400 cache.pem
 sudo chmod 444 cache.pem.pub
-# (hostname, public key) -> nix trusted substituters TODO maybe move to user.nix
-# (path to the private key) -> machine config
+
+# substituter -> `user.nix`
+# path to the private key -> machine config (`services.nix-serve` option)
+# open port 5000
 
 # retroactively sign everything:
 nix sign-paths --all -k /var/cache.pem
