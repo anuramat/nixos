@@ -6,7 +6,7 @@ let
     "https://devenv.cachix.org"
     "https://nix-community.cachix.org"
     "https://nixpkgs-python.cachix.org"
-    "https://anuramat-ll7:5000"
+    "http://anuramat-ll7:5000"
     # "https://cache.iog.io"
   ];
 in
