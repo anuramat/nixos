@@ -38,6 +38,9 @@ sudo chmod 400 cache.pem
 sudo chmod 444 cache.pem.pub
 # (hostname, public key) -> nix trusted substituters TODO maybe move to user.nix
 # (path to the private key) -> machine config
+
+# retroactively sign everything:
+nix sign-paths --all -k /var/cache.pem
 ```
 
 ## Structure
