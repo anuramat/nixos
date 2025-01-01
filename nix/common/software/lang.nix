@@ -46,7 +46,13 @@
     yamlfmt # google
 
     # Servers {{{1
-    (haskell-language-server.override { supportedGhcVersions = [ "927" ]; })
+    (haskell-language-server.override {
+      supportedGhcVersions = [
+        "927"
+        "966"
+        "965"
+      ];
+    })
     bash-language-server
     ccls
     clang-tools
