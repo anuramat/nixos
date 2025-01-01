@@ -13,4 +13,7 @@
     "anuramat-ll7"
     "anuramat-t480"
   ];
+
+  substituters = [ "http://anuramat-ll7:5000" ];
+  trusted-public-keys = [ "anuramat-ll7:aFFmygZTV872vjBs+mugpBgkTObki/bi5xfJspLKeSc=" ];
 }
