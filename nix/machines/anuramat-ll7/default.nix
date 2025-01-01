@@ -41,7 +41,7 @@
 
     nix-serve = {
       enable = true;
-      secretKeyFile = "/var/cache-priv.pem";
+      secretKeyFile = "/var/cache.pem";
     };
   };
 
