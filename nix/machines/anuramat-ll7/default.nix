@@ -38,7 +38,16 @@
     xserver = {
       dpi = 236;
     };
+
+    nix-serve = {
+      enable = true;
+      secretKeyFile = "/var/cache-priv.pem";
+    };
   };
+
+  networking.firewall.allowedTCPPorts = [
+    5000 # nix-serve
+  ];
 
   services.tlp.settings = {
     # turn on battery charge threshold
