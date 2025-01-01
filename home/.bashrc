@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# make remote shells obey the fucking rules
+[ -z "$PS1" ] && return
+
 shopt -s globstar # enables **
 set +H            # turn off ! history bullshit
 
