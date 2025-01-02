@@ -25,6 +25,8 @@
             inherit unstable inputs;
             user = import ./nix/user.nix;
             dummy = import ./nix/utils/dummy.nix;
+            remote = ./nix/utils/remote.nix;
+            local = ./nix/utils/local.nix;
             hostname = name;
           };
           modules = [
