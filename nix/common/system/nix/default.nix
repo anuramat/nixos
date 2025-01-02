@@ -7,6 +7,7 @@
 }:
 let
   home = config.users.users.${user.username}.home;
+  # TODO idk what the fuck to do with this, it's not good to leave this hardcoded
   sshKey = "${builtins.toString home}/.ssh/id_ed25519";
   # TODO add missing keys to trusted-public-keys
   substituters = [

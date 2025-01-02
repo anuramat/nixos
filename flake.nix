@@ -28,7 +28,7 @@
               ;
             user = (import ./nix/user.nix) {
               hostname = name;
-              inherit hostnames;
+              inherit machines;
             };
             dummy = import ./nix/utils/dummy.nix;
             builder = ./nix/utils/builder.nix;
@@ -40,6 +40,7 @@
         };
       };
       hostnames = ./nix/machines |> builtins.readDir |> builtins.attrNames;
+      machines = inputs.nixpkgs.lib.attrsets.genAttrs hostnames (x: import ./machines/${x}/out.nix);
     in
     {
       nixosConfigurations = builtins.listToAttrs (map system hostnames);
