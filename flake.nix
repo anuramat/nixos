@@ -26,8 +26,12 @@
           ];
         };
       };
+      machines = nixpkgs.lib.pipe ./nix/machines [
+        builtins.readDir
+        builtins.attrNames
+      ];
     in
     {
-      nixosConfigurations = builtins.listToAttrs (map system user.machines);
+      nixosConfigurations = builtins.listToAttrs (map system machines);
     };
 }

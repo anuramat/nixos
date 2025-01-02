@@ -9,11 +9,6 @@
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIORDkTNsAaKxMF/VIfoI+FXvcLARbswddfqtHNkuTsxR anuramat-ll7"
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINBre248H/l0+aS5MJ+nr99m10g44y+UsaKTruszS6+D anuramat-ipad"
   ];
-  machines = [
-    "anuramat-ll7"
-    "anuramat-t480"
-  ];
-
   substituters = [ "http://anuramat-ll7:5000" ];
   trusted-public-keys = [ "anuramat-ll7:aFFmygZTV872vjBs+mugpBgkTObki/bi5xfJspLKeSc=" ];
 }
