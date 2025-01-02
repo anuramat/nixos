@@ -11,6 +11,8 @@
   ];
   # TODO might need to filter out $hostname from the list?
   # TODO or just refactor everything, move machine specific stuff to machine folders? would kinda make sense
+  # TODO at least turn this into a map over keys
+  builders = [ "anuramat-ll7" ];
   substituters = [ "http://anuramat-ll7:5000" ];
   trusted-public-keys = [ "anuramat-ll7:aFFmygZTV872vjBs+mugpBgkTObki/bi5xfJspLKeSc=" ];
 }

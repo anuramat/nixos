@@ -25,7 +25,6 @@
             inherit
               unstable
               inputs
-              machines
               name
               ;
             user = import ./nix/user.nix;

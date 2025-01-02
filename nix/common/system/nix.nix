@@ -3,7 +3,6 @@
   user,
   unstable,
   config,
-  machines,
   ...
 }:
 let
@@ -28,7 +27,7 @@ in
 {
   nix = {
     # NOTE that distributed builds are disabled by default, enable per machine
-    buildMachines = map nameToBuilder machines;
+    buildMachines = map nameToBuilder user.builders;
     channel.enable = false;
     nixPath = [ ];
     settings = {
