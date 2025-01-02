@@ -50,7 +50,6 @@
       supportedGhcVersions = [
         "927"
         "966"
-        "965"
       ];
     })
     bash-language-server
