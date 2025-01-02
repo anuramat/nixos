@@ -23,11 +23,19 @@ local configs = function()
       cmd = { 'nixd', '--inlay-hints=false' },
       settings = {
         nixd = {
+          options = {
+            nixos = {
+              expr = string.format(
+                '(builtins.getFlake "/etc/nixos/").nixosConfigurations.%s.options',
+                vim.fn.hostname()
+              ),
+            },
+          },
           diagnostic = {
             suppress = {
-              'sema-escaping-with',
-              'escaping-this-with',
-              'sema-extra-with',
+              -- 'sema-escaping-with',
+              -- 'escaping-this-with',
+              -- 'sema-extra-with',
             },
           },
         },

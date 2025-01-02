@@ -18,6 +18,7 @@ in
       experimental-features = [
         "nix-command"
         "flakes"
+        "pipe-operators"
       ];
       inherit substituters; # used by default
       trusted-substituters = substituters; # merely allowed
