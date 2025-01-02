@@ -1,4 +1,4 @@
-_: {
+{
   # removable media stuff
   services.udisks2 = {
     enable = true;

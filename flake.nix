@@ -24,7 +24,7 @@
           specialArgs = {
             inherit unstable inputs;
             user = import ./nix/user.nix;
-            dummy = import ./nix/dummy.nix;
+            dummy = import ./nix/utils/dummy.nix;
             hostname = name;
           };
           modules = [

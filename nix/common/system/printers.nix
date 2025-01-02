@@ -1,4 +1,4 @@
-_: {
+{
   # scanning - `scanimage`
   # printing - CUPS @ http://localhost:631/ or a desktop entry cups.desktop (Manage Printing)
   # printer settings and job list - `system-config-printer`
