@@ -10,7 +10,6 @@
   outputs =
     inputs:
     let
-      user = import ./nix/user.nix;
       unstable = import inputs.nixpkgs-unstable {
         config = {
           allowUnfree = true;
@@ -19,7 +18,11 @@
         };
         system = "x86_64-linux";
       };
-      specialArgs = { inherit user unstable inputs; };
+      specialArgs = {
+        inherit unstable inputs;
+        user = import ./nix/user.nix;
+        dummy = import ./nix/dummy.nix;
+      };
       system = name: {
         inherit name;
         value = inputs.nixpkgs.lib.nixosSystem {

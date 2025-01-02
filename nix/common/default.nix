@@ -1,7 +1,1 @@
-_: {
-  imports = [
-    ./mime
-    ./software
-    ./system
-  ];
-}
+{ dummy, ... }: dummy ./.
