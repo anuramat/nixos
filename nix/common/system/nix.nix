@@ -1,4 +1,9 @@
-{ pkgs, user, ... }:
+{
+  pkgs,
+  user,
+  unstable,
+  ...
+}:
 let
   # TODO add missing keys to trusted-public-keys
   substituters = [
@@ -30,11 +35,8 @@ in
       ] ++ user.trusted-public-keys;
     };
   };
-  nixpkgs.config = {
-    allowUnfree = true;
-    # cudaSupport = true; # breaks nomacs, mathematica takes a lot of time to compile
-    # cudnnSupoprt = true;
-  };
+  nixpkgs.config = unstable.config;
+
   environment.systemPackages = [
     pkgs.nix-index
   ];

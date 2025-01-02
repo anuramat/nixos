@@ -8,17 +8,21 @@
     zen-browser.url = "github:MarceColl/zen-browser-flake";
   };
   outputs =
-    { nixpkgs, ... }@inputs:
+    inputs:
     let
       user = import ./nix/user.nix;
       unstable = import inputs.nixpkgs-unstable {
-        config.allowUnfree = true;
+        config = {
+          allowUnfree = true;
+          # cudaSupport = true;
+          # cudnnSupoprt = true;
+        };
         system = "x86_64-linux";
       };
       specialArgs = { inherit user unstable inputs; };
       system = name: {
         inherit name;
-        value = nixpkgs.lib.nixosSystem {
+        value = inputs.nixpkgs.lib.nixosSystem {
           inherit specialArgs;
           modules = [
             ./nix/machines/${name}
