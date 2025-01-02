@@ -16,14 +16,6 @@
   # nix.settings.trusted-users = [ name ];
 
   # binary cache part {{{1
-  # TODO adda Makefile target for key generation (ssh too)
-  services = {
-    nix-serve = {
-      enable = true;
-      secretKeyFile = "/var/cache.pem";
-    };
-  };
-  networking.firewall.allowedTCPPorts = [
-    5000
-  ];
+  # TODO add a Makefile target for key generation (ssh too)
+  nix.settings.secret-key-files = "/var/cache.pem";
 }

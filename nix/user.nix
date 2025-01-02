@@ -23,7 +23,7 @@ in
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINBre248H/l0+aS5MJ+nr99m10g44y+UsaKTruszS6+D anuramat-ipad"
   ] ++ map (x: x.sshKey) (builtins.attrValues others);
   # TODO disentangle ssh keys, move to builder_config.nix or something idk
-  substituters = map (x: "http://${x}:5000") builderHostnames;
+  substituters = map (x: "ssh-ng://${x}") builderHostnames;
   trusted-public-keys = map (x: x.cacheKey) (builtins.attrValues builders);
   builderUsername = "builder";
 }
