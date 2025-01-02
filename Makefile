@@ -4,7 +4,7 @@
 all: flake links code
 flake:
 	@ ./scripts/heading.sh "Building NixOS"
-	@ sudo nixos-rebuild switch --offline --option extra-experimental-features pipe-operators 
+	@ sudo nixos-rebuild switch --option extra-experimental-features pipe-operators 
 links:
 	@ ./scripts/heading.sh "Setting up links"
 	@ BASH_ENV=/etc/profile ./scripts/install.sh
