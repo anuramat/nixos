@@ -25,6 +25,6 @@ in
   ] ++ map (x: x.sshKey) (builtins.attrValues others);
   # TODO disentangle ssh keys, move to builder_config.nix or something idk
   substituters = map (x: "http://${x.hostname}:5000") builderHostnames;
-  trusted-public-keys = map (x: x.cacheKey) builders;
+  trusted-public-keys = builtins.attrValues (builtins.mapAttrs (n: v: v.cacheKey) builders);
   builderUsername = "builder";
 }
