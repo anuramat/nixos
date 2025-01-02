@@ -29,8 +29,8 @@ in
   nixpkgs.config = unstable.config;
 
   nix = {
-    buildMachines = map nameToBuilder user.builders;
-    distributedBuilds = !user.builder;
+    buildMachines = map nameToBuilder user.builderHostnames;
+    distributedBuilds = !user.isBuilder;
     channel.enable = false;
     nixPath = [ ];
     settings = {
@@ -51,7 +51,7 @@ in
     };
   };
 
-  imports = if user.builder then [ ./builder.nix ] else [ ];
+  imports = if user.isBuilder then [ ./builder.nix ] else [ ];
 
   environment.systemPackages = [
     pkgs.nix-index
