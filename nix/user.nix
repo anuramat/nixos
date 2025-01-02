@@ -4,12 +4,11 @@
   lib,
 }:
 let
-  # TODO rename everything ffs
-  machines2 = builtins.mapAttrs (n: v: v // { builder = v.builder or false; }) machines;
-  filter = lib.attrsets.filterAttrs;
-  isBuilder = machines2.${hostname}.builder;
-  others = filter (n: v: n != hostname) machines2;
-  builders = filter (n: v: v.builder or false) others;
+  # TODO rename somehow idk
+  machinesValid = builtins.mapAttrs (n: v: v // { builder = v.builder or false; }) machines;
+  isBuilder = machinesValid.${hostname}.builder;
+  others = lib.attrsets.filterAttrs (n: v: n != hostname) machinesValid;
+  builders = lib.attrsets.filterAttrs (n: v: v.builder or false) others;
   builderHostnames = builtins.attrNames builders;
 in
 {
@@ -24,7 +23,7 @@ in
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINBre248H/l0+aS5MJ+nr99m10g44y+UsaKTruszS6+D anuramat-ipad"
   ] ++ map (x: x.sshKey) (builtins.attrValues others);
   # TODO disentangle ssh keys, move to builder_config.nix or something idk
-  substituters = map (x: "http://${x.hostname}:5000") builderHostnames;
-  trusted-public-keys = builtins.attrValues (builtins.mapAttrs (n: v: v.cacheKey) builders);
+  substituters = map (x: "http://${x}:5000") builderHostnames;
+  trusted-public-keys = map (x: x.cacheKey) (builtins.attrValues builders);
   builderUsername = "builder";
 }
