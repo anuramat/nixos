@@ -2,7 +2,7 @@
   pkgs,
   config,
   inputs,
-  remote,
+  builder,
   ...
 }:
 {
@@ -11,8 +11,8 @@
   imports = [
     inputs.nixos-hardware.nixosModules.common-cpu-intel
     inputs.nixos-hardware.nixosModules.common-gpu-intel
-    remote
     ./hardware-configuration.nix
+    builder
   ];
 
   environment.systemPackages = with pkgs; [
