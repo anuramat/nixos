@@ -25,6 +25,7 @@ in
         "flakes"
         "pipe-operators"
       ];
+      builders-use-substitutes = true; # (cache -> remote) instead of (cache -> local -> remote)
       inherit substituters; # used by default
       trusted-substituters = substituters; # merely allowed
       trusted-public-keys = [
@@ -36,7 +37,6 @@ in
     };
   };
   nixpkgs.config = unstable.config;
-
   environment.systemPackages = [
     pkgs.nix-index
   ];
