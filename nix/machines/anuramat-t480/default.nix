@@ -7,8 +7,6 @@
     ./hardware-configuration.nix
   ];
 
-  networking.hostName = "anuramat-t480";
-
   swapDevices = [
     {
       device = "/var/lib/swapfile";

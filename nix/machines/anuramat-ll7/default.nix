@@ -6,7 +6,6 @@
 }:
 {
   system.stateVersion = "24.05";
-  networking.hostName = "anuramat-ll7";
 
   imports = [
     inputs.nixos-hardware.nixosModules.common-cpu-intel

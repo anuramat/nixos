@@ -1,5 +1,6 @@
-{ user, ... }:
+{ user, hostname, ... }:
 {
+  networking.hostName = hostname;
   documentation.man.generateCaches = true; # apropos
   hardware.enableAllFirmware = true; # regardless of license
   time.timeZone = user.timezone;

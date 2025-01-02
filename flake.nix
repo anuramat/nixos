@@ -18,15 +18,15 @@
         };
         system = "x86_64-linux";
       };
-      specialArgs = {
-        inherit unstable inputs;
-        user = import ./nix/user.nix;
-        dummy = import ./nix/dummy.nix;
-      };
       system = name: {
         inherit name;
         value = inputs.nixpkgs.lib.nixosSystem {
-          inherit specialArgs;
+          specialArgs = {
+            inherit unstable inputs;
+            user = import ./nix/user.nix;
+            dummy = import ./nix/dummy.nix;
+            hostname = name;
+          };
           modules = [
             ./nix/machines/${name}
             ./nix/common
