@@ -10,6 +10,11 @@
   outputs =
     inputs:
     let
+
+      machineDir = ./nix/machines;
+      hostnames = machineDir |> builtins.readDir |> builtins.attrNames;
+      machines = inputs.nixpkgs.lib.attrsets.genAttrs hostnames (x: import (machineDir + /${x}/out.nix));
+
       unstable = import inputs.nixpkgs-unstable {
         config = {
           allowUnfree = true;
@@ -18,9 +23,11 @@
         };
         system = "x86_64-linux";
       };
+
       system = name: {
         inherit name;
         value = inputs.nixpkgs.lib.nixosSystem {
+
           specialArgs = {
             inherit
               unstable
@@ -29,18 +36,17 @@
             user = (import ./nix/user.nix) {
               hostname = name;
               inherit machines;
+              lib = inputs.nixpkgs.lib;
             };
-            dummy = import ./nix/utils/dummy.nix;
-            builder = ./nix/utils/builder.nix;
+            dummy = import ./nix/dummy.nix;
           };
+
           modules = [
-            ./nix/machines/${name}
+            (machineDir + /${name})
             ./nix/common
           ];
         };
       };
-      hostnames = ./nix/machines |> builtins.readDir |> builtins.attrNames;
-      machines = inputs.nixpkgs.lib.attrsets.genAttrs hostnames (x: import ./machines/${x}/out.nix);
     in
     {
       nixosConfigurations = builtins.listToAttrs (map system hostnames);
