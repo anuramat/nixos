@@ -23,7 +23,9 @@ local configs = function()
       cmd = { 'nixd', '--inlay-hints=false' },
       settings = {
         nixd = {
+          -- this can fail silently
           options = {
+            -- keys don't matter
             nixos = {
               expr = string.format(
                 '(builtins.getFlake "/etc/nixos/").nixosConfigurations.%s.options',
@@ -32,11 +34,7 @@ local configs = function()
             },
           },
           diagnostic = {
-            suppress = {
-              -- 'sema-escaping-with',
-              -- 'escaping-this-with',
-              -- 'sema-extra-with',
-            },
+            suppress = {},
           },
         },
       },
