@@ -22,12 +22,15 @@
         inherit name;
         value = inputs.nixpkgs.lib.nixosSystem {
           specialArgs = {
-            inherit unstable inputs;
+            inherit
+              unstable
+              inputs
+              machines
+              name
+              ;
             user = import ./nix/user.nix;
             dummy = import ./nix/utils/dummy.nix;
             builder = ./nix/utils/builder.nix;
-            inherit machines;
-            hostname = name;
           };
           modules = [
             ./nix/machines/${name}
