@@ -16,6 +16,7 @@
   # nix.settings.trusted-users = [ name ];
 
   # binary cache part {{{1
+  # TODO adda Makefile target for key generation (ssh too)
   services = {
     nix-serve = {
       enable = true;

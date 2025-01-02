@@ -23,6 +23,7 @@ let
     hostName = name;
     sshUser = user.builderUsername;
     system = pkgs.stdenv.hostPlatform.system;
+    protocol = "ssh-ng";
   };
 in
 {
