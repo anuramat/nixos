@@ -2,9 +2,13 @@
   pkgs,
   user,
   unstable,
+  config,
+  machines,
   ...
 }:
 let
+  home = config.users.users.${user.username}.home;
+  sshKey = "${builtins.toString home}/.ssh/id_ed25519";
   # TODO add missing keys to trusted-public-keys
   substituters = [
     "https://cache.nixos.org"
@@ -14,9 +18,17 @@ let
     "https://nixpkgs-python.cachix.org"
     "https://cache.iog.io"
   ] ++ user.substituters;
+  nameToBuilder = name: {
+    inherit sshKey;
+    hostName = name;
+    sshUser = "builder";
+    system = pkgs.stdenv.hostPlatform.system;
+  };
 in
 {
   nix = {
+    # NOTE that distributed builds are disabled by default, enable per machine
+    buildMachines = map nameToBuilder machines;
     channel.enable = false;
     nixPath = [ ];
     settings = {
