@@ -10,7 +10,7 @@ let
   isBuilder = machines2.${hostname}.builder;
   others = filter (n: v: n != hostname) machines2;
   builders = filter (n: v: v.builder or false) others;
-  builderHostnames = builtins.attrValues builders;
+  builderHostnames = builtins.attrNames builders;
 in
 {
   # WARN don't fuck this up
