@@ -64,7 +64,6 @@ local null_sources = function()
     cbfmt,
     ormolu,
     -- diagnostics
-    d.deadnix,
     d.statix,
     d.protolint,
     d.markdownlint,
