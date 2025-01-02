@@ -1,7 +1,6 @@
 { inputs, ... }:
 {
   system.stateVersion = "24.05";
-  nix.distributedBuilds = true;
 
   imports = [
     inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t480

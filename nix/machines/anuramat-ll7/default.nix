@@ -2,7 +2,6 @@
   pkgs,
   config,
   inputs,
-  builder,
   ...
 }:
 {
@@ -12,7 +11,6 @@
     inputs.nixos-hardware.nixosModules.common-cpu-intel
     inputs.nixos-hardware.nixosModules.common-gpu-intel
     ./hardware-configuration.nix
-    builder
   ];
 
   environment.systemPackages = with pkgs; [

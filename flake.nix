@@ -25,9 +25,11 @@
             inherit
               unstable
               inputs
-              name
               ;
-            user = import ./nix/user.nix;
+            user = (import ./nix/user.nix) {
+              hostname = name;
+              inherit hostnames;
+            };
             dummy = import ./nix/utils/dummy.nix;
             builder = ./nix/utils/builder.nix;
           };
@@ -37,9 +39,9 @@
           ];
         };
       };
-      machines = ./nix/machines |> builtins.readDir |> builtins.attrNames;
+      hostnames = ./nix/machines |> builtins.readDir |> builtins.attrNames;
     in
     {
-      nixosConfigurations = builtins.listToAttrs (map system machines);
+      nixosConfigurations = builtins.listToAttrs (map system hostnames);
     };
 }

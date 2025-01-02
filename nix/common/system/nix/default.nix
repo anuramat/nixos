@@ -20,14 +20,16 @@ let
   nameToBuilder = name: {
     inherit sshKey;
     hostName = name;
-    sshUser = "builder";
+    sshUser = user.builderUsername;
     system = pkgs.stdenv.hostPlatform.system;
   };
 in
 {
+  nixpkgs.config = unstable.config;
+
   nix = {
-    # NOTE that distributed builds are disabled by default, enable per machine
     buildMachines = map nameToBuilder user.builders;
+    distributedBuilds = !user.builder;
     channel.enable = false;
     nixPath = [ ];
     settings = {
@@ -47,7 +49,9 @@ in
       ] ++ user.trusted-public-keys;
     };
   };
-  nixpkgs.config = unstable.config;
+
+  imports = if user.builder then [ ./builder.nix ] else [ ];
+
   environment.systemPackages = [
     pkgs.nix-index
   ];
