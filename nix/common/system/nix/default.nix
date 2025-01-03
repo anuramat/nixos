@@ -48,8 +48,8 @@ in
       # for now add those to /root/.ssh/config
       sshUser = machines.builderUsername;
       sshKey = "${home}/.ssh/id_ed25519";
-      hostName = x.this.name;
-      system = x.this.platform;
+      hostName = x.name;
+      system = x.platform;
       protocol = "ssh-ng";
     }) machines.builders;
 

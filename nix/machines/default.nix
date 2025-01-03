@@ -49,7 +49,7 @@ in
       {
         inherit builders this hostnames;
         clientKeyFiles = others |> map (x: x.clientKeyFiles) |> concatLists;
-        substituters = builders |> map (x: "ssh-ng://${x.hostname}");
+        substituters = builders |> map (x: "ssh-ng://${x.name}");
         trusted-public-keys = builders |> map (x: x.cacheKey) |> filter (x: x != null);
         builderUsername = "builder";
         hostKeysFiles = others |> map (x: x.hostKeysFile);
