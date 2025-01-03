@@ -56,7 +56,7 @@ in
   };
 
   nix.distributedBuilds = !machines.this.builder;
-  imports = if !machines.this.builder then [ ./builder.nix ] else [ ];
+  imports = if machines.this.builder then [ ./builder.nix ] else [ ];
 
   environment.systemPackages = [
     pkgs.nix-index
