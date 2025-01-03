@@ -8,21 +8,12 @@ let
     filter
     attrValues
     concatStringsSep
-    mapAttrs
     attrNames
     ;
 
   # TODO rename somehow idk
-  machinesValid = mapAttrs (
-    n: v:
-    v
-    // {
-      hostKeys = v.hostKeys or "";
-      sshKey = "";
-    }
-  ) machines;
-  isBuilder = machinesValid.${hostname}.builder or false;
-  others = lib.attrsets.filterAttrs (n: v: n != hostname) machinesValid;
+  isBuilder = machines.${hostname}.builder or false;
+  others = lib.attrsets.filterAttrs (n: v: n != hostname) machines;
   builders = lib.attrsets.filterAttrs (n: v: v.builder or false) others;
   builderHostnames = attrNames builders;
 in
