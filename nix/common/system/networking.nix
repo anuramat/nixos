@@ -30,7 +30,7 @@
     openssh = {
       enable = true;
       ports = [ 22 ];
-      knownHosts = user.knownHosts;
+      inherit (user) knownHosts;
       settings = {
         PasswordAuthentication = false;
         KbdInteractiveAuthentication = false;
