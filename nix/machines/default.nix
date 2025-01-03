@@ -12,42 +12,41 @@ let
     readFile
     ;
   inherit (lib.strings) hasSuffix;
-  hostnames = u.epsilon ./.;
+
+  mkMachine =
+    name:
+    let
+      cacheFilename = "cache.pem.pub";
+      cachePath = path + "/${cacheFilename}";
+      path = ./${name}/keys;
+      meta = import ./${name}/meta.nix;
+    in
+    {
+      inherit name;
+      inherit (meta) builder platform;
+      cacheKey = if pathExists cachePath then readFile cachePath else null;
+      clientKeyFiles = (
+        readDir path
+        |> attrNames
+        |> filter (x: hasSuffix ".pub" x && x != cacheFilename)
+        |> map (x: path + /${x})
+      );
+      hostKeysFile = path + "/host_keys";
+      module = ./${name};
+    };
 in
-{
-  inherit hostnames;
+rec {
+  hostnames = u.epsilon ./.;
   machines =
     name:
     (
       let
-        getMachine =
-          name:
-          let
-            cacheFilename = "cache.pem.pub";
-            cachePath = path + "/${cacheFilename}";
-            path = ./${name}/keys;
-            meta = import ./${name}/meta.nix;
-          in
-          {
-            inherit name;
-            inherit (meta) builder platform;
-            cacheKey = if pathExists cachePath then readFile cachePath else null;
-            clientKeyFiles = (
-              readDir path
-              |> attrNames
-              |> filter (x: hasSuffix ".pub" x && x != cacheFilename)
-              |> map (x: path + /${x})
-            );
-            hostKeysFile = path + "/host_keys";
-            module = ./${name};
-          };
-        machines = hostnames |> map getMachine;
+        machines = hostnames |> map mkMachine;
         others = filter (x: x.name != name) machines;
-        builders = filter (x: x.builder) others;
-        this = (getMachine name);
       in
-      {
-        inherit builders this hostnames;
+      rec {
+        builders = filter (x: x.builder) others;
+        this = (mkMachine name);
         clientKeyFiles = others |> map (x: x.clientKeyFiles) |> concatLists;
         substituters = builders |> map (x: "ssh-ng://${x.name}");
         trusted-public-keys = builders |> map (x: x.cacheKey) |> filter (x: x != null);

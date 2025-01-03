@@ -9,12 +9,8 @@
   };
   outputs =
     inputs:
+
     let
-
-      x =
-        assert false;
-        2;
-
       u = import ./nix/utils.nix;
       m = (import ./nix/machines) {
         inherit u;
@@ -39,7 +35,7 @@
                 ;
               unstable = import inputs.nixpkgs-unstable {
                 config = {
-                  allowUnfree = true; # try recursive? TODO
+                  allowUnfree = true;
                 };
                 system = machines.this.platform;
               };

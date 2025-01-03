@@ -1,11 +1,10 @@
-{ machines, user, ... }:
+{ machines, ... }:
 {
   users.users.${machines.builderUsername} = {
     isNormalUser = true;
     createHome = false;
     home = "/var/empty";
     group = machines.builderUsername;
-    openssh.authorizedKeys.keys = user.keys;
     openssh.authorizedKeys.keyFiles = machines.clientKeyFiles;
   };
   users.groups.${machines.builderUsername} = { };

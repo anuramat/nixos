@@ -1,11 +1,10 @@
 alpha = 80
-
+env_vars = true
 [templates]
-# WARN: XDGBDSV
-zathura = { src = 'zathura', target = "~/.config/zathura/generated-colors" }
-foot = { src = 'foot', target = "~/.config/foot/generated-colors.ini" }
-mako = { src = 'mako', target = "~/.config/mako/generated-colors.conf" }
-sway = { src = 'sway', target = "~/.config/sway/config.d/xx-generated-colors" }
-neopywal = { src = 'neopywal', target = "~/.cache/wallust/colors_neopywal.vim" }
-swaybg = { src = 'swaybg', target = "~/.cache/wallust/swaybg" }
-graphviz = { src = 'graphviz', target = "~/.cache/wallust/graphviz" }
+zathura = { src = 'zathura', target = "$XDG_CONFIG_HOME/zathura/generated-colors" }
+foot = { src = 'foot', target = "$XDG_CONFIG_HOME/foot/generated-colors.ini" }
+mako = { src = 'mako', target = "$XDG_CONFIG_HOME/mako/generated-colors.conf" }
+sway = { src = 'sway', target = "$XDG_CONFIG_HOME/sway/config.d/xx-generated-colors" }
+neopywal = { src = 'neopywal', target = "$XDG_CACHE_HOME/wallust/colors_neopywal.vim" }
+swaybg = { src = 'swaybg', target = "$XDG_CACHE_HOME/wallust/swaybg" }
+graphviz = { src = 'graphviz', target = "$XDG_CACHE_HOME/wallust/graphviz" }
