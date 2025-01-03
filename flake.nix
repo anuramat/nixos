@@ -15,30 +15,25 @@
       hostnames = machineDir |> builtins.readDir |> builtins.attrNames;
       machines = genAttrs hostnames (x: import (machineDir + /${x}/out.nix));
 
-      unstable = import inputs.nixpkgs-unstable {
-        config = {
-          allowUnfree = true;
-          # cudaSupport = true;
-          # cudnnSupoprt = true;
-        };
-        system = "x86_64-linux";
-      };
-
       system = name: {
         inherit name;
         value = inputs.nixpkgs.lib.nixosSystem {
-
           specialArgs = {
-            inherit
-              unstable
-              inputs
-              ;
+            inherit inputs;
+            dummy = import ./nix/dummy.nix;
             user = (import ./nix/user.nix) {
               hostname = name;
               inherit machines;
               lib = inputs.nixpkgs.lib;
             };
-            dummy = import ./nix/dummy.nix;
+            unstable = import inputs.nixpkgs-unstable {
+              config = {
+                allowUnfree = true;
+                # cudaSupport = true;
+                # cudnnSupoprt = true;
+              };
+              system = machines.${name}.system;
+            };
           };
 
           modules = [

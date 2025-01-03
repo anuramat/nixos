@@ -1,14 +1,11 @@
 {
   pkgs,
   user,
+  lib,
   unstable,
-  config,
   ...
 }:
 let
-  home = config.users.users.${user.username}.home;
-  # TODO idk what the fuck to do with this, it's not good to leave this hardcoded
-  sshKey = "${builtins.toString home}/.ssh/id_ed25519";
   # TODO add missing keys to trusted-public-keys
   substituters = [
     "https://cache.nixos.org"
@@ -18,20 +15,11 @@ let
     "https://nixpkgs-python.cachix.org"
     "https://cache.iog.io"
   ] ++ user.substituters;
-  nameToBuilder = name: {
-    inherit sshKey;
-    hostName = name;
-    sshUser = user.builderUsername;
-    system = pkgs.stdenv.hostPlatform.system;
-    protocol = "ssh-ng";
-  };
 in
 {
   nixpkgs.config = unstable.config;
 
   nix = {
-    buildMachines = map nameToBuilder user.builderHostnames;
-    distributedBuilds = !user.isBuilder;
     channel.enable = false;
     nixPath = [ ];
     settings = {
@@ -50,6 +38,15 @@ in
         "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
       ] ++ user.trusted-public-keys;
     };
+
+    distributedBuilds = !user.isBuilder;
+    buildMachines = lib.attrsets.mapAttrsToList (name: value: {
+      # sshKey or sshUser doesn't work TODO figure out
+      hostName = name;
+      system = value.system;
+      protocol = "ssh-ng";
+    }) user.builders;
+
   };
 
   imports = if user.isBuilder then [ ./builder.nix ] else [ ];

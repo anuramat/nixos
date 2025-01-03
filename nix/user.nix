@@ -13,11 +13,10 @@ let
 
   others = filterAttrs (n: v: n != hostname) machines;
   builders = filterAttrs (n: v: v.builder or false) others;
-  builderHostnames = attrNames builders;
 in
 # TODO split the file?
 {
-  inherit hostname builderHostnames;
+  inherit hostname builders;
   isBuilder = machines.${hostname}.builder or false;
   username = "anuramat";
   fullname = "Arsen Nuramatov";
@@ -27,7 +26,7 @@ in
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKl0YHcx+ju+3rsPerkAXoo2zI4FXRHaxzfq8mNHCiSD anuramat-iphone16"
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINBre248H/l0+aS5MJ+nr99m10g44y+UsaKTruszS6+D anuramat-ipad"
   ] ++ (others |> attrValues |> filter (x: x ? sshKey) |> map (x: x.sshKey));
-  substituters = map (x: "ssh-ng://${x}") builderHostnames;
+  substituters = builders |> attrNames |> map (x: "ssh-ng://${x}");
   trusted-public-keys = builders |> attrValues |> map (x: x.cacheKey);
   builderUsername = "builder";
   knownHosts =
