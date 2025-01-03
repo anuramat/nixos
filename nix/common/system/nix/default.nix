@@ -47,14 +47,15 @@ in
       # for now add those to /root/.ssh/config
       sshUser = user.builderUsername;
       sshKey = "${home}/.ssh/id_ed25519";
-      hostName = x.hostname;
-      system = x.platform;
+      hostName = x.this.hostname;
+      system = x.this.platform;
       protocol = "ssh-ng";
     }) user.builders;
 
   };
 
-  imports = if false then [ ./builder.nix ] else [ ];
+  nix.distributedBuilds = !user.this.builder;
+  imports = if !user.this.builder then [ ./builder.nix ] else [ ];
 
   environment.systemPackages = [
     pkgs.nix-index

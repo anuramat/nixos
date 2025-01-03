@@ -2,7 +2,6 @@
   hostname,
   hostnames,
   lib,
-  flake,
 }:
 let
   inherit (builtins)
@@ -21,10 +20,11 @@ let
       cacheFilename = "cache.pem.pub";
       cachePath = path + "/${cacheFilename}";
       path = ./${hostname}/keys;
+      meta = import ./${hostname}/meta.nix;
     in
     {
       inherit hostname;
-      builder = flake.nixosConfigurations.${hostname}.config.nix.distributedBuilds;
+      inherit (meta) builder platform;
       cacheKey = if pathExists cachePath then readFile cachePath else null;
       clientKeyFiles = (
         readDir path
@@ -33,16 +33,16 @@ let
         |> map (x: path + /${x})
       );
       hostKeysFile = path + "/host_keys";
-      platform = "x86_64-linux";
     };
 
   machines = hostnames |> map getMachine;
   others = filter (x: x.hostname != hostname) machines;
   builders = filter (x: x.builder) others;
+  this = (getMachine hostname);
 in
 # TODO split the file?
 {
-  inherit hostname builders;
+  inherit builders this;
   username = "anuramat";
   fullname = "Arsen Nuramatov";
   timezone = "Europe/Berlin";
