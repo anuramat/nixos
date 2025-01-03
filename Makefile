@@ -47,3 +47,8 @@ shlint:
 # 	# @ yaml
 # misc:
 # 	@ yamllint . || true
+# TODO add make lint
+
+.PHONY hostkeys
+hostkeys:
+	@ ssh-keyscan "$(shell hostname)" > "nix/machines/$(shell hostname)/hostkeys"
