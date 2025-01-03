@@ -57,8 +57,6 @@ misclint:
 miscfmt:
 	# hehe
 	yamlfmt .
-	# this forces "strings" -> strings
-	yamlfix .
 
 # key generation {{{1
 # TODO

@@ -41,9 +41,8 @@
     nodePackages.prettier # just in case
     shfmt # posix/bash/mksh
     stylua # lua
-    treefmt # combined
-    yamlfix # I like this more
-    yamlfmt # google
+    treefmt # aggregator
+    yamlfmt
 
     # Servers {{{1
     (haskell-language-server.override {
