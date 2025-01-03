@@ -55,7 +55,6 @@ misclint:
 	yamllint . || true
 	checkmake Makefile
 miscfmt:
-	# hehe
 	yamlfmt .
 
 # key generation {{{1
