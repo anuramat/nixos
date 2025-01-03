@@ -61,7 +61,8 @@
     unstable.cheese # webcam
     unstable.proton-pass
     unstable.transmission_4-gtk # transmission torrent client gui
-    unstable.wallust # better pywal
+    # better pywal TODO go back to stable when xdg compialnt version gets released
+    inputs.wallust.packages.${pkgs.system}.default
     wev # wayland event viewer, useful for debugging
     # }}}
   ];
