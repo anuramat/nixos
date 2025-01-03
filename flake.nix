@@ -6,6 +6,7 @@
 
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     zen-browser.url = "github:MarceColl/zen-browser-flake";
+    wallust.url = "git+https://codeberg.org/explosion-mental/wallust?ref=master";
   };
   outputs =
     inputs:

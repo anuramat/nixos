@@ -13,8 +13,6 @@ __wallust_wrapped() {
 	swaymsg reload &> /dev/null || true # shits out a scary error - ignore it TODO figure out
 }
 
-
-
 # bash-completions sets up a default comp func, that lazy-loads completions if
 # they exist. fzf defines another default comp func on top, that lazily wraps
 # the existing completion, adding "**". note that fzf can't auto-wrap non-lazy
