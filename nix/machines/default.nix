@@ -12,9 +12,7 @@ let
     readFile
     ;
   inherit (lib.strings) hasSuffix;
-
   hostnames = u.epsilon ./.;
-
 in
 {
   inherit hostnames;
@@ -43,7 +41,6 @@ in
             hostKeysFile = path + "/host_keys";
             module = ./${name};
           };
-
         machines = hostnames |> map getMachine;
         others = filter (x: x.name != name) machines;
         builders = filter (x: x.builder) others;
