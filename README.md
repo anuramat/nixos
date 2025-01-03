@@ -43,7 +43,7 @@ sudo chmod 444 cache.pem.pub
 # open port 5000
 
 # retroactively sign everything:
-nix sign-paths --all -k /var/cache.pem
+sudo nix store sign --all -k /var/cache.pem
 ```
 
 ## Structure
