@@ -7,10 +7,9 @@ let
   inherit (builtins)
     filter
     attrValues
-    concatStringsSep
     attrNames
     ;
-  inherit (lib.attrsets) filterAttrs;
+  inherit (lib.attrsets) filterAttrs mapAttrs;
 
   others = filterAttrs (n: v: n != hostname) machines;
   builders = filterAttrs (n: v: v.builder or false) others;
@@ -32,6 +31,6 @@ in
   substituters = map (x: "ssh-ng://${x}") builderHostnames;
   trusted-public-keys = builders |> attrValues |> map (x: x.cacheKey);
   builderUsername = "builder";
-  hostKeys =
-    others |> attrValues |> filter (x: x ? hostKeys) |> map (x: x.hostKeys) |> concatStringsSep "\n";
+  knownHosts =
+    others |> filterAttrs (n: v: v ? hostKeys) |> mapAttrs (n: v: { publicKey = v.hostKeys; });
 }

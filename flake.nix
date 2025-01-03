@@ -10,10 +10,10 @@
   outputs =
     inputs:
     let
-
+      inherit (inputs.nixpkgs.lib.attrsets) genAttrs;
       machineDir = ./nix/machines;
       hostnames = machineDir |> builtins.readDir |> builtins.attrNames;
-      machines = inputs.nixpkgs.lib.attrsets.genAttrs hostnames (x: import (machineDir + /${x}/out.nix));
+      machines = genAttrs hostnames (x: import (machineDir + /${x}/out.nix));
 
       unstable = import inputs.nixpkgs-unstable {
         config = {
