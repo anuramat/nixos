@@ -8,6 +8,7 @@ let
     filter
     concatLists
     readDir
+    attrNames
     ;
   inherit (lib.strings) hasSuffix;
 
@@ -22,7 +23,10 @@ let
       builder = false; # TODO XXX
       cacheKey = path + "/${cacheFileName}";
       clientKeyFiles = (
-        readDir path |> filter (x: hasSuffix ".pub" x && x != cacheFileName) |> map (x: path + /${x})
+        readDir path
+        |> attrNames
+        |> filter (x: hasSuffix ".pub" x && x != cacheFileName)
+        |> map (x: path + /${x})
       );
       hostKeysFile = path + "/host_keys";
     };

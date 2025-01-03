@@ -31,15 +31,12 @@ sudo tailscale up "--operator=$(whoami)" # set up tailscale
 #### Turning a machine into a builder
 
 ```bash
-# arbitrary, used in `services.nix-serve.secretKeyFile`
-cd /var
+cd /etc/nix
 sudo nix-store --generate-binary-cache-key $(hostname) cache.pem cache.pem.pub
 sudo chown nix-serve cache-priv-key.pem
 sudo chmod 400 cache.pem
 sudo chmod 444 cache.pem.pub
 sudo nix store sign --all -k /var/cache.pem
-
-# out.nix TODO
 ```
 
 ## Structure

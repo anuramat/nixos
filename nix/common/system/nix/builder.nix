@@ -1,6 +1,5 @@
 { user, ... }:
 {
-  # remote build part {{{1
   nix.distributedBuilds = false;
   users.users.${user.builderUsername} = {
     isNormalUser = true;
@@ -14,10 +13,6 @@
   services.openssh.settings.AllowUsers = [
     user.builderUsername
   ];
-  # TODO not sure if we need this, research
-  # nix.settings.trusted-users = [ name ];
-
-  # binary cache part {{{1
-  # TODO add a Makefile target for key generation (ssh too)
-  nix.settings.secret-key-files = "/var/cache.pem";
+  # sign the derivations so that we can use the builder as a cache
+  nix.settings.secret-key-files = "/etc/nix/cache.pem";
 }
