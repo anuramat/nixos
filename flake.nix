@@ -10,41 +10,49 @@
   outputs =
     inputs:
     let
-      machineDir = ./nix/machines;
-      hostnames =
-        machineDir |> builtins.readDir |> builtins.attrNames |> builtins.filter (x: x != "user.nix");
 
-      system =
+      x =
+        assert false;
+        2;
+
+      u = import ./nix/utils.nix;
+      m = (import ./nix/machines) {
+        inherit u;
+        inherit (inputs.nixpkgs) lib;
+      };
+
+      mkSystem =
         name:
         let
-          user = (import ./nix/machines/user.nix) {
-            inherit hostnames;
-            hostname = name;
-            lib = inputs.nixpkgs.lib;
-          };
+          machines = m.machines name;
+          user = (import ./nix/user.nix);
         in
         {
           inherit name;
           value = inputs.nixpkgs.lib.nixosSystem {
             specialArgs = {
-              inherit inputs user;
-              dummy = import ./nix/dummy.nix;
+              inherit
+                inputs
+                user
+                machines
+                u
+                ;
               unstable = import inputs.nixpkgs-unstable {
                 config = {
-                  allowUnfree = true; # try recursive
+                  allowUnfree = true; # try recursive? TODO
                 };
-                system = user.this.platform;
+                system = machines.this.platform;
               };
             };
 
             modules = [
-              (machineDir + /${name})
+              machines.this.module
               ./nix/common
             ];
           };
         };
     in
     {
-      nixosConfigurations = builtins.listToAttrs (map system hostnames);
+      nixosConfigurations = builtins.listToAttrs (map mkSystem m.hostnames);
     };
 }

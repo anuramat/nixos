@@ -4,6 +4,7 @@
   pkgs,
   unstable,
   user,
+  machines,
   ...
 }:
 let
@@ -15,7 +16,7 @@ let
     "https://nix-community.cachix.org"
     "https://nixpkgs-python.cachix.org"
     "https://cache.iog.io"
-  ] ++ user.substituters;
+  ] ++ machines.substituters;
   home = config.users.users.${user.username}.home;
 in
 {
@@ -38,24 +39,24 @@ in
         "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
-      ] ++ user.trusted-public-keys;
+      ] ++ machines.trusted-public-keys;
     };
 
     buildMachines = map (x: {
       # sshKey and sshUser are ignored for some reason
       # <https://github.com/NixOS/nix/issues/3423>
       # for now add those to /root/.ssh/config
-      sshUser = user.builderUsername;
+      sshUser = machines.builderUsername;
       sshKey = "${home}/.ssh/id_ed25519";
-      hostName = x.this.hostname;
+      hostName = x.this.name;
       system = x.this.platform;
       protocol = "ssh-ng";
-    }) user.builders;
+    }) machines.builders;
 
   };
 
-  nix.distributedBuilds = !user.this.builder;
-  imports = if !user.this.builder then [ ./builder.nix ] else [ ];
+  nix.distributedBuilds = !machines.this.builder;
+  imports = if !machines.this.builder then [ ./builder.nix ] else [ ];
 
   environment.systemPackages = [
     pkgs.nix-index

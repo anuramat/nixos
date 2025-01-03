@@ -1,4 +1,4 @@
-{ user, ... }:
+{ user, machines, ... }:
 {
   hardware.bluetooth = {
     enable = true;
@@ -24,10 +24,10 @@
 
   users.users.${user.username}.openssh.authorizedKeys = {
     keys = user.keys;
-    keyFiles = user.clientKeyFiles;
+    keyFiles = machines.clientKeyFiles;
   };
 
-  programs.ssh.knownHostsFiles = user.hostKeysFiles;
+  programs.ssh.knownHostsFiles = machines.hostKeysFiles;
   services = {
     fail2ban.enable = true; # intrusion prevention
     tailscale.enable = true;

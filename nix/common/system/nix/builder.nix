@@ -1,16 +1,16 @@
-{ user, ... }:
+{ machines, user, ... }:
 {
-  users.users.${user.builderUsername} = {
+  users.users.${machines.builderUsername} = {
     isNormalUser = true;
     createHome = false;
     home = "/var/empty";
-    group = user.builderUsername;
+    group = machines.builderUsername;
     openssh.authorizedKeys.keys = user.keys;
-    openssh.authorizedKeys.keyFiles = user.clientKeyFiles;
+    openssh.authorizedKeys.keyFiles = machines.clientKeyFiles;
   };
-  users.groups.${user.builderUsername} = { };
+  users.groups.${machines.builderUsername} = { };
   services.openssh.settings.AllowUsers = [
-    user.builderUsername
+    machines.builderUsername
   ];
   # sign the derivations so that we can use the builder as a cache
   nix.settings.secret-key-files = "/etc/nix/cache.pem";

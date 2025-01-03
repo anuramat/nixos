@@ -1,7 +1,7 @@
 # vim: fdm=marker fdl=0
 
-.PHONY: all flake links code
-all: flake links code
+.PHONY: all flake links code keys
+all: flake links code keys
 flake:
 	@ ./scripts/heading.sh "Building NixOS"
 	@ sudo nixos-rebuild switch --option extra-experimental-features pipe-operators
@@ -9,6 +9,12 @@ links:
 	@ ./scripts/heading.sh "Setting up links"
 	@ BASH_ENV=/etc/profile ./scripts/install.sh
 code: nix lua sh
+keys::="nix/machines/$(shell hostname)/keys"
+keys:
+	@ mkdir -p "$(keys)"
+	@ ssh-keyscan -q "$(shell hostname)" > "$(keys)/host_keys"
+	@ grep -rL PRIVATE "$(HOME)/.ssh" | grep '\.pub$$' | xargs cp -t "$(keys)"
+	@ cp -t "$(keys)" "/etc/nix/cache.pem.pub"
 
 # nix {{{1
 .PHONY: nix nixlint nixfmt
@@ -41,21 +47,8 @@ shlint:
 	@ ./scripts/heading.sh "Checking shell scripts"
 	@ ./scripts/shrun.sh 'verbose' 'shellcheck --color=always -o all'
 
-# # misc {{{1
-# .PHONY: misc miscfmt
-# miscfmt:
-# 	# @ yaml
+# misc {{{1
+# .PHONY: misc
 # misc:
 # 	@ yamllint . || true
-# TODO add make lint
-
-
-keys::="nix/machines/$(shell hostname)/keys"
-.PHONY: host_keys client_keys keys dirs
-dirs:
-	@ mkdir -p "$(keys)"
-host_keys: dirs
-	@ ssh-keyscan -q "$(shell hostname)" > "$(keys)/host_keys"
-client_keys: dirs
-	@ grep -rL PRIVATE "$(HOME)/.ssh" | grep '\.pub$$' | xargs cp -t "$(keys)"
-keys: client_keys host_keys
+# TODO yaml formatter, make linter

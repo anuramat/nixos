@@ -1,6 +1,6 @@
-{ user, ... }:
+{ user, machines, ... }:
 {
-  networking.hostName = user.this.hostname;
+  networking.hostName = machines.this.name;
   documentation.man.generateCaches = true; # apropos
   hardware.enableAllFirmware = true; # regardless of license
   time.timeZone = user.timezone;
