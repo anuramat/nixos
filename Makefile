@@ -15,7 +15,7 @@ keys:
 	@ mkdir -p "$(keys)"
 	@ ssh-keyscan -q "$(shell hostname)" > "$(keys)/host_keys"
 	@ grep -rL PRIVATE "$(HOME)/.ssh" | grep '\.pub$$' | xargs cp -ft "$(keys)"
-	@ cp -ft "$(keys)" "/etc/nix/cache.pem.pub"
+	@ cp -ft "$(keys)" "/etc/nix/cache.pem.pub" || true
 
 # nix {{{1
 .PHONY: nix nixlint nixfmt
