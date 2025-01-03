@@ -58,6 +58,7 @@ end
 
 return {
   lazy = false,
+  enabled = false,
   'goolord/alpha-nvim',
   event = 'VimEnter',
   -- enabled = false,

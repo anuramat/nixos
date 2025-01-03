@@ -74,7 +74,7 @@ se sbr=↪ list lcs=tab:├─,extends:❯,precedes:❮,trail:·,lead:·
 au TextYankPost * silent! lua vim.highlight.on_yank()
 se number relativenumber
 se scrolloff=0 sidescrolloff=30
-se report=0 shortmess=CFISTWacqst " notification settings, I for intro
+se report=0 shortmess=CFSTWacqst " notification settings, I for intro
 se cursorline cursorlineopt=both
 se matchtime=1 showmatch " highlight matching bracket (deciseconds)
 se signcolumn=yes " gutter
