@@ -1,7 +1,7 @@
 # vim: fdm=marker fdl=0
 
 .PHONY: all flake links code keys
-all: flake links code keys
+all: keys flake links code
 flake:
 	@ ./scripts/heading.sh "Building NixOS"
 	@ sudo nixos-rebuild switch --option extra-experimental-features pipe-operators
@@ -9,11 +9,12 @@ links:
 	@ ./scripts/heading.sh "Setting up links"
 	@ BASH_ENV=/etc/profile ./scripts/install.sh
 code: nix lua sh
-keys::="nix/machines/$(shell hostname)/keys"
+keys::=$(shell pwd)/nix/machines/$(shell hostname)/keys
 keys:
+	@ ./scripts/heading.sh "Copying public keys"
 	@ mkdir -p "$(keys)"
 	@ ssh-keyscan -q "$(shell hostname)" > "$(keys)/host_keys"
-	@ grep -rL PRIVATE "$(HOME)/.ssh" | grep '\.pub$$' | xargs cp -t "$(keys)"
+	@ grep -rL PRIVATE "$(HOME)/.ssh" | grep '\.pub$$' | xargs cp -ft "$(keys)"
 	@ cp -t "$(keys)" "/etc/nix/cache.pem.pub"
 
 # nix {{{1
