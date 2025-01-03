@@ -49,10 +49,18 @@ shlint:
 	./scripts/shrun.sh 'verbose' 'shellcheck --color=always -o all'
 
 # misc {{{1
-# .PHONY: misc
-# misc:
-# 	yamllint . || true
-# TODO yaml formatter, make linter
+.PHONY: misc misclint miscfmt
+misc: misclint
+misclint:
+	yamllint . || true
+	checkmake Makefile
+miscfmt:
+	# yamlfmt
 
 # key generation {{{1
 # TODO
+
+# checkmate, checkmake {{{1
+.PHONY: clean test
+clean:
+test:
