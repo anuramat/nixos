@@ -30,7 +30,7 @@ in
   ] ++ (others |> attrValues |> filter (x: x ? sshKey) |> map (x: x.sshKey));
   # TODO disentangle ssh keys, move to builder_config.nix or something idk
   substituters = map (x: "ssh-ng://${x}") builderHostnames;
-  trusted-public-keys = map (x: x.cacheKey) (attrValues builders);
+  trusted-public-keys = builders |> attrValues |> map (x: x.cacheKey);
   builderUsername = "builder";
   hostKeys =
     others |> attrValues |> filter (x: x ? hostKeys) |> map (x: x.hostKeys) |> concatStringsSep "\n";
