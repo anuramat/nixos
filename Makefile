@@ -55,7 +55,10 @@ misclint:
 	yamllint . || true
 	checkmake Makefile
 miscfmt:
-	# yamlfmt
+	# hehe
+	yamlfmt .
+	# this forces "strings" -> strings
+	yamlfix .
 
 # key generation {{{1
 # TODO
