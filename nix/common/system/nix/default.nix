@@ -1,8 +1,9 @@
 {
-  pkgs,
-  user,
+  config,
   lib,
+  pkgs,
   unstable,
+  user,
   ...
 }:
 let
@@ -15,6 +16,7 @@ let
     "https://nixpkgs-python.cachix.org"
     "https://cache.iog.io"
   ] ++ user.substituters;
+  home = config.users.users.${user.username}.home;
 in
 {
   nixpkgs.config = unstable.config;
@@ -42,6 +44,8 @@ in
     distributedBuilds = !user.isBuilder;
     buildMachines = lib.attrsets.mapAttrsToList (name: value: {
       # sshKey or sshUser doesn't work TODO figure out
+      sshUser = user.builderUsername;
+      sshKey = "${home}/.ssh/id_ed25519";
       hostName = name;
       system = value.system;
       protocol = "ssh-ng";
