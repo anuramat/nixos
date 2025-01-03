@@ -1,21 +1,33 @@
 # vim: fdm=marker fdl=0
 .SILENT:
-.PHONY: all flake links code keys
-all: keys flake links code
-flake:
+.PHONY: all flake links code dupe init_pre init
+all: dupe flake links code
+flake: | init_pre
 	./scripts/heading.sh "Building NixOS"
 	sudo nixos-rebuild switch --option extra-experimental-features pipe-operators
 links:
 	./scripts/heading.sh "Setting up links"
 	BASH_ENV=/etc/profile ./scripts/install.sh
 code: nix lua sh
-keys::=$(shell pwd)/nix/machines/$(shell hostname)/keys
-keys:
+machine_dir::=$(shell pwd)/nix/machines/$(shell hostname)
+keys_dir::=$(machine_dir)/keys
+dupe: | init_pre
 	./scripts/heading.sh "Copying public keys"
-	mkdir -p "$(keys)"
-	LC_ALL=C ssh-keyscan -q "$(shell hostname)" | sort > "$(keys)/host_keys"
-	grep -rL PRIVATE "$(HOME)/.ssh" | grep '\.pub$$' | xargs cp -ft "$(keys)"
-	cp -ft "$(keys)" "/etc/nix/cache.pem.pub" 2>/dev/null || true
+	mkdir -p "$(keys_dir)"
+	LC_ALL=C ssh-keyscan -q "$(shell hostname)" | sort > "$(keys_dir)/host_keys"
+	grep -rL PRIVATE "$(HOME)/.ssh" | grep '\.pub$$' | xargs cp -ft "$(keys_dir)"
+	cp -ft "$(keys_dir)" "/etc/nix/cache.pem.pub" 2>/dev/null || true
+init_pre:
+	./scripts/heading.sh "Initial install"
+	./scripts/guard.sh
+	./scripts/heading.sh "Generating machine module"
+	./scripts/machine_template.sh
+	nixos-generate-config --show-hardware-config > "$(machine_dir)"/hardware-configuration.nix
+	./scripts/heading.sh "Generating keys"
+	./scripts/keygen.sh
+init: init_pre all
+	./scripts/heading.sh
+	# wallust theme random # TODO need the wrapped version
 
 # nix {{{1
 .PHONY: nix nixlint nixfmt
