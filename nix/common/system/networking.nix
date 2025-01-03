@@ -22,15 +22,18 @@
     };
   };
 
-  users.users.${user.username}.openssh.authorizedKeys.keys = user.keys;
+  users.users.${user.username}.openssh.authorizedKeys = {
+    keys = user.keys;
+    keyFiles = user.clientKeyFiles;
+  };
 
+  programs.ssh.knownHostsFiles = user.hostKeysFiles;
   services = {
     fail2ban.enable = true; # intrusion prevention
     tailscale.enable = true;
     openssh = {
       enable = true;
       ports = [ 22 ];
-      inherit (user) knownHosts;
       settings = {
         PasswordAuthentication = false;
         KbdInteractiveAuthentication = false;

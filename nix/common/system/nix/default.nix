@@ -42,14 +42,14 @@ in
     };
 
     distributedBuilds = !user.isBuilder;
-    buildMachines = lib.attrsets.mapAttrsToList (name: value: {
+    buildMachines = map (x: {
       # sshKey and sshUser are ignored for some reason
       # <https://github.com/NixOS/nix/issues/3423>
       # for now add those to /root/.ssh/config
       sshUser = user.builderUsername;
       sshKey = "${home}/.ssh/id_ed25519";
-      hostName = name;
-      system = value.system;
+      hostName = x.hostname;
+      system = x.system;
       protocol = "ssh-ng";
     }) user.builders;
 

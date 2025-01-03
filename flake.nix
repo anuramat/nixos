@@ -10,10 +10,9 @@
   outputs =
     inputs:
     let
-      inherit (inputs.nixpkgs.lib.attrsets) genAttrs;
       machineDir = ./nix/machines;
-      hostnames = machineDir |> builtins.readDir |> builtins.attrNames;
-      machines = genAttrs hostnames (x: import (machineDir + /${x}/out.nix));
+      hostnames =
+        machineDir |> builtins.readDir |> builtins.attrNames |> builtins.filter (x: x != "user.nix");
 
       system = name: {
         inherit name;
@@ -21,9 +20,9 @@
           specialArgs = {
             inherit inputs;
             dummy = import ./nix/dummy.nix;
-            user = (import ./nix/user.nix) {
+            user = (import ./nix/machines/user.nix) {
+              inherit hostnames;
               hostname = name;
-              inherit machines;
               lib = inputs.nixpkgs.lib;
             };
             unstable = import inputs.nixpkgs-unstable {
@@ -32,7 +31,7 @@
                 # cudaSupport = true;
                 # cudnnSupoprt = true;
               };
-              system = machines.${name}.system;
+              system = "x86_64-linux";
             };
           };
 

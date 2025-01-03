@@ -49,6 +49,11 @@ shlint:
 # 	@ yamllint . || true
 # TODO add make lint
 
-.PHONY: hostkeys
-hostkeys:
-	@ ssh-keyscan "$(shell hostname)" > "nix/machines/$(shell hostname)/hostkeys"
+
+keys::="nix/machines/$(shell hostname)/keys"
+.PHONY: host_keys client_keys keys
+host_keys:
+	@ ssh-keyscan -q "$(shell hostname)" > "$(keys)/host_keys"
+client_keys:
+	@ grep -rL PRIVATE "$(HOME)/.ssh" | grep '\.pub$$' | xargs cp -t "$(keys)"
+keys: client_keys host_keys

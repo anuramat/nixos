@@ -8,6 +8,7 @@
     home = "/var/empty";
     group = user.builderUsername;
     openssh.authorizedKeys.keys = user.keys;
+    openssh.authorizedKeys.keyFiles = user.clientKeyFiles;
   };
   users.groups.${user.builderUsername} = { };
   services.openssh.settings.AllowUsers = [
