@@ -1,6 +1,7 @@
 # vim: fdm=marker fdl=0
 .SILENT:
-# .PHONY: all flake links code dupe init_pre init
+
+.PHONY: all flake links code dupe init_pre init clean test
 all: flake links code
 flake: dupe
 	./scripts/heading.sh "Building NixOS"
@@ -68,11 +69,3 @@ misclint:
 	checkmake Makefile
 miscfmt:
 	yamlfmt .
-
-# key generation {{{1
-# TODO
-
-# checkmate, checkmake {{{1
-.PHONY: clean test
-clean:
-test:
