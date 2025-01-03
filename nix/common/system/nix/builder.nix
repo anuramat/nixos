@@ -5,6 +5,7 @@
   users.users.${user.builderUsername} = {
     isNormalUser = true;
     createHome = false;
+    home = "/var/empty";
     group = user.builderUsername;
     openssh.authorizedKeys.keys = user.keys;
   };
