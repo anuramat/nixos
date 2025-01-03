@@ -13,7 +13,7 @@ keys::=$(shell pwd)/nix/machines/$(shell hostname)/keys
 keys:
 	./scripts/heading.sh "Copying public keys"
 	mkdir -p "$(keys)"
-	ssh-keyscan -q "$(shell hostname)" > "$(keys)/host_keys"
+	LC_ALL=C ssh-keyscan -q "$(shell hostname)" | sort > "$(keys)/host_keys"
 	grep -rL PRIVATE "$(HOME)/.ssh" | grep '\.pub$$' | xargs cp -ft "$(keys)"
 	cp -ft "$(keys)" "/etc/nix/cache.pem.pub" 2>/dev/null || true
 

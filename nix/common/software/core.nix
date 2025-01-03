@@ -59,7 +59,7 @@
     openconnect_openssl
 
     # editors {{{1
-    neovim
+    unstable.neovim
     # inputs.neovim-nightly-overlay.packages.${pkgs.system}.default
     unstable.helix
     unstable.vis
