@@ -28,7 +28,7 @@ sudo tailscale up "--operator=$(whoami)" # set up tailscale
 # etc: proton pass, web browser, cache, telegram, spotify
 ```
 
-#### Setting up nix-serve
+#### Turning a machine into a builder
 
 ```bash
 # arbitrary, used in `services.nix-serve.secretKeyFile`
@@ -37,13 +37,9 @@ sudo nix-store --generate-binary-cache-key $(hostname) cache.pem cache.pem.pub
 sudo chown nix-serve cache-priv-key.pem
 sudo chmod 400 cache.pem
 sudo chmod 444 cache.pem.pub
-
-# substituter -> `user.nix`
-# path to the private key -> machine config (`services.nix-serve` option)
-# open port 5000
-
-# retroactively sign everything:
 sudo nix store sign --all -k /var/cache.pem
+
+# out.nix TODO
 ```
 
 ## Structure

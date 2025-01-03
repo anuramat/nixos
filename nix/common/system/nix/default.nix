@@ -43,7 +43,9 @@ in
 
     distributedBuilds = !user.isBuilder;
     buildMachines = lib.attrsets.mapAttrsToList (name: value: {
-      # sshKey or sshUser doesn't work TODO figure out
+      # sshKey and sshUser are ignored for some reason
+      # <https://github.com/NixOS/nix/issues/3423>
+      # for now add those to /root/.ssh/config
       sshUser = user.builderUsername;
       sshKey = "${home}/.ssh/id_ed25519";
       hostName = name;
