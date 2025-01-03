@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=all
 
 TODOTXT_SILENT_ARCHIVE=1
 

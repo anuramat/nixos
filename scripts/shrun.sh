@@ -9,7 +9,7 @@ shrun() {
 	local -r command="$1"
 
 	# find all shell scripts
-	fd -u --exclude ./git -t f -0 . | while IFS= read -r -d '' filename; do
+	fd -HL -t f -0 . | while IFS= read -r -d '' filename; do
 		head -n 1 "$filename" | grep -q "^#!.*sh" || echo "$filename" | grep -iq "sh$" && printf '%s\0' "$filename"
 	done | while IFS= read -r -d '' filename; do
 		# print the filename
