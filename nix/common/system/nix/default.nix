@@ -41,7 +41,6 @@ in
       ] ++ user.trusted-public-keys;
     };
 
-    distributedBuilds = !user.isBuilder;
     buildMachines = map (x: {
       # sshKey and sshUser are ignored for some reason
       # <https://github.com/NixOS/nix/issues/3423>
@@ -49,13 +48,13 @@ in
       sshUser = user.builderUsername;
       sshKey = "${home}/.ssh/id_ed25519";
       hostName = x.hostname;
-      system = x.system;
+      system = x.platform;
       protocol = "ssh-ng";
     }) user.builders;
 
   };
 
-  imports = if user.isBuilder then [ ./builder.nix ] else [ ];
+  imports = if false then [ ./builder.nix ] else [ ];
 
   environment.systemPackages = [
     pkgs.nix-index

@@ -1,5 +1,7 @@
 { inputs, ... }:
 {
+  nix.distributedBuilds = true;
+
   system.stateVersion = "24.05";
 
   imports = [

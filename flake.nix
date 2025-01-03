@@ -22,6 +22,7 @@
             dummy = import ./nix/dummy.nix;
             user = (import ./nix/machines/user.nix) {
               inherit hostnames;
+              flake = inputs.self;
               hostname = name;
               lib = inputs.nixpkgs.lib;
             };
@@ -31,7 +32,8 @@
                 # cudaSupport = true;
                 # cudnnSupoprt = true;
               };
-              system = "x86_64-linux";
+              # system = inputs.self.nixosConfigurations.${name}.config.nixpkgs.hostPlatform;
+              system = "x86_64-linux"; # TODO de-ugly
             };
           };
 

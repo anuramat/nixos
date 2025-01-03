@@ -1,6 +1,5 @@
 { user, ... }:
 {
-  nix.distributedBuilds = false;
   users.users.${user.builderUsername} = {
     isNormalUser = true;
     createHome = false;

@@ -7,6 +7,8 @@
 {
   system.stateVersion = "24.05";
 
+  nix.distributedBuilds = false;
+
   imports = [
     inputs.nixos-hardware.nixosModules.common-cpu-intel
     inputs.nixos-hardware.nixosModules.common-gpu-intel
