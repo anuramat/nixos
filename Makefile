@@ -1,17 +1,16 @@
 # vim: fdm=marker fdl=0
 .SILENT:
-.PHONY: all flake links code dupe init_pre init
-all: dupe flake links code
-flake: | init_pre
+# .PHONY: all flake links code dupe init_pre init
+all: flake links code
+flake: dupe
 	./scripts/heading.sh "Building NixOS"
 	sudo nixos-rebuild switch --option extra-experimental-features pipe-operators
 links:
 	./scripts/heading.sh "Setting up links"
 	BASH_ENV=/etc/profile ./scripts/install.sh
-code: nix lua sh
 machine_dir::=$(shell pwd)/nix/machines/$(shell hostname)
 keys_dir::=$(machine_dir)/keys
-dupe: | init_pre
+dupe:
 	./scripts/heading.sh "Copying public keys"
 	mkdir -p "$(keys_dir)"
 	LC_ALL=C ssh-keyscan -q "$(shell hostname)" | sort > "$(keys_dir)/host_keys"
@@ -25,9 +24,10 @@ init_pre:
 	nixos-generate-config --show-hardware-config > "$(machine_dir)"/hardware-configuration.nix
 	./scripts/heading.sh "Generating keys"
 	./scripts/keygen.sh
-init: init_pre all
-	./scripts/heading.sh
+init: init_pre .WAIT all
+	./scripts/heading.sh uhhh TODO
 	# wallust theme random # TODO need the wrapped version
+code: nix lua sh
 
 # nix {{{1
 .PHONY: nix nixlint nixfmt
