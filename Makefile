@@ -51,9 +51,11 @@ shlint:
 
 
 keys::="nix/machines/$(shell hostname)/keys"
-.PHONY: host_keys client_keys keys
-host_keys:
+.PHONY: host_keys client_keys keys dirs
+dirs:
+	@ mkdir -p "$(keys)"
+host_keys: dirs
 	@ ssh-keyscan -q "$(shell hostname)" > "$(keys)/host_keys"
-client_keys:
+client_keys: dirs
 	@ grep -rL PRIVATE "$(HOME)/.ssh" | grep '\.pub$$' | xargs cp -t "$(keys)"
 keys: client_keys host_keys
