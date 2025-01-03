@@ -1,7 +1,8 @@
 # vim: fdm=marker fdl=0
 .SILENT:
+.PHONY: clean test
 
-.PHONY: all flake links code dupe init_pre init clean test
+.PHONY: all flake links code dupe init_pre init
 all: flake links code
 flake: dupe
 	./scripts/heading.sh "Building NixOS"
@@ -25,9 +26,10 @@ init_pre:
 	nixos-generate-config --show-hardware-config > "$(machine_dir)"/hardware-configuration.nix
 	./scripts/heading.sh "Generating keys"
 	./scripts/keygen.sh
+# if only there was a better way... too bad order-only prerequisites are not order-only
 init: init_pre .WAIT all
-	./scripts/heading.sh uhhh TODO
-	# wallust theme random # TODO need the wrapped version
+	./scripts/heading.sh "Applying a theme"
+	source ./config/bash/config.d/01-wallust.sh && __wallust_wrapped theme random
 code: nix lua sh
 
 # nix {{{1
@@ -63,7 +65,7 @@ shlint:
 
 # misc {{{1
 .PHONY: misc misclint miscfmt
-misc: misclint
+misc: misclint miscfmt
 misclint:
 	yamllint . || true
 	checkmake Makefile

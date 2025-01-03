@@ -1,25 +1,11 @@
 #!/usr/bin/env bash
 
-__wallust_cs_dir="$XDG_CONFIG_HOME/wallust/colorschemes"
-
-# set wallust theme, and apply post hooks
-__wallust_wrapped() {
-	if [ "$1" = "sex" ]; then
-		wallust cs -f terminal-sexy "$__wallust_cs_dir/$2.json" || return
-	else
-		wallust "$@" || return
-	fi
-	"$XDG_CONFIG_HOME/mako/wal.sh"
-	swaymsg reload &> /dev/null || true # shits out a scary error - ignore it TODO figure out
-}
-
-
-
 # bash-completions sets up a default comp func, that lazy-loads completions if
 # they exist. fzf defines another default comp func on top, that lazily wraps
 # the existing completion, adding "**". note that fzf can't auto-wrap non-lazy
 # completions, since it only works with defaults, thus we load everything
 # manually. note that for some commands, fzf comp is explicitly defined.
+# TODO move/copy this to the notes
 
 __wallust_alias=wal
 __load_completion wallust
