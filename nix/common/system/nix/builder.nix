@@ -14,4 +14,5 @@
   ];
   # sign the derivations so that we can use the builder as a cache
   nix.settings.secret-key-files = "/etc/nix/cache.pem";
+  # TODO might wanna add gc and autoUpgrade later
 }
