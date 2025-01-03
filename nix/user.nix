@@ -17,7 +17,6 @@ let
 in
 # TODO split the file?
 {
-  # WARN don't fuck this up
   inherit hostname builderHostnames;
   isBuilder = machines.${hostname}.builder or false;
   username = "anuramat";
