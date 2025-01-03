@@ -39,6 +39,8 @@ sudo chmod 444 cache.pem.pub
 sudo nix store sign --all -k /var/cache.pem
 ```
 
+then set builder = true in `meta.nix` in the machine folder
+
 ## Structure
 
 - `bin:config:home` - linked to appropriate directories
