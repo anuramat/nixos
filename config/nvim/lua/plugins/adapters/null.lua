@@ -60,6 +60,7 @@ local null_sources = function()
     f.stylua,
     f.black,
     f.nixfmt,
+    f.yamlfmt,
     f.markdownlint,
     cbfmt,
     ormolu,
@@ -67,6 +68,7 @@ local null_sources = function()
     -- d.statix, -- TODO turn on when they introduce pipe operator
     d.protolint,
     d.markdownlint,
+    d.yamllint,
     -- actions
     a.statix,
     -- hovers
