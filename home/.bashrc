@@ -6,6 +6,7 @@
 shopt -s globstar # enables **
 set +H            # turn off ! history bullshit
 
+source "$XDG_CONFIG_HOME/bash/xdg_shims.sh"
 for f in "$XDG_CONFIG_HOME"/bash/config.d/*; do source "$f"; done
 
 # TODO do I need it? foot is styled already via templates
