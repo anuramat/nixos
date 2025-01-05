@@ -1,6 +1,4 @@
 {
-  config,
-  cluster,
   ...
 }:
 {
@@ -26,12 +24,6 @@
     };
   };
 
-  users.users.${config.me}.openssh.authorizedKeys = {
-    keys = cluster.miscKeys;
-    keyFiles = cluster.clientKeyFiles;
-  };
-
-  programs.ssh.knownHostsFiles = cluster.hostKeysFiles;
   services = {
     fail2ban.enable = true; # intrusion prevention
     tailscale.enable = true;
@@ -43,7 +35,6 @@
         KbdInteractiveAuthentication = false;
         PermitRootLogin = "no";
         PrintLastLog = false;
-        AllowUsers = [ config.me ];
       };
     };
   };

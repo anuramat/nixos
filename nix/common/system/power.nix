@@ -1,5 +1,6 @@
 { lib, ... }:
 {
+  # TODO check if it's a laptop
   services.logind.extraConfig = ''
     HandlePowerKey=hybrid-sleep
     HandlePowerKeyLongPress=ignore

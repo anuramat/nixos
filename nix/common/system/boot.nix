@@ -1,4 +1,3 @@
-{ config, ... }:
 {
   boot = {
     loader = {
@@ -29,7 +28,6 @@
   services.getty = {
     greetingLine = ''\l'';
     helpLine = "";
-    autologinUser = config.me;
     autologinOnce = true;
   };
 }

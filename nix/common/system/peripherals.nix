@@ -1,26 +1,18 @@
 {
   pkgs,
-  config,
   unstable,
   ...
 }:
 {
   hardware = {
-    # Flipper Zero
     flipperzero.enable = true;
-    # Generic RGB software
-    # Razer
-    openrazer = {
-      users = [ config.me ];
-      enable = true;
-    };
+    openrazer.enable = true;
   };
   environment.systemPackages = [
     unstable.keymapp # ZSA keyboard thing
     pkgs.polychromatic # openrazer frontend
     pkgs.rpi-imager # raspbery pi
   ];
-  # kmonad is apparently big and slow
   services = {
     # ZSA Voyager
     udev.extraRules = ''

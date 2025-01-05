@@ -1,5 +1,4 @@
 {
-  config,
   pkgs,
   cluster,
   ...
@@ -14,7 +13,6 @@ let
     "https://nixpkgs-python.cachix.org"
     "https://cache.iog.io"
   ] ++ cluster.substituters;
-  inherit (config.users.users.${config.me}) home;
 in
 {
   nixpkgs = {
@@ -47,8 +45,8 @@ in
       # sshKey and sshUser are ignored for some reason
       # <https://github.com/NixOS/nix/issues/3423>
       # for now add those to /root/.ssh/config
-      sshUser = cluster.builderUsername;
-      sshKey = "${home}/.ssh/id_ed25519";
+      # sshUser = cluster.builderUsername;
+      # sshKey = "${home}/.ssh/id_ed25519";
       hostName = x.name;
       system = x.platform;
       protocol = "ssh-ng";
