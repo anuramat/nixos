@@ -13,46 +13,43 @@
 
     let
       u = import ./nix/utils.nix;
-      inherit
-        ((import ./nix/machines) {
-          inherit u inputs;
-          inherit (inputs.nixpkgs) lib;
-        })
+      inherit ((import ./nix/machines) { inherit u inputs; })
         hostnames
-        mkMachines
+        mkCluster
+        mkModules
         ;
 
       mkSystem =
         name:
         let
-          machines = mkMachines name;
-          user = (import ./nix/user.nix);
-          nixpkgsOption = inputs.self.nixosConfigurations.${name}.config.nixpkgs;
+          pkgscfg = inputs.self.nixosConfigurations.${name}.config.nixpkgs;
         in
-        {
-          inherit name;
-          value = inputs.nixpkgs.lib.nixosSystem {
-            specialArgs = {
-              inherit
-                inputs
-                user
-                machines
-                u
-                ;
-              unstable = import inputs.nixpkgs-unstable {
-                inherit (nixpkgsOption) config;
-                inherit (nixpkgsOption.hostPlatform) system;
-              };
+        inputs.nixpkgs.lib.nixosSystem {
+          specialArgs = {
+            user = (import ./nix/user.nix);
+            machines = mkCluster name;
+            inherit
+              inputs
+              u
+              ;
+            unstable = import inputs.nixpkgs-unstable {
+              inherit (pkgscfg) config;
+              inherit (pkgscfg.hostPlatform) system;
             };
-
-            modules = [
-              machines.this.module
-              ./nix/common
-            ];
           };
+
+          modules = mkModules name ++ [
+            ./nix/common
+          ];
         };
     in
     {
-      nixosConfigurations = builtins.listToAttrs (map mkSystem hostnames);
+      nixosConfigurations =
+        hostnames
+        |> map (name: {
+          inherit name;
+          value = mkSystem name;
+        })
+        |> builtins.listToAttrs;
     };
 }

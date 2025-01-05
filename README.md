@@ -30,3 +30,4 @@ TODO
 - todo.sh, ~/notes
 - XDG basedir spec - `rg XDGBDSV`
 - wmenu books in sway config searches for files in ~/books
+- `/etc/nix/cache.pem`

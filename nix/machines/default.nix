@@ -1,26 +1,20 @@
-# XXX remember to update the machine_template.sh
-{
-  lib,
-  u,
-  inputs,
-}:
+{ u, inputs }:
 with builtins;
 let
-  inherit (lib.strings) hasSuffix;
-  hostnames = u.epsilon ./.;
+  inherit (inputs.nixpkgs.lib.strings) hasSuffix;
+
   mkMachine =
     name:
     let
       config = inputs.self.nixosConfigurations.${name}.config;
       cacheFilename = "cache.pem.pub";
-      cachePath = path + "/${cacheFilename}";
       path = ./${name}/keys;
-      builder = !config.nix.distributedBuilds;
     in
     rec {
-      inherit name builder;
+      inherit name;
+      builder = !config.nix.distributedBuilds;
       platform = config.nixpkgs.hostPlatform.system;
-      cacheKey = if builder then readFile cachePath else null;
+      cacheKey = if builder then readFile (path + "/${cacheFilename}") else null;
       clientKeyFiles = (
         readDir path
         |> attrNames
@@ -28,26 +22,28 @@ let
         |> map (x: path + /${x})
       );
       hostKeysFile = path + "/host_keys";
-      module = ./${name};
     };
+  hostnames = u.epsilon ./.;
 in
 {
   inherit hostnames;
-  mkMachines =
+  mkModules = name: [
+    ./${name}
+    (_: { networking.hostName = name; })
+  ];
+  mkCluster =
     name:
-    (
-      let
-        machines = hostnames |> map mkMachine;
-        others = filter (x: x.name != name) machines;
-      in
-      rec {
-        builders = filter (x: x.builder) others;
-        this = (mkMachine name);
-        clientKeyFiles = others |> map (x: x.clientKeyFiles) |> concatLists;
-        substituters = builders |> map (x: "ssh-ng://${x.name}");
-        trusted-public-keys = builders |> map (x: x.cacheKey) |> filter (x: x != null);
-        builderUsername = "builder";
-        hostKeysFiles = others |> map (x: x.hostKeysFile);
-      }
-    );
+    let
+      machines = hostnames |> map mkMachine |> filter (x: x.name != name);
+    in
+    rec {
+      builders = filter (x: x.builder) machines;
+
+      substituters = builders |> map (x: "ssh-ng://${x.name}");
+
+      builderUsername = "builder";
+      clientKeyFiles = machines |> map (x: x.clientKeyFiles) |> concatLists;
+      hostKeysFiles = machines |> map (x: x.hostKeysFile);
+      trusted-public-keys = builders |> map (x: x.cacheKey) |> filter (x: x != null);
+    };
 }
