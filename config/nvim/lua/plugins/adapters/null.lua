@@ -65,7 +65,7 @@ local null_sources = function() -- {{{1
     cbfmt,
     ormolu,
     -- diagnostics
-    d.statix, -- TODO turn on when they introduce pipe operator
+    -- d.statix, -- TODO turn on when they introduce pipe operator
     d.protolint,
     d.markdownlint,
     d.yamllint,
