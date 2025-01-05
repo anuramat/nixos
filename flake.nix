@@ -27,6 +27,7 @@
         let
           machines = mkMachines name;
           user = (import ./nix/user.nix);
+          nixpkgsOption = inputs.self.nixosConfigurations.${name}.config.nixpkgs;
         in
         {
           inherit name;
@@ -39,10 +40,8 @@
                 u
                 ;
               unstable = import inputs.nixpkgs-unstable {
-                config = {
-                  allowUnfree = true;
-                };
-                system = machines.this.platform;
+                inherit (nixpkgsOption) config;
+                inherit (nixpkgsOption.hostPlatform) system;
               };
             };
 

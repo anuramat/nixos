@@ -1,10 +1,10 @@
 {
   config,
-  lib,
   pkgs,
   unstable,
   user,
   machines,
+  inputs,
   ...
 }:
 let
@@ -18,9 +18,15 @@ let
     "https://cache.iog.io"
   ] ++ machines.substituters;
   home = config.users.users.${user.username}.home;
+
+  getPlatform = name: inputs.self.nixosConfigurations.${name}.config.nixpkgs.hostPlatform;
 in
 {
-  nixpkgs.config = unstable.config;
+  nixpkgs = {
+    config = {
+      allowUnfree = true;
+    };
+  };
 
   nix = {
     channel.enable = false;
@@ -49,7 +55,7 @@ in
       sshUser = machines.builderUsername;
       sshKey = "${home}/.ssh/id_ed25519";
       hostName = x.name;
-      system = x.platform;
+      system = getPlatform x;
       protocol = "ssh-ng";
     }) machines.builders;
 

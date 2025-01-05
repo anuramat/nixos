@@ -22,7 +22,7 @@ let
       # maybe builder can just be the distributed builds var
       # but where would the keyboard go... I'll still need some sort of a
       # per-machine file that would be validated by some other script
-      inherit (meta) builder platform keyboard;
+      inherit (meta) builder keyboard;
       cacheKey = if builder then readFile cachePath else null;
       clientKeyFiles = (
         readDir path
