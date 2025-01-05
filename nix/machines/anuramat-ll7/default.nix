@@ -7,9 +7,24 @@
 {
   system.stateVersion = "24.05";
   nix.distributedBuilds = false;
-  services.keyd.keyboards.main.ids = [
-    "048d:c997:193096a7"
-  ];
+  services = {
+    keyd.keyboards.main.ids = [
+      "048d:c997:193096a7"
+    ];
+    # ssd
+    fstrim.enable = true;
+    # proprietary drivers
+    xserver = {
+      dpi = 236;
+    };
+    tlp.settings = {
+      # turn on battery charge threshold
+      # `tlp fullcharge` to charge to 100% once
+      START_CHARGE_THRESH_BAT0 = 0; # dummy value
+      STOP_CHARGE_THRESH_BAT0 = 1;
+      CPU_MAX_PERF_ON_BAT = 20;
+    };
+  };
 
   imports = [
     inputs.nixos-hardware.nixosModules.common-cpu-intel
@@ -33,24 +48,6 @@
       size = 128 * 1024;
     }
   ];
-
-  services = {
-    # ssd
-    fstrim.enable = true;
-    # proprietary drivers
-    xserver = {
-      dpi = 236;
-    };
-
-  };
-
-  services.tlp.settings = {
-    # turn on battery charge threshold
-    # `tlp fullcharge` to charge to 100% once
-    START_CHARGE_THRESH_BAT0 = 0; # dummy value
-    STOP_CHARGE_THRESH_BAT0 = 1;
-    CPU_MAX_PERF_ON_BAT = 20;
-  };
 
   # # intel
   # hardware.cpu.intel.updateMicrocode = true;
