@@ -13,7 +13,7 @@ __wallust_comp_custom() {
 	[ "${COMP_WORDS[1]}" = "sex" ] && {
 		[ "$COMP_CWORD" = 2 ] && {
 			__wallust_cs_dir="$XDG_CONFIG_HOME/wallust/colorschemes"
-			mapfile -t sexthemes < <(compgen -W "$(find "$__wallust_cs_dir" -mindepth 1 -exec basename "{}" ';' | sed 's/\.json$//')" ${COMP_WORDS[2]})
+			mapfile -t sexthemes < <(compgen -W "$(find "$__wallust_cs_dir" -mindepth 1 -exec basename "{}" ';' | sed 's/\.json$//')" "${COMP_WORDS[2]}")
 			COMPREPLY+=("${sexthemes[@]}") && return
 		}
 		return

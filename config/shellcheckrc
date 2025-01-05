@@ -1,4 +1,5 @@
 enable=all
+external-sources=true
 # quote even if not necessary
 disable=SC2250
 # this masks return value
@@ -17,3 +18,5 @@ disable=SC2015
 disable=SC2155
 # unintended? expansion in an alias (alias a="$test" instead of '$test')
 disable=SC2139
+# can't follow non constant source
+disable=SC1090

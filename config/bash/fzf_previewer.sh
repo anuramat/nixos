@@ -17,7 +17,7 @@ if [ -d "$1" ]; then
 # file
 elif [ -f "$1" ]; then
 	# image
-	timg -p s "-g${FZF_PREVIEW_COLUMNS}x$FZF_PREVIEW_LINES" $1 && exit
+	timg -p s "-g${FZF_PREVIEW_COLUMNS}x$FZF_PREVIEW_LINES" "$1" && exit
 	# plaintext
 	if command -v "bat" &> /dev/null; then
 		bat --style=numbers --color=always "$1" && exit
