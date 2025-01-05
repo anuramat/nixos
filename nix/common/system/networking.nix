@@ -1,6 +1,5 @@
 {
   config,
-  user,
   machines,
   ...
 }:
@@ -27,10 +26,10 @@
     };
   };
 
-  # users.users.${config.me}.openssh.authorizedKeys = {
-  #   keys = user.keys;
-  #   keyFiles = machines.clientKeyFiles;
-  # };
+  users.users.${config.me}.openssh.authorizedKeys = {
+    keys = machines.miscKeys;
+    keyFiles = machines.clientKeyFiles;
+  };
 
   programs.ssh.knownHostsFiles = machines.hostKeysFiles;
   services = {

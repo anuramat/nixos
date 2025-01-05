@@ -10,10 +10,11 @@
   };
   outputs =
     inputs:
-
     let
-      u = import ./nix/utils.nix;
-      inherit ((import ./nix/machines) { inherit u inputs; })
+      epsilon =
+        path: path |> builtins.readDir |> builtins.attrNames |> builtins.filter (a: a != "default.nix");
+
+      inherit ((import ./nix/machines) { inherit inputs epsilon; })
         hostnames
         mkCluster
         mkModules
@@ -26,18 +27,14 @@
         in
         inputs.nixpkgs.lib.nixosSystem {
           specialArgs = {
-            user = (import ./nix/user.nix);
             machines = mkCluster name;
-            inherit
-              inputs
-              u
-              ;
+            inherit inputs;
+            dummy = path: path |> epsilon |> map (name: path + /${name});
             unstable = import inputs.nixpkgs-unstable {
               inherit (pkgscfg) config;
               inherit (pkgscfg.hostPlatform) system;
             };
           };
-
           modules = mkModules name ++ [
             ./nix/common
           ];

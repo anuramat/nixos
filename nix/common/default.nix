@@ -1,4 +1,4 @@
-{ u, ... }:
+{ dummy, ... }:
 {
-  imports = u.dummy ./.;
+  imports = dummy ./.;
 }

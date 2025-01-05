@@ -1,8 +1,9 @@
-{ u, inputs }:
+{ inputs, epsilon }:
 with builtins;
 let
   inherit (inputs.nixpkgs.lib.strings) hasSuffix;
 
+  hostnames = epsilon ./.;
   mkMachine =
     name:
     let
@@ -23,14 +24,17 @@ let
       );
       hostKeysFile = path + "/host_keys";
     };
-  hostnames = u.epsilon ./.;
 in
 {
   inherit hostnames;
+
   mkModules = name: [
     ./${name}
-    (_: { networking.hostName = name; })
+    (_: {
+      networking.hostName = name;
+    })
   ];
+
   mkCluster =
     name:
     let
@@ -43,7 +47,7 @@ in
 
       builderUsername = "builder";
       clientKeyFiles = machines |> map (x: x.clientKeyFiles) |> concatLists;
-      # TODO move
+      # TODO move the keys to a file or a folder
       miscKeys = [
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKl0YHcx+ju+3rsPerkAXoo2zI4FXRHaxzfq8mNHCiSD anuramat-iphone16"
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINBre248H/l0+aS5MJ+nr99m10g44y+UsaKTruszS6+D anuramat-ipad"
