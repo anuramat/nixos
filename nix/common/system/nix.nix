@@ -1,10 +1,8 @@
 {
   config,
   pkgs,
-  unstable,
   user,
   machines,
-  inputs,
   ...
 }:
 let
@@ -17,9 +15,7 @@ let
     "https://nixpkgs-python.cachix.org"
     "https://cache.iog.io"
   ] ++ machines.substituters;
-  home = config.users.users.${user.username}.home;
-
-  getPlatform = name: inputs.self.nixosConfigurations.${name}.config.nixpkgs.hostPlatform;
+  inherit (config.users.users.${user.username}) home;
 in
 {
   nixpkgs = {
@@ -55,14 +51,11 @@ in
       sshUser = machines.builderUsername;
       sshKey = "${home}/.ssh/id_ed25519";
       hostName = x.name;
-      system = getPlatform x;
+      system = x.platform;
       protocol = "ssh-ng";
     }) machines.builders;
 
   };
-
-  nix.distributedBuilds = !machines.this.builder;
-  imports = if machines.this.builder then [ ./builder.nix ] else [ ];
 
   environment.systemPackages = [
     pkgs.nix-index

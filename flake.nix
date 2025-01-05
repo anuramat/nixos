@@ -15,7 +15,7 @@
       u = import ./nix/utils.nix;
       inherit
         ((import ./nix/machines) {
-          inherit u;
+          inherit u inputs;
           inherit (inputs.nixpkgs) lib;
         })
         hostnames

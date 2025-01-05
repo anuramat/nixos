@@ -6,6 +6,10 @@
 }:
 {
   system.stateVersion = "24.05";
+  nix.distributedBuilds = false;
+  services.keyd.keyboards.main.ids = [
+    "048d:c997:193096a7"
+  ];
 
   imports = [
     inputs.nixos-hardware.nixosModules.common-cpu-intel

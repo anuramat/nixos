@@ -1,5 +1,10 @@
-{ machines, ... }:
 {
+  machines,
+  config,
+  lib,
+  ...
+}:
+lib.mkIf (!config.nix.distributedBuilds) {
   users.users.${machines.builderUsername} = {
     isNormalUser = true;
     createHome = false;
@@ -13,5 +18,5 @@
   ];
   # sign the derivations so that we can use the builder as a cache
   nix.settings.secret-key-files = "/etc/nix/cache.pem";
-  # TODO might wanna add gc and autoUpgrade later
+  # NOTE might wanna add gc and autoUpgrade later
 }

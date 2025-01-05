@@ -1,8 +1,10 @@
 { inputs, ... }:
 {
   nix.distributedBuilds = true;
-
   system.stateVersion = "24.05";
+  services.keyd.keyboards.main.ids = [
+    "0001:0001:a38e6885"
+  ];
 
   imports = [
     inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t480

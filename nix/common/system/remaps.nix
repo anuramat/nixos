@@ -1,12 +1,18 @@
-{ machines, ... }:
+{ config, ... }:
 {
+  assertions = [
+    {
+      assertion = config.services.keyd.keyboards.main.ids != [ ];
+      message = "main keyboard not configured";
+    }
+  ];
   services.keyd = {
     enable = true;
     keyboards = {
       main = {
-        ids = [
-          machines.this.keyboard
-        ];
+        ids =
+          [
+          ];
         settings =
           let
             interval = toString 64;

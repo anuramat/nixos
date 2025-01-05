@@ -2,28 +2,24 @@
 {
   lib,
   u,
+  inputs,
 }:
 with builtins;
 let
   inherit (lib.strings) hasSuffix;
+  hostnames = u.epsilon ./.;
   mkMachine =
     name:
     let
+      config = inputs.self.nixosConfigurations.${name}.config;
       cacheFilename = "cache.pem.pub";
       cachePath = path + "/${cacheFilename}";
       path = ./${name}/keys;
-      meta = import ./${name}/meta.nix;
+      builder = !config.nix.distributedBuilds;
     in
     rec {
-      inherit name;
-      # stuff that is REQUIRED on every (builder) system
-      # OR interconnectivity configuration, where you need to reference other systems
-      # machine specific configs go to machine modules
-      # TODO
-      # maybe builder can just be the distributed builds var
-      # but where would the keyboard go... I'll still need some sort of a
-      # per-machine file that would be validated by some other script
-      inherit (meta) builder keyboard;
+      inherit name builder;
+      platform = config.nixpkgs.hostPlatform.system;
       cacheKey = if builder then readFile cachePath else null;
       clientKeyFiles = (
         readDir path
@@ -34,7 +30,6 @@ let
       hostKeysFile = path + "/host_keys";
       module = ./${name};
     };
-  hostnames = u.epsilon ./.;
 in
 {
   inherit hostnames;
