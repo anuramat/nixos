@@ -51,17 +51,17 @@ luafmt:
 	stylua .
 lualint:
 	./scripts/heading.sh "Checking Lua files"
-	luacheck . --globals=vim | ghead -n -2
+	luacheck . --globals=vim -q
 
 # shell {{{1
 .PHONY: sh shlint shfmt
 sh: shfmt shlint
 shfmt:
 	./scripts/heading.sh "Formatting shell scripts"
-	./scripts/shrun.sh 'silent' 'shfmt --write --simplify --case-indent --binary-next-line --space-redirects'
+	./scripts/shrun.sh shfmt --write --simplify --case-indent --binary-next-line --space-redirects
 shlint:
 	./scripts/heading.sh "Checking shell scripts"
-	./scripts/shrun.sh 'verbose' 'shellcheck --color=always -o all'
+	./scripts/shrun.sh shellcheck --color=always -o all
 
 # misc {{{1
 .PHONY: misc misclint miscfmt
