@@ -1,6 +1,6 @@
 {
-  user,
   pkgs,
+  config,
   unstable,
   ...
 }:
@@ -11,7 +11,7 @@
     # Generic RGB software
     # Razer
     openrazer = {
-      users = [ user.username ];
+      users = [ config.me ];
       enable = true;
     };
   };

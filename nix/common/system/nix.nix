@@ -1,7 +1,6 @@
 {
   config,
   pkgs,
-  user,
   machines,
   ...
 }:
@@ -15,7 +14,7 @@ let
     "https://nixpkgs-python.cachix.org"
     "https://cache.iog.io"
   ] ++ machines.substituters;
-  inherit (config.users.users.${user.username}) home;
+  inherit (config.users.users.${config.me}) home;
 in
 {
   nixpkgs = {

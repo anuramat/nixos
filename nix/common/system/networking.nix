@@ -1,4 +1,9 @@
-{ user, machines, ... }:
+{
+  config,
+  user,
+  machines,
+  ...
+}:
 {
   hardware.bluetooth = {
     enable = true;
@@ -22,10 +27,10 @@
     };
   };
 
-  users.users.${user.username}.openssh.authorizedKeys = {
-    keys = user.keys;
-    keyFiles = machines.clientKeyFiles;
-  };
+  # users.users.${config.me}.openssh.authorizedKeys = {
+  #   keys = user.keys;
+  #   keyFiles = machines.clientKeyFiles;
+  # };
 
   programs.ssh.knownHostsFiles = machines.hostKeysFiles;
   services = {
@@ -39,7 +44,7 @@
         KbdInteractiveAuthentication = false;
         PermitRootLogin = "no";
         PrintLastLog = false;
-        AllowUsers = [ user.username ];
+        AllowUsers = [ config.me ];
       };
     };
   };

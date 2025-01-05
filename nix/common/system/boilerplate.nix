@@ -1,12 +1,13 @@
-{ user, machines, ... }:
+{
+  config,
+  ...
+}:
 {
   documentation.man.generateCaches = true; # apropos
   hardware.enableAllFirmware = true; # regardless of license
-  time.timeZone = user.timezone;
-  i18n.defaultLocale = user.defaultLocale;
   environment.extraOutputsToInstall = [ "info" ];
-  users.users.${user.username} = {
-    description = user.fullname;
+
+  users.users.${config.me} = {
     isNormalUser = true;
     extraGroups = [
       "wheel" # root
