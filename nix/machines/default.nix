@@ -1,3 +1,4 @@
+# XXX remember to update the machine_template.sh
 {
   lib,
   u,
@@ -18,7 +19,7 @@ let
       # stuff that is REQUIRED on every (builder) system
       # OR interconnectivity configuration, where you need to reference other systems
       # machine specific configs go to machine modules
-      # TODO can we stop having the platform in the meta.nix? it's in hardware config anyway
+      # TODO
       # maybe builder can just be the distributed builds var
       # but where would the keyboard go... I'll still need some sort of a
       # per-machine file that would be validated by some other script
