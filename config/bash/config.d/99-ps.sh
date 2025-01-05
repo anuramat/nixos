@@ -46,7 +46,6 @@ __return_code_prompt() {
 # TODO maybe work on shortening depending on terminal width
 __path="$(tput bold)\w$(tput sgr0)"
 
-# Capture last return code
 PROMPT_COMMAND='__last_return_code=$?'"${PROMPT_COMMAND:+;${PROMPT_COMMAND}}"
 PS1=$'$(__return_code_prompt)\n'" $__path"$' $(__git_prompt) \n $ '
 PS2='│'
