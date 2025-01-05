@@ -1,7 +1,7 @@
 {
   config,
   pkgs,
-  machines,
+  cluster,
   ...
 }:
 let
@@ -13,7 +13,7 @@ let
     "https://nix-community.cachix.org"
     "https://nixpkgs-python.cachix.org"
     "https://cache.iog.io"
-  ] ++ machines.substituters;
+  ] ++ cluster.substituters;
   inherit (config.users.users.${config.me}) home;
 in
 {
@@ -40,19 +40,19 @@ in
         "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
-      ] ++ machines.trusted-public-keys;
+      ] ++ cluster.trusted-public-keys;
     };
 
     buildMachines = map (x: {
       # sshKey and sshUser are ignored for some reason
       # <https://github.com/NixOS/nix/issues/3423>
       # for now add those to /root/.ssh/config
-      sshUser = machines.builderUsername;
+      sshUser = cluster.builderUsername;
       sshKey = "${home}/.ssh/id_ed25519";
       hostName = x.name;
       system = x.platform;
       protocol = "ssh-ng";
-    }) machines.builders;
+    }) cluster.builders;
 
   };
 

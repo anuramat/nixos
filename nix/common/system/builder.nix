@@ -1,20 +1,20 @@
 {
-  machines,
+  cluster,
   config,
   lib,
   ...
 }:
 lib.mkIf (!config.nix.distributedBuilds) {
-  users.users.${machines.builderUsername} = {
+  users.users.${cluster.builderUsername} = {
     isNormalUser = true;
     createHome = false;
     home = "/var/empty";
-    group = machines.builderUsername;
-    openssh.authorizedKeys.keyFiles = machines.clientKeyFiles;
+    group = cluster.builderUsername;
+    openssh.authorizedKeys.keyFiles = cluster.clientKeyFiles;
   };
-  users.groups.${machines.builderUsername} = { };
+  users.groups.${cluster.builderUsername} = { };
   services.openssh.settings.AllowUsers = [
-    machines.builderUsername
+    cluster.builderUsername
   ];
   # sign the derivations so that we can use the builder as a cache
   nix.settings.secret-key-files = "/etc/nix/cache.pem";

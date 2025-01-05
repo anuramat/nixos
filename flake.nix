@@ -27,7 +27,7 @@
         in
         inputs.nixpkgs.lib.nixosSystem {
           specialArgs = {
-            machines = mkCluster name;
+            cluster = mkCluster name;
             inherit inputs;
             dummy = path: path |> epsilon |> map (name: path + /${name});
             unstable = import inputs.nixpkgs-unstable {

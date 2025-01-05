@@ -1,6 +1,6 @@
 {
   config,
-  machines,
+  cluster,
   ...
 }:
 {
@@ -27,11 +27,11 @@
   };
 
   users.users.${config.me}.openssh.authorizedKeys = {
-    keys = machines.miscKeys;
-    keyFiles = machines.clientKeyFiles;
+    keys = cluster.miscKeys;
+    keyFiles = cluster.clientKeyFiles;
   };
 
-  programs.ssh.knownHostsFiles = machines.hostKeysFiles;
+  programs.ssh.knownHostsFiles = cluster.hostKeysFiles;
   services = {
     fail2ban.enable = true; # intrusion prevention
     tailscale.enable = true;
