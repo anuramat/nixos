@@ -5,30 +5,6 @@
 }:
 {
   programs = {
-    starship = {
-      enable = false;
-      presets = [ "plain-text-symbols" ];
-      settings = {
-        format = "$status\n\n$all\n$character";
-        add_newline = false;
-        character =
-          let
-            symbol = " \\$";
-          in
-          {
-            success_symbol = symbol;
-            error_symbol = symbol;
-          };
-        status = {
-          disabled = false;
-          style = "bold red";
-          format = "[$status:$common_meaning$signal_name]($style)";
-        };
-        username.disabled = true;
-        battery.disabled = true;
-      };
-    };
-
     direnv = {
       enable = true;
       silent = true;
