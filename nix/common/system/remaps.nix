@@ -1,11 +1,11 @@
+{ machines, ... }:
 {
   services.keyd = {
     enable = true;
     keyboards = {
       main = {
         ids = [
-          "048d:c997:193096a7" # ll7
-          "0001:0001:a38e6885" # t480
+          machines.this.keyboard
         ];
         settings =
           let
@@ -30,9 +30,11 @@
               k = "lettermod(alt, k, ${interval}, ${duration})";
               j = "lettermod(meta, j, ${interval}, ${duration})";
 
-              capslock = "noop";
+              capslock = "tab";
               leftalt = "escape";
+              leftshift = "noop";
               rightalt = "backspace";
+              tab = "noop";
 
               # <https://github.com/rvaiya/keyd/issues/114>
               # right mods are remapped to left ones. sad.

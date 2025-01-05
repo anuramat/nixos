@@ -8,7 +8,6 @@ let
     concatLists
     readDir
     attrNames
-    pathExists
     readFile
     ;
   inherit (lib.strings) hasSuffix;
@@ -21,10 +20,17 @@ let
       path = ./${name}/keys;
       meta = import ./${name}/meta.nix;
     in
-    {
+    rec {
       inherit name;
-      inherit (meta) builder platform;
-      cacheKey = if pathExists cachePath then readFile cachePath else null;
+      # stuff that is REQUIRED on every (builder) system
+      # OR interconnectivity configuration, where you need to reference other systems
+      # machine specific configs go to machine modules
+      # TODO can we stop having the platform in the meta.nix? it's in hardware config anyway
+      # maybe builder can just be the distributed builds var
+      # but where would the keyboard go... I'll still need some sort of a
+      # per-machine file that would be validated by some other script
+      inherit (meta) builder platform keyboard;
+      cacheKey = if builder then readFile cachePath else null;
       clientKeyFiles = (
         readDir path
         |> attrNames
@@ -34,10 +40,11 @@ let
       hostKeysFile = path + "/host_keys";
       module = ./${name};
     };
-in
-rec {
   hostnames = u.epsilon ./.;
-  machines =
+in
+{
+  inherit hostnames;
+  mkMachines =
     name:
     (
       let

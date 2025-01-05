@@ -13,15 +13,19 @@
 
     let
       u = import ./nix/utils.nix;
-      m = (import ./nix/machines) {
-        inherit u;
-        inherit (inputs.nixpkgs) lib;
-      };
+      inherit
+        ((import ./nix/machines) {
+          inherit u;
+          inherit (inputs.nixpkgs) lib;
+        })
+        hostnames
+        mkMachines
+        ;
 
       mkSystem =
         name:
         let
-          machines = m.machines name;
+          machines = mkMachines name;
           user = (import ./nix/user.nix);
         in
         {
@@ -50,6 +54,6 @@
         };
     in
     {
-      nixosConfigurations = builtins.listToAttrs (map mkSystem m.hostnames);
+      nixosConfigurations = builtins.listToAttrs (map mkSystem hostnames);
     };
 }
