@@ -1,21 +1,21 @@
--- vim: fdl=0
+-- vim: fdl=0 fdm=marker
 
-local function latexindent()
-  -- already used in texlab
-  local null_ls = require('null-ls')
-  local helpers = require('null-ls.helpers')
-  null_ls.register({
-    name = 'latexindent',
-    method = null_ls.methods.FORMATTING,
-    filetypes = { 'tex' },
-    generator = helpers.formatter_factory({
-      command = 'latexindent',
-      args = { '$FILENAME' },
-    }),
-  })
-end
+-- Already used in texlab, keep here just in case {{{1
+-- local function latexindent()
+--   local null_ls = require('null-ls')
+--   local helpers = require('null-ls.helpers')
+--   null_ls.register({
+--     name = 'latexindent',
+--     method = null_ls.methods.FORMATTING,
+--     filetypes = { 'tex' },
+--     generator = helpers.formatter_factory({
+--       command = 'latexindent',
+--       args = { '$FILENAME' },
+--     }),
+--   })
+-- end
 
--- codeblock formatter for markdown
+-- codeblock formatter for markdown {{{1
 local function cbfmt()
   -- sources are set in $XDG_CONFIG_HOME/cbfmt.toml
   local null_ls = require('null-ls')
@@ -32,7 +32,7 @@ local function cbfmt()
   })
 end
 
--- haskell formatter
+-- haskell formatter {{{1
 local function ormolu()
   local null_ls = require('null-ls')
   local helpers = require('null-ls.helpers')
@@ -48,7 +48,7 @@ local function ormolu()
   })
 end
 
-local null_sources = function()
+local null_sources = function() -- {{{1
   local null_ls = require('null-ls')
   local f = null_ls.builtins.formatting
   local d = null_ls.builtins.diagnostics
@@ -76,8 +76,7 @@ local null_sources = function()
   }
 end
 
-local on_attach = require('utils.lsp').on_attach
-
+-- }}}
 -- alternatives:
 -- - mfussenegger/nvim-lint -- linting
 -- - stevearc/conform.nvim -- formatting
@@ -92,7 +91,7 @@ return {
     local null_ls = require('null-ls')
     null_ls.setup({
       sources = null_sources(),
-      on_attach = on_attach,
+      on_attach = require('utils.lsp').on_attach,
       border = vim.g.border,
       temp_dir = '/tmp',
     })
