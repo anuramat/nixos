@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
+# TODO code review
 __git_prompt() {
 	tput setaf 2
 	local git_dir
 	if git_dir="$(git rev-parse --git-dir 2> /dev/null)"; then
 		git_dir="$(realpath "$git_dir")"
 		local -r root_dir="${git_dir/%"/.git"/}"
-		local -r sep=':'
 
 		# Bare repository case
 		if [ "$(git rev-parse --is-bare-repository 2> /dev/null)" = "true" ]; then
@@ -22,14 +22,14 @@ __git_prompt() {
 		# Branch
 		local branch="$(git branch --show-current)"
 		[ -z "$branch" ] && branch="$(git -C "$root_dir" rev-parse --short HEAD)"
-		printf %s "$sep$branch"
+		printf %s "/$branch"
 
 		# Status
 		local git_status=$(git -C "$root_dir" status --porcelain -z \
 			| grep -ozP -- '^\s*\K[A-Z]*' | tr -d '\0' | grep -o '.' | sort -u | tr -d '\n')
 		# first column from porcelain |> unique and sorted
 		[ -n "$(git cherry)" ] && git_status+="^"
-		[ -n "$git_status" ] && printf %s "$sep$git_status"
+		[ -n "$git_status" ] && printf %s ":$git_status"
 	fi
 	tput sgr0
 }
@@ -48,5 +48,5 @@ __path="$(tput bold)\w$(tput sgr0)"
 
 # Capture last return code
 PROMPT_COMMAND='__last_return_code=$?'"${PROMPT_COMMAND:+;${PROMPT_COMMAND}}"
-PS1=$'$(__return_code_prompt)\n'" $__path"$'$(__git_prompt) \n $ '
+PS1=$'$(__return_code_prompt)\n'" $__path"$' $(__git_prompt) \n $ '
 PS2='│'
