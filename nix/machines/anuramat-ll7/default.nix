@@ -13,7 +13,7 @@
     ];
     # ssd
     fstrim.enable = true;
-    # proprietary drivers
+    # proprietary drivers TODO huh
     xserver = {
       dpi = 236;
     };
@@ -49,10 +49,7 @@
     }
   ];
 
-  # # intel
-  # hardware.cpu.intel.updateMicrocode = true;
-
-  # nvidia
+  # nvidia TODO tidy
   # {{{1
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware = {

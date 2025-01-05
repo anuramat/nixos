@@ -40,7 +40,7 @@ nixfmt:
 	nixfmt $(shell fd -e nix)
 nixlint:
 	./scripts/heading.sh "Checking Nix files"
-	statix check . || true
+	statix check -i hardware-configuration.nix || true
 	deadnix || true
 
 # lua {{{1
