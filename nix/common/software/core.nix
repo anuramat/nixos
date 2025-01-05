@@ -12,7 +12,6 @@
     # posix {{{1
     bc # simple calculator
     coreutils-full
-    coreutils-prefixed # for compatibility
     curl
     file
     gcc
@@ -49,6 +48,7 @@
     v4l-utils
 
     # network {{{1
+    mtr # net diagnostics
     dig # dns utils
     gsocket # get shit through nat
     inetutils # common network stuff
@@ -102,6 +102,8 @@
     expect # automating tuis
 
     # misc {{{1
+    ansifilter
+    pstree
     age # file encryption
     virtualbox
     wine

@@ -14,6 +14,7 @@ for f in "$XDG_CONFIG_HOME"/bash/config.d/*; do source "$f"; done
 # # color rice:
 # [ -z "$SSH_CLIENT" ] && [ -z "$SSH_TTY" ] && [[ $TERM != foot ]] && (cat ~/.cache/wallust/sequences &)
 
+alias repl="nixos-rebuild repl"
 alias f="nvim"
 alias ..="cd .."
 alias ...="cd ../.."

@@ -6,23 +6,23 @@
 {
   programs = {
     starship = {
-      enable = true;
+      enable = false;
       presets = [ "plain-text-symbols" ];
       settings = {
-        format = " $all$status$line_break$character";
-        character = {
-          success_symbol = "";
-          error_symbol = "";
-          vimcmd_symbol = "";
-        };
+        format = "$status\n\n$all\n$character";
+        add_newline = false;
+        character =
+          let
+            symbol = " \\$";
+          in
+          {
+            success_symbol = symbol;
+            error_symbol = symbol;
+          };
         status = {
           disabled = false;
           style = "bold red";
           format = "[$status:$common_meaning$signal_name]($style)";
-        };
-        time = {
-          disabled = false;
-          format = "[$time]($style) ";
         };
         username.disabled = true;
         battery.disabled = true;

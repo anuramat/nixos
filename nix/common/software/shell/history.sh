@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# check if these work
 export HISTSIZE=-1
 export HISTFILESIZE=-1
 export HISTTIMEFORMAT="[%F %T %z]"

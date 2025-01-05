@@ -1,8 +1,7 @@
 input * {
     repeat_delay 250
     repeat_rate 50
-    xkb_layout us
-    # us,ru
+    xkb_layout us,ru
     xkb_options "grp:alt_space_toggle"
 }
 input 5426:98:Razer_Razer_Atheris_-_Mobile_Gaming_Mouse_Keyboard {
