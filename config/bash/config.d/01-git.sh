@@ -26,7 +26,7 @@ __ghq_fzf_base() {
 	echo "$repos"
 
 	echo 'selected repositories:' >&2
-	printf "\t$repos" | sed -z 's/\n/\n\t/g' >&2
+	printf '%s' "\t$repos" | sed -z 's/\n/\n\t/g' >&2
 	echo >&2
 
 	read -rs -n 1 -p $"$1 (y/*):"$'\n' choice <&2
@@ -46,10 +46,10 @@ gg() {
 	local -r before_dirs="$(ghq list -p | sort)"
 	local repos
 	repos="$(gh repo list "$1" | cut -f 1 | __ghq_fzf_base "download?")" || return
-	ghq get -P -p $repos
+	ghq get -P -p "${repos[@]}"
 	local -r after_dirs="$(ghq list -p | sort)"
 	local -r new_dirs="$(comm -13 <(echo "$before_dirs") <(echo "$after_dirs"))"
-	zoxide add $new_dirs
+	zoxide add "${new_dirs}[@]"
 	echo "$new_dirs" | xargs -I{} bash -c 'cd {}; gh repo set-default $(git config --get remote.origin.url | rev | cut -d "/" -f 1,2 | rev)'
 }
 
@@ -69,7 +69,7 @@ gc() {
 				cd "$path" || return
 				[ -z "$(git status --porcelain)" ] && [ -z "$(git cherry)" ] && return
 				[ -n "$prefix_length" ] && printf '\t%s\n' "${path:prefix_length}" && return
-				printf '\t%s\n' "$(basename $path)"
+				printf '\t%s\n' "$(basename "$path")"
 			)
 		done
 	}
@@ -108,7 +108,8 @@ pushall() {
 	__heading="$(tput setaf 5 bold)%s$(tput sgr0)\n"
 	for i in "${__free_repos[@]}"; do
 		(
-			printf "$__heading" "*** pushing $(basename $i) ***"
+			# shellcheck disable=SC2059
+			printf "$__heading" "*** pushing $(basename "$i") ***"
 			cd "$i" || exit
 			push
 		)
