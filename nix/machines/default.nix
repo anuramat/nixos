@@ -2,16 +2,9 @@
   lib,
   u,
 }:
+with builtins;
 let
-  inherit (builtins)
-    filter
-    concatLists
-    readDir
-    attrNames
-    readFile
-    ;
   inherit (lib.strings) hasSuffix;
-
   mkMachine =
     name:
     let
