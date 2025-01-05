@@ -21,6 +21,10 @@ in
     };
   };
 
+  programs.nh = {
+    enable = true;
+  };
+
   nix = {
     channel.enable = false;
     nixPath = [ ];
