@@ -26,14 +26,6 @@
     };
   };
 
-  # removable media stuff
-  services.udisks2 = {
-    enable = true;
-    mountOnMedia = true;
-  };
-  # udisks2 frontend
-  programs.gnome-disks.enable = true;
-
   # realtime kit, hands out realtime priority to user processes
   security.rtkit.enable = true;
 
@@ -53,18 +45,29 @@
     };
   };
 
-  # security credential storage, exposed over dbus
-  services.gnome.gnome-keyring.enable = true;
-  # gnome keyring frontend
-  programs.seahorse.enable = true;
-  # adb
-  programs.adb.enable = true;
+  programs = {
+    # gnome keyring frontend
+    seahorse.enable = true;
+    # adb
+    adb.enable = true;
+    # udisks2 frontend
+    gnome-disks.enable = true;
+  };
 
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    jack.enable = true;
+  services = {
+    # removable media stuff
+    udisks2 = {
+      enable = true;
+      mountOnMedia = true;
+    };
+    # security credential storage, exposed over dbus
+    gnome.gnome-keyring.enable = true;
+    pipewire = {
+      enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+      pulse.enable = true;
+      jack.enable = true;
+    };
   };
 }

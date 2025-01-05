@@ -7,7 +7,7 @@ let
   mkMachine =
     name:
     let
-      config = inputs.self.nixosConfigurations.${name}.config;
+      inherit (inputs.self.nixosConfigurations.${name}) config;
       cacheFilename = "cache.pem.pub";
       path = ./${name}/keys;
     in
