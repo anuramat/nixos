@@ -4,31 +4,19 @@ gaps inner 0
 gaps outer 0
 default_border pixel 3
 set $cursor_theme Hackneyed
-# or Adwaita
 set $cursor_size 30
 seat * {
     hide_cursor when-typing enable
     xcursor_theme $cursor_theme $cursor_size
 }
-exec_always gsettings set org.gnome.desktop.interface {
-  gtk-theme 'Adwaita'
-  # gtk-key-theme 'Emacs'
-  # sadly this breaks half the websites on firefox
-  gtk-key-theme 'Default'
-  icon-theme 'Dracula'
-  text-scaling-factor 1
-  cursor-theme $cursor_theme
-  cursor-size $cursor_size
-  color-scheme 'prefer-dark'
+# gsettings reset ... to get the defaults
+exec_always gsettings set {
+  org.gnome.desktop.interface {
+    cursor-theme $cursor_theme
+    cursor-size $cursor_size
+    color-scheme 'prefer-dark'
+  }
+  org.gnome.desktop.wm.preferences button-layout ''
+  org.gtk.Settings.Debug enable-inspector-keybinding true
 }
-exec_always gsettings set org.gnome.desktop.wm.preferences {
-  # https://unix.stackexchange.com/questions/408454/how-to-change-gtk-button-layout-in-kde
-  # removes all buttons in the header bar
-  # XXX testing if this works, remove close buttons later
-  button-layout ''
-}
-# Ctrl + Shift + D - opens Gnome Inspector
-exec_always gsettings set org.gtk.Settings.Debug enable-inspector-keybinding true
-
-# output * bg ~/wp.png fill
 # vim: ft=swayconfig

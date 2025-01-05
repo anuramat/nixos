@@ -10,5 +10,5 @@ __wallust_wrapped() {
 		wallust "$@" || return
 	fi
 	"$XDG_CONFIG_HOME/mako/wal.sh"
-	swaymsg reload &> /dev/null || true # shits out a scary error - ignore it TODO figure out
+	swaymsg reload
 }

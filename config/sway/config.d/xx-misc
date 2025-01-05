@@ -2,7 +2,6 @@ for_window [shell="xwayland"] title_format "%title [XWayland]"
 focus_wrapping no
 title_align center
 focus_follows_mouse no
-# mouse gets centered on container focus
 mouse_warping container
 default_orientation auto
 floating_maximum_size 1420 x 980
