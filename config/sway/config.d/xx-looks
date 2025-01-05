@@ -4,6 +4,7 @@ gaps inner 0
 gaps outer 0
 default_border pixel 3
 set $cursor_theme Hackneyed
+# Adwaita Hackneyed
 set $cursor_size 30
 seat * {
     hide_cursor when-typing enable
@@ -12,6 +13,7 @@ seat * {
 # gsettings reset ... to get the defaults
 exec_always gsettings set {
   org.gnome.desktop.interface {
+    icon-theme 'Dracula'
     cursor-theme $cursor_theme
     cursor-size $cursor_size
     color-scheme 'prefer-dark'

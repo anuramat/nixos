@@ -1,8 +1,6 @@
 # https://nixos.wiki/wiki/Sway
-{ dummy, pkgs, ... }:
+{ pkgs, ... }:
 {
-  imports = dummy ./.;
-
   programs.sway = {
     enable = true;
     # TODO doc this
@@ -34,6 +32,7 @@
 
     glib # gsettings (gtk etc)
     hackneyed # windows inspired cursor theme
+    dracula-icon-theme # for the bar
   ];
 
   # force native wayland support in chrome/electron apps
