@@ -39,7 +39,7 @@ _code() {
 	local err=$__last_return_code
 	[ "$err" -ne 0 ] && {
 		tput bold setaf 1
-		echo " $err"
+		echo " ERR:$err"
 		tput sgr0
 	}
 }
@@ -49,10 +49,19 @@ _path=" $(tput bold)\w$(tput sgr0)"
 
 _ssh=''
 if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
-	_ssh=" \u@\H\n"
+	_ssh=" \u@\h\n"
 fi
 
+_jobs() {
+	n_jobs=$(jobs | wc -l)
+	((n_jobs > 0)) && {
+		tput bold setaf 3
+		printf %s " J:$n_jobs"
+		tput sgr0
+	}
+}
+
 PROMPT_COMMAND='__last_return_code=$?'"${PROMPT_COMMAND:+;${PROMPT_COMMAND}}"
-PS1=$(printf '%s' '$(_code)' '\n' "$_ssh" "$_path\$(_git) \t")
+PS1=$(printf '%s' '$(_code)' '\n' "$_ssh" "$_path\$(_git) \A\$(_jobs)")
 PS1+='\n $ '
 PS2='│'
