@@ -38,15 +38,20 @@ __return_code_prompt() {
 	local err=$__last_return_code
 	[ "$err" -ne 0 ] && {
 		tput bold setaf 1
-		echo " $err"
+		printf %s "$err"
 		tput sgr0
 	}
 }
 
 # TODO maybe work on shortening depending on terminal width
-__path="\n $(tput bold)\w$(tput sgr0)"
+__path="$(tput bold)\w$(tput sgr0)"
+
+__ssh=''
+if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+	__ssh="\u@\H"
+fi
 
 PROMPT_COMMAND='__last_return_code=$?'"${PROMPT_COMMAND:+;${PROMPT_COMMAND}}"
-PS1=$(printf '%s' '$(__return_code_prompt)' "$__path" ' $(__git_prompt)')
+PS1=$(printf '%s' ' $(__return_code_prompt)\n' " $__ssh\n" " $__path" ' $(__git_prompt)')
 PS1+='\n $ '
 PS2='│'
