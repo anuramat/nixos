@@ -5,7 +5,7 @@
   ...
 }:
 {
-  documentation.man.generateCaches = true; # apropos
+  # documentation.man.generateCaches = true; # apropos
   hardware.enableAllFirmware = true; # regardless of license
   environment.extraOutputsToInstall = [ "info" ];
   programs.ssh.knownHostsFiles = cluster.hostKeysFiles;
