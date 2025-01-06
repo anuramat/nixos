@@ -39,7 +39,7 @@ _code() {
 	local err=$__last_return_code
 	[ "$err" -ne 0 ] && {
 		tput bold setaf 1
-		echo " ERR:$err"
+		printf %s " ERR:$err\n"
 		tput sgr0
 	}
 }
@@ -54,17 +54,32 @@ _jobs() {
 }
 
 _time() {
-	printf "%$(tput cols)s\r" "$(date +%H:%M)"
+	printf %s " $(date +%H:%M)"
 }
 
-_ssh=''
-if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
-	_ssh=" \u@\h\n"
-fi
-# TODO maybe work on shortening depending on terminal width
-_path=" $(tput bold)\w$(tput sgr0)"
+_ssh() {
+	if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+		printf '%s' " $(whoami)@$(hostname)\n"
+	fi
+}
+
+_path() {
+	cwd=$(pwd)
+	len=${#HOME}
+	[[ $cwd == "$HOME"* ]] \
+		&& cwd="~${cwd:len}"
+	tput bold
+	printf %s "$cwd"
+	tput sgr0
+}
 
 PROMPT_COMMAND='__last_return_code=$?'"${PROMPT_COMMAND:+;${PROMPT_COMMAND}}"
-PS1=$(printf '%s' '$(_code)' '\n' "$_ssh" "\$(_time)$_path\$(_git)\$(_jobs)")
-PS1+='\n $ '
+
+PS1=
+PS1+=' $(_code)'
+PS1+='\n'
+PS1+=' $(_ssh)'
+PS1+='$(_path)$(_git)$(_jobs)$(_time)\n'
+PS1+=' \$ '
+
 PS2='│'

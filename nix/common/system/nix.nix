@@ -1,6 +1,8 @@
 {
   pkgs,
   cluster,
+  inputs,
+  lib,
   ...
 }:
 let
@@ -27,7 +29,12 @@ in
 
   nix = {
     channel.enable = false;
-    nixPath = [ ];
+    # fix nixpkgs in registry
+    # TODO can we just add everything from registry to flake inputs?
+    registry.nixpkgs.flake = inputs.nixpkgs;
+    nixPath = lib.mkForce [
+      "nixpkgs=${inputs.nixpkgs.outPath}"
+    ];
     settings = {
       experimental-features = [
         "nix-command"
