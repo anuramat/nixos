@@ -1,7 +1,7 @@
 # anuramat/nixos
 
 ## Install
-test
+
 - make sure the hostname matches the target
 
 ```bash
