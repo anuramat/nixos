@@ -27,14 +27,15 @@ in
     enable = true;
   };
 
-  nix = {
+  nix = with lib.attrsets; {
     channel.enable = false;
-    # fix nixpkgs in registry
-    # TODO can we just add everything from registry to flake inputs?
-    registry.nixpkgs.flake = inputs.nixpkgs;
-    nixPath = lib.mkForce [
-      "nixpkgs=${inputs.nixpkgs.outPath}"
-    ];
+
+    # add all inputs to registry
+    registry = mapAttrs (n: v: { flake = v; }) inputs;
+    # and then to nixpath (required by haskell stack)
+    nixPath = mapAttrsToList (n: v: "${n}=${v.outPath}") inputs;
+    # note that input names matter now
+
     settings = {
       experimental-features = [
         "nix-command"
