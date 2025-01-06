@@ -44,14 +44,6 @@ _code() {
 	}
 }
 
-# TODO maybe work on shortening depending on terminal width
-_path=" $(tput bold)\w$(tput sgr0)"
-
-_ssh=''
-if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
-	_ssh=" \u@\h\n"
-fi
-
 _jobs() {
 	n_jobs=$(jobs | wc -l)
 	((n_jobs > 0)) && {
@@ -61,7 +53,18 @@ _jobs() {
 	}
 }
 
+_time() {
+	printf "%$(tput cols)s" "$(date +%H:%M)"
+}
+
+_ssh=''
+if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+	_ssh=" \u@\h\n"
+fi
+# TODO maybe work on shortening depending on terminal width
+_path=" $(tput bold)\w$(tput sgr0)"
+
 PROMPT_COMMAND='__last_return_code=$?'"${PROMPT_COMMAND:+;${PROMPT_COMMAND}}"
-PS1=$(printf '%s' '$(_code)' '\n' "$_ssh" "$_path\$(_git) \A\$(_jobs)")
+PS1=$(printf '%s' '$(_code)' '\n' "$_ssh" "\$(_time)\r$_path\$(_git) \$(_jobs)")
 PS1+='\n $ '
 PS2='│'
