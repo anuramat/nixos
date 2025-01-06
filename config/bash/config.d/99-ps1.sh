@@ -39,7 +39,7 @@ _code() {
 	local err=$__last_return_code
 	[ "$err" -ne 0 ] && {
 		tput bold setaf 1
-		printf %s " ERR:$err\n"
+		printf '%s\n' " ERR:$err"
 		tput sgr0
 	}
 }
@@ -59,7 +59,7 @@ _time() {
 
 _ssh() {
 	if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
-		printf '%s' " $(whoami)@$(hostname)\n"
+		printf '%s\n' " $(whoami)@$(hostname)"
 	fi
 }
 
