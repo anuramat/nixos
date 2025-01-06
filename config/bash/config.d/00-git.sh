@@ -49,7 +49,7 @@ gclone() {
 	ghq get -P -p "${repos[@]}"
 	local -r after_dirs="$(ghq list -p | sort)"
 	local -r new_dirs="$(comm -13 <(echo "$before_dirs") <(echo "$after_dirs"))"
-	zoxide add "${new_dirs}[@]"
+	zoxide add "${new_dirs[@]}"
 	echo "$new_dirs" | xargs -I{} bash -c 'cd {}; gh repo set-default $(git config --get remote.origin.url | rev | cut -d "/" -f 1,2 | rev)'
 }
 
