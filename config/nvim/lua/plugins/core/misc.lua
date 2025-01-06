@@ -277,6 +277,7 @@ return {
   {
     'folke/flash.nvim',
     event = 'VeryLazy',
+    enabled = false, -- TODO reenable with new hotkeys that don't conflict with surround
     opts = {
       modes = {
         char = {
