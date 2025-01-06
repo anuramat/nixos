@@ -3,9 +3,9 @@
 __free_repos=("$HOME/notes" "/etc/nixos")
 
 # cd to ghq repo
+# optional: $1 - query; then you cd to the best match
+# TODO rewrite with less assumptions, use ghq queries
 g() {
-	# optional: $1 - query; then you cd to the best match
-	# TODO rewrite with less assumptions, use ghq queries
 	local -r root="$(ghq root)"
 	local -r repo_relative_paths="$(fd . "$root" --exact-depth 3 | sed "s#${root}/##")"
 	local chosen_path
@@ -17,10 +17,10 @@ g() {
 }
 
 # pick a ghq repo
+# stdin - \n separated list of repos
+# $1 - prompt question
+# stdout - \n separated list of repos
 __ghq_fzf_base() {
-	# stdin - \n separated list of repos
-	# $1 - prompt question
-	# stdout - \n separated list of repos
 	local repos
 	repos="$(fzf)" || return 1
 	echo "$repos"
@@ -40,9 +40,9 @@ grm() {
 	echo "$repos" | xargs -I{} bash -c 'yes | ghq rm {} 2>/dev/null'
 }
 
-gg() {
-	# clone gh repo(s) with ghq
-	# optional $1 - owner
+# clone gh repo(s) with ghq
+# optional $1 - owner
+gclone() {
 	local -r before_dirs="$(ghq list -p | sort)"
 	local repos
 	repos="$(gh repo list "$1" | cut -f 1 | __ghq_fzf_base "download?")" || return
@@ -54,12 +54,13 @@ gg() {
 }
 
 # sync a fork with the upstream
-ghsync() {
+gsync() {
 	gh repo sync "$(gh repo set-default --view)"
+	git pull
 }
 
-# check if ghq/predefined repos are pushed
-gc() {
+# check if ghq/personal repos are pushed
+gcheck() {
 	local root=$(ghq root)
 	local dirty
 	get_dirty() {
@@ -85,8 +86,8 @@ gc() {
 	printf "%s\n" "$dirty"
 }
 
-# simplified push for personal repos
-push() {
+# push+commit on personal repos
+__gpush() {
 	local ok
 	for i in "${__free_repos[@]}"; do
 		[[ "$(realpath .)" == "$i"* ]] && {
@@ -104,14 +105,18 @@ push() {
 	git push
 }
 # push all personal repos
-pushall() {
+gpush() {
+	[ "$1" = all ] && {
+		__gpush
+		return
+	}
 	__heading="$(tput setaf 5 bold)%s$(tput sgr0)\n"
 	for i in "${__free_repos[@]}"; do
 		(
 			# shellcheck disable=SC2059
 			printf "$__heading" "*** pushing $(basename "$i") ***"
 			cd "$i" || exit
-			push
+			__gpush
 		)
 	done
 }
