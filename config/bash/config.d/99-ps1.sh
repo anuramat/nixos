@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
-# TODO code review
-__git_prompt() {
+# TODO review the code
+_git() {
 	tput setaf 2
 	local git_dir
 	if git_dir="$(git rev-parse --git-dir 2> /dev/null)"; then
 		git_dir="$(realpath "$git_dir")"
 		local -r root_dir="${git_dir/%"/.git"/}"
+		printf ' '
 
 		# Bare repository case
 		if [ "$(git rev-parse --is-bare-repository 2> /dev/null)" = "true" ]; then
@@ -34,24 +35,24 @@ __git_prompt() {
 	tput sgr0
 }
 
-__return_code_prompt() {
+_code() {
 	local err=$__last_return_code
 	[ "$err" -ne 0 ] && {
 		tput bold setaf 1
-		printf %s "$err"
+		echo " $err"
 		tput sgr0
 	}
 }
 
 # TODO maybe work on shortening depending on terminal width
-__path="$(tput bold)\w$(tput sgr0)"
+_path=" $(tput bold)\w$(tput sgr0)"
 
-__ssh=''
+_ssh=''
 if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
-	__ssh="\u@\H"
+	_ssh=" \u@\H\n"
 fi
 
 PROMPT_COMMAND='__last_return_code=$?'"${PROMPT_COMMAND:+;${PROMPT_COMMAND}}"
-PS1=$(printf '%s' ' $(__return_code_prompt)\n' " $__ssh\n" " $__path" ' $(__git_prompt)')
+PS1=$(printf '%s' '$(_code)' '\n' "$_ssh" "$_path\$(_git) \t")
 PS1+='\n $ '
 PS2='│'
