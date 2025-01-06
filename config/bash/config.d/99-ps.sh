@@ -38,27 +38,15 @@ __return_code_prompt() {
 	local err=$__last_return_code
 	[ "$err" -ne 0 ] && {
 		tput bold setaf 1
-		printf %s "$err"
+		echo " $err"
 		tput sgr0
 	}
 }
 
-__line() {
-	printf "%$(tput cols)s" | tr ' ' '-'
-
-	# really fucking slow:
-	# local -r chars="!@#$"
-	# local -r n_chars=${#chars}
-	# local -r cmd="echo \$(({}%$n_chars))"
-	# nums=$(seq 1 "$(tput cols)")
-	# cycle=$(echo "$nums" | xargs -I{} bash -c "$cmd" | tr -d '\n')
-	# onecycle=$(seq 1 "$n_chars" | tr -d '\n')
-	# echo "$cycle" | tr "$onecycle" "$chars"
-}
 # TODO maybe work on shortening depending on terminal width
 __path="\n $(tput bold)\w$(tput sgr0)"
 
 PROMPT_COMMAND='__last_return_code=$?'"${PROMPT_COMMAND:+;${PROMPT_COMMAND}}"
-PS1=$'$(__return_code_prompt)'"$__line$__path"$' $(__git_prompt) \n $ '
-PS1=$(printf '%s\n%s\n%s %s\n $ ' '$(__return_code_prompt)' '$(__line)' "$__path" '$(__git_prompt)')
+PS1=$(printf '%s' '$(__return_code_prompt)' "$__path" ' $(__git_prompt)')
+PS1+='\n $ '
 PS2='│'
