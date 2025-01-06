@@ -73,13 +73,21 @@ _path() {
 	tput sgr0
 }
 
+_shlvl() {
+	[ -n "$SHLVL" ] && ((SHLVL > 1)) && printf %s " L:$SHLVL"
+}
+
+_nix() {
+	[ -n "$IN_NIX_SHELL" ] && printf %s " $IN_NIX_SHELL"
+}
+
 PROMPT_COMMAND='__last_return_code=$?'"${PROMPT_COMMAND:+;${PROMPT_COMMAND}}"
 
 PS1=
 PS1+=' $(_code)'
 PS1+='\n'
 PS1+=' $(_ssh)'
-PS1+='$(_path)$(_git)$(_jobs)$(_time)\n'
+PS1+='$(_path)$(_git)$(_jobs)$(_shlvl)$(_nix)$(_time)\n'
 PS1+=' \$ '
 
 PS2='│'
