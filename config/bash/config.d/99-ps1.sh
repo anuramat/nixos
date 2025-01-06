@@ -54,7 +54,7 @@ _jobs() {
 }
 
 _time() {
-	printf "%$(tput cols)s" "$(date +%H:%M)"
+	printf "%$(tput cols)s\r" "$(date +%H:%M)"
 }
 
 _ssh=''
@@ -65,6 +65,6 @@ fi
 _path=" $(tput bold)\w$(tput sgr0)"
 
 PROMPT_COMMAND='__last_return_code=$?'"${PROMPT_COMMAND:+;${PROMPT_COMMAND}}"
-PS1=$(printf '%s' '$(_code)' '\n' "$_ssh" "\$(_time)\r$_path\$(_git)\$(_jobs)")
+PS1=$(printf '%s' '$(_code)' '\n' "$_ssh" "\$(_time)$_path\$(_git)\$(_jobs)")
 PS1+='\n $ '
 PS2='│'
