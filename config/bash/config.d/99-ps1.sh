@@ -1,19 +1,31 @@
 #!/usr/bin/env bash
 
+_git_status() {
+	local out=
+	# porcelain escapes the path for us
+	local raw=$(git -C "$1" status --porcelain=v2)
+
+	# stash
+	if stashed=$(echo "$raw" | head -n 1 | grep -oP '(?<=# stash )\d+'); then
+		out+='$'
+		raw=$(echo "$raw" | tail -n +2)
+	fi
+
+}
+
 # TODO review the code
 _git() {
+	# bare repository case
+	local bare
+	bare=$(git rev-parse --is-bare-repository 2> /dev/null) || return
 	tput setaf 2
-	local git_dir
-	if git_dir="$(git rev-parse --git-dir 2> /dev/null)"; then
-		git_dir="$(realpath "$git_dir")"
+	if [ "$bare" = 'true' ]; then
+		printf 'bare'
+	else
+		local git_dir
+		local git_dir="$(git rev-parse --git-dir 2> /dev/null | xargs realpath)"
 		local -r root_dir="${git_dir/%"/.git"/}"
 		printf ' '
-
-		# Bare repository case
-		if [ "$(git rev-parse --is-bare-repository 2> /dev/null)" = "true" ]; then
-			printf %s "$(basename -s .git "$git_dir")"
-			return
-		fi
 
 		# Repository name
 		local url
