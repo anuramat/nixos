@@ -37,6 +37,8 @@ in
     # note that input names matter now
 
     settings = {
+      # how the fuck is this not default BUG
+      fallback = true;
       experimental-features = [
         "nix-command"
         "flakes"
@@ -54,11 +56,13 @@ in
     };
 
     buildMachines = map (x: {
-      # sshKey and sshUser are ignored for some reason
+      # sshKey and sshUser are ignored for some reason BUG
       # <https://github.com/NixOS/nix/issues/3423>
       # for now add those to /root/.ssh/config
       # sshUser = cluster.builderUsername;
       # sshKey = "${home}/.ssh/id_ed25519";
+      # so that it doesn't take forever:
+      # ConnectTimeout 3
       hostName = x.name;
       system = x.platform;
       protocol = "ssh-ng";
