@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 
+# TODO unsafe path handling
+
 __free_repos=("$HOME/notes" "/etc/nixos")
 
 # cd to ghq repo
-# optional: $1 - query; then you cd to the best match
+# optional: $1 - query (best match is picked)
 # TODO rewrite with less assumptions, use ghq queries
 g() {
 	local -r root="$(ghq root)"
 	local -r repo_relative_paths="$(fd . "$root" --exact-depth 3 | sed "s#${root}/##")"
 	local chosen_path
-	# cd $root so that fzf preview works properly
 	[ -n "$1" ] && {
 		chosen_path=$(cd "$root" && echo "$repo_relative_paths" | fzf -f "$1" | head -n 1) || return
 	} || chosen_path=$(cd "$root" && echo "$repo_relative_paths" | fzf) || return
@@ -22,11 +23,11 @@ g() {
 # stdout - \n separated list of repos
 __ghq_fzf_base() {
 	local repos
-	repos="$(fzf)" || return 1
+	repos="$(fzf --bind one:accept)" || return 1
 	echo "$repos"
 
 	echo 'selected repositories:' >&2
-	printf '%s' "\t$repos" | sed -z 's/\n/\n\t/g' >&2
+	printf '%s' "$repos" | sed 's/^/\t/' >&2
 	echo >&2
 
 	read -rs -n 1 -p $"$1 (y/*):"$'\n' choice <&2
@@ -34,22 +35,32 @@ __ghq_fzf_base() {
 }
 
 # rm ghq repo(s)
+# optional $1 - repo
 grm() {
-	local repos
-	repos=$(ghq list | __ghq_fzf_base "delete?") || return
-	echo "$repos" | xargs -I{} bash -c 'yes | ghq rm {} 2>/dev/null'
+	local repos=$1
+	[ -z "$repos" ] && repos=$(ghq list)
+	local selected
+	selected=$(echo "$repos" | __ghq_fzf_base "delete?") || return
+	echo "$selected" | xargs -I{} bash -c 'yes | ghq rm {} 2>/dev/null'
 }
 
-# clone gh repo(s) with ghq
-# optional $1 - owner
+# clone your gh repo(s) with ghq
+# optional $1 - repo (as interpreted by ghq)
 gclone() {
 	local -r before_dirs="$(ghq list -p | sort)"
-	local repos
-	repos="$(gh repo list "$1" | cut -f 1 | __ghq_fzf_base "download?")" || return
-	ghq get -P -p "${repos[@]}"
+	local repos=$1
+	[ -z "$repos" ] && repos=$(gh repo list)
+	local selected
+	selected="$(echo "$repos" | cut -f 1 | __ghq_fzf_base "download?")" || return
+	echo "$selected" | xargs ghq get --no-recursive --parallel -p --silent || {
+		echo "Couldn't clone"
+		return 1
+	}
 	local -r after_dirs="$(ghq list -p | sort)"
+	# HACK
 	local -r new_dirs="$(comm -13 <(echo "$before_dirs") <(echo "$after_dirs"))"
-	zoxide add "${new_dirs[@]}"
+	echo "$new_dirs" | xargs zoxide add
+	# HACK with remote url
 	echo "$new_dirs" | xargs -I{} bash -c 'cd {}; gh repo set-default $(git config --get remote.origin.url | rev | cut -d "/" -f 1,2 | rev)'
 }
 
@@ -104,6 +115,7 @@ __gpush() {
 	git pull --ff --no-edit
 	git push
 }
+
 # push all personal repos
 gpush() {
 	[ "$1" = all ] && {
@@ -119,4 +131,23 @@ gpush() {
 			__gpush
 		)
 	done
+}
+
+gcreate() {
+	name=$1
+	visibility=private
+	[ -n "$2" ] && visibility=$2
+
+	path=$(ghq create "$name") || {
+		echo "Couldn't create the repo"
+		return 1
+	}
+	cd "$path" || {
+		echo "Couldn't cd"
+		return 1
+	}
+	git commit --allow-empty -m "init"
+	gh repo create "--$visibility" --disable-issues --disable-wiki --push --source "$path"
+	gh repo set-default
+	gh repo edit --enable-projects=false
 }
