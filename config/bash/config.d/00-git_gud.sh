@@ -131,7 +131,7 @@ gpush() {
 	}
 	cmd="subcat"
 	for path in "${__free_repos[@]}"; do
-		cmd+=$(printf ' <(wrapper "%s")' "$path")
+		cmd+=$(printf ' <(wrapper "%s" 2>&1)' "$path")
 	done
 	eval "$cmd"
 }
