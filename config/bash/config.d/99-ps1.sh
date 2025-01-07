@@ -26,16 +26,20 @@ _git() {
 		# status
 		local status
 		{
-			# XY status codes
+			# get XY status codes
 			codes() {
 				# TODO awk stuff is gpt, check
 				echo "$raw" | grep '^[12]' | awk -v pos="$1" -v num="$2" '{printf substr($0, pos, num)} END {print ""}' \
 					| sed 's/[. #]//g' | fold -w1 | LC_ALL=C sort -u | tr -d '\n'
 			}
-			status+=$(codes 3 1) # second arg to 2 if we want both staged and not staged
 
-			# unstaged changes
-			[ -n "$(codes 4 1)" ] && status+="*"
+			# staging area (index)
+			status+=$(codes 3 1)
+
+			# work tree
+			if [ -n "$(codes 4 1)" ] || echo "$raw" | grep -q '^\?'; then
+				status+="?"
+			fi
 
 			# unpushed commits
 			[ -n "$url" ] && [ -n "$(git cherry)" ] && status+='^'
