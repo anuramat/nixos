@@ -123,6 +123,7 @@ gpush() {
 		return
 	}
 	__heading="$(tput setaf 5 bold)%s$(tput sgr0)\n"
+	# shellcheck disable=SC2317
 	wrapper() {
 		# shellcheck disable=SC2059
 		printf "$__heading" "*** pushing $(basename "$1") ***"
