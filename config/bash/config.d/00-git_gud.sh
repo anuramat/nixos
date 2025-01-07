@@ -123,14 +123,17 @@ gpush() {
 		return
 	}
 	__heading="$(tput setaf 5 bold)%s$(tput sgr0)\n"
-	for i in "${__free_repos[@]}"; do
-		(
-			# shellcheck disable=SC2059
-			printf "$__heading" "*** pushing $(basename "$i") ***"
-			cd "$i" || exit
-			__gpush
-		)
+	wrapper() {
+		# shellcheck disable=SC2059
+		printf "$__heading" "*** pushing $(basename "$1") ***"
+		cd "$1" || exit
+		__gpush
+	}
+	cmd="subcat"
+	for path in "${__free_repos[@]}"; do
+		cmd+=$(printf ' <(wrapper "%s")' "$path")
 	done
+	eval "$cmd"
 }
 
 gcreate() {

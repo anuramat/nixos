@@ -1,6 +1,7 @@
 {
   pkgs,
   unstable,
+  inputs,
   ...
 }:
 {
@@ -65,6 +66,7 @@
     unstable.vis
 
     # core {{{1
+    inputs.subcat.packages.${pkgs.system}.default
     multitail # multiple files at once
     bat # cat++: syntax hl
     delta # pretty diff

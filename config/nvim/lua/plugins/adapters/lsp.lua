@@ -24,15 +24,16 @@ local configs = function()
       settings = {
         nixd = {
           -- this can fail silently
-          options = {
-            -- keys don't matter
-            nixos = {
-              expr = string.format(
-                '(builtins.getFlake "/etc/nixos/").nixosConfigurations.%s.options',
-                vim.fn.hostname()
-              ),
-            },
-          },
+          -- apparently this breaks shit while editing
+          -- options = {
+          --   -- keys don't matter
+          --   nixos = {
+          --     expr = string.format(
+          --       '(builtins.getFlake "/etc/nixos/").nixosConfigurations.%s.options',
+          --       vim.fn.hostname()
+          --     ),
+          --   },
+          -- },
           diagnostic = {
             suppress = {},
           },
