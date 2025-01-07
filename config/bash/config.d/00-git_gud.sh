@@ -118,7 +118,7 @@ __gpush() {
 
 # push all personal repos
 gpush() {
-	[ "$1" = all ] && {
+	[ "${1:-this}" != "all" ] && {
 		__gpush
 		return
 	}

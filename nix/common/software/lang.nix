@@ -10,6 +10,8 @@
     cargo
     clang
     ghc
+    gcc
+    cudaPackages.cuda_nvcc
     go
     julia
     llvm
