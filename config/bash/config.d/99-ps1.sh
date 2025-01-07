@@ -1,51 +1,45 @@
 #!/usr/bin/env bash
 
-_git_status() {
-	local out=
-	# porcelain escapes the path for us
-	local raw=$(git -C "$1" status --porcelain=v2)
-
-	# stash
-	if stashed=$(echo "$raw" | head -n 1 | grep -oP '(?<=# stash )\d+'); then
-		out+='$'
-		raw=$(echo "$raw" | tail -n +2)
-	fi
-
-}
-
 # TODO review the code
 _git() {
-	# bare repository case
 	local bare
-	bare=$(git rev-parse --is-bare-repository 2> /dev/null) || return
+	bare=$(git rev-parse --is-bare-repository 2> /dev/null) || return # we're not in a repo
 	tput setaf 2
+	printf ' '
 	if [ "$bare" = 'true' ]; then
 		printf 'bare'
 	else
-		local git_dir
-		local git_dir="$(git rev-parse --git-dir 2> /dev/null | xargs realpath)"
-		local -r root_dir="${git_dir/%"/.git"/}"
-		printf ' '
+		# repo name
+		local -r url="$(git remote get-url origin 2> /dev/null)"
+		printf %s "$(basename -s .git "$url")/"
 
-		# Repository name
-		local url
-		local remote_exists=true
-		url="$(git config --get remote.origin.url)" || remote_exists=false
-		local -r repo_name="$(basename -s .git "${url:-$root_dir}")"
-		printf %s "$repo_name"
+		# porcelain escapes the paths for us
+		local raw=$(git -C "$1" status --porcelain=v2 --show-stash --branch)
 
-		# Branch
-		local branch="$(git branch --show-current)"
-		[ -z "$branch" ] && branch="$(git -C "$root_dir" rev-parse --short HEAD)"
-		printf %s "/$branch"
+		# branch/commit
+		local -r branch=$(echo "$raw" | grep -oP '(?<=^# branch.head ).*') && {
+			if ! [ "$branch" = '(detached)' ]; then
+				printf %s "$branch"
+			else
+				printf %.6s "$(echo "$raw" | grep -oP '(?<=^# branch.oid ).*')"
+			fi
+		}
 
-		# Status - first column from porcelain |> unique and sorted
+		local status
+
+		# stash
+		echo "$raw" | grep -qP '(?<=^# stash )\d+' && status+='$'
+
+		# check for unpushed commits
+		[ -n "$url" ] && [ -n "$(git cherry)" ] && status+='^'
+
+		# print markers
+		[ -n "$git_status" ] && printf %s ":$git_status"
+
+		# TODO rewrite this in porcelain v2
+		# status - first column from porcelain |> unique and sorted
 		local git_status=$(git -C "$root_dir" status --porcelain -z \
 			| grep -ozP -- '^\s*\K[A-Z]*' | tr -d '\0' | grep -o '.' | sort -u | tr -d '\n')
-		# Check for unpushed commits
-		[ "$remote_exists" = true ] && [ -n "$(git cherry)" ] && git_status+="^"
-		# TODO git stash
-		[ -n "$git_status" ] && printf %s ":$git_status"
 	fi
 	tput sgr0
 }
