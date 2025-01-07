@@ -65,6 +65,7 @@
     unstable.vis
 
     # core {{{1
+    multitail # multiple files at once
     bat # cat++: syntax hl
     delta # pretty diff
     difftastic # diff++: syntax aware using TS
