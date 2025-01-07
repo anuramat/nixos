@@ -67,7 +67,6 @@
 
     # core {{{1
     inputs.subcat.packages.${pkgs.system}.default
-    multitail # multiple files at once
     bat # cat++: syntax hl
     delta # pretty diff
     difftastic # diff++: syntax aware using TS
@@ -105,12 +104,12 @@
     expect # automating tuis
 
     # misc {{{1
+    asciinema
     ansifilter
     pstree
     age # file encryption
     virtualbox
     wine
-    # yazi broot lf nnn ranger vifm TODO
     aria # downloader
     banner
     unstable.croc # send/receive files through relay with encryption
