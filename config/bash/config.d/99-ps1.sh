@@ -37,7 +37,7 @@ _git() {
 			status+=$(codes 3 1)
 
 			# work tree
-			if [ -n "$(codes 4 1)" ] || echo "$raw" | grep -q '^\?'; then
+			if [ -n "$(codes 4 1)" ] || echo "$raw" | grep -q '^?'; then
 				status+="?"
 			fi
 
