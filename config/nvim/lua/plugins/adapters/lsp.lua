@@ -87,7 +87,6 @@ local configs = function()
       settings = {
         gopls = {
           analyses = {
-            fieldalignment = true,
             shadow = true,
             unusedwrite = true,
             useany = true,
