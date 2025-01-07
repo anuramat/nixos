@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-# TODO review the code
 _git() {
 	local bare
 	bare=$(git rev-parse --is-bare-repository 2> /dev/null) || return # we're not in a repo
@@ -9,12 +8,11 @@ _git() {
 	if [ "$bare" = 'true' ]; then
 		printf 'bare'
 	else
+		local -r raw=$(git -C "$1" status --porcelain=v2 --show-stash --branch)
+
 		# repo name
 		local -r url="$(git remote get-url origin 2> /dev/null)"
 		printf %s "$(basename -s .git "$url")/"
-
-		# porcelain escapes the paths for us
-		local raw=$(git -C "$1" status --porcelain=v2 --show-stash --branch)
 
 		# branch/commit
 		local -r branch=$(echo "$raw" | grep -oP '(?<=^# branch.head ).*') && {
@@ -25,21 +23,27 @@ _git() {
 			fi
 		}
 
+		# status
 		local status
+		{
+			# XY status codes
+			codes() {
+				# TODO awk stuff is gpt, check
+				echo "$raw" | grep '^[12]' | awk -v pos="$1" -v num="$2" '{printf substr($0, pos, num)} END {print ""}' \
+					| sed 's/[. #]//g' | fold -w1 | LC_ALL=C sort -u | tr -d '\n'
+			}
+			status+=$(codes 3 1) # second arg to 2 if we want both staged and not staged
 
-		# stash
-		echo "$raw" | grep -qP '(?<=^# stash )\d+' && status+='$'
+			# unstaged changes
+			[ -n "$(codes 4 1)" ] && status+="*"
 
-		# check for unpushed commits
-		[ -n "$url" ] && [ -n "$(git cherry)" ] && status+='^'
+			# unpushed commits
+			[ -n "$url" ] && [ -n "$(git cherry)" ] && status+='^'
 
-		# print markers
-		[ -n "$git_status" ] && printf %s ":$git_status"
-
-		# TODO rewrite this in porcelain v2
-		# status - first column from porcelain |> unique and sorted
-		local git_status=$(git -C "$root_dir" status --porcelain -z \
-			| grep -ozP -- '^\s*\K[A-Z]*' | tr -d '\0' | grep -o '.' | sort -u | tr -d '\n')
+			# stash
+			echo "$raw" | grep -qP '(?<=^# stash )\d+' && status+='$'
+		}
+		[ -n "$status" ] && printf %s ":$status"
 	fi
 	tput sgr0
 }
