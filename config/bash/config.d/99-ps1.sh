@@ -16,7 +16,9 @@ _git() {
 		fi
 
 		# Repository name
-		local -r url="$(git config --get remote.origin.url)"
+		local url
+		local remote_exists=true
+		url="$(git config --get remote.origin.url)" || remote_exists=false
 		local -r repo_name="$(basename -s .git "${url:-$root_dir}")"
 		printf %s "$repo_name"
 
@@ -25,11 +27,12 @@ _git() {
 		[ -z "$branch" ] && branch="$(git -C "$root_dir" rev-parse --short HEAD)"
 		printf %s "/$branch"
 
-		# Status
+		# Status - first column from porcelain |> unique and sorted
 		local git_status=$(git -C "$root_dir" status --porcelain -z \
 			| grep -ozP -- '^\s*\K[A-Z]*' | tr -d '\0' | grep -o '.' | sort -u | tr -d '\n')
-		# first column from porcelain |> unique and sorted
-		[ -n "$(git cherry)" ] && git_status+="^"
+		# Check for unpushed commits
+		[ "$remote_exists" = true ] && [ -n "$(git cherry)" ] && git_status+="^"
+		# TODO git stash
 		[ -n "$git_status" ] && printf %s ":$git_status"
 	fi
 	tput sgr0
@@ -45,6 +48,7 @@ _code() {
 }
 
 _jobs() {
+	# TODO figure out how to hide zoxide (?) job
 	n_jobs=$(jobs | wc -l)
 	((n_jobs > 0)) && {
 		tput bold setaf 3
