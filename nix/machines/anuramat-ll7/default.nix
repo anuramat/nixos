@@ -20,8 +20,9 @@
     tlp.settings = {
       # turn on battery charge threshold
       # `tlp fullcharge` to charge to 100% once
-      START_CHARGE_THRESH_BAT0 = 0; # dummy value
-      STOP_CHARGE_THRESH_BAT0 = 1;
+      # values taken from <https://linrunner.de/tlp/faq/battery.html>
+      START_CHARGE_THRESH_BAT0 = 40;
+      STOP_CHARGE_THRESH_BAT0 = 50;
       CPU_MAX_PERF_ON_BAT = 20;
     };
   };
