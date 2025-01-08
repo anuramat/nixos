@@ -355,7 +355,7 @@ c = get_config()  # noqa
 
 ## The IP address the Jupyter server will listen on.
 #  Default: 'localhost'
-# c.ServerApp.ip = 'localhost'
+c.ServerApp.ip = "0.0.0.0"
 
 ## Supply extra arguments that will be passed to Jinja environment.
 #  Default: {}
@@ -561,7 +561,7 @@ c.ServerApp.port = 8888
 
 ## DEPRECATED. Use IdentityProvider.token
 #  Default: '<DEPRECATED>'
-# c.ServerApp.token = '<DEPRECATED>'
+c.ServerApp.token = ""
 
 ## Supply overrides for the tornado.web.Application that the Jupyter server uses.
 #  Default: {}
