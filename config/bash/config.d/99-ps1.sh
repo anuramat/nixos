@@ -62,13 +62,12 @@ _code() {
 	local err=$__last_return_code
 	[ "$err" -ne 0 ] && {
 		tput bold setaf 1
-		printf '%s\n' " ERR:$err"
+		printf ' %s\n' "ERR:$err"
 		tput sgr0
 	}
 }
 
 _jobs() {
-	# TODO figure out how to hide zoxide (?) job
 	((__n_jobs > 0)) && {
 		tput setaf 3
 		printf %s " J:$__n_jobs"
@@ -84,7 +83,7 @@ _time() {
 
 _ssh() {
 	if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
-		printf '%s:' "$(whoami)@$(hostname)"
+		printf ' %s\' "$(whoami)@$(hostname)"
 	fi
 }
 
@@ -113,10 +112,10 @@ __set_vars() {
 precmd_functions=(__set_vars "${precmd_functions[@]}")
 
 PS1=''
-PS1+=' $(_code)'
+PS1+='$(_code)'
 PS1+='\n'
-PS1+=' $(_ssh)'
-PS1+='$(_path)$(_git)$(_jobs)$(_shlvl)$(_nix)$(_time)\n'
+PS1+='$(_ssh)'
+PS1+=' $(_path)$(_git)$(_jobs)$(_shlvl)$(_nix)$(_time)\n'
 PS1+=' \$ '
 
 PS2='│'
