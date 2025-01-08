@@ -50,7 +50,11 @@ z() {
 }
 take() {
 	# send full path of a file/files to clipboard
-	realpath "$@" | tr '\n' ' ' | wl-copy -n
+	local paths=()
+	for i in "$@"; do
+		paths+=("$(printf %q "$(realpath "$i")")")
+	done
+	echo "${paths[@]}" | wl-copy -n
 }
 brexit() {
 	# set brightness for an external monitor (0-100)
