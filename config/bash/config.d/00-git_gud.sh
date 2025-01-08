@@ -23,6 +23,8 @@ g() {
 # stdout - \n separated list of repos
 __ghq_fzf_base() {
 	local repos
+
+	# only bind on single line input
 	repos="$(fzf --bind one:accept)" || return 1
 	echo "$repos"
 
@@ -30,6 +32,7 @@ __ghq_fzf_base() {
 	printf '%s' "$repos" | sed 's/^/\t/' >&2
 	echo >&2
 
+	# TODO make it y/c-c instead of y/*
 	read -rs -n 1 -p $"$1 (y/*):"$'\n' choice <&2
 	[ "$choice" = 'y' ]
 }
