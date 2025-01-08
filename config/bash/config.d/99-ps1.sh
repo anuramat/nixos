@@ -19,7 +19,7 @@ _git() {
 			if ! [ "$branch" = '(detached)' ]; then
 				printf %s "$branch"
 			else
-				printf %.6s "$(echo "$raw" | grep -oP '(?<=^# branch.oid ).*')"
+				printf %.7s "$(echo "$raw" | grep -oP '(?<=^# branch.oid ).*')"
 			fi
 		}
 
@@ -41,8 +41,14 @@ _git() {
 				status+="?"
 			fi
 
-			# unpushed commits
-			[ -n "$url" ] && [ -n "$(git cherry)" ] && status+='^'
+			# not sure about the symbols here
+
+			[ -n "$url" ] && {
+				# unpushed commits
+				[ -n "$(git cherry 2> /dev/null)" ] && status+='^'
+				# unpulled commits
+				[ -n "$(git cherry 2> /dev/null)" ] && status+='_'
+			}
 
 			# stash
 			echo "$raw" | grep -qP '(?<=^# stash )\d+' && status+='$'
@@ -63,16 +69,17 @@ _code() {
 
 _jobs() {
 	# TODO figure out how to hide zoxide (?) job
-	n_jobs=$(jobs | wc -l)
-	((n_jobs > 0)) && {
-		tput bold setaf 3
-		printf %s " J:$n_jobs"
+	((__n_jobs > 0)) && {
+		tput setaf 3
+		printf %s " J:$__n_jobs"
 		tput sgr0
 	}
 }
 
 _time() {
+	tput bold setaf 15
 	printf %s " $(date +%H:%M)"
+	tput sgr0
 }
 
 _ssh() {
@@ -99,9 +106,13 @@ _nix() {
 	[ -n "$IN_NIX_SHELL" ] && printf %s " $IN_NIX_SHELL"
 }
 
-PROMPT_COMMAND='__last_return_code=$?'"${PROMPT_COMMAND:+;${PROMPT_COMMAND}}"
+__set_vars() {
+	__last_return_code=$?
+	__n_jobs=$(jobs | wc -l)
+}
+precmd_functions=(__set_vars "${precmd_functions[@]}")
 
-PS1=
+PS1=''
 PS1+=' $(_code)'
 PS1+='\n'
 PS1+=' $(_ssh)'
