@@ -84,6 +84,7 @@ _time() {
 
 _ssh() {
 	if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+		# for some reason \n doesn't work TODO
 		printf '%s\n' " $(whoami)@$(hostname)"
 	fi
 }
