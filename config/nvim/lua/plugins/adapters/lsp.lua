@@ -19,28 +19,27 @@ end
 local configs = function()
   return {
     -- supports options, packages
-    nixd = {
-      cmd = { 'nixd', '--inlay-hints=false' },
-      settings = {
-        nixd = {
-          -- this can fail silently
-          -- apparently this breaks shit while editing
-          -- options = {
-          --   -- keys don't matter
-          --   nixos = {
-          --     expr = string.format(
-          --       '(builtins.getFlake "/etc/nixos/").nixosConfigurations.%s.options',
-          --       vim.fn.hostname()
-          --     ),
-          --   },
-          -- },
-          diagnostic = {
-            suppress = {},
-          },
-        },
-      },
-    },
-    -- nil_ls = {}, -- nice code actions
+    -- and fucking crashes nvim half the time
+    -- nixd = {
+    --   cmd = { 'nixd', '--inlay-hints=false' },
+    --   settings = {
+    --     nixd = {
+    --       options = {
+    --         -- keys don't matter
+    --         nixos = {
+    --           expr = string.format(
+    --             '(builtins.getFlake "/etc/nixos/").nixosConfigurations.%s.options',
+    --             vim.fn.hostname()
+    --           ),
+    --         },
+    --       },
+    --       diagnostic = {
+    --         suppress = {},
+    --       },
+    --     },
+    --   },
+    -- },
+    nil_ls = {}, -- nice code actions
     yamlls = {
       -- we can use schemastore plugin if we need more logic
       -- eg replacements or custom schemas
@@ -102,12 +101,12 @@ local configs = function()
           },
           hints = {
             assignVariableTypes = false,
-            compositeLiteralFields = true,
-            compositeLiteralTypes = true,
-            constantValues = true,
-            functionTypeParameters = true,
+            compositeLiteralFields = false,
+            compositeLiteralTypes = false,
+            constantValues = false,
+            functionTypeParameters = false,
             parameterNames = false,
-            rangeVariableTypes = true,
+            rangeVariableTypes = false,
           },
           usePlaceholders = true,
           staticcheck = true,

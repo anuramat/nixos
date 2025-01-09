@@ -83,7 +83,7 @@
     ripgrep-all # ripgrep over docs, archives, etc
     rmtrash # rm but to trash
     tealdeer # tldr reimplementation: rust + xdg
-    tgpt # tui for llm apis
+    tgpt
     unstable.devenv
     unstable.eza # ls++
     (unstable.todo-txt-cli.overrideAttrs {
