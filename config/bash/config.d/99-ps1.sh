@@ -30,7 +30,7 @@ _git() {
 			# '3 1' - staging, '4 1' - work tree, '3 2' - both
 			chars() {
 				# TODO awk stuff is gpt, check
-				echo "$raw" | grep '^[12]' | awk -v pos="$1" -v num="$2" '{printf substr($0, pos, num)} END {print ""}' \
+				echo "$raw" | grep '^[12]' | awk -v pos="$1" -v num="$2" '{printf substr($0, pos, num)}' \
 					| sed 's/[. #]//g' | fold -w1 | LC_ALL=C sort -u | tr -d '\n'
 			}
 
