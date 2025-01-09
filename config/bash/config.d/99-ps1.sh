@@ -2,57 +2,57 @@
 
 _git() {
 	tput setaf 5
+	local result=' '
 	local bare
 	bare=$(git rev-parse --is-bare-repository 2> /dev/null) || return # we're not in a repo
-	printf ' '
 	if [ "$bare" = 'true' ]; then
-		printf 'bare'
+		result+='bare'
 	else
 		local -r raw=$(git -C "$1" status --porcelain=v2 --show-stash --branch)
 
 		# repo name
 		local -r url="$(git remote get-url origin 2> /dev/null)"
-		printf %s "$(basename -s .git "$url")/"
+		result+="$(basename -s .git "$url")/"
 
 		# branch/commit
 		local -r branch=$(echo "$raw" | grep -oP '(?<=^# branch.head ).*') && {
 			if ! [ "$branch" = '(detached)' ]; then
-				printf %s "$branch"
+				result+=$branch
 			else
-				printf %.7s "$(echo "$raw" | grep -oP '(?<=^# branch.oid ).*')"
+				result+=$(printf %.7s "$(echo "$raw" | grep -oP '(?<=^# branch.oid ).*')")
 			fi
 		}
 
 		# status
-		# TODO maybe change the order
 		local status
 		{
-			# get XY status codes
-			codes() {
+			# returns unique chars in given columns of stdin
+			chars() {
 				# TODO awk stuff is gpt, check
 				echo "$raw" | grep '^[12]' | awk -v pos="$1" -v num="$2" '{printf substr($0, pos, num)} END {print ""}' \
 					| sed 's/[. #]//g' | fold -w1 | LC_ALL=C sort -u | tr -d '\n'
 			}
 
-			# staging area (index)
-			status+=$(codes 3 1)
+			# XY codes from staging area (index)
+			status+=$(chars 3 1)
 
-			# work tree
-			if [ -n "$(codes 4 1)" ] || echo "$raw" | grep -q '^?'; then
+			# dirty work tree
+			if [ -n "$(chars 4 1)" ] || echo "$raw" | grep -q '^?'; then
 				status+="?"
 			fi
-
-			[ -n "$url" ] && [ -n "$branch" ] && {
-				# unpulled commits
-				[ -n "$(git cherry "$branch" origin 2> /dev/null)" ] && status+='<'
-				# unpushed commits
-				[ -n "$(git cherry 2> /dev/null)" ] && status+='>'
-			}
-
-			# stash
-			echo "$raw" | grep -qP '(?<=^# stash )\d+' && status+='$'
 		}
-		[ -n "$status" ] && printf %s " $status"
+
+		local desync
+		[ -n "$url" ] && [ -n "$branch" ] && {
+			# behind
+			[ -n "$(git cherry "$branch" origin 2> /dev/null)" ] && desync+='<'
+			# ahead
+			[ -n "$(git cherry 2> /dev/null)" ] && desync+='>'
+		}
+
+		local -r stash=$(echo "$raw" | grep -qP '(?<=^# stash )\d+')
+
+		printf %s "${status:+ $status}${desync:+ $desync}${stash:+ $stash}"
 	fi
 	tput sgr0
 }
