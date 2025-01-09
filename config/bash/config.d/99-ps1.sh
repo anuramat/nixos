@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 _git() {
-	tput setaf 2
+	tput setaf 5
 	local bare
 	bare=$(git rev-parse --is-bare-repository 2> /dev/null) || return # we're not in a repo
 	printf ' '
@@ -42,12 +42,11 @@ _git() {
 				status+="?"
 			fi
 
-			# TODO not sure about the symbols here
 			[ -n "$url" ] && [ -n "$branch" ] && {
-				# unpushed commits
-				[ -n "$(git cherry 2> /dev/null)" ] && status+='^'
 				# unpulled commits
-				[ -n "$(git cherry "$branch" origin 2> /dev/null)" ] && status+='_'
+				[ -n "$(git cherry "$branch" origin 2> /dev/null)" ] && status+='<'
+				# unpushed commits
+				[ -n "$(git cherry 2> /dev/null)" ] && status+='>'
 			}
 
 			# stash
@@ -76,7 +75,7 @@ _jobs() {
 }
 
 _time() {
-	tput bold setaf 15
+	tput bold setaf 7
 	printf %s " $(date +%H:%M)"
 	tput sgr0
 }
@@ -99,11 +98,13 @@ _path() {
 }
 
 _shlvl() {
-	[ -n "$SHLVL" ] && ((SHLVL > 1)) && printf %s " L:$SHLVL"
+	tput setaf 2
+	[ -n "$SHLVL" ] && ((SHLVL > 1)) && printf %s " L$SHLVL"
 	tput sgr0
 }
 
 _nix() {
+	tput setaf 2
 	[ -n "$IN_NIX_SHELL" ] && printf %s " $IN_NIX_SHELL"
 	tput sgr0
 }
@@ -118,7 +119,7 @@ PS1=''
 PS1+='$(_code)'
 PS1+='\n'
 PS1+='$(_ssh)'
-PS1+=' $(_path)$(_git)$(_jobs)$(_shlvl)$(_nix)$(_time)\n'
+PS1+=' $(_path)$(_git)$(_shlvl)$(_nix)$(_time)$(_jobs)\n'
 PS1+=' \$ '
 
 PS2='│'
