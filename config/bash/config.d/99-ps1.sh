@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 _git() {
+	tput setaf 2
 	local bare
 	bare=$(git rev-parse --is-bare-repository 2> /dev/null) || return # we're not in a repo
-	tput setaf 2
 	printf ' '
 	if [ "$bare" = 'true' ]; then
 		printf 'bare'
@@ -24,6 +24,7 @@ _git() {
 		}
 
 		# status
+		# TODO maybe change the order
 		local status
 		{
 			# get XY status codes
@@ -41,38 +42,37 @@ _git() {
 				status+="?"
 			fi
 
-			# not sure about the symbols here
-
-			[ -n "$url" ] && {
+			# TODO not sure about the symbols here
+			[ -n "$url" ] && [ -n "$branch" ] && {
 				# unpushed commits
 				[ -n "$(git cherry 2> /dev/null)" ] && status+='^'
 				# unpulled commits
-				[ -n "$(git cherry 2> /dev/null)" ] && status+='_'
+				[ -n "$(git cherry "$branch" origin 2> /dev/null)" ] && status+='_'
 			}
 
 			# stash
 			echo "$raw" | grep -qP '(?<=^# stash )\d+' && status+='$'
 		}
-		[ -n "$status" ] && printf %s ":$status"
+		[ -n "$status" ] && printf %s " $status"
 	fi
 	tput sgr0
 }
 
 _code() {
+	tput bold setaf 1
 	local err=$__last_return_code
 	[ "$err" -ne 0 ] && {
-		tput bold setaf 1
 		printf ' %s\n' "ERR:$err"
-		tput sgr0
 	}
+	tput sgr0
 }
 
 _jobs() {
+	tput setaf 3
 	((__n_jobs > 0)) && {
-		tput setaf 3
 		printf %s " J:$__n_jobs"
-		tput sgr0
 	}
+	tput sgr0
 }
 
 _time() {
@@ -83,26 +83,29 @@ _time() {
 
 _ssh() {
 	if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
-		printf ' %s\n' "$(whoami)@$(hostname)"
+		printf ' %s\n' "ssh: $(whoami)@$(hostname)"
 	fi
+	tput sgr0
 }
 
 _path() {
+	tput bold
 	cwd=$(pwd)
 	len=${#HOME}
 	[[ $cwd == "$HOME"* ]] \
 		&& cwd="~${cwd:len}"
-	tput bold
 	printf %s "$cwd"
 	tput sgr0
 }
 
 _shlvl() {
 	[ -n "$SHLVL" ] && ((SHLVL > 1)) && printf %s " L:$SHLVL"
+	tput sgr0
 }
 
 _nix() {
 	[ -n "$IN_NIX_SHELL" ] && printf %s " $IN_NIX_SHELL"
+	tput sgr0
 }
 
 __set_vars() {
