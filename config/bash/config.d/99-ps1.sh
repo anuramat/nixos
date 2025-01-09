@@ -26,7 +26,8 @@ _git() {
 		# status
 		local status
 		{
-			# returns unique chars in given columns of stdin
+			# returns a string with unique XY status codes
+			# '3 1' - staging, '4 1' - work tree, '3 2' - both
 			chars() {
 				# TODO awk stuff is gpt, check
 				echo "$raw" | grep '^[12]' | awk -v pos="$1" -v num="$2" '{printf substr($0, pos, num)} END {print ""}' \
@@ -37,9 +38,10 @@ _git() {
 			status+=$(chars 3 1)
 
 			# dirty work tree
-			if [ -n "$(chars 4 1)" ] || echo "$raw" | grep -q '^?'; then
-				status+="?"
-			fi
+			[ -n "$(chars 4 1)" ] && status+='+'
+
+			# untracked files
+			echo "$raw" | grep -q '^?' && status+="?"
 		}
 
 		local desync
