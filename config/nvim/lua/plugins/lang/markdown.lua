@@ -4,4 +4,5 @@ return {
   keys = {
     { '<localleader>e', '<cmd>FeMaco<cr>', ft = 'markdown', desc = 'Edit Code Block' },
   },
+  -- TODO integrate otter.nvim
 }

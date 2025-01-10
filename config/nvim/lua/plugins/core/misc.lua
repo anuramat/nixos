@@ -12,6 +12,10 @@ return {
     opts = {
       keymap = {
         preset = 'default',
+        cmdline = {
+          ['<tab>'] = { 'select_next', 'fallback' },
+          ['<s-tab>'] = { 'select_next', 'fallback' },
+        },
       },
       signature = { enabled = true },
       -- TODO maybe replace with native stuff:
