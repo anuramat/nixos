@@ -10,7 +10,10 @@ __wallust_wrapped() {
 		wallust "$@" || return
 	fi
 	(
-		cd "$XDG_CONFIG_HOME/mako" || exit
+		cd "$XDG_CONFIG_HOME/mako" || {
+			echo "Couldn't cd to the mako folder, skipping"
+			exit
+		}
 		cat main.conf generated-colors.conf apps.conf > "./config"
 		makoctl reload
 	)
