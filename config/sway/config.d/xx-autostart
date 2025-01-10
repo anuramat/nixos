@@ -1,8 +1,4 @@
 exec_always {
-    # # perf hogs!!!
-    # pkill inactive-windo; inactive-windows-transparency.py
-    # "pkill mpvpaper; mpvpaper '*' ~/Videos/wp/waves.mp4 -o 'loop-file=inf panscan=1.0 hwdec=auto'"
-
     # display config daemon
     "pkill kanshi; kanshi"
     # clipboard persistence
