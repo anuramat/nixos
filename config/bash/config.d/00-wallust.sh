@@ -9,6 +9,10 @@ __wallust_wrapped() {
 	else
 		wallust "$@" || return
 	fi
-	"$XDG_CONFIG_HOME/mako/wal.sh"
+	(
+		cd "$XDG_CONFIG_HOME/mako" || exit
+		cat main.conf generated-colors.conf apps.conf > "./config"
+		makoctl reload
+	)
 	swaymsg reload
 }
