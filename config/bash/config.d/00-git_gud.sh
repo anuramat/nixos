@@ -17,44 +17,36 @@ g() {
 	cd "$root/$chosen_path" || return
 }
 
-# pick a ghq repo
+# pick a subset of a list with confirmation
 # stdin - \n separated list of repos
 # $1 - prompt question
+# $2 - query (optional)
 # stdout - \n separated list of repos
-__ghq_fzf_base() {
+__picker() {
 	local repos
-
-	# only bind on single line input
-	repos="$(fzf --bind one:accept)" || return 1
+	repos="$(fzf -1 -q "$2")" || return 1
 	echo "$repos"
-
-	echo 'selected repositories:' >&2
-	printf '%s' "$repos" | sed 's/^/\t/' >&2
-	echo >&2
-
-	# TODO make it y/c-c instead of y/*
+	echo $'\t'"${repos//$'\n'/$'\n\t'}" >&2
 	read -rs -n 1 -p $"$1 (y/*):"$'\n' choice <&2
 	[ "$choice" = 'y' ]
 }
 
 # rm ghq repo(s)
-# optional $1 - repo
+# $1 - repo (optional)
 grm() {
-	local repos=$1
-	[ -z "$repos" ] && repos=$(ghq list)
 	local selected
-	selected=$(echo "$repos" | __ghq_fzf_base "delete?") || return
+	selected=$(ghq list | __picker "delete?" "$1") || return
 	echo "$selected" | xargs -I{} bash -c 'yes | ghq rm {} 2>/dev/null'
 }
 
-# clone your gh repo(s) with ghq
-# optional $1 - repo (as interpreted by ghq)
+# clone repo(s) with ghq
+# $1 - repo as interpreted by ghq, optional
 gclone() {
 	local -r before_dirs="$(ghq list -p | sort)"
 	local repos=$1
-	[ -z "$repos" ] && repos=$(gh repo list)
+	[ -z "$repos" ] && repos=$(gh repo list | cut -f 1)
 	local selected
-	selected="$(echo "$repos" | cut -f 1 | __ghq_fzf_base "download?")" || return
+	selected="$(echo "$repos" | cut -f 1 | __picker "download?")" || return
 	echo "$selected" | xargs ghq get --no-recursive --parallel -p --silent || {
 		echo "Couldn't clone"
 		return 1
