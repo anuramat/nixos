@@ -9,9 +9,10 @@ return {
   },
   {
     'kiyoon/jupynium.nvim',
-    lazy = false,
+    ft = 'python',
     opts = {
       python_host = 'python',
+      jupynium_file_pattern = { '*.ju.py' },
     },
   },
 }
