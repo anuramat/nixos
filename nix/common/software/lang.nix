@@ -83,6 +83,7 @@
     jq # json processor
     luajitPackages.luarocks
     markdown-link-check
+    python311Packages.nbdime
     pup # html
     tidy-viewer # csv viewer
     universal-ctags # maintained ctags
