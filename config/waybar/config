@@ -10,6 +10,7 @@
       "pulseaudio",
       "backlight",
       "idle_inhibitor",
+      "mpris",
     ],
     "modules-center": [
       "sway/mode",
