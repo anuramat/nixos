@@ -55,6 +55,7 @@
     # Misc {{{1
     hyprpicker # simple terminal color picker
     obs-studio
+    chatterino2 # gui twitch chat client
     qalculate-gtk # qalc calculator gui
     spotify
     steam
