@@ -1,20 +1,5 @@
 -- vim: fdl=0 fdm=marker
 
--- Already used in texlab, keep here just in case {{{1
--- local function latexindent()
---   local null_ls = require('null-ls')
---   local helpers = require('null-ls.helpers')
---   null_ls.register({
---     name = 'latexindent',
---     method = null_ls.methods.FORMATTING,
---     filetypes = { 'tex' },
---     generator = helpers.formatter_factory({
---       command = 'latexindent',
---       args = { '$FILENAME' },
---     }),
---   })
--- end
-
 -- codeblock formatter for markdown {{{1
 local function cbfmt()
   -- sources are set in $XDG_CONFIG_HOME/cbfmt.toml
@@ -33,6 +18,7 @@ local function cbfmt()
 end
 
 -- haskell formatter {{{1
+-- TODO contrib
 local function ormolu()
   local null_ls = require('null-ls')
   local helpers = require('null-ls.helpers')
@@ -62,7 +48,7 @@ local null_sources = function() -- {{{1
     f.nixfmt,
     f.yamlfmt,
     f.markdownlint,
-    cbfmt,
+    cbfmt, -- the builtin one doesn't work with extra args for some reason
     ormolu,
     -- diagnostics
     -- d.statix, -- TODO turn on when they introduce pipe operator

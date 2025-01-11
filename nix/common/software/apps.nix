@@ -54,7 +54,15 @@
 
     # Misc {{{1
     hyprpicker # simple terminal color picker
-    obs-studio
+    (pkgs.wrapOBS {
+      plugins = with pkgs.obs-studio-plugins; [
+        obs-multi-rtmp
+        obs-pipewire-audio-capture
+        obs-tuna
+        obs-vaapi
+        wlrobs
+      ];
+    })
     chatterino2 # gui twitch chat client
     qalculate-gtk # qalc calculator gui
     spotify
