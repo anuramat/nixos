@@ -20,7 +20,8 @@
     mako # notifications - smaller than fnott and dunst
     networkmanagerapplet # networking
     slurp # select screen region
-    swappy # markup wrapper for grim+slurp/etc
+    swappy # screenshot markup
+    satty # screenshot markup
     swaybg # wallpaper
     swayidle # lock/sleep on idle
     swaylock # lockscreen

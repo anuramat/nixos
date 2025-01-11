@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+XDG_DOWNLOAD_DIR="$HOME/dl/"
+XDG_DOCUMENTS_DIR="$HOME/docs/"
+XDG_PICTURES_DIR="$HOME/img/"
+XDG_VIDEOS_DIR="$HOME/vid/"
+
 # make remote shells obey the fucking rules
 [ -z "$PS1" ] && return
 

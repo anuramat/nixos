@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-export SCREENSHOT_DIR="$HOME/img/screen"
-mkdir -p "$SCREENSHOT_DIR"
+# TODO move this shit
 
 # eza
 export EZACMD="eza --group-directories-first --group --header --git --icons=always --color=always --color-scale=all --sort=time"
@@ -25,10 +24,8 @@ alias grep='grep --color=auto'
 alias ip='ip -c=auto'
 
 # etc
-# TODO move this shit
 alias fd="fd -HL" # working tree minus junk
 alias info="info --init-file $XDG_CONFIG_HOME/infokey"
-export GRIM_DEFAULT_DIR="$SCREENSHOT_DIR"
 export VIRTUAL_ENV_DISABLE_PROMPT="1" # TODO maybe we don't need this either? # Don't let python venvs change the PS1
 export VIMTEX_OUTPUT_DIRECTORY="/tmp/"
 export NO_AT_BRIDGE=1 # TODO do we still need this # hides gnomeWARNING **: Couldn't connect to accessibility bus:
