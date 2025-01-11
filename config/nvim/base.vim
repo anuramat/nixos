@@ -27,6 +27,7 @@ se formatoptions=qj
 " general {{{1
 pa cfilter
 se complete=t,i,d,.,w,b,u,U " completion source priority
+se clipboard=unnamedplus
 se notimeout " no timeout on key sequences
 se keymap=russian-jcukenwin imi=0 " cyrillic on i_^6
 se completeopt=menu,menuone,noselect,preview " ins completion
