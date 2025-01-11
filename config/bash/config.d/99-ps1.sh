@@ -52,9 +52,9 @@ _git() {
 			[ -n "$(git cherry 2> /dev/null)" ] && desync+='>'
 		}
 
-		local -r stash=$(echo "$raw" | grep -qP '(?<=^# stash )\d+')
+		local -r stash=$(echo "$raw" | grep -oP '(?<=^# stash )\d+')
 
-		printf %s "${status:+ $status}${desync:+ $desync}${stash:+ $stash}"
+		printf %s "${status:+ $status}${desync:+ $desync}${stash:+ \$:$stash}"
 	fi
 	tput sgr0
 }
