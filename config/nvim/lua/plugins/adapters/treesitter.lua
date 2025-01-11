@@ -18,9 +18,6 @@ return {
       },
       indent = {
         enable = true,
-        disable = {
-          'markdown', -- ts indentation is ugly in md bullets
-        },
       },
       ensure_installed = false, -- install missing parsers on launch
       auto_install = true, -- install corresponding parser on buffer enter
