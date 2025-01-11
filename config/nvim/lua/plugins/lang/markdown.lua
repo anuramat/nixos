@@ -13,5 +13,16 @@ return {
     },
     opts = {},
     ft = 'markdown',
+    keys = {
+
+      {
+        '<localleader>o',
+        function()
+          require('otter').activate()
+        end,
+        ft = 'markdown',
+        desc = 'Activate Otter',
+      },
+    },
   },
 }
