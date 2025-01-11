@@ -33,7 +33,6 @@
 
     # Formatters {{{1
     black # python
-    cbfmt # md code blocks
     formatjson5
     gofumpt # stricter go
     haskellPackages.ormolu

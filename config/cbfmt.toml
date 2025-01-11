@@ -1,6 +1,0 @@
-[languages]
-go = ["gofumpt"]
-lua = ["stylua -s -"]
-python = ["black --fast -"]
-latex = ["latexindent"]
-# javascript is handled by prettier

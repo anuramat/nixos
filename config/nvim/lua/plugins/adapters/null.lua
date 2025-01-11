@@ -1,22 +1,5 @@
 -- vim: fdl=0 fdm=marker
 
--- codeblock formatter for markdown {{{1
-local function cbfmt()
-  -- sources are set in $XDG_CONFIG_HOME/cbfmt.toml
-  local null_ls = require('null-ls')
-  local helpers = require('null-ls.helpers')
-  null_ls.register({
-    name = 'cbfmt',
-    method = null_ls.methods.FORMATTING,
-    filetypes = { 'markdown' },
-    generator = helpers.formatter_factory({
-      to_stdin = true,
-      command = 'cbfmt',
-      args = { '--config', vim.fn.expand('$XDG_CONFIG_HOME') .. '/cbfmt.toml', '-p', 'markdown' },
-    }),
-  })
-end
-
 -- haskell formatter {{{1
 -- TODO contrib
 local function ormolu()
@@ -48,8 +31,6 @@ local null_sources = function() -- {{{1
     f.nixfmt,
     f.yamlfmt,
     f.markdownlint,
-    -- off due to otter.nvim
-    -- cbfmt, -- the builtin one doesn't work with extra args for some reason
     ormolu,
     -- diagnostics
     -- d.statix, -- TODO turn on when they introduce pipe operator
