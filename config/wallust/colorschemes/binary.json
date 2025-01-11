@@ -1,0 +1,24 @@
+{
+  "name": "elflord",
+  "author": "original author Ron Aaron <ron@ronware.org>",
+  "color": [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#888888",
+    "#888888",
+    "#888888",
+    "#888888",
+    "#888888",
+    "#888888",
+    "#888888",
+    "#888888"
+  ],
+  "foreground": "#ffffff",
+  "background": "#000000"
+}
