@@ -12,9 +12,15 @@ return {
       'nvim-treesitter/nvim-treesitter',
     },
     opts = {},
-    ft = 'markdown',
     keys = {
-
+      {
+        '<localleader>O',
+        function()
+          require('otter').deactivate()
+        end,
+        ft = 'markdown',
+        desc = 'Deactivate Otter',
+      },
       {
         '<localleader>o',
         function()
