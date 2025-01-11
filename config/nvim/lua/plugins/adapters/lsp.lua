@@ -48,7 +48,24 @@ local configs = function()
       cmd = { 'vscode-json-languageserver', '--stdio' },
       schemas = require('schemastore').json.schemas(),
     },
-    texlab = {},
+    texlab = {
+      settings = {
+        texlab = {
+          build = {
+            forwardSearchAfter = true,
+            onSave = true,
+          },
+          chktex = {
+            onEdit = true,
+            onOpenAndSave = true,
+          },
+          forwardSearch = {
+            executable = 'zathura',
+            args = { '--synctex-forward', '%l:1:%f', '%p' },
+          },
+        },
+      },
+    },
     bashls = {
       settings = {
         bashIde = {
