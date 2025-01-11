@@ -30,7 +30,7 @@ complete -F _todo t
 send() {
 	# send a file over taildrop:
 	# send $file $device:
-	tailscale file cp "$@"
+	tailscale file cp "$1" "$2:"
 }
 upload() {
 	# uploads a file, sends link to stdout AND pastebin
