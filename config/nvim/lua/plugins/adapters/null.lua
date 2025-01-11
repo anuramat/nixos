@@ -48,7 +48,8 @@ local null_sources = function() -- {{{1
     f.nixfmt,
     f.yamlfmt,
     f.markdownlint,
-    cbfmt, -- the builtin one doesn't work with extra args for some reason
+    -- off due to otter.nvim
+    -- cbfmt, -- the builtin one doesn't work with extra args for some reason
     ormolu,
     -- diagnostics
     -- d.statix, -- TODO turn on when they introduce pipe operator

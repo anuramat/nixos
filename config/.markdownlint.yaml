@@ -1,4 +1,3 @@
----
 # https://github.com/DavidAnson/markdownlint
 
 # Default state for all rules
@@ -32,10 +31,8 @@ MD009:
   list_item_empty_lines: false
   # Include unnecessary breaks
   strict: false
-MD010/no-hard-tabs:  # <https://github.com/DavidAnson/markdownlint/blob/v0.37.2/doc/md010.md>
-  code_blocks: true
-  ignore_code_languages: []
-  # spaces_per_tab: 2  # gets ignored somehow
+MD010/no-hard-tabs: # <https://github.com/DavidAnson/markdownlint/blob/v0.37.2/doc/md010.md>
+  code_blocks: false
 # MD011/no-reversed-links : Reversed link syntax : https://github.com/DavidAnson/markdownlint/blob/v0.37.2/doc/md011.md
 MD011: true
 # MD012/no-multiple-blanks : Multiple consecutive blank lines : https://github.com/DavidAnson/markdownlint/blob/v0.37.2/doc/md012.md
@@ -44,21 +41,12 @@ MD012:
   maximum: 1
 # MD013/line-length : Line length : https://github.com/DavidAnson/markdownlint/blob/v0.37.2/doc/md013.md
 MD013:
-  # Number of characters
   line_length: 80
-  # Number of characters for headings
   heading_line_length: 80
-  # Number of characters for code blocks
-  code_block_line_length: 80
-  # Include code blocks
   code_blocks: false
-  # Include tables
   tables: true
-  # Include headings
   headings: true
-  # Strict length checking
   strict: false
-  # Stern length checking
   stern: false
 # MD014/commands-show-output : Dollar signs used before commands without showing output : https://github.com/DavidAnson/markdownlint/blob/v0.37.2/doc/md014.md
 MD014: true
