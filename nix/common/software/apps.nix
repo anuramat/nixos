@@ -54,8 +54,8 @@
 
     # Misc {{{1
     hyprpicker # simple terminal color picker
-    (pkgs.wrapOBS {
-      plugins = with pkgs.obs-studio-plugins; [
+    (unstable.wrapOBS {
+      plugins = with unstable.obs-studio-plugins; [
         obs-multi-rtmp
         obs-pipewire-audio-capture
         obs-tuna
