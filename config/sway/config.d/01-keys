@@ -17,14 +17,15 @@ set {
     $up k
 
     $resize_value 50 px
-    $move_value 50 ppt
+    $move_value 200 ppt
 }
 
 floating_modifier $mod normal
 $bind {
     $mod+semicolon exec $term
-    $mod+apostrophe exec $term_exec --working-directory ~/notes --app-id foot-float nvim ~/notes/scratchpad.md
-    $mod+slash reload; exec notify-send "Sway configuration reloaded" -e -t 2000 -u critical
+    $mod+apostrophe exec $term_exec -D ~/notes nvim ~/notes/scratchpad.md
+    $mod+slash reload
+    $mod+$mod2+slash exec $term_exec -D /etc/nixos nvim
     $mod+q kill
     $mod+$mod2+q exec $lock
     $mod+$mod3+q exec systemctl suspend
