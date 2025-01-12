@@ -1,7 +1,7 @@
 set {
     $term foot
     # size is chosen s.t. nvim buffer is 80x24
-    $term_exec foot -a foot-float -W 88x28
+    $term_float foot -a foot-float -W 88x28
     $menu bemenu -i --fn "Hack Nerd Font 16" -l 5
     $bookdir ~/books
     $books pkill wmenu || swaymsg exec "echo \"$(cd $bookdir && fd -t f | $menu -p read -l 20)\" | xargs -rI{} zathura '$bookdir/{}'"
