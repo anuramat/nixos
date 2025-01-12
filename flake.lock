@@ -402,11 +402,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1736249969,
-        "narHash": "sha256-0Ee4Y2J4qbREwi/Q+TYnbMVAL8AsIfg3sQjx1PfSTJ4=",
+        "lastModified": 1736518272,
+        "narHash": "sha256-bRKTWWQrWZ0LEq6X4uwG6bDXhVacZydUAooFpnJifM8=",
         "owner": "anuramat",
         "repo": "subcat",
-        "rev": "642da0a7dbbe6b96982fa132c35b87a156ae008e",
+        "rev": "35815913e9e62575ee216e6561ff222a8b7f990b",
         "type": "github"
       },
       "original": {
