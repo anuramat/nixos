@@ -20,8 +20,6 @@ __wallust_wrapped() {
 		makoctl reload
 	)
 
-	# BUG reload somehow fucks up the terminal, sleep somehow helps
-	# probably keyd causes problems
-	sleep 0.03
+	# BUG keys get stuck on reload, might wanna report
 	swaymsg reload
 }

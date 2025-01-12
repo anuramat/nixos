@@ -23,7 +23,7 @@ set {
 floating_modifier $mod normal
 $bind {
     $mod+semicolon exec $term
-    $mod+apostrophe exec $term_exec nvim
+    $mod+apostrophe exec $term_exec --working-directory ~/notes --app-id foot-float nvim ~/notes/scratchpad.md
     $mod+slash reload; exec notify-send "Sway configuration reloaded" -e -t 2000 -u critical
     $mod+q kill
     $mod+$mod2+q exec $lock
