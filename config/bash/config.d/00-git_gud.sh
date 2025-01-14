@@ -67,6 +67,7 @@ gsync() {
 
 # fetch and show status of all repos
 gcheck() {
+	fetch="$1"
 	# repos are taken from ghq and hardcoded array
 	local root=$(ghq root)
 	local dirty
@@ -75,9 +76,13 @@ gcheck() {
 		while IFS= read -r -d '' path; do
 			(
 				cd "$path" || return
+
+				[ -n "$fetch" ] && git fetch
+
 				prompt=$(_git_prompt hide_clean)
 				[ -z "$prompt" ] && return
 				prompt="$(tput setaf 1)$prompt$(tput sgr0)"
+
 				printf '\t%s\n' "${path:prefix_length} $prompt" && return
 			)
 		done
@@ -104,7 +109,7 @@ __gpush() {
 		}
 	done
 	[ -z "$ok" ] && {
-		echo "illegal directory"
+		echo "illegal directory" >&2
 		return 1
 	}
 	git add .
@@ -120,7 +125,11 @@ gpush() {
 			__gpush
 			return
 			;;
-		*) ;;
+		"") ;;
+		*)
+			echo "illegal argument" >&2
+			return 1
+			;;
 	esac
 
 	[ "${1:-all}" != "all" ] && {
@@ -148,11 +157,11 @@ gcreate() {
 	[ -n "$2" ] && visibility=$2
 
 	path=$(ghq create "$name") || {
-		echo "Couldn't create the repo"
+		echo "couldn't create the repo" >&2
 		return 1
 	}
 	cd "$path" || {
-		echo "Couldn't cd"
+		echo "couldn't cd" >&2
 		return 1
 	}
 	git commit --allow-empty -m "init"
