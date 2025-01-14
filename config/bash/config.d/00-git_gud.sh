@@ -80,15 +80,15 @@ gcheck() {
 		[ -n "$fetch" ] && git fetch
 
 		prompt=$(_git_prompt 1)
-		[ -z "$prompt" ] && return
+		[ -n "$prompt" ] || return
 		prompt="$(tput setaf 1)$prompt$(tput sgr0)"
 
-		printf '\t%s\n' "${path:prefix_length} $prompt" && return
+		printf '\t%s\n' "${path:prefix_length} $prompt"
 	}
 	dirty=$(
 		export -f get_dirty _git_prompt
-		printf '%s\0' "${__free_repos[@]}" | xargs -0 -P 0 -I {} bash -c "get_dirty '$fetch' ${#__free_repos} {}" | LC_ALL=C sort
-		ghq list -p | xargs -P 0 -I {} bash -c "get_dirty '$fetch' 0 {}" | LC_ALL=C sort
+		printf '%s\0' "${__free_repos[@]}" | xargs -0 -P 0 -I {} bash -c "get_dirty '$fetch' 0 {}" | LC_ALL=C sort
+		ghq list -p | xargs -P 0 -I {} bash -c "get_dirty '$fetch' $((${#root} + 1)) {}" | LC_ALL=C sort
 	)
 	[ -z "$dirty" ] && {
 		echo "all clean!"
