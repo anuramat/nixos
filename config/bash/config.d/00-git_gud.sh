@@ -67,7 +67,7 @@ gsync() {
 
 # fetch/pull and show status of all repos
 gcheck() {
-	pull="$1"
+	local pull="$1"
 	# repos are taken from ghq and hardcoded array
 	local root=$(ghq root)
 
