@@ -376,6 +376,7 @@
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "subcat": "subcat",
+        "templates": "templates",
         "wallust": "wallust",
         "zen-browser": "zen-browser"
       }
@@ -412,6 +413,21 @@
       "original": {
         "owner": "anuramat",
         "repo": "subcat",
+        "type": "github"
+      }
+    },
+    "templates": {
+      "locked": {
+        "lastModified": 1734897514,
+        "narHash": "sha256-IrCUHvEdV3lzLD1D7JUxxI3xZoeNq/gPACoq25vpHtw=",
+        "owner": "nix-community",
+        "repo": "templates",
+        "rev": "71b9b0879720defb2d17288ac09bf3d3a9b10085",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "templates",
         "type": "github"
       }
     },
