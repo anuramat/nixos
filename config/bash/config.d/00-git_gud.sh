@@ -65,19 +65,23 @@ gsync() {
 	git pull
 }
 
-# fetch and show status of all repos
+# fetch/pull and show status of all repos
 gcheck() {
-	fetch="$1"
+	pull="$1"
 	# repos are taken from ghq and hardcoded array
 	local root=$(ghq root)
+
+	# TODO maybe show progress using subcat
 	# shellcheck disable=SC2317
 	get_dirty() {
-		local fetch="$1"
+		local pull="$1"
 		local prefix_length="$2"
 		local path="$3"
 		cd "$path" || return
 
-		[ -n "$fetch" ] && git fetch
+		[ -n "$pull" ] && {
+			git pull --ff-only &> /dev/null
+		}
 
 		prompt=$(_git_prompt 1)
 		[ -n "$prompt" ] || return
@@ -85,10 +89,11 @@ gcheck() {
 
 		printf '\t%s\n' "${path:prefix_length} $prompt"
 	}
+
 	dirty=$(
 		export -f get_dirty _git_prompt
-		printf '%s\0' "${__free_repos[@]}" | xargs -0 -P 0 -I {} bash -c "get_dirty '$fetch' 0 {}" | LC_ALL=C sort
-		ghq list -p | xargs -P 0 -I {} bash -c "get_dirty '$fetch' $((${#root} + 1)) {}" | LC_ALL=C sort
+		printf '%s\0' "${__free_repos[@]}" | xargs -0 -P 0 -I {} bash -c "get_dirty '$pull' 0 {}" | LC_ALL=C sort
+		ghq list -p | xargs -P 0 -I {} bash -c "get_dirty '$pull' $((${#root} + 1)) {}" | LC_ALL=C sort
 	)
 	[ -z "$dirty" ] && {
 		echo "all clean!"
