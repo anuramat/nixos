@@ -49,6 +49,7 @@
     v4l-utils
 
     # network {{{1
+    aircrack-ng
     mtr # net diagnostics
     dig # dns utils
     gsocket # get shit through nat

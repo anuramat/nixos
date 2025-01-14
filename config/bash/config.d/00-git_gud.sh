@@ -65,7 +65,7 @@ gsync() {
 	git pull
 }
 
-# check if ghq/personal repos are pushed
+# show status of repositories
 gcheck() {
 	local root=$(ghq root)
 	local dirty
@@ -74,6 +74,8 @@ gcheck() {
 		while IFS= read -r -d '' path; do
 			(
 				cd "$path" || return
+				# git fetch
+				# branch=$(git status --porcelain=v2 --branch | grep -oP '(?<=^# branch.head ).*')
 				[ -z "$(git status --porcelain)" ] && [ -z "$(git cherry)" ] && return
 				[ -n "$prefix_length" ] && printf '\t%s\n' "${path:prefix_length}" && return
 				printf '\t%s\n' "$(basename "$path")"
@@ -157,4 +159,59 @@ gcreate() {
 	gh repo create "--$visibility" --disable-issues --disable-wiki --push --source "$path"
 	gh repo set-default
 	gh repo edit --enable-projects=false
+}
+
+_git_prompt() {
+	local bare
+	bare=$(git rev-parse --is-bare-repository 2> /dev/null) || return # we're not in a repo
+	local result
+	if [ "$bare" = 'true' ]; then
+		result+='bare'
+	else
+		local -r raw=$(git status --porcelain=v2 --show-stash --branch)
+
+		# branch/commit
+		local branch
+		local commit
+		branch=$(echo "$raw" | grep -oP '(?<=^# branch.head ).*') && {
+			if [ "$branch" = '(detached)' ]; then
+				branch=''
+				commit=$(printf %.7s "$(echo "$raw" | grep -oP '(?<=^# branch.oid ).*')")
+			fi
+		}
+
+		# status
+		local status
+		{
+			# returns a string with unique XY status codes
+			# '3 1' - staging, '4 1' - work tree, '3 2' - both
+			chars() {
+				# TODO awk stuff is gpt, check
+				echo "$raw" | grep '^[12]' | awk -v pos="$1" -v num="$2" '{printf substr($0, pos, num)}' \
+					| sed 's/[. #]//g' | fold -w1 | LC_ALL=C sort -u | tr -d '\n'
+			}
+
+			# XY codes from staging area (index)
+			status+=$(chars 3 1)
+
+			# dirty work tree
+			[ -n "$(chars 4 1)" ] && status+='+'
+
+			# untracked files
+			echo "$raw" | grep -q '^?' && status+="?"
+		}
+
+		local desync
+		[ -n "$url" ] && [ -n "$branch" ] && {
+			# behind
+			[ -n "$(git cherry "$branch" origin 2> /dev/null)" ] && desync+='<'
+			# ahead
+			[ -n "$(git cherry 2> /dev/null)" ] && desync+='>'
+		}
+
+		local -r stash=$(echo "$raw" | grep -oP '(?<=^# stash )\d+')
+
+		printf %s "${branch:-$commit}${status:+ $status}${desync:+ $desync}${stash:+ \$$stash}"
+	fi
+	tput sgr0
 }
