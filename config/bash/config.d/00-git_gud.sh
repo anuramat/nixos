@@ -65,8 +65,9 @@ gsync() {
 	git pull
 }
 
-# show status of repositories
+# fetch and show status of all repos
 gcheck() {
+	# repos are taken from ghq and hardcoded array
 	local root=$(ghq root)
 	local dirty
 	get_dirty() {
@@ -74,16 +75,15 @@ gcheck() {
 		while IFS= read -r -d '' path; do
 			(
 				cd "$path" || return
-				# git fetch
-				# branch=$(git status --porcelain=v2 --branch | grep -oP '(?<=^# branch.head ).*')
-				[ -z "$(git status --porcelain)" ] && [ -z "$(git cherry)" ] && return
-				[ -n "$prefix_length" ] && printf '\t%s\n' "${path:prefix_length}" && return
-				printf '\t%s\n' "$(basename "$path")"
+				prompt=$(_git_prompt hide_clean)
+				[ -z "$prompt" ] && return
+				prompt="$(tput setaf 1)$prompt$(tput sgr0)"
+				printf '\t%s\n' "${path:prefix_length} $prompt" && return
 			)
 		done
 	}
 	dirty=$(
-		printf '%s\0' "${__free_repos[@]}" | get_dirty
+		printf '%s\0' "${__free_repos[@]}" | get_dirty 0
 		ghq list -p | tr '\n' '\0' | get_dirty ${#root}
 	)
 	[ -z "$dirty" ] && {
@@ -162,6 +162,12 @@ gcreate() {
 }
 
 _git_prompt() {
+	local -r hide_clean=$1
+	[ -n "$hide_clean" ] && [ "$hide_clean" != "hide_clean" ] && {
+		echo "Wrong argument to git prompt" >&2
+		return 1
+	}
+
 	local bare
 	bare=$(git rev-parse --is-bare-repository 2> /dev/null) || return # we're not in a repo
 	local result
@@ -171,14 +177,11 @@ _git_prompt() {
 		local -r raw=$(git status --porcelain=v2 --show-stash --branch)
 
 		# branch/commit
-		local branch
-		local commit
-		branch=$(echo "$raw" | grep -oP '(?<=^# branch.head ).*') && {
-			if [ "$branch" = '(detached)' ]; then
-				branch=''
-				commit=$(printf %.7s "$(echo "$raw" | grep -oP '(?<=^# branch.oid ).*')")
-			fi
-		}
+		local branch=$(echo "$raw" | grep -oP '(?<=^# branch.head ).*')
+		if [ "$branch" = '(detached)' ]; then
+			branch=''
+			local commit=$(printf %.7s "$(echo "$raw" | grep -oP '(?<=^# branch.oid ).*')")
+		fi
 
 		# status
 		local status
@@ -211,7 +214,8 @@ _git_prompt() {
 
 		local -r stash=$(echo "$raw" | grep -oP '(?<=^# stash )\d+')
 
-		printf %s "${branch:-$commit}${status:+ $status}${desync:+ $desync}${stash:+ \$$stash}"
+		result=$(printf %s "${branch:-$commit}${status:+ $status}${desync:+ $desync}${stash:+ \$$stash}")
+		[ -n "$hide_clean" ] && [ "$result" = "$branch" ] && return
+		printf %s "$result"
 	fi
-	tput sgr0
 }
