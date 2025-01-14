@@ -209,13 +209,10 @@ _git_prompt() {
 		}
 
 		local desync
-		local upstream=$(echo "$raw" | grep -oP '(?<=^# branch.upstream ).*')
-		[ -n "$upstream" ] && [ -n "$branch" ] && {
-			# behind
-			[ -n "$(git cherry "$branch" "$upstream" 2> /dev/null)" ] && desync+='<'
-			# ahead
-			[ -n "$(git cherry 2> /dev/null)" ] && desync+='>'
-		}
+		# behind
+		[ -n "$(git cherry @ "@{push}" 2> /dev/null)" ] && desync+='<'
+		# ahead
+		[ -n "$(git cherry "@{u}" @ 2> /dev/null)" ] && desync+='>'
 
 		local -r stash=$(echo "$raw" | grep -oP '(?<=^# stash )\d+')
 
