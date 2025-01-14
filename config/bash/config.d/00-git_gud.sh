@@ -70,26 +70,25 @@ gcheck() {
 	fetch="$1"
 	# repos are taken from ghq and hardcoded array
 	local root=$(ghq root)
-	local dirty
+	# shellcheck disable=SC2317
 	get_dirty() {
-		local prefix_length="$1"
-		while IFS= read -r -d '' path; do
-			(
-				cd "$path" || return
+		local fetch="$1"
+		local prefix_length="$2"
+		local path="$3"
+		cd "$path" || return
 
-				[ -n "$fetch" ] && git fetch
+		[ -n "$fetch" ] && git fetch
 
-				prompt=$(_git_prompt hide_clean)
-				[ -z "$prompt" ] && return
-				prompt="$(tput setaf 1)$prompt$(tput sgr0)"
+		prompt=$(_git_prompt 1)
+		[ -z "$prompt" ] && return
+		prompt="$(tput setaf 1)$prompt$(tput sgr0)"
 
-				printf '\t%s\n' "${path:prefix_length} $prompt" && return
-			)
-		done
+		printf '\t%s\n' "${path:prefix_length} $prompt" && return
 	}
 	dirty=$(
-		printf '%s\0' "${__free_repos[@]}" | get_dirty 0
-		ghq list -p | tr '\n' '\0' | get_dirty ${#root}
+		export -f get_dirty _git_prompt
+		printf '%s\0' "${__free_repos[@]}" | xargs -0 -P 0 -I {} bash -c "get_dirty '$fetch' ${#__free_repos} {}" | LC_ALL=C sort
+		ghq list -p | xargs -P 0 -I {} bash -c "get_dirty '$fetch' 0 {}" | LC_ALL=C sort
 	)
 	[ -z "$dirty" ] && {
 		echo "all clean!"
@@ -172,10 +171,6 @@ gcreate() {
 
 _git_prompt() {
 	local -r hide_clean=$1
-	[ -n "$hide_clean" ] && [ "$hide_clean" != "hide_clean" ] && {
-		echo "Wrong argument to git prompt" >&2
-		return 1
-	}
 
 	local bare
 	bare=$(git rev-parse --is-bare-repository 2> /dev/null) || return # we're not in a repo
@@ -214,9 +209,10 @@ _git_prompt() {
 		}
 
 		local desync
-		[ -n "$url" ] && [ -n "$branch" ] && {
+		local upstream=$(echo "$raw" | grep -oP '(?<=^# branch.upstream ).*')
+		[ -n "$upstream" ] && [ -n "$branch" ] && {
 			# behind
-			[ -n "$(git cherry "$branch" origin 2> /dev/null)" ] && desync+='<'
+			[ -n "$(git cherry "$branch" "$upstream" 2> /dev/null)" ] && desync+='<'
 			# ahead
 			[ -n "$(git cherry 2> /dev/null)" ] && desync+='>'
 		}
