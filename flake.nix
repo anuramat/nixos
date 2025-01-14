@@ -5,6 +5,7 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
+    templates.url = "github:nix-community/templates";
     zen-browser.url = "github:MarceColl/zen-browser-flake";
     wallust.url = "git+https://codeberg.org/explosion-mental/wallust?ref=master";
     subcat.url = "github:anuramat/subcat";
