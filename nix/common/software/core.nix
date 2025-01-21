@@ -111,6 +111,13 @@
     age # file encryption
     virtualbox
     wine
+    felix-fm
+    joshuto
+    lf
+    nnn
+    ranger
+    xplr
+    yazi
     aria # downloader
     banner
     unstable.croc # send/receive files through relay with encryption
@@ -174,8 +181,8 @@
     nomacs # image viewer # TODO remove?
     xfig # vector graphics, old as FUCK
     swayimg # image viewer
-    chafa # shat its pants but somehow popular? used by fzf-lua
-    timg # sixel, kitty, iterm2, unicode half blocks
+    chafa # sixel, kitty, iterm2, unicode
+    timg # sixel, kitty, iterm2, unicode
     ueberzugpp # terminal images + native overlay
     unstable.lsix # sixel ls
 
