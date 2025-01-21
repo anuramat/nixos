@@ -97,5 +97,13 @@ exer_dl() {
 		| rg "/tracks/$lang/exercises/([\w-]+\w)" -r '$1' -o \
 		| xargs -n 1 -P 10 -I{} sh -c "exercism download --track $lang --force  --exercise {} || true"
 }
+y() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	yazi "$@" --cwd-file="$tmp"
+	if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+		builtin cd -- "$cwd" || return
+	fi
+	rm -f -- "$tmp"
+}
 
 # vim: fdl=0
