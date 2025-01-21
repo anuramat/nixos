@@ -29,6 +29,7 @@
     bemenu # slightly better
     j4-dmenu-desktop # .desktop wrapper for dmenus
     xdg-utils # xdg-open etc
+    gtk3 # gtk-launch - starts an app by name of the desktop file
     xdragon # drag and drop from terminal
 
     # Terminal helpers {{{1

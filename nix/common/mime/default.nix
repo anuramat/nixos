@@ -8,13 +8,11 @@ let
       }) types
     ));
 
-  # browser = "google-chrome.desktop";
-  # browser = "firefox.desktop";
   browser = "zen.desktop";
-  fileManager = "nnn.desktop";
+  fileManager = "yazi.desktop";
   documentViewer = "org.pwmt.zathura.desktop";
   textEditor = "nvim.desktop";
-  imageViewer = "org.nomacs.ImageLounge.desktop";
+  imageViewer = "swayimg.desktop";
   torrentClient = "transmission-gtk.desktop";
   videoPlayer = "mpv.desktop";
 in
