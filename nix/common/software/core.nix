@@ -111,13 +111,12 @@
     age # file encryption
     virtualbox
     wine
-    felix-fm
-    joshuto
-    lf
-    nnn
-    ranger
-    xplr
-    yazi
+
+    yazi # big
+    felix-fm # smallest, image previews, waiting for picker: <https://github.com/kyoheiu/felix/issues/261>
+    nnn # small, simple, ubiquitous
+    xplr # small, hackable/lua, plugins, hard -- no time for this shit
+
     aria # downloader
     banner
     unstable.croc # send/receive files through relay with encryption
