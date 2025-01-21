@@ -112,10 +112,10 @@
     virtualbox
     wine
 
-    yazi # big
+    yazi # big, simple, hackable/lua
     felix-fm # smallest, image previews, waiting for picker: <https://github.com/kyoheiu/felix/issues/261>
-    nnn # small, simple, ubiquitous
-    xplr # small, hackable/lua, plugins, hard -- no time for this shit
+    nnn # small, simple, ubiquitous -- [q, hjkl, 1234, /, ?]
+    vifm
 
     aria # downloader
     banner
