@@ -25,3 +25,5 @@ node_modules/
 # pytorch lightning
 *.ckpt
 lightning_logs
+# notes
+*.pdf
