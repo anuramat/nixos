@@ -5,8 +5,10 @@ XDG_DOCUMENTS_DIR="$HOME/docs/"
 XDG_PICTURES_DIR="$HOME/img/"
 XDG_VIDEOS_DIR="$HOME/vid/"
 
-# make remote shells obey the fucking rules
-# TODO I forgor why we need this
+# ssh sessions are hardcoded to source bashrc
+# which is a problem when it's actually not an interactive session
+# PS1 is hardcoded to be unset in non-interactive sessions
+# <https://www.gnu.org/software/bash/manual/bash.html#Is-this-Shell-Interactive_003f>
 [ -z "$PS1" ] && return
 
 shopt -s globstar # enables **
