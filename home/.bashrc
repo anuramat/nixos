@@ -6,6 +6,7 @@ XDG_PICTURES_DIR="$HOME/img/"
 XDG_VIDEOS_DIR="$HOME/vid/"
 
 # make remote shells obey the fucking rules
+# TODO I forgor why we need this
 [ -z "$PS1" ] && return
 
 shopt -s globstar # enables **
@@ -14,10 +15,6 @@ set +H            # turn off ! history bullshit
 # shellcheck source=config/bash/xdg_shims.sh
 source "$XDG_CONFIG_HOME/bash/xdg_shims.sh"
 for f in "$XDG_CONFIG_HOME"/bash/config.d/*; do source "$f"; done
-
-# TODO do I need it? foot is styled already via templates
-# # color rice:
-# [ -z "$SSH_CLIENT" ] && [ -z "$SSH_TTY" ] && [[ $TERM != foot ]] && (cat ~/.cache/wallust/sequences &)
 
 alias repl="nixos-rebuild repl"
 alias f="nvim"
