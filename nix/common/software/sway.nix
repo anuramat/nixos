@@ -27,6 +27,7 @@
     swaylock # lockscreen
     udiskie # userspace frontend for udisk2
     waybar # status bar
+    waypipe # gui forwarding
     wl-clip-persist # otherwise clipboard contents disappear on exit
     wl-clipboard # wl-copy/wl-paste: copy from stdin/paste to stdout
     wl-mirror # screen mirroring
