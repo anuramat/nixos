@@ -13,7 +13,9 @@ function! ToggleQuickFix()
         cclose
     endif
 endfunction
-nn <silent> <leader>q :call ToggleQuickFix()<cr>
+nn <leader>q <cmd>call ToggleQuickFix()<cr>
+nn <m-j> <cmd>cnext<cr>
+nn <m-k> <cmd>cprev<cr>
 
 " formatting {{{1
 se shiftround shiftwidth=0 expandtab tabstop=2

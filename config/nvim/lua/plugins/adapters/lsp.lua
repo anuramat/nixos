@@ -20,27 +20,28 @@ local configs = function()
   return {
     -- supports options, packages
     -- and fucking crashes nvim half the time
-    -- nixd = {
-    --   cmd = { 'nixd', '--inlay-hints=false' },
-    --   settings = {
-    --     nixd = {
-    --       options = {
-    --         -- keys don't matter
-    --         nixos = {
-    --           expr = string.format(
-    --             '(builtins.getFlake "/etc/nixos/").nixosConfigurations.%s.options',
-    --             vim.fn.hostname()
-    --           ),
-    --         },
-    --       },
-    --       diagnostic = {
-    --         suppress = {},
-    --       },
-    --     },
-    --   },
-    -- },
-    nil_ls = {}, -- nice code actions
+    nixd = {
+      cmd = { 'nixd', '--inlay-hints=false' },
+      settings = {
+        nixd = {
+          options = {
+            -- keys don't matter
+            nixos = {
+              expr = string.format(
+                '(builtins.getFlake "/etc/nixos/").nixosConfigurations.%s.options',
+                vim.fn.hostname()
+              ),
+            },
+          },
+          diagnostic = {
+            suppress = {},
+          },
+        },
+      },
+    },
+    -- nil_ls = {}, -- nice code actions
     yamlls = {
+      -- natively supports schema store
       -- we can use schemastore plugin if we need more logic
       -- eg replacements or custom schemas
     },
