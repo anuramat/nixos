@@ -27,3 +27,9 @@ node_modules/
 lightning_logs
 # notes
 *.pdf
+
+# latex temp stuff
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
