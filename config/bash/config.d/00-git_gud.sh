@@ -181,15 +181,16 @@ _git_prompt() {
 	bare=$(git rev-parse --is-bare-repository 2> /dev/null) || return # we're not in a repo
 	local result
 	if [ "$bare" = 'true' ]; then
-		result+='bare'
+		result='bare'
 	else
 		local -r raw=$(git status --porcelain=v2 --show-stash --branch)
 
 		# branch/commit
 		local branch=$(echo "$raw" | grep -oP '(?<=^# branch.head ).*')
+		local commit
 		if [ "$branch" = '(detached)' ]; then
 			branch=''
-			local commit=$(printf %.7s "$(echo "$raw" | grep -oP '(?<=^# branch.oid ).*')")
+			commit=$(printf %.7s "$(echo "$raw" | grep -oP '(?<=^# branch.oid ).*')")
 		fi
 
 		# status
@@ -223,6 +224,6 @@ _git_prompt() {
 
 		result=$(printf %s "${branch:-$commit}${status:+ $status}${desync:+ $desync}${stash:+ \$$stash}")
 		[ -n "$hide_clean" ] && [ "$result" = "$branch" ] && return
-		printf %s "$result"
 	fi
+	printf %s "$result"
 }
