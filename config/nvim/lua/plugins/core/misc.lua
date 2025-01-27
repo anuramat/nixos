@@ -285,7 +285,6 @@ return {
   {
     'folke/flash.nvim',
     event = 'VeryLazy',
-    enabled = false, -- TODO reenable with new hotkeys that don't conflict with surround
     opts = {
       modes = {
         char = {
@@ -305,7 +304,7 @@ return {
     },
     keys = {
       {
-        's',
+        '<leader>r',
         mode = 'n',
         function()
           require('flash').jump()
@@ -344,7 +343,7 @@ return {
       },
     },
   },
-  -- native comments ++
+  -- improves native comments
   {
     'folke/ts-comments.nvim',
     opts = {},
