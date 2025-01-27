@@ -1,2 +1,1 @@
-setl noet
-setl ts=4
+setl noet ts=4

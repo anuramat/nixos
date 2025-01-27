@@ -1,2 +1,2 @@
-se fo< 
-se ts=4 noet
+setl fo< 
+setl ts=4 noet

@@ -1,6 +1,1 @@
-se cole=0
-se cc=+1
-se commentstring=<!--%s-->
-se formatoptions-=w
-se shiftwidth=0
-se tabstop=2
+setl cole=0 cc=+1 formatoptions-=w shiftwidth=0 tabstop=2
