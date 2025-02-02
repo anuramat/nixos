@@ -18,6 +18,9 @@ return {
       },
       indent = {
         enable = true,
+        disable = {
+          'markdown', -- to make `gq` properly wrap lists
+        },
       },
       ensure_installed = false, -- install missing parsers on launch
       auto_install = true, -- install corresponding parser on buffer enter
