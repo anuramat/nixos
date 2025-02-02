@@ -11,7 +11,7 @@
     inputs.zen-browser.packages.${pkgs.system}.specific
     tor-browser-bundle-bin
     unstable.firefox
-    unstable.google-chrome
+    google-chrome
 
     # Terminals {{{1
     cool-retro-term
