@@ -3,7 +3,7 @@
 # TODO move this shit
 
 # eza
-export EZACMD="eza --group-directories-first --group --header --git --icons=always --color=always --color-scale=all --sort=time"
+export EZACMD="eza --group-directories-first --group --header --git --icons=always --color=always --color-scale=all --sort=name"
 if command -v "eza" &> /dev/null; then
 	# config file implementation is in progress:
 	# https://github.com/eza-community/eza/issues/897
