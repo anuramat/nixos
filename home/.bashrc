@@ -49,7 +49,7 @@ random() {
 }
 z() {
 	# uhhh TODO unugly
-	zathura "$1" &> /dev/null &
+	zathura "$@" &> /dev/null &
 	disown
 }
 take() {
