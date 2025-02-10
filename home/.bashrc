@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-XDG_DOWNLOAD_DIR="$HOME/dl/"
-XDG_DOCUMENTS_DIR="$HOME/docs/"
-XDG_PICTURES_DIR="$HOME/img/"
-XDG_VIDEOS_DIR="$HOME/vid/"
+export XDG_DOWNLOAD_DIR="$HOME/dl/"
+export XDG_DOCUMENTS_DIR="$HOME/docs/"
+export XDG_PICTURES_DIR="$HOME/img/"
+export XDG_VIDEOS_DIR="$HOME/vid/"
 
 # ssh sessions are hardcoded to source bashrc
 # which is a problem when it's actually not an interactive session
