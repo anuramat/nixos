@@ -11,36 +11,53 @@ local M = {}
 --- @field lhs_prefix string Prefix to add to mappings
 --- @field desc_prefix string Prefix to add to description
 --- @field cmd_prefix string|nil !nil => rhs -> '<cmd>'..prefix..rhs..'<cr>'
---- @field wrapped any[]? Passthrough keys, to be appended as is
+--- @field ft (string|string[])? !nil => rhs -> '<cmd>'..prefix..rhs..'<cr>'
+--- @field wrapped any[]? Keys that shouldn't be prefixed
 
 --- Wraps lazy specs
---- @param keys lazy_keys[] Lazy.nvim key spec without prefixes
+--- @param unwrapped lazy_keys[] Lazy.nvim key spec without prefixes
 --- @param opts wrap_opts
 --- @return lazy_keys[] keys Lazy.nvim keymap spec with prefixes
-function M.wrap_lazy_keys(keys, opts)
-  for k = 1, #keys do
-    local rhs = keys[k][2]
+function M.wrap_lazy_keys(unwrapped, opts)
+  local wrap = function(keys, wrapped)
+    for k = 1, #keys do
+      local rhs = keys[k][2]
 
-    -- add key prefix
-    keys[k][1] = opts.lhs_prefix .. keys[k][1]
+      -- add key prefix
+      if not wrapped then
+        keys[k][1] = opts.lhs_prefix .. keys[k][1]
+      end
 
-    -- set fallback desc
-    if keys[k].desc == nil and type(rhs) == 'string' then
-      keys[k].desc = rhs
+      -- set fallback desc
+      if keys[k].desc == nil and type(rhs) == 'string' then
+        keys[k].desc = rhs
+      end
+
+      -- add desc prefix
+      keys[k].desc = opts.desc_prefix .. keys[k].desc
+
+      -- wrap cmd
+      if type(rhs) == 'string' and type(opts.cmd_prefix) == 'string' then
+        keys[k][2] = '<cmd>' .. opts.cmd_prefix .. rhs .. '<cr>'
+      end
+
+      -- set ft
+      if type(opts.ft) ~= 'nil' then
+        keys[k].ft = opts.ft
+      end
     end
 
-    -- add desc prefix
-    keys[k].desc = opts.desc_prefix .. keys[k].desc
-
-    -- wrap cmd
-    if type(rhs) == 'string' and type(opts.cmd_prefix) == 'string' then
-      keys[k][2] = '<cmd>' .. opts.cmd_prefix .. rhs .. '<cr>'
-    end
+    return keys
   end
+
+  unwrapped = wrap(unwrapped, false)
+
   if type(opts.wrapped) ~= 'nil' then
-    return M.join(keys, opts.wrapped) -- TODO: add desc prefix to wrapped keys too, adapt existing calls
+    opts.wrapped = wrap(opts.wrapped, false)
+    return M.join(unwrapped, opts.wrapped) -- TODO: since we added desc prefix to wrapped keys too, adapt existing calls
   end
-  return keys
+
+  return unwrapped
 end
 
 --- Concatenates two lists

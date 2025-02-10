@@ -14,6 +14,26 @@ return {
       'nvim-treesitter/nvim-treesitter',
     },
     opts = {},
+    keys = u.wrap_lazy_keys({
+      {
+        'o',
+        function()
+          require('otter').activate()
+        end,
+        desc = 'activate',
+      },
+      {
+        'O',
+        function()
+          require('otter').deactivate()
+        end,
+        desc = 'deactivate',
+      },
+    }, {
+      desc_prefix = 'otter: ',
+      lhs_prefix = '<localleader>',
+      ft = { 'markdown', 'quarto' },
+    }),
   },
   {
     'MeanderingProgrammer/render-markdown.nvim',
@@ -64,8 +84,7 @@ return {
         default_method = 'molten',
       },
     },
-
-    keymaps = u.wrap_lazy_keys({
+    keys = u.wrap_lazy_keys({
       {
         'c',
         function()
@@ -97,6 +116,7 @@ return {
     }, {
       lhs_prefix = '<localleader>r',
       desc_prefix = 'quarto: ',
+      ft = { 'markdown', 'quarto' },
       wrapped = {
         {
           '<localleader>r',
@@ -104,16 +124,7 @@ return {
             require('quarto.runner').run_range()
           end,
           mode = 'v',
-          desc = 'quarto: run range',
-        },
-        {
-          '<localleader>o',
-          function()
-            require('otter').activate()
-            require('quarto').activate()
-          end,
-          -- silent = 'true'
-          desc = 'activate otter and quarto',
+          desc = 'run range',
         },
       },
     }),
