@@ -99,6 +99,15 @@ local fileformat = {
   color = error_color,
 }
 
+local molten = {
+  function()
+    return require('molten.status').initialized()
+  end,
+  cond = function()
+    return require('molten.status').initialized() ~= ''
+  end,
+}
+
 -- }}}
 
 return {
@@ -144,6 +153,7 @@ return {
         },
         lualine_x = {
           dap_status,
+          molten,
         },
         lualine_y = { location },
         lualine_z = { progress },
