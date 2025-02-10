@@ -97,7 +97,14 @@ return {
         function()
           require('quarto.runner').run_above()
         end,
-        desc = 'run above',
+        desc = 'run all above including current one',
+      },
+      {
+        'b',
+        function()
+          require('quarto.runner').run_below()
+        end,
+        desc = 'run all below including current one',
       },
       {
         'A',
