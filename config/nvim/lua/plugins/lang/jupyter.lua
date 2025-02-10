@@ -1,18 +1,35 @@
 return {
+  -- {
+  --   'goerz/jupytext.nvim',
+  --   version = '0.2.0',
+  --   opts = {
+  --     format = 'py:light',
+  --   },
+  --   lazy = false,
+  -- },
   {
-    'goerz/jupytext.nvim',
-    version = '0.2.0',
+    'GCBallesteros/jupytext.nvim',
     opts = {
-      format = 'py:light',
+      style = 'markdown',
+      output_extension = 'md',
+      force_ft = 'markdown',
     },
     lazy = false,
   },
   {
-    'kiyoon/jupynium.nvim',
-    ft = 'python',
-    opts = {
-      python_host = 'python',
-      jupynium_file_pattern = { '*.ju.py' },
+    'benlubas/molten-nvim',
+    version = '^1.0.0', -- use version <2.0.0 to avoid breaking changes
+    build = ':UpdateRemotePlugins',
+    dependencies = {
+      '3rd/image.nvim',
+      'quarto-dev/quarto-nvim',
     },
+    init = function()
+      vim.g.molten_auto_open_output = false
+      vim.g.molten_image_provider = 'image.nvim'
+      vim.g.molten_wrap_output = true
+      vim.g.molten_virt_text_output = true
+      -- vim.g.molten_virt_lines_off_by_1 = true
+    end,
   },
 }

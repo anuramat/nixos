@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-export UNDISTRACT_TOLERANCE=5
+export UNDISTRACT_TOLERANCE=9999999 # TODO turn on once kitty is figured out
 
 __undistract_preexec() {
 	__last_command_start_time=$(date +%s)

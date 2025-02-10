@@ -24,10 +24,25 @@ in
 
         neovim = {
           enable = true;
-          package = unstable.neovim;
+          package = unstable.neovim-unwrapped;
           # inputs.neovim-nightly-overlay.packages.${pkgs.system}.default
           extraLuaPackages = ps: [ ps.magick ];
           extraPackages = [ pkgs.imagemagick ];
+          extraPython3Packages =
+            ps: with ps; [
+              pynvim
+              jupyter-client
+              cairosvg # for image rendering
+              pnglatex # for image rendering
+              plotly # for image rendering
+              pyperclip
+              ipython
+              nbformat
+            ];
+        };
+
+        kitty = {
+          enable = true;
         };
       };
     };

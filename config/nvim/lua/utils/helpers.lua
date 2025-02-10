@@ -38,7 +38,7 @@ function M.wrap_lazy_keys(keys, opts)
     end
   end
   if type(opts.wrapped) ~= 'nil' then
-    return M.join(keys, opts.wrapped)
+    return M.join(keys, opts.wrapped) -- TODO: add desc prefix to wrapped keys too, adapt existing calls
   end
   return keys
 end

@@ -82,8 +82,9 @@
     jq # json processor
     luajitPackages.luarocks
     markdown-link-check
-    python311Packages.nbdime
     pup # html
+    python311Packages.nbdime
+    python3Packages.jupytext
     tidy-viewer # csv viewer
     universal-ctags # maintained ctags
     yq # basic yaml, json, xml, csv, toml processor
