@@ -89,7 +89,7 @@ return {
           end,
           mode = 'i',
           silent = true,
-          desc = 'FzfLua: path completion',
+          desc = 'path completion',
         },
       },
     }),

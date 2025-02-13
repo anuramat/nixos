@@ -53,7 +53,7 @@ function M.wrap_lazy_keys(unwrapped, opts)
   unwrapped = wrap(unwrapped, false)
 
   if type(opts.wrapped) ~= 'nil' then
-    opts.wrapped = wrap(opts.wrapped, false)
+    opts.wrapped = wrap(opts.wrapped, true)
     return M.join(unwrapped, opts.wrapped) -- TODO: since we added desc prefix to wrapped keys too, adapt existing calls
   end
 
