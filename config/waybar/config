@@ -19,6 +19,7 @@
       "sway/mode",
     ],
     "modules-right": [
+      "sway/window",
       "tray",
       // "battery#internal",
       // "battery#external",
@@ -26,6 +27,9 @@
       "sway/language",
       "clock",
     ],
+    "sway/window": {
+      "icon": true
+    },
     "sway/workspaces": {
       "disable-scroll": true
     },
