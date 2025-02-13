@@ -4,12 +4,12 @@
 # output * background {{background}} solid_color
 # set both using swaybg
 
-#class                   bar_border     bar_bg         bar_text       tiling_indicator view_border
-client.focused           {{foreground}} {{foreground}} {{background}} {{color1}}       {{foreground}}
-client.focused_inactive  {{background}} {{background}} {{foreground}} {{background}}   {{background}}
-client.focused_tab_title {{foreground}} {{foreground}} {{background}} {{foreground}}   {{foreground}}
-client.unfocused         {{foreground}} {{background}} {{foreground}} {{background}}   {{background}}
-client.urgent            #FFFF00        #FFFF00        #000000        #FFFF00          #FFFF00
+#class                   bar_border     bar_bg                           bar_text                         tiling_indicator view_border
+client.focused           {{foreground}} {{foreground}}                   {{background}}                   {{color1}}       {{foreground}}
+client.focused_inactive  {{background}} {{foreground|blend(background)}} {{foreground}}                   {{background}}   {{background}}
+client.focused_tab_title {{foreground}} {{foreground}}                   {{background}}                   {{foreground}}   {{foreground}}
+client.unfocused         {{foreground}} {{background}}                   {{foreground|blend(background)}} {{background}}   {{background}}
+client.urgent            #FFFF00        #FFFF00                          #000000                          #FFFF00          #FFFF00
 
 # focused_inactive - most recently focused view within a container
 # focused_tab_title - a view that has focused descendant container; defaults to focused_inactive
