@@ -45,6 +45,10 @@
   };
 
   programs = {
+    appimage = {
+      enable = true;
+      binfmt = true;
+    };
     # gnome keyring frontend
     seahorse.enable = true;
     # adb
