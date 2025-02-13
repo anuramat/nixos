@@ -55,11 +55,6 @@ $bind {
     $mod+$mod2+$float_key floating toggle
     $mod+$scratchpad_key scratchpad show
     $mod+$mod2+$scratchpad_key move scratchpad
-    # Gaps {{{1
-    $mod+braceright gaps outer all plus 10
-    $mod+braceleft gaps outer all minus 10
-    $mod+bracketright gaps inner all plus 10
-    $mod+bracketleft gaps inner all minus 10
     # Notifications {{{1
     $mod+$notification_key exec $invoke_notificiation
     $mod+$mod2+$notification_key exec $dismiss_notification
