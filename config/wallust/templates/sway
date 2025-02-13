@@ -8,7 +8,7 @@
 client.focused           {{foreground}} {{foreground}} {{background}} {{color1}}       {{foreground}}
 client.focused_inactive  {{background}} {{background}} {{foreground}} {{background}}   {{background}}
 client.focused_tab_title {{foreground}} {{foreground}} {{background}} {{foreground}}   {{foreground}}
-client.unfocused         {{background}} {{background}} {{foreground}} {{background}}   {{background}}
+client.unfocused         {{foreground}} {{background}} {{foreground}} {{background}}   {{background}}
 client.urgent            #FFFF00        #FFFF00        #000000        #FFFF00          #FFFF00
 
 # focused_inactive - most recently focused view within a container
