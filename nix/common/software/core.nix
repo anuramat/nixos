@@ -174,7 +174,6 @@
     libwebp # tools for WebP image format
     exiftool # read/write EXIF metadata
     # mypaint # not-ms-paint # XXX broken
-    nomacs # image viewer # TODO remove?
     xfig # vector graphics, old as FUCK
     swayimg # image viewer
     chafa # sixel, kitty, iterm2, unicode
