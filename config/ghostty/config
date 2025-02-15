@@ -1,0 +1,9 @@
+config-file = ?generated-colors
+
+font-family = Hack Nerd Font
+font-size = 13
+
+cursor-style = block
+shell-integration-features = no-cursor
+resize-overlay = never
+window-decoration = false
