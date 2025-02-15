@@ -16,6 +16,8 @@
     # Terminals {{{1
     cool-retro-term
     foot
+    unstable.ghostty
+    unstable.wezterm
 
     # Settings {{{1
     ddcutil # configure external monitors (eg brightness)
