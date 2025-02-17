@@ -71,7 +71,7 @@ se cole=0
 se fcs=fold:\─,foldopen:,foldsep:\ ,foldclose:
 se foldtext=
 se laststatus=3 " show only one statusline
-se sbr=↪ list lcs=tab:├─,extends:❯,precedes:❮,trail:·,lead:·
+se sbr=↪ list lcs=tab:├─,extends:❯,precedes:❮,trail:·
 " i		jjdfsd
 au TextYankPost * silent! lua vim.highlight.on_yank()
 se number relativenumber

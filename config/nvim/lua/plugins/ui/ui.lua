@@ -73,29 +73,6 @@ return {
       },
     },
   },
-  -- indent-blankline.nvim
-  {
-    'lukas-reineke/indent-blankline.nvim',
-    dependencies = { 'nvim-treesitter/nvim-treesitter' },
-    event = 'VeryLazy',
-    main = 'ibl',
-    init = function()
-      vim.cmd([[se lcs+=lead:\ ]])
-    end,
-    opts = function()
-      return {
-        scope = {
-          show_start = false,
-          show_end = false,
-        },
-        exclude = {
-          filetypes = {
-            'lazy',
-          },
-        },
-      }
-    end,
-  },
   -- lightbulb - code action indicator
   {
     'kosayoda/nvim-lightbulb',

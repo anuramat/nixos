@@ -112,12 +112,6 @@ return {
       },
     },
   },
-  -- neogen - annotation generation
-  {
-    'danymat/neogen',
-    opts = {},
-    event = 'BufEnter',
-  },
   -- neotest
   {
     'nvim-neotest/neotest',
@@ -359,3 +353,6 @@ return {
     keys = {},
   },
 }
+
+-- annotation generation: <https://github.com/danymat/neogen>
+-- indentation <https://github.com/lukas-reineke/indent-blankline.nvim>
