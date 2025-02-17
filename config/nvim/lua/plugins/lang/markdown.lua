@@ -49,7 +49,6 @@ return {
     '3rd/image.nvim',
     -- TODO check if build and processor are required
     build = false,
-    lazy = false,
     opts = {
       backend = 'kitty',
       processor = 'magick_cli',
