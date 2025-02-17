@@ -49,3 +49,5 @@ local function molten()
     return ''
   end
 end
+
+return {}
