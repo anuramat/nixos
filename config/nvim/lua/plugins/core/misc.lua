@@ -10,12 +10,14 @@ return {
     },
     version = '*', -- on nightly - add `build = 'nix run .#build-plugin'`
     opts = {
-	cmdline = { keymap = {
+      cmdline = {
+        keymap = {
 
           preset = 'default',
           ['<tab>'] = { 'select_next', 'fallback' },
           ['<s-tab>'] = { 'select_prev', 'fallback' },
-  }, },
+        },
+      },
       keymap = {
         preset = 'default',
       },
@@ -119,7 +121,6 @@ return {
   -- neotest
   {
     'nvim-neotest/neotest',
-    lazy = false,
     dependencies = {
       'nvim-neotest/nvim-nio',
       'nvim-neotest/neotest-go', -- go

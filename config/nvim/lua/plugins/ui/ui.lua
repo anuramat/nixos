@@ -99,8 +99,7 @@ return {
   -- lightbulb - code action indicator
   {
     'kosayoda/nvim-lightbulb',
-    lazy = false,
-    -- event = 'LspAttach',
+    event = 'LspAttach',
     config = {
       autocmd = { enabled = true },
       code_lenses = true,
