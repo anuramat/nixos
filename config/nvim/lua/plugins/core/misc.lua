@@ -10,13 +10,14 @@ return {
     },
     version = '*', -- on nightly - add `build = 'nix run .#build-plugin'`
     opts = {
-      keymap = {
-        preset = 'default',
-        cmdline = {
+	cmdline = { keymap = {
+
           preset = 'default',
           ['<tab>'] = { 'select_next', 'fallback' },
           ['<s-tab>'] = { 'select_prev', 'fallback' },
-        },
+  }, },
+      keymap = {
+        preset = 'default',
       },
       completion = {
         documentation = { auto_show = true, auto_show_delay_ms = 500 },

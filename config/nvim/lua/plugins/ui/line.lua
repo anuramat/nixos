@@ -104,7 +104,9 @@ local molten = {
     return require('molten.status').initialized()
   end,
   cond = function()
-    return require('molten.status').initialized() ~= ''
+    return pcall(function()
+      require('molten')
+    end) and require('molten.status').initialized() ~= ''
   end,
 }
 
