@@ -30,7 +30,7 @@ return {
   -- nvim-colorizer.lua - highlights colors, eg #012345
   {
     'NvChad/nvim-colorizer.lua',
-    event = 'VeryLazy',
+    ft = { 'markdown', 'html', 'css' },
     opts = {},
   },
   -- vim-illuminate - highlights the word under cursor using LSP/TS/regex
