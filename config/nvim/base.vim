@@ -20,7 +20,6 @@ nn <m-k> <cmd>cprev<cr>
 " formatting {{{1
 se shiftround shiftwidth=0 expandtab tabstop=2
 se textwidth=80
-se nowrap
 se formatoptions=qj
 " q -- adds comment leader on format
 " r -- adds comment leader on newline
@@ -58,6 +57,7 @@ se mouse= " disable mouse
 " }}}
 
 " visuals {{{1
+se nowrap
 let g:matchparen_timeout=50
 let g:matchparen_insert_timeout=50
 " se mopt=wait:0,history:10000
