@@ -115,12 +115,6 @@ local molten = {
 return {
   'nvim-lualine/lualine.nvim',
   event = 'VeryLazy',
-  dependencies = {
-    {
-      'letieu/harpoon-lualine',
-      dependencies = 'ThePrimeagen/harpoon',
-    },
-  },
   opts = function()
     vim.o.showmode = false
 
@@ -138,7 +132,7 @@ return {
       tabline = {
         lualine_a = { cwd, git_branch },
         lualine_b = { tabs },
-        lualine_c = { 'harpoon2' },
+        lualine_c = {},
         lualine_x = {},
         lualine_y = {},
         lualine_z = { layout },
