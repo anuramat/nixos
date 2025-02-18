@@ -50,4 +50,6 @@ function m.molten()
   end
 end
 
+-- TODO add some of these after %= in stl in adhoc/stl or something
+
 return m
