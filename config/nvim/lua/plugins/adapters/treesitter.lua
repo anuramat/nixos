@@ -8,7 +8,7 @@ return {
       'nvim-treesitter/nvim-treesitter-textobjects',
       'nvim-treesitter/nvim-treesitter-context',
     },
-    build = ':se nomore | TSUpdateSync all',
+    build = ':echo "Updating treesitter" | se nomore | TSUpdateSync all',
     event = { 'BufReadPre', 'BufNewFile' },
     opts = {
       highlight = {
