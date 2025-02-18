@@ -140,16 +140,14 @@ augroup END
 se grepprg=rg\ --vimgrep
 se grepformat=%f:%l:%c:%m
 
-" statusline
 function! PathLine()
-  let cwd = printf('%s/', substitute(getcwd(), '^' . getenv('HOME'), '~', ''))
-  let filename = expand('%:.')
-  if filename[0] == '/'
-    let cwd = cwd . '; '
+  let center = expand('%:.')
+  let left = printf('%s/', substitute(getcwd(), '^' . getenv('HOME'), '~', ''))
+  if center[0] == '/'
+    let left = left . '; '
   endif
-  let pdded_fname_wdth=max([0,(winwidth(0) + len(filename))/2 - len(cwd)])
-  return printf("%s%*s", cwd, pdded_fname_wdth, filename)
+  let width = max([0,(winwidth(0) + len(center))/2 - len(left)])
+  return printf("%s%*s", left, width, center)
 endfunction
-
-set statusline=%{PathLine()}%=%y%m%r\ %P
-" maybe center the filename? kinda hard
+se statusline=%{PathLine()}%=%S%y%m%r[%P]
+se showcmdloc=statusline

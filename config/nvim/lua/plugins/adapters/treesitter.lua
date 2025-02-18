@@ -3,6 +3,7 @@ return {
   {
     'nvim-treesitter/nvim-treesitter',
     branch = 'master',
+    -- enabled = false,
     dependencies = {
       'nvim-treesitter/nvim-treesitter-textobjects',
       'nvim-treesitter/nvim-treesitter-context',
