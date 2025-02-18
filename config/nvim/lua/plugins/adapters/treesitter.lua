@@ -3,11 +3,12 @@ return {
   {
     'nvim-treesitter/nvim-treesitter',
     branch = 'master',
+    -- enabled = false,
     dependencies = {
       'nvim-treesitter/nvim-treesitter-textobjects',
       'nvim-treesitter/nvim-treesitter-context',
     },
-    build = ':se nomore | TSUpdateSync all',
+    build = ':echo "Updating treesitter" | se nomore | TSUpdateSync all',
     event = { 'BufReadPre', 'BufNewFile' },
     opts = {
       highlight = {
@@ -62,7 +63,7 @@ return {
   },
   {
     'windwp/nvim-ts-autotag',
+    ft = { 'html', 'xml', 'jsx', 'javascript' }, -- more are available
     opts = {},
-    lazy = false,
   },
 }

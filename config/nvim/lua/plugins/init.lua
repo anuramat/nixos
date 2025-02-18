@@ -19,7 +19,6 @@ require('lazy').setup({
   { import = 'plugins.core' },
   { import = 'plugins.adapters' },
   { import = 'plugins.lang' },
-  { import = 'plugins.ui' },
 }, {
   change_detection = {
     enabled = false,

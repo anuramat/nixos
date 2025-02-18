@@ -10,13 +10,16 @@ return {
     },
     version = '*', -- on nightly - add `build = 'nix run .#build-plugin'`
     opts = {
-      keymap = {
-        preset = 'default',
-        cmdline = {
+      cmdline = {
+        keymap = {
+
           preset = 'default',
           ['<tab>'] = { 'select_next', 'fallback' },
           ['<s-tab>'] = { 'select_prev', 'fallback' },
         },
+      },
+      keymap = {
+        preset = 'default',
       },
       completion = {
         documentation = { auto_show = true, auto_show_delay_ms = 500 },
@@ -109,16 +112,9 @@ return {
       },
     },
   },
-  -- neogen - annotation generation
-  {
-    'danymat/neogen',
-    opts = {},
-    event = 'BufEnter',
-  },
   -- neotest
   {
     'nvim-neotest/neotest',
-    lazy = false,
     dependencies = {
       'nvim-neotest/nvim-nio',
       'nvim-neotest/neotest-go', -- go
@@ -357,3 +353,6 @@ return {
     keys = {},
   },
 }
+
+-- annotation generation: <https://github.com/danymat/neogen>
+-- indentation <https://github.com/lukas-reineke/indent-blankline.nvim>

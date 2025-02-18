@@ -157,7 +157,7 @@ end
 
 return {
   'neovim/nvim-lspconfig',
-  event = { 'BufReadPre', 'BufNewFile' },
+  event = { 'BufReadPost', 'BufNewFile' },
   dependencies = {
     'saghen/blink.cmp',
     'b0o/schemastore.nvim', -- yamlls, jsonls dependency

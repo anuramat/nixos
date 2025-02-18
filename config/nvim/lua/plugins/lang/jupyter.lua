@@ -1,23 +1,16 @@
 return {
-  -- {
-  --   'goerz/jupytext.nvim',
-  --   version = '0.2.0',
-  --   opts = {
-  --     format = 'py:light',
-  --   },
-  --   lazy = false,
-  -- },
   {
     'GCBallesteros/jupytext.nvim',
+    -- TODO turn this on, figure out loading chain
     opts = {
       style = 'markdown',
       output_extension = 'md',
       force_ft = 'markdown',
     },
-    lazy = false,
   },
   {
     'benlubas/molten-nvim',
+    -- TODO turn this on
     version = '^1.0.0', -- use version <2.0.0 to avoid breaking changes
     build = ':UpdateRemotePlugins',
     dependencies = {

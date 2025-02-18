@@ -20,7 +20,6 @@ nn <m-k> <cmd>cprev<cr>
 " formatting {{{1
 se shiftround shiftwidth=0 expandtab tabstop=2
 se textwidth=80
-se nowrap
 se formatoptions=qj
 " q -- adds comment leader on format
 " r -- adds comment leader on newline
@@ -58,6 +57,7 @@ se mouse= " disable mouse
 " }}}
 
 " visuals {{{1
+se nowrap
 let g:matchparen_timeout=50
 let g:matchparen_insert_timeout=50
 " se mopt=wait:0,history:10000
@@ -71,8 +71,7 @@ se cole=0
 se fcs=fold:\─,foldopen:,foldsep:\ ,foldclose:
 se foldtext=
 se laststatus=3 " show only one statusline
-se sbr=↪ list lcs=tab:├─,extends:❯,precedes:❮,trail:·,lead:·
-" i		jjdfsd
+se sbr=↪ list lcs=tab:│\ ,extends:❯,precedes:❮,trail:·
 au TextYankPost * silent! lua vim.highlight.on_yank()
 se number relativenumber
 se scrolloff=0 sidescrolloff=30
@@ -140,3 +139,15 @@ augroup END
 " use ripgrep
 se grepprg=rg\ --vimgrep
 se grepformat=%f:%l:%c:%m
+
+function! PathLine()
+  let center = expand('%:.')
+  let left = printf('%s/', substitute(getcwd(), '^' . getenv('HOME'), '~', ''))
+  if center[0] == '/'
+    let left = left . '; '
+  endif
+  let width = max([0,(&columns + len(center))/2 - len(left)])
+  return printf("%s%*s", left, width, center)
+endfunction
+se statusline=%{PathLine()}%=%S%y%m%r[%P]
+se showcmdloc=statusline

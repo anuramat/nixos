@@ -30,7 +30,7 @@ return {
   -- nvim-colorizer.lua - highlights colors, eg #012345
   {
     'NvChad/nvim-colorizer.lua',
-    event = 'VeryLazy',
+    ft = { 'markdown', 'html', 'css' },
     opts = {},
   },
   -- vim-illuminate - highlights the word under cursor using LSP/TS/regex
@@ -73,34 +73,10 @@ return {
       },
     },
   },
-  -- indent-blankline.nvim
-  {
-    'lukas-reineke/indent-blankline.nvim',
-    dependencies = { 'nvim-treesitter/nvim-treesitter' },
-    event = 'VeryLazy',
-    main = 'ibl',
-    init = function()
-      vim.cmd([[se lcs+=lead:\ ]])
-    end,
-    opts = function()
-      return {
-        scope = {
-          show_start = false,
-          show_end = false,
-        },
-        exclude = {
-          filetypes = {
-            'lazy',
-          },
-        },
-      }
-    end,
-  },
   -- lightbulb - code action indicator
   {
     'kosayoda/nvim-lightbulb',
-    lazy = false,
-    -- event = 'LspAttach',
+    event = 'LspAttach',
     config = {
       autocmd = { enabled = true },
       code_lenses = true,
