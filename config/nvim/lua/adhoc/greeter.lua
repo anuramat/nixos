@@ -1,26 +1,61 @@
-local input = 'neovim'
-
 local u = require('utils.helpers')
 
---- Generates a banner with a random font
----@param text string
----@param font? string
----@return string
-local function figlet(text, font)
-  if not font then
-    -- hehe
-    local font_cmd = [[
+local start_time = vim.loop.hrtime()
+
+local input = 'neovim' -- clear cache on change!
+local myfont = 'puffy'
+
+local function figlet(font)
+  local figlet_res = vim.system({ 'figlet', '-w', '999', '-f', font, input }, { text = true }):wait()
+  return figlet_res.stdout
+end
+
+local function cache(font)
+  local dir = vim.fn.stdpath('cache') .. '/greeter'
+  vim.fn.mkdir(dir, 'p')
+  local filename = dir .. string.format('/%s.txt', font)
+
+  local function open(mode)
+    local file = io.open(filename, mode)
+    if file == nil then
+      error(string.format('Couldn\'t open (%s) the figlet cache file %s', mode, filename))
+    end
+    return file
+  end
+
+  local res = ''
+  if not u.file_exists(filename) then
+    res = figlet(font)
+    local file = open('w')
+    file:write(res)
+    file:close()
+  else
+    local file = open('r')
+    res = file:read('*a')
+    file:close()
+  end
+  return res
+end
+
+local function random_font()
+  local font_cmd = [[
       figlist |
       sed -n '/Figlet fonts in this directory:/,/Figlet control files in this directory:/{//!p}' |
       shuf |
       head -n 1
       ]]
-    local font_res = vim.system({ 'bash', '-c', font_cmd }, { text = true }):wait()
-    font = vim.trim(font_res.stdout)
+  local font_res = vim.system({ 'bash', '-c', font_cmd }, { text = true }):wait()
+  return vim.trim(font_res.stdout)
+end
+
+--- Generates a banner with a random font
+---@return string
+local function getbanner(font)
+  if font == '' then
+    font = random_font()
   end
   vim.g.figlet_font = font
-  local figlet_res = vim.system({ 'figlet', '-w', '999', '-f', font, text }, { text = true }):wait()
-  return figlet_res.stdout
+  return cache(font)
 end
 
 -- returns a version string
@@ -56,7 +91,7 @@ end
 -- returns a function that builds lines for the greeter
 ---@return function
 local function make_renderer()
-  local body = figlet(input)
+  local body = getbanner(myfont)
   local ver_string = version_string()
   local lines = vim.split(body, '\n', { trimempty = true })
   local tx = #lines[1] -- assuming all lines have equal width
@@ -95,8 +130,6 @@ local function make_renderer()
     return result
   end
 end
-
--- TODO maybe cache body
 
 -- maps keys to noop
 ---@param keys string
@@ -164,3 +197,6 @@ vim.api.nvim_create_autocmd('VimEnter', {
     unmap('hjklgGwebWEB')
   end,
 })
+
+local elapsed = (vim.loop.hrtime() - start_time) / 1e6 -- ms
+vim.g.figlet_elapsed = string.format('figlet done in %.3f ms', elapsed)

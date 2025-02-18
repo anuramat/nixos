@@ -86,4 +86,14 @@ function m.concat_list(a)
   return res
 end
 
+function m.file_exists(path)
+  local file = io.open(path, 'r')
+  if file ~= nil then
+    io.close(file)
+    return true
+  else
+    return false
+  end
+end
+
 return m
