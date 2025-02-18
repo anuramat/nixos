@@ -139,3 +139,6 @@ augroup END
 " use ripgrep
 se grepprg=rg\ --vimgrep
 se grepformat=%f:%l:%c:%m
+
+" statusline
+set statusline=%{getcwd()}/%=%f%=%y%m%r%=%P
