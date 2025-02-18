@@ -12,7 +12,6 @@ return {
     opts = {
       cmdline = {
         keymap = {
-
           preset = 'default',
           ['<tab>'] = { 'select_next', 'fallback' },
           ['<s-tab>'] = { 'select_prev', 'fallback' },
@@ -112,35 +111,6 @@ return {
       },
     },
   },
-  -- neotest
-  {
-    'nvim-neotest/neotest',
-    dependencies = {
-      'nvim-neotest/nvim-nio',
-      'nvim-neotest/neotest-go', -- go
-      'nvim-lua/plenary.nvim',
-      'antoinemadec/FixCursorHold.nvim',
-      'nvim-treesitter/nvim-treesitter',
-    },
-    opts = function()
-      -- get neotest namespace (api call creates or returns namespace)
-      local neotest_ns = vim.api.nvim_create_namespace('neotest')
-      vim.diagnostic.config({
-        virtual_text = {
-          format = function(diagnostic)
-            local message = diagnostic.message:gsub('\n', ' '):gsub('\t', ' '):gsub('%s+', ' '):gsub('^%s+', '')
-            return message
-          end,
-        },
-      }, neotest_ns)
-      return {
-        -- your neotest config here
-        adapters = {
-          require('neotest-go'),
-        },
-      }
-    end,
-  },
   -- oil.nvim - file manager
   {
     'stevearc/oil.nvim',
@@ -209,30 +179,9 @@ return {
       },
     },
   },
-  -- vim-table-mode -  tables for markdown etc
-  {
-    'dhruvasagar/vim-table-mode',
-    init = function()
-      vim.g.table_mode_disable_mappings = 1
-      vim.g.table_mode_disable_tableize_mappings = 1
-      vim.keymap.set('n', '<leader>T', '<cmd>TableModeToggle<cr>', { silent = true, desc = 'Table Mode: Toggle' })
-      vim.keymap.set(
-        'n',
-        '<leader>t',
-        '<cmd>TableModeRealign<cr>',
-        { silent = true, desc = 'Table Mode: Realign once' }
-      )
-    end,
-    ft = 'markdown',
-  },
   -- mini.align - align text interactively
   {
     'echasnovski/mini.align',
-    -- See also:
-    -- junegunn/vim-easy-align
-    -- godlygeek/tabular
-    -- tommcdo/vim-lion
-    -- Vonr/align.nvim
     opts = {
       mappings = {
         start = '<leader>a',
@@ -356,3 +305,4 @@ return {
 
 -- annotation generation: <https://github.com/danymat/neogen>
 -- indentation <https://github.com/lukas-reineke/indent-blankline.nvim>
+-- tests 'nvim-neotest/neotest'
