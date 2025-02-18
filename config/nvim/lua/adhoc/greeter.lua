@@ -127,6 +127,7 @@ vim.api.nvim_create_autocmd('VimEnter', {
     -- when a new window is created, replace the greeter buffer with an empty buffer
     local old = vim.fn.win_getid()
     vim.api.nvim_create_autocmd('WinNew', {
+      buffer = 1,
       callback = function(ev)
         local buf = vim.api.nvim_create_buf(true, false)
         vim.api.nvim_win_set_buf(old, buf)
@@ -139,7 +140,7 @@ vim.api.nvim_create_autocmd('VimEnter', {
 
     -- rerender on resize
     vim.api.nvim_create_autocmd('VimResized', {
-      buffer = 0,
+      buffer = 1,
       callback = set,
     })
 
