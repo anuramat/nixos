@@ -2,7 +2,8 @@ local u = require('utils.helpers')
 
 local start_time = vim.loop.hrtime()
 
-local input = 'neovim' -- clear cache on change!
+-- XXX don't forget to clear cache!
+local input = 'neovim'
 local myfont = 'puffy'
 
 local function figlet(font)
@@ -125,17 +126,18 @@ local function make_renderer()
       add_prefix({ ver_string }, prefix),
     }
 
-    local result = u.concat_list(parts)
-    result[1] = '█' .. string.sub(result[1], 2) -- hide cursor
-    return result
+    return u.concat_list(parts)
   end
 end
 
--- maps keys to noop
----@param keys string
-local function unmap(keys)
-  for i = 1, #keys do
-    vim.api.nvim_buf_set_keymap(0, 'n', string.sub(keys, i, i), '<nop>', {})
+-- maps almost all keys to noop
+---@param allowed_keys string
+local function unmap(allowed_keys)
+  for i = 32, 126 do
+    local c = string.char(i)
+    if not vim.tbl_contains(allowed_keys, c) then
+      vim.api.nvim_buf_set_keymap(0, 'n', c, '<nop>', {})
+    end
   end
 end
 
@@ -147,6 +149,21 @@ local function set()
   vim.opt_local.modifiable = false
 end
 
+local old_hl = vim.api.nvim_get_hl(0, { name = 'Cursor' })
+local old_gcr = vim.opt.guicursor
+
+local function hide()
+  local hl = vim.api.nvim_get_hl(0, { name = 'Cursor' })
+  hl.blend = 100
+  vim.api.nvim_set_hl(0, 'Cursor', hl)
+  vim.opt.guicursor:append('a:Cursor')
+end
+
+local function unhide()
+  vim.api.nvim_set_hl(0, 'Cursor', old_hl)
+  vim.opt.guicursor = old_gcr
+end
+
 vim.api.nvim_create_autocmd('VimEnter', {
   callback = function()
     -- skip greeter when opening files
@@ -156,17 +173,28 @@ vim.api.nvim_create_autocmd('VimEnter', {
 
     -- greet
     set()
+    hide()
 
     -- when a new window is created, replace the greeter buffer with an empty buffer
     local old = vim.fn.win_getid()
     vim.api.nvim_create_autocmd('WinNew', {
       buffer = 1,
       callback = function(ev)
+        unhide()
         local buf = vim.api.nvim_create_buf(true, false)
         vim.api.nvim_win_set_buf(old, buf)
         if ev.buf == 1 then
           vim.api.nvim_win_set_buf(0, buf)
         end
+      end,
+      once = true,
+    })
+
+    -- when the buffer is closed, unhide the cursor
+    vim.api.nvim_create_autocmd('BufDelete', {
+      buffer = 1,
+      callback = function()
+        unhide()
       end,
       once = true,
     })
@@ -189,12 +217,14 @@ vim.api.nvim_create_autocmd('VimEnter', {
     vim.opt_local.signcolumn = 'no'
     vim.opt_local.stl = ' '
     vim.opt_local.swapfile = false
+    vim.opt_local.sidescrolloff = 0
 
     -- some remaps
+    local allowed_keys = vim.split(':`', '')
+    unmap(allowed_keys)
     vim.api.nvim_buf_set_keymap(0, 'n', 'q', '<cmd>quit<cr>', {})
     vim.api.nvim_buf_set_keymap(0, 'n', 'i', '<cmd>enew<cr>i', {})
     vim.api.nvim_buf_set_keymap(0, 'n', 'a', '<cmd>enew<cr>a', {})
-    unmap('hjklgGwebWEB')
   end,
 })
 
