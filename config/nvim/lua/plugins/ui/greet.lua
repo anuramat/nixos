@@ -1,5 +1,7 @@
 local input = 'neovim'
 
+local u = require('utils.helpers')
+
 --- Generates a banner with a random font
 ---@param text string
 ---@param font? string
@@ -27,19 +29,35 @@ local function version_string()
   return nvim_version_info
 end
 
+local function add_prefix(lines, prefix)
+  local result = {}
+  for i, v in ipairs(lines) do
+    table.insert(result, i, prefix .. v)
+  end
+  return result
+end
+
+local function empty(n)
+  local result = {}
+  for _ = 1, n do
+    table.insert(result, '')
+  end
+  return result
+end
+
 -- calc padding, add version string
 local function pook()
-  local raw = figlet(input)
+  local body = figlet(input)
   local ver_string = version_string()
-  local lines = vim.split(raw, '\n', { trimempty = true })
+  local lines = vim.split(body, '\n', { trimempty = true })
   local tx = #lines[1] -- assuming all lines have equal width
   local ty = #lines
   -- center align the version string with the main block
   ver_string = string.rep(' ', math.floor((tx - #ver_string) / 2)) .. ver_string
   -- add some space between the two
   local spacing = 3
-  raw = raw .. string.rep(' \n', spacing) .. ver_string
-  ty = ty + spacing -- +1 from ver string but -1 from button = 0
+  local space = empty(spacing)
+  ty = ty + spacing -- +1 from ver string but -1 from button = 0 TODO will I still use the button?
 
   return function()
     local wx = vim.fn.winwidth(0)
@@ -49,41 +67,61 @@ local function pook()
     local ypad = math.floor((wy - ty) / 2)
 
     if xpad <= 0 or ypad <= 0 then
-      return ''
+      -- body doesn't fit, hide
+      return {}
     end
 
-    return string.rep(' \n', ypad) .. raw
+    local prefix = string.rep(' ', xpad)
+    local head = empty(ypad)
+
+    local parts = {
+      head,
+      add_prefix(lines, prefix),
+      space,
+      add_prefix({ ver_string }, prefix),
+    }
+
+    print(head)
+    return u.concat_list(parts)
   end
 end
 
-return {
-  lazy = false,
-  enabled = false,
-  'goolord/alpha-nvim',
-  event = 'VimEnter',
-  -- enabled = false,
-  dependencies = { 'nvim-tree/nvim-web-devicons' },
-  opts = function()
-    vim.api.nvim_create_autocmd('Filetype', {
-      pattern = 'alpha',
-      callback = function()
-        vim.api.nvim_buf_set_keymap(0, 'n', 'q', '<cmd>quit<cr>', {})
-        vim.api.nvim_buf_set_keymap(0, 'n', 'i', '<cmd>enew<cr>i', {})
-        vim.api.nvim_buf_set_keymap(0, 'n', 'a', '<cmd>enew<cr>a', {})
-        vim.cmd('setlocal fcs=eob:\\ ')
-      end,
-    })
-    return {
-      layout = {
-        { type = 'button', val = '█' }, -- hides cursor
-        { type = 'text', opts = { position = 'center' }, val = pook() },
-      },
-      opts = {
-        keymap = {
-          press = nil,
-          press_queue = nil,
-        },
-      },
-    }
+-- TODO create autocommand to redraw on resize
+-- TODO hide cursor or lock at least
+vim.api.nvim_create_autocmd('VimEnter', {
+  callback = function()
+    if vim.fn.argc() == 0 then -- Only show the greeter if no files are opened
+      vim.cmd('enew') -- Open a new empty buffer
+      local lines = {
+        'Welcome to Neovim!',
+        '',
+        'Type :q to exit or :e <filename> to edit a file.',
+        'Happy coding!',
+      }
+      local f = pook()
+      lines = f()
+
+      vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
+
+      vim.opt_local.modifiable = false
+      vim.opt_local.readonly = true
+      vim.opt_local.buftype = 'nofile'
+      vim.opt_local.bufhidden = 'wipe'
+      vim.opt_local.swapfile = false
+      vim.opt_local.number = false
+      vim.opt_local.relativenumber = false
+      vim.opt_local.signcolumn = 'no'
+      vim.opt_local.cursorline = false
+      vim.opt_local.stl = ' '
+      vim.opt_local.list = false
+
+      vim.api.nvim_buf_set_keymap(0, 'n', 'q', '<cmd>quit<cr>', {})
+      vim.api.nvim_buf_set_keymap(0, 'n', 'i', '<cmd>enew<cr>i', {})
+      vim.api.nvim_buf_set_keymap(0, 'n', 'a', '<cmd>enew<cr>a', {})
+    end
   end,
-}
+})
+
+-- { type = 'button', val = '█' }, -- hides cursor
+-- vim.cmd('setlocal fcs=eob:\\ ')
+return {}

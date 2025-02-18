@@ -54,7 +54,7 @@ function M.wrap_lazy_keys(unwrapped, opts)
 
   if type(opts.wrapped) ~= 'nil' then
     opts.wrapped = wrap(opts.wrapped, true)
-    return M.join(unwrapped, opts.wrapped) -- TODO: since we added desc prefix to wrapped keys too, adapt existing calls
+    return M.concat(unwrapped, opts.wrapped) -- TODO: since we added desc prefix to wrapped keys too, adapt existing calls
   end
 
   return unwrapped
@@ -64,13 +64,24 @@ end
 --- @param a any[]
 --- @param b any[]
 --- @return any[] res
-function M.join(a, b)
+function M.concat(a, b)
   local res = {}
   for _, v in pairs(a) do
     table.insert(res, v)
   end
   for _, v in pairs(b) do
     table.insert(res, v)
+  end
+  return res
+end
+
+--- Concatenates a list of lists
+--- @param a (any[])[]
+--- @return any[] res
+function M.concat_list(a)
+  local res = {}
+  for _, v in pairs(a) do
+    res = M.concat(res, v)
   end
   return res
 end
