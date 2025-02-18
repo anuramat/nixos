@@ -31,6 +31,7 @@ in
           extraPackages = [ pkgs.imagemagick ];
           extraPython3Packages =
             ps: with ps; [
+              # these are from molten I think
               pynvim
               jupyter-client
               cairosvg # for image rendering

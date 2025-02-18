@@ -53,7 +53,6 @@ return {
   },
   {
     'MeanderingProgrammer/render-markdown.nvim',
-    -- enabled = false,
     dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' },
     ft = { 'markdown', 'quarto' },
     opts = {
@@ -76,16 +75,25 @@ return {
     branch = 'master',
   },
   -- TODO figure out proper latex
-  -- {
-  --   'Prometheus1400/markdown-latex-render.nvim',
-  --   dependencies = { '3rd/image.nvim', 'nvim-lua/plenary.nvim' },
-  --   build = 'make install',
-  --   lazy = false,
-  --   branch = 'main',
-  --   opts = {
-  --     usetex = true,
-  --   },
-  -- },
+  {
+    'Prometheus1400/markdown-latex-render.nvim',
+    dependencies = { '3rd/image.nvim', 'nvim-lua/plenary.nvim' },
+    build = 'make install',
+    lazy = false,
+    branch = 'main',
+    opts = {
+      usetex = true,
+      preamble = (function()
+        local path = vim.fn.expand('$XDG_CONFIG_HOME') .. '/latex/preamble.tex'
+        local file = io.open(path, 'r')
+        if file ~= nil then
+          local preamble = file:read('*a')
+          file:close()
+          return preamble
+        end
+      end)(),
+    },
+  },
   {
     'quarto-dev/quarto-nvim',
     dependencies = {
