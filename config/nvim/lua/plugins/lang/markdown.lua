@@ -78,6 +78,7 @@ return {
   {
     'Prometheus1400/markdown-latex-render.nvim',
     dependencies = { '3rd/image.nvim', 'nvim-lua/plenary.nvim' },
+    enabled = false,
     build = 'make install',
     lazy = false,
     branch = 'main',

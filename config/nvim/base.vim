@@ -26,6 +26,7 @@ se formatoptions=qj
 " j -- removes leader on line join
 
 " general {{{1
+se tildeop
 pa cfilter
 se complete=t,i,d,.,w,b,u,U " completion source priority
 se clipboard=unnamedplus
