@@ -141,4 +141,15 @@ se grepprg=rg\ --vimgrep
 se grepformat=%f:%l:%c:%m
 
 " statusline
-set statusline=%{getcwd()}/%=%f%=%y%m%r%=%P
+function! PathLine()
+  let cwd = printf('%s/', substitute(getcwd(), '^' . getenv('HOME'), '~', ''))
+  let filename = expand('%:.')
+  if filename[0] == '/'
+    let cwd = cwd . '; '
+  endif
+  let pdded_fname_wdth=max([0,(winwidth(0) + len(filename))/2 - len(cwd)])
+  return printf("%s%*s", cwd, pdded_fname_wdth, filename)
+endfunction
+
+set statusline=%{PathLine()}%=%y%m%r\ %P
+" maybe center the filename? kinda hard
