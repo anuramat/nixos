@@ -1,4 +1,6 @@
-local function dap()
+local m = {}
+
+function m.dap()
   if package.loaded['dap'] and require('dap').status() ~= '' then
     return '  ' .. require('dap').status()
   else
@@ -6,15 +8,13 @@ local function dap()
   end
 end
 
-local git_icon = '󰊢'
-
-local function cwd_fn()
+function m.cwd()
   local fullpath = vim.fn.getcwd()
   local home = vim.fn.getenv('HOME')
   return string.gsub(fullpath, '^' .. home, '~')
 end
 
-local function layout_fn()
+function m.layout()
   if vim.o.iminsert == 0 then
     return ''
   elseif vim.o.iminsert == 1 then
@@ -25,21 +25,21 @@ local function layout_fn()
   return 'ERR'
 end
 
-local function encoding_fn()
+function m.encoding()
   if vim.o.fileencoding ~= 'utf-8' then
     return vim.o.fileencoding
   end
   return ''
 end
 
-local function encoding_fn()
+function m.format()
   if vim.o.fileformat ~= 'unix' then
     return vim.o.fileencoding
   end
   return ''
 end
 
-local function molten()
+function m.molten()
   local ok, v = pcall(function()
     return require('molten.status').initialized()
   end)
@@ -50,4 +50,4 @@ local function molten()
   end
 end
 
-return {}
+return m

@@ -1,4 +1,4 @@
-local M = {}
+local m = {}
 
 local function set_lsp_keys(buffer)
   local function set(keys, func, desc)
@@ -41,21 +41,21 @@ local function set_lsp_keys(buffer)
   set_prefixed('wl', list_workspace_folders, 'List Workspace Folders')
 end
 
-M.on_attach = function(client, buffer)
+m.on_attach = function(client, buffer)
   set_lsp_keys(buffer)
   require('lsp-format').on_attach(client, buffer)
   vim.lsp.inlay_hint.enable()
 end
 
-M.apply_settings = function()
+m.apply_settings = function()
   vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, { border = vim.g.border })
   vim.lsp.handlers['textDocument/signatureHelp'] =
     vim.lsp.with(vim.lsp.handlers.signature_help, { border = vim.g.border })
 end
 
-M.capabilities = function()
+m.capabilities = function()
   local capabilities = vim.lsp.protocol.make_client_capabilities()
   return require('blink.cmp').get_lsp_capabilities(capabilities)
 end
 
-return M
+return m

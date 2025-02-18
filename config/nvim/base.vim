@@ -146,7 +146,7 @@ function! PathLine()
   if center[0] == '/'
     let left = left . '; '
   endif
-  let width = max([0,(winwidth(0) + len(center))/2 - len(left)])
+  let width = max([0,(&columns + len(center))/2 - len(left)])
   return printf("%s%*s", left, width, center)
 endfunction
 se statusline=%{PathLine()}%=%S%y%m%r[%P]

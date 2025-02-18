@@ -1,6 +1,6 @@
 -- vim: fdl=0
 
-local M = {}
+local m = {}
 
 --- @class lazy_keys
 --- @field [1] string LHS
@@ -18,7 +18,7 @@ local M = {}
 --- @param unwrapped lazy_keys[] Lazy.nvim key spec without prefixes
 --- @param opts wrap_opts
 --- @return lazy_keys[] keys Lazy.nvim keymap spec with prefixes
-function M.wrap_lazy_keys(unwrapped, opts)
+function m.wrap_lazy_keys(unwrapped, opts)
   local wrap = function(keys, wrapped)
     for k = 1, #keys do
       local rhs = keys[k][2]
@@ -54,7 +54,7 @@ function M.wrap_lazy_keys(unwrapped, opts)
 
   if type(opts.wrapped) ~= 'nil' then
     opts.wrapped = wrap(opts.wrapped, true)
-    return M.concat(unwrapped, opts.wrapped) -- TODO: since we added desc prefix to wrapped keys too, adapt existing calls
+    return m.concat(unwrapped, opts.wrapped) -- TODO: since we added desc prefix to wrapped keys too, adapt existing calls
   end
 
   return unwrapped
@@ -64,7 +64,7 @@ end
 --- @param a any[]
 --- @param b any[]
 --- @return any[] res
-function M.concat(a, b)
+function m.concat(a, b)
   local res = {}
   for _, v in pairs(a) do
     table.insert(res, v)
@@ -78,12 +78,12 @@ end
 --- Concatenates a list of lists
 --- @param a (any[])[]
 --- @return any[] res
-function M.concat_list(a)
+function m.concat_list(a)
   local res = {}
   for _, v in pairs(a) do
-    res = M.concat(res, v)
+    res = m.concat(res, v)
   end
   return res
 end
 
-return M
+return m
