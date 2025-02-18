@@ -24,9 +24,9 @@ floating_modifier $mod normal
 $bind {
     $mod+semicolon exec $term
     $mod+backslash exec $term_float
-    $mod+apostrophe exec $term_float -D ~/notes nvim ~/notes/scratchpad.md
+    $mod+apostrophe exec $term_float --working-directory=~/notes -e "$EDITOR" ~/notes/scratchpad.md
     $mod+$mod2+slash reload
-    $mod+slash exec $term_float -D /etc/nixos nvim
+    $mod+slash exec $term_float --working-directory=/etc/nixos -e "$EDITOR"
     $mod+q kill
     $mod+$mod2+q exec $lock
     $mod+$mod3+q exec systemctl suspend
