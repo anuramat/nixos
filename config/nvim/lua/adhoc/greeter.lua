@@ -88,7 +88,12 @@ local function pook()
 end
 
 -- TODO create autocommand to redraw on resize
--- TODO hide cursor or lock at least
+
+local function unmap(keys)
+  for i = 1, #keys do
+    vim.api.nvim_buf_set_keymap(0, 'n', string.sub(keys, i, i), '<nop>', {})
+  end
+end
 
 local render = pook()
 vim.api.nvim_create_autocmd('VimEnter', {
@@ -98,6 +103,19 @@ vim.api.nvim_create_autocmd('VimEnter', {
     end
     vim.cmd('enew')
     vim.api.nvim_buf_set_lines(0, 0, -1, false, render())
+
+    -- vim.api.nvim_create_autocmd('WinLeave', {
+    --   callback = function()
+    --     vim.cmd('enew')
+    --   end,
+    -- })
+
+    vim.api.nvim_create_autocmd('WinNew', {
+      callback = function()
+        vim.cmd('enew')
+        vim.cmd('silent bd 1')
+      end,
+    })
 
     vim.opt_local.bufhidden = 'wipe'
     vim.opt_local.buftype = 'nofile'
@@ -114,5 +132,6 @@ vim.api.nvim_create_autocmd('VimEnter', {
     vim.api.nvim_buf_set_keymap(0, 'n', 'q', '<cmd>quit<cr>', {})
     vim.api.nvim_buf_set_keymap(0, 'n', 'i', '<cmd>enew<cr>i', {})
     vim.api.nvim_buf_set_keymap(0, 'n', 'a', '<cmd>enew<cr>a', {})
+    unmap('hjklgGwebWEB')
   end,
 })
