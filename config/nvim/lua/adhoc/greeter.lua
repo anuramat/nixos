@@ -149,18 +149,16 @@ local function set()
   vim.opt_local.modifiable = false
 end
 
-local old_hl = vim.api.nvim_get_hl(0, { name = 'Cursor' })
 local old_gcr = vim.opt.guicursor
 
 local function hide()
   local hl = vim.api.nvim_get_hl(0, { name = 'Cursor' })
   hl.blend = 100
-  vim.api.nvim_set_hl(0, 'Cursor', hl)
-  vim.opt.guicursor:append('a:Cursor')
+  vim.api.nvim_set_hl(0, 'HiddenCursor', hl)
+  vim.opt.guicursor:append('a:HiddenCursor,ci-c-cr:Cursor')
 end
 
 local function unhide()
-  vim.api.nvim_set_hl(0, 'Cursor', old_hl)
   vim.opt.guicursor = old_gcr
 end
 
