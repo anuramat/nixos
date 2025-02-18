@@ -57,7 +57,7 @@ local function pook()
   -- add some space between the two
   local spacing = 3
   local space = empty(spacing)
-  ty = ty + spacing -- +1 from ver string but -1 from button = 0 TODO will I still use the button?
+  ty = ty + spacing + 1
 
   return function()
     local wx = vim.fn.winwidth(0)
@@ -81,47 +81,38 @@ local function pook()
       add_prefix({ ver_string }, prefix),
     }
 
-    print(head)
-    return u.concat_list(parts)
+    local result = u.concat_list(parts)
+    result[1] = '█' .. string.sub(result[1], 2) -- hide cursor
+    return result
   end
 end
 
 -- TODO create autocommand to redraw on resize
 -- TODO hide cursor or lock at least
+
+local render = pook()
 vim.api.nvim_create_autocmd('VimEnter', {
   callback = function()
-    if vim.fn.argc() == 0 then -- Only show the greeter if no files are opened
-      vim.cmd('enew') -- Open a new empty buffer
-      local lines = {
-        'Welcome to Neovim!',
-        '',
-        'Type :q to exit or :e <filename> to edit a file.',
-        'Happy coding!',
-      }
-      local f = pook()
-      lines = f()
-
-      vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
-
-      vim.opt_local.modifiable = false
-      vim.opt_local.readonly = true
-      vim.opt_local.buftype = 'nofile'
-      vim.opt_local.bufhidden = 'wipe'
-      vim.opt_local.swapfile = false
-      vim.opt_local.number = false
-      vim.opt_local.relativenumber = false
-      vim.opt_local.signcolumn = 'no'
-      vim.opt_local.cursorline = false
-      vim.opt_local.stl = ' '
-      vim.opt_local.list = false
-
-      vim.api.nvim_buf_set_keymap(0, 'n', 'q', '<cmd>quit<cr>', {})
-      vim.api.nvim_buf_set_keymap(0, 'n', 'i', '<cmd>enew<cr>i', {})
-      vim.api.nvim_buf_set_keymap(0, 'n', 'a', '<cmd>enew<cr>a', {})
+    if vim.fn.argc() ~= 0 then
+      return
     end
+    vim.cmd('enew')
+    vim.api.nvim_buf_set_lines(0, 0, -1, false, render())
+
+    vim.opt_local.bufhidden = 'wipe'
+    vim.opt_local.buftype = 'nofile'
+    vim.opt_local.cursorline = false
+    vim.opt_local.list = false
+    vim.opt_local.modifiable = false
+    vim.opt_local.number = false
+    vim.opt_local.readonly = true
+    vim.opt_local.relativenumber = false
+    vim.opt_local.signcolumn = 'no'
+    vim.opt_local.stl = ' '
+    vim.opt_local.swapfile = false
+
+    vim.api.nvim_buf_set_keymap(0, 'n', 'q', '<cmd>quit<cr>', {})
+    vim.api.nvim_buf_set_keymap(0, 'n', 'i', '<cmd>enew<cr>i', {})
+    vim.api.nvim_buf_set_keymap(0, 'n', 'a', '<cmd>enew<cr>a', {})
   end,
 })
-
--- { type = 'button', val = '█' }, -- hides cursor
--- vim.cmd('setlocal fcs=eob:\\ ')
-return {}
