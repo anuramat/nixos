@@ -177,9 +177,7 @@
     xfig # vector graphics, old as FUCK
     swayimg # image viewer
     chafa # sixel, kitty, iterm2, unicode
-    timg # sixel, kitty, iterm2, unicode
-    ueberzugpp # terminal images + native overlay
-    unstable.lsix # sixel ls
+    timg # sixel, kitty, iterm2, unicode; faster than chafa
 
     # video {{{1
     vlc
