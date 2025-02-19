@@ -169,7 +169,8 @@ __gup() {
 	fi
 
 	local prompt
-	echo "status:$(_git_prompt 1)"
+	prompt=$(_git_prompt 1) || prompt="$(tput setaf 1)$prompt$(tput sgr0)"
+	echo "status:$prompt"
 	echo 'done'
 }
 
