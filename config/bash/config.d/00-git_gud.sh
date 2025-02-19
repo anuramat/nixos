@@ -135,12 +135,12 @@ __gup() {
 
 	git add -A
 
+	printf %s 'committing: '
 	if git diff-index --quiet HEAD; then
-		echo 'nothing to commit'
+		echo "nothing to commit"
 	else
-		printf %s 'committing: '
 		git commit -qam "auto: $(hostname)" || return
-		echo ok
+		echo "ok"
 	fi
 
 	printf %s 'pulling: '
