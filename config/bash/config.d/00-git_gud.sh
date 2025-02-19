@@ -118,7 +118,7 @@ gdown() {
 		return
 	}
 	echo "of them dirty:" >&2
-	printf "%s\n" "$dirty"
+	printf "%s\n" "$dirty" >&2
 	return 1
 }
 
