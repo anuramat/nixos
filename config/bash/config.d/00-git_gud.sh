@@ -277,5 +277,6 @@ _git_prompt() {
 		printf %s "${state:- clean}"
 	fi
 
+	# error on dirty
 	[ -z "$state" ]
 }
