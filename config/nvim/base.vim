@@ -81,7 +81,7 @@ se cursorline cursorlineopt=both
 se matchtime=1 showmatch " highlight matching bracket (deciseconds)
 se signcolumn=yes " gutter
 let g:border="rounded" " none/single/double/rounded/solid/shadow/array; used in plug cfgs; `:he nvim_open_win`
-let g:nonfiles=['NeogitStatus', 'NeogitPopup', 'oil', 'lazy', 'lspinfo', 'null-ls-info', 'NvimTree', 'neo-tree', 'alpha', 'help']
+let g:nonfiles=['NeogitStatus', 'NeogitPopup', 'oil', 'lazy', 'lspinfo', 'null-ls-info', 'NvimTree', 'neo-tree', 'alpha', 'help', 'fzf']
 se ph=20 " popup max height
 
 " fallback colorscheme {{{2
@@ -141,14 +141,26 @@ augroup END
 se grepprg=rg\ --vimgrep
 se grepformat=%f:%l:%c:%m
 
-function! PathLine()
-  let center = expand('%:.')
+" left and center parts of the status line
+function! LM_STL()
+  " disentangled
   let left = printf('%s/', substitute(getcwd(), '^' . getenv('HOME'), '~', ''))
+  if index(g:nonfiles, &filetype) != -1
+    return left
+  endif
+  let center = expand('%:.')
+
+  " entangle
   if center[0] == '/'
     let left = left . '; '
   endif
+
+  " align
   let width = max([0,(&columns + len(center))/2 - len(left)])
+
+  " join
   return printf("%s%*s", left, width, center)
 endfunction
-se statusline=%{PathLine()}%=%S%y%m%r[%P]
+
+se statusline=%{LM_STL()}%=%S%y%m%r[%P]
 se showcmdloc=statusline

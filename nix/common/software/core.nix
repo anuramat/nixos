@@ -109,6 +109,7 @@
     age # file encryption
     virtualbox
     wine
+    ollama-cuda
 
     yazi # big, simple, hackable/lua -- ~ for help
     felix-fm # smallest, image previews -- :help<cr> for help; waiting for picker: <https://github.com/kyoheiu/felix/issues/261>
