@@ -94,18 +94,21 @@ gdown() {
 		cd "$path" || return
 
 		local name="${path:prefix_length}"
+		local pulled
 
 		[ -z "$nopull" ] && {
 			local before=$(git rev-parse @)
 			git pull --ff-only &> /dev/null
-			[ "$before" != "$(git rev-parse @)" ] && echo "pulled (ff): $name" >&2
+			[ "$before" != "$(git rev-parse @)" ] && pulled=1
 		}
 
 		local prompt
-		prompt=$(_git_prompt 1) && return
-		prompt="$(tput setaf 1)$prompt$(tput sgr0)"
+		prompt=$(_git_prompt 1) && prompt=
+		[ -n "$pulled" ] && prompt=" ff$prompt"
 
-		printf '\t%s\n' "$name $prompt"
+		[ -z "$prompt" ] && return
+		prompt="$(tput setaf 1)$prompt$(tput sgr0)"
+		printf '\t%s\n' "$name$prompt"
 	}
 
 	dirty=$(
