@@ -178,8 +178,10 @@ gup() {
 	case "$1" in
 		"") ;;
 		*)
-			cd "$1" || return 1
-			__gup
+			(
+				cd "$1" || exit 1
+				__gup
+			)
 			return
 			;;
 	esac
