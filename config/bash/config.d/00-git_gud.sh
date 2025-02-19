@@ -68,6 +68,14 @@ gsync() {
 # pull and show status of all repos
 gdown() {
 	local nopull="$1"
+	case "$nopull" in
+		check | "") ;;
+		*)
+			echo "illegal argument; allowed: 'check' | ''" >&2
+			return 1
+			;;
+	esac
+
 	[ -z "$nopull" ] && printf "pulling" || printf "checking"
 	printf " %d repos\n" "$((${#__free_repos[@]} + $(ghq list | wc -l)))"
 
@@ -137,7 +145,7 @@ gup() {
 			;;
 		"") ;;
 		*)
-			echo "illegal argument" >&2
+			echo "illegal argument; allowed: '.' | ''" >&2
 			return 1
 			;;
 	esac
