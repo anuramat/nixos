@@ -77,7 +77,7 @@ gdown() {
 			;;
 	esac
 
-	printf "%d repos\n" "$((${#__free_repos[@]} + $(ghq list | wc -l)))"
+	printf "%d repos; " "$((${#__free_repos[@]} + $(ghq list | wc -l)))"
 
 	# repos are taken from ghq and hardcoded array
 	local root=$(ghq root)
@@ -113,7 +113,7 @@ gdown() {
 		echo "all clean!" >&2
 		return
 	}
-	echo "dirty repos:" >&2
+	echo "of them dirty:" >&2
 	printf "%s\n" "$dirty"
 	return 1
 }
