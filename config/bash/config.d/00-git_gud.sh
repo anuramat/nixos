@@ -191,9 +191,6 @@ gup() {
 		cmd+=$(printf ' <(wrapper "%s" 2>&1)' "$path")
 	done
 	eval "$cmd"
-	# shellcheck disable=SC2059
-	printf "$__heading" "*** checking all repos ***"
-	gdown 'check'
 }
 
 gnew() {
