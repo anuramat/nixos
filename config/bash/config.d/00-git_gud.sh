@@ -34,7 +34,7 @@ __picker() {
 
 # rm ghq repo(s)
 # $1 - repo (optional)
-grm() {
+git_rm() {
 	local selected
 	selected=$(ghq list | __picker "delete?" "$1") || return
 	echo "$selected" | xargs -I{} bash -c 'yes | ghq rm {} 2>/dev/null'
@@ -42,7 +42,7 @@ grm() {
 
 # clone repo(s) with ghq
 # $1 - repo as interpreted by ghq, optional
-gclone() {
+git_clone() {
 	local -r before_dirs="$(ghq list -p | sort)"
 	local repos=$1
 	[ -z "$repos" ] && repos=$(gh repo list | cut -f 1)
@@ -61,17 +61,17 @@ gclone() {
 }
 
 # sync a fork with the upstream
-gsync() {
+github_sync() {
 	gh repo sync "$(gh repo set-default --view)"
 	git pull
 }
 
-gcheck() {
-	gdown check
+check() {
+	down check
 }
 
 # pull and show status of all repos
-gdown() {
+down() {
 	local nopull="$1"
 	case "$nopull" in
 		"check" | "") ;;
@@ -126,7 +126,7 @@ gdown() {
 }
 
 # push+commit on personal repos
-__gup() {
+__git_up() {
 	local ok
 	# check that we're in a personal repo directory
 	for i in "${__free_repos[@]}"; do
@@ -174,13 +174,13 @@ __gup() {
 }
 
 # push all personal repos
-gup() {
+up() {
 	case "$1" in
 		"") ;;
 		*)
 			(
 				cd "$1" || exit 1
-				__gup
+				__git_up
 			)
 			return
 			;;
@@ -190,7 +190,7 @@ gup() {
 	wrapper() {
 		printf "$(tput setaf 5 bold)%s$(tput sgr0)\n" "*** syncing $(basename "$1") ***"
 		cd "$1" || exit
-		__gup
+		__git_up
 	}
 	cmd="subcat"
 	for path in "${__free_repos[@]}"; do
@@ -199,7 +199,7 @@ gup() {
 	eval "$cmd"
 }
 
-gnew() {
+github_create() {
 	name=$1
 	visibility=private
 	[ -n "$2" ] && visibility=$2
