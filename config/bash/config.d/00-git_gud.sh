@@ -65,35 +65,41 @@ gsync() {
 	git pull
 }
 
-# fetch/pull and show status of all repos
-gcheck() {
-	local pull="$1"
+# pull and show status of all repos
+gdown() {
+	local nopull="$1"
+	[ -z "$nopull" ] && printf "pulling" || printf "checking"
+	printf " %d repos\n" "$((${#__free_repos[@]} + $(ghq list | wc -l)))"
+
 	# repos are taken from ghq and hardcoded array
 	local root=$(ghq root)
 
-	# TODO maybe show progress using subcat
 	# shellcheck disable=SC2317
 	get_dirty() {
-		local pull="$1"
+		local nopull="$1"
 		local prefix_length="$2"
 		local path="$3"
 		cd "$path" || return
 
-		[ -n "$pull" ] && {
+		local name="${path:prefix_length}"
+
+		[ -z "$nopull" ] && {
+			local before=$(git rev-parse HEAD)
 			git pull --ff-only &> /dev/null
+			[ "$before" != "$(git rev-parse HEAD)" ] && echo "pulled (ff): $name" 1>&2
 		}
 
 		prompt=$(_git_prompt 1)
 		[ -n "$prompt" ] || return
 		prompt="$(tput setaf 1)$prompt$(tput sgr0)"
 
-		printf '\t%s\n' "${path:prefix_length} $prompt"
+		printf '\t%s\n' "$name $prompt"
 	}
 
 	dirty=$(
 		export -f get_dirty _git_prompt
-		printf '%s\0' "${__free_repos[@]}" | xargs -0 -P 0 -I {} bash -c "get_dirty '$pull' 0 {}" | LC_ALL=C sort
-		ghq list -p | xargs -P 0 -I {} bash -c "get_dirty '$pull' $((${#root} + 1)) {}" | LC_ALL=C sort
+		printf '%s\0' "${__free_repos[@]}" | xargs -0 -P 0 -I {} bash -c "get_dirty '$nopull' 0 {}" | LC_ALL=C sort
+		ghq list -p | xargs -P 0 -I {} bash -c "get_dirty '$nopull' $((${#root} + 1)) {}" | LC_ALL=C sort
 	)
 	[ -z "$dirty" ] && {
 		echo "all clean!"
@@ -104,7 +110,7 @@ gcheck() {
 }
 
 # push+commit on personal repos
-__gpush() {
+__gup() {
 	local ok
 	for i in "${__free_repos[@]}"; do
 		[[ "$(realpath .)" == "$i"* ]] && {
@@ -123,10 +129,10 @@ __gpush() {
 }
 
 # push all personal repos
-gpush() {
+gup() {
 	case "$1" in
 		.)
-			__gpush
+			__gup
 			return
 			;;
 		"") ;;
@@ -137,7 +143,7 @@ gpush() {
 	esac
 
 	[ "${1:-all}" != "all" ] && {
-		__gpush
+		__gup
 		return
 	}
 	__heading="$(tput setaf 5 bold)%s$(tput sgr0)\n"
@@ -146,7 +152,7 @@ gpush() {
 		# shellcheck disable=SC2059
 		printf "$__heading" "*** pushing $(basename "$1") ***"
 		cd "$1" || exit
-		__gpush
+		__gup
 	}
 	cmd="subcat"
 	for path in "${__free_repos[@]}"; do
@@ -155,7 +161,7 @@ gpush() {
 	eval "$cmd"
 }
 
-gcreate() {
+gnew() {
 	name=$1
 	visibility=private
 	[ -n "$2" ] && visibility=$2
