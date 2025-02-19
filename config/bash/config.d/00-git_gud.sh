@@ -162,7 +162,7 @@ __gup() {
 	fi
 
 	local prompt
-	prompt=$(_git_prompt 1) && echo "status: $prompt" # TODO refactor to not use cut?
+	prompt=$(_git_prompt 1) && echo "status: $prompt " # TODO refactor to not use cut?
 	printf 'done'
 }
 
