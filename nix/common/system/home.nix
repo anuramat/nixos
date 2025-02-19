@@ -42,10 +42,6 @@ in
               nbformat
             ];
         };
-
-        kitty = {
-          enable = true;
-        };
       };
     };
   };
