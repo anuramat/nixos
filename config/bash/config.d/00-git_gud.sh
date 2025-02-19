@@ -92,9 +92,9 @@ gdown() {
 		local name="${path:prefix_length}"
 
 		[ -z "$nopull" ] && {
-			local before=$(git rev-parse HEAD)
+			local before=$(git rev-parse @)
 			git pull --ff-only &> /dev/null
-			[ "$before" != "$(git rev-parse HEAD)" ] && echo "pulled (ff): $name" >&2
+			[ "$before" != "$(git rev-parse @)" ] && echo "pulled (ff): $name" >&2
 		}
 
 		prompt=$(_git_prompt 1)
@@ -144,18 +144,18 @@ __gup() {
 	fi
 
 	printf %s 'pulling: '
-	local pull_before=$(git rev-parse HEAD)
+	local pull_before=$(git rev-parse "@{u}")
 	git pull --ff --no-edit -q || return
-	if [ "$pull_before" == "$(git rev-parse HEAD)" ]; then
+	if [ "$pull_before" == "$(git rev-parse "@{u}")" ]; then
 		echo "already up to date"
 	else
 		echo "updated local"
 	fi
 
 	printf %s 'pushing: '
-	local push_before=$(git rev-parse HEAD)
+	local push_before=$(git rev-parse "@{push}")
 	git push -q || return
-	if [ "$push_before" == "$(git rev-parse origin/HEAD)" ]; then
+	if [ "$push_before" == "$(git rev-parse "@{push}")" ]; then
 		echo "already up to date"
 	else
 		echo "updated remote"
