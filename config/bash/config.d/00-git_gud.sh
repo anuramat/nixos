@@ -171,7 +171,6 @@ __gup() {
 	local prompt
 	prompt=$(_git_prompt 1) || prompt="$(tput setaf 1)$prompt$(tput sgr0)"
 	echo "status:$prompt"
-	echo 'done'
 }
 
 # push all personal repos
