@@ -186,11 +186,9 @@ gup() {
 			;;
 	esac
 
-	__heading="$(tput setaf 5 bold)%s$(tput sgr0)\n"
 	# shellcheck disable=SC2317
 	wrapper() {
-		# shellcheck disable=SC2059
-		printf "$__heading" "*** syncing $(basename "$1") ***"
+		printf "$(tput setaf 5 bold)%s$(tput sgr0)\n" "*** syncing $(basename "$1") ***"
 		cd "$1" || exit
 		__gup
 	}
