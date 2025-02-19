@@ -66,6 +66,10 @@ gsync() {
 	git pull
 }
 
+gcheck() {
+	gdown check
+}
+
 # pull and show status of all repos
 gdown() {
 	local nopull="$1"
