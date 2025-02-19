@@ -24,7 +24,6 @@ alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
 alias peco="fzf --height=100 --preview=''"
-alias lab="jupyter-lab --ServerApp.iopub_msg_rate_limit 9999999999999"
 alias recv='tailscale file get'
 
 alias t="todo.sh"
