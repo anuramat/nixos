@@ -70,9 +70,9 @@ gsync() {
 gdown() {
 	local nopull="$1"
 	case "$nopull" in
-		check | "") ;;
+		"check_private" | "check" | "") ;;
 		*)
-			echo "illegal argument; allowed: 'check' | ''" >&2
+			echo "illegal argument; allowed: 'check_private' | 'check' | ''" >&2
 			return 1
 			;;
 	esac
@@ -108,7 +108,7 @@ gdown() {
 	dirty=$(
 		export -f get_dirty _git_prompt
 		printf '%s\0' "${__free_repos[@]}" | xargs -0 -P 0 -I {} bash -c "get_dirty '$nopull' 0 {}" | LC_ALL=C sort
-		ghq list -p | xargs -P 0 -I {} bash -c "get_dirty '$nopull' $((${#root} + 1)) {}" | LC_ALL=C sort
+		[ "$nopull" != "check_private" ] && ghq list -p | xargs -P 0 -I {} bash -c "get_dirty '$nopull' $((${#root} + 1)) {}" | LC_ALL=C sort
 	)
 	[ -z "$dirty" ] && {
 		echo "all clean!" >&2
@@ -122,6 +122,7 @@ gdown() {
 # push+commit on personal repos
 __gup() {
 	local ok
+	# check that we're in a personal repo directory
 	for i in "${__free_repos[@]}"; do
 		[[ "$(realpath .)" == "$i"* ]] && {
 			ok=1
@@ -129,13 +130,23 @@ __gup() {
 		}
 	done
 	[ -z "$ok" ] && {
-		echo "illegal directory" >&2
+		echo "illegal directory"
 		return 1
 	}
-	git add .
-	git commit -am "auto: $(hostname)"
-	git pull --ff --no-edit
-	git push
+
+	git add -A
+	if git diff-index --quiet HEAD; then
+		echo 'nothing to commit'
+	else
+		git commit -qam "auto: $(hostname)" || return
+	fi
+	echo 'pulling'
+	git pull --ff --no-edit -q || return
+	echo 'pushing'
+	git push -q || return
+	echo 'done'
+
+	printf "%s" "$(_git_prompt 1)"
 }
 
 # push all personal repos
@@ -169,6 +180,7 @@ gup() {
 		cmd+=$(printf ' <(wrapper "%s" 2>&1)' "$path")
 	done
 	eval "$cmd"
+	gdown 'check_private'
 }
 
 gnew() {
