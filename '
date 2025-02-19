@@ -176,10 +176,16 @@ __gup() {
 # push all personal repos
 gup() {
 	case "$1" in
+		.)
+			__gup
+			return
+			;;
 		"") ;;
 		*)
-			cd "$1" || return 1
-			__gup
+			echo "illegal argument; allowed: '.' | ''" >&2
+			(
+				cd "$1" || exit 1
+			) || return 1
 			return
 			;;
 	esac
