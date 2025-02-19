@@ -134,16 +134,33 @@ __gup() {
 	}
 
 	git add -A
+
 	if git diff-index --quiet HEAD; then
 		echo 'nothing to commit'
 	else
-		echo 'committing'
+		printf %s 'committing: '
 		git commit -qam "auto: $(hostname)" || return
+		echo ok
 	fi
-	echo 'pulling'
+
+	printf %s 'pulling: '
+	local pull_before=$(git rev-parse HEAD)
 	git pull --ff --no-edit -q || return
-	echo 'pushing'
+	if [ "$pull_before" == "$(git rev-parse HEAD)" ]; then
+		echo "already up to date"
+	else
+		echo "updated local"
+	fi
+
+	printf %s 'pushing: '
+	local push_before=$(git rev-parse HEAD)
 	git push -q || return
+	if [ "$push_before" == "$(git rev-parse origin/HEAD)" ]; then
+		echo "already up to date"
+	else
+		echo "updated remote"
+	fi
+
 	echo 'done'
 
 	printf "%s" "$(_git_prompt 1)"
