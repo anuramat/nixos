@@ -77,8 +77,7 @@ gdown() {
 			;;
 	esac
 
-	[ -z "$nopull" ] && printf "pulling" || printf "checking"
-	printf " %d repos\n" "$((${#__free_repos[@]} + $(ghq list | wc -l)))"
+	[ "$nopull" != "check_private" ] && printf "%d repos\n" "$((${#__free_repos[@]} + $(ghq list | wc -l)))"
 
 	# repos are taken from ghq and hardcoded array
 	local root=$(ghq root)
