@@ -163,7 +163,7 @@ __gup() {
 
 	local prompt
 	prompt=$(_git_prompt 1) && echo "status:$prompt" # TODO refactor to not use cut?
-	printf 'done'
+	echo 'done'
 }
 
 # push all personal repos
