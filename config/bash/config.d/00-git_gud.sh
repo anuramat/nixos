@@ -102,7 +102,7 @@ gdown() {
 		}
 
 		local prompt
-		prompt=$(_git_prompt 1) || return
+		prompt=$(_git_prompt 1) && return
 		prompt="$(tput setaf 1)$prompt$(tput sgr0)"
 
 		printf '\t%s\n' "$name $prompt"
@@ -219,7 +219,7 @@ gnew() {
 }
 
 _git_prompt() {
-	local -r only_status=$1
+	local -r only_state=$1 # don't show branch/commit
 
 	local bare
 	bare=$(git rev-parse --is-bare-repository 2> /dev/null) || return # we're not in a repo
@@ -268,16 +268,14 @@ _git_prompt() {
 
 	local -r stash=$(echo "$raw" | grep -oP '(?<=^# stash )\d+')
 
-	local combined_status=$(printf %s "${status:+ $status}${desync:+ $desync}${stash:+ \$$stash}")
+	local state=$(printf %s "${status:+ $status}${desync:+ $desync}${stash:+ \$$stash}")
 
-	if [ -z "$only_status" ]; then
+	if [ -z "$only_state" ]; then
 		# for PS1: prepend branch/hash
-		printf %s "${branch:-$commit}$combined_status"
+		printf %s "${branch:-$commit}$state"
 	else
-		# in case of only_status, error out if repo is clean
-		printf %s "${combined_status:- clean}"
+		printf %s "${state:- clean}"
 	fi
 
-	# err on clean repo; TODO maybe reverse?
-	[ -z "$combined_status" ] && return 1
+	[ -z "$state" ]
 }
