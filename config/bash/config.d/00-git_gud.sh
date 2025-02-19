@@ -162,7 +162,7 @@ __gup() {
 	fi
 
 	local prompt
-	echo "status: $(_git_prompt 1)" # TODO refactor to not use cut?
+	echo "status:$(_git_prompt 1)"
 	echo 'done'
 }
 
@@ -271,7 +271,7 @@ _git_prompt() {
 		printf %s "${branch:-$commit}$combined_status"
 	else
 		# in case of only_status, error out if repo is clean
-		printf %s "${combined_status:-clean}"
+		printf %s "${combined_status:- clean}"
 	fi
 
 	# err on clean repo; TODO maybe reverse?
