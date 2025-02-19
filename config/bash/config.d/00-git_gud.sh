@@ -190,7 +190,7 @@ gup() {
 	# shellcheck disable=SC2317
 	wrapper() {
 		# shellcheck disable=SC2059
-		printf "$__heading" "*** pushing $(basename "$1") ***"
+		printf "$__heading" "*** syncing $(basename "$1") ***"
 		cd "$1" || exit
 		__gup
 	}
