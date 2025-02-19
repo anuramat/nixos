@@ -266,7 +266,10 @@ _git_prompt() {
 		result=$(printf %s "${status:+ $status}${desync:+ $desync}${stash:+ \$$stash}")
 
 		# in case of only_status, error out if repo is clean
-		[ -n "$only_status" ] && [ -z "$result" ] && return 1
+		[ -n "$only_status" ] && [ -z "$result" ] && {
+			printf %s "clean"
+			return 1
+		}
 		# prepend branch/hash
 		[ -z "$only_status" ] && result=$(printf %s "${branch:-$commit}$result")
 	fi
