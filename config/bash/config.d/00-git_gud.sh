@@ -70,14 +70,14 @@ gsync() {
 gdown() {
 	local nopull="$1"
 	case "$nopull" in
-		"check_private" | "check" | "") ;;
+		"check" | "") ;;
 		*)
-			echo "illegal argument; allowed: 'check_private' | 'check' | ''" >&2
+			echo "illegal argument; allowed: 'check' | ''" >&2
 			return 1
 			;;
 	esac
 
-	[ "$nopull" != "check_private" ] && printf "%d repos\n" "$((${#__free_repos[@]} + $(ghq list | wc -l)))"
+	printf "%d repos\n" "$((${#__free_repos[@]} + $(ghq list | wc -l)))"
 
 	# repos are taken from ghq and hardcoded array
 	local root=$(ghq root)
@@ -107,7 +107,7 @@ gdown() {
 	dirty=$(
 		export -f get_dirty _git_prompt
 		printf '%s\0' "${__free_repos[@]}" | xargs -0 -P 0 -I {} bash -c "get_dirty '$nopull' 0 {}" | LC_ALL=C sort
-		[ "$nopull" != "check_private" ] && ghq list -p | xargs -P 0 -I {} bash -c "get_dirty '$nopull' $((${#root} + 1)) {}" | LC_ALL=C sort
+		ghq list -p | xargs -P 0 -I {} bash -c "get_dirty '$nopull' $((${#root} + 1)) {}" | LC_ALL=C sort
 	)
 	[ -z "$dirty" ] && {
 		echo "all clean!" >&2
@@ -162,8 +162,6 @@ __gup() {
 	fi
 
 	echo 'done'
-
-	printf "%s" "$(_git_prompt 1)"
 }
 
 # push all personal repos
@@ -180,10 +178,6 @@ gup() {
 			;;
 	esac
 
-	[ "${1:-all}" != "all" ] && {
-		__gup
-		return
-	}
 	__heading="$(tput setaf 5 bold)%s$(tput sgr0)\n"
 	# shellcheck disable=SC2317
 	wrapper() {
@@ -198,8 +192,8 @@ gup() {
 	done
 	eval "$cmd"
 	# shellcheck disable=SC2059
-	printf "$__heading" "*** checking ***"
-	gdown 'check_private'
+	printf "$__heading" "*** checking all repos ***"
+	gdown 'check'
 }
 
 gnew() {
