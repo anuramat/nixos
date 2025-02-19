@@ -137,6 +137,7 @@ __gup() {
 	if git diff-index --quiet HEAD; then
 		echo 'nothing to commit'
 	else
+		echo 'committing'
 		git commit -qam "auto: $(hostname)" || return
 	fi
 	echo 'pulling'
