@@ -77,7 +77,7 @@ gdown() {
 			;;
 	esac
 
-	printf "%d repos; " "$((${#__free_repos[@]} + $(ghq list | wc -l)))"
+	printf "%d repos, " "$((${#__free_repos[@]} + $(ghq list | wc -l)))"
 
 	# repos are taken from ghq and hardcoded array
 	local root=$(ghq root)
@@ -97,8 +97,8 @@ gdown() {
 			[ "$before" != "$(git rev-parse @)" ] && echo "pulled (ff): $name" >&2
 		}
 
-		prompt=$(_git_prompt 1)
-		[ -n "$prompt" ] || return
+		local prompt
+		prompt=$(_git_prompt 1) || return
 		prompt="$(tput setaf 1)$prompt$(tput sgr0)"
 
 		printf '\t%s\n' "$name $prompt"
@@ -161,7 +161,9 @@ __gup() {
 		echo "updated remote"
 	fi
 
-	echo 'done'
+	local prompt
+	prompt=$(_git_prompt 1) && echo "status: $prompt" # TODO refactor to not use cut?
+	printf 'done'
 }
 
 # push all personal repos
@@ -213,7 +215,7 @@ gnew() {
 }
 
 _git_prompt() {
-	local -r hide_clean=$1
+	local -r only_status=$1
 
 	local bare
 	bare=$(git rev-parse --is-bare-repository 2> /dev/null) || return # we're not in a repo
@@ -257,11 +259,16 @@ _git_prompt() {
 		[ -n "$(git cherry @ "@{push}" 2> /dev/null)" ] && desync+='<'
 		# ahead
 		[ -n "$(git cherry "@{u}" @ 2> /dev/null)" ] && desync+='>'
+		# TODO add unpushed commits from other branches with a special flag?
 
 		local -r stash=$(echo "$raw" | grep -oP '(?<=^# stash )\d+')
 
-		result=$(printf %s "${branch:-$commit}${status:+ $status}${desync:+ $desync}${stash:+ \$$stash}")
-		[ -n "$hide_clean" ] && [ "$result" = "$branch" ] && return
+		result=$(printf %s "${status:+ $status}${desync:+ $desync}${stash:+ \$$stash}")
+
+		# in case of only_status, error out if repo is clean
+		[ -n "$only_status" ] && [ -z "$result" ] && return 1
+		# prepend branch/hash
+		[ -z "$only_status" ] && result=$(printf %s "${branch:-$commit}$result")
 	fi
 	printf %s "$result"
 }
