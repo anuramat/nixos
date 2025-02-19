@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # TODO unsafe path handling
+# TODO reconsider stderr/stdout depending on usecases
 
 __free_repos=("$HOME/notes" "/etc/nixos")
 
@@ -94,7 +95,7 @@ gdown() {
 		[ -z "$nopull" ] && {
 			local before=$(git rev-parse HEAD)
 			git pull --ff-only &> /dev/null
-			[ "$before" != "$(git rev-parse HEAD)" ] && echo "pulled (ff): $name" 1>&2
+			[ "$before" != "$(git rev-parse HEAD)" ] && echo "pulled (ff): $name" >&2
 		}
 
 		prompt=$(_git_prompt 1)
@@ -110,11 +111,12 @@ gdown() {
 		ghq list -p | xargs -P 0 -I {} bash -c "get_dirty '$nopull' $((${#root} + 1)) {}" | LC_ALL=C sort
 	)
 	[ -z "$dirty" ] && {
-		echo "all clean!"
+		echo "all clean!" >&2
 		return
 	}
-	echo "dirty repos:"
+	echo "dirty repos:" >&2
 	printf "%s\n" "$dirty"
+	return 1
 }
 
 # push+commit on personal repos
