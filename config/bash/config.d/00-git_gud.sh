@@ -95,21 +95,18 @@ down() {
 		cd "$path" || return
 
 		local -r name="${path:prefix_length}"
-		local pulled
 
 		[ -z "$nopull" ] && {
 			local before=$(git rev-parse @)
 			git pull --ff-only &> /dev/null
-			[ "$before" != "$(git rev-parse @)" ] && pulled=1
+			[ "$before" != "$(git rev-parse @)" ] && local pulled=1
 		}
 
-		local prompt
-		prompt=$(_git_prompt 1) && prompt=
-		[ -n "$pulled" ] && prompt=" ff$prompt"
-
-		[ -z "$prompt" ] && return
-		prompt="$(tput setaf 1)$prompt$(tput sgr0)"
-		printf '\t%s\n' "$name$prompt"
+		local status
+		status=$(_git_prompt 1) && status=
+		status="${pulled:+ [ff]}${status:+$(tput setaf 1)$status$(tput sgr0)}"
+		[ -z "$status" ] && return
+		printf '\t%s\n' "$name$status"
 	}
 
 	local dirty
@@ -118,12 +115,12 @@ down() {
 		printf '%s\0' "${__free_repos[@]}" | xargs -0 -P 0 -I {} bash -c "get_dirty '$nopull' 0 {}" | LC_ALL=C sort
 		ghq list -p | xargs -P 0 -I {} bash -c "get_dirty '$nopull' $((${#root} + 1)) {}" | LC_ALL=C sort
 	)
+	printf %s "status:" >&2
 	[ -z "$dirty" ] && {
 		echo "all clean!" >&2
 		return
 	}
-	echo "of them dirty:" >&2
-	printf "%s\n" "$dirty" >&2
+	printf "\n%s\n" "$dirty" >&2
 	return 1
 }
 
