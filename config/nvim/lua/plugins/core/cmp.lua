@@ -30,41 +30,41 @@ return {
       }
     end,
   },
-  {
-    'milanglacier/minuet-ai.nvim',
-    lazy = false,
-    branch = 'main',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'Saghen/blink.cmp', -- optional, not required if you are using virtual-text frontend
-    },
-    opts = function()
-      return {
-        virtualtext = {
-          auto_trigger_ft = { '*' },
-          auto_trigger_ignore_ft = {},
-          show_on_completion_menu = true, -- show when menu is visible
-          keymap = {
-            -- TODO figure out hotkeys
-            accept = '<A-a>',
-            accept_line = '<A-y>',
-            prev = '<A-p>',
-            next = '<A-n>',
-            dismiss = '<A-e>',
-          },
-        },
-        provider = 'openai_fim_compatible',
-        n_completions = 5,
-        context_window = 512, -- isn't this too large
-        provider_options = {
-          openai_fim_compatible = {
-            api_key = 'TERM',
-            name = 'Ollama',
-            end_point = 'http://localhost:11434/v1/completions',
-            model = 'deepseek-coder-v2:16b',
-          },
-        },
-      }
-    end,
-  },
+  -- {
+  --   'milanglacier/minuet-ai.nvim',
+  --   lazy = false,
+  --   branch = 'main',
+  --   dependencies = {
+  --     'nvim-lua/plenary.nvim',
+  --     'Saghen/blink.cmp', -- optional, not required if you are using virtual-text frontend
+  --   },
+  --   opts = function()
+  --     return {
+  --       virtualtext = {
+  --         auto_trigger_ft = { '*' },
+  --         auto_trigger_ignore_ft = {},
+  --         show_on_completion_menu = true, -- show when menu is visible
+  --         keymap = {
+  --           -- TODO figure out hotkeys
+  --           accept = '<A-a>',
+  --           accept_line = '<A-y>',
+  --           prev = '<A-p>',
+  --           next = '<A-n>',
+  --           dismiss = '<A-e>',
+  --         },
+  --       },
+  --       provider = 'openai_fim_compatible',
+  --       n_completions = 1,
+  --       context_window = 512,
+  --       provider_options = {
+  --         openai_fim_compatible = {
+  --           api_key = 'TERM',
+  --           name = 'Ollama',
+  --           end_point = 'http://localhost:11434/v1/completions',
+  --           model = 'deepseek-coder-v2:16b',
+  --         },
+  --       },
+  --     }
+  --   end,
+  -- },
 }
