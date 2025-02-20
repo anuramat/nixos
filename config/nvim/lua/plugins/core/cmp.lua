@@ -45,6 +45,7 @@ return {
           auto_trigger_ignore_ft = {},
           show_on_completion_menu = true, -- show when menu is visible
           keymap = {
+            -- TODO figure out hotkeys
             accept = '<A-a>',
             accept_line = '<A-y>',
             prev = '<A-p>',
