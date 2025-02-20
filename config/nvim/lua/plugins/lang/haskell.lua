@@ -1,9 +1,7 @@
 local ul = require('utils.lsp')
 
 local function repl_toggler(ht, buffer)
-  return function()
-    ht.repl.toggle(vim.api.nvim_buf_get_name(buffer))
-  end
+  return function() ht.repl.toggle(vim.api.nvim_buf_get_name(buffer)) end
 end
 
 return {

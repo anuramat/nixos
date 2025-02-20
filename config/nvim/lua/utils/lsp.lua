@@ -1,20 +1,14 @@
 local m = {}
 
 local function set_lsp_keys(buffer)
-  local function set(keys, func, desc)
-    vim.keymap.set('n', keys, func, { buffer = buffer, desc = 'LSP: ' .. desc })
-  end
+  local function set(keys, func, desc) vim.keymap.set('n', keys, func, { buffer = buffer, desc = 'LSP: ' .. desc }) end
   local function set_prefixed(keys, func, desc)
     vim.keymap.set('n', '<leader>l' .. keys, func, { buffer = buffer, desc = 'LSP: ' .. desc })
   end
 
-  local function list_workspace_folders()
-    vim.print(vim.lsp.buf.list_workspace_folders())
-  end
+  local function list_workspace_folders() vim.print(vim.lsp.buf.list_workspace_folders()) end
 
-  local function references()
-    vim.lsp.buf.references({ includeDeclaration = false })
-  end
+  local function references() vim.lsp.buf.references({ includeDeclaration = false }) end
 
   vim.bo[buffer].omnifunc = 'v:lua.vim.lsp.omnifunc'
 

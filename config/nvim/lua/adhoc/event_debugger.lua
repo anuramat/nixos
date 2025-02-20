@@ -7,9 +7,7 @@
 local function follow_events(events)
   local g = vim.api.nvim_create_augroup('event_debugger', { clear = true })
   local counter = 0
-  if events == nil or events == {} then
-    return
-  end
+  if events == nil or events == {} then return end
   for _, e in pairs(events) do
     vim.api.nvim_create_autocmd(e, {
       group = g,

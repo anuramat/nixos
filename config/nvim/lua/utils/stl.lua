@@ -26,23 +26,17 @@ function m.layout()
 end
 
 function m.encoding()
-  if vim.o.fileencoding ~= 'utf-8' then
-    return vim.o.fileencoding
-  end
+  if vim.o.fileencoding ~= 'utf-8' then return vim.o.fileencoding end
   return ''
 end
 
 function m.format()
-  if vim.o.fileformat ~= 'unix' then
-    return vim.o.fileencoding
-  end
+  if vim.o.fileformat ~= 'unix' then return vim.o.fileencoding end
   return ''
 end
 
 function m.molten()
-  local ok, v = pcall(function()
-    return require('molten.status').initialized()
-  end)
+  local ok, v = pcall(function() return require('molten.status').initialized() end)
   if ok then
     return v
   else

@@ -18,9 +18,7 @@ local function cache(font)
 
   local function open(mode)
     local file = io.open(filename, mode)
-    if file == nil then
-      error(string.format('Couldn\'t open (%s) the figlet cache file %s', mode, filename))
-    end
+    if file == nil then error(string.format('Couldn\'t open (%s) the figlet cache file %s', mode, filename)) end
     return file
   end
 
@@ -52,9 +50,7 @@ end
 --- Generates a banner with a random font
 ---@return string
 local function getbanner(font)
-  if font == '' then
-    font = random_font()
-  end
+  if font == '' then font = random_font() end
   vim.g.figlet_font = font
   return cache(font)
 end
@@ -135,9 +131,7 @@ end
 local function unmap(allowed_keys)
   for i = 32, 126 do
     local c = string.char(i)
-    if not vim.tbl_contains(allowed_keys, c) then
-      vim.api.nvim_buf_set_keymap(0, 'n', c, '<nop>', {})
-    end
+    if not vim.tbl_contains(allowed_keys, c) then vim.api.nvim_buf_set_keymap(0, 'n', c, '<nop>', {}) end
   end
 end
 
@@ -158,16 +152,12 @@ local function hide()
   vim.opt.guicursor:append('a:HiddenCursor,ci-c-cr:Cursor')
 end
 
-local function unhide()
-  vim.opt.guicursor = old_gcr
-end
+local function unhide() vim.opt.guicursor = old_gcr end
 
 vim.api.nvim_create_autocmd('VimEnter', {
   callback = function()
     -- skip greeter when opening files
-    if vim.fn.argc() ~= 0 then
-      return
-    end
+    if vim.fn.argc() ~= 0 then return end
 
     -- greet
     set()
@@ -181,9 +171,7 @@ vim.api.nvim_create_autocmd('VimEnter', {
         unhide()
         local buf = vim.api.nvim_create_buf(true, false)
         vim.api.nvim_win_set_buf(old, buf)
-        if ev.buf == 1 then
-          vim.api.nvim_win_set_buf(0, buf)
-        end
+        if ev.buf == 1 then vim.api.nvim_win_set_buf(0, buf) end
       end,
       once = true,
     })
@@ -191,9 +179,7 @@ vim.api.nvim_create_autocmd('VimEnter', {
     -- when the buffer is closed, unhide the cursor
     vim.api.nvim_create_autocmd('BufDelete', {
       buffer = 1,
-      callback = function()
-        unhide()
-      end,
+      callback = function() unhide() end,
       once = true,
     })
 
