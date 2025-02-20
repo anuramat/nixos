@@ -44,12 +44,9 @@ return {
     dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' },
     ft = { 'markdown', 'quarto' },
     opts = {
-      pipe_table = {
-        enabled = false,
-      },
-      latex = {
-        enabled = false,
-      },
+      sign = { enabled = false },
+      pipe_table = { enabled = false },
+      latex = { enabled = false },
     },
   },
   {
