@@ -2,6 +2,7 @@
   "aerial.nvim": { "branch": "master", "commit": "3284a2cb858ba009c79da87d5e010ccee3c99c4d" },
   "blink.cmp": { "branch": "main", "commit": "18b352d12b35bca148427b607098df14b75a218f" },
   "clangd_extensions.nvim": { "branch": "main", "commit": "db28f29be928d18cbfb86fbfb9f83f584f658feb" },
+  "codecompanion.nvim": { "branch": "main", "commit": "67a747eeab28456971979c8ee03c648135e8687c" },
   "compiler.nvim": { "branch": "main", "commit": "ba9c511ff106d3ce077f679cac1c3ac8260700dc" },
   "conflict-marker.vim": { "branch": "master", "commit": "62742b2ffe7a433988759c67b5c5a22eff74a14b" },
   "cscope_maps.nvim": { "branch": "main", "commit": "6a1b48874211b360de0767489cb9befeeedee996" },
