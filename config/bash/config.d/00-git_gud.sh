@@ -117,7 +117,7 @@ down() {
 	)
 	printf %s "status:" >&2
 	[ -z "$dirty" ] && {
-		echo "all clean!" >&2
+		echo " all clean!" >&2
 		return
 	}
 	printf "\n%s\n" "$dirty" >&2
