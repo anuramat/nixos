@@ -2,35 +2,6 @@
 
 local u = require('utils.helpers')
 return {
-  -- autocomplete and signature
-  {
-    'saghen/blink.cmp',
-    dependencies = {
-      'anuramat/friendly-snippets',
-    },
-    version = '*', -- on nightly - add `build = 'nix run .#build-plugin'`
-    opts = {
-      cmdline = {
-        keymap = {
-          preset = 'default',
-          ['<tab>'] = { 'select_next', 'fallback' },
-          ['<s-tab>'] = { 'select_prev', 'fallback' },
-        },
-      },
-      keymap = {
-        preset = 'default',
-      },
-      completion = {
-        documentation = { auto_show = true, auto_show_delay_ms = 500 },
-      },
-      signature = { enabled = true },
-      -- TODO maybe replace with native stuff:
-      -- inoremap <c-k> <cmd>lua vim.lsp.buf.signature_help()<cr>
-      appearance = {
-        nerd_font_variant = 'mono', -- 'normal' adds spacing between the icon and the name
-      },
-    },
-  },
   -- fuzzy finder
   {
     'ibhagwan/fzf-lua',
