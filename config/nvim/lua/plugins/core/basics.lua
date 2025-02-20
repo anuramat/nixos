@@ -306,18 +306,17 @@ return {
     opts = {
       modes = {
         char = {
-          enable = true,
+          enabled = false,
+        },
+        treesitter = {
           label = {
-            rainbow = { enabled = false },
+            rainbow = { enabled = true },
           },
         },
-        treesitter = {},
       },
       label = {
         before = true,
         after = false,
-        reuse = 'none',
-        rainbow = { enabled = true },
       },
     },
     keys = {
