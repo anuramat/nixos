@@ -2,6 +2,7 @@
 
 # TODO unsafe path handling
 # TODO reconsider stderr/stdout depending on usecases
+# more locals
 
 __free_repos=("$HOME/notes" "/etc/nixos")
 
@@ -72,7 +73,7 @@ check() {
 
 # pull and show status of all repos
 down() {
-	local nopull="$1"
+	local -r nopull="$1"
 	case "$nopull" in
 		"check" | "") ;;
 		*)
@@ -84,16 +85,16 @@ down() {
 	printf "%d repos, " "$((${#__free_repos[@]} + $(ghq list | wc -l)))"
 
 	# repos are taken from ghq and hardcoded array
-	local root=$(ghq root)
+	local -r root=$(ghq root)
 
 	# shellcheck disable=SC2317
 	get_dirty() {
-		local nopull="$1"
-		local prefix_length="$2"
-		local path="$3"
+		local -r nopull="$1"
+		local -r prefix_length="$2"
+		local -r path="$3"
 		cd "$path" || return
 
-		local name="${path:prefix_length}"
+		local -r name="${path:prefix_length}"
 		local pulled
 
 		[ -z "$nopull" ] && {
@@ -111,6 +112,7 @@ down() {
 		printf '\t%s\n' "$name$prompt"
 	}
 
+	local dirty
 	dirty=$(
 		export -f get_dirty _git_prompt
 		printf '%s\0' "${__free_repos[@]}" | xargs -0 -P 0 -I {} bash -c "get_dirty '$nopull' 0 {}" | LC_ALL=C sort
@@ -151,7 +153,7 @@ __git_up() {
 	fi
 
 	printf %s 'pulling: '
-	local pull_before=$(git rev-parse "@{u}")
+	local -r pull_before=$(git rev-parse "@{u}")
 	git pull --ff --no-edit -q || return
 	if [ "$pull_before" == "$(git rev-parse "@{u}")" ]; then
 		echo "already up to date"
@@ -160,7 +162,7 @@ __git_up() {
 	fi
 
 	printf %s 'pushing: '
-	local push_before=$(git rev-parse "@{push}")
+	local -r push_before=$(git rev-parse "@{push}")
 	git push -q || return
 	if [ "$push_before" == "$(git rev-parse "@{push}")" ]; then
 		echo "already up to date"
@@ -268,7 +270,7 @@ _git_prompt() {
 
 	local -r stash=$(echo "$raw" | grep -oP '(?<=^# stash )\d+')
 
-	local state=$(printf %s "${status:+ $status}${desync:+ $desync}${stash:+ \$$stash}")
+	local -r state=$(printf %s "${status:+ $status}${desync:+ $desync}${stash:+ \$$stash}")
 
 	if [ -z "$only_state" ]; then
 		# for PS1: prepend branch/hash
