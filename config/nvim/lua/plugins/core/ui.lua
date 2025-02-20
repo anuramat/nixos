@@ -43,9 +43,9 @@ return {
       local neopywal = require('neopywal')
       neopywal.setup({
         use_wallust = true,
-        -- transparent_background = true,
+        transparent_background = true, -- changes the look even with alpha=100
         dim_inactive = true,
-        show_end_of_buffer = false,
+        show_end_of_buffer = true,
         show_split_lines = true,
       })
       vim.cmd.colorscheme('neopywal')

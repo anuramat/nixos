@@ -190,18 +190,12 @@ vim.api.nvim_create_autocmd('VimEnter', {
     })
 
     -- make it special
-    vim.opt_local.bufhidden = 'wipe'
-    vim.opt_local.buftype = 'nofile'
-    vim.opt_local.cursorline = false
-    vim.opt_local.list = false
-    vim.opt_local.modifiable = false
-    vim.opt_local.number = false
-    vim.opt_local.readonly = true
-    vim.opt_local.relativenumber = false
-    vim.opt_local.signcolumn = 'no'
-    vim.opt_local.stl = ' '
-    vim.opt_local.swapfile = false
-    vim.opt_local.sidescrolloff = 0
+    vim.cmd([[
+      setl bh=wipe bt=nofile scl=no siso=0
+      setl fcs+=eob:\ 
+      setl nocul nolist noma nonu nornu noswf ro
+      setl stl=\ 
+      ]])
 
     -- some remaps
     local allowed_keys = vim.split(':`', '')
