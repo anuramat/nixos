@@ -4,7 +4,6 @@ return {
     'saghen/blink.cmp',
     dependencies = {
       'anuramat/friendly-snippets',
-      'milanglacier/minuet-ai.nvim',
     },
     version = '*', -- on nightly - add `build = 'nix run .#build-plugin'`
     opts = function()
@@ -18,20 +17,9 @@ return {
         },
         keymap = {
           preset = 'default',
-          ['<a-y>'] = require('minuet').make_blink_map(),
         },
         completion = {
           documentation = { auto_show = true, auto_show_delay_ms = 500 },
-        },
-        sources = {
-          default = { 'lsp', 'path', 'snippets', 'buffer', 'minuet' },
-          providers = {
-            minuet = {
-              name = 'minuet',
-              module = 'minuet.blink',
-              score_offset = 8,
-            },
-          },
         },
         signature = { enabled = true },
         -- TODO maybe replace with native stuff:
@@ -45,12 +33,26 @@ return {
   {
     'milanglacier/minuet-ai.nvim',
     lazy = false,
+    branch = 'main',
     dependencies = {
       'nvim-lua/plenary.nvim',
       'Saghen/blink.cmp', -- optional, not required if you are using virtual-text frontend
     },
-    config = function()
-      require('minuet').setup({
+    opts = function()
+      return {
+        virtualtext = {
+          auto_trigger_ft = { '*' },
+          auto_trigger_ignore_ft = {},
+          show_on_completion_menu = true,
+          keymap = {
+            accept = '<A-A>',
+            accept_line = '<A-a>',
+            accept_n_lines = '<A-z>',
+            prev = '<A-[>',
+            next = '<A-]>',
+            dismiss = '<A-e>',
+          },
+        },
         provider = 'openai_fim_compatible',
         n_completions = 1, -- recommend for local model for resource saving
         -- I recommend beginning with a small context window size and incrementally
@@ -63,7 +65,7 @@ return {
           openai_fim_compatible = {
             api_key = 'TERM',
             name = 'Ollama',
-            end_point = 'http://localhost:11434/v1/completions',
+            end_point = 'http://localhost:11434/api/generate',
             model = 'deepseek-coder-v2:16b',
             optional = {
               max_tokens = 56,
@@ -71,7 +73,7 @@ return {
             },
           },
         },
-      })
+      }
     end,
   },
 }
