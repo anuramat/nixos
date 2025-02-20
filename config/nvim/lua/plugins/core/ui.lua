@@ -5,41 +5,33 @@ return {
     -- alterntaives:
     -- * https://github.com/luochen1990/rainbow -- 1.7k stars
     -- * https://github.com/junegunn/rainbow_parentheses.vim -- junegunn, seems "complete", 374 stars
+    -- * blink.delimiters
     'HiPhish/rainbow-delimiters.nvim',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
     event = 'BufEnter',
   },
   -- dressing.nvim - input/select ui elements
   {
-    {
-      'stevearc/dressing.nvim',
-      opts = {
-        input = {
-          insert_only = true,
-          border = vim.g.border,
-        },
-        select = {
-          backend = { 'builtin', 'nui' },
-          nui = { border = { style = vim.g.border } },
-          builtin = { border = vim.g.border },
-        },
+    -- primarily used in symbol rename
+    'stevearc/dressing.nvim',
+    opts = {
+      input = {
+        insert_only = true,
+        border = vim.g.border,
       },
-      event = 'VeryLazy',
+      select = {
+        backend = { 'builtin', 'nui' },
+        nui = { border = { style = vim.g.border } },
+        builtin = { border = vim.g.border },
+      },
     },
+    event = 'VeryLazy',
   },
   -- nvim-colorizer.lua - highlights colors, eg #012345
   {
     'NvChad/nvim-colorizer.lua',
     ft = { 'markdown', 'html', 'css' },
     opts = {},
-  },
-  -- vim-illuminate - highlights the word under cursor using LSP/TS/regex
-  {
-    'RRethy/vim-illuminate',
-    event = 'VeryLazy',
-    config = function()
-      require('illuminate').configure({ filetypes_denylist = vim.g.nonfiles })
-    end,
   },
   -- neopywal.nvim
   {
@@ -51,7 +43,10 @@ return {
       local neopywal = require('neopywal')
       neopywal.setup({
         use_wallust = true,
-        transparent_background = true,
+        -- transparent_background = true,
+        dim_inactive = true,
+        show_end_of_buffer = false,
+        show_split_lines = true,
       })
       vim.cmd.colorscheme('neopywal')
     end,
@@ -79,7 +74,9 @@ return {
     event = 'LspAttach',
     config = {
       autocmd = { enabled = true },
-      code_lenses = true,
+      ignore = {
+        ft = { 'markdown' },
+      },
     },
   },
 }
