@@ -1,3 +1,6 @@
+-- vim: fdl=1
+local u = require('utils.helpers')
+
 return {
   -- project wide find and replace
   {
@@ -39,6 +42,15 @@ return {
   {
     'ThePrimeagen/harpoon',
     branch = 'harpoon2',
+    keys = u.wrap_lazy_keys({
+      { 'a', function(m) m:list():add() end, 'Add' },
+      { 'l', function(m) m.ui:toggle_quick_menu(m:list()) end, 'List' },
+      { 'n', function(m) m:list():next() end, 'Next' },
+      { 'p', function(m) m:list():prev() end, 'Previous' },
+    }, {
+      module = 'harpoon',
+      lhs_prefix = '<leader>h',
+    }),
     dependencies = {
       'nvim-lua/plenary.nvim',
     },
@@ -47,17 +59,9 @@ return {
       local set = function(lhs, rhs, desc)
         vim.keymap.set('n', '<leader>h' .. lhs, rhs, { silent = true, desc = 'Harpoon: ' .. desc })
       end
-   -- stylua: ignore start
-    set('a', function() harpoon:list():add() end, 'Add')
-    set('l', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, 'List')
-    set('n', function() harpoon:list():next() end, 'Next')
-    set('p', function() harpoon:list():prev() end, 'Previous')
-      -- stylua: ignore end
       for i = 1, 9 do
         local si = tostring(i)
-        set(si, function()
-          harpoon:list():select(i)
-        end, 'Go to #' .. si)
+        set(si, function() harpoon:list():select(i) end, 'Go to #' .. si)
       end
     end,
   },
@@ -79,5 +83,26 @@ return {
     keys = {
       { '<leader>s', '<cmd>Namu symbols<cr>', { desc = 'Jump to LSP symbol', silent = true } },
     },
+  },
+  -- diffview
+  {
+    'sindrets/diffview.nvim',
+    event = 'VeryLazy',
+  },
+  -- conflict markers
+  {
+    'rhysd/conflict-marker.vim',
+    init = function()
+      vim.g.conflict_marker_enable_highlight = 1
+      vim.g.conflict_marker_highlight_group = 'Error'
+      vim.g.conflict_marker_enable_matchit = 1
+      vim.g.conflict_marker_enable_mappings = 0
+      -- ct - theirs
+      -- co - ours
+      -- cn - none
+      -- cb - both
+      -- cB - reversed both
+      -- :ConflictMarker*
+    end,
   },
 }

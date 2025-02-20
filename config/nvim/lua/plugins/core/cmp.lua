@@ -30,6 +30,7 @@ return {
       }
     end,
   },
+  -- LLM autocomplete
   -- {
   --   'milanglacier/minuet-ai.nvim',
   --   lazy = false,

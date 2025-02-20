@@ -31,22 +31,10 @@ return {
     },
     opts = {},
     keys = u.wrap_lazy_keys({
-      {
-        'o',
-        function()
-          require('otter').activate()
-        end,
-        desc = 'activate',
-      },
-      {
-        'O',
-        function()
-          require('otter').deactivate()
-        end,
-        desc = 'deactivate',
-      },
+      { 'o', function(m) m.activate() end, 'activate' },
+      { 'O', function(m) m.deactivate() end, 'deactivate' },
     }, {
-      desc_prefix = 'otter: ',
+      module = 'otter',
       lhs_prefix = '<localleader>',
       ft = { 'markdown', 'quarto' },
     }),
@@ -113,53 +101,22 @@ return {
       },
     },
     keys = u.wrap_lazy_keys({
-      {
-        'c',
-        function()
-          require('quarto.runner').run_cell()
-        end,
-        desc = 'run cell',
-      },
-      {
-        'a',
-        function()
-          require('quarto.runner').run_above()
-        end,
-        desc = 'run all above including current one',
-      },
-      {
-        'b',
-        function()
-          require('quarto.runner').run_below()
-        end,
-        desc = 'run all below including current one',
-      },
-      {
-        'A',
-        function()
-          require('quarto.runner').run_all()
-        end,
-        desc = 'run all',
-      },
-      {
-        'l',
-        function()
-          require('quarto.runner').run_line()
-        end,
-        desc = 'run line',
-      },
+      { 'c', function(m) m.run_cell() end, 'run cell' },
+      { 'a', function(m) m.run_above() end, 'run all above including current one' },
+      { 'b', function(m) m.run_below() end, 'run all below including current one' },
+      { 'A', function(m) m.run_all() end, 'run all' },
+      { 'l', function(m) m.run_line() end, 'run line' },
     }, {
       lhs_prefix = '<localleader>r',
-      desc_prefix = 'quarto: ',
+      desc_prefix = 'quarto',
       ft = { 'markdown', 'quarto' },
+      module = 'quarto.runner',
       wrapped = {
         {
           '<localleader>r',
-          function()
-            require('quarto.runner').run_range()
-          end,
+          function(m) m.run_range() end,
+          'run range',
           mode = 'v',
-          desc = 'run range',
         },
       },
     }),

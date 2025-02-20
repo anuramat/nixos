@@ -2,12 +2,9 @@
 
 local u = require('utils.helpers')
 
-local function log_point()
-  require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: '))
-end
+local function log_point(m) m.set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end
 
-local wrapper_opts = { desc_prefix = 'DAP: ', lhs_prefix = '<leader>d' }
-
+local lhs_prefix = '<leader>d'
 return {
   -- nvim-dap
   {
@@ -30,15 +27,18 @@ return {
     end,
   -- stylua: ignore
   keys = u.wrap_lazy_keys( {
-    { 'c', function() require('dap').continue() end,          desc = 'Continue' },
-    { 'o', function() require('dap').step_out() end,          desc = 'Step Out' },
-    { 'n', function() require('dap').step_over() end,         desc = 'Step Over' },
-    { 'i', function() require('dap').step_into() end,         desc = 'Step Into' },
-    { 'b', function() require('dap').toggle_breakpoint() end, desc = 'Toggle Breakpoint' },
-    { 'l', log_point,                                         desc = 'Set Log Point' },
-    { 'r', function() require('dap').repl.open() end,         desc = 'Open Debug REPL' },
-    { 'd', function() require('dap').run_last() end,          desc = 'Run Last Debug Session' },
-  }, wrapper_opts ),
+    { 'b', function(m) m.toggle_breakpoint() end,  'Toggle Breakpoint' },
+    { 'c', function(m) m.continue() end,         'Continue' },
+    { 'd', function(m) m.run_last() end,           'Run Last Debug Session' },
+    { 'i', function(m) m.step_into() end,          'Step Into' },
+    { 'l', log_point,                           'Set Log Point' },
+    { 'n', function(m) m.step_over() end,          'Step Over' },
+    { 'o', function(m) m.step_out() end,           'Step Out' },
+    { 'r', function(m) m.repl.open() end,          'Open Debug REPL' },
+  }, {
+    module = 'dap',
+    lhs_prefix =lhs_prefix ,
+  } ),
   },
   -- nvim-dap-ui
   {
@@ -46,9 +46,12 @@ return {
     dependencies = { 'mfussenegger/nvim-dap', 'nvim-neotest/nvim-nio' },
   -- stylua: ignore
   keys = u.wrap_lazy_keys( {
-    { "u", function() require("dapui").toggle() end, desc = "Dap UI" },
-    { "e", function() require("dapui").eval() end, desc = "Eval", mode = {"n", "v"} },
-  }, wrapper_opts),
+    { "u", function(m) m.toggle() end, "Toggle Dap UI" },
+    { "e", function(m) m.eval() end, "Evaluate", mode = {"n", "v"} },
+  }, {
+module = 'dapui',
+        lhs_prefix=lhs_prefix
+      }),
     opts = {
       -- setting up default settings explicitly just in case
       floating = {
