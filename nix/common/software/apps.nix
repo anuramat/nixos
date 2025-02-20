@@ -57,15 +57,6 @@
 
     # Misc {{{1
     hyprpicker # simple terminal color picker
-    (unstable.wrapOBS {
-      plugins = with unstable.obs-studio-plugins; [
-        obs-multi-rtmp
-        obs-pipewire-audio-capture
-        obs-tuna
-        obs-vaapi
-        wlrobs
-      ];
-    })
     chatterino2 # gui twitch chat client
     qalculate-gtk # qalc calculator gui
     spotify
@@ -78,4 +69,15 @@
     wev # wayland event viewer, useful for debugging
     # }}}
   ];
+
+  programs.obs-studio = {
+    enable = true;
+    plugins = with pkgs.obs-studio-plugins; [
+      obs-multi-rtmp
+      obs-pipewire-audio-capture
+      obs-tuna
+      obs-vaapi
+      wlrobs
+    ];
+  };
 }

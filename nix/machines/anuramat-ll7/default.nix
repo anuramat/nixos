@@ -28,7 +28,8 @@
     };
   };
 
-  nixpkgs.config.cudaSupport = true;
+  # TODO too much to recompile
+  # nixpkgs.config.cudaSupport = true;
 
   imports = [
     inputs.nixos-hardware.nixosModules.common-cpu-intel
