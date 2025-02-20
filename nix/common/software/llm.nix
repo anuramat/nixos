@@ -1,8 +1,7 @@
-{ pkgs, ... }:
 {
   services.ollama = {
-    package = pkgs.ollama-cuda;
     enable = true;
+    acceleration = "cuda";
     # pull models on service start
     loadModels = [ ];
   };
