@@ -25,6 +25,7 @@ alias ...="cd ../.."
 alias ....="cd ../../.."
 alias peco="fzf --height=100 --preview=''"
 alias recv='tailscale file get'
+alias d='rmtrash'
 
 alias t="todo.sh"
 __load_completion todo.sh
