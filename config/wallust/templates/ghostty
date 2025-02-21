@@ -1,5 +1,5 @@
 cursor-color = {{cursor}}
-cursor-text = {{foreground}}
+cursor-text = {{background}}
 
 background = {{background}}
 foreground = {{foreground}}
