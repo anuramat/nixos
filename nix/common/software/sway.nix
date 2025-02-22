@@ -1,14 +1,20 @@
 # https://nixos.wiki/wiki/Sway
 { pkgs, ... }:
 {
-  programs.sway = {
-    enable = true;
-    # TODO doc this
-    wrapperFeatures.gtk = true;
-    extraPackages = with pkgs; [
-      dbus # make sure dbus-update-activation-environment is available
-      # isnt dbus already in there anyway?
-    ];
+  programs = {
+    sway = {
+      enable = true;
+      # TODO doc this
+      wrapperFeatures.gtk = true;
+      extraPackages = with pkgs; [
+        dbus # make sure dbus-update-activation-environment is available
+        # isnt dbus already in there anyway?
+      ];
+    };
+
+    # captive-browser = {
+    #   enable = true;
+    # };
   };
 
   environment.systemPackages = with pkgs; [
