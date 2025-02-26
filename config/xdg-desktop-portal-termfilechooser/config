@@ -1,6 +1,0 @@
-[filechooser]
-; this shit for some reason starts in $HOME
-; also completely empty environment
-cmd=$XDG_CONFIG_HOME/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh
-default_dir=$HOME/Downloads
-; env=TERMCMD=foot
