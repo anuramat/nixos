@@ -43,7 +43,6 @@
     lshw # hw info
     pciutils
     procps # info from /proc
-    vdpauinfo # decoding stuff
     smartmontools # storage
     nvme-cli
     smem # ram usage
