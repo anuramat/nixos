@@ -108,7 +108,6 @@
     ansifilter
     pstree
     age # file encryption
-    virtualbox
     wine
 
     yazi # big, simple, hackable/lua -- ~ for help
