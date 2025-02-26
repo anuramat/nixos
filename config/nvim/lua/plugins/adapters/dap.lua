@@ -1,5 +1,7 @@
 -- vim: fdl=1
 
+-- TODO check if any of this works
+
 local u = require('utils.helpers')
 
 local function log_point(m) m.set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end
