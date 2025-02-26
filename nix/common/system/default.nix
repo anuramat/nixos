@@ -5,10 +5,12 @@
   ...
 }:
 {
-  hardware.enableAllFirmware = true; # regardless of license
-  environment.extraOutputsToInstall = [ "info" ];
-  programs.ssh.knownHostsFiles = cluster.hostKeysFiles;
   imports = dummy ./.;
+  hardware.enableAllFirmware = true; # as in "regardless of license"
+  programs.ssh.knownHostsFiles = cluster.hostKeysFiles;
+
+  programs.adb.enable = true; # android stuff
+  security.rtkit.enable = true; # realtime kit, hands out realtime priority to user processes
 
   fonts = {
     packages = with unstable; [
@@ -42,22 +44,6 @@
       dockerCompat = true;
       # > Required for containers under podman-compose to be able to talk to each other.
       defaultNetwork.settings.dns_enabled = true;
-    };
-  };
-
-  programs.adb.enable = true; # android stuff
-
-  # realtime kit, hands out realtime priority to user processes
-  security.rtkit.enable = true;
-
-  services = {
-    # removable media stuff
-    pipewire = {
-      enable = true;
-      alsa.enable = true;
-      alsa.support32Bit = true;
-      pulse.enable = true;
-      jack.enable = true;
     };
   };
 }
