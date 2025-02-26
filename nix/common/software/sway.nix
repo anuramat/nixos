@@ -1,4 +1,5 @@
 # https://nixos.wiki/wiki/Sway
+# contents: most of the DE-ish stuff
 { pkgs, ... }:
 {
   programs = {
@@ -31,7 +32,7 @@
     swaybg # wallpaper
     swayidle # lock/sleep on idle
     swaylock # lockscreen
-    udiskie # userspace frontend for udisk2
+    udiskie # udisk2 applet frontend
     waybar # status bar
     waypipe # gui forwarding
     wl-clip-persist # otherwise clipboard contents disappear on exit
@@ -42,6 +43,24 @@
     hackneyed # windows inspired cursor theme
     dracula-icon-theme # for the bar
   ];
+
+  # packages
+  services.flatpak.enable = true;
+  programs.appimage = {
+    enable = true;
+    binfmt = true;
+  };
+
+  # creds
+  services.gnome.gnome-keyring.enable = true; # security credential storage, exposed over dbus
+  programs.seahorse.enable = true; # gnome keyring frontend
+
+  # disks
+  programs.gnome-disks.enable = true; # udisks2 frontend
+  services.udisks2 = {
+    enable = true;
+    mountOnMedia = true;
+  };
 
   # force native wayland support in chrome/electron apps
   environment.sessionVariables.NIXOS_OZONE_WL = "1";

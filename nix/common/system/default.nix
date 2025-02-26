@@ -25,9 +25,6 @@
     };
   };
 
-  # realtime kit, hands out realtime priority to user processes
-  security.rtkit.enable = true;
-
   virtualisation = {
     virtualbox = {
       host = {
@@ -41,34 +38,20 @@
     containers.enable = true;
     podman = {
       enable = true;
-      # Create a `docker` alias for podman, to use it as a drop-in replacement
+      # docker aliases
       dockerCompat = true;
-      # Required for containers under podman-compose to be able to talk to each other.
+      # > Required for containers under podman-compose to be able to talk to each other.
       defaultNetwork.settings.dns_enabled = true;
     };
   };
 
-  programs = {
-    appimage = {
-      enable = true;
-      binfmt = true;
-    };
-    # gnome keyring frontend
-    seahorse.enable = true;
-    # adb
-    adb.enable = true;
-    # udisks2 frontend
-    gnome-disks.enable = true;
-  };
+  programs.adb.enable = true; # android stuff
+
+  # realtime kit, hands out realtime priority to user processes
+  security.rtkit.enable = true;
 
   services = {
     # removable media stuff
-    udisks2 = {
-      enable = true;
-      mountOnMedia = true;
-    };
-    # security credential storage, exposed over dbus
-    gnome.gnome-keyring.enable = true;
     pipewire = {
       enable = true;
       alsa.enable = true;
@@ -76,6 +59,5 @@
       pulse.enable = true;
       jack.enable = true;
     };
-    flatpak.enable = true;
   };
 }
