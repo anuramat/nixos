@@ -74,11 +74,14 @@
   programs.obs-studio = {
     enable = true;
     plugins = with pkgs.obs-studio-plugins; [
-      obs-multi-rtmp
+      obs-backgroundremoval
+      obs-gstreamer
+      obs-multi-rtmp # multi-site
+      obs-nvfbc
       obs-pipewire-audio-capture
-      obs-tuna
+      obs-tuna # song info
       obs-vaapi
-      wlrobs
+      wlrobs # screen capture for wlroots
     ];
   };
 }

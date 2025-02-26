@@ -75,10 +75,14 @@
       pkgs.xdg-desktop-portal-gtk
       unstable.xdg-desktop-portal-termfilechooser # not in stable yet
     ];
-    config = {
-      common = {
-        "org.freedesktop.impl.portal.FileChooser" = "termfilechooser";
+    config =
+      let
+        portalConfig = {
+          "org.freedesktop.impl.portal.FileChooser" = "termfilechooser";
+        };
+      in
+      {
+        sway = portalConfig;
       };
-    };
   };
 }
