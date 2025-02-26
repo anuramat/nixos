@@ -10,9 +10,8 @@
     enable = true;
     keyboards = {
       main = {
-        ids =
-          [
-          ];
+        ids = [
+        ];
         settings =
           let
             interval = toString 64;

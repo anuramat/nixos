@@ -65,8 +65,8 @@
     proton-pass
     transmission_4-gtk # transmission torrent client gui
     # better pywal TODO go back to stable when xdg compialnt version gets released
-    unstable.wallust
-    # inputs.wallust.packages.${pkgs.system}.default
+    # unstable.wallust
+    inputs.wallust.packages.${pkgs.system}.default
     wev # wayland event viewer, useful for debugging
     # }}}
   ];
