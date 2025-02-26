@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+export TERMCMD=foot
+
 export XDG_DOWNLOAD_DIR="$HOME/dl/"
 export XDG_DOCUMENTS_DIR="$HOME/docs/"
 export XDG_PICTURES_DIR="$HOME/img/"
