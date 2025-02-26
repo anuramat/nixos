@@ -18,7 +18,7 @@ let
   wrapper = pkgs.writeTextFile {
     name = "nix_wrapper.sh";
     text = ''
-      #!/usr/bin/env bash
+      #!/bin/sh
       export PATH="${pkgs.foot}/bin:${pkgs.yazi}/bin''${PATH:+:$PATH}"
       ${unstable.xdg-desktop-portal-termfilechooser}/share/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh "$@"
     '';
