@@ -12,6 +12,7 @@
 
   programs.adb.enable = true; # android stuff
   security.rtkit.enable = true; # realtime kit, hands out realtime priority to user processes
+  services.tcsd.enable = true; # might fix long sysinit-reactivation.target restart times
 
   # fonts {{{1
   fonts = {
