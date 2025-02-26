@@ -6,5 +6,6 @@ for_window {
     [app_id="openrgb"] floating enable
     [app_id="foot-float"] floating enable
     [app_id="ghostty.float"] floating enable
+    [app_id="Proton Pass"] floating enable
 }
 # vim: ft=swayconfig

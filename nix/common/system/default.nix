@@ -29,9 +29,13 @@
   security.rtkit.enable = true;
 
   virtualisation = {
-    virtualbox.host = {
-      enable = true;
-      # enableExtensionPack = true; # allegedly causes frequent recompilation: <https://nixos.wiki/wiki/VirtualBox>
+    virtualbox = {
+      host = {
+        enable = true;
+      };
+      guest = {
+        enable = true;
+      };
     };
     # common container config files in /etc/containers
     containers.enable = true;
