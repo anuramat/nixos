@@ -1,5 +1,6 @@
 [filechooser]
-cmd=yazi-wrapper.sh
+; this shit for some reason starts in $HOME
+; also completely empty environment
+cmd=$XDG_CONFIG_HOME/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh
 default_dir=$HOME/Downloads
-; Uncomment and edit the line below to change the terminal emulator command
 ; env=TERMCMD=foot
