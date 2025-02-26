@@ -10,14 +10,14 @@
     # Browsers {{{1
     inputs.zen-browser.packages.${pkgs.system}.specific
     tor-browser-bundle-bin
-    unstable.firefox
+    firefox
     google-chrome
 
     # Terminals {{{1
     cool-retro-term
     foot
     unstable.ghostty
-    unstable.wezterm
+    wezterm
 
     # Settings {{{1
     ddcutil # configure external monitors (eg brightness)
@@ -61,9 +61,9 @@
     qalculate-gtk # qalc calculator gui
     spotify
     steam
-    unstable.cheese # webcam
-    unstable.proton-pass
-    unstable.transmission_4-gtk # transmission torrent client gui
+    cheese # webcam
+    proton-pass
+    transmission_4-gtk # transmission torrent client gui
     # better pywal TODO go back to stable when xdg compialnt version gets released
     inputs.wallust.packages.${pkgs.system}.default
     wev # wayland event viewer, useful for debugging

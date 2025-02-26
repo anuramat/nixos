@@ -62,8 +62,8 @@
     openconnect_openssl
 
     # editors {{{1
-    unstable.helix
-    unstable.vis
+    helix
+    vis
 
     # core {{{1
     inputs.subcat.packages.${pkgs.system}.default
@@ -84,8 +84,8 @@
     rmtrash # rm but to trash
     tealdeer # tldr reimplementation: rust + xdg
     tgpt
-    unstable.devenv
-    unstable.eza # ls++
+    devenv
+    eza # ls++
     (unstable.todo-txt-cli.overrideAttrs {
       # fixes <https://github.com/NixOS/nixpkgs/issues/367635>
       installPhase = ''
@@ -103,7 +103,7 @@
     zoxide # cd++
     expect # automating tuis
 
-    # misc {{{1
+    # misc
     asciinema
     ansifilter
     pstree
@@ -116,7 +116,7 @@
 
     aria # downloader
     banner
-    unstable.croc # send/receive files through relay with encryption
+    croc # send/receive files through relay with encryption TODO might be broken, unstable worked tho
     makefile2graph
     mermaid-cli
     mermaid-filter
@@ -163,7 +163,7 @@
     iotop # detailed io info, requires sudo
     nvitop # nvidia gpu
     podman-tui # podman container status
-    unstable.nvtopPackages.full # top for GPUs (doesn't support intel yet)
+    unstable.nvtopPackages.full # top for GPUs (waiting for intel support to reach from upstream)
     zenith-nvidia # top WITH nvidia GPUs
 
     # img {{{1
@@ -184,7 +184,7 @@
     mpv
     # davinci-resolve
     handbrake
-    unstable.footage
+    footage
     ffmpeg
     yt-dlp # download youtube videos
 
@@ -202,7 +202,7 @@
     readability-cli # extracts main content from pages
     okular # reader # TODO remove?
     djview # djvu reader # TODO remove?
-    unstable.zathura # keyboard-centric aio reader
+    zathura # keyboard-centric aio reader
     zotero # TODO do I need this?
     easyocr # neural OCR
     pandoc # markup converter (latex, markdown, etc)
