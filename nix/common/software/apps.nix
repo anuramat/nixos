@@ -73,7 +73,7 @@
 
   programs.obs-studio = {
     enable = true;
-    plugins = with pkgs.obs-studio-plugins; [
+    plugins = with unstable.obs-studio-plugins; [
       obs-backgroundremoval
       obs-gstreamer
       obs-multi-rtmp # multi-site

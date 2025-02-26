@@ -125,7 +125,7 @@ down() {
 }
 
 # push+commit on personal repos
-__git_up() {
+__git_push_commit() {
 	local ok
 	# check that we're in a personal repo directory
 	for i in "${__free_repos[@]}"; do
@@ -179,7 +179,7 @@ up() {
 		*)
 			(
 				cd "$1" || exit 1
-				__git_up
+				__git_push_commit
 			)
 			return
 			;;
@@ -189,7 +189,7 @@ up() {
 	wrapper() {
 		printf "$(tput setaf 5 bold)%s$(tput sgr0)\n" "*** syncing $(basename "$1") ***"
 		cd "$1" || exit
-		__git_up
+		__git_push_commit
 	}
 	cmd="subcat"
 	for path in "${__free_repos[@]}"; do
