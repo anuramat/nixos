@@ -28,6 +28,7 @@
     tree
     unrar-wrapper
     unzip
+    p7zip
     util-linux # I think it's already installed but whatever
     wget
     zip
