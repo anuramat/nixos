@@ -173,5 +173,7 @@ return {
   end,
 }
 
--- https://github.com/netmute/ctags-lsp
--- https://github.com/netmute/ctags-lsp.nvim
+-- ctags-lsp configuration https://github.com/netmute/ctags-lsp.nvim
+-- lsp adapter for ctags https://github.com/netmute/ctags-lsp
+-- cscope support <https://github.com/dhananjaylatkar/cscope_maps.nvim>
+-- regenerates tag files <https://github.com/ludovicchabant/vim-gutentags>
