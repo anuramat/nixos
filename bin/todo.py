@@ -3,6 +3,7 @@
 from collections import defaultdict
 from itertools import zip_longest
 import argparse
+import readline
 import os
 import re
 import sys
@@ -111,6 +112,9 @@ def overview(symbol: str):
     result = "\n".join(["".join(str(item) for item in row) for row in z])
 
     print(result)
+
+
+# TODO open in nvim on nth line
 
 
 def main():
