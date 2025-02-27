@@ -73,10 +73,7 @@
       "quiet"
       "udev.log_level=3"
     ];
-    plymouth = {
-      theme = "breeze"; # package is overridden to use a nixos logo
-      enable = true;
-    };
+    plymouth.enable = true;
   };
   # autologin, tty prompt
   services.getty = {

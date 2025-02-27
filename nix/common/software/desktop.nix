@@ -67,22 +67,28 @@
   # force native wayland support in chrome/electron apps
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
-  # TODO doc this
-  xdg.portal = {
-    enable = true;
-    wlr.enable = true;
-    extraPortals = [
-      pkgs.xdg-desktop-portal-gtk
-      unstable.xdg-desktop-portal-termfilechooser # not in stable yet
-    ];
-    config =
-      let
-        portalConfig = {
-          "org.freedesktop.impl.portal.FileChooser" = "termfilechooser";
+  xdg = {
+    portal = {
+      enable = true;
+      wlr.enable = true;
+      extraPortals = [
+        pkgs.xdg-desktop-portal-gtk
+        unstable.xdg-desktop-portal-termfilechooser # not in stable yet
+      ];
+      config =
+        let
+          portalConfig = {
+            "org.freedesktop.impl.portal.FileChooser" = "termfilechooser";
+          };
+        in
+        {
+          sway = portalConfig;
         };
-      in
-      {
-        sway = portalConfig;
+    };
+    terminal-exec = {
+      settings = {
+        default = "foot.desktop";
       };
+    };
   };
 }
