@@ -27,33 +27,31 @@ return {
       sign('DapStopped', { text = '→', texthl = 'DapStopped', linehl = '', numhl = '' })
       -- sign('DapBreakpointRejected', { text = 'R', texthl = 'DapBreakpointRejected', linehl = '', numhl = '' })
     end,
-  -- stylua: ignore
-  keys = u.wrap_lazy_keys( {
-    { 'b', function(m) m.toggle_breakpoint() end,  'Toggle Breakpoint' },
-    { 'c', function(m) m.continue() end,         'Continue' },
-    { 'd', function(m) m.run_last() end,           'Run Last Debug Session' },
-    { 'i', function(m) m.step_into() end,          'Step Into' },
-    { 'l', log_point,                           'Set Log Point' },
-    { 'n', function(m) m.step_over() end,          'Step Over' },
-    { 'o', function(m) m.step_out() end,           'Step Out' },
-    { 'r', function(m) m.repl.open() end,          'Open Debug REPL' },
-  }, {
-    module = 'dap',
-    lhs_prefix =lhs_prefix ,
-  } ),
+    keys = u.wrap_lazy_keys({
+      { 'b', function(m) m.toggle_breakpoint() end, 'Toggle Breakpoint' },
+      { 'c', function(m) m.continue() end, 'Continue' },
+      { 'd', function(m) m.run_last() end, 'Run Last Debug Session' },
+      { 'i', function(m) m.step_into() end, 'Step Into' },
+      { 'l', log_point, 'Set Log Point' },
+      { 'n', function(m) m.step_over() end, 'Step Over' },
+      { 'o', function(m) m.step_out() end, 'Step Out' },
+      { 'r', function(m) m.repl.open() end, 'Open Debug REPL' },
+    }, {
+      module = 'dap',
+      lhs_prefix = lhs_prefix,
+    }),
   },
   -- nvim-dap-ui
   {
     'rcarriga/nvim-dap-ui',
     dependencies = { 'mfussenegger/nvim-dap', 'nvim-neotest/nvim-nio' },
-  -- stylua: ignore
-  keys = u.wrap_lazy_keys( {
-    { "u", function(m) m.toggle() end, "Toggle Dap UI" },
-    { "e", function(m) m.eval() end, "Evaluate", mode = {"n", "v"} },
-  }, {
-module = 'dapui',
-        lhs_prefix=lhs_prefix
-      }),
+    keys = u.wrap_lazy_keys({
+      { 'u', function(m) m.toggle() end, 'Toggle Dap UI' },
+      { 'e', function(m) m.eval() end, 'Evaluate', mode = { 'n', 'v' } },
+    }, {
+      module = 'dapui',
+      lhs_prefix = lhs_prefix,
+    }),
     opts = {
       -- setting up default settings explicitly just in case
       floating = {

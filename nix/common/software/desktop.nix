@@ -88,7 +88,7 @@
     terminal-exec = {
       enable = true;
       settings = {
-        default = "foot.desktop";
+        default = [ "foot.desktop" ];
       };
     };
   };

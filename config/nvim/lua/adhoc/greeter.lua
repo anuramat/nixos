@@ -22,7 +22,7 @@ local function cache(font)
     return file
   end
 
-  local res = ''
+  local res
   if not u.file_exists(filename) then
     res = figlet(font)
     local file = open('w')
@@ -190,6 +190,7 @@ vim.api.nvim_create_autocmd('VimEnter', {
     })
 
     -- make it special
+    -- luacheck: ignore 613 -- trailing whitespace
     vim.cmd([[
       setl bh=wipe bt=nofile scl=no siso=0
       setl fcs+=eob:\ 

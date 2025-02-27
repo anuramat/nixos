@@ -27,32 +27,31 @@ return {
         changedelete = { text = '▎' },
         untracked = { text = '▎' },
       },
-    -- stylua: ignore
-    on_attach = function()
-      local gs = package.loaded.gitsigns
-      local prefix = '<leader>g'
-      local function prefixed(mode, l, r, desc) vim.keymap.set(mode, prefix..l, r, { buffer = 0, desc = desc }) end
-      local function set(mode, l, r, desc) vim.keymap.set(mode, l, r, { buffer = 0, desc = desc }) end
-      local function stage_selection() gs.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') }) end
-      local function reset_selection() gs.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') }) end
-      -- stage
-      prefixed('n', 'S', gs.stage_buffer,   'Stage buffer')
-      prefixed('n', 's', gs.stage_hunk,     'Stage hunk')
-      prefixed('v', 's', stage_selection, 'Stage selection')
-      -- reset
-      prefixed('n', 'R', gs.reset_buffer,   'Reset buffer')
-      prefixed('n', 'r', gs.reset_hunk,     'Reset hunk')
-      prefixed('v', 'r', reset_selection, 'Reset selection')
-      -- misc hunk fns
-      prefixed('n', 'u', gs.undo_stage_hunk, 'Unstage this hunk/selection')
-      set('n',      ']h', gs.next_hunk,    'Next hunk')
-      set('n',      '[h', gs.prev_hunk,    'Previous hunk')
-      prefixed('n', 'p',  gs.preview_hunk, 'Preview hunk')
-      set({ 'o', 'x' }, 'ih', ':<c-u>Gitsigns select_hunk<cr>', 'Select hunk')
-      -- misc
-      prefixed('n', 'b', function() gs.blame_line({ full = true }) end, 'show blame current line')
-      prefixed('n', 'd', gs.diffthis, 'Show diff for current file')
-    end,
+      on_attach = function()
+        local gs = package.loaded.gitsigns
+        local prefix = '<leader>g'
+        local function prefixed(mode, l, r, desc) vim.keymap.set(mode, prefix .. l, r, { buffer = 0, desc = desc }) end
+        local function set(mode, l, r, desc) vim.keymap.set(mode, l, r, { buffer = 0, desc = desc }) end
+        local function stage_selection() gs.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') }) end
+        local function reset_selection() gs.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') }) end
+        -- stage
+        prefixed('n', 'S', gs.stage_buffer, 'Stage buffer')
+        prefixed('n', 's', gs.stage_hunk, 'Stage hunk')
+        prefixed('v', 's', stage_selection, 'Stage selection')
+        -- reset
+        prefixed('n', 'R', gs.reset_buffer, 'Reset buffer')
+        prefixed('n', 'r', gs.reset_hunk, 'Reset hunk')
+        prefixed('v', 'r', reset_selection, 'Reset selection')
+        -- misc hunk fns
+        prefixed('n', 'u', gs.undo_stage_hunk, 'Unstage this hunk/selection')
+        set('n', ']h', gs.next_hunk, 'Next hunk')
+        set('n', '[h', gs.prev_hunk, 'Previous hunk')
+        prefixed('n', 'p', gs.preview_hunk, 'Preview hunk')
+        set({ 'o', 'x' }, 'ih', ':<c-u>Gitsigns select_hunk<cr>', 'Select hunk')
+        -- misc
+        prefixed('n', 'b', function() gs.blame_line({ full = true }) end, 'show blame current line')
+        prefixed('n', 'd', gs.diffthis, 'Show diff for current file')
+      end,
     },
   },
 }

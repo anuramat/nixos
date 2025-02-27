@@ -52,7 +52,7 @@ luafmt:
 	stylua .
 lualint:
 	./scripts/heading.sh "Checking Lua files"
-	luacheck . --globals=vim -q | head -n -1
+	luacheck . --codes --globals=vim -q | head -n -1
 
 # shell {{{1
 .PHONY: sh shlint shfmt
