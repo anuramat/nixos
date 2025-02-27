@@ -11,7 +11,7 @@ import sys
 # TODO expand $HOME
 # TODO syntax hl
 
-TASK_FILE = "./notes/todo/todo.txt"
+TASK_FILE = "./notes/todo.txt"
 
 MIN_LINES = 10
 MIN_DESC_CHARS = 30
@@ -115,6 +115,7 @@ def overview(symbol: str):
 
 
 # TODO open in nvim on nth line
+
 
 def main():
     parser = argparse.ArgumentParser(prog="task")
