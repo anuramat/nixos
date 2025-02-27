@@ -64,7 +64,7 @@
   };
 
   # misc hacks {{{1
-  # force native wayland support in chrome/electron apps
+  # force native wayland support in chrome/electron apps; TODO check if still required
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   xdg = {
@@ -72,8 +72,8 @@
       enable = true;
       wlr.enable = true; # screen capture
       extraPortals = [
-        pkgs.xdg-desktop-portal-gtk
         unstable.xdg-desktop-portal-termfilechooser # file picker; not in stable yet
+        pkgs.xdg-desktop-portal-gtk # the rest: <https://wiki.archlinux.org/title/XDG_Desktop_Portal>
       ];
       config =
         let
