@@ -63,8 +63,3 @@ se shiftwidth=4
 se tabstop=4
 " no idea what this means: "set the spacing between hardware tab settings"
 " se hardtabs=4
-
-" complex bindings {{{1
-" open man on current word (no idea why there's double "o",
-" but it doesn't work otherwise
-map K wb"zyw:oo:!man "zp

@@ -23,6 +23,13 @@ in
 
       xdg.enable = true;
 
+      # #!/usr/bin/env bash
+      # # shellcheck source-path=home
+      # . "$HOME/.bashrc"
+      programs.bash = {
+        enable = true;
+      };
+
       programs = {
         home-manager.enable = true;
 
