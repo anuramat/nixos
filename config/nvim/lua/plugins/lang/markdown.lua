@@ -41,9 +41,11 @@ return {
   },
   {
     'MeanderingProgrammer/render-markdown.nvim',
+    enabled = false,
     dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' },
     ft = { 'markdown', 'quarto' },
     opts = {
+      link = { enabled = false }, -- fucks up cursor position
       sign = { enabled = false },
       pipe_table = { enabled = false },
       latex = { enabled = false },
