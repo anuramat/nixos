@@ -3,15 +3,14 @@
 from collections import defaultdict
 from itertools import zip_longest
 import argparse
-import readline
 import os
 import re
 import sys
 
-# TODO expand $HOME
-# TODO syntax hl
+# TODO syntax hl?
+# TODO command that opens todo.txt on the nth line
 
-TASK_FILE = "./notes/todo.txt"
+TASK_FILE = os.path.expanduser("~/notes/todo.txt")
 
 MIN_LINES = 10
 MIN_DESC_CHARS = 30
@@ -98,7 +97,7 @@ def overview(symbol: str):
         tasks = by_tags[tag]
         count = len(by_tags[tag])
         heading = f"{tag}: {count}"
-        underline = len(heading) * "-"  # TODO
+        underline = len(heading) * "-"
         cell_lines = ["", heading, underline] + tasks
         cell_lines = [_shorten(i, "~", w - 1).ljust(w) for i in cell_lines[:h]]
         cells.append(cell_lines)
@@ -112,9 +111,6 @@ def overview(symbol: str):
     result = "\n".join(["".join(str(item) for item in row) for row in z])
 
     print(result)
-
-
-# TODO open in nvim on nth line
 
 
 def main():
@@ -136,7 +132,7 @@ def main():
 
     if args.command == "add":
         add(args.task_text)
-    elif args.command == "done":
+    elif args.command == "rm":
         rm(args.task_number)
     elif args.command == "ls":
         ls()
