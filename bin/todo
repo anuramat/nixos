@@ -3,6 +3,7 @@
 from collections import defaultdict
 from itertools import zip_longest
 import argparse
+from math import ceil
 import os
 import re
 import sys
@@ -12,9 +13,9 @@ import sys
 
 TASK_FILE = os.path.expanduser("~/notes/todo.txt")
 
-MIN_LINES = 10
-MIN_DESC_CHARS = 30
-PROMPT_N_LINES = 3
+TERM_HEIGHT_OFFSET = 5  # terminal prompt etc
+MIN_CELL_HEIGHT = 10
+MIN_CELL_WIDTH = 30
 
 
 def add(line):
@@ -76,41 +77,48 @@ def _shorten(line: str, symbol: str, max_width: int):
     return line
 
 
-def overview(symbol: str):
+def overview(title: str, symbol: str):
     term_x, term_y = os.get_terminal_size()
-    nx_cells = term_x // MIN_DESC_CHARS
 
-    header = "-" * (term_x // 2) + "TODO"
+    header = "-" * (term_x // 2) + title
     header += (term_x - len(header)) * "-"
-    print(header)
 
-    lines = _read()
-    by_tags = _get_tag_dict(lines, symbol)
+    file_lines = _read()
+    lines_by_tags = _get_tag_dict(file_lines, symbol)
 
-    n_tags = len(by_tags)
-    ny_cells = (n_tags + nx_cells - 1) // nx_cells  # ceil(tags/cols)
-    w = term_x // nx_cells
-    h = max(MIN_LINES, (term_y - PROMPT_N_LINES - 1) // ny_cells)  # XXX -1 -- header
+    n_x = term_x // MIN_CELL_WIDTH
+    n_y = ceil(len(lines_by_tags) / n_x)
 
-    cells = []
-    for tag in by_tags:
-        tasks = by_tags[tag]
-        count = len(by_tags[tag])
-        heading = f"{tag}: {count}"
+    w = term_x // n_x
+    h = max(
+        MIN_CELL_HEIGHT,
+        (
+            term_y - TERM_HEIGHT_OFFSET - (n_y - 1) - 1
+        )  # subtracting prompt, spacing, and main header
+        // n_y,
+    )
+
+    cells_lines = []
+    for tag in lines_by_tags:
+        lines = lines_by_tags[tag]
+        heading = f"{tag}: {len(lines_by_tags[tag])}"
         underline = len(heading) * "-"
-        cell_lines = ["", heading, underline] + tasks
-        cell_lines = [_shorten(i, "~", w - 1).ljust(w) for i in cell_lines[:h]]
-        cells.append(cell_lines)
+        lines = ([heading, underline] + lines)[:h]
+        lines += [""] * (h - len(lines))  # exact cell height
+        lines = [_shorten(i, "~", w - 1).ljust(w) for i in lines]  # exact line width
+        cells_lines.append(lines)
 
-    columns = [[] for _ in range(nx_cells)]
-    for i, v in enumerate(cells):
-        columns[i % nx_cells].append(v)
-    columns = [sum(i, []) for i in columns]
+    cells_by_columns = [[] for _ in range(n_x)]
+    for i, v in enumerate(cells_lines):
+        cells_by_columns[i % n_x].append(v + [""])
+    column_lines = [sum(i, []) for i in cells_by_columns]
 
-    z = zip_longest(*columns, fillvalue=(" " * w))
-    result = "\n".join(["".join(str(item) for item in row) for row in z])
+    zipped_columns = zip_longest(*column_lines, fillvalue=(" " * w))
+    final_lines = ["".join(str(item) for item in row) for row in zipped_columns]
+    final_lines = final_lines[:-1]  # remove last padding line
+    result = "\n".join(final_lines)
 
-    print(result)
+    print(header + result)
 
 
 def main():
@@ -130,16 +138,16 @@ def main():
 
     args = parser.parse_args()
 
-    if args.command == "add":
+    if args.command is None or args.command == "prj":
+        overview("PROJECTS", "+")
+    elif args.command == "ctx":
+        overview("CONTEXTS", "@")
+    elif args.command == "add":
         add(args.task_text)
     elif args.command == "rm":
         rm(args.task_number)
     elif args.command == "ls":
         ls()
-    elif args.command == "prj":
-        overview("+")
-    elif args.command == "ctx":
-        overview("@")
     else:
         parser.print_help()
         sys.exit(1)
