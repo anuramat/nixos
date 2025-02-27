@@ -1,32 +1,24 @@
 $include /etc/inputrc
-# set bell-style visible
-# highlight common prefix
-set colored-completion-prefix on
-# completion colors for file types
-set colored-stats on
-# number of columns in completion
-set completion-display-width -1
-# ignore case
+# completion: logic {{{1
+set match-hidden-files on
+set skip-completed-text on
 set completion-ignore-case on
 # '-' == '_'
 set completion-map-case on
-# max length in chars of a common prefix that doesn't get abbreviated
-set completion-prefix-display-length 0
-# max completions that don't prompt "Display all n? (y or n)"
-set completion-query-items 0
-# only complete .files when the prefix has a leading dot
-set match-hidden-files off
-# show filetype char
+# completion: visuals {{{1
 set visible-stats on
-# show comps without a bell when multiple comps
-set show-all-if-ambiguous on
-# show comps without a bell when no common prefix
-set show-all-if-unmodified on
+set colored-stats on
+set mark-symlinked-directories on
+set completion-display-width -1
+set colored-completion-prefix on
+set completion-prefix-display-length 5
+# history {{{1
 # reset history modifications after running a command
 set revert-all-at-newline on
-# infinite history
 set history-size -1
-# show trailing slash for directory symlinks
-set mark-symlinked-directories on
-# off: |file -> Makefilefile; on: |file -> Makefile
-set skip-completed-text on
+# stfu {{{1
+set completion-query-items 0
+set page-completions off
+set show-all-if-ambiguous on
+set show-all-if-unmodified on
+# vim: fdm=marker fdl=0
