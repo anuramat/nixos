@@ -28,6 +28,9 @@ in
       # . "$HOME/.bashrc"
       programs.bash = {
         enable = true;
+        bashrcExtra = ''
+          source ${./bashrc.sh}
+        '';
       };
 
       programs = {
