@@ -20,6 +20,9 @@ in
     users.${user} = {
       home.username = user;
       home.homeDirectory = config.users.users.${user}.home;
+
+      xdg.enable = true;
+
       programs = {
         home-manager.enable = true;
 

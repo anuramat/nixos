@@ -1,6 +1,8 @@
 #!/bin/sh
 
 # some basic env vars
+# TODO: read this:
+# https://www.gnu.org/software/gettext/manual/html_node/Locale-Environment-Variables.html
 
 # XDG paths
 export XDG_CONFIG_HOME="$HOME/.config"
