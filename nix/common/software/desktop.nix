@@ -70,10 +70,10 @@
   xdg = {
     portal = {
       enable = true;
-      wlr.enable = true;
+      wlr.enable = true; # screen capture
       extraPortals = [
         pkgs.xdg-desktop-portal-gtk
-        unstable.xdg-desktop-portal-termfilechooser # not in stable yet
+        unstable.xdg-desktop-portal-termfilechooser # file picker; not in stable yet
       ];
       config =
         let
