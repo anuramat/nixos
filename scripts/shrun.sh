@@ -4,9 +4,6 @@ get_scripts() {
 	# find all shell scripts and run a command
 	fd -HL -t f -0 . | while IFS= read -r -d '' filename; do
 		if head -n 1 "$filename" | grep -q "^#!.*sh" || echo "$filename" | grep -iq "sh$"; then
-			# remove after todo.sh is finished
-			echo "$filename" | grep -iq "/todo/" && continue
-
 			printf '%s\0' "$filename"
 		fi
 	done

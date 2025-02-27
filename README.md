@@ -27,7 +27,7 @@ TODO
 ### Hardcoded variables
 
 - Personal data (`nixos/user.nix`, `rg -i 'anuramat|arsen'`, maybe `.bashrc`)
-- todo.sh, ~/notes
+- `~/notes`
 - XDG basedir spec - `rg XDGBDSV`
 - wmenu books in sway config searches for files in ~/books
 - `/etc/nix/cache.pem`

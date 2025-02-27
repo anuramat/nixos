@@ -86,17 +86,6 @@
     tgpt
     devenv
     eza # ls++
-    (unstable.todo-txt-cli.overrideAttrs {
-      # fixes <https://github.com/NixOS/nixpkgs/issues/367635>
-      installPhase = ''
-        install -vd $out/bin
-        install -vm 755 todo.sh $out/bin
-        install -vd $out/share/bash-completion/completions
-        install -vm 644 todo_completion $out/share/bash-completion/completions/todo.sh
-        install -vd $out/etc/todo
-        install -vm 644 todo.cfg $out/etc/todo/config
-      '';
-    })
     watchman # another file watcher TODO try and compare to entr
     wayidle # runs a command on idle
     zellij # tmux++
