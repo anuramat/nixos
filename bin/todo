@@ -116,7 +116,6 @@ def overview(symbol: str):
 
 # TODO open in nvim on nth line
 
-
 def main():
     parser = argparse.ArgumentParser(prog="task")
 
