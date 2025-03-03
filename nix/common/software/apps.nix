@@ -58,6 +58,7 @@
     # Misc {{{1
     hyprpicker # simple terminal color picker
     qalculate-gtk # qalc calculator gui
+    spotify
     steam
     cheese # webcam
     proton-pass
