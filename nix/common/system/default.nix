@@ -139,6 +139,9 @@
   };
 
   programs.gphoto2.enable = true;
+  boot.kernelModules = [
+    "v4l2loopback"
+  ];
 
   services = {
     fail2ban.enable = true; # intrusion prevention
