@@ -57,9 +57,7 @@
 
     # Misc {{{1
     hyprpicker # simple terminal color picker
-    chatterino2 # gui twitch chat client
     qalculate-gtk # qalc calculator gui
-    spotify
     steam
     cheese # webcam
     proton-pass
