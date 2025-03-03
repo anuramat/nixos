@@ -83,5 +83,8 @@
       obs-vaapi
       wlrobs # screen capture for wlroots
     ];
+    enableVirtualCamera = true; # set up the v4l2loopback kernel module
   };
+  programs.gphoto2.enable = true; # dslr interface
+
 }

@@ -47,7 +47,7 @@
     nvme-cli
     smem # ram usage
     usbutils
-    v4l-utils
+    v4l-utils # camera stuff
 
     # network {{{1
     aircrack-ng
