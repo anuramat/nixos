@@ -138,6 +138,8 @@
     };
   };
 
+  programs.gphoto2.enable = true;
+
   services = {
     fail2ban.enable = true; # intrusion prevention
     tailscale.enable = true;

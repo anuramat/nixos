@@ -27,6 +27,7 @@ in
       description = fullname;
       isNormalUser = true;
       extraGroups = [
+        "camera" # gphoto2
         "wheel" # root
         "video" # screen brightness
         "network" # wifi
