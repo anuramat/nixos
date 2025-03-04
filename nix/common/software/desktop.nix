@@ -1,6 +1,4 @@
-# vim: fdl=1 fdm=marker
-# https://nixos.wiki/wiki/Sway
-# contents: most of the DE-ish stuff
+# vim: fdl=0 fdm=marker
 {
   lib,
   pkgs,
@@ -8,9 +6,7 @@
   ...
 }:
 {
-
   hardware.enableAllFirmware = true; # as in "regardless of license"
-
   programs.adb.enable = true; # android stuff
   security.rtkit.enable = true; # realtime kit, hands out realtime priority to user processes
 
