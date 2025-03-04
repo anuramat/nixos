@@ -1,24 +1,10 @@
 # vim: fdl=0 fdm=marker
 {
   pkgs,
-  unstable,
-  inputs,
   ...
 }:
 {
   environment.systemPackages = with pkgs; [
-    # Browsers {{{1
-    inputs.zen-browser.packages.${pkgs.system}.specific
-    tor-browser-bundle-bin
-    firefox
-    google-chrome
-
-    # Terminals {{{1
-    cool-retro-term
-    foot
-    unstable.ghostty
-    wezterm
-
     # Comms {{{1
     element-desktop # matrix client
     onionshare # tor-based file-sharing etc
@@ -29,8 +15,6 @@
     whatsapp-for-linux
 
     # Misc {{{1
-    hyprpicker # simple terminal color picker
-    qalculate-gtk # qalc calculator gui
     chatterino2 # gui twitch chat client
     spotify
     steam

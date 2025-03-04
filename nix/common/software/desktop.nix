@@ -20,6 +20,7 @@
 
   # packages {{{1
   environment.systemPackages = with pkgs; [
+    # Essentials {{{2
     avizo # brightness/volume control with overlay indicator
     kanshi # display config daemon
     wdisplays # GUI kanshi config generator
@@ -27,6 +28,18 @@
     playerctl # cli media player controls
     mako # notifications - smaller than fnott and dunst
     waybar # status bar
+
+    # Browsers {{{2
+    inputs.zen-browser.packages.${pkgs.system}.specific
+    tor-browser-bundle-bin
+    firefox
+    google-chrome
+
+    # Terminals {{{2
+    cool-retro-term
+    foot
+    unstable.ghostty
+    wezterm
 
     # Config utils {{{2
     glib # gsettings (gtk etc)
@@ -81,6 +94,7 @@
     # Theme {{{2
     hackneyed # windows inspired cursor theme
     dracula-icon-theme # for the bar
+    # }}}
   ];
 
   # external pkgs {{{1
