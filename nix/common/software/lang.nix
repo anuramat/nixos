@@ -5,7 +5,7 @@
 }:
 {
   environment.systemPackages = with pkgs; [
-    # Compilers {{{1
+    # compilers {{{1
     cabal-install
     cargo
     clang
@@ -26,12 +26,12 @@
     texliveFull
     yarn
 
-    # Debuggers {{{1
+    # debuggers {{{1
     delve # Go debugger
     gdb # C
     python311Packages.debugpy
 
-    # Formatters {{{1
+    # formatters {{{1
     black # python
     formatjson5
     gofumpt # stricter go
@@ -45,7 +45,7 @@
     treefmt # aggregator
     yamlfmt
 
-    # Servers {{{1
+    # servers {{{1
     # (haskell-language-server.override {
     #   supportedGhcVersions =
     #     [
@@ -65,7 +65,7 @@
     unstable.nixd # XXX waiting for pipe support
     yaml-language-server
 
-    # Linters {{{1
+    # linters {{{1
     checkmake # makefile
     deadnix # nix dead code
     golangci-lint # go
@@ -74,7 +74,7 @@
     statix # nix
     yamllint
 
-    # Misc {{{1
+    # misc {{{1
     bats # bash testing
     bear # compilation database generator for clangd
     haskellPackages.hoogle
