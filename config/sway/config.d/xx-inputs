@@ -33,5 +33,8 @@ input 1:1:AT_Translated_Set_2_keyboard {
 input 1739:0:Synaptics_TM3276-022 {
     events disabled
 }
+input 2:10:TPPS/2_IBM_TrackPoint {
+    pointer_accel 1
+}
 
 # vim: ft=swayconfig fdm=marker fdl=0
