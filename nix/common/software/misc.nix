@@ -5,7 +5,6 @@
 }:
 {
   environment.systemPackages = with pkgs; [
-    # Misc {{{1
     chatterino2 # gui twitch chat client
     spotify
     steam
@@ -26,4 +25,11 @@
     enableVirtualCamera = true; # set up the v4l2loopback kernel module
   };
   programs.gphoto2.enable = true; # dslr interface
+
+  services.ollama = {
+    enable = true;
+    acceleration = "cuda";
+    # pull models on service start
+    loadModels = [ ];
+  };
 }
