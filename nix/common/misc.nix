@@ -1,7 +1,5 @@
 { pkgs, dummy, ... }:
 {
-  imports = dummy ./.;
-
   environment.systemPackages = with pkgs; [
     # comms {{{1
     element-desktop # matrix client
