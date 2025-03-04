@@ -14,6 +14,7 @@
     inputs.zen-browser.packages.${pkgs.system}.specific
     tor-browser-bundle-bin
     firefox
+    librewolf
     google-chrome
 
     # terminals {{{1
