@@ -1,26 +1,28 @@
+# vim: fdl=1 fdm=marker
 # https://nixos.wiki/wiki/Sway
 # contents: most of the DE-ish stuff
 { pkgs, unstable, ... }:
 {
-  programs = {
-    sway = {
-      enable = true;
-      # TODO doc this
-      wrapperFeatures.gtk = true;
-      extraPackages = with pkgs; [
-        dbus # make sure dbus-update-activation-environment is available
-        # isnt dbus already in there anyway?
-      ];
-    };
 
-    # captive-browser = {
-    #   enable = true;
-    # };
+  # wm {{{1
+  programs.sway = {
+    enable = true;
+    # TODO doc this; why is this not on by default
+    wrapperFeatures.gtk = true;
+    extraPackages = with pkgs; [
+      dbus # make sure dbus-update-activation-environment is available
+      # isnt dbus already in there anyway?
+    ];
+  };
+
+  # captive portal support
+  programs.captive-browser = {
+    enable = true;
   };
 
   # packages {{{1
   environment.systemPackages = with pkgs; [
-    # Essentials {{{2
+    # essentials {{{2
     avizo # brightness/volume control with overlay indicator
     kanshi # display config daemon
     wdisplays # GUI kanshi config generator
@@ -29,29 +31,29 @@
     mako # notifications - smaller than fnott and dunst
     waybar # status bar
 
-    # Browsers {{{2
+    # browsers {{{2
     inputs.zen-browser.packages.${pkgs.system}.specific
     tor-browser-bundle-bin
     firefox
     google-chrome
 
-    # Terminals {{{2
+    # terminals {{{2
     cool-retro-term
     foot
     unstable.ghostty
     wezterm
 
-    # Config utils {{{2
+    # config utils {{{2
     glib # gsettings (gtk etc)
     ddcutil # configure external monitors (eg brightness)
 
-    # Gui settings {{{2
+    # gui settings {{{2
     networkmanagerapplet # networking
     helvum # pipewire patchbay
     pavucontrol # audio
     system-config-printer # printer
 
-    # Screen capture etc {{{2
+    # screen capture etc {{{2
     slurp # select screen region
     swappy # screenshot markup
     kooha # screen capture with basic gui
@@ -61,12 +63,12 @@
     satty # screenshot markup
     grim # barebones screenshot tool
 
-    # Wallpaper helpers {{{2
+    # wallpaper helpers {{{2
     swaybg # image
     mpvpaper # video
     glpaper # shader
 
-    # Unfiled {{{2
+    # unfiled {{{2
     swayidle # lock/sleep on idle
     swaylock # lockscreen
     udiskie # udisk2 applet frontend
@@ -82,7 +84,7 @@
     gtk3 # gtk-launch - starts an app by name of the desktop file
     xdragon # terminal drag and drop
 
-    # Misc {{{2
+    # misc {{{2
     qalculate-gtk # qalc calculator gui
     cheese # webcam
     proton-pass # password manager
@@ -91,7 +93,7 @@
     inputs.wallust.packages.${pkgs.system}.default
     wev # wayland event viewer, useful for debugging
 
-    # Theme {{{2
+    # theme {{{2
     hackneyed # windows inspired cursor theme
     dracula-icon-theme # for the bar
     # }}}
@@ -119,6 +121,7 @@
   # force native wayland support in chrome/electron apps; TODO check if still required
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
+  # xdg {{{1
   xdg = {
     portal = {
       enable = true;
