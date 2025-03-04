@@ -1,4 +1,4 @@
-# vim: fdl=1 fdm=marker
+# vim: fdl=2 fdm=marker
 # https://nixos.wiki/wiki/Sway
 # contents: most of the DE-ish stuff
 { pkgs, unstable, ... }:
@@ -29,18 +29,6 @@
     playerctl # cli media player controls
     mako # notifications - smaller than fnott and dunst
     waybar # status bar
-
-    # browsers {{{2
-    inputs.zen-browser.packages.${pkgs.system}.specific
-    tor-browser-bundle-bin
-    firefox
-    google-chrome
-
-    # terminals {{{2
-    cool-retro-term
-    foot
-    unstable.ghostty
-    wezterm
 
     # config utils {{{2
     glib # gsettings (gtk etc)
@@ -83,15 +71,6 @@
     gtk3 # gtk-launch - starts an app by name of the desktop file
     xdragon # terminal drag and drop
 
-    # comms {{{2
-    element-desktop # matrix client
-    onionshare # tor-based file-sharing etc
-    onionshare-gui # p2p file sharing, chat, website hosting
-    # qtox # p2p IM XXX broken
-    # slack # XXX broken
-    telegram-desktop
-    whatsapp-for-linux
-
     # misc system {{{2
     qalculate-gtk # qalc calculator gui
     cheese # webcam
@@ -100,11 +79,6 @@
     # unstable.wallust # better pywal TODO go back to stable when xdg compliant version gets merged
     inputs.wallust.packages.${pkgs.system}.default
     wev # wayland event viewer, useful for debugging
-
-    # misc {{{2
-    chatterino2 # gui twitch chat client
-    spotify
-    steam
 
     # theme {{{2
     hackneyed # windows inspired cursor theme
