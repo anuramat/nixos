@@ -19,55 +19,21 @@
     unstable.ghostty
     wezterm
 
-    # Settings {{{1
-    ddcutil # configure external monitors (eg brightness)
-    helvum # pipewire patchbay
-    pavucontrol # gui audio configuration
-    system-config-printer # printer gui
-
-    # Opening stuff {{{1
-    desktop-file-utils # update-desktop-database etc
-    wmenu # dmenu 1to1
-    bemenu # slightly better
-    j4-dmenu-desktop # .desktop wrapper for dmenus
-    xdg-utils # xdg-open etc
-    gtk3 # gtk-launch - starts an app by name of the desktop file
-    xdragon # drag and drop from terminal
-
-    # Terminal helpers {{{1
-    playerctl # cli media player controls
-
-    # Wallpaper helpers {{{1
-    glpaper # shader
-    mpvpaper # video
-
-    # Screenshots and screen capture {{{1
-    kooha # screen capture with basic gui
-    shotman # screenshot, with simple preview afterwards, no markup
-    wf-recorder # CLI screen capture
-
     # Comms {{{1
     element-desktop # matrix client
     onionshare # tor-based file-sharing etc
     onionshare-gui # p2p file sharing, chat, website hosting
-    # qtox # p2p IM # XXX broken
+    # qtox # p2p IM XXX broken
     # slack # XXX broken
     telegram-desktop
-    whatsapp-for-linux # isn't this worthless TODO
+    whatsapp-for-linux
 
     # Misc {{{1
     hyprpicker # simple terminal color picker
     qalculate-gtk # qalc calculator gui
+    chatterino2 # gui twitch chat client
     spotify
     steam
-    cheese # webcam
-    proton-pass
-    transmission_4-gtk # transmission torrent client gui
-    # better pywal TODO go back to stable when xdg compialnt version gets released
-    # unstable.wallust
-    inputs.wallust.packages.${pkgs.system}.default
-    wev # wayland event viewer, useful for debugging
-    # }}}
   ];
 
   programs.obs-studio = {

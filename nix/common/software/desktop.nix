@@ -21,26 +21,64 @@
   # packages {{{1
   environment.systemPackages = with pkgs; [
     avizo # brightness/volume control with overlay indicator
-    grim # barebones screenshot tool
     kanshi # display config daemon
     wdisplays # GUI kanshi config generator
     libnotify # notify-send etc
+    playerctl # cli media player controls
     mako # notifications - smaller than fnott and dunst
+    waybar # status bar
+
+    # Config utils {{{2
+    glib # gsettings (gtk etc)
+    ddcutil # configure external monitors (eg brightness)
+
+    # Gui settings {{{2
     networkmanagerapplet # networking
+    helvum # pipewire patchbay
+    pavucontrol # audio
+    system-config-printer # printer
+
+    # Screen capture etc {{{2
     slurp # select screen region
     swappy # screenshot markup
+    kooha # screen capture with basic gui
+    shotman # screenshot, with simple preview afterwards, no markup
+    wf-recorder # CLI screen capture
+    hyprpicker # color picker
     satty # screenshot markup
-    swaybg # wallpaper
+    grim # barebones screenshot tool
+
+    # Wallpaper helpers {{{2
+    swaybg # image
+    mpvpaper # video
+    glpaper # shader
+
+    # Unfiled {{{2
     swayidle # lock/sleep on idle
     swaylock # lockscreen
     udiskie # udisk2 applet frontend
-    waybar # status bar
     waypipe # gui forwarding
     wl-clip-persist # otherwise clipboard contents disappear on exit
     wl-clipboard # wl-copy/wl-paste: copy from stdin/paste to stdout
     wl-mirror # screen mirroring
+    desktop-file-utils # update-desktop-database etc
+    wmenu # dmenu 1to1
+    bemenu # slightly better -- has dynamic height
+    j4-dmenu-desktop # .desktop wrapper for dmenus
+    xdg-utils # xdg-open etc
+    gtk3 # gtk-launch - starts an app by name of the desktop file
+    xdragon # terminal drag and drop
 
-    glib # gsettings (gtk etc)
+    # Misc {{{2
+    qalculate-gtk # qalc calculator gui
+    cheese # webcam
+    proton-pass # password manager
+    transmission_4-gtk # torrent client
+    # unstable.wallust # better pywal TODO go back to stable when xdg compliant version gets merged
+    inputs.wallust.packages.${pkgs.system}.default
+    wev # wayland event viewer, useful for debugging
+
+    # Theme {{{2
     hackneyed # windows inspired cursor theme
     dracula-icon-theme # for the bar
   ];

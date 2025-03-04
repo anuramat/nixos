@@ -142,6 +142,7 @@ Shift+ScrollUp = prev_file
 Shift+ScrollDown = next_file
 Alt+ScrollUp = prev_frame
 Alt+ScrollDown = next_frame
+y = exec cat "%" | wl-copy
 
 ################################################################################
 # Gallery mode key binding configuration: key = action [parameters]
