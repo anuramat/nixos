@@ -5,15 +5,6 @@
 }:
 {
   environment.systemPackages = with pkgs; [
-    # Comms {{{1
-    element-desktop # matrix client
-    onionshare # tor-based file-sharing etc
-    onionshare-gui # p2p file sharing, chat, website hosting
-    # qtox # p2p IM XXX broken
-    # slack # XXX broken
-    telegram-desktop
-    whatsapp-for-linux
-
     # Misc {{{1
     chatterino2 # gui twitch chat client
     spotify
@@ -35,5 +26,4 @@
     enableVirtualCamera = true; # set up the v4l2loopback kernel module
   };
   programs.gphoto2.enable = true; # dslr interface
-
 }
