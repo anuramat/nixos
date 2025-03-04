@@ -1,3 +1,4 @@
+# vim: fdm=marker fdl=0
 {
   pkgs,
   unstable,
@@ -200,4 +201,3 @@
     # }}}
   ];
 }
-# vim: fdm=marker fdl=0

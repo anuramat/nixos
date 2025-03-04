@@ -1,3 +1,4 @@
+# vim: fdl=0 fdm=marker
 {
   unstable,
   dummy,
@@ -8,10 +9,16 @@
 {
   imports = dummy ./.;
   hardware.enableAllFirmware = true; # as in "regardless of license"
-  programs.ssh.knownHostsFiles = cluster.hostKeysFiles;
 
   programs.adb.enable = true; # android stuff
   security.rtkit.enable = true; # realtime kit, hands out realtime priority to user processes
+
+  # external pkgs {{{1
+  services.flatpak.enable = true;
+  programs.appimage = {
+    enable = true;
+    binfmt = true;
+  };
 
   # fonts {{{1
   fonts = {
@@ -50,7 +57,7 @@
     };
   };
 
-  # boot {{{1
+  # boot and tty {{{1
   # TODO remove values that mirror defaults
   boot = {
     loader = {
@@ -138,6 +145,8 @@
     };
   };
 
+  # ssh etc {{{1
+  programs.ssh.knownHostsFiles = cluster.hostKeysFiles;
   services = {
     fail2ban.enable = true; # intrusion prevention
     tailscale.enable = true;

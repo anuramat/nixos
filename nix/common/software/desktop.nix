@@ -3,7 +3,6 @@
 # contents: most of the DE-ish stuff
 { pkgs, unstable, ... }:
 {
-
   # wm {{{1
   programs.sway = {
     enable = true;
@@ -112,13 +111,6 @@
     dracula-icon-theme # for the bar
     # }}}
   ];
-
-  # external pkgs {{{1
-  services.flatpak.enable = true;
-  programs.appimage = {
-    enable = true;
-    binfmt = true;
-  };
 
   # creds {{{1
   services.gnome.gnome-keyring.enable = true; # security credential storage, exposed over dbus
