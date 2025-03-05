@@ -1,10 +1,14 @@
+# vim: fdm=marker fdl=0
+
 $include /etc/inputrc
+
 # completion: logic {{{1
 set match-hidden-files on
 set skip-completed-text on
 set completion-ignore-case on
-# '-' == '_'
+# '-' == '_':
 set completion-map-case on
+
 # completion: visuals {{{1
 set visible-stats on
 set colored-stats on
@@ -12,13 +16,14 @@ set mark-symlinked-directories on
 set completion-display-width -1
 set colored-completion-prefix on
 set completion-prefix-display-length 5
+
 # history {{{1
-# reset history modifications after running a command
+# reset history modifications after running a command:
 set revert-all-at-newline on
 set history-size -1
+
 # stfu {{{1
 set completion-query-items 0
 set page-completions off
 set show-all-if-ambiguous on
 set show-all-if-unmodified on
-# vim: fdm=marker fdl=0
