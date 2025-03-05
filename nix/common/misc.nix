@@ -1,4 +1,4 @@
-{ pkgs, dummy, ... }:
+{ pkgs, inputs, ... }:
 {
   environment.systemPackages = with pkgs; [
     # comms {{{1
