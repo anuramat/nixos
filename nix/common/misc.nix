@@ -1,4 +1,9 @@
-{ pkgs, inputs, ... }:
+{
+  pkgs,
+  unstable,
+  inputs,
+  ...
+}:
 {
   environment.systemPackages = with pkgs; [
     # comms {{{1
