@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-default_preview="--preview='$XDG_CONFIG_HOME/bash/fzf_previewer.sh {}'"
+default_preview="--preview='$XDG_CONFIG_HOME/fzf/previewer.sh {}'"
 if command -v "fd" &> /dev/null; then
 	export FZF_DEFAULT_COMMAND="fd -u --exclude .git/"
 

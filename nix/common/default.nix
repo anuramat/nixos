@@ -3,6 +3,7 @@
   lib,
   pkgs,
   unstable,
+  inputs,
   cluster,
   dummy,
   ...
@@ -25,9 +26,10 @@
   };
 
   # captive portal support {{{1
-  programs.captive-browser = {
-    enable = true;
-  };
+  # TODO
+  # programs.captive-browser = {
+  #   enable = true;
+  # };
 
   # packages {{{1
   environment.systemPackages = with pkgs; [

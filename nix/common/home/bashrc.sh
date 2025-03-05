@@ -18,10 +18,6 @@ export ESCDELAY=25
 shopt -s globstar # enables **
 set +H            # turn off ! history bullshit
 
-# shellcheck source=config/bash/xdg_shims.sh
-source "$XDG_CONFIG_HOME/bash/xdg_shims.sh"
-for f in "$XDG_CONFIG_HOME"/bash/config.d/*; do source "$f"; done
-
 alias repl="nixos-rebuild repl"
 alias f="nvim"
 alias ..="cd .."

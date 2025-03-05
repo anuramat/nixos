@@ -23,12 +23,12 @@ in
 
       xdg.enable = true;
 
-      # #!/usr/bin/env bash
-      # # shellcheck source-path=home
-      # . "$HOME/.bashrc"
       programs.bash = {
         enable = true;
+        # TODO move everything around ffs
         bashrcExtra = ''
+          source ${./xdg_shims.sh}
+          for f in "${./bashrc.d}/*"; do source "$f"; done
           source ${./bashrc.sh}
         '';
       };
