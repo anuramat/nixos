@@ -153,7 +153,7 @@ __git_push_commit() {
 	local -r pull_before=$(git rev-parse "@{u}")
 	git pull --ff --no-edit -q || return
 	if [ "$pull_before" == "$(git rev-parse "@{u}")" ]; then
-		echo "already up to date"
+		echo "local is already up to date"
 	else
 		echo "updated local"
 	fi
@@ -162,7 +162,7 @@ __git_push_commit() {
 	local -r push_before=$(git rev-parse "@{push}")
 	git push -q || return
 	if [ "$push_before" == "$(git rev-parse "@{push}")" ]; then
-		echo "already up to date"
+		echo "remote is already up to date"
 	else
 		echo "updated remote"
 	fi
