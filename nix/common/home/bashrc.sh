@@ -7,6 +7,8 @@ export XDG_DOCUMENTS_DIR="$HOME/docs/"
 export XDG_PICTURES_DIR="$HOME/img/"
 export XDG_VIDEOS_DIR="$HOME/vid/"
 
+export ESCDELAY=25
+
 # ssh sessions are hardcoded to source bashrc
 # which is a problem when it's actually not an interactive session
 # PS1 is hardcoded to be unset in non-interactive sessions
