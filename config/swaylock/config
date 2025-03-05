@@ -4,7 +4,7 @@
 ignore-empty-password
 font=Hack Nerd Font
 indicator-caps-lock
-hide-keyboard-layout
+# hide-keyboard-layout
 
 ### Colors {{{1
 color=#FF0000
@@ -24,6 +24,10 @@ ring-wrong-color=#FF0000
 inside-ver-color=#FF0000
 line-ver-color=#FF0000
 ring-ver-color=#FF0000
+
+layout-bg-color=#00000000
+layout-border-color=#00000000
+layout-text-color=#000000
 
 key-hl-color=#000000
 
