@@ -18,8 +18,14 @@ in
     useGlobalPkgs = true;
     useUserPackages = true;
     users.${user} = {
-      home.username = user;
-      home.homeDirectory = config.users.users.${user}.home;
+      home = {
+        username = user;
+        homeDirectory = config.users.users.${user}.home;
+        # file.".config" = {
+        #   recursive = true;
+        #   source = ./config;
+        # };
+      };
 
       xdg.enable = true;
 
