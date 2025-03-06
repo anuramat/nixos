@@ -58,7 +58,7 @@ all = no
 
 [font]
 name = monospace
-size = 14
+size = 28
 color = #ccccccff
 shadow = #000000d0
 
