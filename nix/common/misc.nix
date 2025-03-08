@@ -56,4 +56,10 @@
     # pull models on service start
     loadModels = [ ];
   };
+
+  # TODO move
+  hardware.nvidia-container-toolkit = {
+    enable = true;
+    mount-nvidia-executables = true;
+  };
 }

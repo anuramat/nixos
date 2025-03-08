@@ -1,18 +1,14 @@
-# Swayimg configuration file.
 # vim: filetype=dosini
 
 [general]
-# Mode at startup (viewer/gallery)
-mode = gallery
-# Window position (parent or absolute coordinates, e.g. 100,200)
+# viewer/gallery
+mode = viewer
+# parent or absolute coordinates, e.g. 100,200
 position = parent
-# Window size (fullscreen/parent/image, or absolute size, e.g. 800,600)
-size = parent
-# Action performed by SIGUSR1 signal (same format as for key bindings)
+# fullscreen/parent/image, or absolute size, e.g. 800,600
+size = fullscreen
 sigusr1 = reload
-# Action performed by SIGUSR2 signal (same format as for key bindings)
 sigusr2 = next_file
-# Application ID and window class name
 app_id = swayimg
 
 [viewer]
@@ -52,9 +48,8 @@ border = #000000ff
 shadow = #000000ff
 
 [list]
-# Default order (none/alpha/reverse/random)
+# none/alpha/reverse/random
 order = alpha
-# Looping list of images (yes/no)
 loop = yes
 # Read directories recursively (yes/no)
 recursive = no
@@ -62,13 +57,9 @@ recursive = no
 all = no
 
 [font]
-# Font name
 name = monospace
-# Font size (pt)
-size = 14
-# Font color (RGBA)
+size = 28
 color = #ccccccff
-# Shadow color (RGBA)
 shadow = #000000d0
 
 [info]
@@ -128,7 +119,7 @@ Shift+m = flip_horizontal
 a = antialiasing
 r = reload
 i = info
-Shift+Delete = exec rm "%"; skip_file
+Shift+Delete = exec rmtrash "%"; skip_file
 Escape = exit
 q = exit
 # Mouse related

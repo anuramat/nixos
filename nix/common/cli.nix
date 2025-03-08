@@ -83,6 +83,7 @@
     ripgrep # grep++
     ripgrep-all # ripgrep over docs, archives, etc
     rmtrash # rm but to trash
+    trashy
     tealdeer # tldr reimplementation: rust + xdg
     tgpt
     devenv
