@@ -1,9 +1,15 @@
 {
   pkgs,
   unstable,
-  inputs,
+  config,
+  lib,
   ...
 }:
+let
+  # nvidia = config.hardware.nvidia.enabled; # only in unstable
+  nvidia = lib.elem "nvidia" config.services.xserver.videoDrivers;
+  inherit (lib) mkIf;
+in
 {
   environment.systemPackages = with pkgs; [
     # comms {{{1
@@ -50,14 +56,8 @@
 
   services.ollama = {
     enable = true;
-    acceleration = "cuda";
+    acceleration = mkIf nvidia "cuda";
     # pull models on service start
     loadModels = [ ];
-  };
-
-  # TODO move
-  hardware.nvidia-container-toolkit = {
-    enable = true;
-    mount-nvidia-executables = true;
   };
 }

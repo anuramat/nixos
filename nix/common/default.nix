@@ -6,8 +6,13 @@
   inputs,
   cluster,
   dummy,
+  config,
   ...
 }:
+let
+  # nvidia = config.hardware.nvidia.enabled; # only in unstable
+  nvidia = lib.elem "nvidia" config.services.xserver.videoDrivers;
+in
 {
   imports = dummy ./.;
   hardware.enableAllFirmware = true; # as in "regardless of license"
@@ -210,6 +215,10 @@
       # > Required for containers under podman-compose to be able to talk to each other.
       defaultNetwork.settings.dns_enabled = true;
     };
+  };
+  hardware.nvidia-container-toolkit = {
+    enable = nvidia;
+    mount-nvidia-executables = true;
   };
 
   # boot and tty {{{1
