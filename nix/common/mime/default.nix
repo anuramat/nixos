@@ -8,7 +8,7 @@ let
       }) types
     ));
 
-  browser = "zen.desktop";
+  browser = "librewolf.desktop";
   fileManager = "yazi.desktop";
   documentViewer = "org.pwmt.zathura.desktop";
   textEditor = "nvim.desktop";

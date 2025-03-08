@@ -16,9 +16,7 @@
     whatsapp-for-linux
 
     # browsers {{{1
-    inputs.zen-browser.packages.${pkgs.system}.specific
     tor-browser-bundle-bin
-    firefox
     librewolf
     google-chrome
 
