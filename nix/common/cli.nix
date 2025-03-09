@@ -161,6 +161,8 @@
     krita # raster graphics, digital art
     inkscape-with-extensions # vector graphics
     gimp-with-plugins # raster graphics
+    darktable # lightroom
+    rawtherapee # lightroom
     imagemagickBig # CLI image manipulation
     libwebp # tools for WebP image format
     exiftool # read/write EXIF metadata
