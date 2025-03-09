@@ -134,6 +134,7 @@ Shift+ScrollDown = next_file
 Alt+ScrollUp = prev_frame
 Alt+ScrollDown = next_frame
 y = exec cat "%" | wl-copy
+Ctrl+N = exec dragon -x -i -T "$1"
 
 ################################################################################
 # Gallery mode key binding configuration: key = action [parameters]
