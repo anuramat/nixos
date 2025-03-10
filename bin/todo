@@ -182,7 +182,7 @@ def main():
     done_parser = subparsers.add_parser("rm", help="Mark a task as done")
     done_parser.add_argument("task_number", type=int, help="Task number to remove")
 
-    merge_parser = subparsers.add_parser("rm", help="Merge")
+    merge_parser = subparsers.add_parser("merge", help="Merge")
     merge_parser.add_argument("left", type=str, help="")
     merge_parser.add_argument("root", type=str, help="")
     merge_parser.add_argument("right", type=str, help="")
