@@ -145,8 +145,8 @@ def overview(title: str, symbol: str):
     print(header + result)
 
 
-def merge(root_name: str, left_name: str, right_name: str):
-    # to be used as git mergetool
+def merge(left_name: str, root_name: str, right_name: str):
+    # to be used as git merge driver
     left_lines = _read(left_name)
     right_lines = _read(right_name)
     root = set(_read(root_name))
@@ -183,6 +183,7 @@ def main():
     done_parser.add_argument("task_number", type=int, help="Task number to remove")
 
     merge_parser = subparsers.add_parser("merge", help="Merge")
+    # XXX here order is super important
     merge_parser.add_argument("left", type=str, help="")
     merge_parser.add_argument("root", type=str, help="")
     merge_parser.add_argument("right", type=str, help="")
@@ -197,6 +198,8 @@ def main():
 
     if args.command is None or args.command == "prj":
         overview("PROJECTS", "+")
+    elif args.command == "merge":
+        merge(args.left, args.root, args.right)
     elif args.command == "ctx":
         overview("CONTEXTS", "@")
     elif args.command == "add":
