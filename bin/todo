@@ -39,8 +39,8 @@ def norm():
     exp = r"\s*$"
     pattern = re.compile(exp)
 
-    # remove empty lines and whitespace suffix
-    clean_lines = []  # normalized, not deduplicated yet
+    # remove empty lines and whitespace suffixes
+    clean_lines = []
     for line in raw_lines:
         new_line = pattern.sub("", line)
         if new_line:
