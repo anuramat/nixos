@@ -5,7 +5,7 @@ vim.diagnostic.config({
   float = { border = vim.g.border }, -- settings for `vim.diagnostic.open_float`
   signs = false,
 })
-if vim.fn.getenv('SSH_TTY') ~= vim.NIL then
+if os.getenv('SSH_TTY') then
   vim.g.clipboard = {
     name = 'OSC 52',
     copy = {
