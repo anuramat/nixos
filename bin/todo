@@ -34,6 +34,28 @@ def rm(task_number):
     _write(lines)
 
 
+def norm():
+    raw_lines = _read()
+    exp = r"\s*$"
+    pattern = re.compile(exp)
+
+    # remove empty lines and whitespace suffix
+    clean_lines = []  # normalized, not deduplicated yet
+    for line in raw_lines:
+        new_line = pattern.sub("", line)
+        if new_line:
+            clean_lines.append(new_line + "\n")
+
+    # remove duplicate tasks (keep the first one)
+    seen = set()
+    deduplicated_lines = []
+    for line in clean_lines:
+        if line not in seen:
+            deduplicated_lines.append(line)
+
+    _write(deduplicated_lines)
+
+
 def _read():
     with open(TASK_FILE, "r") as file:
         return file.readlines()
@@ -136,6 +158,8 @@ def main():
     subparsers.add_parser("prj", help="List all tasks by projects")
     subparsers.add_parser("ctx", help="List all tasks by context")
 
+    subparsers.add_parser("norm", help="Normalize the file")
+
     args = parser.parse_args()
 
     if args.command is None or args.command == "prj":
@@ -148,6 +172,8 @@ def main():
         rm(args.task_number)
     elif args.command == "ls":
         ls()
+    elif args.command == "norm":
+        norm()
     else:
         parser.print_help()
         sys.exit(1)
