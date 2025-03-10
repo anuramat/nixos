@@ -111,4 +111,11 @@ rsd() {
 	rsync -av --ignore-existing "$target:$path" "$path"
 }
 
+rsc() {
+	target="$1"
+	path="$(realpath "$2")/"
+	[ -d "$path" ] || return 1
+	rsync -avcn --delete "$target:$path" "$path"
+}
+
 # vim: fdl=0
