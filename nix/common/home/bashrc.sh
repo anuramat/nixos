@@ -97,4 +97,16 @@ y() {
 	rm -f -- "$tmp"
 }
 
+rsu() {
+	target="$1"
+	path="$(realpath "$2")/"
+	rsync -av --ignore-existing "$path" "$target:$path"
+}
+
+rsd() {
+	target="$1"
+	path="$(realpath "$2")/"
+	rsync -av --ignore-existing "$target:$path" "$path"
+}
+
 # vim: fdl=0
