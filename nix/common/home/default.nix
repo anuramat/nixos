@@ -34,6 +34,7 @@ in
         # TODO move everything around ffs
         bashrcExtra = ''
           source ${./xdg_shims.sh}
+          [[ $- == *i* ]] || return
           for f in "${./bashrc.d}"/*; do source "$f"; done
           source ${./bashrc.sh}
         '';

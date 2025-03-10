@@ -9,12 +9,6 @@ export XDG_VIDEOS_DIR="$HOME/vid/"
 
 export ESCDELAY=25
 
-# ssh sessions are hardcoded to source bashrc
-# which is a problem when it's actually not an interactive session
-# PS1 is hardcoded to be unset in non-interactive sessions
-# <https://www.gnu.org/software/bash/manual/bash.html#Is-this-Shell-Interactive_003f>
-[ -z "$PS1" ] && return
-
 shopt -s globstar # enables **
 set +H            # turn off ! history bullshit
 
