@@ -39,8 +39,8 @@ def norm():
     exp = r"\s*$"
     pattern = re.compile(exp)
 
-    # remove empty lines and whitespace suffix
-    clean_lines = []  # normalized, not deduplicated yet
+    # remove empty lines and whitespace suffixes
+    clean_lines = []
     for line in raw_lines:
         new_line = pattern.sub("", line)
         if new_line:
@@ -183,10 +183,9 @@ def main():
     done_parser.add_argument("task_number", type=int, help="Task number to remove")
 
     merge_parser = subparsers.add_parser("merge", help="Merge")
-    # XXX here order is super important
-    merge_parser.add_argument("left", type=str, help="")
-    merge_parser.add_argument("root", type=str, help="")
-    merge_parser.add_argument("right", type=str, help="")
+    merge_parser.add_argument("left", type=str, help="Current version (%%A)")
+    merge_parser.add_argument("root", type=str, help="Common ancestor's version (%%O)")
+    merge_parser.add_argument("right", type=str, help="Other branches' (%%B)")
 
     subparsers.add_parser("ls", help="List all tasks")
     subparsers.add_parser("prj", help="List all tasks by projects")

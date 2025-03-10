@@ -1,15 +1,17 @@
+# vim: ft=swayconfig fdm=marker fdl=0
+
 input * {
     repeat_delay 250
     repeat_rate 50
     xkb_layout us,ru
     xkb_options "grp:alt_space_toggle"
+    accel_profile flat
 }
 input 5426:98:Razer_Razer_Atheris_-_Mobile_Gaming_Mouse_Keyboard {
-    accel_profile flat
 }
 input 5426:138:Razer_Razer_Viper_Mini {
-    accel_profile flat
 }
+
 # anuramat-ll7 {{{1
 input 1267:12928:ELAN06FA:00_04F3:3280_Touchpad {
     dwt enabled
@@ -20,20 +22,18 @@ input 1267:12928:ELAN06FA:00_04F3:3280_Touchpad {
     tap disabled
     drag enabled # tap-drag
     drag_lock enabled # grace period for tap-drag
+    accel_profile adaptive
 }
 input 1165:51607:ITE_Tech._Inc._ITE_Device(8258)_Keyboard {
-    xkb_options "ctrl:nocaps,altwin:swap_lalt_lwin,grp:alt_space_toggle"
 }
 
 # anuramat-t480 {{{1
 input 1:1:AT_Translated_Set_2_keyboard {
-    xkb_options "ctrl:nocaps,altwin:swap_lalt_lwin,grp:alt_space_toggle"
 }
 input 1739:0:Synaptics_TM3276-022 {
     events disabled
 }
 input 2:10:TPPS/2_IBM_TrackPoint {
-    pointer_accel 1
+    pointer_accel 0.7
+    accel_profile adaptive
 }
-
-# vim: ft=swayconfig fdm=marker fdl=0

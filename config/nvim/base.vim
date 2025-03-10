@@ -162,5 +162,5 @@ function! LM_STL()
   return printf("%s%*s", left, width, center)
 endfunction
 
-se statusline=%{LM_STL()}%=%S%y%m%r[%P]
+se statusline=%{LM_STL()}%=%S%y%m%r[%c][%P]
 se showcmdloc=statusline
