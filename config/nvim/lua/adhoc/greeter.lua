@@ -4,7 +4,7 @@ local start_time = vim.loop.hrtime()
 
 -- XXX don't forget to clear cache!
 local input = 'neovim'
-local myfont = 'puffy'
+local myfont = 'fraktur'
 
 local function figlet(font)
   local figlet_res = vim.system({ 'figlet', '-w', '999', '-f', font, input }, { text = true }):wait()
