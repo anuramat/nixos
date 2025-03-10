@@ -100,12 +100,14 @@ y() {
 rsu() {
 	target="$1"
 	path="$(realpath "$2")/"
+	[ -d "$path" ] || return 1
 	rsync -av --ignore-existing "$path" "$target:$path"
 }
 
 rsd() {
 	target="$1"
 	path="$(realpath "$2")/"
+	[ -d "$path" ] || return 1
 	rsync -av --ignore-existing "$target:$path" "$path"
 }
 
