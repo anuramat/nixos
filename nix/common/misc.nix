@@ -41,7 +41,7 @@ in
   programs.obs-studio = {
     enable = true;
     plugins = with pkgs.obs-studio-plugins; [
-      obs-backgroundremoval
+      # obs-backgroundremoval # breaks on CUDA
       obs-gstreamer
       obs-multi-rtmp # multi-site
       obs-nvfbc
