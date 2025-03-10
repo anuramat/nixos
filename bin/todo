@@ -70,9 +70,17 @@ def _write(lines, filename=TASK_FILE):
 
 def ls():
     lines = _read()
+    result = _index(lines)
+    print("\n".join(result))
+
+
+def _index(lines: list[str]) -> list[str]:
+    # TODO rewrite
     w = len(str(len(lines)))
+    result = []
     for i, line in enumerate(lines, 1):
-        print(f"{str(i).rjust(w)} {line.strip()}")
+        result.append(f"{str(i).rjust(w)} {line.strip()}")
+    return result
 
 
 def _get_tag_dict(tasks: list[str], symbol: str):
@@ -188,7 +196,10 @@ def main():
     merge_parser.add_argument("right", type=str, help="Other branches' (%%B)")
 
     subparsers.add_parser("ls", help="List all tasks")
-    subparsers.add_parser("prj", help="List all tasks by projects")
+    prj_parser = subparsers.add_parser("prj", help="List all tasks by projects")
+    prj_parser.add_argument(
+        "project", type=str, nargs="?", help="Specific project to print"
+    )
     subparsers.add_parser("ctx", help="List all tasks by context")
 
     subparsers.add_parser("norm", help="Normalize the file")
@@ -196,7 +207,8 @@ def main():
     args = parser.parse_args()
 
     if args.command is None or args.command == "prj":
-        overview("PROJECTS", "+")
+        if args.project is None:
+            overview("PROJECTS", "+")
     elif args.command == "merge":
         merge(args.left, args.root, args.right)
     elif args.command == "ctx":

@@ -85,7 +85,7 @@
     rmtrash # rm but to trash
     trashy
     tealdeer # tldr reimplementation: rust + xdg
-    tgpt
+    unstable.tgpt
     devenv
     eza # ls++
     watchman # another file watcher TODO try and compare to entr
