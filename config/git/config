@@ -52,9 +52,6 @@ root = "~/.local/share/ghq"
   name = Merge two files, treating them as sets of lines
   driver = "$XDG_CONFIG_HOME/git/merge_sets.sh" %A %O %B
 
-[diff "set"]
-  textconv = "LC_ALL=C sort"
-
 [pull]
   ff = only
 
