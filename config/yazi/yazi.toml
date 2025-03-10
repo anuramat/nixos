@@ -1,6 +1,5 @@
-[[plugin.prepend_preloaders]]
-name = "/media/**"
-run = "noop"
+[plugin]
+preloaders = []
 
 [[plugin.prepend_previewers]]
 name = "/media/**"
