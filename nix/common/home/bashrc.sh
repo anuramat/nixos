@@ -100,21 +100,42 @@ y() {
 rsu() {
 	target="$1"
 	path="$(realpath "$2")/"
-	[ -d "$path" ] || return 1
+	[ -n "$target" ] && [ -n "$path" ] || {
+		echo "invalid arguments"
+		return 1
+	}
+	[ -d "$path" ] || {
+		echo "not a directory"
+		return 1
+	}
 	rsync -av --ignore-existing "$path" "$target:$path"
 }
 
 rsd() {
 	target="$1"
 	path="$(realpath "$2")/"
-	[ -d "$path" ] || return 1
+	[ -n "$target" ] && [ -n "$path" ] || {
+		echo "invalid arguments"
+		return 1
+	}
+	[ -d "$path" ] || {
+		echo "not a directory"
+		return 1
+	}
 	rsync -av --ignore-existing "$target:$path" "$path"
 }
 
 rsc() {
 	target="$1"
 	path="$(realpath "$2")/"
-	[ -d "$path" ] || return 1
+	[ -n "$target" ] && [ -n "$path" ] || {
+		echo "invalid arguments"
+		return 1
+	}
+	[ -d "$path" ] || {
+		echo "not a directory"
+		return 1
+	}
 	rsync -avcn --delete "$target:$path" "$path"
 }
 
