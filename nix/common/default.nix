@@ -93,8 +93,7 @@ in
     cheese # webcam
     proton-pass # password manager
     transmission_4-gtk # torrent client
-    # unstable.wallust # better pywal TODO go back to stable when xdg compliant version gets merged
-    inputs.wallust.packages.${pkgs.system}.default
+    unstable.wallust # better pywal TODO go back to stable when xdg compliant version gets merged
     wev # wayland event viewer, useful for debugging
 
     # theme {{{2
