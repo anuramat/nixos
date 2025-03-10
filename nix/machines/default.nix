@@ -43,7 +43,9 @@ in
     rec {
       builders = filter (x: x.builder) machines;
 
-      substituters = builders |> map (x: "ssh-ng://${x.name}");
+      substituters = builders |> map (x: "ssh-ng://${x.name}?priority=50");
+      # lower number -- used earlier
+      # cache.nixos.org has priority of 40, cachix -- 41
 
       builderUsername = "builder";
       clientKeyFiles = machines |> map (x: x.clientKeyFiles) |> concatLists;
