@@ -89,7 +89,6 @@ def _get_tag_dict(tasks: list[str]):
     tasks_by_tags = defaultdict(list)
     for task in tasks:
         tags = pattern.findall(task)
-        task = pattern.sub("", task)
         task = task.rstrip()
         for tag in tags:
             tasks_by_tags[tag].append(task)
@@ -108,6 +107,8 @@ def _shorten(line: str, symbol: str, max_width: int):
 
 
 def ls_tag(item):
+    if item == "@":
+        item = "unfiled"
     file_lines = _index(_read())
     lines_by_tags = _get_tag_dict(file_lines)
     print("\n".join(lines_by_tags[item]))
@@ -203,9 +204,8 @@ def main():
     merge_parser.add_argument("root", type=str, help="Common ancestor's version (%%O)")
     merge_parser.add_argument("right", type=str, help="Other branches' (%%B)")
 
-    # TODO rewrite maybe
-    if len(sys.argv) > 1 and sys.argv[1].startswith("@"):
-        ls_tag(sys.argv[1])
+    if len(sys.argv) > 1 and (item := sys.argv[1]).startswith("@"):
+        ls_tag(item)
         return
 
     args = parser.parse_args()
