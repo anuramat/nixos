@@ -46,23 +46,25 @@ def norm():
         if new_line:
             clean_lines.append(new_line + "\n")
 
-    # remove duplicate tasks (keep the first one)
+    _write(_deduplicate_lines(clean_lines))
+
+
+def _deduplicate_lines(lines: list[str]) -> list[str]:
     seen = set()
-    deduplicated_lines = []
-    for line in clean_lines:
+    result = []
+    for line in lines:
         if line not in seen:
-            deduplicated_lines.append(line)
+            result.append(line)
+    return result
 
-    _write(deduplicated_lines)
 
-
-def _read():
-    with open(TASK_FILE, "r") as file:
+def _read(filename=TASK_FILE):
+    with open(filename, "r") as file:
         return file.readlines()
 
 
-def _write(lines):
-    with open(TASK_FILE, "w") as file:
+def _write(lines, filename=TASK_FILE):
+    with open(filename, "w") as file:
         file.writelines(lines)
 
 
@@ -143,6 +145,32 @@ def overview(title: str, symbol: str):
     print(header + result)
 
 
+def merge(root_name: str, left_name: str, right_name: str):
+    # to be used as git mergetool
+    left_lines = _read(left_name)
+    right_lines = _read(right_name)
+    root = set(_read(root_name))
+    left = set(left_lines)
+    right = set(right_lines)
+
+    # keep intersection -- old tasks (or rarely -- added in both revisions)
+    # (union - intersection) -- either added in one or removed in the other:
+    # check if it was in root: if it was, then it was removed => drop;
+    # otherwise it was added => keep
+    unchanged = left & right
+    diff = (left | right) - unchanged
+    new = diff - root
+    keep = unchanged | new
+
+    result = []
+    for line in left_lines + right_lines:
+        if line in keep:
+            result.append(line)
+            keep.remove(line)
+
+    _write(result, left_name)
+
+
 def main():
     parser = argparse.ArgumentParser(prog="task")
 
@@ -153,6 +181,11 @@ def main():
 
     done_parser = subparsers.add_parser("rm", help="Mark a task as done")
     done_parser.add_argument("task_number", type=int, help="Task number to remove")
+
+    merge_parser = subparsers.add_parser("rm", help="Merge")
+    merge_parser.add_argument("left", type=str, help="")
+    merge_parser.add_argument("root", type=str, help="")
+    merge_parser.add_argument("right", type=str, help="")
 
     subparsers.add_parser("ls", help="List all tasks")
     subparsers.add_parser("prj", help="List all tasks by projects")

@@ -48,9 +48,8 @@ root = "~/.local/share/ghq"
 [push]
   autoSetupRemote = true
 
-[merge "set"]
-  name = Merge two files, treating them as sets of lines
-  driver = "$XDG_CONFIG_HOME/git/merge_sets.sh" %A %O %B
+[merge "todo"]
+  driver = todo merge %A %O %B
 
 [pull]
   ff = only
