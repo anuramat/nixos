@@ -7,10 +7,7 @@
       url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
-    templates.url = "github:nix-community/templates";
-    wallust.url = "git+https://codeberg.org/explosion-mental/wallust?ref=master";
+    # neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     subcat.url = "github:anuramat/subcat";
   };
   outputs =
