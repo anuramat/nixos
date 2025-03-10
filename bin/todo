@@ -83,25 +83,23 @@ def _index(lines: list[str]) -> list[str]:
     return result
 
 
-def _get_tag_dict(tasks: list[str], symbol: str):
-    if symbol == "+":
-        symbol = "\\" + symbol
-    exp = f"(?<!\\S){symbol}\\S+\\s*"
+def _get_tag_dict(tasks: list[str]):
+    exp = r"(?<!\S)@\S+"
     pattern = re.compile(exp)
     tasks_by_tags = defaultdict(list)
     for task in tasks:
         tags = pattern.findall(task)
         task = pattern.sub("", task)
-        task = task.strip()
+        task = task.rstrip()
         for tag in tags:
-            tasks_by_tags[tag.strip()].append(task)
+            tasks_by_tags[tag].append(task)
         if len(tags) == 0:
-            tasks_by_tags[f"-{symbol[-1]}"].append(task)
+            tasks_by_tags["unfiled"].append(task)
     return tasks_by_tags
 
 
 def _shorten(line: str, symbol: str, max_width: int):
-    # very long line -> very long li...
+    # very long line -> very long li~
     if len(symbol) > max_width:
         raise ValueError
     if len(line) > max_width:
@@ -109,14 +107,20 @@ def _shorten(line: str, symbol: str, max_width: int):
     return line
 
 
-def overview(title: str, symbol: str):
+def ls_tag(item):
+    file_lines = _index(_read())
+    lines_by_tags = _get_tag_dict(file_lines)
+    print("\n".join(lines_by_tags[item]))
+
+
+def tag_overview():
+    file_lines = _index(_read())
+    lines_by_tags = _get_tag_dict(file_lines)
+
     term_x, term_y = os.get_terminal_size()
 
-    header = "-" * (term_x // 2) + title
+    header = "-" * (term_x // 2) + "TAGS"
     header += (term_x - len(header)) * "-"
-
-    file_lines = _read()
-    lines_by_tags = _get_tag_dict(file_lines, symbol)
 
     n_x = term_x // MIN_CELL_WIDTH
     n_y = ceil(len(lines_by_tags) / n_x)
@@ -190,30 +194,23 @@ def main():
     done_parser = subparsers.add_parser("rm", help="Mark a task as done")
     done_parser.add_argument("task_number", type=int, help="Task number to remove")
 
+    subparsers.add_parser("ls", help="List all tasks")
+
+    subparsers.add_parser("norm", help="Normalize the file")
+
     merge_parser = subparsers.add_parser("merge", help="Merge")
     merge_parser.add_argument("left", type=str, help="Current version (%%A)")
     merge_parser.add_argument("root", type=str, help="Common ancestor's version (%%O)")
     merge_parser.add_argument("right", type=str, help="Other branches' (%%B)")
 
-    subparsers.add_parser("ls", help="List all tasks")
-    prj_parser = subparsers.add_parser("prj", help="List all tasks by projects")
-    prj_parser.add_argument(
-        "project", type=str, nargs="?", help="Specific project to print"
-    )
-    subparsers.add_parser("ctx", help="List all tasks by context")
-
-    subparsers.add_parser("norm", help="Normalize the file")
+    # TODO rewrite maybe
+    if len(sys.argv) > 1 and sys.argv[1].startswith("@"):
+        ls_tag(sys.argv[1])
+        return
 
     args = parser.parse_args()
 
-    if args.command is None or args.command == "prj":
-        if args.project is None:
-            overview("PROJECTS", "+")
-    elif args.command == "merge":
-        merge(args.left, args.root, args.right)
-    elif args.command == "ctx":
-        overview("CONTEXTS", "@")
-    elif args.command == "add":
+    if args.command == "add":
         add(args.task_text)
     elif args.command == "rm":
         rm(args.task_number)
@@ -221,9 +218,10 @@ def main():
         ls()
     elif args.command == "norm":
         norm()
+    elif args.command == "merge":
+        merge(args.left, args.root, args.right)
     else:
-        parser.print_help()
-        sys.exit(1)
+        tag_overview()
 
 
 if __name__ == "__main__":
