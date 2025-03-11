@@ -43,6 +43,16 @@ in
       programs = {
         home-manager.enable = true;
 
+        librewolf = {
+          enable = true;
+          settings = {
+            "identity.fxaccounts.enabled" = true;
+            "privacy.resistFingerprinting" = false;
+            "sidebar.revamp" = true;
+            "sidebar.verticalTabs" = true;
+          };
+        };
+
         neovim = {
           enable = true;
           package = unstable.neovim-unwrapped;
