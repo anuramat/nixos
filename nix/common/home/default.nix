@@ -14,10 +14,13 @@ in
   ];
 
   home-manager = {
+
     backupFileExtension = "backup";
     useGlobalPkgs = true;
     useUserPackages = true;
+
     users.${user} = {
+
       home = {
         username = user;
         homeDirectory = config.users.users.${user}.home;
@@ -29,6 +32,9 @@ in
       xdg.enable = true;
 
       programs = {
+
+        home-manager.enable = true;
+
         bash = {
           enable = true;
           # TODO move everything around ffs
@@ -39,14 +45,11 @@ in
             source ${./bashrc.sh}
           '';
         };
+
         readline = {
           enable = true;
           extraConfig = builtins.readFile ./inputrc;
         };
-      };
-
-      programs = {
-        home-manager.enable = true;
 
         librewolf = {
           enable = true;
@@ -56,6 +59,7 @@ in
             "sidebar.revamp" = true;
             "sidebar.verticalTabs" = true;
           };
+
         };
 
         neovim = {
@@ -77,6 +81,7 @@ in
               nbformat
             ];
         };
+
       };
     };
   };
