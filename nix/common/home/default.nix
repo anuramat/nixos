@@ -20,20 +20,17 @@ in
     useUserPackages = true;
 
     users.${user} = {
+      xdg.enable = true; # TODO what does this even do
 
-      home = {
-        username = user;
-        homeDirectory = config.users.users.${user}.home;
-        file.".exrc" = {
+      home.file = {
+        ".exrc" = {
           source = ./exrc;
         };
       };
 
-      xdg.enable = true;
-
       programs = {
 
-        home-manager.enable = true;
+        home-manager.enable = true; # TODO same here
 
         bash = {
           enable = true;
