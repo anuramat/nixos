@@ -1,7 +1,3 @@
-# vim: fdm=marker fdl=0
-
-$include /etc/inputrc
-
 # completion: logic {{{1
 set match-hidden-files on
 set skip-completed-text on
@@ -27,3 +23,5 @@ set completion-query-items 0
 set page-completions off
 set show-all-if-ambiguous on
 set show-all-if-unmodified on
+
+# vim: fdm=marker fdl=0 ft=readline

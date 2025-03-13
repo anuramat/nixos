@@ -29,15 +29,21 @@ in
 
       xdg.enable = true;
 
-      programs.bash = {
-        enable = true;
-        # TODO move everything around ffs
-        bashrcExtra = ''
-          source ${./xdg_shims.sh}
-          [[ $- == *i* ]] || return
-          for f in "${./bashrc.d}"/*; do source "$f"; done
-          source ${./bashrc.sh}
-        '';
+      programs = {
+        bash = {
+          enable = true;
+          # TODO move everything around ffs
+          bashrcExtra = ''
+            source ${./xdg_shims.sh}
+            [[ $- == *i* ]] || return
+            for f in "${./bashrc.d}"/*; do source "$f"; done
+            source ${./bashrc.sh}
+          '';
+        };
+        readline = {
+          enable = true;
+          extraConfig = builtins.readFile ./inputrc;
+        };
       };
 
       programs = {
