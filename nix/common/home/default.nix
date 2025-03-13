@@ -21,10 +21,9 @@ in
       home = {
         username = user;
         homeDirectory = config.users.users.${user}.home;
-        # file.".config" = {
-        #   recursive = true;
-        #   source = ./config;
-        # };
+        file.".exrc" = {
+          source = ./exrc;
+        };
       };
 
       xdg.enable = true;
