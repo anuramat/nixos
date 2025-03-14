@@ -15,6 +15,5 @@ lndir() (
 	shopt -u dotglob
 )
 
-lndir "$PWD/home" "$HOME"
 lndir "$PWD/config" "$XDG_CONFIG_HOME"
 lndir "$PWD/bin" "$XDG_BIN_HOME"
