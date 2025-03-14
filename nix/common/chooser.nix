@@ -25,6 +25,9 @@ in
 
   home-manager = {
     users.${user} = {
+      # TODO: move default term to a variable or something?
+      # or figure out how to make systemd services read env vars
+      # maybe use xdg term thing?
       home.file.".config/xdg-desktop-portal-termfilechooser/config".text = ''
         [filechooser]
         cmd=${wrapper}
