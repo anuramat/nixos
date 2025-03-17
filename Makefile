@@ -21,8 +21,7 @@ dupe:
 init_pre:
 	./scripts/heading.sh "Initial install"
 	./scripts/guard.sh
-	./scripts/heading.sh "Generating machine module"
-	./scripts/machine_template.sh
+	./scripts/heading.sh "Generating hardware configuration"
 	nixos-generate-config --show-hardware-config > "$(machine_dir)"/hardware-configuration.nix
 	./scripts/heading.sh "Generating keys"
 	./scripts/keygen.sh
