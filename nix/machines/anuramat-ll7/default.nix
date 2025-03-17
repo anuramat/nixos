@@ -5,7 +5,7 @@
   ...
 }:
 {
-  config.server = false;
+  server = false;
   system.stateVersion = "24.05";
   home-manager.users.${config.user}.home.stateVersion = "24.11";
   nix.distributedBuilds = false;

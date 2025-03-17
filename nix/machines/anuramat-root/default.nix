@@ -1,6 +1,6 @@
 { config, ... }:
 {
-  config.server = true;
+  server = true;
   nix.distributedBuilds = true;
   system.stateVersion = "24.11";
   home-manager.users.${config.user}.home.stateVersion = "24.11";
