@@ -10,7 +10,7 @@ let
   # nvidia = config.hardware.nvidia.enabled; # only in unstable
   nvidia = lib.elem "nvidia" config.services.xserver.videoDrivers;
 in
-{
+lib.mkIf (!config.server) {
   programs.adb.enable = true; # android stuff
   security.rtkit.enable = true; # realtime kit, hands out realtime priority to user processes
 
