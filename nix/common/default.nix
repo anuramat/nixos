@@ -17,6 +17,8 @@ in
 
   # external pkgs {{{1
   services.flatpak.enable = true;
+  # TODO remove from here -- flatpak depends on portals
+  xdg.portal.enable = true;
   programs.appimage = {
     enable = true;
     binfmt = true;

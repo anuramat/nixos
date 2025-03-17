@@ -2,7 +2,7 @@
 {
   assertions = [
     {
-      assertion = config.services.keyd.keyboards.main.ids != [ ];
+      assertion = (config.services.keyd.keyboards.main.ids != [ ]) || config.server;
       message = "main keyboard not configured";
     }
   ];
