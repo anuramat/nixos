@@ -122,7 +122,7 @@
     prettyping # ping++
     progress # progress status for cp etc
     pv # pipe viewer
-    rsbkb # rust blackbag - encode/decode tools: crc
+    rsbkb # rust blackbag - encode/decode tools
     scc # sloc cloc and code: dick measuring tool
     speedtest-cli
     unstable.xdg-ninja # checks $HOME for junk
@@ -132,12 +132,10 @@
     qrcp # send files to mobile over Wi-Fi using QR
     rclone # rsync for cloud
     tree-sitter
-    mesa-demos # some 3d demos, useful for graphics debugging
     cowsay
     fortune # random quotes
 
     # backend {{{1
-    dbeaver-bin # databases
     dive # look into docker image layers
     grpcui
     grpcurl
@@ -157,34 +155,20 @@
     unstable.nvtopPackages.full # top for GPUs (waiting for intel support to reach from upstream)
     zenith-nvidia # top WITH nvidia GPUs
 
-    # img {{{1
-    krita # raster graphics, digital art
-    inkscape-with-extensions # vector graphics
-    gimp-with-plugins # raster graphics
-    darktable # lightroom
-    rawtherapee # lightroom
+    # img {{{2
     imagemagickBig # CLI image manipulation
     libwebp # tools for WebP image format
     exiftool # read/write EXIF metadata
-    # mypaint # not-ms-paint # XXX broken
-    xfig # vector graphics, old as FUCK
-    swayimg # image viewer
     chafa # sixel, kitty, iterm2, unicode
     timg # sixel, kitty, iterm2, unicode; faster than chafa
 
     # video {{{1
-    vlc
-    mpv
-    # davinci-resolve
-    handbrake
-    footage
     ffmpeg
     yt-dlp # download youtube videos
 
     # audio {{{1
     sox # CLI audio processing
     lame # mp3
-    alsa-utils
     piper-tts # good neural TTS
 
     # docs {{{1
@@ -193,14 +177,9 @@
     poppler_utils # pdf utils
     ghostscript # postscript/pdf utils
     readability-cli # extracts main content from pages
-    okular # reader # TODO remove?
-    djview # djvu reader # TODO remove?
-    zathura # keyboard-centric aio reader
-    zotero # TODO do I need this?
     easyocr # neural OCR
     pandoc # markup converter (latex, markdown, etc)
     djvulibre # djvu tools
-    xournalpp # pdf markup, handwritten notes
     # }}}
   ];
 }

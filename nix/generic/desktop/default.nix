@@ -82,6 +82,33 @@ lib.mkIf (!config.server) {
     xdg-utils # xdg-open etc
     gtk3 # gtk-launch - starts an app by name of the desktop file
     xdragon # terminal drag and drop
+    alsa-utils
+    dbeaver-bin # databases
+    mesa-demos # some 3d demos, useful for graphics debugging
+
+    # docs {{{2
+    xournalpp # pdf markup, handwritten notes
+    okular # reader # TODO remove?
+    djview # djvu reader # TODO remove?
+    zathura # keyboard-centric aio reader
+    zotero # TODO do I need this?
+
+    # img {{{2
+    krita # raster graphics, digital art
+    inkscape-with-extensions # vector graphics
+    # mypaint # not-ms-paint # XXX broken
+    swayimg # image viewer
+    xfig # vector graphics, old as FUCK
+    gimp-with-plugins # raster graphics
+    darktable # lightroom
+    rawtherapee # lightroom
+
+    # video {{{2
+    vlc
+    mpv
+    # davinci-resolve
+    handbrake
+    footage
 
     # misc system {{{2
     qalculate-gtk # qalc calculator gui
