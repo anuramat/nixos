@@ -1,21 +1,23 @@
 { inputs, epsilon }:
 with builtins;
 let
-  inherit (inputs.nixpkgs.lib.strings) hasSuffix;
-  inherit (inputs.nixpkgs.lib.lists) findFirst;
+  lib = inputs.nixpkgs.lib;
+  inherit (lib.strings) hasSuffix;
+  inherit (lib.lists) findFirst;
 
   hostnames = epsilon ./.;
   mkMachine =
     name:
     let
       inherit (inputs.self.nixosConfigurations.${name}) config;
+      meta = import ./${name}/meta.nix;
       cacheFilename = "cache.pem.pub";
       path = ./${name}/keys;
     in
     rec {
       inherit name;
       builder = !config.nix.distributedBuilds;
-      server = name == "anuramat-root";
+      server = meta.server;
       desktop = !server;
       platform = config.nixpkgs.hostPlatform.system;
       cacheKey = if builder then readFile (path + "/${cacheFilename}") else null;
