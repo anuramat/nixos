@@ -26,6 +26,13 @@ lib.mkIf (!config.server) {
     ];
   };
 
+  # external pkgs {{{1
+  services.flatpak.enable = true;
+  programs.appimage = {
+    enable = true;
+    binfmt = true;
+  };
+
   # captive portal support {{{1
   # TODO
   # programs.captive-browser = {

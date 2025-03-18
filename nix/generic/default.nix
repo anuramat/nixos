@@ -15,15 +15,6 @@ in
   hardware.enableAllFirmware = true; # as in "regardless of license"
   services.gnome.gnome-keyring.enable = true; # security credential storage, exposed over dbus
 
-  # external pkgs {{{1
-  services.flatpak.enable = true;
-  # TODO remove from here -- flatpak depends on portals
-  xdg.portal.enable = true;
-  programs.appimage = {
-    enable = true;
-    binfmt = true;
-  };
-
   # virtualization {{{1
   virtualisation = {
     virtualbox = {
