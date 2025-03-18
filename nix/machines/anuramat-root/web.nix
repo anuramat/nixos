@@ -5,7 +5,6 @@ let
   domain = "ctrl.sn";
 in
 {
-  # web {{{1
   networking.firewall.allowedTCPPorts = [
     80
     443
