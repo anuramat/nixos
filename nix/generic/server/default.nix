@@ -1,4 +1,12 @@
-{ pkgs, ... }:
 {
-  services.nextcloud.enable = true;
+  pkgs,
+  cluster,
+  config,
+  ...
+}:
+{
+  services.nextcloud = {
+    enable = true;
+    hostName = config.networking.hostName;
+  };
 }
