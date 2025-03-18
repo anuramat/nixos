@@ -38,7 +38,7 @@
             };
           };
           modules = mkModules name ++ [
-            ./nix/common
+            ./nix/generic
           ];
         };
     in
