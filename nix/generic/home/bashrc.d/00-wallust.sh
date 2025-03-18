@@ -11,7 +11,7 @@ __wallust_wrapped() {
 		$__wallust_base_cmd "$@" || return
 	fi
 
-	(
+	command -v makoctl &> /dev/null && (
 		cd "$XDG_CONFIG_HOME/mako" || {
 			echo "Couldn't cd to the mako folder, skipping"
 			exit
@@ -21,5 +21,5 @@ __wallust_wrapped() {
 	)
 
 	# BUG keys get stuck on reload, might wanna report
-	swaymsg reload
+	command -v swaymsg &> /dev/null && swaymsg reload
 }
