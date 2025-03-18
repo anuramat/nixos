@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, unstable, ... }:
 {
   # TODO move the file contents
   environment.systemPackages = with pkgs; [
