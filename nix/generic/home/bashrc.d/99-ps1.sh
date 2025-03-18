@@ -23,7 +23,7 @@ __time_user_ps1() {
 
 __ssh_user_ps1() {
 	if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
-		printf ' %s\n' "ssh: $(whoami)@$(hostname)"
+		printf ' %s\n' "$(whoami)@$(hostname)"
 	fi
 }
 
