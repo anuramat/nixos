@@ -3,6 +3,7 @@ let
   home = config.users.users.${config.user}.home;
   root = "${home}/public";
   domain = "ctrl.sn";
+  email = "x@ctrl.sn";
 in
 {
   networking.firewall.allowedTCPPorts = [
@@ -25,6 +26,7 @@ in
   security.acme = {
     acceptTerms = true;
     certs."${domain}" = {
+      inherit email;
       reloadServices = [ "static-web-server" ];
       listenHTTP = ":80";
       group = "www-data";
