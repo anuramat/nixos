@@ -10,7 +10,7 @@ sudo rm -rf /etc/nixos
 sudo mv -T nixos /etc/nixos
 make init
 
-wal sex binary # set colorscheme TODO create a special "fake" theme
+wal theme base16-dracula # set colorscheme TODO create a special "fake" theme
 nvim # fetch plugins, install TS parsers
 gh auth login # github cli
 git remote set-url origin git@github.com:anuramat/nixos # switch to ssh
