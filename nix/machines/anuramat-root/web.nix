@@ -11,6 +11,7 @@ in
     443
   ];
   services.static-web-server = {
+    inherit root;
     enable = true;
     listen = "[::]:443";
     configuration = {
