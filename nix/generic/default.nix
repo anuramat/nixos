@@ -5,5 +5,5 @@
     ./home
     ./mime
     ./shell
-  ] ++ (if cluster.this.desktop then [ ./desktop ] else [ ]);
+  ] ++ (if cluster.this.server then [ ./server ] else [ ./desktop ]);
 }
