@@ -73,6 +73,10 @@ in
   };
   # breaks rebuilds sometimes: <https://github.com/NixOS/nixpkgs/issues/180175>
   systemd.services.NetworkManager-wait-online.enable = false;
+  services.resolved = {
+    enable = true;
+    dnssec = "true";
+  };
 
   # ssh etc {{{1
   programs.ssh.knownHostsFiles = cluster.hostKeysFiles;
