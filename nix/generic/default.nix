@@ -1,9 +1,9 @@
-{ config, ... }:
+{ cluster, ... }:
 {
   imports = [
     ./common
     ./home
     ./mime
     ./shell
-  ] ++ (if !config.server then ./desktop else [ ]);
+  ] ++ (if cluster.this.desktop then ./desktop else [ ]);
 }

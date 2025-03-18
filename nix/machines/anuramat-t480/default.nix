@@ -1,7 +1,6 @@
 { inputs, config, ... }:
 {
   nix.distributedBuilds = true;
-  server = false;
   system.stateVersion = "24.05";
   home-manager.users.${config.user}.home.stateVersion = "24.11";
   services.keyd.keyboards.main.ids = [
