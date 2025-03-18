@@ -1,5 +1,5 @@
-{ inputs, epsilon }:
 with builtins;
+{ inputs, epsilon }:
 let
   inherit (inputs.nixpkgs.lib.strings) hasSuffix;
 
