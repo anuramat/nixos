@@ -1,7 +1,8 @@
-with builtins;
 { inputs, epsilon }:
+with builtins;
 let
   inherit (inputs.nixpkgs.lib.strings) hasSuffix;
+  inherit (inputs.nixpkgs.lib.lists) findFirst;
 
   hostnames = epsilon ./.;
   mkMachine =
