@@ -265,4 +265,11 @@ in
     };
     efi.canTouchEfiVariables = true;
   };
+
+  # firewall {{{1
+  networking.firewall.allowedTCPPorts = [
+    22 # SSH
+    8080
+    8888
+  ];
 }

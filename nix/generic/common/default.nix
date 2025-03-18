@@ -66,13 +66,6 @@ in
   networking = {
     firewall = {
       enable = true;
-      allowedTCPPorts = [
-        22 # SSH
-        8080
-        8888
-        5000 # nix-serve
-      ];
-      allowedUDPPorts = [ ];
     };
     networkmanager = {
       enable = true;

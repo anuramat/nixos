@@ -5,6 +5,9 @@
   ...
 }:
 lib.mkIf (!config.nix.distributedBuilds) {
+  networking.firewall.allowedTCPPorts = [
+    5000 # nix-serve
+  ];
   users.users.${cluster.builderUsername} = {
     isNormalUser = true;
     createHome = false;
