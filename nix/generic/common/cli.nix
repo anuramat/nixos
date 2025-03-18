@@ -69,6 +69,7 @@
     # core {{{1
     inputs.subcat.packages.${pkgs.system}.default
     bat # cat++: syntax hl
+    unstable.wallust # better pywal TODO go back to stable when xdg compliant version gets merged
     delta # pretty diff
     difftastic # diff++: syntax aware using TS
     du-dust # du++
