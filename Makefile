@@ -4,7 +4,7 @@
 
 .PHONY: all flake links code init
 all: flake links code
-flake: dupe
+flake:
 	./scripts/heading.sh "Copying public keys"
 	mkdir -p "$(keys_dir)"
 	LC_ALL=C ssh-keyscan -q "$(shell hostname)" | sort > "$(keys_dir)/host_keys"
