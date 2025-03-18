@@ -5,18 +5,19 @@ vim.diagnostic.config({
   float = { border = vim.g.border }, -- settings for `vim.diagnostic.open_float`
   signs = false,
 })
-if os.getenv('SSH_TTY') then
-  vim.g.clipboard = {
-    name = 'OSC 52',
-    copy = {
-      ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
-      ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
-    },
-    paste = {
-      ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
-      ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
-    },
-  }
-end
+-- TODO gets stuck sometimes
+-- if os.getenv('SSH_TTY') then
+--   vim.g.clipboard = {
+--     name = 'OSC 52',
+--     copy = {
+--       ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
+--       ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
+--     },
+--     paste = {
+--       ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
+--       ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
+--     },
+--   }
+-- end
 require('plugins')
 require('adhoc')
