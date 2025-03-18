@@ -12,4 +12,6 @@
       size = 16 * 1024;
     }
   ];
+  boot.loader.grub.enable = true;
+  boot.loader.grub.device = "/dev/vda";
 }

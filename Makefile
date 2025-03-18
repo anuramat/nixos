@@ -21,8 +21,6 @@ dupe:
 init_pre:
 	./scripts/heading.sh "Initial install"
 	./scripts/guard.sh
-	./scripts/heading.sh "Generating hardware configuration"
-	nixos-generate-config --show-hardware-config > "$(machine_dir)"/hardware-configuration.nix
 	./scripts/heading.sh "Generating keys"
 	./scripts/keygen.sh
 # if only there was a better way... too bad order-only prerequisites are not order-only
