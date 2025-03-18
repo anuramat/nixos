@@ -1,5 +1,7 @@
 { config, ... }:
 {
+  boot.loader.grub.enable = true;
+  boot.loader.grub.device = "/dev/vda";
   nix.distributedBuilds = true;
   system.stateVersion = "24.11";
   home-manager.users.${config.user}.home.stateVersion = "24.11";
@@ -12,6 +14,4 @@
       size = 16 * 1024;
     }
   ];
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "/dev/vda";
 }
