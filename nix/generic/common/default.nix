@@ -43,16 +43,6 @@ in
   # boot and tty {{{1
   # TODO remove values that mirror defaults
   boot = {
-    loader = {
-      systemd-boot = {
-        enable = true;
-        configurationLimit = 10;
-        memtest86.enable = true;
-        edk2-uefi-shell.enable = true;
-        netbootxyz.enable = true;
-      };
-      efi.canTouchEfiVariables = true;
-    };
     # silent boot, suggested by boot.initrd.verbose description:
     consoleLogLevel = 0;
     initrd = {

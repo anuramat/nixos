@@ -253,4 +253,17 @@ in
       };
     };
   };
+
+  # boot {{{1
+  # on desktops we expect efi
+  boot.loader = {
+    systemd-boot = {
+      enable = true;
+      configurationLimit = 10;
+      memtest86.enable = true;
+      edk2-uefi-shell.enable = true;
+      netbootxyz.enable = true;
+    };
+    efi.canTouchEfiVariables = true;
+  };
 }
