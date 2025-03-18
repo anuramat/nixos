@@ -51,6 +51,7 @@ in
         librewolf = {
           enable = true;
           settings = {
+            "widget.use-xdg-desktop-portal.file-picker" = 1;
             "identity.fxaccounts.enabled" = true;
             "privacy.resistFingerprinting" = false;
             "sidebar.revamp" = true;
