@@ -22,4 +22,6 @@ __wallust_wrapped() {
 
 	# BUG keys get stuck on reload, might wanna report
 	command -v swaymsg &> /dev/null && swaymsg reload
+
+	true
 }
