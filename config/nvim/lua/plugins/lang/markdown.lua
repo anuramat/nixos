@@ -40,17 +40,6 @@ return {
     }),
   },
   {
-    'MeanderingProgrammer/render-markdown.nvim',
-    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' },
-    ft = { 'markdown', 'quarto' },
-    opts = {
-      link = { enabled = false }, -- fucks up cursor position
-      sign = { enabled = false },
-      pipe_table = { enabled = false },
-      latex = { enabled = false },
-    },
-  },
-  {
     '3rd/image.nvim',
     -- TODO check if build and processor are required
     build = false,
