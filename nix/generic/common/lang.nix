@@ -51,6 +51,8 @@
     #     [
     #     ];
     # })
+    superhtml
+    typescript-language-server
     haskell-language-server
     bash-language-server
     ccls
