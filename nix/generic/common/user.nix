@@ -17,6 +17,7 @@ in
     description = fullname;
     isNormalUser = true;
     extraGroups = [
+      "nginx"
       "camera" # gphoto2
       "wheel" # root
       "video" # screen brightness

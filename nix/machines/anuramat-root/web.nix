@@ -1,7 +1,5 @@
-{ lib, config, ... }:
 let
-  home = config.users.users.${config.user}.home;
-  root = "${home}/public";
+  root = "/var/www/static";
   domain = "ctrl.sn";
   email = "x@ctrl.sn";
 in
@@ -10,16 +8,21 @@ in
     80
     443
   ];
-  services.static-web-server = {
-    inherit root;
-    enable = true;
-    listen = "[::]:443";
-    configuration = {
-      general = {
-        directory-listing = true;
-        http2 = true;
-        http2-tls-cert = "/var/lib/acme/${domain}/fullchain.pem";
-        http2-tls-key = "/var/lib/acme/${domain}/key.pem";
+  services = {
+    nginx = {
+      enable = true;
+      virtualHosts.${domain} = {
+        forceSSL = true;
+        enableACME = true;
+        locations = {
+          "/" = {
+            inherit root;
+            extraConfig = ''
+              autoindex on;
+              autoindex_exact_size off;
+            '';
+          };
+        };
       };
     };
   };
@@ -28,21 +31,6 @@ in
     acceptTerms = true;
     certs."${domain}" = {
       inherit email;
-      reloadServices = [ "static-web-server" ];
-      listenHTTP = ":80";
-      group = "www-data";
     };
   };
-  users.groups.www-data = { };
-
-  # TODO wtf is this paragraph for
-  systemd.services.static-web-server.serviceConfig.SupplementaryGroups = lib.mkForce [
-    ""
-    "www-data"
-  ];
-  systemd.services.static-web-server.serviceConfig.BindReadOnlyPaths = lib.mkForce [
-    root
-    "/var/lib/acme/${domain}"
-  ];
-
 }
