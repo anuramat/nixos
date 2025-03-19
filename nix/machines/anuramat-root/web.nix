@@ -1,5 +1,5 @@
 let
-  root = "/var/www/static";
+  root = "/var/www";
   domain = "ctrl.sn";
   email = "x@ctrl.sn";
 in
@@ -16,7 +16,11 @@ in
         enableACME = true;
         locations = {
           "/" = {
-            inherit root;
+            root = "${root}/static";
+          };
+          "/photos/" = {
+            basicAuthFile = "${root}/.htpasswd";
+            alias = "${root}/photos/";
             extraConfig = ''
               autoindex on;
               autoindex_exact_size off;
