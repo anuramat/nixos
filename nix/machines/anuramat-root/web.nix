@@ -18,7 +18,12 @@ in
         forceSSL = true;
         enableACME = true;
         locations = {
-          "/" = { inherit root; };
+          "/" = {
+            inherit root;
+            extraConfig = ''
+              autoindex on;
+            '';
+          };
         };
       };
     };
