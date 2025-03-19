@@ -102,7 +102,7 @@
     age # file encryption
     wine
 
-    yazi # big, simple, hackable/lua -- ~ for help
+    unstable.yazi # big, simple, hackable/lua -- ~ for help
     felix-fm # smallest, image previews -- :help<cr> for help; waiting for picker: <https://github.com/kyoheiu/felix/issues/261>
     nnn # small, simple, ubiquitous -- ? for help
 
