@@ -1,8 +1,5 @@
-{ config, ... }:
 let
-  # home = config.users.users.${config.user}.home;
-  # root = "${home}/public";
-  root = "/var/www";
+  root = "/var/www/static";
   domain = "ctrl.sn";
   email = "x@ctrl.sn";
 in
