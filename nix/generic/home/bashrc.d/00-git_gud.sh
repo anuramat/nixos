@@ -4,7 +4,11 @@
 # TODO reconsider stderr/stdout depending on usecases
 # more locals
 
-__free_repos=("$HOME/notes" "/etc/nixos")
+__free_repos_cand=("$HOME/notes" "/etc/nixos" "/var/www")
+__free_repos=()
+for i in "${__free_repos_cand[@]}"; do
+	[ -d "$i" ] && __free_repos+=("$i")
+done
 
 # cd to ghq repo
 # optional: $1 - query (best match is picked)
@@ -82,8 +86,6 @@ down() {
 			;;
 	esac
 
-	printf "%d repos, " "$((${#__free_repos[@]} + $(ghq list | wc -l)))"
-
 	# repos are taken from ghq and hardcoded array
 	local -r root=$(ghq root)
 
@@ -124,8 +126,9 @@ down() {
 	return 1
 }
 
-# push+commit on personal repos
-__git_push_commit() {
+# fast push+commit for personal repos
+up() (
+	cd "$1" || exit 1
 	local ok
 	# check that we're in a personal repo directory
 	for i in "${__free_repos[@]}"; do
@@ -170,33 +173,7 @@ __git_push_commit() {
 	local prompt
 	prompt=$(_git_prompt 1) || prompt="$(tput setaf 1)$prompt$(tput sgr0)"
 	echo "status:$prompt"
-}
-
-# push all personal repos
-up() {
-	case "$1" in
-		"") ;;
-		*)
-			(
-				cd "$1" || exit 1
-				__git_push_commit
-			)
-			return
-			;;
-	esac
-
-	# shellcheck disable=SC2317
-	wrapper() {
-		printf "$(tput setaf 5 bold)%s$(tput sgr0)\n" "*** syncing $(basename "$1") ***"
-		cd "$1" || exit
-		__git_push_commit
-	}
-	cmd="subcat"
-	for path in "${__free_repos[@]}"; do
-		cmd+=$(printf ' <(wrapper "%s" 2>&1)' "$path")
-	done
-	eval "$cmd"
-}
+)
 
 github_create() {
 	name=$1
