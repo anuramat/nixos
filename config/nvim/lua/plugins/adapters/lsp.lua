@@ -46,6 +46,8 @@ local configs = function()
       -- eg replacements or custom schemas
     },
     superhtml = {},
+    ts_ls = {},
+    stylelint_lsp = {},
     jsonls = {
       cmd = { 'vscode-json-languageserver', '--stdio' },
       schemas = require('schemastore').json.schemas(),
