@@ -31,3 +31,5 @@ lightning_logs
 *.fdb_latexmk
 *.fls
 *.log
+
+.htpasswd
