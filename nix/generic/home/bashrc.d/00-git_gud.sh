@@ -227,55 +227,59 @@ _git_prompt() {
 		return
 	fi
 
-	local -r raw=$(git status --porcelain=v2 --show-stash --branch)
+	local -r git_root=$(dirname "$(realpath "$(git rev-parse --git-dir)")")
+	(
+		cd "$git_root" || exit
+		local -r raw=$(git status --porcelain=v2 --show-stash --branch)
 
-	# branch/commit
-	local branch=$(echo "$raw" | grep -oP '(?<=^# branch.head ).*')
-	local commit
-	if [ "$branch" = '(detached)' ]; then
-		branch=''
-		commit=$(printf %.7s "$(echo "$raw" | grep -oP '(?<=^# branch.oid ).*')")
-	fi
+		# branch/commit
+		local branch=$(echo "$raw" | grep -oP '(?<=^# branch.head ).*')
+		local commit
+		if [ "$branch" = '(detached)' ]; then
+			branch=''
+			commit=$(printf %.7s "$(echo "$raw" | grep -oP '(?<=^# branch.oid ).*')")
+		fi
 
-	# status
-	local status
-	{
-		# returns a string with unique XY status codes
-		# '3 1' - staging, '4 1' - work tree, '3 2' - both
-		chars() {
-			# TODO awk stuff is gpt, check
-			echo "$raw" | grep '^[12u]' | awk -v pos="$1" -v num="$2" '{printf substr($0, pos, num)}' \
-				| sed 's/[. #]//g' | fold -w1 | LC_ALL=C sort -u | tr -d '\n'
+		# status
+		local status
+		{
+			# returns a string with unique XY status codes
+			# '3 1' - staging, '4 1' - work tree, '3 2' - both
+			chars() {
+				# TODO awk stuff is gpt, check
+				echo "$raw" | grep '^[12u]' | awk -v pos="$1" -v num="$2" '{printf substr($0, pos, num)}' \
+					| sed 's/[. #]//g' | fold -w1 | LC_ALL=C sort -u | tr -d '\n'
+			}
+
+			# XY codes from staging area (index)
+			status+=$(chars 3 1)
+
+			# dirty work tree
+			[ -n "$(chars 4 1)" ] && status+='+'
+
+			# untracked files
+			echo "$raw" | grep -q '^?' && status+="?"
 		}
 
-		# XY codes from staging area (index)
-		status+=$(chars 3 1)
+		local desync
+		# behind
+		[ -n "$(git cherry @ "@{push}" 2> /dev/null)" ] && desync+='<'
+		# ahead
+		[ -n "$(git cherry "@{u}" @ 2> /dev/null)" ] && desync+='>'
+		# TODO add unpushed commits from other branches with a special flag?
 
-		# dirty work tree
-		[ -n "$(chars 4 1)" ] && status+='+'
+		local -r stash=$(echo "$raw" | grep -oP '(?<=^# stash )\d+')
 
-		# untracked files
-		echo "$raw" | grep -q '^?' && status+="?"
-	}
+		local -r state=$(printf %s "${status:+ $status}${desync:+ $desync}${stash:+ \$$stash}")
 
-	local desync
-	# behind
-	[ -n "$(git cherry @ "@{push}" 2> /dev/null)" ] && desync+='<'
-	# ahead
-	[ -n "$(git cherry "@{u}" @ 2> /dev/null)" ] && desync+='>'
-	# TODO add unpushed commits from other branches with a special flag?
+		if [ -z "$only_state" ]; then
+			# for PS1: prepend branch/hash
+			printf %s "${branch:-$commit}$state"
+		else
+			printf %s "${state:- clean}"
+		fi
 
-	local -r stash=$(echo "$raw" | grep -oP '(?<=^# stash )\d+')
-
-	local -r state=$(printf %s "${status:+ $status}${desync:+ $desync}${stash:+ \$$stash}")
-
-	if [ -z "$only_state" ]; then
-		# for PS1: prepend branch/hash
-		printf %s "${branch:-$commit}$state"
-	else
-		printf %s "${state:- clean}"
-	fi
-
-	# error on dirty
-	[ -z "$state" ]
+		# error on dirty
+		[ -z "$state" ]
+	)
 }
