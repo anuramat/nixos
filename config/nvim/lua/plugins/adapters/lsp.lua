@@ -45,6 +45,9 @@ local configs = function()
       -- we can use schemastore plugin if we need more logic
       -- eg replacements or custom schemas
     },
+    superhtml = {},
+    ts_ls = {},
+    stylelint_lsp = {},
     jsonls = {
       cmd = { 'vscode-json-languageserver', '--stdio' },
       schemas = require('schemastore').json.schemas(),

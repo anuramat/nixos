@@ -51,6 +51,9 @@
     #     [
     #     ];
     # })
+    superhtml
+    typescript-language-server
+    stylelint-lsp # css
     haskell-language-server
     bash-language-server
     ccls
