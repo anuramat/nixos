@@ -22,6 +22,7 @@ in
             inherit root;
             extraConfig = ''
               autoindex on;
+              autoindex_exact_size off;
             '';
           };
         };
