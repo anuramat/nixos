@@ -117,12 +117,11 @@ down() {
 		printf '%s\0' "${__free_repos[@]}" | xargs -0 -P 0 -I {} bash -c "get_dirty '$nopull' 0 {}" | LC_ALL=C sort
 		ghq list -p | xargs -P 0 -I {} bash -c "get_dirty '$nopull' $((${#root} + 1)) {}" | LC_ALL=C sort
 	)
-	printf %s "status:" >&2
 	[ -z "$dirty" ] && {
-		echo " all clean!" >&2
+		echo "all clean!" >&2
 		return
 	}
-	printf "\n%s\n" "$dirty" >&2
+	echo "$dirty" >&2
 	return 1
 }
 
