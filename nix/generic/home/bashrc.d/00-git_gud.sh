@@ -108,7 +108,7 @@ down() {
 		status=$(_git_prompt 1) && status=
 		status="${pulled:+ [ff]}${status:+$(tput setaf 1)$status$(tput sgr0)}"
 		[ -z "$status" ] && return
-		printf '\t%s\n' "$name$status"
+		echo "$name$status"
 	}
 
 	local dirty
