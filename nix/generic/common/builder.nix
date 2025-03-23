@@ -5,7 +5,7 @@
   ...
 }:
 lib.mkIf (!config.nix.distributedBuilds) {
-  networking.firewall.allowedTCPPorts = [
+  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
     5000 # nix-serve
   ];
   users.users.${cluster.builderUsername} = {
