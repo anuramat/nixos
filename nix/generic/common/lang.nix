@@ -82,6 +82,7 @@
     bear # compilation database generator for clangd
     haskellPackages.hoogle
     htmlq
+    gomodifytags
     jq # json processor
     luajitPackages.luarocks
     markdown-link-check
