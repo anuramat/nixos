@@ -33,3 +33,4 @@ lightning_logs
 *.log
 
 .htpasswd
+.env
