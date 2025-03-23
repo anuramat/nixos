@@ -75,7 +75,7 @@ in
   systemd.services.NetworkManager-wait-online.enable = false;
   services.resolved = {
     enable = true;
-    dnssec = "true";
+    # dnssec = "true";
   };
 
   # ssh etc {{{1

@@ -10,7 +10,9 @@ pandoc-md() {
 	# even if they were, pdf output is ugly
 	# --citeproc might be useful TODO document
 	# also maybe switch to --pdf-engine xelatex
+	notify-send -t 1000 $'\n\nrendering\n\n'
 	pandoc -H "$XDG_CONFIG_HOME/latex/preamble.tex" "$1" -f "$__markdown" -t pdf -o "$2"
+	notify-send -t 1000 $'\n\nrender done\n\n'
 }
 
 hotdoc() {
