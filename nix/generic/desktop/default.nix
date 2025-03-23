@@ -267,8 +267,8 @@ in
   };
 
   # firewall {{{1
-  networking.firewall.allowedTCPPorts = [
-    22 # SSH
+  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
+    # jupyter etc
     8080
     8888
   ];
