@@ -17,6 +17,7 @@ alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
 alias peco="fzf --height=100 --preview=''"
+export AI_PROVIDER='pollinations'
 
 send() {
 	# send a file over taildrop:
