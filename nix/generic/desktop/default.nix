@@ -114,9 +114,8 @@ in
     # video {{{2
     vlc
     mpv
-    # davinci-resolve
-    handbrake
-    footage
+    footage # simple editor: trim, crop, etc
+    # davinci-resolve # heavy duty editor
 
     # misc system {{{2
     qalculate-gtk # qalc calculator gui
