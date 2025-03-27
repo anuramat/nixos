@@ -12,15 +12,11 @@ export ESCDELAY=25
 shopt -s globstar # enables **
 set +H            # turn off ! history bullshit
 
-alias repl="nixos-rebuild repl"
 alias f="nvim"
 alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
 alias peco="fzf --height=100 --preview=''"
-alias recv='tailscale file get'
-alias d='rmtrash'
-alias t="todo"
 
 send() {
 	# send a file over taildrop:

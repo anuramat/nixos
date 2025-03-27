@@ -16,4 +16,5 @@
   "image/x-portable-pixmap"
   "image/x-xbitmap"
   "image/x-xpixmap"
+  "image/x-nikon-ref"
 ]
