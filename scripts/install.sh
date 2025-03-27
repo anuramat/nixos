@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
+# TODO: this doesn't overwrite dotfiles
+
 lndir() (
 	source="$1"
 	directory="$2"
