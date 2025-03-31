@@ -63,7 +63,6 @@ in
     # screen capture etc {{{2
     slurp # select screen region
     swappy # screenshot markup
-    kooha # screen capture with basic gui
     shotman # screenshot, with simple preview afterwards, no markup
     wf-recorder # CLI screen capture
     hyprpicker # color picker
