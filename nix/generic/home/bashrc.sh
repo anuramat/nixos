@@ -53,21 +53,6 @@ brexit() {
 	# usage: brexit 69
 	ddcutil setvcp 10 "$1" --display 1
 }
-beep() {
-	# announce every $1 minutes
-	local -r period=$1
-	[ -n "$period" ] || {
-		echo -e 'Invalid arguments\nUsage:\n\tbeep 45'
-		return 1
-	}
-
-	while true; do
-		local hours=$(date +%H)
-		local minutes=$(date +%M)
-		(say "Current time: $hours $minutes" &)
-		sleep $((period * 60))
-	done
-}
 nai() {
 	path=$(realpath "$(command -v "$1")")
 	cd "$(echo "$path" | cut -d / -f 1-4)" || {
@@ -92,48 +77,6 @@ y() {
 		builtin cd -- "$cwd" || return
 	fi
 	rm -f -- "$tmp"
-}
-
-rsu() {
-	target="$1"
-	path="$(realpath "$2")/"
-	[ -n "$target" ] && [ -n "$path" ] || {
-		echo "invalid arguments"
-		return 1
-	}
-	[ -d "$path" ] || {
-		echo "not a directory"
-		return 1
-	}
-	rsync -avhP --ignore-existing "$path" "$target:$path"
-}
-
-rsd() {
-	target="$1"
-	path="$(realpath "$2")/"
-	[ -n "$target" ] && [ -n "$path" ] || {
-		echo "invalid arguments"
-		return 1
-	}
-	[ -d "$path" ] || {
-		echo "not a directory"
-		return 1
-	}
-	rsync -avhP --ignore-existing "$target:$path" "$path"
-}
-
-rsc() {
-	target="$1"
-	path="$(realpath "$2")/"
-	[ -n "$target" ] && [ -n "$path" ] || {
-		echo "invalid arguments"
-		return 1
-	}
-	[ -d "$path" ] || {
-		echo "not a directory"
-		return 1
-	}
-	rsync -avcn --delete "$target:$path" "$path"
 }
 
 # vim: fdl=0
