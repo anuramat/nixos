@@ -105,7 +105,7 @@ rsu() {
 		echo "not a directory"
 		return 1
 	}
-	rsync -av --ignore-existing "$path" "$target:$path"
+	rsync -avhP --ignore-existing "$path" "$target:$path"
 }
 
 rsd() {
@@ -119,7 +119,7 @@ rsd() {
 		echo "not a directory"
 		return 1
 	}
-	rsync -av --ignore-existing "$target:$path" "$path"
+	rsync -avhP --ignore-existing "$target:$path" "$path"
 }
 
 rsc() {
