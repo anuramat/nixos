@@ -5,12 +5,13 @@ let
   appName = "ctrl.sn";
   cwd = "/var/www/";
   port = "8080";
+  binary = "${inputs.ctrlsn.packages.${pkgs.system}.default}/bin/ctrl.sn";
 in
 {
   systemd.services.${appName} = {
     after = [ "network.target" ];
     serviceConfig = {
-      ExecStart = "${inputs.${appName}.packages.${pkgs.system}.default}/bin/${appName}";
+      ExecStart = binary;
       Restart = "always";
       WorkingDirectory = cwd;
       Environment = "PORT=${port}";
