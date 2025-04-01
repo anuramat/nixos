@@ -9,6 +9,7 @@
     };
     # neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     subcat.url = "github:anuramat/subcat";
+    "ctrl.sn".url = "github:anuramat/ctrl.sn";
   };
   outputs =
     inputs:

@@ -1,9 +1,25 @@
+{ pkgs, inputs, ... }:
 let
-  root = "/var/www";
   domain = "ctrl.sn";
   email = "x@ctrl.sn";
+  appName = "ctrl.sn";
+  cwd = "/var/www/";
+  port = 8080;
 in
 {
+  systemd.services.${appName} = {
+    after = [ "network.target" ];
+    serviceConfig = {
+      ExecStart = inputs.${appName}.packages.${pkgs.system}.default;
+      Restart = "always";
+      User = appName;
+      Group = appName;
+      WorkingDirectory = cwd;
+      Environment = "PORT=${port}";
+    };
+    wantedBy = [ "multi-user.target" ]; # why this
+  };
+
   networking.firewall.allowedTCPPorts = [
     80
     443
@@ -11,20 +27,13 @@ in
   services = {
     nginx = {
       enable = true;
+      recommendedProxySettings = true;
       virtualHosts.${domain} = {
         forceSSL = true;
         enableACME = true;
         locations = {
           "/" = {
-            root = "${root}/static";
-          };
-          "/photos/" = {
-            basicAuthFile = "${root}/.htpasswd";
-            alias = "${root}/photos/";
-            extraConfig = ''
-              autoindex on;
-              autoindex_exact_size off;
-            '';
+            proxyPass = "http://localhost:${port}";
           };
         };
       };
