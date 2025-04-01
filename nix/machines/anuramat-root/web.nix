@@ -11,20 +11,13 @@ in
   services = {
     nginx = {
       enable = true;
+      recommendedProxySettings = true;
       virtualHosts.${domain} = {
         forceSSL = true;
         enableACME = true;
         locations = {
           "/" = {
-            root = "${root}/static";
-          };
-          "/photos/" = {
-            basicAuthFile = "${root}/.htpasswd";
-            alias = "${root}/photos/";
-            extraConfig = ''
-              autoindex on;
-              autoindex_exact_size off;
-            '';
+            proxyPass = "http://localhost:8080";
           };
         };
       };
