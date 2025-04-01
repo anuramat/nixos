@@ -1,9 +1,25 @@
+{ pkgs, inputs, ... }:
 let
-  root = "/var/www";
   domain = "ctrl.sn";
   email = "x@ctrl.sn";
+  appName = "ctrl.sn";
+  cwd = "/var/www/";
+  port = 8080;
 in
 {
+  systemd.services.${appName} = {
+    after = [ "network.target" ];
+    serviceConfig = {
+      ExecStart = inputs.${appName}.packages.${pkgs.system}.default;
+      Restart = "always";
+      User = appName;
+      Group = appName;
+      WorkingDirectory = cwd;
+      Environment = "PORT=${port}";
+    };
+    wantedBy = [ "multi-user.target" ]; # why this
+  };
+
   networking.firewall.allowedTCPPorts = [
     80
     443
@@ -17,7 +33,7 @@ in
         enableACME = true;
         locations = {
           "/" = {
-            proxyPass = "http://localhost:8080";
+            proxyPass = "http://localhost:${port}";
           };
         };
       };
