@@ -72,7 +72,6 @@ def ls():
 
 
 def _index(lines: list[str]) -> list[str]:
-    # TODO rewrite
     w = len(str(len(lines)))
     result = []
     for i, line in enumerate(lines, 1):
