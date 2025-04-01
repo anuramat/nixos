@@ -10,10 +10,8 @@ in
   systemd.services.${appName} = {
     after = [ "network.target" ];
     serviceConfig = {
-      ExecStart = inputs.${appName}.packages.${pkgs.system}.default;
+      ExecStart = "${inputs.${appName}.packages.${pkgs.system}.default}/bin/${appName}";
       Restart = "always";
-      User = appName;
-      Group = appName;
       WorkingDirectory = cwd;
       Environment = "PORT=${port}";
     };
