@@ -8,9 +8,6 @@ import os
 import re
 import sys
 
-# TODO syntax hl?
-# TODO command that opens todo.txt on the nth line
-
 TASK_FILE = os.path.expanduser("~/notes/todo.txt")
 
 TERM_HEIGHT_OFFSET = 5  # terminal prompt etc
