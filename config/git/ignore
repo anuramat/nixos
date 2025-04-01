@@ -25,6 +25,8 @@ node_modules/
 # pytorch lightning
 *.ckpt
 lightning_logs
+# nix
+result
 
 # latex temp stuff
 *.aux
