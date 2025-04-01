@@ -4,7 +4,7 @@ let
   email = "x@ctrl.sn";
   appName = "ctrl.sn";
   cwd = "/var/www/";
-  port = 8080;
+  port = "8080";
 in
 {
   systemd.services.${appName} = {
