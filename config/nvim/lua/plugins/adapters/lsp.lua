@@ -47,7 +47,14 @@ local configs = function()
     },
     superhtml = {},
     ts_ls = {},
-    stylelint_lsp = {},
+    stylelint_lsp = {
+      -- this shit doesn't work
+      settings = {
+        stylelintplus = {
+          -- see available options in stylelint-lsp documentation
+        },
+      },
+    },
     jsonls = {
       cmd = { 'vscode-json-languageserver', '--stdio' },
       schemas = require('schemastore').json.schemas(),
