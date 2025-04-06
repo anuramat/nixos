@@ -4,16 +4,15 @@ let
   email = "x@ctrl.sn";
   appName = "ctrl.sn";
   cwd = "/var/www/";
-  port = 8080;
+  port = "8080";
+  binary = "${inputs.ctrlsn.packages.${pkgs.system}.default}/bin/ctrl.sn";
 in
 {
   systemd.services.${appName} = {
     after = [ "network.target" ];
     serviceConfig = {
-      ExecStart = inputs.${appName}.packages.${pkgs.system}.default;
+      ExecStart = binary;
       Restart = "always";
-      User = appName;
-      Group = appName;
       WorkingDirectory = cwd;
       Environment = "PORT=${port}";
     };
