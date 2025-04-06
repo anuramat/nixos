@@ -1,15 +1,15 @@
 {
   "nodes": {
-    "ctrl.sn": {
+    "ctrlsn": {
       "inputs": {
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1743506186,
-        "narHash": "sha256-Go4ek00JgH9PzlfCTIRQsLQUz1ctELtWVTQbxQV+BEA=",
+        "lastModified": 1743968894,
+        "narHash": "sha256-5yUJ8LrW48/FUXKz7lxY60F1TMyawG0+R4zx1dKVkVw=",
         "ref": "main",
-        "rev": "f4f5109ebb35cf9fa8ce28c527f4e328d321b303",
-        "revCount": 42,
+        "rev": "6931f0ca2fe128b1b2aa3cf6ad9c85b586af6c2c",
+        "revCount": 50,
         "type": "git",
         "url": "ssh://git@github.com/anuramat/ctrl.sn"
       },
@@ -122,7 +122,7 @@
     },
     "root": {
       "inputs": {
-        "ctrl.sn": "ctrl.sn",
+        "ctrlsn": "ctrlsn",
         "home-manager": "home-manager",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_2",
