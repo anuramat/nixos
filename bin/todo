@@ -8,9 +8,6 @@ import os
 import re
 import sys
 
-# TODO syntax hl?
-# TODO command that opens todo.txt on the nth line
-
 TASK_FILE = os.path.expanduser("~/notes/todo.txt")
 
 TERM_HEIGHT_OFFSET = 5  # terminal prompt etc
@@ -75,7 +72,6 @@ def ls():
 
 
 def _index(lines: list[str]) -> list[str]:
-    # TODO rewrite
     w = len(str(len(lines)))
     result = []
     for i, line in enumerate(lines, 1):
@@ -136,7 +132,7 @@ def tag_overview():
     )
 
     cells_lines = []
-    for tag in lines_by_tags:
+    for tag in sorted(lines_by_tags.keys()):
         lines = lines_by_tags[tag]
         heading = f"{tag}: {len(lines_by_tags[tag])}"
         underline = len(heading) * "-"
@@ -199,6 +195,8 @@ def main():
 
     subparsers.add_parser("norm", help="Normalize the file")
 
+    subparsers.add_parser("unfiled", help="List unfiled tasks")
+
     merge_parser = subparsers.add_parser("merge", help="Merge")
     merge_parser.add_argument("left", type=str, help="Current version (%%A)")
     merge_parser.add_argument("root", type=str, help="Common ancestor's version (%%O)")
@@ -220,6 +218,8 @@ def main():
         norm()
     elif args.command == "merge":
         merge(args.left, args.root, args.right)
+    elif args.command == "unfiled":
+        ls_tag("unfiled")
     else:
         tag_overview()
 
