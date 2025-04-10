@@ -95,10 +95,9 @@ in
 
     # docs {{{2
     xournalpp # pdf markup, handwritten notes
-    okular # reader # TODO remove?
-    djview # djvu reader # TODO remove?
-    zathura # keyboard-centric aio reader
-    zotero # TODO do I need this?
+    okular # aio doc reader with pdf form support
+    zathura # keyboard-centric pdf/djvu reader
+    zotero # TODO remove after backing up
 
     # img {{{2
     krita # raster graphics, digital art
