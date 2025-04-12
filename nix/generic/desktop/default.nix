@@ -117,7 +117,7 @@ in
 
     # misc system {{{2
     qalculate-gtk # qalc calculator gui
-    cheese # webcam
+    unstable.cheese # webcam
     proton-pass # password manager
     transmission_4-gtk # torrent client
     wev # wayland event viewer, useful for debugging

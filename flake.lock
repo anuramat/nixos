@@ -5,11 +5,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1743968894,
-        "narHash": "sha256-5yUJ8LrW48/FUXKz7lxY60F1TMyawG0+R4zx1dKVkVw=",
+        "lastModified": 1743970485,
+        "narHash": "sha256-6vg93/s19PJJXLoiE7T+DCPPQ2fhzLEgIWfVfEWN2QM=",
         "ref": "main",
-        "rev": "6931f0ca2fe128b1b2aa3cf6ad9c85b586af6c2c",
-        "revCount": 50,
+        "rev": "19e4befdfcfa2da3344ec5091c3d74483093ffc8",
+        "revCount": 51,
         "type": "git",
         "url": "ssh://git@github.com/anuramat/ctrl.sn"
       },
