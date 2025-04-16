@@ -10,6 +10,7 @@
     # docs {{{1
     man-pages
     man-pages-posix
+    manix # nix doc search
 
     # posix {{{1
     bc # simple calculator
