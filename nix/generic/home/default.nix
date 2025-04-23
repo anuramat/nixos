@@ -82,6 +82,7 @@ in
               pyperclip
               ipython
               nbformat
+              requests # for remote molten
             ];
         };
 
