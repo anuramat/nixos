@@ -33,6 +33,7 @@ return {
     'GCBallesteros/jupytext.nvim',
     lazy = false,
     opts = {
+      -- markdown, because jupytext quarto conversion is slower
       style = 'markdown',
       output_extension = 'md', -- default: searches for py, creates md
       force_ft = 'markdown', -- defaults to kernel language

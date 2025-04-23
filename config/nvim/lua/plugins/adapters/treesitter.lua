@@ -38,8 +38,12 @@ return {
       textobjects = {
         swap = {
           enable = true,
-          swap_next = { ['<a-l>'] = '@parameter.inner' },
-          swap_previous = { ['<a-h>'] = '@parameter.inner' },
+          swap_next = {
+            ['<a-l>'] = { query = '@parameter.inner', desc = 'swap with the next parameter' },
+          },
+          swap_previous = {
+            ['<a-h>'] = { query = '@parameter.inner', desc = 'swap with the previous parameter' },
+          },
         },
       },
     },

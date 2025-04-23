@@ -55,7 +55,7 @@ return {
       return {
         n_lines = 500,
         custom_textobjects = {
-          b = false, -- = ([{
+          -- b = false, -- = ([{
           q = false, -- = `'"
           -- ~~~~~~~~~~~~~~~~~~~ functions ~~~~~~~~~~~~~~~~~~~ --
           F = ts({
@@ -80,6 +80,10 @@ return {
             i = { '@return.inner' },
           }),
           -- ~~~~~~~~~~~~~~~~~~~~~ misc ~~~~~~~~~~~~~~~~~~~~~~ --
+          b = ts({ -- code blocks in markdown (custom query)
+            a = { '@code_cell.inner' },
+            i = { '@code_cell.outer' },
+          }),
           s = ts({ -- structs/classes; instance/definition
             a = { '@class.outer' },
             i = { '@class.inner' },
