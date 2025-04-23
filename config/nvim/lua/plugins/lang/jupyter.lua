@@ -104,9 +104,8 @@ return {
       { 'a', function(m) m.run_above() end, 'run all above including current one' },
       { 'b', function(m) m.run_below() end, 'run all below including current one' },
       { 'A', function(m) m.run_all() end, 'run all' },
-      { 'l', function(m) m.run_line() end, 'run line' },
     }, {
-      lhs_prefix = '<localleader>r',
+      lhs_prefix = '<leader>m',
       desc_prefix = 'quarto',
       ft = { 'markdown', 'quarto' },
       module = 'quarto.runner',
