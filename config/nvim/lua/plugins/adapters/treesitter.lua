@@ -39,10 +39,16 @@ return {
         swap = {
           enable = true,
           swap_next = {
-            ['<a-l>'] = { query = '@parameter.inner', desc = 'swap with the next parameter' },
+            ['<a-l>'] = {
+              query = { '@parameter.inner' },
+              desc = 'swap with the next parameter',
+            },
           },
           swap_previous = {
-            ['<a-h>'] = { query = '@parameter.inner', desc = 'swap with the previous parameter' },
+            ['<a-h>'] = {
+              query = { '@parameter.inner' },
+              desc = 'swap with the previous parameter',
+            },
           },
         },
       },

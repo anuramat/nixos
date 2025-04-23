@@ -57,32 +57,32 @@ return {
         custom_textobjects = {
           -- b = false, -- = ([{
           q = false, -- = `'"
-          -- ~~~~~~~~~~~~~~~~~~~ functions ~~~~~~~~~~~~~~~~~~~ --
+          -- functions
           F = ts({
-            a = { '@function.outer' },
-            i = { '@function.inner' },
+            a = { '@function.outer' }, -- entire declaration
+            i = { '@function.inner' }, -- body
           }, {}),
           f = ts({
-            a = { '@call.outer' },
-            i = { '@call.inner' },
+            a = { '@call.outer' }, -- line with the call
+            i = { '@call.inner' }, -- arguments
           }),
           a = ts({
-            a = { '@parameter.outer' },
-            i = { '@parameter.inner' },
+            a = { '@parameter.outer' }, -- with comma
+            i = { '@parameter.inner' }, -- only parameter itself
           }),
           -- there are not really used
           e = ts({
-            a = { '@assignment.outer' },
-            i = { '@assignment.rhs' },
+            a = { '@assignment.outer' }, -- entire assigment line
+            i = { '@assignment.rhs' }, -- only the rhs
           }),
           r = ts({
-            a = { '@return.outer' },
-            i = { '@return.inner' },
+            a = { '@return.outer' }, -- entire return line
+            i = { '@return.inner' }, -- only the return value
           }),
           -- ~~~~~~~~~~~~~~~~~~~~~ misc ~~~~~~~~~~~~~~~~~~~~~~ --
           b = ts({ -- code blocks in markdown (custom query)
-            a = { '@code_cell.inner' },
-            i = { '@code_cell.outer' },
+            a = { '@code_cell.outer' },
+            i = { '@code_cell.inner' },
           }),
           s = ts({ -- structs/classes; instance/definition
             a = { '@class.outer' },
