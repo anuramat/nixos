@@ -14,8 +14,8 @@ function! ToggleQuickFix()
     endif
 endfunction
 nn <leader>q <cmd>call ToggleQuickFix()<cr>
-nn <m-j> <cmd>cnext<cr>
-nn <m-k> <cmd>cprev<cr>
+nn <c-j> <cmd>cnext<cr>
+nn <c-k> <cmd>cprev<cr>
 
 " formatting {{{1
 se shiftround shiftwidth=0 expandtab tabstop=2

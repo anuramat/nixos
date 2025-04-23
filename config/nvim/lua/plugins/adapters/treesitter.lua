@@ -43,11 +43,19 @@ return {
               query = { '@parameter.inner' },
               desc = 'swap with the next parameter',
             },
+            ['<a-j>'] = {
+              query = { '@code_block.outer' },
+              desc = 'swap with the cell below',
+            },
           },
           swap_previous = {
             ['<a-h>'] = {
               query = { '@parameter.inner' },
               desc = 'swap with the previous parameter',
+            },
+            ['<a-k>'] = {
+              query = { '@code_block.outer' },
+              desc = 'swap with the cell above',
             },
           },
         },

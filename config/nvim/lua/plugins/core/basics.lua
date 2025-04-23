@@ -81,8 +81,8 @@ return {
           }),
           -- ~~~~~~~~~~~~~~~~~~~~~ misc ~~~~~~~~~~~~~~~~~~~~~~ --
           b = ts({ -- code blocks in markdown (custom query)
-            a = { '@code_cell.outer' },
-            i = { '@code_cell.inner' },
+            a = { '@code_block.outer' },
+            i = { '@code_block.inner' },
           }),
           s = ts({ -- structs/classes; instance/definition
             a = { '@class.outer' },

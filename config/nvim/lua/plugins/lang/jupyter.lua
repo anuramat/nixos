@@ -62,7 +62,7 @@ return {
       { 'i', initLatestWithOtter, 'init with latest kernel' },
     }, {
       desc_prefix = 'molten',
-      lhs_prefix = '<leader>m',
+      lhs_prefix = '<localleader>',
       ft = { 'markdown', 'quarto' },
     }),
   },
@@ -77,7 +77,7 @@ return {
       { 'O', function(m) m.deactivate() end, 'deactivate' },
     }, {
       module = 'otter',
-      lhs_prefix = '<leader>m',
+      lhs_prefix = '<localleader>',
       ft = { 'markdown', 'quarto' },
     }),
     ft = { 'markdown', 'quarto' },
@@ -105,19 +105,12 @@ return {
       { 'a', function(m) m.run_above() end, 'run all above including current one' },
       { 'b', function(m) m.run_below() end, 'run all below including current one' },
       { 'A', function(m) m.run_all() end, 'run all' },
+      { 'e', function(m) m.run_range() end, 'run range', mode = 'v' },
     }, {
-      lhs_prefix = '<leader>m',
+      lhs_prefix = '<localleader>',
       desc_prefix = 'quarto',
       ft = { 'markdown', 'quarto' },
       module = 'quarto.runner',
-      wrapped = {
-        {
-          '<leader>m',
-          function(m) m.run_range() end,
-          'run range',
-          mode = 'v',
-        },
-      },
     }),
   },
 }
