@@ -76,7 +76,7 @@ return {
       { 'O', function(m) m.deactivate() end, 'deactivate' },
     }, {
       module = 'otter',
-      lhs_prefix = '<localleader>',
+      lhs_prefix = '<leader>m',
       ft = { 'markdown', 'quarto' },
     }),
     ft = { 'markdown', 'quarto' },
