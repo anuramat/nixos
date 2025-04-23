@@ -60,6 +60,7 @@ return {
       { 'ee', 'MoltenEvaluateLine', 'evaluate line' }, -- for some reason doouble operator doesn't make an output
       { 'e', moltenVisual, 'run selection', mode = 'v' },
       { 'r', 'MoltenReevaluateCell', 'reevaluate cell' },
+      { 'd', 'MoltenDelete', 'delete cell' },
 
       { 'i', initLocalhost, 'init with localhost and start otter' },
     }, {
