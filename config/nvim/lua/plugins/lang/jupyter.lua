@@ -1,6 +1,20 @@
 local u = require('utils.helpers')
 
-local moltenVisual = function()
+local function initLatest()
+  local share = os.getenv('XDG_DATA_HOME')
+  local path = share .. '/jupyter/runtime/'
+
+  local kernel = ''
+
+  local handle = io.popen('ls -t ' .. path .. 'kernel-*.json 2>/dev/null')
+  if not handle then return nil end
+  kernel = handle:read('*l')
+  handle:close()
+
+  vim.cmd('MoltenInit ' .. kernel)
+end
+
+local function moltenVisual()
   local start_line = vim.fn.line('v')
   local end_line = vim.fn.line('.')
   if start_line > end_line then
@@ -44,6 +58,7 @@ return {
 
       { 'o', 'MoltenEnterOutput', 'open output window' },
       { 'd', 'MoltenDelete', 'delete cell' },
+      { 'i', initLatest, 'init with latest kernel' },
     }, {
       desc_prefix = 'molten',
       lhs_prefix = '<leader>m',
