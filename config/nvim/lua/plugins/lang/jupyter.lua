@@ -14,6 +14,11 @@ local function initLatest()
   vim.cmd('MoltenInit ' .. kernel)
 end
 
+local function initLatestWithOtter()
+  initLatest()
+  require('otter').activate()
+end
+
 local function moltenVisual()
   local start_line = vim.fn.line('v')
   local end_line = vim.fn.line('.')
@@ -48,17 +53,12 @@ return {
       vim.g.molten_virt_text_output = false
     end,
     keys = u.wrap_lazy_keys({
-      -- running is handled by quarto plugin
+      { 'e', 'MoltenEvaluateOperator', 'evaluate operator' },
+      { 'ee', 'MoltenEvaluateLine', 'evaluate line' }, -- for some reason doouble operator doesn't make an output
+      { 'e', moltenVisual, 'run selection', mode = 'v' },
+      { 'r', 'MoltenReevaluateCell', 'reevaluate cell' },
 
-      -- { 'e', 'MoltenEvaluateOperator', 'evaluate operator' },
-      -- { 'ee', 'MoltenEvaluateLine', 'evaluate line' }, -- for some reason doouble operator doesn't make an output
-      -- { 'e', moltenVisual, 'run selection', mode = 'v' },
-      -- { 'r', 'MoltenReevaluateCell', 'reevaluate cell' },
-      --
-      -- { 'o', 'MoltenEnterOutput', 'open output window' },
-      -- { 'd', 'MoltenDelete', 'delete cell' },
-
-      { 'i', initLatest, 'init with latest kernel' },
+      { 'i', initLatestWithOtter, 'init with latest kernel' },
     }, {
       desc_prefix = 'molten',
       lhs_prefix = '<leader>m',
