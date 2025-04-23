@@ -2,6 +2,7 @@ return {
   {
     'GCBallesteros/jupytext.nvim',
     -- TODO turn this on, figure out loading chain
+    lazy = false,
     opts = {
       style = 'markdown',
       output_extension = 'md',
@@ -11,6 +12,7 @@ return {
   {
     'benlubas/molten-nvim',
     -- TODO turn this on
+    lazy = false,
     version = '^1.0.0', -- use version <2.0.0 to avoid breaking changes
     build = ':UpdateRemotePlugins',
     dependencies = {

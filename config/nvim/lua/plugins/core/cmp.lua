@@ -8,13 +8,14 @@ return {
     version = '*', -- on nightly - add `build = 'nix run .#build-plugin'`
     opts = function()
       return {
-        cmdline = {
-          keymap = {
-            preset = 'default',
-            ['<tab>'] = { 'select_next', 'fallback' },
-            ['<s-tab>'] = { 'select_prev', 'fallback' },
-          },
-        },
+        -- NOTE apparently this breaks on the new version, and might be actually included by default
+        -- cmdline = {
+        --   keymap = {
+        --     preset = 'default',
+        --     -- ['<tab>'] = { 'select_next', 'fallback' },
+        --     -- ['<s-tab>'] = { 'select_prev', 'fallback' },
+        --   },
+        -- },
         keymap = {
           preset = 'default',
         },

@@ -26,6 +26,7 @@ return {
   },
   {
     'jmbuhr/otter.nvim',
+    lazy = false,
     dependencies = {
       'nvim-treesitter/nvim-treesitter',
     },
@@ -50,6 +51,7 @@ return {
     branch = 'master',
   },
   -- TODO figure out proper latex
+  -- this uses a weird matplotlib hack
   {
     'Prometheus1400/markdown-latex-render.nvim',
     dependencies = { '3rd/image.nvim', 'nvim-lua/plenary.nvim' },
