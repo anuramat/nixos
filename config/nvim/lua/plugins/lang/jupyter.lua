@@ -1,3 +1,5 @@
+local u = require('utils.helpers')
+
 return {
   {
     'GCBallesteros/jupytext.nvim',
@@ -20,11 +22,20 @@ return {
       'quarto-dev/quarto-nvim',
     },
     init = function()
-      vim.g.molten_auto_open_output = false
+      vim.g.molten_auto_open_output = true
       vim.g.molten_image_provider = 'image.nvim'
       vim.g.molten_wrap_output = true
-      vim.g.molten_virt_text_output = true
-      -- vim.g.molten_virt_lines_off_by_1 = true
+      vim.g.molten_virt_text_output = false
     end,
+    keys = u.wrap_lazy_keys({
+      { 'e', 'MoltenEvaluateOperator', 'evaluate operator' },
+      { 'ee', 'MoltenEvaluateLine', 'evaluate line' }, -- for some reason doouble operator doesn't make an output
+      { 'o', 'MoltenEnterOutput', 'open output window' },
+      { 'e', 'MoltenEvaluateVisual', mode = 'v' }, -- kinda weird, doesn't work half the time
+    }, {
+      desc_prefix = 'molten',
+      lhs_prefix = '<leader>m',
+      ft = { 'markdown' },
+    }),
   },
 }

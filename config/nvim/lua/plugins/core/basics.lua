@@ -70,7 +70,7 @@ return {
             a = { '@parameter.outer' },
             i = { '@parameter.inner' },
           }),
-          -- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ --
+          -- there are not really used
           e = ts({
             a = { '@assignment.outer' },
             i = { '@assignment.rhs' },
