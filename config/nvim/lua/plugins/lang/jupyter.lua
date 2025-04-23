@@ -15,6 +15,11 @@ local function initKernel()
   require('otter').activate()
 end
 
+local function initLocalhost()
+  vim.cmd('MoltenInit http://localhost:8888')
+  require('otter').activate()
+end
+
 local function moltenVisual()
   local start_line = vim.fn.line('v')
   local end_line = vim.fn.line('.')
@@ -22,11 +27,6 @@ local function moltenVisual()
     start_line, end_line = end_line, start_line
   end
   vim.fn.MoltenEvaluateRange(start_line, end_line)
-end
-
-local function initLocalhost()
-  vim.cmd('MoltenInit http://localhost:8888')
-  require('otter').activate()
 end
 
 return {
@@ -55,6 +55,7 @@ return {
       vim.g.molten_virt_text_output = false
     end,
     keys = u.wrap_lazy_keys({
+      -- TODO fix export
       { 'e', 'MoltenEvaluateOperator', 'evaluate operator' },
       { 'ee', 'MoltenEvaluateLine', 'evaluate line' }, -- for some reason doouble operator doesn't make an output
       { 'e', moltenVisual, 'run selection', mode = 'v' },
