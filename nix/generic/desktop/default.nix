@@ -98,6 +98,7 @@ in
     okular # aio doc reader with pdf form support
     zathura # keyboard-centric pdf/djvu reader
     zotero # TODO remove after backing up
+    libreoffice # just in case
 
     # img {{{2
     krita # raster graphics, digital art
