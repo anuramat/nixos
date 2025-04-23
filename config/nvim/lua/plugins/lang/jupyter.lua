@@ -1,5 +1,14 @@
 local u = require('utils.helpers')
 
+local moltenVisual = function()
+  local start_line = vim.fn.line('v')
+  local end_line = vim.fn.line('.')
+  if start_line > end_line then
+    start_line, end_line = end_line, start_line
+  end
+  vim.fn.MoltenEvaluateRange(start_line, end_line)
+end
+
 return {
   {
     'GCBallesteros/jupytext.nvim',
@@ -30,8 +39,11 @@ return {
     keys = u.wrap_lazy_keys({
       { 'e', 'MoltenEvaluateOperator', 'evaluate operator' },
       { 'ee', 'MoltenEvaluateLine', 'evaluate line' }, -- for some reason doouble operator doesn't make an output
+      { 'e', moltenVisual, 'run selection', mode = 'v' },
+      { 'r', 'MoltenReevaluateCell', 'reevaluate cell' },
+
       { 'o', 'MoltenEnterOutput', 'open output window' },
-      { 'e', 'MoltenEvaluateVisual', mode = 'v' }, -- kinda weird, doesn't work half the time
+      { 'd', 'MoltenDelete', 'delete cell' },
     }, {
       desc_prefix = 'molten',
       lhs_prefix = '<leader>m',

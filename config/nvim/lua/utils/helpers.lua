@@ -26,7 +26,7 @@ function m.wrap_lazy_keys(unwrapped, opts)
 
   local wrap = function(keys, wrapped)
     for k = 1, #keys do
-      local rhs = keys[k][2]
+      local rhs = keys[k][2] -- is this just for convenience or?
 
       -- wrap lhs
       if not wrapped then keys[k][1] = lhs_prefix .. keys[k][1] end
@@ -34,7 +34,7 @@ function m.wrap_lazy_keys(unwrapped, opts)
       -- wrap rhs
       if type(rhs) == 'string' then
         keys[k][2] = '<cmd>' .. cmd_prefix .. rhs .. '<cr>'
-      elseif not wrapped then
+      elseif not wrapped and opts.module then
         keys[k][2] = function() rhs(require(opts.module)) end
       end
 
