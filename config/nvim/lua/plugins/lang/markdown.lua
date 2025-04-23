@@ -102,7 +102,7 @@ return {
       module = 'quarto.runner',
       wrapped = {
         {
-          '<localleader>r',
+          '<leader>m',
           function(m) m.run_range() end,
           'run range',
           mode = 'v',
