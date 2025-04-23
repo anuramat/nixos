@@ -1,6 +1,6 @@
 local u = require('utils.helpers')
 
-local function initLatest()
+local function initKernel()
   local share = os.getenv('XDG_DATA_HOME')
   local path = share .. '/jupyter/runtime/'
 
@@ -12,10 +12,6 @@ local function initLatest()
   handle:close()
 
   vim.cmd('MoltenInit ' .. kernel)
-end
-
-local function initLatestWithOtter()
-  initLatest()
   require('otter').activate()
 end
 
@@ -26,6 +22,11 @@ local function moltenVisual()
     start_line, end_line = end_line, start_line
   end
   vim.fn.MoltenEvaluateRange(start_line, end_line)
+end
+
+local function initLocalhost()
+  vim.cmd('MoltenInit http://localhost:8888')
+  require('otter').activate()
 end
 
 return {
@@ -59,7 +60,7 @@ return {
       { 'e', moltenVisual, 'run selection', mode = 'v' },
       { 'r', 'MoltenReevaluateCell', 'reevaluate cell' },
 
-      { 'i', initLatestWithOtter, 'init with latest kernel' },
+      { 'i', initLocalhost, 'init with localhost and start otter' },
     }, {
       desc_prefix = 'molten',
       lhs_prefix = '<localleader>',
