@@ -67,7 +67,6 @@ return {
   },
   {
     'jmbuhr/otter.nvim',
-    lazy = false,
     dependencies = {
       'nvim-treesitter/nvim-treesitter',
     },
@@ -80,6 +79,7 @@ return {
       lhs_prefix = '<localleader>',
       ft = { 'markdown', 'quarto' },
     }),
+    ft = { 'markdown', 'quarto' },
   },
 
   {
