@@ -45,8 +45,8 @@ return {
               desc = 'swap with the next parameter',
             },
             ['<a-j>'] = {
-              query = { '@code_block.outer' },
-              desc = 'swap with the cell below',
+              query = { '@block.outer' },
+              desc = 'swap with the block below',
             },
           },
           swap_previous = {
@@ -55,8 +55,8 @@ return {
               desc = 'swap with the previous parameter',
             },
             ['<a-k>'] = {
-              query = { '@code_block.outer' },
-              desc = 'swap with the cell above',
+              query = { '@block.outer' },
+              desc = 'swap with the block above',
             },
           },
         },
