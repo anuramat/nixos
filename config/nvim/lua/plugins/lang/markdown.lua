@@ -25,34 +25,8 @@ return {
     },
   },
   {
-    'jmbuhr/otter.nvim',
-    lazy = false,
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter',
-    },
-    opts = {},
-    keys = u.wrap_lazy_keys({
-      { 'o', function(m) m.activate() end, 'activate' },
-      { 'O', function(m) m.deactivate() end, 'deactivate' },
-    }, {
-      module = 'otter',
-      lhs_prefix = '<localleader>',
-      ft = { 'markdown', 'quarto' },
-    }),
-  },
-  {
-    '3rd/image.nvim',
-    -- TODO check if build and processor are required
-    build = false,
-    opts = {
-      backend = 'kitty',
-      processor = 'magick_cli',
-    },
-    branch = 'master',
-  },
-  -- TODO figure out proper latex
-  -- this uses a weird matplotlib hack
-  {
+    -- TODO figure out proper latex
+    -- this uses a weird matplotlib hack
     'Prometheus1400/markdown-latex-render.nvim',
     dependencies = { '3rd/image.nvim', 'nvim-lua/plenary.nvim' },
     enabled = false,
@@ -71,43 +45,5 @@ return {
         end
       end)(),
     },
-  },
-  {
-    'quarto-dev/quarto-nvim',
-    dependencies = {
-      'jmbuhr/otter.nvim',
-      'nvim-treesitter/nvim-treesitter',
-    },
-    ft = { 'markdown', 'quarto' },
-    branch = 'main',
-    opts = {
-      closePreviewOnExit = true,
-      lspFeatures = {
-        languages = { 'python' },
-      },
-      codeRunner = {
-        default_method = 'molten',
-      },
-    },
-    keys = u.wrap_lazy_keys({
-      { 'c', function(m) m.run_cell() end, 'run cell' },
-      { 'a', function(m) m.run_above() end, 'run all above including current one' },
-      { 'b', function(m) m.run_below() end, 'run all below including current one' },
-      { 'A', function(m) m.run_all() end, 'run all' },
-      { 'l', function(m) m.run_line() end, 'run line' },
-    }, {
-      lhs_prefix = '<localleader>r',
-      desc_prefix = 'quarto',
-      ft = { 'markdown', 'quarto' },
-      module = 'quarto.runner',
-      wrapped = {
-        {
-          '<leader>m',
-          function(m) m.run_range() end,
-          'run range',
-          mode = 'v',
-        },
-      },
-    }),
   },
 }
