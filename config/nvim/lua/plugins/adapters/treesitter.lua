@@ -130,6 +130,8 @@ return {
             i = { '@comment.inner' },
           }),
           o = ts({ -- any other blocks
+            -- not sure if all of these make sense even
+            -- TODO find a reference
             a = { '@block.outer', '@conditional.outer', '@loop.outer', '@frame.outer' },
             i = { '@block.inner', '@conditional.inner', '@loop.inner', '@frame.inner' },
           }, {}),
