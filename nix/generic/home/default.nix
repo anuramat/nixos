@@ -69,23 +69,37 @@ in
           enable = true;
           package = unstable.neovim-unwrapped;
           # inputs.neovim-nightly-overlay.packages.${pkgs.system}.default
-          extraLuaPackages = ps: [ ps.magick ];
-          extraPackages = [ pkgs.imagemagick ];
+          extraLuaPackages = ps: [
+            # molten:
+            ps.magick
+          ];
+          extraPackages = [
+            # molten:
+            pkgs.imagemagick
+            pkgs.python3Packages.jupytext
+          ];
           extraPython3Packages =
             ps: with ps; [
-              # these are from molten I think
+              # molten {{{1
+              # required:
               pynvim
               jupyter-client
-              cairosvg # for image rendering
-              pnglatex # for image rendering
-              plotly # for image rendering
-              pyperclip
-              ipython
-              nbformat
-              requests # for remote molten
+              # images:
+              cairosvg # to display svg with transparency
+              pillow # open images with :MoltenImagePopup
+              pnglatex # latex formulas
+              # plotly figures:
+              plotly
+              kaleido
+              # for remote molten:
+              requests
+              websocket-client
+              # misc:
+              pyperclip # clipboard support
+              nbformat # jupyter import/export
+              # }}}
             ];
         };
-
       };
     };
   };
