@@ -7,7 +7,7 @@
       url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
+    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     subcat.url = "github:anuramat/subcat";
     ctrlsn.url = "git+ssh://git@github.com/anuramat/ctrl.sn?ref=main";
   };

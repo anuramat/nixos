@@ -67,8 +67,8 @@ in
 
         neovim = {
           enable = true;
-          package = unstable.neovim-unwrapped;
-          # inputs.neovim-nightly-overlay.packages.${pkgs.system}.default
+          # package = unstable.neovim-unwrapped;
+          package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.default;
           extraLuaPackages = ps: [
             # molten:
             ps.magick
