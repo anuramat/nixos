@@ -30,24 +30,13 @@ return {
         [adapter] = function()
           return require('codecompanion.adapters').extend('ollama', {
             name = adapter,
-            schema = {
-              model = {
-                default = 'deepseek-coder-v2:16b',
-              },
-            },
+            schema = { model = { default = 'deepseek-coder-v2:16b' } },
           })
         end,
       },
       strategies = {
-        chat = {
-          adapter = adapter,
-        },
-        inline = {
-          adapter = {
-
-            name = adapter,
-          },
-        },
+        chat = { adapter = adapter },
+        inline = { adapter = { name = adapter } },
       },
     },
     dependencies = {
