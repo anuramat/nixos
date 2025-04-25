@@ -5,6 +5,7 @@ vim.diagnostic.config({
   float = { border = vim.g.border }, -- settings for `vim.diagnostic.open_float`
   signs = false,
 })
+vim.deprecate = function() end -- shut up
 -- TODO gets stuck sometimes
 -- if os.getenv('SSH_TTY') then
 --   vim.g.clipboard = {
