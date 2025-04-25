@@ -72,7 +72,7 @@ return {
   {
     'kosayoda/nvim-lightbulb',
     event = 'LspAttach',
-    branch = 'master',
+    branch = 'master', -- until 7c651c0185bfe712948f8c4e21eb3ca495e4faa5 gets merged in
     config = {
       autocmd = { enabled = true },
       ignore = {
