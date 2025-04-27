@@ -9,7 +9,6 @@
     # qtox # p2p IM XXX broken
     # slack # XXX broken
     telegram-desktop
-    whatsapp-for-linux
 
     # browsers {{{1
     tor-browser-bundle-bin
