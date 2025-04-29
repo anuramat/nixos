@@ -1,4 +1,7 @@
 { dummy, ... }:
+let
+  email = "x@ctrl.sn";
+in
 {
   imports = dummy ./.;
 
@@ -15,5 +18,6 @@
   };
   security.acme = {
     acceptTerms = true;
+    defaults = { inherit email; };
   };
 }
