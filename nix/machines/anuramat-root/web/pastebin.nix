@@ -24,4 +24,13 @@ in
       inherit email;
     };
   };
+
+  services.wastebin = { 
+    enable = true;
+    settings = {
+      WASTEBIN_BASE_URL = "https://${domain}";
+      WASTEBIN_ADDRESS_PORT = "localhost:${port}"
+    };
+  };
+
 }
