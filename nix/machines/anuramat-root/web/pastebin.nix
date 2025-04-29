@@ -1,9 +1,4 @@
-{
-  pkgs,
-  inputs,
-  helpers,
-  ...
-}:
+{ helpers, ... }:
 let
   domain = "bin.ctrl.sn";
   port = "8081";
