@@ -166,8 +166,8 @@ in
   };
 
   # misc hacks {{{1
-  # force native wayland support in chrome/electron apps; TODO check if still required
-  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+  # force native wayland support in chrome/electron apps; TODO delete if chrome doesn't go xwayland
+  # environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   # print/scan {{{1
   # TODO move this to notes?
@@ -205,7 +205,6 @@ in
   services.blueman.enable = true; # bluetooth gui
 
   # power {{{1
-  # TODO check if it's a laptop
   services.logind.extraConfig = ''
     HandlePowerKey=hybrid-sleep
     HandlePowerKeyLongPress=ignore
