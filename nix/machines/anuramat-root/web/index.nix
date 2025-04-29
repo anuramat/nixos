@@ -19,14 +19,8 @@ in
     wantedBy = [ "multi-user.target" ]; # why this
   };
 
-  networking.firewall.allowedTCPPorts = [
-    80
-    443
-  ];
   services = {
     nginx = {
-      enable = true;
-      recommendedProxySettings = true;
       virtualHosts.${domain} = {
         forceSSL = true;
         enableACME = true;
@@ -40,7 +34,6 @@ in
   };
 
   security.acme = {
-    acceptTerms = true;
     certs."${domain}" = {
       inherit email;
     };
