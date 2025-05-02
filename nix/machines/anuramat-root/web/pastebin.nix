@@ -5,12 +5,10 @@ let
   port = "8081";
 in
 {
-  config =
-    lib.mkMerge (
-      helpers.serve {
-        inherit root domain port;
-      }
-    )
+  config = lib.mkMerge (
+    (helpers.serve {
+      inherit root domain port;
+    })
     ++ [
       ({
         services.wastebin = {
@@ -21,5 +19,6 @@ in
           };
         };
       })
-    ];
+    ]
+  );
 }
