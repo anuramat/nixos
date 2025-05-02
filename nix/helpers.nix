@@ -27,7 +27,7 @@ let
   };
   noRobots = domain: {
     # TODO
-  }
+  };
 in
 rec {
   serve =
