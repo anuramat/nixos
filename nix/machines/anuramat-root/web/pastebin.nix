@@ -6,19 +6,17 @@ let
     port = "8081";
   };
 in
-{
-  config = lib.mkMerge (
-    (helpers.serve w)
-    ++ [
-      ({
-        services.wastebin = {
-          enable = true;
-          settings = {
-            WASTEBIN_BASE_URL = "https://${w.domain}";
-            WASTEBIN_ADDRESS_PORT = "127.0.0.1:${w.port}";
-          };
+lib.mkMerge (
+  (helpers.serve w)
+  ++ [
+    ({
+      services.wastebin = {
+        enable = true;
+        settings = {
+          WASTEBIN_BASE_URL = "https://${w.domain}";
+          WASTEBIN_ADDRESS_PORT = "127.0.0.1:${w.port}";
         };
-      })
-    ]
-  );
-}
+      };
+    })
+  ]
+)
