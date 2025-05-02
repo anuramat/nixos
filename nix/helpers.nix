@@ -1,52 +1,51 @@
 let
-  acmeRoot = domain: {
-    services.nginx.virtualHosts.${domain} = {
+  acmeRoot = w: {
+    services.nginx.virtualHosts.${w.domain} = {
       enableACME = true;
       forceSSL = true;
     };
   };
-  acmeExtra = domain: root: {
-    services.nginx.virtualHosts.${domain} = {
-      useACMEHost = root;
+  acmeExtra = w: {
+    services.nginx.virtualHosts.${w.domain} = {
+      useACMEHost = w.root;
       forceSSL = true;
     };
-    security.acme.certs.${root}.extraDomainNames = [ domain ];
+    security.acme.certs.${w.root}.extraDomainNames = [ w.domain ];
   };
-  reverseProxy = domain: port: {
+  reverseProxy = w: {
     services = {
       nginx = {
-        virtualHosts.${domain} = {
+        virtualHosts.${w.domain} = {
           locations = {
             "/" = {
-              proxyPass = "http://localhost:${port}";
+              proxyPass = "http://localhost:${w.port}";
             };
           };
         };
       };
     };
   };
-  noRobots = domain: {
-    # TODO
+  noRobots = w: {
   };
 in
 rec {
   serve =
     w:
-    [ (reverseProxy w.domain w.port) ]
-    ++ (if w ? root then [ (acmeExtra w.domain w.root) ] else [ (acmeRoot w.domain) ])
-    ++ (if w ? noRobots && w.noRobots == true then [ (noRobots w.domain) ] else [ ]);
+    [ (reverseProxy w) ]
+    ++ (if w ? root then [ (acmeExtra w) ] else [ (acmeRoot w) ])
+    ++ (if w ? noRobots && w.noRobots == true then [ (noRobots w) ] else [ ]);
   serveBinary =
-    b:
-    (serve b)
+    w:
+    (serve w)
     ++ [
       {
-        systemd.services.${b.domain} = {
+        systemd.services.${w.domain} = {
           after = [ "network.target" ];
           serviceConfig = {
-            ExecStart = b.binary;
+            ExecStart = w.binary;
             Restart = "always";
-            WorkingDirectory = b.cwd;
-            Environment = "PORT=${b.port}";
+            WorkingDirectory = w.cwd;
+            Environment = "PORT=${w.port}";
           };
           wantedBy = [ "multi-user.target" ]; # why this
         };
