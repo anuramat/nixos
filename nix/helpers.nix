@@ -37,8 +37,8 @@ rec {
   serve =
     w:
     [ (reverseProxy w) ]
-    ++ (if w ? root then [ (acmeExtra w) ] else [ (acmeRoot w) ])
-    ++ (if w ? noRobots && w.noRobots == true then [ (noRobots w) ] else [ ]);
+    ++ (if w.root == null then [ (acmeRoot w) ] else [ (acmeExtra w) ])
+    ++ (if w.noRobots == true then [ (noRobots w) ] else [ ]);
   serveBinary =
     w:
     (serve w)

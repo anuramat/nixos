@@ -7,6 +7,7 @@
 }:
 lib.mkMerge (
   helpers.serveBinary {
+    root = null;
     noRobots = true;
     domain = "ctrl.sn";
     cwd = "/var/www/";
