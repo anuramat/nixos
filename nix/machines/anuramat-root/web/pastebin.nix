@@ -3,8 +3,7 @@ let
   domain = "bin.ctrl.sn";
   port = "8081";
 in
-(helpers.proxy domain port)
-// {
+{
   services.wastebin = {
     enable = true;
     settings = {
@@ -13,3 +12,4 @@ in
     };
   };
 }
+// (helpers.proxy domain port)

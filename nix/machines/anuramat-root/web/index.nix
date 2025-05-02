@@ -1,4 +1,9 @@
-{ pkgs, inputs, helpers, ... }:
+{
+  pkgs,
+  inputs,
+  helpers,
+  ...
+}:
 let
   domain = "ctrl.sn";
   appName = "ctrl.sn";
@@ -6,8 +11,7 @@ let
   port = "8080";
   binary = "${inputs.ctrlsn.packages.${pkgs.system}.default}/bin/ctrl.sn";
 in
-(helpers.proxy domain port)
-// {
+{
   systemd.services.${appName} = {
     after = [ "network.target" ];
     serviceConfig = {
@@ -19,3 +23,5 @@ in
     wantedBy = [ "multi-user.target" ]; # why this
   };
 }
+// (helpers.proxy domain port)
+// (helpers.acmeRoot domain)
