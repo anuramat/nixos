@@ -5,7 +5,7 @@ let
       forceSSL = true;
     };
   };
-  acmeExtra = root: domain: {
+  acmeExtra = domain: root: {
     services.nginx.virtualHosts.${domain} = {
       useACMEHost = root;
       forceSSL = true;
