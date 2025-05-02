@@ -33,7 +33,7 @@ rec {
   serve =
     w:
     [ (reverseProxy w.domain w.port) ]
-    ++ (if w ? root then [ (acmeRoot w.domain) ] else [ (acmeExtra w.domain w.root) ])
+    ++ (if w ? root then [ (acmeExtra w.domain w.root) ] else [ (acmeRoot w.domain) ])
     ++ (if w ? noRobots && w.noRobots == true then [ (noRobots w.domain) ] else [ ]);
   serveBinary =
     b:
