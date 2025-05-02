@@ -8,6 +8,7 @@
       nginx = {
         virtualHosts.${domain} = {
           forceSSL = true;
+          useACMEHost = domain;
           locations = {
             "/" = {
               proxyPass = "http://localhost:${port}";
