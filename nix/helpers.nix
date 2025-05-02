@@ -37,7 +37,7 @@ rec {
     ++ (if w ? noRobots && w.noRobots == true then [ (noRobots w.domain) ] else [ ]);
   serveBinary =
     b:
-    serve b
+    (serve b)
     ++ [
       {
         systemd.services.${b.domain} = {
