@@ -8,6 +8,7 @@
 {
   config = lib.mkMerge (
     helpers.serveBinary {
+      noRobots = true;
       domain = "ctrl.sn";
       cwd = "/var/www/";
       port = "8080";
