@@ -1,10 +1,10 @@
 {
   acmeRoot = domain: {
     services.nginx.virtualHosts.${domain}.enableACME = true;
-    security.acme.certs.${domain}.extraDomainNames = [ "*.${domain}" ];
   };
-  acmeSubdomain = domain: {
-    services.nginx.virtualHosts.${domain}.useACMEHost = "ctrl.sn";
+  acmeExtra = domain: extra: {
+    services.nginx.virtualHosts.${domain}.useACMEHost = domain;
+    security.acme.certs.${extra}.extraDomainNames = [ extra ];
   };
   proxy = domain: port: {
     services = {

@@ -1,5 +1,6 @@
 { helpers, ... }:
 let
+  root = "ctrl.sn";
   domain = "bin.ctrl.sn";
   port = "8081";
 in
@@ -13,4 +14,4 @@ in
   };
 }
 // (helpers.proxy domain port)
-// (helpers.acmeSubdomain domain)
+// (helpers.acmeExtra root domain)
