@@ -3,12 +3,14 @@
     services.nginx.virtualHosts.${domain}.enableACME = true;
     security.acme.certs.${domain}.extraDomainNames = [ "*.${domain}" ];
   };
+  acmeSubdomain = domain: {
+    services.nginx.virtualHosts.${domain}.useACMEHost = "*.ctrl.sn";
+  };
   proxy = domain: port: {
     services = {
       nginx = {
         virtualHosts.${domain} = {
           forceSSL = true;
-          useACMEHost = domain;
           locations = {
             "/" = {
               proxyPass = "http://localhost:${port}";
