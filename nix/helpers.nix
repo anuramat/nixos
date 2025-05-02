@@ -1,16 +1,21 @@
-{
+let
   acmeRoot = domain: {
-    services.nginx.virtualHosts.${domain}.enableACME = true;
+    services.nginx.virtualHosts.${domain} = {
+      enableACME = true;
+      forceSSL = true;
+    };
   };
-  acmeExtra = domain: extra: {
-    services.nginx.virtualHosts.${extra}.useACMEHost = domain;
-    security.acme.certs.${domain}.extraDomainNames = [ extra ];
+  acmeExtra = root: domain: {
+    services.nginx.virtualHosts.${domain} = {
+      useACMEHost = root;
+      forceSSL = true;
+    };
+    security.acme.certs.${root}.extraDomainNames = [ domain ];
   };
-  proxy = domain: port: {
+  reverseProxy = domain: port: {
     services = {
       nginx = {
         virtualHosts.${domain} = {
-          forceSSL = true;
           locations = {
             "/" = {
               proxyPass = "http://localhost:${port}";
@@ -20,4 +25,31 @@
       };
     };
   };
+  noRobots = domain: {
+    # TODO
+  }
+in
+rec {
+  serve =
+    w:
+    [ (reverseProxy w.domain w.port) ]
+    ++ (if w ? root then [ (acmeRoot w.domain) ] else [ (acmeExtra w.domain w.root) ])
+    ++ (if w ? noRobots && w.noRobots == true then [ (noRobots w.domain) ] else [ ]);
+  serveBinary =
+    b:
+    serve b
+    ++ [
+      {
+        systemd.services.${b.domain} = {
+          after = [ "network.target" ];
+          serviceConfig = {
+            ExecStart = b.binary;
+            Restart = "always";
+            WorkingDirectory = b.cwd;
+            Environment = "PORT=${b.port}";
+          };
+          wantedBy = [ "multi-user.target" ]; # why this
+        };
+      }
+    ];
 }
