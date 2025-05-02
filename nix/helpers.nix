@@ -4,7 +4,7 @@
     security.acme.certs.${domain}.extraDomainNames = [ "*.${domain}" ];
   };
   acmeSubdomain = domain: {
-    services.nginx.virtualHosts.${domain}.useACMEHost = "*.ctrl.sn";
+    services.nginx.virtualHosts.${domain}.useACMEHost = "ctrl.sn";
   };
   proxy = domain: port: {
     services = {
