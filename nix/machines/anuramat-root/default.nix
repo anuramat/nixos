@@ -2,7 +2,7 @@
 { config, ... }:
 {
   imports = [
-    ./web.nix
+    ./web
     ./hardware-configuration.nix
   ];
   # basic {{{1

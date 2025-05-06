@@ -1,4 +1,4 @@
-alpha = 80
+alpha = 100
 env_vars = true
 [templates]
 zathura = { src = 'zathura', target = "$XDG_CONFIG_HOME/zathura/generated-colors" }

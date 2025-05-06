@@ -76,6 +76,7 @@ return {
         zindex = 20, -- The Z-index of the context window
       })
       vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+      -- E490: no fold found <https://github.com/neovim/neovim/issues/28692>
       vim.opt.fdm = 'expr'
     end,
   },
