@@ -74,11 +74,7 @@ return {
     dependencies = {
       'nvim-treesitter/nvim-treesitter',
     },
-    opts = {
-      buffers = {
-        set_filetype = false,
-      },
-    },
+    opts = {},
     keys = u.wrap_lazy_keys({
       { 'o', function(m) m.activate() end, 'activate' },
       { 'O', function(m) m.deactivate() end, 'deactivate' },
