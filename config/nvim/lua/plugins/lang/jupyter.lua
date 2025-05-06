@@ -85,7 +85,6 @@ return {
     }),
     ft = { 'markdown', 'quarto' },
   },
-
   {
     'quarto-dev/quarto-nvim',
     dependencies = {
