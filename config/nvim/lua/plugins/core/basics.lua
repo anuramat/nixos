@@ -281,9 +281,7 @@ return {
   },
   -- wastebin -- (selfhosted) pastebin
   {
-    'matze/wastebin.nvim',
-    -- cmd = 'WastePaste',
-    lazy = false,
+    'anuramat/wastebin.nvim',
     keys = {
       { '<leader>w', '<cmd>WastePaste<cr>' },
       { '<leader>w', [[<cmd>'<,'>WastePaste<cr>]], mode = 'v' },
@@ -291,6 +289,7 @@ return {
     opts = {
       url = 'https://bin.ctrl.sn',
       open_cmd = '__wastebin() { wl-copy "$1" && xdg-open "$1"; }; __wastebin',
+      ask = false,
     },
   },
 }
