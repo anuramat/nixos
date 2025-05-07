@@ -281,7 +281,7 @@ return {
   },
   -- wastebin -- (selfhosted) pastebin
   {
-    'anuramat/wastebin.nvim',
+    'matze/wastebin.nvim',
     keys = {
       { '<leader>w', '<cmd>WastePaste<cr>' },
       { '<leader>w', [[<cmd>'<,'>WastePaste<cr>]], mode = 'v' },
