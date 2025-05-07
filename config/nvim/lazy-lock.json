@@ -56,5 +56,5 @@
   "vim-fetch": { "branch": "master", "commit": "0b6e2b6464e0bc326d8330c03ead5d53efa4bf71" },
   "vim-fugitive": { "branch": "master", "commit": "96c1009fcf8ce60161cc938d149dd5a66d570756" },
   "vim-table-mode": { "branch": "master", "commit": "9ac358083943f6339fc304a6e218b634fd1e30bd" },
-  "wastebin.nvim": { "branch": "master", "commit": "b8a33e59033cfd9e7db5ffe004741d4b2cb5bba1" }
+  "wastebin.nvim": { "branch": "master", "commit": "7a70a7e5efc2af5025134c395bd27e3ada9b8629" }
 }
