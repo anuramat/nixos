@@ -54,7 +54,7 @@ return {
     keys = u.wrap_lazy_keys({
       -- TODO fix export
       { 'd', 'MoltenDelete', 'delete cell' },
-      { 'i', mkInit('localhost'), 'init and start otter' },
+      { 'i', mkInit('file'), 'init and start otter' },
     }, {
       desc_prefix = 'molten',
       lhs_prefix = '<localleader>',
