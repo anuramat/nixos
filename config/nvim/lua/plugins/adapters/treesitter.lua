@@ -44,20 +44,22 @@ return {
               query = { '@parameter.inner' },
               desc = 'swap with the next parameter',
             },
-            ['<a-j>'] = {
-              query = { '@block.outer' },
-              desc = 'swap with the block below',
-            },
+            -- doesn't properly work, no idempotency (eats whitespace)
+            -- ['<a-j>'] = {
+            --   query = { '@block.outer' },
+            --   desc = 'swap with the block below',
+            -- },
           },
           swap_previous = {
             ['<a-h>'] = {
               query = { '@parameter.inner' },
               desc = 'swap with the previous parameter',
             },
-            ['<a-k>'] = {
-              query = { '@block.outer' },
-              desc = 'swap with the block above',
-            },
+            -- doesn't properly work, no idempotency (eats whitespace)
+            -- ['<a-k>'] = {
+            --   query = { '@block.outer' },
+            --   desc = 'swap with the block above',
+            -- },
           },
         },
       },

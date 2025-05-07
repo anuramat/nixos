@@ -1,32 +1,28 @@
 local u = require('utils.helpers')
 
-local function initKernel()
-  local share = os.getenv('XDG_DATA_HOME')
-  local path = share .. '/jupyter/runtime/'
+---@param kernelType "localhost"|"file"
+---@return function init
+local function mkInit(kernelType)
+  return function()
+    if kernelType == 'localhost' then
+      vim.cmd('MoltenInit http://localhost:8888')
+    elseif kernelType == 'file' then
+      local share = os.getenv('XDG_DATA_HOME')
+      local path = share .. '/jupyter/runtime/'
 
-  local kernel = ''
+      local kernel = ''
 
-  local handle = io.popen('ls -t ' .. path .. 'kernel-*.json 2>/dev/null')
-  if not handle then return nil end
-  kernel = handle:read('*l')
-  handle:close()
+      local handle = io.popen('ls -t ' .. path .. 'kernel-*.json 2>/dev/null')
+      if not handle then return nil end
+      kernel = handle:read('*l')
+      handle:close()
 
-  vim.cmd('MoltenInit ' .. kernel)
-  require('otter').activate()
-end
-
-local function initLocalhost()
-  vim.cmd('MoltenInit http://localhost:8888')
-  require('otter').activate()
-end
-
-local function moltenVisual()
-  local start_line = vim.fn.line('v')
-  local end_line = vim.fn.line('.')
-  if start_line > end_line then
-    start_line, end_line = end_line, start_line
+      vim.cmd('MoltenInit ' .. kernel)
+    else
+      error('illegal kernel type init')
+    end
+    require('otter').activate()
   end
-  vim.fn.MoltenEvaluateRange(start_line, end_line)
 end
 
 return {
@@ -56,17 +52,16 @@ return {
     end,
     keys = u.wrap_lazy_keys({
       -- TODO fix export
-      { 'e', 'MoltenEvaluateOperator', 'evaluate operator' },
-      { 'ee', 'MoltenEvaluateLine', 'evaluate line' }, -- for some reason doouble operator doesn't make an output
-      { 'e', moltenVisual, 'run selection', mode = 'v' },
-      { 'r', 'MoltenReevaluateCell', 'reevaluate cell' },
       { 'd', 'MoltenDelete', 'delete cell' },
-
-      { 'i', initLocalhost, 'init with localhost and start otter' },
+      { 'i', mkInit('file'), 'init and start otter' },
     }, {
       desc_prefix = 'molten',
       lhs_prefix = '<localleader>',
       ft = { 'markdown', 'quarto' },
+      wrapped = {
+        { '<a-j>', 'MoltenNext', 'jump to next cell' },
+        { '<a-k>', 'MoltenPrev', 'jump to prev cell' },
+      },
     }),
   },
   {

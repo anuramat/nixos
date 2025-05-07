@@ -12,7 +12,7 @@ local m = {}
 --- @field desc_prefix string? Prefix to add to description
 --- @field cmd_prefix string? rhs -> '<cmd>'..prefix..rhs..'<cr>'
 --- @field ft (string|string[])?
---- @field wrapped any[]? Keys that shouldn't be prefixed
+--- @field wrapped lazy_keys[]? Keys that don't need: lhs prefix, rhs prefix, rhs module arg
 --- @field module string? Name of the module, that gets passed to RHS functions
 
 --- Wraps lazy specs
@@ -33,7 +33,8 @@ function m.wrap_lazy_keys(unwrapped, opts)
 
       -- wrap rhs
       if type(rhs) == 'string' then
-        keys[k][2] = '<cmd>' .. cmd_prefix .. rhs .. '<cr>'
+        if not wrapped then rhs = cmd_prefix .. rhs end
+        keys[k][2] = '<cmd>' .. rhs .. '<cr>'
       elseif not wrapped and opts.module then
         keys[k][2] = function() rhs(require(opts.module)) end
       end
