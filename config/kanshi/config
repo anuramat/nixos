@@ -1,6 +1,6 @@
 output "LG Display 0x0521 Unknown" alias $t480 position 0,0
-output "California Institute of Technology 0x1626 0x00006002" alias $ll7 position 0,0 scale 1.5 mode 3200x2000@165Hz
-output "Dell Inc. DELL S2722QC 192SH24" alias $ext scale 1.5 mode 3840x2160@60Hz adaptive_sync off
+output "California Institute of Technology 0x1626 0x00006002" alias $ll7 position 0,0 scale 1.5
+output "Dell Inc. DELL S2722QC 192SH24" alias $ext scale 1.5 adaptive_sync off
 
 profile ll7-home {
   output $ll7 scale 2
