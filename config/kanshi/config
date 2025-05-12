@@ -1,14 +1,19 @@
-output "LG Display 0x0521 (eDP-1)" alias $t480 position 0,0
+output "LG Display 0x0521 Unknown" alias $t480 position 0,0
 output "California Institute of Technology 0x1626 0x00006002" alias $ll7 position 0,0 scale 1.5 mode 3200x2000@165Hz
-output "Dell Inc. DELL S2722QC 192SH24" alias $ext position 9999,0 scale 1.5 mode 3840x2160@60Hz adaptive_sync off
+output "Dell Inc. DELL S2722QC 192SH24" alias $ext scale 1.5 mode 3840x2160@60Hz adaptive_sync off
 
 profile ll7-home {
-  output $ll7 scale 2 position 0,0
+  output $ll7 scale 2
   output $ext position 1600,0
 }
 
 profile ll7 {
   output $ll7 scale 1.5
+}
+
+profile t480-home {
+  output $t480
+  output $ext position 0,-2000
 }
 
 profile t480 {
