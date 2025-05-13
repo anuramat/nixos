@@ -37,14 +37,7 @@ trw() {
 	case "$subcommand" in
 		sync)
 			longflag=--ignore-existing
-			[ "$force" = true ] && {
-				local reply
-				echo "are you sure? (y/*)"
-				read -n 1 -r reply
-				echo
-				[ "$reply" != y ] && return 1
-				longflag=--delete
-			}
+			[ "$force" = true ] && longflag=--delete
 			;;
 		check)
 			shortflags+=n
@@ -72,5 +65,14 @@ trw() {
 			;;
 	esac
 
-	rsync "$shortflags" "$longflag" "$from" "$to"
+	local -r args=("$shortflags" "$longflag" "$from" "$to")
+
+	printf 'executing: rsync %s\n' "${args[*]}"
+	local reply
+	echo "continue? (y/*)"
+	read -n 1 -r reply
+	echo
+	[ "$reply" != y ] && return 1
+
+	rsync "${args[@]}"
 }
