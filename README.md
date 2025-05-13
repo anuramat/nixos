@@ -29,6 +29,19 @@ TODO, but long story short:
 
 ## Problems
 
+### Builder setup
+
+- sshKey and sshUser in nix.buildMachines are ignored: <https://github.com/NixOS/nix/issues/3423>
+- for now add those to /root/.ssh/config:
+
+  ```ssh_config
+  Host anuramat-ll7
+          IdentitiesOnly yes
+          IdentityFile /home/anuramat/.ssh/id_ed25519
+          User builder
+          ConnectTimeout 3
+  ```
+
 ### Hardcoded variables
 
 - Personal data (`nixos/user.nix`, `rg -i 'anuramat|arsen'`, maybe `.bashrc`)
