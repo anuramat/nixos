@@ -40,6 +40,7 @@ in
             [[ $- == *i* ]] || return
             for f in "${./bashrc.d}"/*; do source "$f"; done
             source ${./bashrc.sh}
+            source ${./trw.sh}
           '';
         };
 
