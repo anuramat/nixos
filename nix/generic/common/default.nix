@@ -89,7 +89,11 @@ in
             HostName ${hostname}
         '';
       in
-      lib.strings.concatMapStringsSep "\n" mkAliasEntry cluster.hostnames;
+      cluster.hostnames
+      |> lib.filter (x: lib.strings.hasPrefix prefix x)
+      |> map mkAliasEntry
+      |> lib.strings.intersperse "\n"
+      |> lib.concatStrings;
   };
   services = {
     fail2ban.enable = true; # intrusion prevention
