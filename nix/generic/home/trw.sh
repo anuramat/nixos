@@ -1,10 +1,35 @@
 #!/usr/bin/env bash
 
 trw() {
+	local -r errstr='error: %s\nusage: trw down/up/check [-f] $REMOTE $PATH\n'
+
+	((4 >= $#)) && (($# >= 3)) || {
+		printf "$errstr" 'illegal number of arguments'
+		return 1
+	}
+
 	local -r subcommand=$1 && shift
-	local force && [ "$1" = '-f' ] && shift && force=true
+
+	local force=false
+	[ "$#" = 3 ] && {
+		[ "$1" != '-f' ] && {
+			printf "$errstr" "illegal flag: $1"
+			return 1
+		}
+		force=true && shift
+	}
+
 	local -r remote=$1
-	local -r path=$(realpath "$2")/
+	[ -n "$remote" ] || {
+		printf "$errstr" "empty remote"
+		return 1
+	}
+
+	local path
+	path=$(realpath -q "$2")/ && [ -d "$path" ] || {
+		printf "$errstr" "invalid path: $path"
+		return 1
+	}
 
 	local from=$path
 	local to=$remote:$path
@@ -12,51 +37,32 @@ trw() {
 	local longflag=
 
 	case "$subcommand" in
-		h)
-			echo 'trw down/up/check [-f] $REMOTE $PATH'
-			;;
 		down)
-			temp=$to
+			local tmp=$to
 			to=$from
-			from=$temp
+			from=$tmp
 			;&
 		up)
 			longflag=--ignore-existing
-			[ "$force" = true ] && __trw_sure && longflag=--delete || return 1
+			[ "$force" = true ] && {
+				local reply
+				echo "are you sure? (y/*)"
+				read -n 1 -r reply
+				echo
+				[ "$reply" != y ] && return 1
+				longflag=--delete
+			}
 			;;
 		check)
 			shortflags+=n
 			longflag=--delete
-			[ "$force" = true ] && __trw_sure && shortflags+=c || return 1
+			[ "$force" = true ] && shortflags+=c
 			;;
 		*)
-			echo 'illegal subcommand'
+			printf "$errstr" 'illegal subcommand'
 			return 1
 			;;
 	esac
 
-	__trw_check_ends "$remote" "$path" || return 1
-
 	rsync "$shortflags" "$longflag" "$from" "$to"
-}
-
-__trw_check_ends() {
-	local remote="$1"
-	local path
-	path="$(realpath -q "$2")/" && [ -n "$path" ] && [ -d "$path" ] || {
-		echo "error: invalid path: $path"
-		return 1
-	}
-	[ -n "$remote" ] || {
-		echo "error: empty remote"
-		return 1
-	}
-}
-
-__trw_sure() {
-	local reply
-	echo "are you sure? (y/*)"
-	read -t 1 -n 1 -r reply
-	echo
-	[ "$reply" == y ]
 }
