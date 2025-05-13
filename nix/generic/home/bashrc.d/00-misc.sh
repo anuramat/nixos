@@ -32,15 +32,15 @@ export NO_AT_BRIDGE=1 # TODO do we still need this # hides gnomeWARNING **: Coul
 
 # rsync wrapper
 rs() {
-	local -r errmsg='error: %s\nusage: rs (up/down) [rsync options] HOST PATH\n'
+	local -r errmsg='error: %s\nusage: rs HOST (up/down) [rsync options] PATH\n'
+	local host=$1 && shift
 	local direction=$1 && shift
-	local path=$(realpath "${*: -1:1}")
+	local path=$(realpath -- "${*: -1:1}")
 	[ -d "$path" ] || {
 		printf "$errmsg" 'path does not exist'
 		return 1
 	}
-	local host=${*: -2:1}
-	local args=("${@:1:$#-2}")
+	local args=("${@:1:$#-1}")
 	case "$direction" in
 		down)
 			from="$host:$path"
