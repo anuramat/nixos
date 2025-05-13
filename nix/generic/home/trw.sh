@@ -21,20 +21,6 @@ trw_up_delete_extra() {
 	rsync -av --delete --ignore-existing "$path" "$target:$path"
 }
 
-trw_check_extra() {
-	__trw_check_args "$@" || return 1
-	target="$1"
-	path="$(realpath "$2")/"
-	rsync -avn "$target:$path" "$path"
-}
-
-trw_check_missing() {
-	__trw_check_args "$@" || return 1
-	target="$1"
-	path="$(realpath "$2")/"
-	rsync -avn "$path" "$target:$path"
-}
-
 trw_check() {
 	__trw_check_args "$@" || return 1
 	target="$1"
