@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# depends on _git_prompt defined outside
+# deps: _git_prompt defined in git_gud.sh
 
 __git_user_ps1() {
 	local -r prompt=$(_git_prompt)
