@@ -48,16 +48,17 @@ in
     in
     rec {
       this = findFirst (x: x.name == name) null allMachines;
-      builders = filter (x: x.builder) otherMachines;
+      inherit hostnames;
 
+      builderUsername = "builder";
+      builders = filter (x: x.builder) otherMachines;
       substituters = builders |> map (x: "ssh-ng://${x.name}?priority=50");
       # lower number -- used earlier
       # cache.nixos.org has priority of 40, cachix -- 41
 
-      builderUsername = "builder";
       clientKeyFiles = otherMachines |> map (x: x.clientKeyFiles) |> concatLists;
-      # TODO move the keys to a file or a folder
       miscKeys = [
+        # TODO move the keys to a file or a folder
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKl0YHcx+ju+3rsPerkAXoo2zI4FXRHaxzfq8mNHCiSD anuramat-iphone16"
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINBre248H/l0+aS5MJ+nr99m10g44y+UsaKTruszS6+D anuramat-ipad"
       ];

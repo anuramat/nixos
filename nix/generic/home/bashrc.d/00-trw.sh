@@ -1,18 +1,19 @@
 #!/usr/bin/env bash
 
 trw() {
-	local -r errstr='error: %s\nusage: trw down/up/check [-f] $REMOTE $PATH\n'
+	local -r errstr='error: %s\nusage: trw (check/sync) (up/down) [force] HOSTNAME PATH\n'
 
-	((4 >= $#)) && (($# >= 3)) || {
+	((5 >= $#)) && (($# >= 4)) || {
 		printf "$errstr" 'illegal number of arguments'
 		return 1
 	}
 
 	local -r subcommand=$1 && shift
+	local -r direction=$1 && shift
 
 	local force=false
 	[ "$#" = 3 ] && {
-		[ "$1" != '-f' ] && {
+		[ "$1" != 'force' ] && {
 			printf "$errstr" "illegal flag: $1"
 			return 1
 		}
@@ -21,7 +22,7 @@ trw() {
 
 	local -r remote=$1
 	[ -n "$remote" ] || {
-		printf "$errstr" "empty remote"
+		printf "$errstr" "empty hostname"
 		return 1
 	}
 
@@ -31,18 +32,10 @@ trw() {
 		return 1
 	}
 
-	local from=$path
-	local to=$remote:$path
 	local shortflags=-av
 	local longflag=
-
 	case "$subcommand" in
-		down)
-			local tmp=$to
-			to=$from
-			from=$tmp
-			;&
-		up)
+		sync)
 			longflag=--ignore-existing
 			[ "$force" = true ] && {
 				local reply
@@ -60,6 +53,21 @@ trw() {
 			;;
 		*)
 			printf "$errstr" 'illegal subcommand'
+			return 1
+			;;
+	esac
+
+	case "$direction" in
+		up)
+			local from=$path
+			local to=$remote:$path
+			;;
+		down)
+			local from=$remote:$path
+			local to=$path
+			;;
+		*)
+			printf "$errstr" 'illegal direction'
 			return 1
 			;;
 	esac
