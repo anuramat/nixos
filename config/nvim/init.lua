@@ -6,7 +6,7 @@ vim.diagnostic.config({
   signs = false,
 })
 vim.deprecate = function() end -- shut up
--- TODO gets stuck sometimes
+-- TODO gets stuck sometimes; not that important anyway
 -- if os.getenv('SSH_TTY') then
 --   vim.g.clipboard = {
 --     name = 'OSC 52',
