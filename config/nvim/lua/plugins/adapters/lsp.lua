@@ -175,7 +175,9 @@ return {
   config = function()
     local lspconfig = require('lspconfig')
     for name, cfg in pairs(configs()) do
-      cfg.capabilities = ul.capabilities()
+      vim.lsp.config(name, {
+        capabilities = require('blink.cmp').get_lsp_capabilities(),
+      })
       cfg.on_attach = cfg.on_attach or ul.on_attach
       lspconfig[name].setup(cfg)
     end

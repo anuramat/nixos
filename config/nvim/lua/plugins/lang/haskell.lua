@@ -13,7 +13,7 @@ return {
   config = function()
     vim.g.haskell_tools = {
       hls = {
-        capabilities = ul.capabilities(),
+        capabilities = require('blink.cmp').get_lsp_capabilities(),
         on_attach = function(client, buffer, ht)
           ul.on_attach(client, buffer)
 

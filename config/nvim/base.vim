@@ -80,7 +80,7 @@ se report=0 shortmess=CFTWacqst " notification settings
 se cursorline cursorlineopt=both
 se matchtime=1 showmatch " highlight matching bracket (deciseconds)
 se signcolumn=yes " gutter
-se winborder=rounded
+se winborder=double
 let g:nonfiles=['NeogitStatus', 'NeogitPopup', 'oil', 'lazy', 'lspinfo', 'null-ls-info', 'NvimTree', 'neo-tree', 'alpha', 'help', 'fzf']
 se ph=20 " popup max height
 

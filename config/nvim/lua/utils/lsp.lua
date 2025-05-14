@@ -19,9 +19,4 @@ m.on_attach = function(client, buffer)
   vim.lsp.inlay_hint.enable()
 end
 
-m.capabilities = function()
-  local capabilities = vim.lsp.protocol.make_client_capabilities()
-  return require('blink.cmp').get_lsp_capabilities(capabilities)
-end
-
 return m
