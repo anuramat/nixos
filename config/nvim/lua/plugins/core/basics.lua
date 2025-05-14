@@ -95,9 +95,6 @@ return {
       skip_confirm_for_simple_edits = true,
       constrain_cursor = 'editable', -- name false editable
       experimental_watch_for_changes = true,
-      keymaps_help = {
-        border = vim.g.border,
-      },
       view_options = {
         -- Show files and directories that start with "."
         show_hidden = true,
@@ -108,12 +105,6 @@ return {
           { 'type', 'asc' },
           { 'name', 'asc' },
         },
-      },
-      float = { border = vim.g.border },
-      preview = { border = vim.g.border },
-      progress = { border = vim.g.border },
-      ssh = {
-        border = vim.g.border,
       },
     },
     dependencies = { 'nvim-tree/nvim-web-devicons' },

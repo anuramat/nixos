@@ -173,7 +173,6 @@ return {
     'b0o/schemastore.nvim', -- yamlls, jsonls dependency
   },
   config = function()
-    ul.apply_settings()
     local lspconfig = require('lspconfig')
     for name, cfg in pairs(configs()) do
       cfg.capabilities = ul.capabilities()

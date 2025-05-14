@@ -28,7 +28,4 @@ require('lazy').setup({
     cond = not vim.g.vscode,
     version = '*', -- nil for latest, * for latest stable semver
   },
-  ui = {
-    border = vim.g.border,
-  },
 })

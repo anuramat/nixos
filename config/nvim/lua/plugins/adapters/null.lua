@@ -60,7 +60,6 @@ return {
     null_ls.setup({
       sources = null_sources(),
       on_attach = require('utils.lsp').on_attach,
-      border = vim.g.border,
       temp_dir = '/tmp',
     })
   end,

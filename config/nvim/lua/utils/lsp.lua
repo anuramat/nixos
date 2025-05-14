@@ -19,12 +19,6 @@ m.on_attach = function(client, buffer)
   vim.lsp.inlay_hint.enable()
 end
 
-m.apply_settings = function()
-  vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, { border = vim.g.border })
-  vim.lsp.handlers['textDocument/signatureHelp'] =
-    vim.lsp.with(vim.lsp.handlers.signature_help, { border = vim.g.border })
-end
-
 m.capabilities = function()
   local capabilities = vim.lsp.protocol.make_client_capabilities()
   return require('blink.cmp').get_lsp_capabilities(capabilities)
