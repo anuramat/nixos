@@ -87,4 +87,10 @@ return {
     },
     branch = 'master',
   },
+  {
+    'anuramat/figtree.nvim',
+    lazy = false,
+    dev = true,
+    opts = {},
+  },
 }

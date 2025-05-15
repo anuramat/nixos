@@ -17,7 +17,7 @@ vim.opt.rtp:prepend(lazypath)
 vim.opt.rtp:prepend(lazypath)
 
 local username = os.getenv('USER')
-local remote = 'github.com'
+local remote = 'github.com' -- TODO somehow abstract away? hide in nix maybe
 local function get_dev_path()
   local result = vim.system({ 'ghq', 'root' }):wait()
   if result.code ~= 0 then error('failed to get local plugin root path') end
