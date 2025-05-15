@@ -22,9 +22,7 @@ local function get_dev_path()
   local result = vim.system({ 'ghq', 'root' }):wait()
   if result.code ~= 0 then error('failed to get local plugin root path') end
   local root = vim.trim(result.stdout)
-  local path = vim.fs.joinpath(root, remote, username)
-  vim.print(path)
-  return path
+  return vim.fs.joinpath(root, remote, username)
 end
 
 require('lazy').setup({
