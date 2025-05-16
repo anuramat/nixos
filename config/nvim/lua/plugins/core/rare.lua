@@ -11,7 +11,7 @@ return {
   -- task runner (tasks.json, dap integration, etc)
   {
     'stevearc/overseer.nvim',
-    lazy = false,
+    event = 'VeryLazy', -- todo use cmd to lazy load
     opts = {
       task_list = {
         direction = 'bottom',
