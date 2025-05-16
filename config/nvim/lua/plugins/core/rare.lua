@@ -2,26 +2,16 @@
 local u = require('utils.helpers')
 
 return {
-  -- project wide find and replace
+  -- find and replace
   {
     'MagicDuck/grug-far.nvim',
     opts = {},
-    cmd = 'GrugFar',
-    keys = {},
+    cmd = { 'GrugFar', 'GrugFarWithin' },
   },
-  -- compiler.nvim
-  {
-    'Zeioth/compiler.nvim',
-    cmd = { 'CompilerOpen', 'CompilerToggleResults', 'CompilerRedo' },
-    dependencies = { 'stevearc/overseer.nvim' },
-    opts = {},
-    -- TODO steal more shit from https://github.com/Zeioth/compiler.nvim
-  },
-  -- overseer.nvim - task runner (tasks.json, dap integration, etc)
+  -- task runner (tasks.json, dap integration, etc)
   {
     'stevearc/overseer.nvim',
-    commit = '6271cab7ccc4ca840faa93f54440ffae3a3918bd',
-    cmd = { 'CompilerOpen', 'CompilerToggleResults', 'CompilerRedo' },
+    lazy = false,
     opts = {
       task_list = {
         direction = 'bottom',
