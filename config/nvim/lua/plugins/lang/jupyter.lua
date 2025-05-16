@@ -59,7 +59,7 @@ return {
       desc_prefix = 'molten',
       lhs_prefix = '<localleader>',
       ft = { 'markdown', 'quarto' },
-      wrapped = {
+      exceptions = {
         { '<a-j>', 'MoltenNext', 'jump to next cell' },
         { '<a-k>', 'MoltenPrev', 'jump to prev cell' },
       },

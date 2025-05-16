@@ -185,7 +185,7 @@ return {
       lhs_prefix = '<leader>f',
       module = 'fzf-lua',
       cmd_prefix = 'FzfLua ',
-      wrapped = {
+      exceptions = {
         {
           '<C-x><C-f>',
           function(m)
