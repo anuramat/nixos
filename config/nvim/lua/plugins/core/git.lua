@@ -1,9 +1,8 @@
 -- vim: fdl=1
 return {
-  -- fugitive - main interface
+  -- fugitive
   {
-    -- -- neogit is unstable as of 03-2024
-    -- return { 'NeogitOrg/neogit', lazy = false, opts = {} }
+    -- neogit is unstable as of 03-2024
     'tpope/vim-fugitive',
     lazy = false, -- so that merge tool works
     keys = { {
@@ -54,6 +53,9 @@ return {
       end,
     },
   },
+  -- diffview
+  {
+    'sindrets/diffview.nvim',
+    event = 'VeryLazy',
+  },
 }
-
--- neogit?
