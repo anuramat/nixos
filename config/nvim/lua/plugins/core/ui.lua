@@ -89,8 +89,9 @@ return {
   },
   {
     'anuramat/figtree.nvim',
+    priority = 999,
     lazy = false,
-    dev = true,
+    dev = false,
     opts = {},
   },
 }
