@@ -10,13 +10,13 @@
       "pulseaudio",
       "backlight",
       "idle_inhibitor",
-      "mpris",
+      "mpris"
     ],
     "modules-center": [
       "sway/mode",
       "sway/workspaces",
       "sway/scratchpad",
-      "sway/mode",
+      "sway/mode"
     ],
     "modules-right": [
       "sway/window",
@@ -25,13 +25,14 @@
       // "battery#external",
       "battery",
       "sway/language",
-      "clock",
+      "clock"
     ],
     "sway/window": {
       "icon": true
     },
     "sway/workspaces": {
-      "disable-scroll": true
+      "disable-scroll": true,
+      "all-outputs": true
     },
     "sway/mode": {
       "format": "{}"
@@ -139,7 +140,7 @@
     "bluetooth": {
       "format": "{status} ",
       "on-click": "blueman-manager"
-    },
+    }
   }
 ]
-// vim: ft=json commentstring=//\ %s
+// vim: ft=jsonc
