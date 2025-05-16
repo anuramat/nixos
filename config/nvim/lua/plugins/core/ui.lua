@@ -2,26 +2,15 @@
 return {
   -- rainbow-delimiters.nvim - TS rainbow parentheses
   {
-    -- alterntaives:
-    -- * https://github.com/luochen1990/rainbow -- 1.7k stars
-    -- * https://github.com/junegunn/rainbow_parentheses.vim -- junegunn, seems "complete", 374 stars
-    -- * blink.delimiters
+    -- alterntaive: <https://github.com/saghen/blink.pairs>
     'HiPhish/rainbow-delimiters.nvim',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
     event = 'BufEnter',
   },
-  -- dressing.nvim - input/select ui elements
+  -- dressing.nvim -- vim.ui.select (choice menus), vim.ui.input (lsp rename)
   {
-    -- primarily used in symbol rename
     'stevearc/dressing.nvim',
-    opts = {
-      input = {
-        insert_only = true,
-      },
-      select = {
-        backend = { 'builtin', 'nui' },
-      },
-    },
+    opts = {},
     event = 'VeryLazy',
   },
   -- nvim-colorizer.lua - highlights colors, eg #012345
@@ -58,7 +47,7 @@ return {
       highlight = {
         keyword = 'bg', -- only highlight the word
         pattern = [[<(KEYWORDS)>]], -- vim regex
-        multiline = false, -- enable multine todo comments
+        multiline = false,
       },
       search = {
         pattern = [[\b(KEYWORDS)\b]], -- ripgrep regex
@@ -77,16 +66,7 @@ return {
       },
     },
   },
-  -- images using kitty protocol
-  {
-    '3rd/image.nvim',
-    build = false,
-    opts = {
-      backend = 'kitty',
-      processor = 'magick_cli',
-    },
-    branch = 'master',
-  },
+  -- figlet based greeter
   {
     'anuramat/figtree.nvim',
     priority = 999,
