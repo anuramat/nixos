@@ -96,16 +96,6 @@ function m.concat_list(a)
   return res
 end
 
-function m.file_exists(path)
-  local file = io.open(path, 'r')
-  if file ~= nil then
-    io.close(file)
-    return true
-  else
-    return false
-  end
-end
-
 --- @class lazy_keys
 --- @field [1] string LHS
 --- @field [2] string|function RHS
