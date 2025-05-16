@@ -31,8 +31,7 @@
       "icon": true
     },
     "sway/workspaces": {
-      "disable-scroll": true,
-      "all-outputs": true
+      "disable-scroll": true
     },
     "sway/mode": {
       "format": "{}"
