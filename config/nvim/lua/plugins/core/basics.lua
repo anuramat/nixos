@@ -188,8 +188,8 @@ return {
       exceptions = {
         {
           '<C-x><C-f>',
-          function(m)
-            m.complete_file({
+          function()
+            require('fzf-lua').complete_file({
               cmd = 'fd -t f -HL',
               winopts = { preview = { hidden = 'nohidden' } },
             })
