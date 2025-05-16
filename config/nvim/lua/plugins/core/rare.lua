@@ -37,20 +37,11 @@ return {
       { 'l', function(m) m.ui:toggle_quick_menu(m:list()) end, 'List' },
       { 'n', function(m) m:list():next() end, 'Next' },
       { 'p', function(m) m:list():prev() end, 'Previous' },
+      { '%d', function(i, m) m:list():select(i) end, 'Go to #%d', iterator = true },
     }, {
       module = 'harpoon',
       lhs_prefix = '<leader>h',
     }),
-    opts = function()
-      local harpoon = require('harpoon')
-      local set = function(lhs, rhs, desc)
-        vim.keymap.set('n', '<leader>h' .. lhs, rhs, { silent = true, desc = 'Harpoon: ' .. desc })
-      end
-      for i = 1, 9 do
-        local si = tostring(i)
-        set(si, function() harpoon:list():select(i) end, 'Go to #' .. si)
-      end
-    end,
   },
   -- namu -- symbols
   {

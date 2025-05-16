@@ -11,34 +11,60 @@ function m.wrap_lazy_keys(raw_keys, opts)
   local lhs_prefix = opts.lhs_prefix or ''
   local cmd_prefix = opts.cmd_prefix or ''
 
-  local wrap = function(keys, special)
-    if not keys then return {} end
+  local wrap_one = function(key, special)
+    local rhs = key[2]
 
-    for i = 1, #keys do
-      local rhs = keys[i][2]
+    -- wrap lhs
+    if not special then key[1] = lhs_prefix .. key[1] end
 
-      -- wrap lhs
-      if not special then keys[i][1] = lhs_prefix .. keys[i][1] end
-
-      -- wrap rhs
-      if type(rhs) == 'string' then
-        if not special then rhs = cmd_prefix .. rhs end
-        keys[i][2] = '<cmd>' .. rhs .. '<cr>'
-      elseif not special and opts.module then
-        keys[i][2] = function() rhs(require(opts.module)) end
-      end
-
-      -- set desc
-      local desc = table.remove(keys[i], 3) or (type(rhs) == 'string' and rhs) or '?'
-      keys[i].desc = desc_prefix .. ': ' .. desc
-
-      -- number lhs iterator TODO
-
-      -- set ft
-      keys[i].ft = keys[i].ft or opts.ft
+    -- wrap rhs
+    if type(rhs) == 'string' then
+      if not special then rhs = cmd_prefix .. rhs end
+      key[2] = '<cmd>' .. rhs .. '<cr>'
+    elseif not special and opts.module then
+      key[2] = function() rhs(require(opts.module)) end
     end
 
+    -- set desc
+    local desc = table.remove(key, 3) or (type(rhs) == 'string' and rhs) or '?'
+    key.desc = desc_prefix .. ': ' .. desc
+
+    -- set ft
+    key.ft = key.ft or opts.ft
+
+    return key
+  end
+
+  local wrap_iterated = function(key, special)
+    local keys = {}
+    local copy
+    for i = 1, 9 do
+      copy = vim.deepcopy(key)
+      copy[1] = string.format(key[1], i)
+      if type(key[2]) == 'string' then
+        copy[2] = string.format(key[2], i)
+      else
+        copy[2] = function(x) key[2](i, x) end
+      end
+      if copy[3] then copy[3] = string.format(copy[3], i) end
+      copy.iterator = nil
+      copy = wrap_one(copy, special)
+      table.insert(keys, copy)
+    end
     return keys
+  end
+
+  local wrap = function(keys, special)
+    if not keys then return {} end
+    local result = {}
+    for _, key in ipairs(keys) do
+      if key.iterator then
+        result = m.concat(result, wrap_iterated(key))
+      else
+        table.insert(result, wrap_one(key, special))
+      end
+    end
+    return result
   end
 
   return m.concat(wrap(raw_keys, false), wrap(opts.exceptions, true))
@@ -84,6 +110,7 @@ end
 --- @field [1] string LHS
 --- @field [2] string|function RHS
 --- @field [3] string? Command description
+--- @field iterator boolean? Make a mapping per key 1-9 (uhh hard to explain)
 
 --- @class wrap_opts
 --- @field lhs_prefix string Prefix to add to mappings
