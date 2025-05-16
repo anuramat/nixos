@@ -1,6 +1,5 @@
 -- vim: fdl=1
 return {
-  -- images using kitty protocol
   {
     '3rd/image.nvim',
     build = false,
@@ -9,5 +8,8 @@ return {
       processor = 'magick_cli',
     },
     branch = 'master',
+  },
+  {
+    'nvim-lua/plenary.nvim',
   },
 }

@@ -12,11 +12,9 @@ return {
   {
     'mfussenegger/nvim-dap',
     dependencies = {
-      {
-        'theHamsta/nvim-dap-virtual-text',
-        dependencies = 'nvim-treesitter/nvim-treesitter',
-        opts = {},
-      },
+      'theHamsta/nvim-dap-virtual-text',
+      dependencies = 'nvim-treesitter/nvim-treesitter',
+      opts = {},
     },
     config = function()
       -- some of these are used in catppuccin

@@ -107,7 +107,7 @@ return {
         },
       },
     },
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    dependencies = 'nvim-tree/nvim-web-devicons',
     keys = {
       { '<leader>o', '<cmd>Oil<cr>', desc = 'File CWD' },
       { '<leader>O', '<cmd>Oil .<cr>', desc = 'Open Parent Directory' },
@@ -141,9 +141,7 @@ return {
   -- fuzzy finder
   {
     'ibhagwan/fzf-lua',
-    dependencies = {
-      'nvim-tree/nvim-web-devicons',
-    },
+    dependencies = 'nvim-tree/nvim-web-devicons',
     event = 'VeryLazy',
     opts = function()
       return {

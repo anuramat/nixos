@@ -4,9 +4,7 @@ return {
   -- autocomplete and signature
   {
     'saghen/blink.cmp',
-    dependencies = {
-      'anuramat/friendly-snippets',
-    },
+    dependencies = 'anuramat/friendly-snippets',
     version = '*', -- on nightly - add `build = 'nix run .#build-plugin'`
     opts = function()
       return {
@@ -39,9 +37,6 @@ return {
         inline = { adapter = { name = adapter } },
       },
     },
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'nvim-treesitter/nvim-treesitter',
-    },
+    dependencies = 'nvim-treesitter/nvim-treesitter',
   },
 }

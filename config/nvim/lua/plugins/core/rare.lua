@@ -51,9 +51,6 @@ return {
       module = 'harpoon',
       lhs_prefix = '<leader>h',
     }),
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-    },
     opts = function()
       local harpoon = require('harpoon')
       local set = function(lhs, rhs, desc)

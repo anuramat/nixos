@@ -67,9 +67,7 @@ return {
   },
   {
     'jmbuhr/otter.nvim',
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter',
-    },
+    dependencies = 'nvim-treesitter/nvim-treesitter',
     opts = {},
     keys = u.wrap_lazy_keys({
       { 'o', function(m) m.activate() end, 'activate' },

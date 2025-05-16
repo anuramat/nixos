@@ -4,7 +4,7 @@ return {
   {
     -- alterntaive: <https://github.com/saghen/blink.pairs>
     'HiPhish/rainbow-delimiters.nvim',
-    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    dependencies = 'nvim-treesitter/nvim-treesitter',
     event = 'BufEnter',
   },
   -- dressing.nvim -- vim.ui.select (choice menus), vim.ui.input (lsp rename)
@@ -41,7 +41,6 @@ return {
   {
     'folke/todo-comments.nvim',
     event = 'VeryLazy',
-    dependencies = { 'nvim-lua/plenary.nvim' },
     opts = {
       signs = false,
       highlight = {
