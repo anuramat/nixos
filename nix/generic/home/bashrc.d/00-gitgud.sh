@@ -2,7 +2,7 @@
 
 # TODO unsafe path handling
 # TODO reconsider stderr/stdout depending on usecases
-# more locals
+# TODO more local/readonly
 
 __free_repos_cand=("$HOME/notes" "/etc/nixos" "/var/www")
 __free_repos=()
@@ -37,7 +37,7 @@ __gitgud_picker() {
 	[ "$choice" = 'y' ]
 }
 
-# rm ghq repo(s)
+# `ghq rm` with picker
 # $1 - repo (optional)
 git_rm() {
 	local selected
@@ -45,10 +45,7 @@ git_rm() {
 	echo "$selected" | xargs -I{} bash -c 'yes | ghq rm {} 2>/dev/null'
 }
 
-# `ghq get` with extras:
-# * on empty args, shows `gh` repos in fzf
-# * default remote in `gh`, so that 'github_sync' does the expected thing
-# * adds the path to zoxide
+# `ghq get` with picker and zoxide init
 # $1 - repo as interpreted by ghq, optional
 git_clone() {
 	local -r before_dirs="$(ghq list -p | sort)"
@@ -61,17 +58,9 @@ git_clone() {
 		return 1
 	}
 	local -r after_dirs="$(ghq list -p | sort)"
-	# HACK
+	# show the cloned repos; a bit of a hack but whatever, seems to be working
 	local -r new_dirs="$(comm -13 <(echo "$before_dirs") <(echo "$after_dirs"))"
 	echo "$new_dirs" | xargs zoxide add
-	# HACK with remote url
-	echo "$new_dirs" | xargs -I{} bash -c 'cd {}; gh repo set-default $(git config --get remote.origin.url | rev | cut -d "/" -f 1,2 | rev)'
-}
-
-# sync a fork with the upstream
-github_sync() {
-	gh repo sync "$(gh repo set-default --view)" # TODO is the argument still required?
-	git pull
 }
 
 check() {
