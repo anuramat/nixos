@@ -4,6 +4,7 @@ let
       enableACME = true;
       forceSSL = true;
     };
+    security.acme.certs.${w.root}.extraDomainNames = [ ("www." + w.domain) ];
   };
   acmeExtra = w: {
     services.nginx.virtualHosts.${w.domain} = {
