@@ -6,10 +6,10 @@
   ...
 }:
 lib.mkMerge (
-  helpers.serveBinary {
-    root = null;
+  helpers.serveBinary rec {
     noRobots = true;
     domain = "ctrl.sn";
+    root = domain
     cwd = "/var/www/";
     port = "8080";
     binary = "${inputs.ctrlsn.packages.${pkgs.system}.default}/bin/ctrl.sn";
