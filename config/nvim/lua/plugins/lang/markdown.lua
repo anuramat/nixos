@@ -26,9 +26,20 @@ return {
   },
   {
     -- uses mathjax
-    'Thiago4532/mdmath.nvim',
+    'anuramat/mdmath.nvim',
     dependencies = 'nvim-treesitter/nvim-treesitter',
     ft = 'markdown',
-    opts = {},
+    opts = {
+      preamble = (function()
+        local filename = vim.fn.expand('$XDG_CONFIG_HOME/latex/mathjax_preamble.tex')
+        local file = io.open(filename, 'r')
+        local chars = ''
+        if file ~= nil then
+          chars = file:read('*a')
+          file:close()
+        end
+        return chars
+      end)(),
+    },
   },
 }
