@@ -3,6 +3,7 @@ let
     services.nginx.virtualHosts.${w.domain} = {
       enableACME = true;
       forceSSL = true;
+      default = true;
     };
     security.acme.certs.${w.domain}.extraDomainNames = [ ("www." + w.domain) ];
   };
