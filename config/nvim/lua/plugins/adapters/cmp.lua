@@ -26,7 +26,6 @@ return {
   },
   -- llm autocomplete, chat, agents/tools
   {
-    enabled = false,
     'olimorris/codecompanion.nvim',
     -- BUG chat hangs up after one message
     event = 'BufEnter',
