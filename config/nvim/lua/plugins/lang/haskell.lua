@@ -6,6 +6,7 @@ end
 
 return {
   'mrcjkb/haskell-tools.nvim',
+  -- probably broken
   ft = { 'haskell', 'lhaskell', 'cabal', 'cabalproject' },
   config = function()
     vim.g.haskell_tools = {

@@ -1,5 +1,3 @@
-local adapter = 'llmao' -- just a bound name
-
 return {
   -- autocomplete and signature
   {
@@ -25,18 +23,55 @@ return {
     event = 'BufEnter',
     opts = {
       adapters = {
-        [adapter] = function()
+        lmao = function()
           return require('codecompanion.adapters').extend('ollama', {
-            name = adapter,
+            name = 'lmao',
             schema = { model = { default = 'deepseek-coder-v2:16b' } },
+          })
+        end,
+        pollinations = function()
+          return require('codecompanion.adapters').extend('openai_compatible', {
+            env = { url = 'https://text.pollinations.ai/openai' },
+            schema = { model = { default = 'openai' } },
           })
         end,
       },
       strategies = {
-        chat = { adapter = adapter },
-        inline = { adapter = { name = adapter } },
+        chat = { adapter = 'pollinations' },
+        inline = { adapter = { name = '' } },
       },
     },
     dependencies = 'nvim-treesitter/nvim-treesitter',
   },
+  {
+    'yetone/avante.nvim',
+    event = 'VeryLazy',
+    version = false,
+    opts = {
+      provider = 'pollinations',
+      vendors = {
+        pollinations = {
+          __inherited_from = 'openai',
+          api_key_name = '',
+          endpoint = 'https://text.pollinations.ai/openai',
+          model = 'openai',
+        },
+        ollama = {
+          __inherited_from = 'openai',
+          api_key_name = '',
+          endpoint = 'http://127.0.0.1:11434/v1',
+          model = 'gemma3:4b',
+          disable_tools = true, -- open-source models often do not support tools.
+        },
+      },
+    },
+    build = 'make',
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+      'stevearc/dressing.nvim',
+      'MunifTanjim/nui.nvim',
+      'ibhagwan/fzf-lua',
+    },
+  },
+  -- TODO github models
 }
