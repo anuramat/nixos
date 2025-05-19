@@ -15,6 +15,16 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 vim.opt.rtp:prepend(lazypath)
+
+local username = os.getenv('USER')
+local remote = 'github.com' -- TODO somehow abstract away? hide in nix maybe
+local function get_dev_path()
+  local result = vim.system({ 'ghq', 'root' }):wait()
+  if result.code ~= 0 then error('failed to get local plugin root path') end
+  local root = vim.trim(result.stdout)
+  return vim.fs.joinpath(root, remote, username)
+end
+
 require('lazy').setup({
   { import = 'plugins.core' },
   { import = 'plugins.adapters' },
@@ -23,12 +33,17 @@ require('lazy').setup({
   change_detection = {
     enabled = false,
   },
+  install = {
+    missing = false,
+  },
   defaults = {
     lazy = true,
     cond = not vim.g.vscode,
     version = '*', -- nil for latest, * for latest stable semver
   },
-  ui = {
-    border = vim.g.border,
+  dev = {
+    path = get_dev_path(),
+    patterns = { username },
+    fallback = true,
   },
 })

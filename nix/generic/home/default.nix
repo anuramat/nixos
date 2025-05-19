@@ -40,7 +40,6 @@ in
             [[ $- == *i* ]] || return
             for f in "${./bashrc.d}"/*; do source "$f"; done
             source ${./bashrc.sh}
-            source ${./trw.sh}
           '';
         };
 
@@ -74,10 +73,12 @@ in
             # molten:
             ps.magick
           ];
-          extraPackages = [
+          extraPackages = with pkgs; [
             # molten:
-            pkgs.imagemagick
-            pkgs.python3Packages.jupytext
+            imagemagick
+            python3Packages.jupytext
+            # mdmath.nvim
+            librsvg
           ];
           extraPython3Packages =
             ps: with ps; [

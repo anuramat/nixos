@@ -6,14 +6,12 @@ end
 
 return {
   'mrcjkb/haskell-tools.nvim',
-  dependencies = {
-    'nvim-lua/plenary.nvim',
-  },
+  -- probably broken
   ft = { 'haskell', 'lhaskell', 'cabal', 'cabalproject' },
   config = function()
     vim.g.haskell_tools = {
       hls = {
-        capabilities = ul.capabilities(),
+        capabilities = require('blink.cmp').get_lsp_capabilities(),
         on_attach = function(client, buffer, ht)
           ul.on_attach(client, buffer)
 

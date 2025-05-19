@@ -10,13 +10,13 @@
       "pulseaudio",
       "backlight",
       "idle_inhibitor",
-      "mpris",
+      "mpris"
     ],
     "modules-center": [
       "sway/mode",
       "sway/workspaces",
       "sway/scratchpad",
-      "sway/mode",
+      "sway/mode"
     ],
     "modules-right": [
       "sway/window",
@@ -25,7 +25,7 @@
       // "battery#external",
       "battery",
       "sway/language",
-      "clock",
+      "clock"
     ],
     "sway/window": {
       "icon": true
@@ -139,7 +139,7 @@
     "bluetooth": {
       "format": "{status} ",
       "on-click": "blueman-manager"
-    },
+    }
   }
 ]
-// vim: ft=json commentstring=//\ %s
+// vim: ft=jsonc

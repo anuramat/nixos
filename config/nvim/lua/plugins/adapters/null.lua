@@ -54,13 +54,11 @@ end
 return {
   'nvimtools/none-ls.nvim', -- maintained 'jose-elias-alvarez/null-ls.nvim' fork
   event = { 'BufReadPre', 'BufNewFile' },
-  dependencies = 'nvim-lua/plenary.nvim',
   config = function()
     local null_ls = require('null-ls')
     null_ls.setup({
       sources = null_sources(),
       on_attach = require('utils.lsp').on_attach,
-      border = vim.g.border,
       temp_dir = '/tmp',
     })
   end,

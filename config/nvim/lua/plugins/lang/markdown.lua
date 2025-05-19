@@ -25,24 +25,20 @@ return {
     },
   },
   {
-    -- TODO figure out proper latex
-    -- this uses a weird matplotlib hack
-    'Prometheus1400/markdown-latex-render.nvim',
-    dependencies = { '3rd/image.nvim', 'nvim-lua/plenary.nvim' },
-    enabled = false,
-    build = 'make install',
-    lazy = false,
-    branch = 'main',
+    -- uses mathjax
+    'anuramat/mdmath.nvim',
+    dependencies = 'nvim-treesitter/nvim-treesitter',
+    ft = 'markdown',
     opts = {
-      usetex = true,
       preamble = (function()
-        local path = vim.fn.expand('$XDG_CONFIG_HOME') .. '/latex/preamble.tex'
-        local file = io.open(path, 'r')
+        local filename = vim.fn.expand('$XDG_CONFIG_HOME/latex/mathjax_preamble.tex')
+        local file = io.open(filename, 'r')
+        local chars = ''
         if file ~= nil then
-          local preamble = file:read('*a')
+          chars = file:read('*a')
           file:close()
-          return preamble
         end
+        return chars
       end)(),
     },
   },

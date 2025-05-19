@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-# depends on _git_prompt defined outside
+# deps: __gitgud_git_prompt defined in gitgud.sh
 
 __git_user_ps1() {
-	local -r prompt=$(_git_prompt)
+	local -r prompt=$(__gitgud_git_prompt)
 	printf '%s' "${prompt:+ $(tput setaf 5)$prompt$(tput sgr0)}"
 }
 

@@ -2,7 +2,7 @@
 
 # TODO unsafe path handling
 # TODO reconsider stderr/stdout depending on usecases
-# more locals
+# TODO more local/readonly
 
 __free_repos_cand=("$HOME/notes" "/etc/nixos" "/var/www")
 __free_repos=()
@@ -28,7 +28,7 @@ g() {
 # $1 - prompt question
 # $2 - query (optional)
 # stdout - \n separated list of repos
-__picker() {
+__gitgud_picker() {
 	local repos
 	repos="$(fzf -1 -q "$2")" || return 1
 	echo "$repos"
@@ -37,38 +37,30 @@ __picker() {
 	[ "$choice" = 'y' ]
 }
 
-# rm ghq repo(s)
+# `ghq rm` with picker
 # $1 - repo (optional)
 git_rm() {
 	local selected
-	selected=$(ghq list | __picker "delete?" "$1") || return
+	selected=$(ghq list | __gitgud_picker "delete?" "$1") || return
 	echo "$selected" | xargs -I{} bash -c 'yes | ghq rm {} 2>/dev/null'
 }
 
-# clone repo(s) with ghq
+# `ghq get` with picker and zoxide init
 # $1 - repo as interpreted by ghq, optional
 git_clone() {
 	local -r before_dirs="$(ghq list -p | sort)"
 	local repos=$1
 	[ -z "$repos" ] && repos=$(gh repo list | cut -f 1)
 	local selected
-	selected="$(echo "$repos" | cut -f 1 | __picker "download?")" || return
+	selected="$(echo "$repos" | cut -f 1 | __gitgud_picker "download?")" || return
 	echo "$selected" | xargs ghq get --no-recursive --parallel -p --silent || {
 		echo "Couldn't clone"
 		return 1
 	}
 	local -r after_dirs="$(ghq list -p | sort)"
-	# HACK
+	# show the cloned repos; a bit of a hack but whatever, seems to be working
 	local -r new_dirs="$(comm -13 <(echo "$before_dirs") <(echo "$after_dirs"))"
 	echo "$new_dirs" | xargs zoxide add
-	# HACK with remote url
-	echo "$new_dirs" | xargs -I{} bash -c 'cd {}; gh repo set-default $(git config --get remote.origin.url | rev | cut -d "/" -f 1,2 | rev)'
-}
-
-# sync a fork with the upstream
-github_sync() {
-	gh repo sync "$(gh repo set-default --view)"
-	git pull
 }
 
 check() {
@@ -193,7 +185,7 @@ github_create() {
 	gh repo edit --enable-projects=false
 }
 
-_git_prompt() {
+__gitgud_git_prompt() {
 	local -r only_state=$1 # don't show branch/commit
 
 	local bare

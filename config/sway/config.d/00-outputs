@@ -2,7 +2,7 @@
 
 set {
     $internal eDP-1
-    $external DP-1 DP-2 DP-3
+    $external DP-1 DP-2 DP-3 HDMI-A-2
 }
 
 # XXX Sometimes the screen doesn't turn on
@@ -13,7 +13,7 @@ bindswitch --locked lid:off output $internal enable
 # WARN priority is broken
 # eg:
 # 1-5 internal external
-# 6-10 external internal
+# 6-0 external internal
 # would work right EXCEPT when first connecting the monitor:
 # the external one will take the first empty workspace.
 workspace {
@@ -27,7 +27,7 @@ workspace {
     7 output $external
     8 output $external
     9 output $external
-   10 output $external
+    0 output $external
 }
 
 # vim: ft=swayconfig

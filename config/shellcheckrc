@@ -20,3 +20,5 @@ disable=SC2155
 disable=SC2139
 # can't follow non constant source
 disable=SC1090
+# don't use variables in printf format string
+disable=SC2059

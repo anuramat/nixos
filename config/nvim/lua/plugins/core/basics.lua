@@ -8,7 +8,6 @@ return {
     'stevearc/aerial.nvim',
     dependencies = {
       'nvim-treesitter/nvim-treesitter',
-      'nvim-tree/nvim-web-devicons',
     },
     event = 'BufEnter',
     opts = {
@@ -95,9 +94,6 @@ return {
       skip_confirm_for_simple_edits = true,
       constrain_cursor = 'editable', -- name false editable
       experimental_watch_for_changes = true,
-      keymaps_help = {
-        border = vim.g.border,
-      },
       view_options = {
         -- Show files and directories that start with "."
         show_hidden = true,
@@ -109,14 +105,7 @@ return {
           { 'name', 'asc' },
         },
       },
-      float = { border = vim.g.border },
-      preview = { border = vim.g.border },
-      progress = { border = vim.g.border },
-      ssh = {
-        border = vim.g.border,
-      },
     },
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
     keys = {
       { '<leader>o', '<cmd>Oil<cr>', desc = 'File CWD' },
       { '<leader>O', '<cmd>Oil .<cr>', desc = 'Open Parent Directory' },
@@ -150,9 +139,6 @@ return {
   -- fuzzy finder
   {
     'ibhagwan/fzf-lua',
-    dependencies = {
-      'nvim-tree/nvim-web-devicons',
-    },
     event = 'VeryLazy',
     opts = function()
       return {
@@ -196,11 +182,11 @@ return {
       lhs_prefix = '<leader>f',
       module = 'fzf-lua',
       cmd_prefix = 'FzfLua ',
-      wrapped = {
+      exceptions = {
         {
           '<C-x><C-f>',
-          function(m)
-            m.complete_file({
+          function()
+            require('fzf-lua').complete_file({
               cmd = 'fd -t f -HL',
               winopts = { preview = { hidden = 'nohidden' } },
             })
@@ -221,7 +207,10 @@ return {
   {
     'Wansmer/treesj',
     enabled = true,
-    opts = { use_default_keymaps = false },
+    opts = {
+      use_default_keymaps = false,
+      max_join_length = 500,
+    },
     keys = {
       {
         '<leader>j',

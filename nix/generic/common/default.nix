@@ -79,7 +79,22 @@ in
   };
 
   # ssh etc {{{1
-  programs.ssh.knownHostsFiles = cluster.hostKeysFiles;
+  programs.ssh = {
+    knownHostsFiles = cluster.hostKeysFiles;
+    extraConfig =
+      let
+        prefix = config.user + "-";
+        mkAliasEntry = hostname: ''
+          Host ${lib.strings.removePrefix prefix hostname}
+            HostName ${hostname}
+        '';
+      in
+      cluster.hostnames
+      |> lib.filter (x: lib.strings.hasPrefix prefix x)
+      |> map mkAliasEntry
+      |> lib.strings.intersperse "\n"
+      |> lib.concatStrings;
+  };
   services = {
     fail2ban.enable = true; # intrusion prevention
     tailscale.enable = true;
