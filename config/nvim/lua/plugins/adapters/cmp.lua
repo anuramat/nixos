@@ -1,3 +1,4 @@
+local modelname = 'qwen3:8b'
 return {
   -- autocomplete and signature
   {
@@ -19,6 +20,7 @@ return {
   },
   -- llm autocomplete, chat, agents/tools
   {
+    enabled = false,
     'olimorris/codecompanion.nvim',
     -- BUG chat hangs up after one message
     event = 'BufEnter',
@@ -28,7 +30,7 @@ return {
           return require('codecompanion.adapters').extend('ollama', {
             -- BUG tools are broken <https://github.com/ollama/ollama/issues/9632>
             name = 'lmao',
-            schema = { model = { default = 'deepseek-coder-v2:16b' } },
+            schema = { model = { default = modelname } },
           })
         end,
         pollinations = function()
@@ -52,7 +54,7 @@ return {
     event = 'VeryLazy',
     version = false,
     opts = {
-      provider = 'pollinations',
+      provider = 'ollama',
       vendors = {
         pollinations = {
           __inherited_from = 'openai',
@@ -60,14 +62,12 @@ return {
           endpoint = 'https://text.pollinations.ai/openai',
           model = 'openai',
         },
-        ollama = {
-          __inherited_from = 'openai',
-          api_key_name = '',
-          endpoint = 'http://127.0.0.1:11434/v1',
-          model = 'gemma3:4b',
-          disable_tools = true, -- open-source models often do not support tools.
-        },
         -- github models is not available yet <https://github.com/yetone/avante.nvim/issues/2042>
+      },
+      ollama = {
+        endpoint = 'http://127.0.0.1:11434',
+        model = modelname,
+        reasoning_effort = 'low', -- low|medium|high, only used for reasoning models
       },
     },
     build = 'make',

@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  unstable,
   ...
 }:
 let
@@ -10,9 +11,14 @@ let
 in
 {
   services.ollama = {
+    package = unstable.ollama;
     enable = true;
     acceleration = mkIf nvidia "cuda";
     # pull models on service start
     loadModels = [ ];
+    port = 11434; # explicit default
   };
+  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
+    config.services.ollama.port
+  ];
 }

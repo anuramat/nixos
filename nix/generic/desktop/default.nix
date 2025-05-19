@@ -265,7 +265,7 @@ in
 
   # firewall {{{1
   networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
-    # jupyter etc
+    # development, jupyter, etc
     8000
     8080
     8888
