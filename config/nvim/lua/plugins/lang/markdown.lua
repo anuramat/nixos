@@ -29,6 +29,7 @@ return {
     'anuramat/mdmath.nvim',
     dependencies = 'nvim-treesitter/nvim-treesitter',
     ft = 'markdown',
+    -- build = ':MdMath build', -- BUG doesn't help
     opts = {
       preamble = (function()
         local filename = vim.fn.expand('$XDG_CONFIG_HOME/latex/mathjax_preamble.tex')
