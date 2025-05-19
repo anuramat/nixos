@@ -5,6 +5,7 @@ return {
     'HiPhish/rainbow-delimiters.nvim',
     dependencies = 'nvim-treesitter/nvim-treesitter',
     event = 'BufEnter',
+    submodules = false,
   },
   -- dressing.nvim -- vim.ui.select (choice menus), vim.ui.input (lsp rename)
   {
