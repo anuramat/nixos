@@ -1,3 +1,4 @@
+local modelname = 'qwen3:8b'
 return {
   -- autocomplete and signature
   {
@@ -29,7 +30,7 @@ return {
           return require('codecompanion.adapters').extend('ollama', {
             -- BUG tools are broken <https://github.com/ollama/ollama/issues/9632>
             name = 'lmao',
-            schema = { model = { default = 'deepseek-coder-v2:16b' } },
+            schema = { model = { default = modelname } },
           })
         end,
         pollinations = function()
@@ -65,7 +66,7 @@ return {
       },
       ollama = {
         endpoint = 'http://127.0.0.1:11434',
-        model = 'deepseek-coder-v2:16b',
+        model = modelname,
       },
     },
     build = 'make',
