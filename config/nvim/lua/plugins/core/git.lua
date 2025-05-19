@@ -58,4 +58,16 @@ return {
     'sindrets/diffview.nvim',
     event = 'VeryLazy',
   },
+  {
+    'ruifm/gitlinker.nvim',
+    event = 'VeryLazy',
+    opts = {
+      opts = {
+        add_current_line_on_normal_mode = false,
+        print_url = true,
+      },
+      -- mappings = nil -- '<leader>gy',
+      -- TODO move to lazy keys, remove event, add more mappings
+    },
+  },
 }
