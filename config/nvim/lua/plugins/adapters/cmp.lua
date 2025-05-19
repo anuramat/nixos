@@ -17,28 +17,32 @@ return {
       }
     end,
   },
-  -- llm stuff
+  -- llm autocomplete, chat, agents/tools
   {
     'olimorris/codecompanion.nvim',
+    -- BUG chat hangs up after one message
     event = 'BufEnter',
     opts = {
       adapters = {
         lmao = function()
           return require('codecompanion.adapters').extend('ollama', {
+            -- BUG tools are broken <https://github.com/ollama/ollama/issues/9632>
             name = 'lmao',
             schema = { model = { default = 'deepseek-coder-v2:16b' } },
           })
         end,
         pollinations = function()
+          -- BUG doesn't work for some reason
           return require('codecompanion.adapters').extend('openai_compatible', {
             env = { url = 'https://text.pollinations.ai/openai' },
             schema = { model = { default = 'openai' } },
           })
         end,
+        -- 'githubmodels'
       },
       strategies = {
         chat = { adapter = 'pollinations' },
-        inline = { adapter = { name = '' } },
+        -- inline = { adapter = { name = '' } },
       },
     },
     dependencies = 'nvim-treesitter/nvim-treesitter',
@@ -63,6 +67,7 @@ return {
           model = 'gemma3:4b',
           disable_tools = true, -- open-source models often do not support tools.
         },
+        -- github models is not available yet <https://github.com/yetone/avante.nvim/issues/2042>
       },
     },
     build = 'make',
