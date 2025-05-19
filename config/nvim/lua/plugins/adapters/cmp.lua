@@ -5,18 +5,24 @@ return {
     'saghen/blink.cmp',
     dependencies = 'anuramat/friendly-snippets',
     version = '*', -- on nightly - add `build = 'nix run .#build-plugin'`
-    opts = function()
-      return {
-        completion = { documentation = {
-          auto_show = true,
-          auto_show_delay_ms = 500,
-        } },
-        signature = { enabled = true },
-        -- TODO maybe replace with native stuff:
-        -- inoremap <c-k> <cmd>lua vim.lsp.buf.signature_help()<cr>
-        appearance = { nerd_font_variant = 'normal' },
-      }
-    end,
+    opts = {
+      completion = { documentation = {
+        auto_show = true,
+        auto_show_delay_ms = 500,
+      } },
+      signature = { enabled = true }, -- not really required, we can use <c-s> instead
+      appearance = { nerd_font_variant = 'normal' },
+      sources = {
+        providers = {
+          lazydev = {
+            name = 'LazyDev',
+            module = 'lazydev.integrations.blink',
+            score_offset = 100, -- prioritize
+          },
+        },
+        default = { 'lazydev', 'lsp', 'path', 'snippets', 'buffer' },
+      },
+    },
   },
   -- llm autocomplete, chat, agents/tools
   {
