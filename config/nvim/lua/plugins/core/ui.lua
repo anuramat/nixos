@@ -2,7 +2,6 @@
 return {
   -- rainbow-delimiters.nvim - TS rainbow parentheses
   {
-    -- alterntaive: <https://github.com/saghen/blink.pairs>
     'HiPhish/rainbow-delimiters.nvim',
     dependencies = 'nvim-treesitter/nvim-treesitter',
     event = 'BufEnter',
