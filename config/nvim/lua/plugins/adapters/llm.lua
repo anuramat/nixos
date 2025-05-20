@@ -1,9 +1,10 @@
-local modelname = 'gemma3:4b'
+local modelname = 'qwen3:4b'
 return {
   'yetone/avante.nvim',
   event = 'VeryLazy',
   version = false,
   opts = {
+    -- mode = 'legacy', -- required by models that don't support tools
     provider = 'ollama',
     vendors = {
       pollinations = {
