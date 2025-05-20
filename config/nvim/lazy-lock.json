@@ -21,6 +21,7 @@
   "lazydev.nvim": { "branch": "main", "commit": "f59bd14a852ca43db38e3662395354cb2a9b13e0" },
   "lsp-format.nvim": { "branch": "master", "commit": "f336cfd6572bf644d26b5cdec7e5e2c6b8f45135" },
   "mdmath.nvim": { "branch": "main", "commit": "1e66d93e9ea420bc04004d23ea2cdcca1fdd4fee" },
+  "mini.ai": { "branch": "main", "commit": "ebb04799794a7f94628153991e6334c3304961b8" },
   "mini.align": { "branch": "main", "commit": "8d5f3254a4c25fdfd26b7467d2372f5deed3a78c" },
   "mini.bracketed": { "branch": "main", "commit": "937573c7e7d9be6cb29ffd0909d9ff83c92afbf0" },
   "molten-nvim": { "branch": "main", "commit": "e18ac7395d19a39a8180d7a383a07084940e9090" },
@@ -58,7 +59,6 @@
   "undotree": { "branch": "master", "commit": "b951b87b46c34356d44aa71886aecf9dd7f5788a" },
   "vim-eunuch": { "branch": "master", "commit": "39e0232f490322c5a2d9e24275872f28da496a93" },
   "vim-fetch": { "branch": "master", "commit": "0b6e2b6464e0bc326d8330c03ead5d53efa4bf71" },
-  "vim-fugitive": { "branch": "master", "commit": "96c1009fcf8ce60161cc938d149dd5a66d570756" },
   "vim-table-mode": { "branch": "master", "commit": "9ac358083943f6339fc304a6e218b634fd1e30bd" },
   "wastebin.nvim": { "branch": "master", "commit": "7a70a7e5efc2af5025134c395bd27e3ada9b8629" }
 }
