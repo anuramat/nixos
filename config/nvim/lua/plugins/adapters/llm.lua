@@ -1,4 +1,4 @@
-local modelname = 'qwen3:8b'
+local modelname = 'gemma3:4b'
 return {
   'yetone/avante.nvim',
   event = 'VeryLazy',
