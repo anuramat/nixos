@@ -2,7 +2,7 @@
 local textobjects = require('plugins.adapters.treesitter.textobjects')
 
 return {
-  textobjects.ai,
+  textobjects.miniai,
   -- treesitter
   {
     'nvim-treesitter/nvim-treesitter',
@@ -39,7 +39,7 @@ return {
         },
         additional_vim_regex_highlighting = {}, -- use both `:syntax` and Treesitter
       },
-      textobjects = textobjects.cfg,
+      textobjects = textobjects.txtobj_cfg,
     },
     config = function(_, opts)
       require('nvim-treesitter.configs').setup(opts)

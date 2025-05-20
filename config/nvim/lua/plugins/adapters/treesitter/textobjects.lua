@@ -1,4 +1,4 @@
-local ai = {
+local miniai = {
   'echasnovski/mini.ai',
   keys = {
     { 'a', mode = { 'x', 'o' } },
@@ -59,7 +59,7 @@ local ai = {
   end,
 }
 
-local cfg = {
+local txtobj_cfg = {
   swap = {
     enable = true,
     swap_next = {
@@ -87,4 +87,4 @@ local cfg = {
   },
 }
 
-return { ai = ai, cfg = cfg }
+return { miniai = miniai, txtobj_cfg = txtobj_cfg }
