@@ -101,6 +101,7 @@ end
 --- @field [2] string|function RHS
 --- @field [3] string? Command description
 --- @field iterator boolean? Make a mapping per key 1-9 (uhh hard to explain)
+--- @field mode string|string[]? Mapping mode
 
 --- @class wrap_opts
 --- @field lhs_prefix string Prefix to add to mappings
