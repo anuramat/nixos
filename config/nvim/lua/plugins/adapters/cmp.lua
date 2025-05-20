@@ -19,11 +19,10 @@ return {
         avante = {
           module = 'blink-cmp-avante',
           name = 'Avante',
-          opts = {
-          },
+          opts = {},
         },
       },
-      default = { 'lazydev', 'lsp', 'path', 'snippets', 'buffer' },
+      default = { 'avante', 'lazydev', 'lsp', 'path', 'snippets', 'buffer' },
     },
   },
 }

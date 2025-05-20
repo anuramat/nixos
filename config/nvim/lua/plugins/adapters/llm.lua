@@ -31,9 +31,6 @@ return {
   },
   {
     'yetone/avante.nvim',
-    dependencies = {
-      'Kaiser-Yang/blink-cmp-avante',
-    },
     event = 'VeryLazy',
     version = false,
     opts = {
@@ -55,6 +52,7 @@ return {
     },
     build = 'make',
     dependencies = {
+      'Kaiser-Yang/blink-cmp-avante',
       'nvim-treesitter/nvim-treesitter',
       'stevearc/dressing.nvim',
       'MunifTanjim/nui.nvim',
