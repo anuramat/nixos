@@ -31,6 +31,9 @@ return {
   },
   {
     'yetone/avante.nvim',
+    dependencies = {
+      'Kaiser-Yang/blink-cmp-avante',
+    },
     event = 'VeryLazy',
     version = false,
     opts = {
