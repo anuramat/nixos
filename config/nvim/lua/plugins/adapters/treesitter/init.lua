@@ -1,5 +1,8 @@
 -- vim: fdl=3
+local textobjects = require('plugins.adapters.treesitter.textobjects')
+
 return {
+  textobjects.ai,
   -- treesitter
   {
     'nvim-treesitter/nvim-treesitter',
@@ -36,33 +39,7 @@ return {
         },
         additional_vim_regex_highlighting = {}, -- use both `:syntax` and Treesitter
       },
-      textobjects = {
-        swap = {
-          enable = true,
-          swap_next = {
-            ['<a-l>'] = {
-              query = { '@parameter.inner' },
-              desc = 'swap with the next parameter',
-            },
-            -- doesn't properly work, no idempotency (eats whitespace)
-            -- ['<a-j>'] = {
-            --   query = { '@block.outer' },
-            --   desc = 'swap with the block below',
-            -- },
-          },
-          swap_previous = {
-            ['<a-h>'] = {
-              query = { '@parameter.inner' },
-              desc = 'swap with the previous parameter',
-            },
-            -- doesn't properly work, no idempotency (eats whitespace)
-            -- ['<a-k>'] = {
-            --   query = { '@block.outer' },
-            --   desc = 'swap with the block above',
-            -- },
-          },
-        },
-      },
+      textobjects = textobjects.cfg,
     },
     config = function(_, opts)
       require('nvim-treesitter.configs').setup(opts)
