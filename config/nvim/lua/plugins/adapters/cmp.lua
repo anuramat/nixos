@@ -1,87 +1,23 @@
-local modelname = 'qwen3:8b'
 return {
-  -- autocomplete and signature
-  {
-    'saghen/blink.cmp',
-    dependencies = 'anuramat/friendly-snippets',
-    version = '*', -- on nightly - add `build = 'nix run .#build-plugin'`
-    opts = {
-      completion = { documentation = {
-        auto_show = true,
-        auto_show_delay_ms = 500,
-      } },
-      signature = { enabled = true }, -- not really required, we can use <c-s> instead
-      appearance = { nerd_font_variant = 'normal' },
-      sources = {
-        providers = {
-          lazydev = {
-            name = 'LazyDev',
-            module = 'lazydev.integrations.blink',
-            score_offset = 100, -- prioritize
-          },
+  'saghen/blink.cmp',
+  dependencies = 'anuramat/friendly-snippets',
+  version = '*', -- on nightly - add `build = 'nix run .#build-plugin'`
+  opts = {
+    completion = { documentation = {
+      auto_show = true,
+      auto_show_delay_ms = 500,
+    } },
+    signature = { enabled = true }, -- not really required, we can use <c-s> instead
+    appearance = { nerd_font_variant = 'normal' },
+    sources = {
+      providers = {
+        lazydev = {
+          name = 'LazyDev',
+          module = 'lazydev.integrations.blink',
+          score_offset = 100, -- prioritize
         },
-        default = { 'lazydev', 'lsp', 'path', 'snippets', 'buffer' },
       },
+      default = { 'lazydev', 'lsp', 'path', 'snippets', 'buffer' },
     },
   },
-  -- llm autocomplete, chat, agents/tools
-  {
-    'olimorris/codecompanion.nvim',
-    -- BUG chat hangs up after one message
-    event = 'BufEnter',
-    opts = {
-      adapters = {
-        lmao = function()
-          return require('codecompanion.adapters').extend('ollama', {
-            -- BUG tools are broken <https://github.com/ollama/ollama/issues/9632>
-            name = 'lmao',
-            schema = { model = { default = modelname } },
-          })
-        end,
-        pollinations = function()
-          -- BUG doesn't work for some reason
-          return require('codecompanion.adapters').extend('openai_compatible', {
-            env = { url = 'https://text.pollinations.ai/openai' },
-            schema = { model = { default = 'openai' } },
-          })
-        end,
-        -- 'githubmodels'
-      },
-      strategies = {
-        chat = { adapter = 'pollinations' },
-        -- inline = { adapter = { name = '' } },
-      },
-    },
-    dependencies = 'nvim-treesitter/nvim-treesitter',
-  },
-  {
-    'yetone/avante.nvim',
-    event = 'VeryLazy',
-    version = false,
-    opts = {
-      provider = 'ollama',
-      vendors = {
-        pollinations = {
-          __inherited_from = 'openai',
-          api_key_name = '',
-          endpoint = 'https://text.pollinations.ai/openai',
-          model = 'openai',
-        },
-        -- github models is not available yet <https://github.com/yetone/avante.nvim/issues/2042>
-      },
-      ollama = {
-        endpoint = 'http://127.0.0.1:11434',
-        model = modelname,
-        reasoning_effort = 'low', -- low|medium|high, only used for reasoning models
-      },
-    },
-    build = 'make',
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter',
-      'stevearc/dressing.nvim',
-      'MunifTanjim/nui.nvim',
-      'ibhagwan/fzf-lua',
-    },
-  },
-  -- TODO github models
 }
