@@ -6,6 +6,7 @@
   "codecompanion.nvim": { "branch": "main", "commit": "6d8d355f402a304eb2b4f2052ebfd53f05ba5784" },
   "diffview.nvim": { "branch": "main", "commit": "4516612fe98ff56ae0415a259ff6361a89419b0a" },
   "dressing.nvim": { "branch": "master", "commit": "3a45525bb182730fe462325c99395529308f431e" },
+  "fidget.nvim": { "branch": "main", "commit": "b61e8af9b8b68ee0ec7da5fb7a8c203aae854f2e" },
   "figtree.nvim": { "branch": "main", "commit": "a491dbbe0271ad0d86f1af9bfed3ad32812ff996" },
   "flash.nvim": { "branch": "main", "commit": "ec0bf2842189f65f60fd40bf3557cac1029cc932" },
   "fzf-lua": { "branch": "main", "commit": "47b85a25c0c0b2c20b4e75199ed01bb71e7814f5" },

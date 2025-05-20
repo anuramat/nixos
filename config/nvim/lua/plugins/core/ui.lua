@@ -29,7 +29,17 @@ return {
       local neopywal = require('neopywal')
       neopywal.setup({
         use_wallust = true,
-        transparent_background = true, -- changes the look even with alpha=100
+        colorscheme_file = '', -- to make lsp shut up, not required
+        transparent_background = function()
+          local file = io.open(vim.fn.expand('$XDG_CACHE_HOME/wallust/alpha'), 'r')
+          local chars
+          if file ~= nil then
+            chars = vim.trim(file:read('*a'))
+            file:close()
+            return chars ~= '100'
+          end
+          return false
+        end,
         dim_inactive = true,
         show_end_of_buffer = true,
         show_split_lines = true,
@@ -71,6 +81,11 @@ return {
     priority = 999,
     lazy = false,
     dev = false,
+    opts = {},
+  },
+  {
+    'j-hui/fidget.nvim',
+    event = 'LspAttach',
     opts = {},
   },
 }

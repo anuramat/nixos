@@ -33,9 +33,6 @@ require('lazy').setup({
   change_detection = {
     enabled = false,
   },
-  install = {
-    missing = false,
-  },
   defaults = {
     lazy = true,
     cond = not vim.g.vscode,
