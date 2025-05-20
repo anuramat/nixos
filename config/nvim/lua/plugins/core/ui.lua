@@ -16,7 +16,7 @@ return {
   -- nvim-colorizer.lua - highlights colors, eg #012345
   {
     'NvChad/nvim-colorizer.lua',
-    ft = { 'markdown', 'html', 'css' },
+    ft = { 'css' },
     opts = {},
   },
   -- neopywal.nvim
