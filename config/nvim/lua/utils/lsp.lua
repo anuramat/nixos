@@ -22,7 +22,7 @@ end
 --- Root directory function with a fallback
 --- @param opts { primary: string[], fallback: string[] }
 m.root_dir_with_fallback = function(opts)
-  --- @param name string Filename
+  --- @param fname string Filename
   return function(fname)
     local primary_root = vim.fs.root(fname, opts.primary)
     local fallback_root = vim.fs.root(fname, opts.fallback)
