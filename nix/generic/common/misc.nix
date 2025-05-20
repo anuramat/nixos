@@ -17,6 +17,7 @@ in
     # pull models on service start
     loadModels = [ ];
     port = 11434; # explicit default
+    host = "0.0.0.0";
   };
   networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
     config.services.ollama.port
