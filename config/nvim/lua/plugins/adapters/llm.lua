@@ -1,10 +1,11 @@
-local modelname = 'qwen3:4b'
+local modelname = 'qwen3:1.7b'
 return {
   'yetone/avante.nvim',
   event = 'VeryLazy',
   version = false,
   opts = {
-    -- mode = 'legacy', -- required by models that don't support tools
+    system_prompt = '\\no_think',
+    mode = 'legacy', -- required by models that don't support tools (tools are broken for ollama)
     provider = 'ollama',
     vendors = {
       pollinations = {
