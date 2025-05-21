@@ -41,7 +41,7 @@ return {
         host_mount = '/etc/nixos',
         provider = 'ollama',
         llm_model = ollama_model,
-        embed_model = 'nomic-embed-text',
+        embed_model = 'nomic-embed-text', -- TODO change?
         endpoint = ollama_endpoint,
       },
       copilot = {
