@@ -1,4 +1,8 @@
-local modelname = 'qwen3:0.6b'
+local u = require('utils.helpers')
+
+local ollama_model = 'qwen3:0.6b'
+local ollama_endpoint = 'http://localhost:11434'
+
 return {
   {
     'zbirenbaum/copilot.lua',
@@ -24,13 +28,22 @@ return {
     'yetone/avante.nvim',
     version = false,
     opts = {
-      -- TODO wait until the rag gets out of experimental <https://github.com/yetone/avante.nvim/issues/1587>
-      -- (it's implemented as a tool)
-      behaviour = {
-        auto_suggestions = false, -- Experimental stage
-      },
       -- mode = 'legacy', -- BUG required by models that don't support tools (tools are broken for ollama)
       provider = 'copilot',
+      behaviour = {
+        auto_suggestions = false,
+      },
+      rag_service = { -- experimental: <https://github.com/yetone/avante.nvim/issues/1587>
+        -- implemented as a tool
+        -- runs on localhost:20250
+        -- BUG: 1. not reachable from outside; 2. docker logs full of shit (persist_dir is invalid): <https://github.com/yetone/avante.nvim/issues/1634>
+        enabled = false,
+        host_mount = '/etc/nixos',
+        provider = 'ollama',
+        llm_model = ollama_model,
+        embed_model = 'nomic-embed-text',
+        endpoint = ollama_endpoint,
+      },
       copilot = {
         model = 'claude-3.5-sonnet',
       },
@@ -44,8 +57,8 @@ return {
         -- TODO github models <https://github.com/yetone/avante.nvim/issues/2042>
       },
       ollama = {
-        endpoint = 'http://localhost:11434',
-        model = modelname,
+        endpoint = ollama_endpoint,
+        model = ollama_model,
         reasoning_effort = 'low', -- low|medium|high, only used for reasoning models
         -- system_prompt = '\\no_think', -- make reasoners shut up -- TODO not sure if this even works per model
       },
