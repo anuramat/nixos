@@ -1,13 +1,40 @@
 local modelname = 'qwen3:8b'
 return {
   {
+    'zbirenbaum/copilot.lua',
+    cmd = 'Copilot',
+    event = 'InsertEnter',
+    opts = {
+      suggestion = {
+        enabled = true,
+      },
+      panel = {
+        enabled = true,
+      },
+    },
+  },
+  {
+    'CopilotC-Nvim/CopilotChat.nvim',
+    dependencies = 'zbirenbaum/copilot.lua',
+    build = 'make tiktoken',
+    opts = {},
+    -- lazy = false,
+  },
+  {
     'yetone/avante.nvim',
     event = 'VeryLazy',
     version = false,
     opts = {
-      system_prompt = '\\no_think',
+      behaviour = {
+        auto_suggestions = false, -- Experimental stage
+      },
+      -- system_prompt = '\\no_think', -- make reasoners shut up
       -- mode = 'legacy', -- BUG required by models that don't support tools (tools are broken for ollama)
-      provider = 'pollinations',
+      provider = 'copilot',
+      -- copilot = {
+      --   endpoint = 'https://api.githubcopilot.com',
+      --   model = 'gpt-4o-2024-11-20',
+      -- },
       vendors = {
         pollinations = {
           __inherited_from = 'openai',
@@ -15,7 +42,7 @@ return {
           endpoint = 'https://text.pollinations.ai/openai',
           model = 'openai',
         },
-        -- TODO github models is not available yet <https://github.com/yetone/avante.nvim/issues/2042>
+        -- TODO github models <https://github.com/yetone/avante.nvim/issues/2042>
       },
       ollama = {
         endpoint = 'http://anuramat-ll7:11434',
