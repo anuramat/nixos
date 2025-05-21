@@ -32,9 +32,10 @@ return {
       -- system_prompt = '\\no_think', -- make reasoners shut up
       -- mode = 'legacy', -- BUG required by models that don't support tools (tools are broken for ollama)
       provider = 'copilot',
-      -- copilot = {
-      --   model = 'gpt-4o-2024-11-20',
-      -- },
+      copilot = {
+        -- model = 'gpt-4o-2024-11-20',
+        model = '',
+      },
       vendors = {
         pollinations = {
           __inherited_from = 'openai',
