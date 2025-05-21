@@ -25,6 +25,7 @@ return {
     event = 'VeryLazy',
     version = false,
     opts = {
+      -- TODO setup local rag
       behaviour = {
         auto_suggestions = false, -- Experimental stage
       },
@@ -52,7 +53,7 @@ return {
     },
     build = 'make',
     dependencies = {
-      'Kaiser-Yang/blink-cmp-avante',
+      { 'Kaiser-Yang/blink-cmp-avante', version = false, },
       'nvim-treesitter/nvim-treesitter',
       'stevearc/dressing.nvim',
       'MunifTanjim/nui.nvim',

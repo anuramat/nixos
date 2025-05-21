@@ -96,6 +96,13 @@ function m.concat_list(a)
   return res
 end
 
+--- @return string
+function m.ghq_root()
+  local result = vim.system({ 'ghq', 'root' }):wait()
+  if result.code ~= 0 then error('failed to get ghq root') end
+  return vim.trim(result.stdout)
+end
+
 --- @class lazy_keys
 --- @field [1] string LHS
 --- @field [2] string|function RHS

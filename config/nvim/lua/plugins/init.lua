@@ -1,3 +1,5 @@
+local u = require('utils.helpers')
+
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
@@ -18,12 +20,6 @@ vim.opt.rtp:prepend(lazypath)
 
 local username = os.getenv('USER')
 local remote = 'github.com' -- TODO somehow abstract away? hide in nix maybe
-local function get_dev_path()
-  local result = vim.system({ 'ghq', 'root' }):wait()
-  if result.code ~= 0 then error('failed to get local plugin root path') end
-  local root = vim.trim(result.stdout)
-  return vim.fs.joinpath(root, remote, username)
-end
 
 require('lazy').setup({
   { import = 'plugins.core' },
@@ -39,7 +35,7 @@ require('lazy').setup({
     version = '*', -- nil for latest, * for latest stable semver
   },
   dev = {
-    path = get_dev_path(),
+    path = vim.fs.joinpath(u.ghq_root(), remote, username),
     patterns = { username },
     fallback = true,
   },
