@@ -3,26 +3,25 @@ return {
   {
     'zbirenbaum/copilot.lua',
     cmd = 'Copilot',
-    event = 'InsertEnter',
     opts = {
       suggestion = {
-        enabled = true,
+        enabled = false,
       },
       panel = {
-        enabled = true,
+        enabled = false,
       },
     },
   },
   {
+    event = 'VeryLazy',
     'CopilotC-Nvim/CopilotChat.nvim',
     dependencies = 'zbirenbaum/copilot.lua',
     build = 'make tiktoken',
     opts = {},
-    -- lazy = false,
   },
   {
-    'yetone/avante.nvim',
     event = 'VeryLazy',
+    'yetone/avante.nvim',
     version = false,
     opts = {
       -- TODO wait until the rag gets out of experimental <https://github.com/yetone/avante.nvim/issues/1587>
