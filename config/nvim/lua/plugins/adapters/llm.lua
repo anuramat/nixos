@@ -1,4 +1,4 @@
-local modelname = 'qwen3:8b'
+local modelname = 'qwen3:0.6b'
 return {
   {
     'zbirenbaum/copilot.lua',
@@ -29,7 +29,6 @@ return {
       behaviour = {
         auto_suggestions = false, -- Experimental stage
       },
-      -- system_prompt = '\\no_think', -- make reasoners shut up
       -- mode = 'legacy', -- BUG required by models that don't support tools (tools are broken for ollama)
       provider = 'copilot',
       copilot = {
@@ -45,9 +44,10 @@ return {
         -- TODO github models <https://github.com/yetone/avante.nvim/issues/2042>
       },
       ollama = {
-        endpoint = 'http://anuramat-ll7:11434',
+        endpoint = 'http://localhost:11434',
         model = modelname,
         reasoning_effort = 'low', -- low|medium|high, only used for reasoning models
+        -- system_prompt = '\\no_think', -- make reasoners shut up -- TODO not sure if this even works per model
       },
     },
     build = 'make',
