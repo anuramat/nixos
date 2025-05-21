@@ -18,13 +18,6 @@ return {
   },
   {
     event = 'VeryLazy',
-    'CopilotC-Nvim/CopilotChat.nvim',
-    dependencies = 'zbirenbaum/copilot.lua',
-    build = 'make tiktoken',
-    opts = {},
-  },
-  {
-    event = 'VeryLazy',
     'yetone/avante.nvim',
     version = false,
     opts = {
