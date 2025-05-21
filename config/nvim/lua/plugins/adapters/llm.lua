@@ -39,6 +39,7 @@ return {
       },
       copilot = {
         model = 'claude-3.5-sonnet',
+        max_tokens = 20480,
         -- 'gpt-4.1'
       },
       vendors = {
