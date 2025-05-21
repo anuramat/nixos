@@ -25,7 +25,8 @@ return {
     event = 'VeryLazy',
     version = false,
     opts = {
-      -- TODO setup local rag
+      -- TODO wait until the rag gets out of experimental <https://github.com/yetone/avante.nvim/issues/1587>
+      -- (it's implemented as a tool)
       behaviour = {
         auto_suggestions = false, -- Experimental stage
       },
@@ -53,7 +54,7 @@ return {
     },
     build = 'make',
     dependencies = {
-      { 'Kaiser-Yang/blink-cmp-avante', version = false, },
+      { 'Kaiser-Yang/blink-cmp-avante', version = false },
       'nvim-treesitter/nvim-treesitter',
       'stevearc/dressing.nvim',
       'MunifTanjim/nui.nvim',
