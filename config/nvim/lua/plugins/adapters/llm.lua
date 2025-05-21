@@ -39,6 +39,7 @@ return {
       },
       copilot = {
         model = 'claude-3.5-sonnet',
+        -- 'gpt-4.1'
       },
       vendors = {
         pollinations = {
