@@ -97,7 +97,7 @@ down() {
 		}
 
 		local status
-		status=$(_git_prompt 1) && status=
+		status=$(__gitgud_git_prompt 1) && status=
 		status="${pulled:+ [ff]}${status:+$(tput setaf 1)$status$(tput sgr0)}"
 		[ -z "$status" ] && return
 		echo "$name$status"
@@ -105,7 +105,7 @@ down() {
 
 	local dirty
 	dirty=$(
-		export -f get_dirty _git_prompt
+		export -f get_dirty __gitgud_git_prompt
 		printf '%s\0' "${__free_repos[@]}" | xargs -0 -P 0 -I {} bash -c "get_dirty '$nopull' 0 {}" | LC_ALL=C sort
 		ghq list -p | xargs -P 0 -I {} bash -c "get_dirty '$nopull' $((${#root} + 1)) {}" | LC_ALL=C sort
 	)
@@ -162,7 +162,7 @@ up() (
 	fi
 
 	local prompt
-	prompt=$(_git_prompt 1) || prompt="$(tput setaf 1)$prompt$(tput sgr0)"
+	prompt=$(__gitgud_git_prompt 1) || prompt="$(tput setaf 1)$prompt$(tput sgr0)"
 	echo "status:$prompt"
 )
 
