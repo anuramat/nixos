@@ -1,0 +1,10 @@
+{
+  "mcpServers": [
+    
+  ],
+  "nativeMCPServers": {
+    "neovim": {
+      "disabled": false
+    }
+  }
+}
