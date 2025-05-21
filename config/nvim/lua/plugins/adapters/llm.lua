@@ -57,20 +57,32 @@ return {
         reasoning_effort = 'low', -- low|medium|high, only used for reasoning models
         -- system_prompt = '\\no_think', -- make reasoners shut up -- TODO not sure if this even works per model
       },
+      system_prompt = function()
+        local hub = require('mcphub').get_hub_instance()
+        return hub and hub:get_active_servers_prompt() or ''
+      end,
+      custom_tools = function() return { require('mcphub.extensions.avante').mcp_tool() } end,
     },
     build = 'make',
     dependencies = {
       { 'Kaiser-Yang/blink-cmp-avante', version = false },
+      'ravitemer/mcphub.nvim',
       'nvim-treesitter/nvim-treesitter',
       'stevearc/dressing.nvim',
       'MunifTanjim/nui.nvim',
       'ibhagwan/fzf-lua',
     },
   },
-  -- {
-  --   'ravitemer/mcphub.nvim',
-  --   build = 'npm install -g mcp-hub@latest', -- installs `mcp-hub` node binary globally
-  --   opts = {},
-  -- },
-  -- <https://ravitemer.github.io/mcphub.nvim/configuration.html>
+  {
+    'ravitemer/mcphub.nvim',
+    build = 'bundled_build.lua', -- Bundles `mcp-hub` binary along with the neovim plugin
+    opts = {
+      use_bundled_binary = true, -- Use local `mcp-hub` binary
+      extensions = {
+        avante = {
+          make_slash_commands = true, -- make /slash commands from MCP server prompts
+        },
+      },
+    },
+  },
 }
