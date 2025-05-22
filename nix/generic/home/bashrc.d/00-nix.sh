@@ -2,7 +2,7 @@
 
 __jq_equals() {
 	if [ "$#" -ne 3 ]; then
-		echo '__jq_equals: usage'
+		echo 'error(usage): __jq_equals: not enough args'
 		return 1
 	fi
 	local prop=$1
@@ -15,12 +15,13 @@ __jq_equals() {
 }
 
 reflake() {
-	if [ "$#" -ne 1 ]; then
-		echo "Usage: ${FUNCNAME[0]} .../flake.lock"
-		return 1
-	fi
-
 	local target_file="$1"
+	[ -z "$target_file" ] && target_file=./flake.lock
+	[ -f "$target_file" ] || {
+		echo "error(usage): no argument, no flake.lock in cwd"
+		return 1
+	}
+
 	local source_file="/etc/nixos/flake.lock"
 
 	for file in "$source_file" "$target_file"; do
@@ -35,7 +36,11 @@ reflake() {
 		local prop="$input.locked"
 
 		local source_has_prop=$(jq -r "$prop != null" "$source_file")
-		[ "$source_has_prop" == true ] || continue
+		# indirect is deprecated, but just in case:
+		local indirect=$(jq -r "$input.original.type == \"indirect\"" "$target_file")
+		if [ "$source_has_prop" == false ] || [ "$indirect" == true ]; then
+			continue
+		fi
 
 		__jq_equals "$input.original" "$source_file" "$target_file" || {
 			echo ".original mismatch on $input"
