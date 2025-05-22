@@ -78,6 +78,7 @@ return {
     build = 'bundled_build.lua', -- Bundles `mcp-hub` binary along with the neovim plugin
     opts = {
       use_bundled_binary = true, -- Use local `mcp-hub` binary
+      auto_approve = false,
       extensions = {
         avante = {
           make_slash_commands = true, -- make /slash commands from MCP server prompts

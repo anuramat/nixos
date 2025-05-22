@@ -1,5 +1,19 @@
 #!/usr/bin/env bash
 
+__jq_equals() {
+	if [ "$#" -ne 3 ]; then
+		echo '__jq_equals: usage'
+		return 1
+	fi
+	local prop=$1
+	local a=$2
+	local b=$3
+
+	local prop_a=$(jq -r "$prop | tojson" "$a")
+	local match=$(jq -r --arg prop_a "$prop_a" "$prop == (\$prop_a | fromjson)" "$b")
+	[ "$match" == true ]
+}
+
 reflake() {
 	if [ "$#" -ne 1 ]; then
 		echo "Usage: ${FUNCNAME[0]} .../flake.lock"
@@ -16,17 +30,22 @@ reflake() {
 		}
 	done
 
-	local new_value
-	local replace_expr
-	local prop
-	jq --raw-output0 ".nodes | keys[]" "$target_file" | while IFS= read -r -d '' input_name; do
-		# TODO check that .nodes.$input_name.original are equal, otherwise error out
-		# TODO check that the property exists in the target, otherwise ignore
-		prop=".nodes.\"$input_name\".locked"
-		new_value=$(jq -r "$prop | tojson" "$source_file")
-		replace_expr="$prop = (\$arg | fromjson)"
+	while IFS= read -r -d '' input_name; do
+		local input=".nodes.\"$input_name\""
+		local prop="$input.locked"
+
+		local source_has_prop=$(jq -r "$prop != null" "$source_file")
+		[ "$source_has_prop" == true ] || continue
+
+		__jq_equals "$input.original" "$source_file" "$target_file" || {
+			echo ".original mismatch on $input"
+			return 1
+		}
+
+		local new_value=$(jq -r "$prop | tojson" "$source_file")
+		local replace_expr="$prop = (\$arg | fromjson)"
 		jq --arg arg "$new_value" "$replace_expr" "$target_file" | sponge "$target_file"
-	done
+	done < <(jq --raw-output0 ".nodes | keys[]" "$target_file")
 
 	echo "synced $target_file with system flake.lock"
 }
