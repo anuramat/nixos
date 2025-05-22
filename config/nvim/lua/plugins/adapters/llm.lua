@@ -3,6 +3,11 @@ local u = require('utils.helpers')
 local ollama_model = 'qwen3:0.6b'
 local ollama_endpoint = 'http://localhost:11434'
 
+local copilot_models = {
+  gpt = 'gpt-4.1',
+  claude = 'claude-3.5-sonnet',
+}
+
 return {
   {
     'zbirenbaum/copilot.lua',
@@ -21,7 +26,7 @@ return {
     'yetone/avante.nvim',
     version = false,
     opts = {
-      -- mode = 'legacy', -- BUG required by models that don't support tools (tools are broken for ollama)
+      -- mode = 'legacy', -- BUG ollama can't do tools
       provider = 'copilot',
       behaviour = {
         auto_suggestions = false,
@@ -38,9 +43,8 @@ return {
         endpoint = ollama_endpoint,
       },
       copilot = {
-        model = 'claude-3.5-sonnet',
+        model = copilot_models.gpt,
         max_tokens = 20480,
-        -- 'gpt-4.1'
       },
       vendors = {
         pollinations = {
@@ -75,13 +79,13 @@ return {
   },
   {
     'ravitemer/mcphub.nvim',
-    build = 'bundled_build.lua', -- Bundles `mcp-hub` binary along with the neovim plugin
+    build = 'bundled_build.lua',
     opts = {
-      use_bundled_binary = true, -- Use local `mcp-hub` binary
+      use_bundled_binary = true,
       auto_approve = false,
       extensions = {
         avante = {
-          make_slash_commands = true, -- make /slash commands from MCP server prompts
+          make_slash_commands = true,
         },
       },
     },
