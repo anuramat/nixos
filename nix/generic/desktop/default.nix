@@ -95,7 +95,7 @@ in
 
     # docs {{{2
     xournalpp # pdf markup, handwritten notes
-    okular # aio doc reader with pdf form support
+    kdePackages.okular # aio doc reader with pdf form support
     zathura # keyboard-centric pdf/djvu reader
     gnumeric # spreadsheets
     libreoffice # just in case
