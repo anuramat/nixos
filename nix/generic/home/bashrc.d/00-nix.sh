@@ -21,6 +21,7 @@ reflake() {
 	local prop
 	jq --raw-output0 ".nodes | keys[]" "$target_file" | while IFS= read -r -d '' input_name; do
 		# TODO check that .nodes.$input_name.original are equal, otherwise error out
+		# TODO check that the property exists in the target, otherwise ignore
 		prop=".nodes.\"$input_name\".locked"
 		new_value=$(jq -r "$prop | tojson" "$source_file")
 		replace_expr="$prop = (\$arg | fromjson)"
