@@ -6,25 +6,26 @@ reflake() {
 		return 1
 	fi
 
-	local target="$1"
-	local source="/etc/nixos/flake.lock"
+	local target_file="$1"
+	local source_file="/etc/nixos/flake.lock"
 
-	for file in "$source" "$target"; do
+	for file in "$source_file" "$target_file"; do
 		[ -f "$file" ] || {
 			echo "$file not found"
 			return 1
 		}
 	done
 
-	local locked
-	local replace_locked_expr
-	jq --raw-output0 ".nodes | keys[]" "$target" | while IFS= read -r -d '' input; do
-		# TODO skip keys from input that are not in target
-		# TODO check that .nodes.input.original are equal, otherwise skip
-		locked=$(jq -r ".nodes.\"$input\".locked | tojson" "$source")
-		replace_locked_expr=".nodes.\"$input\".locked = (\$input | fromjson)"
-		jq --arg input "$locked" "$replace_locked_expr" "$target" | sponge "$target"
+	local new_value
+	local replace_expr
+	local prop
+	jq --raw-output0 ".nodes | keys[]" "$target_file" | while IFS= read -r -d '' input_name; do
+		# TODO check that .nodes.$input_name.original are equal, otherwise error out
+		prop=".nodes.\"$input_name\".locked"
+		new_value=$(jq -r "$prop | tojson" "$source_file")
+		replace_expr="$prop = (\$arg | fromjson)"
+		jq --arg arg "$new_value" "$replace_expr" "$target_file" | sponge "$target_file"
 	done
 
-	echo "synced $target with system flake.lock"
+	echo "synced $target_file with system flake.lock"
 }
