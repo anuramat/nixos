@@ -15,14 +15,6 @@ local copilot_models = {
 
 return {
   {
-    -- just for the model selector
-    'CopilotC-Nvim/CopilotChat.nvim',
-    dependencies = 'zbirenbaum/copilot.lua',
-    build = 'make tiktoken',
-    opts = {},
-  },
-  {
-    -- TODO write a model selector?
     'zbirenbaum/copilot.lua',
     cmd = 'Copilot',
     opts = {
