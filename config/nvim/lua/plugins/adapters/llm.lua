@@ -1,7 +1,8 @@
-local u = require('utils.helpers')
-
-local ollama_model = 'qwen3:0.6b'
+local ollama_models = {
+  smol = 'qwen3:0.6b',
+}
 local ollama_endpoint = 'http://localhost:11434'
+local mock_endpoint = 'http://localhost:11434'
 
 local copilot_models = {
   gpt = 'gpt-4.1',
@@ -38,7 +39,7 @@ return {
         enabled = false,
         host_mount = '/etc/nixos',
         provider = 'ollama',
-        llm_model = ollama_model,
+        llm_model = ollama_models.smol,
         embed_model = 'nomic-embed-text', -- TODO change?
         endpoint = ollama_endpoint,
       },
@@ -54,10 +55,16 @@ return {
           model = 'openai',
         },
         -- TODO github models <https://github.com/yetone/avante.nvim/issues/2042>
+        ollama_mock = {
+          __inherited_from = 'ollama',
+          api_key_name = '',
+          endpoint = mock_endpoint,
+          model = 'mock_model',
+        },
       },
       ollama = {
         endpoint = ollama_endpoint,
-        model = ollama_model,
+        model = ollama_models.smol,
         reasoning_effort = 'low', -- low|medium|high, only used for reasoning models
         -- system_prompt = '\\no_think', -- make reasoners shut up -- TODO not sure if this even works per model
       },
