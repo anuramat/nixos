@@ -5,12 +5,24 @@ local ollama_endpoint = 'http://localhost:11434'
 local mock_endpoint = 'http://localhost:11434'
 
 local copilot_models = {
-  gpt = 'gpt-4.1',
-  claude = 'claude-3.5-sonnet',
+  gpt41 = 'gpt-4.1', -- outperforms 4o
+  -- 4.5 is not available for some reason
+  claude35 = 'claude-3.5-sonnet',
+  claude37 = 'claude-3.7-sonnet',
+  claude37cot = 'claude-3.7-sonnet-thought',
+  claude40 = 'claude-sonnet-4', -- sota
 }
 
 return {
   {
+    -- just for the model selector
+    'CopilotC-Nvim/CopilotChat.nvim',
+    dependencies = 'zbirenbaum/copilot.lua',
+    build = 'make tiktoken',
+    opts = {},
+  },
+  {
+    -- TODO write a model selector?
     'zbirenbaum/copilot.lua',
     cmd = 'Copilot',
     opts = {
@@ -44,7 +56,7 @@ return {
         endpoint = ollama_endpoint,
       },
       copilot = {
-        model = copilot_models.claude,
+        model = copilot_models.claude40,
         max_tokens = 20480,
       },
       vendors = {
