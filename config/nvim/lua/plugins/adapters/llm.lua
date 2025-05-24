@@ -2,7 +2,7 @@ local ollama_models = {
   smol = 'qwen3:0.6b',
 }
 local ollama_endpoint = 'http://localhost:11434'
-local mock_endpoint = 'http://localhost:11434'
+local mock_endpoint = 'http://localhost:8080'
 
 local copilot_models = {
   gpt41 = 'gpt-4.1', -- outperforms 4o
