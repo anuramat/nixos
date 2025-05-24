@@ -28,7 +28,7 @@ return {
   },
   {
     event = 'VeryLazy',
-    'yetone/avante.nvim',
+    'anuramat/avante.nvim',
     version = false,
     opts = {
       -- mode = 'legacy', -- BUG ollama can't do tools
