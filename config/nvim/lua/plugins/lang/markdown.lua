@@ -30,18 +30,18 @@ return {
     enabled = os.getenv('TERM') == 'xterm-ghostty',
     dependencies = 'nvim-treesitter/nvim-treesitter',
     ft = 'markdown',
-    -- build = ':MdMath build', -- BUG doesn't help
-    opts = {
-      preamble = (function()
-        local filename = vim.fn.expand('$XDG_CONFIG_HOME/latex/mathjax_preamble.tex')
-        local file = io.open(filename, 'r')
-        local chars = ''
-        if file ~= nil then
-          chars = file:read('*a')
-          file:close()
-        end
-        return chars
-      end)(),
-    },
+    -- build = ':MdMath build', -- BUG doesn't work; because of lazy loading?
+    opts = function()
+      local filename = vim.fn.expand('$XDG_CONFIG_HOME/latex/mathjax_preamble.tex')
+      local file = io.open(filename, 'r')
+      local chars = ''
+      if file ~= nil then
+        chars = file:read('*a')
+        file:close()
+      end
+      return {
+        preamble = chars,
+      }
+    end,
   },
 }
