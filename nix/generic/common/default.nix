@@ -71,8 +71,11 @@ in
       enable = true;
     };
   };
-  # breaks rebuilds sometimes: <https://github.com/NixOS/nixpkgs/issues/180175>
+
+  # BUG breaks rebuilds sometimes: <https://github.com/NixOS/nixpkgs/issues/180175>
+  # HACK:
   systemd.services.NetworkManager-wait-online.enable = false;
+
   services.resolved = {
     enable = true;
     # dnssec = "true";
