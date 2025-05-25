@@ -27,11 +27,10 @@ return {
     },
   },
   {
-    event = 'VeryLazy',
     'anuramat/avante.nvim',
     version = false,
+    keys = { '<leader>a' },
     opts = {
-      -- mode = 'legacy', -- BUG ollama can't do tools
       provider = 'copilot',
       behaviour = {
         auto_suggestions = false,
@@ -58,7 +57,6 @@ return {
           endpoint = 'https://text.pollinations.ai/openai',
           model = 'openai',
         },
-        -- TODO github models <https://github.com/yetone/avante.nvim/issues/2042>
         ollama_mock = {
           __inherited_from = 'ollama',
           api_key_name = '',

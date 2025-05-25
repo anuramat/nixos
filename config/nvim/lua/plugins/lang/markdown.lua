@@ -27,7 +27,7 @@ return {
   {
     -- uses mathjax
     'anuramat/mdmath.nvim',
-    enabled = os.getenv('TERM') == 'xterm-ghostty',
+    cond = os.getenv('TERM') == 'xterm-ghostty',
     dependencies = 'nvim-treesitter/nvim-treesitter',
     ft = 'markdown',
     -- build = ':MdMath build', -- BUG doesn't work; because of lazy loading?
