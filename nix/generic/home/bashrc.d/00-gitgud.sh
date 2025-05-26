@@ -90,7 +90,6 @@ down() {
 }
 
 __check() {
-	local -r nopull="$1"
 	case "$1" in
 		"nopull" | "") ;;
 		*)
@@ -98,7 +97,7 @@ __check() {
 			return 1
 			;;
 	esac
-	nopull="$1"
+	local -r nopull="$1"
 
 	# repos are taken from ghq and hardcoded array
 	local -r root=$(ghq root)
@@ -144,7 +143,6 @@ up() (
 		echo 'fast push+commit for personal repos'
 	}
 	cd "$1" || return 1
-	esac
 
 	local ok
 	# check that we're in a personal repo directory

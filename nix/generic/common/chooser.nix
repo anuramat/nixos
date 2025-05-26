@@ -12,7 +12,7 @@ let
     name = "nix_wrapper.sh";
     text = ''
       #!/bin/sh
-      export PATH="${pkgs.foot}/bin:${pkgs.yazi}/bin''${PATH:+:$PATH}"
+      export PATH="${unstable.foot}/bin:${unstable.yazi}/bin''${PATH:+:$PATH}"
       ${unstable.xdg-desktop-portal-termfilechooser}/share/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh "$@"
     '';
     executable = true;
