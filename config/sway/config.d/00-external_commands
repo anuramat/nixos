@@ -29,6 +29,10 @@ set {
     $screenshot_all_outputs grim - | swappy -f -
     $screenshot_focused_output grim -o $(swaymsg -t get_outputs | jq -r '.[] | select(.focused) | .name') - | swappy -f -
 
+    $screencast_mouse swaymsg -t get_tree \
+    | jq -r '.. | (.nodes? // empty)[] | select(.pid and .visible) | .rect | "\(.x),\(.y) \(.width)x\(.height)"' \
+    | slurp | xargs -I {} wf-recorder -g "{}" -f "~/vid/screen/$(date +%Y-%m-%d_%H-%M-%S).mp4"
+    $screencat_stop killall wf-recorder
     # special keys {{{1
     $brightness_up lightctl up
     $brightness_down lightctl down

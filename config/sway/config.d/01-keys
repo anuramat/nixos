@@ -61,9 +61,9 @@ $bind {
     $mod+$mod3+$notification_key exec $dismiss_all_notifications
     # Screenshots {{{1
     $mod+$screenshot_key exec $screenshot_mouse
-    $mod+$mod2+$screenshot_key exec $screenshot_focused_window
-    $mod+$mod3+$screenshot_key exec $screenshot_focused_output
-    $mod+$mod4+$screenshot_key exec $screenshot_all_outputs
+    $mod+$mod2+$screenshot_key exec $screenshot_focused_output
+    $mod+$mod3+$screenshot_key exec $screencast_mouse
+    $mod+$mod4+$screenshot_key exec $screencast_stop
     # }}}
 }
 

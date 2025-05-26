@@ -165,7 +165,7 @@
     timg # sixel, kitty, iterm2, unicode; faster than chafa
 
     # video {{{1
-    ffmpeg
+    ffmpeg-full
     yt-dlp # download youtube videos
 
     # audio {{{1
