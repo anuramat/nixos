@@ -37,4 +37,21 @@ in
       '';
     };
   };
+
+  xdg = {
+    portal = {
+      extraPortals = [
+        unstable.xdg-desktop-portal-termfilechooser # file picker; not in stable yet
+      ];
+      config =
+        let
+          portalConfig = {
+            "org.freedesktop.impl.portal.FileChooser" = "termfilechooser";
+          };
+        in
+        {
+          sway = portalConfig;
+        };
+    };
+  };
 }
