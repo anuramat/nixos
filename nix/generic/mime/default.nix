@@ -62,7 +62,7 @@ let
       }
     ];
 
-    # Web/browser content (prioritized over image viewer for web images)
+    # Web/browser content
     browser = generateMimeTypes [
       { exact = "application/pdf"; }
       { exact = "application/rdf+xml"; }
@@ -79,7 +79,9 @@ let
           "https"
         ];
       }
-      # Web images that should open in browser
+    ];
+
+    images = generateMimeTypes [
       {
         prefix = "image";
         suffixes = [
@@ -87,15 +89,6 @@ let
           "jpeg"
           "png"
           "webp"
-        ];
-      }
-    ];
-
-    # Image files (excluding web images handled by browser)
-    images = generateMimeTypes [
-      {
-        prefix = "image";
-        suffixes = [
           "avif"
           "bmp"
           "heic"
@@ -231,27 +224,32 @@ let
 
     # Application-specific multimedia types
     multimedia = generateMimeTypes [
-      { exact = "application/ogg"; }
-      { exact = "application/x-ogg"; }
-      { exact = "application/mxf"; }
-      { exact = "application/sdp"; }
-      { exact = "application/smil"; }
-      { exact = "application/x-smil"; }
-      { exact = "application/streamingmedia"; }
-      { exact = "application/x-streamingmedia"; }
-      { exact = "application/vnd.rn-realmedia"; }
-      { exact = "application/vnd.rn-realmedia-vbr"; }
-      { exact = "application/x-extension-m4a"; }
-      { exact = "application/x-extension-mp4"; }
-      { exact = "application/vnd.ms-asf"; }
-      { exact = "application/x-matroska"; }
-      { exact = "application/x-ogm"; }
-      { exact = "application/x-ogm-audio"; }
-      { exact = "application/x-ogm-video"; }
-      { exact = "application/x-shorten"; }
-      { exact = "application/x-mpegurl"; }
-      { exact = "application/vnd.apple.mpegurl"; }
-      { exact = "application/x-cue"; }
+      {
+        prefix = "application";
+        suffixes = [
+          "ogg"
+          "x-ogg"
+          "mxf"
+          "sdp"
+          "smil"
+          "x-smil"
+          "streamingmedia"
+          "x-streamingmedia"
+          "vnd.rn-realmedia"
+          "vnd.rn-realmedia-vbr"
+          "x-extension-m4a"
+          "x-extension-mp4"
+          "vnd.ms-asf"
+          "x-matroska"
+          "x-ogm"
+          "x-ogm-audio"
+          "x-ogm-video"
+          "x-shorten"
+          "x-mpegurl"
+          "vnd.apple.mpegurl"
+          "x-cue"
+        ];
+      }
     ];
 
     # Document files (high priority for PDF to override browser)
