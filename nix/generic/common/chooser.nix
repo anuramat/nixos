@@ -8,20 +8,21 @@
 }:
 let
   user = config.user;
-  wrapper = pkgs.writeTextFile {
-    name = "nix_wrapper.sh";
-    text = ''
-      #!/bin/sh
-      export PATH="${unstable.foot}/bin:${unstable.yazi}/bin:${pkgs.gnused}/bin:${pkgs.bash}/bin''${PATH:+:$PATH}"
-      ${unstable.xdg-desktop-portal-termfilechooser}/share/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh "$@"
-    '';
-    executable = true;
-  };
 in
 {
   imports = [
     inputs.home-manager.nixosModules.home-manager
   ];
+
+  # make sure the dependencies are available
+  systemd.user.services."xdg-desktop-portal-termfilechooser" = {
+    overrideStrategy = "asDropin";
+    serviceConfig = {
+      Environment = [
+        ''PATH="${unstable.foot}/bin:${unstable.yazi}/bin:${pkgs.gnused}/bin:${pkgs.bash}/bin''${PATH:+:$PATH}"''
+      ];
+    };
+  };
 
   home-manager = {
     users.${user} = {
@@ -30,7 +31,7 @@ in
       # maybe use xdg term thing?
       home.file.".config/xdg-desktop-portal-termfilechooser/config".text = ''
         [filechooser]
-        cmd=${wrapper}
+        cmd=${unstable.xdg-desktop-portal-termfilechooser}/share/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh
         default_dir=$HOME/Downloads
         env=TERMCMD=foot
       '';
