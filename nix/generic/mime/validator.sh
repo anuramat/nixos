@@ -2,7 +2,6 @@
 
 # get csv files
 
-
 # TODO refactor
 dir=data
 [ "$(basename "$PWD")" = mime ] || exit 1
