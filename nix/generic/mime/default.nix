@@ -1,5 +1,5 @@
 let
-  splitString = with builtins; x: (split "\n" x |> filter (y: typeOf y == "string"));
+  splitString = with builtins; x: (split "\n" x |> filter (y: typeOf y == "string" && y != ""));
   # or just use lib.splitString
   # reimpl so that we don't depend on lib, so that we can eval from bash scripts
   fileLines = path: (builtins.readFile path |> splitString);
@@ -10,13 +10,14 @@ let
         with builtins;
         keySource:
         let
+          type = typeOf keySource;
           keyList =
-            if typeOf keySource == "list" then
+            if type == "list" then
               keySource
-            else if typeOf keySource == "string" then
-              [ keySource ]
+            else if type == "set" then
+              attrNames keySource
             else
-              attrNames keySource;
+              throw "illegal key source of type ${type}";
         in
         sort (l: r: l > r) keyList;
     in
@@ -37,11 +38,19 @@ let
       "prefix"
       "suffixes"
     ];
-    exact = "exact";
-    file = "filepath";
+    exact = "string";
+    file = "path";
   };
 
-  mkmatches = pat: builtins.mapAttrs (n: v: equalKeys pat v) patternSignatures;
+  # TODO recursively do patternSignatures.smth = { field = "type"; }; then
+  # verify type compatibility recursively
+
+  mkmatches =
+    with builtins;
+    pat:
+    mapAttrs (
+      n: v: if typeOf v == "list" && typeOf pat == "set" then equalKeys pat v else (v == typeOf pat)
+    ) patternSignatures;
 
   generateMimeTypes =
     patterns:
@@ -50,16 +59,15 @@ let
         pattern:
         let
           matches = mkmatches pattern;
-          x = builtins.trace matches matches;
         in
         if matches.parts then
           map (suffix: "${pattern.prefix}/${suffix}") pattern.suffixes
         else if matches.exact then
-          [ pattern.exact ]
+          [ pattern ]
         else if matches.file then
-          fileLines pattern.filepath
+          fileLines pattern
         else
-          throw "illegal pattern"
+          throw "illegal pattern: ${builtins.toJSON pattern}"
       ) patterns
     );
 
@@ -78,13 +86,14 @@ let
   mimeTypes = {
     # Text/code files
     text = generateMimeTypes [
-      { exact = "application/x-shellscript"; }
-      { exact = "text/english"; }
-      { exact = "text/plain"; }
-      { exact = "text/markdown"; }
+      "application/x-shellscript"
+      "text/english"
+      "text/plain"
+      "text/markdown"
       {
         prefix = "text";
         suffixes = [
+          "hahameme"
           "x-c"
           "x-c++"
           "x-c++hdr"
@@ -103,14 +112,22 @@ let
 
     # Web/browser content
     browser = generateMimeTypes [
-      { exact = "application/pdf"; }
-      { exact = "application/rdf+xml"; }
-      { exact = "application/rss+xml"; }
-      { exact = "application/xhtml+xml"; }
-      { exact = "application/xhtml_xml"; }
-      { exact = "application/xml"; }
-      { exact = "text/html"; }
-      { exact = "text/xml"; }
+      {
+        prefix = "application";
+        suffixes = [
+          "pdf"
+          "rdf+xml"
+          "xhtml+xml"
+          "xml"
+        ];
+      }
+      {
+        prefix = "text";
+        suffixes = [
+          "html"
+          "xml"
+        ];
+      }
       {
         prefix = "x-scheme-handler";
         suffixes = [
@@ -121,26 +138,10 @@ let
     ];
 
     images = generateMimeTypes [
+      ./data/image.csv
       {
         prefix = "image";
         suffixes = [
-          "gif"
-          "jpeg"
-          "png"
-          "webp"
-          "avif"
-          "bmp"
-          "heic"
-          "heif"
-          "jxl"
-          "tiff"
-          "x-eps"
-          "x-ico"
-          "x-portable-bitmap"
-          "x-portable-graymap"
-          "x-portable-pixmap"
-          "x-xbitmap"
-          "x-xpixmap"
           "x-nikon-ref"
         ];
       }
@@ -148,16 +149,12 @@ let
 
     # Audio files
     audio = generateMimeTypes [
-      {
-        filepath = ./data/audio.csv;
-      }
+      ./data/audio.csv
     ];
 
     # Video files
     video = generateMimeTypes [
-      {
-        filepath = ./data/video.csv;
-      }
+      ./data/video.csv
     ];
 
     # Application-specific multimedia types
@@ -165,34 +162,19 @@ let
       {
         prefix = "application";
         suffixes = [
-          "ogg"
-          "x-ogg"
           "mxf"
+          "ogg"
           "sdp"
           "smil"
-          "x-smil"
-          "streamingmedia"
-          "x-streamingmedia"
-          "vnd.rn-realmedia"
-          "vnd.rn-realmedia-vbr"
-          "x-extension-m4a"
-          "x-extension-mp4"
-          "vnd.ms-asf"
-          "x-matroska"
-          "x-ogm"
-          "x-ogm-audio"
-          "x-ogm-video"
-          "x-shorten"
-          "x-mpegurl"
           "vnd.apple.mpegurl"
-          "x-cue"
+          "vnd.ms-asf"
         ];
       }
     ];
 
     # Document files (high priority for PDF to override browser)
     documents = generateMimeTypes [
-      { exact = "application/pdf"; }
+      "application/pdf"
       {
         prefix = "image";
         suffixes = [
@@ -215,6 +197,8 @@ let
     // setMany applications.documentViewer mimeTypes.documents;
 in
 {
+  # TODO parse .desktop files: package/share/applications:
+  # MimeType=application/postscript;application/eps;application/x-eps;image/eps;image/x-eps;
   xdg.mime = {
     enable = true;
     defaultApplications = {
