@@ -1,15 +1,14 @@
 { lib, ... }:
-with lib;
-with builtins;
-rec {
+let
+  common = import ./common.nix {
+    inherit lib;
+  };
+in
+common
+// {
   web = import ./web.nix;
-
-  readLines = v: v |> readFile |> splitString "\n" |> filter (x: x != "");
-
-  getSchema = attrsets.mapAttrsRecursive (path: v: typeOf (v));
-  getMatches =
-    patterns: x:
-    mapAttrs (
-      name: schema: if typeOf x == "set" then schema == getSchema x else schema == typeOf x
-    ) patterns;
+  mime = import ./mime.nix {
+    inherit lib;
+    inherit common;
+  };
 }

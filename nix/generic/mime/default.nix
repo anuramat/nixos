@@ -1,72 +1,8 @@
 { lib, helpers, ... }:
 with lib;
 with builtins;
+with helpers.mime;
 let
-  mimeFromDesktop =
-    package:
-    let
-      desktopFiles =
-        package:
-        let
-          dir = (package.outPath + "/share/applications");
-        in
-        dir
-        |> readDir
-        |> filterAttrs (n: v: strings.hasSuffix ".desktop" n)
-        |> attrNames
-        |> map (v: dir + "/" + v);
-      lineToMimes =
-        line: line |> strings.removePrefix "MimeType=" |> splitString ";" |> filter (v: v != "");
-    in
-    package
-    |> desktopFiles
-    |> map helpers.readLines
-    |> concatLists
-    |> filter (v: strings.hasPrefix "MimeType" v)
-    |> map lineToMimes
-    |> concatLists
-    |> unique;
-
-  # one app, many types
-  setMany =
-    app: types:
-    types
-    |> map (v: {
-      name = v;
-      value = app;
-    })
-    |> listToAttrs;
-
-  # schema for mime types thingie
-  patterns = {
-    parts = {
-      prefix = "string";
-      suffixes = "list";
-    };
-    exact = "string";
-    file = "path";
-  };
-
-  # thingie to actual mime type list
-  generateMimeTypes =
-    thingies:
-    thingies
-    |> map (
-      v:
-      let
-        matches = helpers.getMatches patterns v;
-      in
-      if matches.parts then
-        map (suffix: "${v.prefix}/${suffix}") v.suffixes
-      else if matches.exact then
-        [ v ]
-      else if matches.file then
-        v |> helpers.readLines
-      else
-        throw "illegal pattern: ${toJSON v}"
-    )
-    |> concatLists;
-
   # TODO everything down there and also flake.nix imports?
 
   # application desktop files
