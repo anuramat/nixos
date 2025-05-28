@@ -1,11 +1,12 @@
-{ lib, helpers, ... }:
-with lib;
-with builtins;
-with helpers.mime;
+{
+  helpers,
+  pkgs,
+  inputs,
+  ...
+}:
 let
-  # TODO everything down there and also flake.nix imports?
+  inherit (helpers.mime) setMany generateMimeTypes mimeFromDesktop;
 
-  # application desktop files
   applications = {
     browser = "librewolf.desktop";
     fileManager = "yazi.desktop";
@@ -18,61 +19,18 @@ let
 
   # MIME type definitions organized by category
   mimeTypes = {
-    # Text/code files
     text = generateMimeTypes [
-      "application/x-shellscript"
-      "text/english"
-      "text/plain"
-      "text/markdown"
-      {
-        prefix = "text";
-        suffixes = [
-          "hahameme"
-          "x-c"
-          "x-c++"
-          "x-c++hdr"
-          "x-c++src"
-          "x-chdr"
-          "x-csrc"
-          "x-java"
-          "x-makefile"
-          "x-moc"
-          "x-pascal"
-          "x-tcl"
-          "x-tex"
-        ];
-      }
+      # TODO somehow abstract this away
+      (mimeFromDesktop inputs.neovim-nightly-overlay.packages.${pkgs.system}.default)
     ];
 
-    # Web/browser content
     browser = generateMimeTypes [
-      {
-        prefix = "application";
-        suffixes = [
-          "pdf"
-          "rdf+xml"
-          "xhtml+xml"
-          "xml"
-        ];
-      }
-      {
-        prefix = "text";
-        suffixes = [
-          "html"
-          "xml"
-        ];
-      }
-      {
-        prefix = "x-scheme-handler";
-        suffixes = [
-          "http"
-          "https"
-        ];
-      }
+      (mimeFromDesktop pkgs.librewolf)
     ];
 
     images = generateMimeTypes [
       ./data/image.csv
+      (mimeFromDesktop pkgs.swayimg)
       {
         prefix = "image";
         suffixes = [
@@ -81,66 +39,34 @@ let
       }
     ];
 
-    # Audio files
-    audio = generateMimeTypes [
-      ./data/audio.csv
-    ];
-
-    # Video files
     video = generateMimeTypes [
       ./data/video.csv
+      (mimeFromDesktop pkgs.mpv)
     ];
 
-    # Application-specific multimedia types
-    multimedia = generateMimeTypes [
-      {
-        prefix = "application";
-        suffixes = [
-          "mxf"
-          "ogg"
-          "sdp"
-          "smil"
-          "vnd.apple.mpegurl"
-          "vnd.ms-asf"
-        ];
-      }
-    ];
-
-    # Document files (high priority for PDF to override browser)
     documents = generateMimeTypes [
-      "application/pdf"
-      {
-        prefix = "image";
-        suffixes = [
-          "vnd.djvu"
-          "vnd.djvu+multipage"
-        ];
-      }
+      (mimeFromDesktop pkgs.zathura)
     ];
   };
 
-  # Build associations with proper precedence
-  # Later associations override earlier ones
-  associations =
-    # Base associations
+  special = {
+    # TODO test if these were required after all
+    # "x-scheme-handler/tg" = "org.telegram.desktop.desktop";
+    # "x-scheme-handler/vscode" = "code-url-handler.desktop";
+    "x-scheme-handler/magnet" = applications.torrentClient;
+    "inode/directory" = applications.fileManager;
+  };
+
+  bulk =
     setMany applications.textEditor mimeTypes.text
     // setMany applications.imageViewer mimeTypes.images
-    // setMany applications.videoPlayer (mimeTypes.video ++ mimeTypes.audio ++ mimeTypes.multimedia)
+    // setMany applications.videoPlayer mimeTypes.video
     // setMany applications.browser mimeTypes.browser
-    # Document viewer overrides browser for PDF
     // setMany applications.documentViewer mimeTypes.documents;
 in
 {
-  # TODO parse .desktop files: package/share/applications:
-  # MimeType=application/postscript;application/eps;application/x-eps;image/eps;image/x-eps;
   xdg.mime = {
     enable = true;
-    defaultApplications = {
-      # Special scheme handlers
-      "x-scheme-handler/tg" = "org.telegram.desktop.desktop";
-      "x-scheme-handler/vscode" = "code-url-handler.desktop";
-      "x-scheme-handler/magnet" = applications.torrentClient;
-      "inode/directory" = applications.fileManager;
-    } // associations;
+    defaultApplications = special // bulk;
   };
 }
