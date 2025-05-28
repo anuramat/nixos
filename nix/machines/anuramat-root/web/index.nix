@@ -6,7 +6,7 @@
   ...
 }:
 lib.mkMerge (
-  helpers.serveBinary rec {
+  helpers.web.serveBinary rec {
     noRobots = true;
     domain = "ctrl.sn";
     root = domain;

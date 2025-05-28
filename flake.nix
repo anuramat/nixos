@@ -34,7 +34,7 @@
           specialArgs = {
             cluster = mkCluster name;
             inherit inputs;
-            helpers = import ./nix/helpers.nix;
+            helpers = import ./nix/helpers { inherit (inputs.nixpkgs) lib; };
             dummy = path: path |> epsilon |> map (name: path + /${name});
             unstable = import inputs.nixpkgs-unstable {
               inherit (pkgscfg) config;

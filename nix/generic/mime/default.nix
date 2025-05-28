@@ -1,77 +1,75 @@
+{ lib, helpers, ... }:
+with lib;
+with builtins;
 let
-  splitString = with builtins; x: (split "\n" x |> filter (y: typeOf y == "string" && y != ""));
-  # or just use lib.splitString
-  # reimpl so that we don't depend on lib, so that we can eval from bash scripts
-  fileLines = path: (builtins.readFile path |> splitString);
-
-  equalKeys =
+  mimeFromDesktop =
+    package:
     let
-      getSortedKeys =
-        with builtins;
-        keySource:
+      desktopFiles =
+        package:
         let
-          type = typeOf keySource;
-          keyList =
-            if type == "list" then
-              keySource
-            else if type == "set" then
-              attrNames keySource
-            else
-              throw "illegal key source of type ${type}";
+          dir = (package.outPath + "/share/applications");
         in
-        sort (l: r: l > r) keyList;
+        dir
+        |> readDir
+        |> filterAttrs (n: v: strings.hasSuffix ".desktop" n)
+        |> attrNames
+        |> map (v: dir + "/" + v);
+      lineToMimes =
+        line: line |> strings.removePrefix "MimeType=" |> splitString ";" |> filter (v: v != "");
     in
-    x: y: (getSortedKeys x) == (getSortedKeys y);
+    package
+    |> desktopFiles
+    |> map helpers.readLines
+    |> concatLists
+    |> filter (v: strings.hasPrefix "MimeType" v)
+    |> map lineToMimes
+    |> concatLists
+    |> unique;
 
-  # Helper function to set many mime types to the same application
+  # one app, many types
   setMany =
     app: types:
-    (builtins.listToAttrs (
-      map (x: {
-        name = x;
-        value = app;
-      }) types
-    ));
+    types
+    |> map (v: {
+      name = v;
+      value = app;
+    })
+    |> listToAttrs;
 
-  patternSignatures = {
-    parts = [
-      "prefix"
-      "suffixes"
-    ];
+  # schema for mime types thingie
+  patterns = {
+    parts = {
+      prefix = "string";
+      suffixes = "list";
+    };
     exact = "string";
     file = "path";
   };
 
-  # TODO recursively do patternSignatures.smth = { field = "type"; }; then
-  # verify type compatibility recursively
-
-  mkmatches =
-    with builtins;
-    pat:
-    mapAttrs (
-      n: v: if typeOf v == "list" && typeOf pat == "set" then equalKeys pat v else (v == typeOf pat)
-    ) patternSignatures;
-
+  # thingie to actual mime type list
   generateMimeTypes =
-    patterns:
-    builtins.concatLists (
-      map (
-        pattern:
-        let
-          matches = mkmatches pattern;
-        in
-        if matches.parts then
-          map (suffix: "${pattern.prefix}/${suffix}") pattern.suffixes
-        else if matches.exact then
-          [ pattern ]
-        else if matches.file then
-          fileLines pattern
-        else
-          throw "illegal pattern: ${builtins.toJSON pattern}"
-      ) patterns
-    );
+    thingies:
+    thingies
+    |> map (
+      v:
+      let
+        matches = helpers.getMatches patterns v;
+      in
+      if matches.parts then
+        map (suffix: "${v.prefix}/${suffix}") v.suffixes
+      else if matches.exact then
+        [ v ]
+      else if matches.file then
+        v |> helpers.readLines
+      else
+        throw "illegal pattern: ${toJSON v}"
+    )
+    |> concatLists;
 
-  # Application desktop files
+  # TODO everything down there and also flake.nix imports?
+
+  # application desktop files
   applications = {
     browser = "librewolf.desktop";
     fileManager = "yazi.desktop";

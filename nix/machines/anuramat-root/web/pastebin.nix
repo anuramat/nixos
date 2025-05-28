@@ -8,7 +8,7 @@ let
   };
 in
 lib.mkMerge (
-  (helpers.serve w)
+  (helpers.web.serve w)
   ++ [
     ({
       services.wastebin = {
