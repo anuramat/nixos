@@ -40,6 +40,7 @@ return {
         file:close()
       end
       return {
+        filetypes = {},
         preamble = chars,
       }
     end,
