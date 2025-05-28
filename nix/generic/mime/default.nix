@@ -1,4 +1,27 @@
 let
+  splitString = with builtins; x: (split "\n" x |> filter (y: typeOf y == "string"));
+  # or just use lib.splitString
+  # reimpl so that we don't depend on lib, so that we can eval from bash scripts
+  fileLines = path: (builtins.readFile path |> splitString);
+
+  equalKeys =
+    let
+      getSortedKeys =
+        with builtins;
+        keySource:
+        let
+          keyList =
+            if typeOf keySource == "list" then
+              keySource
+            else if typeOf keySource == "string" then
+              [ keySource ]
+            else
+              attrNames keySource;
+        in
+        sort (l: r: l > r) keyList;
+    in
+    x: y: (getSortedKeys x) == (getSortedKeys y);
+
   # Helper function to set many mime types to the same application
   setMany =
     app: types:
@@ -9,18 +32,34 @@ let
       }) types
     ));
 
-  # Helper function to generate mime types by pattern
+  patternSignatures = {
+    parts = [
+      "prefix"
+      "suffixes"
+    ];
+    exact = "exact";
+    file = "filepath";
+  };
+
+  mkmatches = pat: builtins.mapAttrs (n: v: equalKeys pat v) patternSignatures;
+
   generateMimeTypes =
     patterns:
     builtins.concatLists (
       map (
         pattern:
-        if builtins.hasAttr "prefix" pattern && builtins.hasAttr "suffixes" pattern then
+        let
+          matches = mkmatches pattern;
+          x = builtins.trace matches matches;
+        in
+        if matches.parts then
           map (suffix: "${pattern.prefix}/${suffix}") pattern.suffixes
-        else if builtins.hasAttr "exact" pattern then
+        else if matches.exact then
           [ pattern.exact ]
+        else if matches.file then
+          fileLines pattern.filepath
         else
-          [ ]
+          throw "illegal pattern"
       ) patterns
     );
 
@@ -110,115 +149,14 @@ let
     # Audio files
     audio = generateMimeTypes [
       {
-        prefix = "audio";
-        suffixes = [
-          "aac"
-          "x-aac"
-          "vnd.dolby.heaac.1"
-          "vnd.dolby.heaac.2"
-          "aiff"
-          "x-aiff"
-          "m4a"
-          "x-m4a"
-          "mp1"
-          "x-mp1"
-          "mp2"
-          "x-mp2"
-          "mp3"
-          "x-mp3"
-          "mpeg"
-          "mpeg2"
-          "mpeg3"
-          "mpegurl"
-          "x-mpegurl"
-          "mpg"
-          "x-mpg"
-          "rn-mpeg"
-          "musepack"
-          "x-musepack"
-          "ogg"
-          "scpls"
-          "x-scpls"
-          "vnd.rn-realaudio"
-          "wav"
-          "x-pn-wav"
-          "x-pn-windows-pcm"
-          "x-realaudio"
-          "x-pn-realaudio"
-          "x-ms-wma"
-          "x-pls"
-          "x-wav"
-          "vorbis"
-          "x-vorbis"
-          "x-vorbis+ogg"
-          "x-shorten"
-          "x-ape"
-          "x-wavpack"
-          "x-tta"
-          "AMR"
-          "ac3"
-          "eac3"
-          "amr-wb"
-          "flac"
-          "mp4"
-          "x-pn-au"
-          "3gpp"
-          "3gpp2"
-          "dv"
-          "opus"
-          "vnd.dts"
-          "vnd.dts.hd"
-          "x-adpcm"
-          "m3u"
-          "x-matroska"
-        ];
+        filepath = ./data/audio.csv;
       }
     ];
 
     # Video files
     video = generateMimeTypes [
       {
-        prefix = "video";
-        suffixes = [
-          "mpeg"
-          "x-mpeg2"
-          "x-mpeg3"
-          "mp4v-es"
-          "x-m4v"
-          "mp4"
-          "divx"
-          "vnd.divx"
-          "msvideo"
-          "x-msvideo"
-          "ogg"
-          "quicktime"
-          "vnd.rn-realvideo"
-          "x-ms-afs"
-          "x-ms-asf"
-          "x-ms-wmv"
-          "x-ms-wmx"
-          "x-ms-wvxvideo"
-          "x-avi"
-          "avi"
-          "x-flic"
-          "fli"
-          "x-flc"
-          "flv"
-          "x-flv"
-          "x-theora"
-          "x-theora+ogg"
-          "x-matroska"
-          "mkv"
-          "webm"
-          "x-ogm"
-          "x-ogm+ogg"
-          "mp2t"
-          "3gp"
-          "3gpp"
-          "3gpp2"
-          "dv"
-          "vnd.mpegurl"
-        ];
+        filepath = ./data/video.csv;
       }
     ];
 
@@ -275,7 +213,6 @@ let
     // setMany applications.browser mimeTypes.browser
     # Document viewer overrides browser for PDF
     // setMany applications.documentViewer mimeTypes.documents;
-
 in
 {
   xdg.mime = {
