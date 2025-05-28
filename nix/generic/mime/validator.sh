@@ -14,7 +14,8 @@ while IFS= read -r link; do
 done < <(htmlq -f "$dir/media-types.xhtml" -b https://www.iana.org/assignments/media-types -a href 'li > a' | sed s@#@/@ | sed 's/$/.csv/')
 
 all=$(cat "$dir"/*.csv | sort | uniq)
-mentioned=$(nix eval --raw --expr "let x = $(nix eval -f default.nix xdg.mime.defaultApplications); in x |> builtins.attrNames |> builtins.concatStringsSep \"\\n\"" | sort | uniq)
+defaultApplications=$(nix eval -f default.nix xdg.mime.defaultApplications --show-trace) || exit 1
+mentioned=$(nix eval --raw --expr "let x = $defaultApplications; in x |> builtins.attrNames |> builtins.concatStringsSep \"\\n\"" | sort | uniq) || exit 1
 
 comm -23 <(echo "$mentioned") <(echo "$all")
 
