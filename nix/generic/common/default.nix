@@ -6,10 +6,6 @@
   config,
   ...
 }:
-let
-  # nvidia = config.hardware.nvidia.enabled; # only in unstable
-  nvidia = lib.elem "nvidia" config.services.xserver.videoDrivers;
-in
 {
   imports = dummy ./.;
   hardware.enableAllFirmware = true; # as in "regardless of license"
@@ -36,7 +32,7 @@ in
     };
   };
   hardware.nvidia-container-toolkit = {
-    enable = nvidia;
+    enable = config.hardware.nvidia.enabled;
     mount-nvidia-executables = true;
   };
 
