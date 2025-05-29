@@ -155,7 +155,7 @@
     iotop # detailed io info, requires sudo
     nvitop # nvidia gpu
     podman-tui # podman container status
-    unstable.nvtopPackages.full # top for GPUs (waiting for intel support to reach from upstream)
+    nvtopPackages.full # top for GPUs # maybe switch to .nvidia and .intel
     zenith-nvidia # top WITH nvidia GPUs
 
     # img {{{2
