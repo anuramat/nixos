@@ -1,2 +1,2 @@
-*lock.json diff=nodiff
-*.lock diff=nodiff
+# *lock.json diff=nodiff
+# *.lock diff=nodiff
