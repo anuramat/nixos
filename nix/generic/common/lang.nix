@@ -1,5 +1,6 @@
 {
   pkgs,
+  old,
   unstable,
   ...
 }:
@@ -21,7 +22,7 @@
     python3
     ruby
     rustc
-    sageWithDoc # computer algebra system
+    old.sageWithDoc # computer algebra system
     stack
     texliveFull
     yarn
@@ -87,7 +88,7 @@
     luajitPackages.luarocks
     markdown-link-check
     pup # html
-    python311Packages.nbdime
+    old.python311Packages.nbdime # ipynb diff, merge
     python3Packages.jupytext
     tidy-viewer # csv viewer
     universal-ctags # maintained ctags

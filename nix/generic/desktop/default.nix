@@ -101,7 +101,7 @@ in
     libreoffice # just in case
 
     # img {{{2
-    krita # raster graphics, digital art
+    # krita # raster graphics, digital art # XXX not in cache, takes ages to build
     inkscape-with-extensions # vector graphics
     # mypaint # not-ms-paint # XXX broken
     swayimg # image viewer

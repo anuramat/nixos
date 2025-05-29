@@ -1,6 +1,7 @@
 # vim: fdm=marker fdl=0
 {
   pkgs,
+  old,
   unstable,
   inputs,
   ...
@@ -25,7 +26,7 @@
     lsof
     moreutils # random unixy goodies
     nix-bash-completions
-    nvi # vi clone
+    old.nvi # vi clone
     tmux # just in case
     tree
     unrar-wrapper
