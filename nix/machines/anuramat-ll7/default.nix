@@ -15,11 +15,9 @@
     keyd.keyboards.main.ids = [
       "048d:c997:193096a7"
     ];
-    # ssd
-    fstrim.enable = true;
     # proprietary drivers TODO huh
     xserver = {
-      dpi = 236;
+      # dpi = 236; # TODO test if we need this
     };
     tlp.settings = {
       # turn on battery charge threshold
