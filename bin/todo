@@ -8,6 +8,7 @@ import os
 import re
 import sys
 
+# TODO move to a env var
 TASK_FILE = os.path.expanduser("~/notes/todo.txt")
 
 TERM_HEIGHT_OFFSET = 5  # terminal prompt etc
@@ -15,38 +16,49 @@ MIN_CELL_HEIGHT = 10
 MIN_CELL_WIDTH = 30
 
 
-def add(line):
+def add(line: str, strip=True):
+    """
+    add a new task
+    """
+    # TODO autoappend date, hide on view
+    if strip:
+        line = line.strip()
+        if not line:
+            return
     with open(TASK_FILE, "a") as file:
         file.write(line + "\n")
 
 
-def rm(task_number):
-    lines = _read()
+def rm(task_number: int):
+    """
+    delete a task
+    """
+    lines = read()
 
     if task_number < 1 or task_number > len(lines):
         print("invalid n")
         return
 
     del lines[task_number - 1]
-    _write(lines)
+    write(lines)
 
 
-def norm():
-    raw_lines = _read()
-    exp = r"\s*$"
-    pattern = re.compile(exp)
-
-    # remove empty lines and whitespace suffixes
-    clean_lines = []
-    for line in raw_lines:
-        new_line = pattern.sub("", line)
-        if new_line:
-            clean_lines.append(new_line + "\n")
-
-    _write(_deduplicate_lines(clean_lines))
+def norm(lines: list[str]) -> list[str]:
+    """
+    strip, remove empty, deduplicate
+    """
+    result = []
+    for line in lines:
+        line = line.strip()
+        if line:
+            result.append(line + "\n")
+    return dedupe(result)
 
 
-def _deduplicate_lines(lines: list[str]) -> list[str]:
+def dedupe(lines: list[str]) -> list[str]:
+    """
+    deduplicate lines, keeping the first appearance, and preserving the ordering
+    """
     seen = set()
     result = []
     for line in lines:
@@ -55,23 +67,26 @@ def _deduplicate_lines(lines: list[str]) -> list[str]:
     return result
 
 
-def _read(filename=TASK_FILE):
+def read(filename=TASK_FILE) -> list[str]:
     with open(filename, "r") as file:
         return file.readlines()
 
 
-def _write(lines, filename=TASK_FILE):
+def write(lines: list[str], filename=TASK_FILE):
     with open(filename, "w") as file:
         file.writelines(lines)
 
 
 def ls():
-    lines = _read()
-    result = _index(lines)
+    lines = read()
+    result = number(lines)
     print("\n".join(result))
 
 
-def _index(lines: list[str]) -> list[str]:
+def number(lines: list[str]) -> list[str]:
+    """
+    prepends aligned task numbers (for printing)
+    """
     w = len(str(len(lines)))
     result = []
     for i, line in enumerate(lines, 1):
@@ -79,7 +94,7 @@ def _index(lines: list[str]) -> list[str]:
     return result
 
 
-def _get_tag_dict(tasks: list[str]):
+def _get_tag_dict(tasks: list[str]) -> dict[str, list[str]]:
     exp = r"(?<!\S)@\S+"
     pattern = re.compile(exp)
     tasks_by_tags = defaultdict(list)
@@ -93,7 +108,7 @@ def _get_tag_dict(tasks: list[str]):
     return tasks_by_tags
 
 
-def _shorten(line: str, symbol: str, max_width: int):
+def _shorten(line: str, symbol: str, max_width: int) -> str:
     # very long line -> very long li~
     if len(symbol) > max_width:
         raise ValueError
@@ -102,16 +117,16 @@ def _shorten(line: str, symbol: str, max_width: int):
     return line
 
 
-def ls_tag(item):
+def ls_tag(item: str):
     if item == "@":
         item = "unfiled"
-    file_lines = _index(_read())
+    file_lines = number(read())
     lines_by_tags = _get_tag_dict(file_lines)
     print("\n".join(lines_by_tags[item]))
 
 
 def tag_overview():
-    file_lines = _index(_read())
+    file_lines = number(read())
     lines_by_tags = _get_tag_dict(file_lines)
 
     term_x, term_y = os.get_terminal_size()
@@ -156,9 +171,9 @@ def tag_overview():
 
 def merge(left_name: str, root_name: str, right_name: str):
     # to be used as git merge driver
-    left_lines = _read(left_name)
-    right_lines = _read(right_name)
-    root = set(_read(root_name))
+    left_lines = read(left_name)
+    right_lines = read(right_name)
+    root = set(read(root_name))
     left = set(left_lines)
     right = set(right_lines)
 
@@ -171,13 +186,14 @@ def merge(left_name: str, root_name: str, right_name: str):
     new = diff - root
     keep = unchanged | new
 
+    # TODO sort by date
     result = []
     for line in left_lines + right_lines:
         if line in keep:
             result.append(line)
             keep.remove(line)
 
-    _write(result, left_name)
+    write(result, left_name)
 
 
 def main():
@@ -215,7 +231,7 @@ def main():
     elif args.command == "ls":
         ls()
     elif args.command == "norm":
-        norm()
+        write(norm(read()))
     elif args.command == "merge":
         merge(args.left, args.root, args.right)
     elif args.command == "unfiled":
