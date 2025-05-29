@@ -11,17 +11,17 @@ bindswitch --locked lid:on output $internal disable
 bindswitch --locked lid:off output $internal enable
 
 workspace {
-    1 output $internal
-    2 output $internal
-    3 output $internal
-    4 output $internal
-    5 output $internal
+    1:1 output $internal
+    2:2 output $internal
+    3:3 output $internal
+    4:4 output $internal
+    5:5 output $internal
 
-    6 output $external
-    7 output $external
-    8 output $external
-    9 output $external
-    0 output $external
+    6:6 output $external
+    7:7 output $external
+    8:8 output $external
+    9:9 output $external
+    10:0 output $external
 }
 
 # vim: ft=swayconfig

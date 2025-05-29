@@ -1,5 +1,6 @@
 local ollama_models = {
-  smol = 'qwen3:0.6b',
+  smol = 'qwen3:0.6b', -- fits even on t480
+  big = 'qwen3:8b', -- kinda fits on ll7 on gpu, TODO try a full context window
 }
 local ollama_endpoint = 'http://localhost:11434'
 local mock_endpoint = 'http://localhost:8080'

@@ -95,27 +95,27 @@ $bind {
     $mod+$mod4+$right resize grow width $resize_value
     # Switching between workspaces {{{1
     $mod+Tab workspace back_and_forth
-    $mod+1 workspace 1
-    $mod+2 workspace 2
-    $mod+3 workspace 3
-    $mod+4 workspace 4
-    $mod+5 workspace 5
-    $mod+6 workspace 6
-    $mod+7 workspace 7
-    $mod+8 workspace 8
-    $mod+9 workspace 9
+    $mod+1 workspace 1:1
+    $mod+2 workspace 2:2
+    $mod+3 workspace 3:3
+    $mod+4 workspace 4:4
+    $mod+5 workspace 5:5
+    $mod+6 workspace 6:6
+    $mod+7 workspace 7:7
+    $mod+8 workspace 8:8
+    $mod+9 workspace 9:9
     $mod+0 workspace 10:0
     # Moving windows between workspaces {{{1
-    $mod+$mod2+1 move container to workspace 1
-    $mod+$mod2+2 move container to workspace 2
-    $mod+$mod2+3 move container to workspace 3
-    $mod+$mod2+4 move container to workspace 4
-    $mod+$mod2+5 move container to workspace 5
-    $mod+$mod2+6 move container to workspace 6
-    $mod+$mod2+7 move container to workspace 7
-    $mod+$mod2+8 move container to workspace 8
-    $mod+$mod2+9 move container to workspace 9
-    $mod+$mod2+0 move container to workspace 0
+    $mod+$mod2+1 move container to workspace 1:1
+    $mod+$mod2+2 move container to workspace 2:2
+    $mod+$mod2+3 move container to workspace 3:3
+    $mod+$mod2+4 move container to workspace 4:4
+    $mod+$mod2+5 move container to workspace 5:5
+    $mod+$mod2+6 move container to workspace 6:6
+    $mod+$mod2+7 move container to workspace 7:7
+    $mod+$mod2+8 move container to workspace 8:8
+    $mod+$mod2+9 move container to workspace 9:9
+    $mod+$mod2+0 move container to workspace 10:0
     # Special keys {{{1
     --locked XF86MonBrightnessDown exec $brightness_down
     --locked XF86MonBrightnessUp   exec $brightness_up
