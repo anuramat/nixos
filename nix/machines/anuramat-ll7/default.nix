@@ -7,7 +7,10 @@
 {
   system.stateVersion = "24.05";
   home-manager.users.${config.user}.home.stateVersion = "24.11";
+
+  # tis a big boy
   nix.distributedBuilds = false;
+
   services = {
     keyd.keyboards.main.ids = [
       "048d:c997:193096a7"
@@ -28,14 +31,20 @@
     };
   };
 
-  nixpkgs.config.cudaSupport = true;
-
   imports = [
     inputs.nixos-hardware.nixosModules.common-cpu-intel
     inputs.nixos-hardware.nixosModules.common-gpu-intel
     ./hardware-configuration.nix
   ];
 
+  swapDevices = [
+    {
+      device = "/var/lib/swapfile";
+      size = 64 * 1024;
+    }
+  ];
+
+  # vendor specifics {{{1
   environment.systemPackages = with pkgs; [
     lenovo-legion
   ];
@@ -46,21 +55,21 @@
     ];
   };
 
-  swapDevices = [
-    {
-      device = "/var/lib/swapfile";
-      size = 128 * 1024;
-    }
-  ];
-
-  # nvidia TODO tidy
-  # {{{1
-  services.xserver.videoDrivers = [ "nvidia" ];
+  # GPU {{{1
+  nixpkgs.config.cudaSupport = true;
+  hardware = {
+    graphics = {
+      extraPackages = with pkgs; [
+        vaapiVdpau # no fucking idea what this does TODO
+      ];
+      enable32Bit = true; # compat
+    };
+  };
+  services.xserver.videoDrivers = [ "nvidia" ]; # use proprietary drivers
   hardware = {
     nvidia = {
       open = true; # recommended on turing+
-      modesetting.enable = true; # wiki says this is required
-      # these two are experimental
+      # dynamicBoost.enable = true; # TODO think about it
       powerManagement = {
         enable = true; # saves entire vram to /tmp/ instead of the bare minimum
         finegrained = true; # turns off gpu when not in use
@@ -75,14 +84,6 @@
         };
       };
       nvidiaSettings = true;
-    };
-    graphics = {
-      extraPackages = with pkgs; [
-        vaapiVdpau # no fucking idea what this does
-      ];
-      # no idea what these do anymore
-      enable = true;
-      enable32Bit = true;
     };
   };
   # }}}
