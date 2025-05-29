@@ -80,7 +80,6 @@ return {
     build = 'make',
     dependencies = {
       { 'Kaiser-Yang/blink-cmp-avante', version = false },
-      'ravitemer/mcphub.nvim',
       'nvim-treesitter/nvim-treesitter',
       'stevearc/dressing.nvim',
       'MunifTanjim/nui.nvim',
@@ -90,6 +89,7 @@ return {
   {
     'ravitemer/mcphub.nvim',
     build = 'bundled_build.lua',
+    cmd = 'MCPHub',
     opts = {
       use_bundled_binary = true,
       auto_approve = false,
