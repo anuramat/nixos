@@ -10,12 +10,6 @@ set {
 bindswitch --locked lid:on output $internal disable
 bindswitch --locked lid:off output $internal enable
 
-# WARN priority is broken
-# eg:
-# 1-5 internal external
-# 6-0 external internal
-# would work right EXCEPT when first connecting the monitor:
-# the external one will take the first empty workspace.
 workspace {
     1 output $internal
     2 output $internal

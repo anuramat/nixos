@@ -104,7 +104,7 @@ $bind {
     $mod+7 workspace 7
     $mod+8 workspace 8
     $mod+9 workspace 9
-    $mod+0 workspace 0
+    $mod+0 workspace 10:0
     # Moving windows between workspaces {{{1
     $mod+$mod2+1 move container to workspace 1
     $mod+$mod2+2 move container to workspace 2
