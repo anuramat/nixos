@@ -1,35 +1,72 @@
+{
+  helpers,
+  pkgs,
+  inputs,
+  ...
+}:
 let
-  setMany =
-    app: types:
-    (builtins.listToAttrs (
-      map (x: {
-        name = x;
-        value = app;
-      }) types
-    ));
+  inherit (helpers.mime) setMany generateMimeTypes mimeFromDesktop;
 
-  browser = "librewolf.desktop";
-  fileManager = "yazi.desktop";
-  documentViewer = "org.pwmt.zathura.desktop";
-  textEditor = "nvim.desktop";
-  imageViewer = "swayimg.desktop";
-  torrentClient = "transmission-gtk.desktop";
-  videoPlayer = "mpv.desktop";
+  applications = {
+    browser = "librewolf.desktop";
+    fileManager = "yazi.desktop";
+    documentViewer = "org.pwmt.zathura.desktop";
+    textEditor = "nvim.desktop";
+    imageViewer = "swayimg.desktop";
+    torrentClient = "transmission-gtk.desktop";
+    videoPlayer = "mpv.desktop";
+  };
+
+  # MIME type definitions organized by category
+  mimeTypes = {
+    text = generateMimeTypes [
+      # TODO somehow abstract this away
+      (mimeFromDesktop inputs.neovim-nightly-overlay.packages.${pkgs.system}.default)
+    ];
+
+    browser = generateMimeTypes [
+      (mimeFromDesktop pkgs.librewolf)
+    ];
+
+    images = generateMimeTypes [
+      ./data/image.csv
+      (mimeFromDesktop pkgs.swayimg)
+      {
+        prefix = "image";
+        suffixes = [
+          "x-nikon-ref"
+        ];
+      }
+    ];
+
+    video = generateMimeTypes [
+      ./data/video.csv
+      (mimeFromDesktop pkgs.mpv)
+    ];
+
+    documents = generateMimeTypes [
+      (mimeFromDesktop pkgs.zathura)
+    ];
+  };
+
+  special = {
+    # TODO test if these were required after all
+    # "x-scheme-handler/tg" = "org.telegram.desktop.desktop";
+    # "x-scheme-handler/vscode" = "code-url-handler.desktop";
+    "x-scheme-handler/magnet" = applications.torrentClient;
+    "inode/directory" = applications.fileManager;
+  };
+
+  bulk =
+    setMany applications.textEditor mimeTypes.text
+    // setMany applications.imageViewer mimeTypes.images
+    // setMany applications.videoPlayer mimeTypes.video
+    // setMany applications.browser mimeTypes.browser
+    // setMany applications.documentViewer mimeTypes.documents;
 in
 {
   xdg.mime = {
     enable = true;
-    defaultApplications =
-      {
-        "x-scheme-handler/tg" = "org.telegram.desktop.desktop";
-        "x-scheme-handler/vscode" = "code-url-handler.desktop";
-        "x-scheme-handler/magnet" = torrentClient;
-        "inode/directory" = fileManager;
-      }
-      // setMany textEditor (import ./text.nix)
-      // setMany browser (import ./browser.nix)
-      // setMany imageViewer (import ./images.nix)
-      // setMany videoPlayer (import ./multimedia.nix)
-      // setMany documentViewer (import ./documents.nix);
+    defaultApplications = special // bulk;
   };
 }

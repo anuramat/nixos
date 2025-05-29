@@ -10,10 +10,12 @@ for i in "${__free_repos_cand[@]}"; do
 	[ -d "$i" ] && __free_repos+=("$i")
 done
 
-# cd to ghq repo
-# optional: $1 - query (best match is picked)
-# TODO rewrite with less assumptions, use ghq queries
 g() {
+	[ "$1" = -h ] && {
+		echo 'cd to ghq repo'
+		echo 'optional: $1 - query (best match is picked)'
+	}
+	# TODO rewrite with less assumptions, use ghq queries
 	local -r root="$(ghq root)"
 	local -r repo_relative_paths="$(fd . "$root" --exact-depth 3 | sed "s#${root}/##")"
 	local chosen_path
@@ -23,12 +25,14 @@ g() {
 	cd "$root/$chosen_path" || return
 }
 
-# pick a subset of a list with confirmation
-# stdin - \n separated list of repos
-# $1 - prompt question
-# $2 - query (optional)
-# stdout - \n separated list of repos
 __gitgud_picker() {
+	[ "$1" = -h ] && {
+		echo 'pick a subset of a list with confirmation'
+		echo 'stdin - NL separated list of repos'
+		echo '$1 - prompt question'
+		echo '$2 - query (optional)'
+		echo 'stdout - NL separated list of repos'
+	}
 	local repos
 	repos="$(fzf -1 -q "$2")" || return 1
 	echo "$repos"
@@ -37,17 +41,23 @@ __gitgud_picker() {
 	[ "$choice" = 'y' ]
 }
 
-# `ghq rm` with picker
-# $1 - repo (optional)
 git_rm() {
+	[ "$1" = -h ] && {
+		echo '`ghq rm` with picker'
+		echo '$1 - repo (optional)'
+	}
 	local selected
 	selected=$(ghq list | __gitgud_picker "delete?" "$1") || return
 	echo "$selected" | xargs -I{} bash -c 'yes | ghq rm {} 2>/dev/null'
 }
 
-# `ghq get` with picker and zoxide init
-# $1 - repo as interpreted by ghq, optional
 git_clone() {
+	[ "$1" = -h ] && {
+		echo '`ghq get` with picker and zoxide init'
+		echo '$1 - repo as interpreted by ghq, optional'
+		return
+	}
+
 	local -r before_dirs="$(ghq list -p | sort)"
 	local repos=$1
 	[ -z "$repos" ] && repos=$(gh repo list | cut -f 1)
@@ -64,19 +74,30 @@ git_clone() {
 }
 
 check() {
-	down check
+	[ "$1" = -h ] && {
+		echo "prints status of all repos"
+		return
+	}
+	__check nopull
 }
 
-# pull and show status of all repos
 down() {
-	local -r nopull="$1"
-	case "$nopull" in
-		"check" | "") ;;
+	[ "$1" = -h ] && {
+		echo "pulls and prints status of all repos"
+		return
+	}
+	__check
+}
+
+__check() {
+	case "$1" in
+		"nopull" | "") ;;
 		*)
-			echo "illegal argument; allowed: 'check' | ''" >&2
+			echo "illegal argument" >&2
 			return 1
 			;;
 	esac
+	local -r nopull="$1"
 
 	# repos are taken from ghq and hardcoded array
 	local -r root=$(ghq root)
@@ -97,7 +118,7 @@ down() {
 		}
 
 		local status
-		status=$(_git_prompt 1) && status=
+		status=$(__gitgud_git_prompt 1) && status=
 		status="${pulled:+ [ff]}${status:+$(tput setaf 1)$status$(tput sgr0)}"
 		[ -z "$status" ] && return
 		echo "$name$status"
@@ -105,7 +126,7 @@ down() {
 
 	local dirty
 	dirty=$(
-		export -f get_dirty _git_prompt
+		export -f get_dirty __gitgud_git_prompt
 		printf '%s\0' "${__free_repos[@]}" | xargs -0 -P 0 -I {} bash -c "get_dirty '$nopull' 0 {}" | LC_ALL=C sort
 		ghq list -p | xargs -P 0 -I {} bash -c "get_dirty '$nopull' $((${#root} + 1)) {}" | LC_ALL=C sort
 	)
@@ -117,9 +138,12 @@ down() {
 	return 1
 }
 
-# fast push+commit for personal repos
 up() (
-	cd "$1" || exit 1
+	[ "$1" = -h ] && {
+		echo 'fast push+commit for personal repos'
+	}
+	cd "$1" || return 1
+
 	local ok
 	# check that we're in a personal repo directory
 	for i in "${__free_repos[@]}"; do
@@ -162,11 +186,16 @@ up() (
 	fi
 
 	local prompt
-	prompt=$(_git_prompt 1) || prompt="$(tput setaf 1)$prompt$(tput sgr0)"
+	prompt=$(__gitgud_git_prompt 1) || prompt="$(tput setaf 1)$prompt$(tput sgr0)"
 	echo "status:$prompt"
 )
 
 github_create() {
+	[ "$1" = -h ] && {
+		echo 'creates a repo with minimum amount of gh features turned on'
+		echo '$1 - name'
+		echo '$2 - visibility (optional)'
+	}
 	name=$1
 	visibility=private
 	[ -n "$2" ] && visibility=$2

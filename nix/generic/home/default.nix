@@ -79,6 +79,8 @@ in
             python3Packages.jupytext
             # mdmath.nvim
             librsvg
+            # mcp
+            unstable.github-mcp-server
           ];
           extraPython3Packages =
             ps: with ps; [

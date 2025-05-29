@@ -1,5 +1,7 @@
 {
   inputs = {
+    # nixpkgs-old.url = "github:nixos/nixpkgs/nixos-24.11";
+    # nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
@@ -32,12 +34,16 @@
           specialArgs = {
             cluster = mkCluster name;
             inherit inputs;
-            helpers = import ./nix/helpers.nix;
+            helpers = import ./nix/helpers { inherit (inputs.nixpkgs) lib; };
             dummy = path: path |> epsilon |> map (name: path + /${name});
             unstable = import inputs.nixpkgs-unstable {
               inherit (pkgscfg) config;
               inherit (pkgscfg.hostPlatform) system;
             };
+            # old = import inputs.nixpkgs-old {
+            #   inherit (pkgscfg) config;
+            #   inherit (pkgscfg.hostPlatform) system;
+            # };
           };
           modules = mkModules name ++ [
             ./nix/generic

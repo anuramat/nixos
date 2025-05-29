@@ -1,4 +1,8 @@
-{ pkgs, unstable, ... }:
+{
+  pkgs,
+  unstable,
+  ...
+}:
 {
   # TODO move the file contents
   environment.systemPackages = with pkgs; [
@@ -33,7 +37,7 @@
       # obs-backgroundremoval # breaks on CUDA
       obs-gstreamer
       obs-multi-rtmp # multi-site
-      obs-nvfbc
+      # obs-nvfbc # TODO broken, uncomment later
       obs-pipewire-audio-capture
       obs-tuna # song info
       obs-vaapi

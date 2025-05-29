@@ -95,7 +95,7 @@ in
 
     # docs {{{2
     xournalpp # pdf markup, handwritten notes
-    okular # aio doc reader with pdf form support
+    kdePackages.okular # aio doc reader with pdf form support
     zathura # keyboard-centric pdf/djvu reader
     gnumeric # spreadsheets
     libreoffice # just in case
@@ -136,19 +136,10 @@ in
       enable = true;
       wlr.enable = true; # screen capture
       extraPortals = [
-        unstable.xdg-desktop-portal-termfilechooser # file picker; not in stable yet
         pkgs.xdg-desktop-portal-gtk # the rest: <https://wiki.archlinux.org/title/XDG_Desktop_Portal>
       ];
-      config =
-        let
-          portalConfig = {
-            "org.freedesktop.impl.portal.FileChooser" = "termfilechooser";
-          };
-        in
-        {
-          sway = portalConfig;
-        };
     };
+    # TODO somewhere around here declare TERMCMD, reuse in termfilechooser
     terminal-exec = {
       enable = true;
       settings = {
