@@ -145,10 +145,11 @@ return {
         grep = {
           fd_opts = '-c never -t f -HL',
           RIPGREP_CONFIG_PATH = vim.env.RIPGREP_CONFIG_PATH,
+          multiline = 2,
         },
         actions = {
           files = {
-            true,
+            true, -- means inherit defaults
             ['ctrl-q'] = { fn = require('fzf-lua').actions.file_sel_to_qf, prefix = 'select-all' },
           },
         },
