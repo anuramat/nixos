@@ -48,7 +48,7 @@ return {
         endpoint = ollama_endpoint,
       },
       copilot = {
-        model = copilot_models.claude40,
+        model = copilot_models.claude35,
         max_tokens = 20480,
       },
       vendors = {
