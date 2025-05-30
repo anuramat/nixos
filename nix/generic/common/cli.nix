@@ -2,7 +2,6 @@
 {
   pkgs,
   old,
-  unstable,
   inputs,
   ...
 }:

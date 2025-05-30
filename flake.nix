@@ -36,10 +36,6 @@
             inherit inputs;
             helpers = import ./nix/helpers { inherit (inputs.nixpkgs) lib; };
             dummy = path: path |> epsilon |> map (name: path + /${name});
-            unstable = import inputs.nixpkgs-unstable {
-              inherit (pkgscfg) config;
-              inherit (pkgscfg.hostPlatform) system;
-            };
             old = import inputs.nixpkgs-old {
               inherit (pkgscfg) config;
               inherit (pkgscfg.hostPlatform) system;
