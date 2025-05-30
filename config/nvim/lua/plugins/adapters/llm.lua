@@ -88,6 +88,10 @@ return {
   },
   {
     'ravitemer/mcphub.nvim',
+    -- todo
+    -- search
+    -- paper search
+    -- hyperbrowser
     build = 'bundled_build.lua',
     cmd = 'MCPHub',
     opts = {
