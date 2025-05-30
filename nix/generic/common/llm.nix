@@ -6,20 +6,10 @@
 }:
 let
   cuda = config.hardware.nvidia.enabled;
-  ollamaPackage = unstable.ollama.overrideAttrs (oldAttrs: rec {
-    version = "0.9.0-rc0";
-    src = unstable.fetchFromGitHub {
-      owner = "ollama";
-      repo = "ollama";
-      rev = "v${version}";
-      sha256 = "sha256-+8UHE9M2JWUARuuIRdKwNkn1hoxtuitVH7do5V5uEg0=";
-    };
-  });
 in
 {
   services = {
     ollama = {
-      package = ollamaPackage;
       enable = true;
       acceleration = lib.mkIf cuda "cuda";
       loadModels = lib.mkIf cuda [ ]; # pull models on service start
