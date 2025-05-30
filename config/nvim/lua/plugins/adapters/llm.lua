@@ -28,7 +28,7 @@ return {
     },
   },
   {
-    'anuramat/avante.nvim',
+    'yetone/avante.nvim',
     version = false,
     keys = { '<leader>a' },
     opts = {
