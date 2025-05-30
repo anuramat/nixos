@@ -7,4 +7,4 @@ local models = {
   claude40 = 'claude-sonnet-4', -- sota
 }
 
-return models.gpt41
+return models.claude40
