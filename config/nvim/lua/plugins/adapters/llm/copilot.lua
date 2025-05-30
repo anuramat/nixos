@@ -1,4 +1,5 @@
 -- https://docs.github.com/en/copilot/managing-copilot/monitoring-usage-and-entitlements/about-premium-requests#user-content-fnref-1
+-- 300 premium requests per month
 local models = {
   gpt41 = 'gpt-4.1', -- free
   -- 4.5 is not available for some reason, 50!!!
