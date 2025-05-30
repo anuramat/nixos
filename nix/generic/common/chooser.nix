@@ -18,8 +18,8 @@ in
   systemd.user.services."xdg-desktop-portal-termfilechooser" = {
     overrideStrategy = "asDropin";
     serviceConfig = {
-      Environment = [
-        ''PATH="${unstable.foot}/bin:${unstable.yazi}/bin:${pkgs.gnused}/bin:${pkgs.bash}/bin''${PATH:+:$PATH}"''
+      Environment = with pkgs; [
+        ''PATH="${foot}/bin:${yazi}/bin:${gnused}/bin:${bash}/bin''${PATH:+:$PATH}"''
       ];
     };
   };
@@ -31,7 +31,7 @@ in
       # maybe use xdg term thing?
       home.file.".config/xdg-desktop-portal-termfilechooser/config".text = ''
         [filechooser]
-        cmd=${unstable.xdg-desktop-portal-termfilechooser}/share/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh
+        cmd=${pkgs.xdg-desktop-portal-termfilechooser}/share/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh
         default_dir=$HOME/Downloads
         env=TERMCMD=foot
       '';
@@ -41,7 +41,7 @@ in
   xdg = {
     portal = {
       extraPortals = [
-        unstable.xdg-desktop-portal-termfilechooser # file picker; not in stable yet
+        pkgs.xdg-desktop-portal-termfilechooser # file picker; not in stable yet TODO
       ];
       config =
         let

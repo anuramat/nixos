@@ -11,4 +11,5 @@ common
     inherit lib;
     inherit common;
   };
+  overlays = import ./overlays.nix;
 }

@@ -2,8 +2,6 @@
 {
   lib,
   pkgs,
-  unstable,
-  config,
   dummy,
   ...
 }:
@@ -114,7 +112,7 @@
 
     # misc system {{{2
     qalculate-gtk # qalc calculator gui
-    unstable.cheese # webcam
+    cheese # webcam
     proton-pass # password manager
     transmission_4-gtk # torrent client
     wev # wayland event viewer, useful for debugging
@@ -223,7 +221,7 @@
 
   # fonts {{{1
   fonts = {
-    packages = with unstable; [
+    packages = with pkgs; [
       nerd-fonts.hack
       nerd-fonts.iosevka
       nerd-fonts.iosevka-term

@@ -21,9 +21,9 @@
 
     # terminals {{{1
     cool-retro-term
-    unstable.foot
-    unstable.ghostty
-    unstable.wezterm
+    foot
+    ghostty
+    wezterm
 
     # misc {{{1
     chatterino2 # gui twitch chat client

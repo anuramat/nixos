@@ -79,7 +79,7 @@ in
             # mdmath.nvim
             librsvg
             # mcp
-            unstable.github-mcp-server
+            github-mcp-server
             mcp-nixos
           ];
           extraPython3Packages =

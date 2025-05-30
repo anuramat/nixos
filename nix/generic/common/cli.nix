@@ -71,7 +71,7 @@
     # core {{{1
     inputs.subcat.packages.${pkgs.system}.default
     bat # cat++: syntax hl
-    unstable.wallust # better pywal TODO go back to stable when xdg compliant version gets merged
+    wallust # better pywal TODO go back to stable when xdg compliant version gets merged
     delta # pretty diff
     difftastic # diff++: syntax aware using TS
     du-dust # du++
@@ -88,7 +88,7 @@
     rmtrash # rm but to trash
     trashy
     tealdeer # tldr reimplementation: rust + xdg
-    unstable.tgpt
+    tgpt
     devenv
     eza # ls++
     watchman # another file watcher TODO try and compare to entr
@@ -104,7 +104,7 @@
     age # file encryption
     wine
 
-    unstable.yazi # big, simple, hackable/lua -- ~ for help
+    yazi # big, simple, hackable/lua -- ~ for help
     felix-fm # smallest, image previews -- :help<cr> for help; waiting for picker: <https://github.com/kyoheiu/felix/issues/261>
     nnn # small, simple, ubiquitous -- ? for help
 
@@ -128,7 +128,7 @@
     rsbkb # rust blackbag - encode/decode tools
     scc # sloc cloc and code: dick measuring tool
     speedtest-cli
-    unstable.xdg-ninja # checks $HOME for junk
+    xdg-ninja # checks $HOME for junk
     git-filter-repo # rewrite/analyze repository history
     mosh # ssh over unstable connections
     python311Packages.pyicloud

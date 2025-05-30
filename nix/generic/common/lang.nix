@@ -1,7 +1,6 @@
 {
   pkgs,
   old,
-  unstable,
   ...
 }:
 {
@@ -66,7 +65,7 @@
     nodePackages_latest.vscode-json-languageserver
     pyright
     texlab
-    unstable.nixd # XXX waiting for pipe support
+    nixd # XXX waiting for pipe support
     yaml-language-server
 
     # linters {{{1

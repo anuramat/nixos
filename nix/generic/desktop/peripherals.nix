@@ -9,10 +9,10 @@
     flipperzero.enable = true;
     openrazer.enable = true;
   };
-  environment.systemPackages = [
-    unstable.keymapp # ZSA keyboard thing
-    pkgs.polychromatic # openrazer frontend
-    pkgs.rpi-imager # raspbery pi
+  environment.systemPackages = with pkgs; [
+    keymapp # ZSA keyboard thing
+    polychromatic # openrazer frontend
+    rpi-imager # raspbery pi
   ];
   services = {
     # ZSA Voyager

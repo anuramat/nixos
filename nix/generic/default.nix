@@ -5,6 +5,6 @@
     ./home
     ./mime
     ./shell
-    ./overlays.nix
+    ./overlays
   ] ++ (if cluster.this.server then [ ./server ] else [ ./desktop ]);
 }
