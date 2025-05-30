@@ -61,11 +61,6 @@ return {
   },
   {
     'ravitemer/mcphub.nvim',
-    -- todo
-    -- - <https://smithery.ai/?q=search>
-    -- - search <https://github.com/nickclyde/duckduckgo-mcp-server>
-    -- - paper search
-    -- - hyperbrowser
     build = 'bundled_build.lua',
     cmd = 'MCPHub',
     opts = {
