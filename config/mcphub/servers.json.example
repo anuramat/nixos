@@ -26,11 +26,22 @@
     },
     "github": {
       "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "<YOUR_TOKEN>"
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "<TOKEN>"
       },
       "command": "github-mcp-server",
       "args": [
         "stdio"
+      ]
+    },
+    "duckduckgo-mcp-server": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@smithery/cli@latest",
+        "run",
+        "@nickclyde/duckduckgo-mcp-server",
+        "--key",
+        "<TOKEN: smithery>"
       ]
     }
   }
