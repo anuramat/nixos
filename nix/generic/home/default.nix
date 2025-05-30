@@ -81,6 +81,7 @@ in
             librsvg
             # mcp
             unstable.github-mcp-server
+            mcp-nixos
           ];
           extraPython3Packages =
             ps: with ps; [
