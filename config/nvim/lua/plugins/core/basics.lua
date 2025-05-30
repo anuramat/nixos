@@ -139,6 +139,8 @@ return {
   -- fuzzy finder
   {
     'ibhagwan/fzf-lua',
+    branch = 'main',
+    commit = '29e982d',
     event = 'VeryLazy',
     opts = function()
       return {
