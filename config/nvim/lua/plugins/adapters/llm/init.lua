@@ -1,17 +1,15 @@
-local ollama_models = {
-  smol = 'qwen3:0.6b', -- fits even on t480
-  big = 'qwen3:8b', -- kinda fits on ll7 on gpu, TODO try a full context window
-}
-local ollama_endpoint = 'http://localhost:11434'
-local mock_endpoint = 'http://localhost:8080'
+local m = require('plugins.adapters.llm.models')
 
-local copilot_models = {
-  gpt41 = 'gpt-4.1', -- outperforms 4o, no limit
-  -- 4.5 is not available for some reason
-  claude35 = 'claude-3.5-sonnet',
-  claude37 = 'claude-3.7-sonnet',
-  claude37cot = 'claude-3.7-sonnet-thought',
-  claude40 = 'claude-sonnet-4', -- sota
+local provider = 'copilot'
+
+local copilot = {
+  model = m.copilot.gpt41,
+}
+
+local ollama = {
+  model = m.ollama.qwen17,
+  endpoint = 'http://localhost:11434',
+  proxy_endpoint = 'http://localhost:11435',
 }
 
 return {
@@ -32,7 +30,7 @@ return {
     version = false,
     keys = { '<leader>a' },
     opts = {
-      provider = 'copilot',
+      provider = provider,
       behaviour = {
         auto_suggestions = false,
       },
@@ -40,15 +38,11 @@ return {
         -- implemented as a tool
         -- runs on localhost:20250
         -- BUG: 1. not reachable from outside; 2. docker logs full of shit (persist_dir is invalid): <https://github.com/yetone/avante.nvim/issues/1634>
+        -- NOTE do we need this? cline people (iirc) say we don't
         enabled = false,
-        host_mount = '/etc/nixos',
-        provider = 'ollama',
-        llm_model = ollama_models.smol,
-        embed_model = 'nomic-embed-text', -- TODO change?
-        endpoint = ollama_endpoint,
       },
       copilot = {
-        model = copilot_models.gpt41,
+        model = copilot.model,
       },
       vendors = {
         pollinations = {
@@ -57,16 +51,16 @@ return {
           endpoint = 'https://text.pollinations.ai/openai',
           model = 'openai',
         },
-        ollama_mock = {
+        ollama_proxy = {
           __inherited_from = 'ollama',
           api_key_name = '',
-          endpoint = mock_endpoint,
-          model = 'mock_model',
+          endpoint = ollama.proxy_endpoint,
+          model = ollama.model,
         },
       },
       ollama = {
-        endpoint = ollama_endpoint,
-        model = ollama_models.smol,
+        endpoint = ollama.endpoint,
+        model = ollama.model,
         reasoning_effort = 'low', -- low|medium|high, only used for reasoning models
         think = false,
       },
