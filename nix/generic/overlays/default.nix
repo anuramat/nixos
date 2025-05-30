@@ -1,5 +1,6 @@
 {
   inputs,
+  pkgs,
   ...
 }:
 let
@@ -13,10 +14,15 @@ let
     in
     prev.lib.listToAttrs (
       map (pkg: {
-        name = pkg.pname;
+        name = pkg.pname; # BUG this fucking line ruined my entire day
         value = pkg;
       }) (pkgfunc unstable)
     );
+  # # Intended usage:
+  # unstablePackages = mkUnstablePackages (
+  #   unstable: with unstable; [
+  #   ]
+  # );
   unwrapOverlays = map (input: input.overlays.default);
   unwrapPackages = (
     inputs: final: prev:
@@ -34,8 +40,8 @@ let
   );
   # ------------------- end of helpers
 
-  unstablePackages = mkUnstablePackages (
-    unstable: with unstable; [
+  unstablePackages = final: prev: {
+    inherit (import inputs.nixpkgs-unstable { inherit (pkgs) config system; })
       cheese
       foot
       ghostty
@@ -48,8 +54,8 @@ let
       xdg-desktop-portal-termfilechooser
       xdg-ninja
       yazi
-    ]
-  );
+      ;
+  };
   overlays = unwrapOverlays (
     with inputs;
     [
