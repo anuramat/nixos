@@ -21,7 +21,7 @@ let
   mimeTypes = {
     text = generateMimeTypes [
       # TODO somehow abstract this away
-      (mimeFromDesktop inputs.neovim-nightly-overlay.packages.${pkgs.system}.default)
+      (mimeFromDesktop pkgs.neovim)
     ];
 
     browser = generateMimeTypes [
