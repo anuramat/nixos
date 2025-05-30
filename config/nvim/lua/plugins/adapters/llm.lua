@@ -6,7 +6,7 @@ local ollama_endpoint = 'http://localhost:11434'
 local mock_endpoint = 'http://localhost:8080'
 
 local copilot_models = {
-  gpt41 = 'gpt-4.1', -- outperforms 4o
+  gpt41 = 'gpt-4.1', -- outperforms 4o, no limit
   -- 4.5 is not available for some reason
   claude35 = 'claude-3.5-sonnet',
   claude37 = 'claude-3.7-sonnet',
@@ -48,8 +48,7 @@ return {
         endpoint = ollama_endpoint,
       },
       copilot = {
-        model = copilot_models.claude35,
-        max_tokens = 20480,
+        model = copilot_models.gpt41,
       },
       vendors = {
         pollinations = {
@@ -69,7 +68,7 @@ return {
         endpoint = ollama_endpoint,
         model = ollama_models.smol,
         reasoning_effort = 'low', -- low|medium|high, only used for reasoning models
-        -- system_prompt = '\\no_think', -- make reasoners shut up -- TODO not sure if this even works per model
+        think = false,
       },
       system_prompt = function()
         local hub = require('mcphub').get_hub_instance()
