@@ -31,6 +31,21 @@ in
 
         home-manager.enable = true; # TODO same here
 
+        gh = {
+          enable = true;
+          settings = {
+            extensions = with pkgs; [
+              gh-f
+              gh-copilot
+              # # wait until they appear
+              # copilot-insights
+              # token
+            ];
+            git_protocol = "ssh";
+            prompt = true;
+          };
+        };
+
         bash = {
           enable = true;
           # TODO move everything around ffs

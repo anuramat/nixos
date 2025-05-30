@@ -77,7 +77,6 @@
     duf # df++
     entr # file watcher - runs command on change
     fd # find++
-    gh # GitHub CLI
     ghq # git repository manager
     libqalculate # `qalc` - advanced calculator
     ncdu # du++: interactive
