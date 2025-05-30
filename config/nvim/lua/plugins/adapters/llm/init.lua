@@ -1,16 +1,7 @@
-local m = require('plugins.adapters.llm.models')
+local copilot = require('plugins.adapters.llm.copilot')
+local ollama = require('plugins.adapters.llm.ollama')
 
 local provider = 'copilot'
-
-local copilot = {
-  model = m.copilot.gpt41,
-}
-
-local ollama = {
-  model = m.ollama.qwen17,
-  endpoint = 'http://localhost:11434',
-  proxy_endpoint = 'http://localhost:11435',
-}
 
 return {
   {
@@ -42,7 +33,7 @@ return {
         enabled = false,
       },
       copilot = {
-        model = copilot.model,
+        model = copilot,
       },
       vendors = {
         pollinations = {
@@ -51,19 +42,8 @@ return {
           endpoint = 'https://text.pollinations.ai/openai',
           model = 'openai',
         },
-        ollama_proxy = {
-          __inherited_from = 'ollama',
-          api_key_name = '',
-          endpoint = ollama.proxy_endpoint,
-          model = ollama.model,
-        },
       },
-      ollama = {
-        endpoint = ollama.endpoint,
-        model = ollama.model,
-        reasoning_effort = 'low', -- low|medium|high, only used for reasoning models
-        think = false,
-      },
+      ollama = ollama,
       system_prompt = function()
         local hub = require('mcphub').get_hub_instance()
         return hub and hub:get_active_servers_prompt() or ''
