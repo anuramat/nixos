@@ -89,7 +89,7 @@ return {
   {
     'ravitemer/mcphub.nvim',
     -- todo
-    -- search
+    -- search https://github.com/nickclyde/duckduckgo-mcp-server
     -- paper search
     -- hyperbrowser
     build = 'bundled_build.lua',
