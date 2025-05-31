@@ -56,20 +56,16 @@ root = "~/.local/share/ghq"
 
 [alias]
   st = status
-  ; TODO is this the only way
   sh = show --ext-diff
   ch = checkout
   br = branch
   sw = switch
   cm = commit
   ps = push
-  lg = log --oneline --graph --all --decorate
+  l = log --ext-diff
+  lg = log --ext-diff --oneline --graph --all --decorate
   df = diff
   ds = diff --staged
-  ; TODO check if this even works
-  unpushed = log --branches --not --remotes --decorate --oneline
-  ; TODO maybe remove this
-  ignored = status --ignored
 
 [init]
   defaultBranch = main
