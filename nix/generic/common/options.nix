@@ -1,10 +1,24 @@
 { lib, ... }:
 with lib;
 {
-  # uniq -- one definition
   options = {
     user = mkOption {
-      type = with types; uniq str;
+      type = types.submodule {
+        options = {
+          username = mkOption {
+            type = with types; uniq str;
+            description = "System username";
+          };
+          fullname = mkOption {
+            type = with types; uniq str;
+            description = "Full name (first last)";
+          };
+          email = mkOption {
+            type = with types; uniq str;
+            description = "Email address";
+          };
+        };
+      };
       description = "Primary user";
     };
   };

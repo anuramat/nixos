@@ -82,7 +82,7 @@
     knownHostsFiles = cluster.hostKeysFiles;
     extraConfig =
       let
-        prefix = config.user + "-";
+        prefix = config.user.username + "-";
         mkAliasEntry = hostname: ''
           Host ${lib.strings.removePrefix prefix hostname}
             HostName ${hostname}

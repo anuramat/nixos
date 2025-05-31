@@ -3,18 +3,21 @@
   ...
 }:
 let
-  username = "anuramat";
-  fullname = "Arsen Nuramatov";
+  user = {
+    username = "anuramat";
+    fullname = "Arsen Nuramatov";
+    email = "x@ctrl.sn";
+  };
   tz = "Europe/Berlin";
   locale = "en_US.UTF-8";
 in
 {
-  user = username;
+  inherit user;
   time.timeZone = tz;
   i18n.defaultLocale = locale;
-  services.openssh.settings.AllowUsers = [ username ];
-  users.users.${username} = {
-    description = fullname;
+  services.openssh.settings.AllowUsers = [ user.username ];
+  users.users.${user.username} = {
+    description = user.fullname;
     isNormalUser = true;
     extraGroups = [
       "nginx"
@@ -39,6 +42,6 @@ in
       keyFiles = cluster.clientKeyFiles;
     };
   };
-  services.getty.autologinUser = username;
-  hardware.openrazer.users = [ username ];
+  services.getty.autologinUser = user.username;
+  hardware.openrazer.users = [ user.username ];
 }
