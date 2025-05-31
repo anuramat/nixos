@@ -1,4 +1,4 @@
-local miniai = {
+return {
   'echasnovski/mini.ai',
   keys = {
     { 'a', mode = { 'x', 'o' } },
@@ -58,33 +58,3 @@ local miniai = {
     }
   end,
 }
-
-local txtobj_cfg = {
-  swap = {
-    enable = true,
-    swap_next = {
-      ['<a-l>'] = {
-        query = { '@parameter.inner' },
-        desc = 'swap with the next parameter',
-      },
-      -- doesn't properly work, no idempotency (eats whitespace)
-      -- ['<a-j>'] = {
-      --   query = { '@block.outer' },
-      --   desc = 'swap with the block below',
-      -- },
-    },
-    swap_previous = {
-      ['<a-h>'] = {
-        query = { '@parameter.inner' },
-        desc = 'swap with the previous parameter',
-      },
-      -- doesn't properly work, no idempotency (eats whitespace)
-      -- ['<a-k>'] = {
-      --   query = { '@block.outer' },
-      --   desc = 'swap with the block above',
-      -- },
-    },
-  },
-}
-
-return { miniai = miniai, txtobj_cfg = txtobj_cfg }

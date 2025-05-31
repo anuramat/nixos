@@ -1,21 +1,19 @@
 -- vim: fdl=3
-local textobjects = require('plugins.adapters.treesitter.textobjects')
 
--- TODO triple check
 -- BUG E490: no fold found <https://github.com/neovim/neovim/issues/28692>
 return {
-  textobjects.miniai,
-  -- treesitter
+  require('plugins.adapters.treesitter.textobjects'),
   {
     'nvim-treesitter/nvim-treesitter',
     branch = 'main',
-    -- enabled = false,
+    lazy = false,
     dependencies = {
       {
-        -- TODO this fucking shit doesn't work
+        -- TODO swaps are broken for now <https://github.com/nvim-treesitter/nvim-treesitter-textobjects/issues/772>
+        -- incremental selection too
         'nvim-treesitter/nvim-treesitter-textobjects',
         branch = 'main',
-        opts = textobjects.txtobj_cfg,
+        opts = {},
       },
       {
         'nvim-treesitter/nvim-treesitter-context',
@@ -32,8 +30,7 @@ return {
         },
       },
     },
-    event = { 'BufReadPre', 'BufNewFile' },
-    config = function(opts)
+    config = function()
       vim.api.nvim_create_autocmd('FileType', {
         callback = function(ev)
           if vim.treesitter.language.add(ev.match) then
@@ -43,30 +40,6 @@ return {
           end
         end,
       })
-      return opts
     end,
-    opts = {
-      highlight = {
-        enable = true,
-      },
-      indent = {
-        enable = true,
-        disable = {
-          'markdown', -- to make `gq` properly wrap lists
-        },
-      },
-      incremental_selection = {
-        enable = true,
-        keymaps = {
-          init_selection = '<c-space>',
-          node_incremental = '<c-space>',
-          scope_incremental = false,
-          node_decremental = '<bs>',
-        },
-      },
-    },
   },
-  -- folding:
-  -- vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
-  -- vim.opt.fdm = 'expr'
 }
