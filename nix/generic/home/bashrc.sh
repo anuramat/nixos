@@ -90,4 +90,8 @@ t() {
 	tgpt --preprompt "$prompt" "$@"
 }
 
+ti() {
+	t -i
+}
+
 # vim: fdl=0
