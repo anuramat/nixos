@@ -33,7 +33,7 @@ return {
         enabled = false,
       },
       copilot = {
-        model = copilot,
+        model = copilot.gpt41,
       },
       vendors = {
         pollinations = {
@@ -41,6 +41,10 @@ return {
           api_key_name = '',
           endpoint = 'https://text.pollinations.ai/openai',
           model = 'openai',
+        },
+        copilot2 = {
+          __inherited_from = 'copilot',
+          model = copilot.claude40,
         },
       },
       ollama = ollama,

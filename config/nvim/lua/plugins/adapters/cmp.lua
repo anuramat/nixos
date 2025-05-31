@@ -1,5 +1,6 @@
 return {
   'saghen/blink.cmp',
+  event = 'InsertEnter',
   dependencies = 'anuramat/friendly-snippets',
   version = '*', -- on nightly - add `build = 'nix run .#build-plugin'`
   opts = {

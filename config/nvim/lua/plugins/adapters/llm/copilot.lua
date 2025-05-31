@@ -10,4 +10,4 @@ local models = {
   claude40 = 'claude-sonnet-4', -- 1
 }
 
-return models.claude40
+return models
