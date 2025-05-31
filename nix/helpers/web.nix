@@ -59,9 +59,10 @@ let
   noRobots = w: [
     {
       services.nginx.virtualHosts.${w.domain}.locations."/robots.txt" = {
-        extraConfig = ''
-          return 200 "User-agent: *\nDisallow: /";
-        '';
+        extraConfig = # nginx
+          ''
+            return 200 "User-agent: *\nDisallow: /";
+          '';
       };
     }
   ];

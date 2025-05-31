@@ -23,7 +23,8 @@ in
 
   # point it to the file manager
   environment.etc."xdg/xdg-desktop-portal-termfilechooser/config" = {
-    text = ''
+    text = # ini
+    ''
       [filechooser]
       cmd=${chooser}/share/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh
       default_dir=$HOME/Downloads

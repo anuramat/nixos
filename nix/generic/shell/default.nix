@@ -8,8 +8,6 @@
     direnv = {
       enable = true;
       silent = true;
-      # direnvrcExtra = ''
-      # '';
     };
 
     fzf = {
@@ -23,13 +21,14 @@
       enableLsColors = false;
       shellInit = "# placeholder: bash.shellInit";
       loginShellInit = "# placeholder: bash.loginShellInit";
-      interactiveShellInit = ''
-        # bash.interactiveShellInit {{{1
-        source ${./osc.sh}
-        source ${./history.sh}
-        source ${pkgs.bash-preexec}/share/bash/bash-preexec.sh
-        # end }}}
-      '';
+      interactiveShellInit = # bash
+        ''
+          # bash.interactiveShellInit {{{1
+          source ${./osc.sh}
+          source ${./history.sh}
+          source ${pkgs.bash-preexec}/share/bash/bash-preexec.sh
+          # end }}}
+        '';
     };
   };
 
@@ -40,12 +39,13 @@
   environment = {
     shellAliases = lib.mkForce { };
     shellInit = "# placeholder: environment.shellInit";
-    loginShellInit = ''
-      # placeholder: environment.loginShellInit {{{1
-      source ${./profile.sh}
-      source ${./sway_autostart.sh}
-      # end }}}
-    '';
+    loginShellInit = # sh
+      ''
+        # placeholder: environment.loginShellInit {{{1
+        source ${./profile.sh}
+        source ${./sway_autostart.sh}
+        # end }}}
+      '';
     interactiveShellInit = "# placeholder: environment.interactiveShellInit";
     extraInit = "# placeholder: environment.extraInit";
   };

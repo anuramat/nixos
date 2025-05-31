@@ -55,7 +55,6 @@ return {
         scope_incremental = false,
         node_decremental = '<bs>',
       },
-      additional_vim_regex_highlighting = {}, -- use both `:syntax` and Treesitter
     },
   },
   -- folding:

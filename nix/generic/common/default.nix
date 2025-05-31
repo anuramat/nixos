@@ -83,10 +83,12 @@
     extraConfig =
       let
         prefix = config.user.username + "-";
-        mkAliasEntry = hostname: ''
-          Host ${lib.strings.removePrefix prefix hostname}
-            HostName ${hostname}
-        '';
+        mkAliasEntry =
+          hostname: # ssh_config
+          ''
+            Host ${lib.strings.removePrefix prefix hostname}
+              HostName ${hostname}
+          '';
       in
       cluster.hostnames
       |> lib.filter (x: lib.strings.hasPrefix prefix x)
