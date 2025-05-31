@@ -196,48 +196,66 @@ def merge(left_name: str, root_name: str, right_name: str):
     write(result, left_name)
 
 
-def main():
+def _setup_parser():
+    """Set up command line argument parser."""
     parser = argparse.ArgumentParser(prog="task")
-
     subparsers = parser.add_subparsers(dest="command")
 
+    # Add command
     add_parser = subparsers.add_parser("add", help="Add a new task")
     add_parser.add_argument("task_text", type=str, help="Task description")
 
-    done_parser = subparsers.add_parser("rm", help="Mark a task as done")
-    done_parser.add_argument("task_number", type=int, help="Task number to remove")
+    # Remove command
+    rm_parser = subparsers.add_parser("rm", help="Mark a task as done")
+    rm_parser.add_argument("task_number", type=int, help="Task number to remove")
 
-    subparsers.add_parser("ls", help="List all tasks")
-
-    subparsers.add_parser("norm", help="Normalize the file")
-
-    subparsers.add_parser("unfiled", help="List unfiled tasks")
-
+    # Merge command
     merge_parser = subparsers.add_parser("merge", help="Merge")
     merge_parser.add_argument("left", type=str, help="Current version (%%A)")
     merge_parser.add_argument("root", type=str, help="Common ancestor's version (%%O)")
     merge_parser.add_argument("right", type=str, help="Other branches' (%%B)")
 
-    if len(sys.argv) > 1 and (item := sys.argv[1]).startswith("@"):
-        ls_tag(item)
-        return
+    # Simple commands without arguments
+    subparsers.add_parser("ls", help="List all tasks")
+    subparsers.add_parser("norm", help="Normalize the file")
+    subparsers.add_parser("unfiled", help="List unfiled tasks")
 
-    args = parser.parse_args()
+    return parser
 
-    if args.command == "add":
-        add(args.task_text)
-    elif args.command == "rm":
-        rm(args.task_number)
-    elif args.command == "ls":
-        ls()
-    elif args.command == "norm":
-        write(norm(read()))
-    elif args.command == "merge":
-        merge(args.left, args.root, args.right)
-    elif args.command == "unfiled":
-        ls_tag("unfiled")
+
+def _handle_tag_command():
+    if len(sys.argv) > 1 and sys.argv[1].startswith("@"):
+        ls_tag(sys.argv[1])
+        return True
+    return False
+
+
+def _dispatch_command(args):
+    """Dispatch to appropriate command handler based on parsed arguments."""
+    command_handlers = {
+        "add": lambda: add(args.task_text),
+        "rm": lambda: rm(args.task_number),
+        "ls": ls,
+        "norm": lambda: write(norm(read())),
+        "merge": lambda: merge(args.left, args.root, args.right),
+        "unfiled": lambda: ls_tag("unfiled"),
+    }
+
+    if args.command in command_handlers:
+        command_handlers[args.command]()
     else:
         tag_overview()
+
+
+def main():
+    # Handle special case: tag commands (e.g., @work, @home)
+    if _handle_tag_command():
+        return
+
+    # Parse arguments and dispatch to appropriate handler
+    parser = _setup_parser()
+    args = parser.parse_args()
+    _dispatch_command(args)
 
 
 if __name__ == "__main__":
