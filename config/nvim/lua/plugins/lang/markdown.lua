@@ -30,7 +30,7 @@ return {
     cond = os.getenv('TERM') == 'xterm-ghostty',
     dependencies = 'nvim-treesitter/nvim-treesitter',
     ft = 'markdown',
-    -- build = ':MdMath build', -- BUG doesn't work; because of lazy loading?
+    build = ':MdMath build', -- BUG doesn't work; because of lazy loading? have to call manually
     opts = function()
       local filename = vim.fn.expand('$XDG_CONFIG_HOME/latex/mathjax_preamble.tex')
       local file = io.open(filename, 'r')

@@ -80,7 +80,13 @@ y() {
 }
 
 t() {
-	local -r prompt="You will be provided with a description of the result that the user is trying to achieve. Try to provide a single complete solution in a concise manner without follow up questions or disclaimers. If possible, make it fit in a terminal window with 50 lines and 100 columns. If there's enough space, explain the key elements of the solution"
+	local -r prompt << EOF
+You will be provided with a description of the result that the user is trying to
+achieve. First, try to provide a single complete solution in a concise manner
+without comments, follow up questions or disclaimers. If possible, make it fit
+in a terminal window with $(tput lines) lines and $(tput cols) columns. Only if
+there's enough space, explain the key elements of the solution.
+EOF
 	for arg in "$@"; do
 		if [[ $arg == "-s" ]]; then
 			tgpt "$@"
