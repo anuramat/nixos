@@ -55,7 +55,7 @@ in
               source ${./files/xdg_shims.sh}
               [[ $- == *i* ]] || return
               for f in "${./files/bashrc.d}"/*; do source "$f"; done
-              source ${./bashrc.sh}
+              source ${./files/bashrc.sh}
             '';
         };
 
@@ -86,7 +86,7 @@ in
 
         };
 
-        neovim = import ./neovim.nix;
+        neovim = import ./neovim.nix pkgs;
       };
     };
   };
