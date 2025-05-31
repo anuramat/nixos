@@ -22,8 +22,9 @@ in
       xdg.enable = true; # TODO what does this even do
 
       home.file = {
+        # made for nvi
         ".exrc" = {
-          source = ./exrc;
+          source = ./files/exrc;
         };
       };
 
@@ -50,9 +51,9 @@ in
           enable = true;
           # TODO move everything around ffs
           bashrcExtra = ''
-            source ${./xdg_shims.sh}
+            source ${./files/xdg_shims.sh}
             [[ $- == *i* ]] || return
-            for f in "${./bashrc.d}"/*; do source "$f"; done
+            for f in "${./files/bashrc.d}"/*; do source "$f"; done
             source ${./bashrc.sh}
           '';
         };
@@ -60,7 +61,7 @@ in
         git = import ./git.nix config;
         readline = {
           enable = true;
-          extraConfig = builtins.readFile ./inputrc;
+          extraConfig = builtins.readFile ./files/inputrc;
         };
 
         librewolf = {
@@ -84,45 +85,7 @@ in
 
         };
 
-        neovim = {
-          enable = true;
-          package = pkgs.neovim;
-          extraLuaPackages = ps: [
-            # molten:
-            ps.magick
-          ];
-          extraPackages = with pkgs; [
-            # molten:
-            imagemagick
-            python3Packages.jupytext
-            # mdmath.nvim
-            librsvg
-            # mcp
-            github-mcp-server
-            mcp-nixos
-          ];
-          extraPython3Packages =
-            ps: with ps; [
-              # molten {{{1
-              # required:
-              pynvim
-              jupyter-client
-              # images:
-              cairosvg # to display svg with transparency
-              pillow # open images with :MoltenImagePopup
-              pnglatex # latex formulas
-              # plotly figures:
-              plotly
-              kaleido
-              # for remote molten:
-              requests
-              websocket-client
-              # misc:
-              pyperclip # clipboard support
-              nbformat # jupyter import/export
-              # }}}
-            ];
-        };
+        neovim = import ./neovim.nix;
       };
     };
   };
