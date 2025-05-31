@@ -50,12 +50,13 @@ in
         bash = {
           enable = true;
           # TODO move everything around ffs
-          bashrcExtra = ''
-            source ${./files/xdg_shims.sh}
-            [[ $- == *i* ]] || return
-            for f in "${./files/bashrc.d}"/*; do source "$f"; done
-            source ${./bashrc.sh}
-          '';
+          bashrcExtra = # bash
+            ''
+              source ${./files/xdg_shims.sh}
+              [[ $- == *i* ]] || return
+              for f in "${./files/bashrc.d}"/*; do source "$f"; done
+              source ${./bashrc.sh}
+            '';
         };
 
         git = import ./git.nix config;
