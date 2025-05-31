@@ -79,4 +79,15 @@ y() {
 	rm -f -- "$tmp"
 }
 
+t() {
+	local -r prompt="You will be provided with a description of the result that the user is trying to achieve. Try to provide a single complete solution in a concise manner without follow up questions or disclaimers. If possible, make it fit in a terminal window with 50 lines and 100 columns. If there's enough space, explain the key elements of the solution"
+	for arg in "$@"; do
+		if [[ $arg == "-s" ]]; then
+			tgpt "$@"
+			return 0
+		fi
+	done
+	tgpt --preprompt "$prompt" "$@"
+}
+
 # vim: fdl=0
