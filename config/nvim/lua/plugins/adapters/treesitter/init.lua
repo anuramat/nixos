@@ -32,28 +32,37 @@ return {
         },
       },
     },
-  },
-  event = { 'BufReadPre', 'BufNewFile' },
-  opts = {
-    highlight = {
-      enable = true,
-      disable = {
-        -- tex conflicts with vimtex
+    event = { 'BufReadPre', 'BufNewFile' },
+    config = function(opts)
+      vim.api.nvim_create_autocmd('FileType', {
+        callback = function(ev)
+          if vim.treesitter.language.add(ev.match) then
+            vim.treesitter.start(ev.buf, ev.match) -- syntax highlighting, provided by Neovim
+            vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+            vim.bo.indentexpr = 'v:lua.require\'nvim-treesitter\'.indentexpr()'
+          end
+        end,
+      })
+      return opts
+    end,
+    opts = {
+      highlight = {
+        enable = true,
       },
-    },
-    indent = {
-      enable = true,
-      disable = {
-        'markdown', -- to make `gq` properly wrap lists
+      indent = {
+        enable = true,
+        disable = {
+          'markdown', -- to make `gq` properly wrap lists
+        },
       },
-    },
-    incremental_selection = {
-      enable = true,
-      keymaps = {
-        init_selection = '<c-space>',
-        node_incremental = '<c-space>',
-        scope_incremental = false,
-        node_decremental = '<bs>',
+      incremental_selection = {
+        enable = true,
+        keymaps = {
+          init_selection = '<c-space>',
+          node_incremental = '<c-space>',
+          scope_incremental = false,
+          node_decremental = '<bs>',
+        },
       },
     },
   },
