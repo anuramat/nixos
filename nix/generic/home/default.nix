@@ -13,7 +13,9 @@
   xdg.enable = true; # set XDG vars in .profile
 
   home = {
-    packages = [ ];
+    packages = with pkgs; [
+      pinentry-tty # just in case
+    ];
     file = {
       # made for nvi
       ".exrc" = {
@@ -27,8 +29,7 @@
     enable = true;
     enableBashIntegration = true;
     pinentry = {
-      package = pkgs.pinentry-all;
-      program = "pinentry-bemenu";
+      package = pkgs.pinentry-bemenu;
     };
   };
 
@@ -36,6 +37,24 @@
     gpg = {
       enable = true;
       homedir = "${config.xdg.dataHome}/gnupg";
+    };
+    himalaya = {
+      enable = true;
+      settings = {
+        accounts.proton = {
+          email = "anuramat@pm.me";
+
+          backend.type = "imap";
+          backend.host = "127.0.0.1";
+          backend.port = 1143;
+          backend.encryption.type = "none";
+
+          message.send.backend.type = "smtp";
+          message.send.backend.host = "127.0.0.1";
+          message.send.backend.port = 1025;
+          message.send.backend.encryption.type = "none";
+        };
+      };
     };
     bemenu = {
       enable = true;
