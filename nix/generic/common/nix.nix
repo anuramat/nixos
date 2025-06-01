@@ -68,6 +68,7 @@ in
       #         User builder
       #         ConnectTimeout 3
       # ```
+      # TODO speedFactor, maxJobs
       hostName = x.name;
       system = x.platform;
       protocol = "ssh-ng";
