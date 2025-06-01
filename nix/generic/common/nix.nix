@@ -8,12 +8,12 @@
 let
   # TODO add missing keys to trusted-public-keys
   substituters = [
+    "https://cache.iog.io"
     "https://cache.nixos.org"
     "https://cuda-maintainers.cachix.org"
     "https://devenv.cachix.org"
     "https://nix-community.cachix.org"
     "https://nixpkgs-python.cachix.org"
-    "https://cache.iog.io"
   ] ++ cluster.substituters;
 in
 {
@@ -48,10 +48,12 @@ in
       inherit substituters; # used by default
       trusted-substituters = substituters; # merely allowed
       trusted-public-keys = [
+        "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
+        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
         "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
         "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-        "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
+        "nixpkgs-python.cachix.org-1:hxjI7pFxTyuTHn2NkvWCrAUcNZLNS3ZAvfYNuYifcEU="
       ] ++ cluster.trusted-public-keys;
     };
 
