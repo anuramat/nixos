@@ -18,6 +18,7 @@
   programs = {
     gpg = {
       enable = true;
+      homedir = "${config.xdg.dataHome}/gnupg";
     };
     home-manager.enable = true; # TODO huh?
     password-store = {
