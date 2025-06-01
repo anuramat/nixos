@@ -8,7 +8,6 @@
   imports = [
     inputs.home-manager.nixosModules.home-manager
     ./common
-    ./home
     ./mime
     ./shell
     ./overlays
