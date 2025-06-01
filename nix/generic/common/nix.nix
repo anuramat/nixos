@@ -1,5 +1,6 @@
 {
   pkgs,
+  config,
   cluster,
   inputs,
   lib,
@@ -15,6 +16,7 @@ let
     "https://nix-community.cachix.org"
     "https://nixpkgs-python.cachix.org"
   ] ++ cluster.substituters;
+  keyPath = "${config.users.users.${config.user.username}.home}/.ssh/id_ed25519";
 in
 {
   nixpkgs = {
@@ -69,6 +71,8 @@ in
       #         ConnectTimeout 3
       # ```
       # TODO speedFactor, maxJobs
+      sshUser = cluster.builderUsername;
+      sshKey = keyPath;
       hostName = x.name;
       system = x.platform;
       protocol = "ssh-ng";
