@@ -98,17 +98,12 @@
     zoxide # cd++
     expect # automating tuis
 
-    # misc
+    # misc {{{1
     asciinema
     ansifilter
     pstree
     age # file encryption
     wine
-
-    yazi # big, simple, hackable/lua -- ~ for help
-    felix-fm # smallest, image previews -- :help<cr> for help; waiting for picker: <https://github.com/kyoheiu/felix/issues/261>
-    nnn # small, simple, ubiquitous -- ? for help
-
     aria # downloader
     banner
     croc # send/receive files through relay with encryption TODO might be broken, unstable worked tho
@@ -127,6 +122,7 @@
     progress # progress status for cp etc
     pv # pipe viewer
     rsbkb # rust blackbag - encode/decode tools
+    nixtract # dependency graph of derivations
     scc # sloc cloc and code: dick measuring tool
     speedtest-cli
     xdg-ninja # checks $HOME for junk
@@ -138,6 +134,10 @@
     tree-sitter
     cowsay
     fortune # random quotes
+    # file managers
+    yazi # big, simple, hackable/lua -- ~ for help
+    felix-fm # smallest, image previews -- :help<cr> for help; waiting for picker: <https://github.com/kyoheiu/felix/issues/261>
+    nnn # small, simple, ubiquitous -- ? for help
 
     # backend {{{1
     dive # look into docker image layers
