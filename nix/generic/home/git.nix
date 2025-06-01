@@ -6,8 +6,9 @@
     enableAsDifftool = true;
     display = "inline";
   };
-  userEmail = config.home.username;
-  userName = config.user.fullname;
+  # TODO move hardcode to an option or something
+  userEmail = "x@ctrl.sn";
+  userName = "Arsen Nuramatov";
   aliases = {
     st = "status";
     sh = "show --ext-diff";

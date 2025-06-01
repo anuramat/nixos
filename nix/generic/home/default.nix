@@ -1,9 +1,8 @@
 {
   config,
   inputs,
-  pkgs,
   ...
-}@args:
+}:
 {
   imports = [
     inputs.home-manager.nixosModules.home-manager
@@ -18,6 +17,6 @@
     # TODO pass a function, so that the hm stuff is properly separated from nixos
     # the first step would be to move config.user option entirely to home manager
     # in some places it's gonna have to be hardcoded, but that probably makes more sense
-    users.${config.user.username} = (import ./hm.nix args);
+    users.${config.user.username} = import ./hm.nix;
   };
 }

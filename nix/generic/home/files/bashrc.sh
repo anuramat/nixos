@@ -105,7 +105,7 @@ t() {
 run() {
 	local -r name=$1
 	shift
-	nix flake run "nixpkgs-unstable#$name" -- "$@"
+	nix run "nixpkgs-unstable#$name" -- "$@"
 }
 
 # vim: fdl=0
