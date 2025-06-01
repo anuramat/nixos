@@ -11,7 +11,7 @@ flake:
 	grep -rL PRIVATE "$(HOME)/.ssh" | grep '\.pub$$' | xargs cp -ft "$(keys_dir)"
 	cp -ft "$(keys_dir)" "/etc/nix/cache.pem.pub" 2>/dev/null || true
 	./scripts/heading.sh "Building NixOS"
-	sudo nixos-rebuild switch --option extra-experimental-features pipe-operators; fi
+	sudo nixos-rebuild switch --option extra-experimental-features pipe-operators
 links:
 	./scripts/heading.sh "Setting up links"
 	BASH_ENV=/etc/profile ./scripts/install.sh

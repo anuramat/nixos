@@ -1,6 +1,7 @@
 # vim: fdl=0 fdm=marker
 {
   lib,
+  pkgs,
   cluster,
   dummy,
   config,
@@ -9,7 +10,10 @@
 {
   imports = dummy ./.;
   hardware.enableAllFirmware = true; # as in "regardless of license"
-  services.gnome.gnome-keyring.enable = true; # security credential storage, exposed over dbus
+  services.passSecretService.enable = true;
+  environment.systemPackages = with pkgs; [
+    pass
+  ];
 
   # virtualization {{{1
   virtualisation = {

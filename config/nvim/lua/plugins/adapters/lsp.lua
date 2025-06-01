@@ -20,7 +20,7 @@ local configs = function()
             -- keys are purely for evaluation progress display
             -- values are merged in the end, sources are shown during completion
             nixos = { expr = optionsExpr },
-            ['home-manager'] = { expr = homeExpr },
+            -- ['home-manager'] = { expr = homeExpr },
           },
           diagnostic = {
             suppress = {},
