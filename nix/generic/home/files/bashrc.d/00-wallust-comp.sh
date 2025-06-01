@@ -25,5 +25,5 @@ __wallust_comp_custom() {
 	}
 }
 complete -o bashdefault -o default -o nosort -F __wallust_comp_custom "$__wallust_alias"
-_fzf_setup_completion path "$__wallust_alias"
+# _fzf_setup_completion path "$__wallust_alias" # doesn't exist??? BUG after rewriting
 alias "$__wallust_alias=__wallust_wrapped"
