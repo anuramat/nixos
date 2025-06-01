@@ -29,8 +29,9 @@
     pinentry = {
       package = pkgs.pinentry-all;
       program = "pinentry-bemenu";
-    }
+    };
   };
+
   programs = {
     gpg = {
       enable = true;
