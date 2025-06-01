@@ -52,6 +52,18 @@
         '';
     };
 
+    fzf = {
+      enable = true;
+      keybindings = true;
+      enableBashIntegration = true;
+    };
+
+    zoxide = {
+      enableBashIntegration = true;
+      enable = true;
+      options = [ "--cmd j" ];
+    };
+
     git = import ./git.nix args;
     readline = {
       enable = true;

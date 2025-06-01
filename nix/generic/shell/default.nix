@@ -10,11 +10,6 @@
       silent = true;
     };
 
-    fzf = {
-      keybindings = true;
-      fuzzyCompletion = true;
-    };
-
     bash = {
       shellAliases = lib.mkForce { };
       promptInit = "# placeholder: bash.promptInit";
@@ -32,9 +27,9 @@
     };
   };
 
-  # exec order:
-  # /etc/profile: bash.shellInit, shellInit, bash.loginShellInit, loginShellInit, /etc/profile.local, /etc/bashrc
-  # /etc/bashrc: /etc/profile, bash.interactiveShellInit, bash.promptInit, (?hooks from software options?), interactiveShellInit, /etc/bashrc.local
+  # login exec order:
+  # - /etc/profile: bash.shellInit, shellInit, bash.loginShellInit, loginShellInit, /etc/profile.local, /etc/bashrc
+  #   - where /etc/bashrc: /etc/profile, bash.interactiveShellInit, bash.promptInit, (?hooks from software options?), interactiveShellInit, /etc/bashrc.local
 
   environment = {
     shellAliases = lib.mkForce { };
