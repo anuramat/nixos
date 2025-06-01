@@ -12,6 +12,6 @@ in
     useGlobalPkgs = true;
     useUserPackages = true;
 
-    users.${user} = import ./hm.nix v;
+    users.${user} = (import ./hm.nix) v;
   };
 }

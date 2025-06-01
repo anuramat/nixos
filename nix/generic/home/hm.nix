@@ -51,7 +51,7 @@
         '';
     };
 
-    git = import ./git.nix config;
+    git = (import ./git.nix) config;
     readline = {
       enable = true;
       extraConfig = builtins.readFile ./files/inputrc;
