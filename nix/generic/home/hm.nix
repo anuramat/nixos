@@ -5,7 +5,7 @@
 }:
 {
 
-  xdg.enable = true; # TODO what does this even do
+  xdg.enable = true; # set XDG vars in .profile
 
   home.file = {
     # made for nvi
@@ -14,8 +14,9 @@
     };
   };
 
+  services.pass-secret-service.enable = true; # secret service api -- exposes password-store over dbus
   programs = {
-    home-manager.enable = true; # TODO same here
+    home-manager.enable = true; # TODO huh?
     password-store = {
       enable = true;
       settings = {
