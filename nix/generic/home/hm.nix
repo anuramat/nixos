@@ -20,6 +20,16 @@
       enable = true;
       homedir = "${config.xdg.dataHome}/gnupg";
     };
+    bemenu = {
+      enable = true;
+      settings = {
+        line-height = 28;
+        prompt = "open";
+        list = 5;
+        fn = "Hack Nerd Font 16";
+        ignorecase = true;
+      };
+    };
     home-manager.enable = true; # TODO huh?
     password-store = {
       enable = true;
