@@ -45,7 +45,7 @@
       # TODO move everything around ffs
       profileExtra = # bash
         ''
-          source ${./sway_autostart.sh}
+          source ${./files/sway_autostart.sh}
         '';
       bashrcExtra = # bash
         ''
