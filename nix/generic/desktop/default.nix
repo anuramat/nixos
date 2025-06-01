@@ -124,6 +124,10 @@
   ];
   programs.seahorse.enable = true; # gnome keyring frontend
 
+  services.protonmail-bridge = {
+    enable = true;
+  };
+
   # xdg {{{1
   xdg = {
     portal = {
