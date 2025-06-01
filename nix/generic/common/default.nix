@@ -11,11 +11,6 @@
   imports = dummy ./.;
   hardware.enableAllFirmware = true; # as in "regardless of license"
 
-  # services.passSecretService.enable = true; # secret service api -- exposes password-store over dbus
-  # environment.systemPackages = with pkgs; [
-  #   pass # aka password-store
-  # ];
-
   # virtualization {{{1
   virtualisation = {
     virtualbox = {
