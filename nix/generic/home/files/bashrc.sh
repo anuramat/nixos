@@ -79,7 +79,7 @@ y() {
 	rm -f -- "$tmp"
 }
 
-t() {
+__tgpt_preprompted() {
 	local -r prompt << EOF
 You will be provided with a description of the result that the user is trying to
 achieve. First, try to provide a single complete solution in a concise manner
@@ -87,17 +87,19 @@ without comments, follow up questions or disclaimers. If possible, make it fit
 in a terminal window with $(tput lines) lines and $(tput cols) columns. Only if
 there's enough space, explain the key elements of the solution.
 EOF
-	for arg in "$@"; do
-		if [[ $arg == "-s" ]]; then
-			tgpt "$@"
-			return 0
-		fi
-	done
 	tgpt --preprompt "$prompt" "$@"
 }
 
 ti() {
-	t -i
+	__tgpt_preprompted -i
+}
+
+t() {
+	if [[ $1 == "-c" || $1 == "-s" ]]; then
+		tgpt "$1" -- "${*:2}"
+		return 0
+	fi
+	__tgpt_preprompted -- "$*"
 }
 
 run() {
