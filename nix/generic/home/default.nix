@@ -1,10 +1,10 @@
-v:
+{ config, inputs, ... }@args:
 let
-  user = v.config.user.username;
+  user = config.user.username;
 in
 {
   imports = [
-    v.inputs.home-manager.nixosModules.home-manager
+    inputs.home-manager.nixosModules.home-manager
   ];
 
   home-manager = {
@@ -12,6 +12,6 @@ in
     useGlobalPkgs = true;
     useUserPackages = true;
 
-    users.${user} = (import ./hm.nix) v;
+    users.${user} = import ./hm.nix args;
   };
 }

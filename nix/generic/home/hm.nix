@@ -2,7 +2,7 @@
   config,
   pkgs,
   ...
-}:
+}@args:
 {
 
   xdg.enable = true; # set XDG vars in .profile
@@ -51,7 +51,7 @@
         '';
     };
 
-    git = (import ./git.nix) config;
+    git = import ./git.nix args;
     readline = {
       enable = true;
       extraConfig = builtins.readFile ./files/inputrc;

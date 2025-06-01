@@ -1,4 +1,5 @@
-config: {
+{ config, ... }:
+{
   enable = true;
   difftastic = {
     enable = true;
