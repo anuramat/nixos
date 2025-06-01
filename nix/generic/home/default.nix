@@ -26,7 +26,10 @@
   services.gpg-agent = {
     enable = true;
     enableBashIntegration = true;
-    pinentryPackage = pkgs.pinentry-bemenu;
+    pinentry = {
+      package = pkgs.pinentry-all;
+      program = "pinentry-bemenu";
+    }
   };
   programs = {
     gpg = {
