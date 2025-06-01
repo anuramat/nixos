@@ -13,9 +13,7 @@
   xdg.enable = true; # set XDG vars in .profile
 
   home = {
-    packages = with pkgs; [
-      pinentry-all
-    ];
+    packages = [ ];
     file = {
       # made for nvi
       ".exrc" = {
