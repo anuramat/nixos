@@ -1,103 +1,105 @@
 { config, ... }:
 {
-  enable = true;
-  difftastic = {
+  programs.git = {
     enable = true;
-    enableAsDifftool = true;
-    display = "inline";
-  };
-  # TODO move hardcode to an option or something
-  userEmail = "x@ctrl.sn";
-  userName = "Arsen Nuramatov";
-  aliases = {
-    st = "status";
-    sh = "show --ext-diff";
-    ch = "checkout";
-    br = "branch";
-    sw = "switch";
-    cm = "commit";
-    ps = "push";
-    l = "log --ext-diff";
-    lg = "log --ext-diff --oneline --graph --all --decorate";
-    df = "diff";
-    ds = "diff --staged";
-  };
-  ignores = [
-    "*.db" # jupyter-lab, maybe etc
-    ".DS_Store" # macOS
-    ".cache/" # clangd, maybe etc
-    ".devenv*"
-    ".env"
-    ".htpasswd"
-    ".ipynb_checkpoints/"
-    ".stack-work/" # haskell
-    "__pycache__/"
-    "node_modules/"
-    "result" # nix
-    "tags"
-    "venv/"
-
-    # pytorch lightning
-    "*.ckpt"
-    "lightning_logs"
-
-    # go, maybe etc
-    "cover.cov"
-    "coverage.html"
-    ".testCoverage.txt"
-
-    # latex temp stuff
-    "*.aux"
-    "*.fdb_latexmk"
-    "*.fls"
-    "*.log"
-
-    # direnv
-    ".direnv/"
-    ".envrc"
-  ];
-  attributes = [
-    "*.ipynb diff=jupyternotebook merge=jupyternotebook"
-  ];
-
-  # TODO check jupyter notebook and nbdime later
-  extraConfig = {
-    pull.ff = "only";
-    core.pager = "less -F";
-    init.defaultBranch = "main";
-    advice = {
-      addEmptyPathspec = false;
-      detachedHead = false;
+    difftastic = {
+      enable = true;
+      enableAsDifftool = true;
+      display = "inline";
     };
-    push.autoSetupRemote = true;
+    # TODO move hardcode to an option or something
+    userEmail = "x@ctrl.sn";
+    userName = "Arsen Nuramatov";
+    aliases = {
+      st = "status";
+      sh = "show --ext-diff";
+      ch = "checkout";
+      br = "branch";
+      sw = "switch";
+      cm = "commit";
+      ps = "push";
+      l = "log --ext-diff";
+      lg = "log --ext-diff --oneline --graph --all --decorate";
+      df = "diff";
+      ds = "diff --staged";
+    };
+    ignores = [
+      "*.db" # jupyter-lab, maybe etc
+      ".DS_Store" # macOS
+      ".cache/" # clangd, maybe etc
+      ".devenv*"
+      ".env"
+      ".htpasswd"
+      ".ipynb_checkpoints/"
+      ".stack-work/" # haskell
+      "__pycache__/"
+      "node_modules/"
+      "result" # nix
+      "tags"
+      "venv/"
 
-    # WARN: XDGBDSV
-    ghq.root = "~/.local/share/ghq";
+      # pytorch lightning
+      "*.ckpt"
+      "lightning_logs"
 
-    merge = {
-      todo.driver = "todo merge %A %O %B";
-      jupyternotebook = {
-        driver = "git-nbmergedriver merge %O %A %B %L %P";
-        name = "jupyter notebook merge driver";
+      # go, maybe etc
+      "cover.cov"
+      "coverage.html"
+      ".testCoverage.txt"
+
+      # latex temp stuff
+      "*.aux"
+      "*.fdb_latexmk"
+      "*.fls"
+      "*.log"
+
+      # direnv
+      ".direnv/"
+      ".envrc"
+    ];
+    attributes = [
+      "*.ipynb diff=jupyternotebook merge=jupyternotebook"
+    ];
+
+    # TODO check jupyter notebook and nbdime later
+    extraConfig = {
+      pull.ff = "only";
+      core.pager = "less -F";
+      init.defaultBranch = "main";
+      advice = {
+        addEmptyPathspec = false;
+        detachedHead = false;
       };
-    };
+      push.autoSetupRemote = true;
 
-    diff = {
-      nodiff.command = "__nodiff() { echo skipping \"$1\"; }; __nodiff";
-      jupyternotebook.command = "git-nbdiffdriver diff";
-    };
+      # WARN: XDGBDSV
+      ghq.root = "~/.local/share/ghq";
 
-    difftool = {
-      prompt = false;
-      nbdime.cmd = "git-nbdifftool diff \"$LOCAL\" \"$REMOTE\" \"$BASE\"";
-    };
-    pager.difftool = true;
+      merge = {
+        todo.driver = "todo merge %A %O %B";
+        jupyternotebook = {
+          driver = "git-nbmergedriver merge %O %A %B %L %P";
+          name = "jupyter notebook merge driver";
+        };
+      };
 
-    # I probably will never use this
-    mergetool = {
-      prompt = false;
-      nbdime.cmd = "git-nbmergetool merge \"$BASE\" \"$LOCAL\" \"$REMOTE\" \"$MERGED\"";
-    };
+      diff = {
+        nodiff.command = "__nodiff() { echo skipping \"$1\"; }; __nodiff";
+        jupyternotebook.command = "git-nbdiffdriver diff";
+      };
 
+      difftool = {
+        prompt = false;
+        nbdime.cmd = "git-nbdifftool diff \"$LOCAL\" \"$REMOTE\" \"$BASE\"";
+      };
+      pager.difftool = true;
+
+      # I probably will never use this
+      mergetool = {
+        prompt = false;
+        nbdime.cmd = "git-nbmergetool merge \"$BASE\" \"$LOCAL\" \"$REMOTE\" \"$MERGED\"";
+      };
+
+    };
   };
 }
