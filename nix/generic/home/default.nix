@@ -33,6 +33,34 @@
     };
   };
 
+  accounts.email.accounts.proton = {
+    himalaya = {
+      enable = true;
+      settings = {
+        "accounts.proton" = {
+          email = "anuramat@pm.me";
+
+          backend = {
+            type = "imap";
+            host = "127.0.0.1";
+            port = 1143;
+            encryption.type = "start-tls";
+            username = "anuramat@pm.me";
+            auth.cmd = "pass show manualBridge";
+          };
+
+          message.send.backend = {
+            type = "smtp";
+            host = "127.0.0.1";
+            port = 1025;
+            encryption.type = "start-tls";
+            username = "anuramat@pm.me";
+          };
+        };
+      };
+    };
+  };
+
   programs = {
     gpg = {
       enable = true;
@@ -40,21 +68,6 @@
     };
     himalaya = {
       enable = true;
-      settings = {
-        accounts.proton = {
-          email = "anuramat@pm.me";
-
-          backend.type = "imap";
-          backend.host = "127.0.0.1";
-          backend.port = 1143;
-          backend.encryption.type = "none";
-
-          message.send.backend.type = "smtp";
-          message.send.backend.host = "127.0.0.1";
-          message.send.backend.port = 1025;
-          message.send.backend.encryption.type = "none";
-        };
-      };
     };
     bemenu = {
       enable = true;
