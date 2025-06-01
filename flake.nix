@@ -12,6 +12,7 @@
     subcat.url = "github:anuramat/subcat";
     ctrlsn.url = "git+ssh://git@github.com/anuramat/ctrl.sn?ref=main";
     mcp-nixos.url = "github:utensils/mcp-nixos";
+    nil.url = "github:oxalica/nil/main";
   };
   outputs =
     inputs:

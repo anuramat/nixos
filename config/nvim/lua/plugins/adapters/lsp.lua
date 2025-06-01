@@ -2,6 +2,9 @@
 
 local ul = require('utils.lsp')
 
+local optionsExpr = string.format('(builtins.getFlake "/etc/nixos/").nixosConfigurations.%s.options', vim.fn.hostname())
+local homeExpr = optionsExpr .. '.home-manager.users.type.getSubOptions []'
+
 -- <https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md>
 --- Returns configs for specific lsps
 --- @return table configs
@@ -14,13 +17,10 @@ local configs = function()
       settings = {
         nixd = {
           options = {
-            -- keys don't matter
-            nixos = {
-              expr = string.format(
-                '(builtins.getFlake "/etc/nixos/").nixosConfigurations.%s.options',
-                vim.fn.hostname()
-              ),
-            },
+            -- keys are purely for evaluation progress display
+            -- values are merged in the end, sources are shown during completion
+            nixos = { expr = optionsExpr },
+            ['home-manager'] = { expr = homeExpr },
           },
           diagnostic = {
             suppress = {},
@@ -28,7 +28,7 @@ local configs = function()
         },
       },
     },
-    -- nil_ls = {}, -- nice code actions, but kinda stale; no pipe in stable
+    -- nil_ls = {}, -- nice code actions, but kinda stale: no pipe in stable
     yamlls = {
       -- natively supports schema store
       -- we can use schemastore plugin if we need more logic
