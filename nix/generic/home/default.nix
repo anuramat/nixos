@@ -12,14 +12,24 @@
 
   xdg.enable = true; # set XDG vars in .profile
 
-  home.file = {
-    # made for nvi
-    ".exrc" = {
-      source = ./files/exrc;
+  home = {
+    packages = with pkgs; [
+      pinentry-all
+    ];
+    file = {
+      # made for nvi
+      ".exrc" = {
+        source = ./files/exrc;
+      };
     };
   };
 
   services.pass-secret-service.enable = true; # secret service api -- exposes password-store over dbus
+  services.gpg-agent = {
+    enable = true;
+    enableBashIntegration = true;
+    pinentryPackage = pkgs.pinentry-bemenu;
+  };
   programs = {
     gpg = {
       enable = true;
