@@ -38,7 +38,6 @@
       ''
         # placeholder: environment.loginShellInit {{{1
         source ${./profile.sh}
-        source ${./sway_autostart.sh}
         # end }}}
       '';
     interactiveShellInit = "# placeholder: environment.interactiveShellInit";

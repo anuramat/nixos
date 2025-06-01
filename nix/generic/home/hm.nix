@@ -43,6 +43,10 @@
     bash = {
       enable = true;
       # TODO move everything around ffs
+      profileExtra = # bash
+        ''
+          source ${./sway_autostart.sh}
+        '';
       bashrcExtra = # bash
         ''
           source ${./files/xdg_shims.sh}
