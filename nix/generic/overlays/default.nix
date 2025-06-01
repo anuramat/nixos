@@ -70,6 +70,7 @@ in
     unstablePackages
     (final: prev: {
       mcp-nixos = inputs.mcp-nixos.packages.${prev.system}.default;
+      nil = inputs.nil.packages.${prev.system}.default;
     })
   ];
 }

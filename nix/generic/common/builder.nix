@@ -9,7 +9,7 @@ lib.mkIf (!config.nix.distributedBuilds) {
     5000 # nix-serve
   ];
   users.users.${cluster.builderUsername} = {
-    isNormalUser = true;
+    isNormalUser = true; # TODO maybe not?
     createHome = false;
     home = "/var/empty";
     group = cluster.builderUsername;
