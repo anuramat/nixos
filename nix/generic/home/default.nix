@@ -35,30 +35,35 @@
 
   accounts.email.accounts.proton = {
     primary = true;
+    realName = "Arsen Nuramatov";
     himalaya = {
       enable = true;
-      settings = {
-        "accounts.proton" = {
+      settings =
+        let
           email = "anuramat@pm.me";
+          lh = "127.0.0.1";
+          enc = "start-tls";
+        in
+        {
+          inherit email;
 
           backend = {
             type = "imap";
-            host = "127.0.0.1";
+            host = lh;
             port = 1143;
-            encryption.type = "start-tls";
-            username = "anuramat@pm.me";
+            encryption.type = enc;
+            username = email;
             auth.cmd = "pass show manualBridge";
           };
 
           message.send.backend = {
             type = "smtp";
-            host = "127.0.0.1";
+            host = lh;
             port = 1025;
-            encryption.type = "start-tls";
-            username = "anuramat@pm.me";
+            encryption.type = enc;
+            username = email;
           };
         };
-      };
     };
   };
 
