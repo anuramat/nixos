@@ -95,7 +95,6 @@
     watchman # another file watcher TODO try and compare to entr
     wayidle # runs a command on idle
     zellij # tmux++
-    zoxide # cd++
     expect # automating tuis
 
     # misc {{{1
