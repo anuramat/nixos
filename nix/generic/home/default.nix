@@ -1,5 +1,4 @@
 v:
-
 let
   user = v.config.user.username;
 in
@@ -13,6 +12,6 @@ in
     useGlobalPkgs = true;
     useUserPackages = true;
 
-    users.${user} = import ./hm.nix;
+    users.${user} = import ./hm.nix v;
   };
 }
