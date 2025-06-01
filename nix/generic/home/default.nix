@@ -34,6 +34,7 @@
   };
 
   accounts.email.accounts.proton = {
+    primary = true;
     himalaya = {
       enable = true;
       settings = {
