@@ -115,6 +115,7 @@
     distrobox
     exercism # CLI for exercism.org
     fastfetch
+    himalaya # mail
     figlet # fancy banners
     gnuplot
     mprocs # job runner
