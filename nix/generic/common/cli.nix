@@ -103,7 +103,6 @@
     ansifilter
     pstree
     age # file encryption
-    gnupg
     wine
     aria # downloader
     banner

@@ -16,6 +16,9 @@
 
   services.pass-secret-service.enable = true; # secret service api -- exposes password-store over dbus
   programs = {
+    gpg = {
+      enable = true;
+    };
     home-manager.enable = true; # TODO huh?
     password-store = {
       enable = true;
