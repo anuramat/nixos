@@ -19,9 +19,6 @@
     home-manager.enable = true; # TODO huh?
     password-store = {
       enable = true;
-      settings = {
-        PASSWORD_STORE_DIR = "${config.xdg.dataHome}/pass";
-      };
     };
 
     gh = {
