@@ -1,17 +1,23 @@
-{ config, inputs, ... }@args:
-let
-  user = config.user.username;
-in
+{
+  config,
+  inputs,
+  pkgs,
+  ...
+}@args:
 {
   imports = [
     inputs.home-manager.nixosModules.home-manager
   ];
 
   home-manager = {
-    backupFileExtension = "backup";
+    backupFileExtension = "hmbackup";
     useGlobalPkgs = true;
     useUserPackages = true;
-
-    users.${user} = import ./hm.nix args;
+    # WARN -- home manager expects a module
+    # so if you pass a function, it's gonna apply it to the home manager args, not nixos
+    # TODO pass a function, so that the hm stuff is properly separated from nixos
+    # the first step would be to move config.user option entirely to home manager
+    # in some places it's gonna have to be hardcoded, but that probably makes more sense
+    users.${config.user.username} = (import ./hm.nix args);
   };
 }

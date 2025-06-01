@@ -6,7 +6,7 @@
     enableAsDifftool = true;
     display = "inline";
   };
-  userEmail = config.user.email;
+  userEmail = config.home.username;
   userName = config.user.fullname;
   aliases = {
     st = "status";
