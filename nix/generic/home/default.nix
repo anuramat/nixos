@@ -157,7 +157,5 @@
       };
 
     };
-
-    neovim = import ./neovim.nix pkgs;
   };
 }
