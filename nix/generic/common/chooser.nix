@@ -46,6 +46,7 @@ in
         in
         {
           common = portalConfig;
+          sway = portalConfig;
         };
     };
   };
