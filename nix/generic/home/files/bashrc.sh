@@ -80,14 +80,22 @@ y() {
 }
 
 __tgpt_preprompted() {
-	local -r prompt << EOF
+	local cols=$(tput cols)
+	cols=$((cols > 80 ? 80 : cols))
+	local lines=$(tput lines)
+	local chars=$((lines * cols))
+	local prompt
+	read -rd '' prompt < <(
+		tr '\n' ' ' << EOF
 You will be provided with a description of the result that the user is trying to
 achieve. First, try to provide a single complete solution in a concise manner
 without comments, follow up questions or disclaimers. If possible, make it fit
-in a terminal window with $(tput lines) lines and $(tput cols) columns. Only if
-there's enough space, explain the key elements of the solution.
+in a terminal window with $(tput lines) lines and $cols columns, and thus
+approximately $chars characters. Only if there's enough space, explain the key
+elements of the solution.
 EOF
-	tgpt --preprompt "$prompt" "$@"
+	)
+	echo --preprompt "$(echo "$prompt" | tr '\n' ' ')" "$@"
 }
 
 ti() {
