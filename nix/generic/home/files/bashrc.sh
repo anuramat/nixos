@@ -95,7 +95,7 @@ approximately $chars characters. Only if there's enough space, explain the key
 elements of the solution.
 EOF
 	)
-	echo --preprompt "$(echo "$prompt" | tr '\n' ' ')" "$@"
+	tgpt --preprompt "$(echo "$prompt" | tr '\n' ' ')" "$@"
 }
 
 ti() {
