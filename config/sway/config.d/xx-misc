@@ -4,6 +4,8 @@ title_align center
 focus_follows_mouse no
 mouse_warping container
 default_orientation auto
+# TODO relative size
 floating_maximum_size 1420 x 980
+floating_minimum_size 600 x 480
 force_display_urgency_hint 300
 # vim: ft=swayconfig
