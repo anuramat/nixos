@@ -23,10 +23,9 @@ set {
 floating_modifier $mod normal
 $bind {
     $mod+semicolon exec $term
-    $mod+backslash exec $term_float
+    $mod+$mod2+semicolon exec $term_float
     $mod+apostrophe exec $term_float --working-directory="$HOME/notes" -e bash $EDITOR ~/notes/scratchpad.md
-    $mod+$mod2+slash reload
-    $mod+slash exec $term_float --working-directory=/etc/nixos -e bash $EDITOR
+    $mod+slash reload
     $mod+q kill
     $mod+$mod2+q exec $lock
     $mod+$mod3+q exec systemctl suspend
