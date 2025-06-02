@@ -78,7 +78,7 @@ $bind {
     $mod+$mod2+$up move up $move_value
     $mod+$mod2+$right move right $move_value
     $mod+$mod2+Tab move workspace back_and_forth
-    $mod+$mod2+semicolon move position center
+    # $mod+$mod2+semicolon move position center # TODO new key
     $mod+$mod2+c move position cursor
     # Moving workspaces {{{1
     $mod+$mod3+$left move workspace to output left
