@@ -50,7 +50,7 @@ in
         settings =
           let
             backend = {
-              username = address;
+              login = address;
               type = "imap";
               host = "127.0.0.1";
               port = 1143;
