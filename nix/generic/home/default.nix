@@ -33,39 +33,44 @@
     };
   };
 
-  accounts.email.accounts.proton = {
-    primary = true;
-    realName = "Arsen Nuramatov";
-    himalaya = {
-      enable = true;
-      settings =
-        let
-          email = "anuramat@pm.me";
-          lh = "127.0.0.1";
-          enc = "start-tls";
-        in
-        {
-          inherit email;
+  accounts.email.accounts.primary =
+    let
+      address = "x@ctrl.sn";
+    in
+    {
+      inherit address;
+      primary = true;
+      realName = "Arsen Nuramatov";
+      himalaya = {
+        enable = true;
+        settings =
+          let
 
-          backend = {
-            type = "imap";
-            host = lh;
-            port = 1143;
-            encryption.type = enc;
-            username = email;
-            auth.cmd = "pass show manualBridge";
-          };
+            lh = "127.0.0.1";
+            enc = "start-tls";
+          in
+          {
+            email = address;
 
-          message.send.backend = {
-            type = "smtp";
-            host = lh;
-            port = 1025;
-            encryption.type = enc;
-            username = email;
+            backend = {
+              type = "imap";
+              host = lh;
+              port = 1143;
+              encryption.type = enc;
+              username = address;
+              auth.cmd = "pass show manualBridge";
+            };
+
+            message.send.backend = {
+              type = "smtp";
+              host = lh;
+              port = 1025;
+              encryption.type = enc;
+              username = address;
+            };
           };
-        };
+      };
     };
-  };
 
   programs = {
     gpg = {

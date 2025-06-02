@@ -1,4 +1,7 @@
 { config, ... }:
+let
+  primary = config.accounts.email.accounts.primary;
+in
 {
   programs.git = {
     enable = true;
@@ -8,8 +11,8 @@
       display = "inline";
     };
     # TODO move hardcode to an option or something
-    userEmail = "x@ctrl.sn";
-    userName = "Arsen Nuramatov";
+    userEmail = primary.address;
+    userName = primary.realName;
     aliases = {
       st = "status";
       sh = "show --ext-diff";
