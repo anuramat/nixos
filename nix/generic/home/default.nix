@@ -79,6 +79,7 @@ in
       homedir = "${config.xdg.dataHome}/gnupg";
     };
     himalaya = {
+      # BUG doesn't work yet with protonmail-bridge <https://github.com/pimalaya/himalaya/issues/574>
       enable = true;
       settings = {
         display-name = realName;
