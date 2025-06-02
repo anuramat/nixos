@@ -49,28 +49,24 @@ in
         enable = true;
         settings =
           let
-
-            lh = "127.0.0.1";
-            enc = "start-tls";
+            backend = {
+              username = address;
+              type = "imap";
+              host = "127.0.0.1";
+              port = 1143;
+              encryption.type = "start-tls";
+              auth = {
+                type = "password";
+                cmd = "pass show manualBridge";
+              };
+            };
           in
           {
             email = address;
-
-            backend = {
-              type = "imap";
-              host = lh;
-              port = 1143;
-              encryption.type = enc;
-              username = address;
-              auth.cmd = "pass show manualBridge";
-            };
-
-            message.send.backend = {
+            inherit backend;
+            message.send.backend = backend // {
               type = "smtp";
-              host = lh;
               port = 1025;
-              encryption.type = enc;
-              username = address;
             };
           };
       };
