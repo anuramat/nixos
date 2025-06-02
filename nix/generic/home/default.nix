@@ -12,6 +12,7 @@ in
   imports = [
     ./git.nix
     ./neovim.nix
+    ./stylix.nix
   ];
 
   xdg.enable = true; # set XDG vars in .profile
