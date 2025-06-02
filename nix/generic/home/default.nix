@@ -3,6 +3,10 @@
   pkgs,
   ...
 }@args:
+let
+
+  realName = "Arsen Nuramatov";
+in
 {
 
   imports = [
@@ -40,7 +44,7 @@
     {
       inherit address;
       primary = true;
-      realName = "Arsen Nuramatov";
+      inherit realName;
       himalaya = {
         enable = true;
         settings =
@@ -79,6 +83,12 @@
     };
     himalaya = {
       enable = true;
+      settings = {
+        display-name = realName;
+        signature = "Regards,\n";
+        signature-delim = "-- \n";
+        downloads-dir = "~/Downloads";
+      };
     };
     bemenu = {
       enable = true;
