@@ -24,6 +24,16 @@ in
     packages = with pkgs; [
       pinentry-tty # just in case
     ];
+    activation = {
+      removeBrokenConfigLinks =
+        lib.hm.dag.entryBefore [ "writeBoundary" ] # bash
+          ''
+            args=("${config.xdg.configHome}" -maxdepth 1 -xtype l)
+            [ -z "$DRY_RUN" ] && args+=(-delete) 
+            [ -n "$VERBOSE" ] && args+=(-print)
+            run find "''${args[@]}"
+          '';
+    };
     file = {
       # made for nvi
       ".exrc" = {
