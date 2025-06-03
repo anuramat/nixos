@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-# TODO: this doesn't overwrite dotfiles
-
 lndir() (
 	source="$1"
 	directory="$2"
@@ -12,7 +10,6 @@ lndir() (
 	}
 	shopt -s dotglob
 	mkdir -p "$directory"
-	find "$directory" -maxdepth 1 -xtype l -delete
 	ln -sft "$directory" "$source"/*
 	shopt -u dotglob
 )
