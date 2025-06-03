@@ -4,7 +4,3 @@ timeout 300 "swaylock -f"
 timeout 600 "swaymsg 'output * dpms off'" resume "swaymsg 'output * dpms on'"
 timeout 999999 "systemctl suspend"
 before-sleep "swaylock -f"
-
-lock "swaylock -f"
-lock "gpg-connect-agent reloadagent /bye"
-unlock "pkill -USR1 swaylock"

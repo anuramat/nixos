@@ -108,6 +108,9 @@ in
     gh = {
       enable = true;
       settings = {
+        aliases = {
+          login = "auth login --skip-ssh-key --hostname github.com --git-protocol ssh --web";
+        };
         extensions = with pkgs; [
           gh-f
           gh-copilot
