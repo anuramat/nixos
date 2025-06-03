@@ -3,8 +3,6 @@ exec_always {
     "pkill kanshi; kanshi"
     # clipboard persistence
     "pkill wl-clip-persist; wl-clip-persist --clipboard regular"
-    # lock/suspend on idle
-    "pkill swayidle; swayidle -w"
     # network manager tray thingie
     "pkill nm-applet; nm-applet"
     # blueman tray thingie
