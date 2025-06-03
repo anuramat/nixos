@@ -6,4 +6,6 @@
       librewolf.profileNames = [ "default" ];
     };
   };
+  gtk.enable = true;
+  qt.enable = true;
 }
