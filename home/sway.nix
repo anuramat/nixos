@@ -3,8 +3,8 @@
     swayidle =
       let
         lock = "swaylock -f";
-        lockKeys = "pkill -SIGHUP gpg-agent";
-        unlock = "pkill -USR1 swaylock";
+        lockKeys = "killall -s SIGHUP gpg-agent";
+        unlock = "killall -s USR1 swaylock";
         sleep = "systemctl suspend";
         screenOff = "swaymsg 'output * dpms off'";
         screenOn = "swaymsg 'output * dpms on'";
