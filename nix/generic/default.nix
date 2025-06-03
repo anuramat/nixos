@@ -75,5 +75,4 @@
     enable = true;
     noAutostart = true;
   };
-  security.polkit.enable = true;
 }
