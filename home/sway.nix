@@ -1,4 +1,7 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
+let
+  useRed = false;
+in
 {
   programs = {
     swaylock = {
@@ -9,6 +12,7 @@
         indicator-caps-lock = true;
 
         # red
+      } // (if useRed then {
         color = "ff0000";
 
         inside-color = "ff0000";
@@ -39,7 +43,8 @@
         text-color = "00000000";
         text-ver-color = "00000000";
         text-wrong-color = "00000000";
-      };
+      } else {})
+      ;
     };
   };
   services = {
