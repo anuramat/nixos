@@ -1,8 +1,0 @@
-include generated-colors
-
-set adjust-open width
-set window-title-home-tilde true
-set statusbar-basename true
-set selection-clipboard clipboard
-set synctex true
-set synctex-editor-command "texlab inverse-search -i %{input} -l %{line}"

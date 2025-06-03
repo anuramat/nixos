@@ -5,6 +5,8 @@
 }@args:
 let
 
+  font-family = "Hack Nerd Font";
+  font-size = "13";
   realName = "Arsen Nuramatov";
 in
 {
@@ -219,6 +221,41 @@ in
         "cookiebanners.service.mode.privateBrowsing" = 1;
       };
 
+    };
+
+    zathura = {
+
+      enable = true;
+
+      options = {
+        adjust-open = "width";
+        window-title-home-tilde = true;
+        statusbar-basename = true;
+        selection-clipboard = "clipboard";
+        synctex = true;
+        synctex-editor-command = "texlab inverse-search -i %{input} -l %{line}"; # result should be quoted I think
+      };
+    };
+    ghostty = {
+      enable = true;
+      clearDefaultKeybinds = true;
+      # enableBashIntegration = true; TODO huh?
+      settings = {
+        inherit font-size font-family;
+        cursor-style = "block";
+        cursor-style-blink = "false";
+        shell-integration-features = "no-cursor";
+        resize-overlay = "never";
+        window-decoration = "false";
+      };
+    };
+    info.enable = true;
+    less = {
+      enable = true;
+      keys = ''
+        #env
+        LESS = -ir
+      '';
     };
   };
 }
