@@ -4,5 +4,6 @@
     targets = {
       bemenu.enable = true;
     };
+
   };
 }

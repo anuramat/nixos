@@ -12,7 +12,7 @@
 
   stylix = {
     enable = true;
-    autoEnable = false;
+    # autoEnable = false;
     polarity = "dark";
     homeManagerIntegration = {
       followSystem = true;
@@ -67,6 +67,10 @@
   };
 
   # add login later
+  security.pam.services.login.gnupg = {
+    enable = true;
+    noAutostart = true;
+  };
   security.pam.services.swaylock.gnupg = {
     enable = true;
     noAutostart = true;
