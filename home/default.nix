@@ -17,6 +17,7 @@ in
     ./neovim.nix
     ./stylix.nix
     ./sway.nix
+    ./pass.nix
   ];
 
   xdg.enable = true; # set XDG vars in .profile
@@ -39,15 +40,6 @@ in
       ".exrc" = {
         source = ./files/exrc;
       };
-    };
-  };
-
-  services.pass-secret-service.enable = true; # secret service api -- exposes password-store over dbus
-  services.gpg-agent = {
-    enable = true;
-    enableBashIntegration = true;
-    pinentry = {
-      package = pkgs.pinentry-bemenu;
     };
   };
 
@@ -112,9 +104,6 @@ in
       };
     };
     home-manager.enable = true; # TODO huh?
-    password-store = {
-      enable = true;
-    };
 
     gh = {
       enable = true;
