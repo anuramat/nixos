@@ -9,17 +9,6 @@
   imports = dummy ./.;
   security.rtkit.enable = true; # realtime kit, hands out realtime priority to user processes
 
-  # wm {{{1
-  programs.sway = {
-    enable = true;
-    # TODO doc this; why is this not on by default
-    wrapperFeatures.gtk = true;
-    extraPackages = with pkgs; [
-      dbus # make sure dbus-update-activation-environment is available
-      # isnt dbus already in there anyway?
-    ];
-  };
-
   # external pkgs {{{1
   services.flatpak.enable = true;
   programs.appimage = {
@@ -149,10 +138,6 @@
     enable = true;
     mountOnMedia = true;
   };
-
-  # misc hacks {{{1
-  # force native wayland support in chrome/electron apps; TODO delete if chrome doesn't go xwayland
-  # environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   # print/scan {{{1
   # TODO move this to notes?
