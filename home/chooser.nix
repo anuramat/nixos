@@ -22,8 +22,7 @@ in
   };
 
   # point it to the file manager
-  environment.etc."xdg/xdg-desktop-portal-termfilechooser/config" = {
-    text = # ini
+  home.file.".config/xdg-desktop-portal-termfilechooser/config".text = # ini
       ''
         [filechooser]
         cmd=${chooser}/share/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh
@@ -46,7 +45,6 @@ in
         in
         {
           common = portalConfig;
-          sway = portalConfig;
         };
     };
   };
