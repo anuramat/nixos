@@ -18,6 +18,13 @@ in
   ];
 
   xdg.enable = true; # set XDG vars in .profile
+  wayland.windowManager.sway = {
+    config = {
+      modifier = "Mod1";
+      bindkeysToCode = true;
+    };
+    checkConfig = true;
+  };
 
   home = {
     packages = with pkgs; [
@@ -234,6 +241,20 @@ in
         selection-clipboard = "clipboard";
         synctex = true;
         synctex-editor-command = "texlab inverse-search -i %{input} -l %{line}"; # result should be quoted I think
+      };
+    };
+    fd = {
+      enable = true;
+      ignores = [
+        ".git/"
+        "*.pb.go"
+      ];
+    };
+    bat = {
+      enable = true;
+      config = {
+        italic-text = "always";
+        pager = "less -F";
       };
     };
     foot = {
