@@ -2,7 +2,7 @@
 .SILENT:
 .PHONY: clean test
 
-.PHONY: all flake links code init
+.PHONY: all flake links code init deadlinks
 all: flake links code
 flake:
 	./scripts/heading.sh "Copying public keys"
@@ -12,8 +12,13 @@ flake:
 	cp -ft "$(keys_dir)" "/etc/nix/cache.pem.pub" 2>/dev/null || true
 	./scripts/heading.sh "Building NixOS"
 	sudo nixos-rebuild switch --option extra-experimental-features pipe-operators --show-trace
-links:
+deadlinks:
+	./scripts/heading.sh "Cleaning up dead links in $$XDG_CONFIG_HOME"
+	find "$(XDG_CONFIG_HOME)" -maxdepth 1 -xtype l -delete
+links: deadlinks
 	./scripts/heading.sh "Setting up links"
+	# bash env will not work anymore, xdg vars are in personal profile now TODO
+	# prob don't touch, delete after transitioning to home manager
 	BASH_ENV=/etc/profile ./scripts/install.sh
 machine_dir::=$(shell pwd)/nix/machines/$(shell hostname)
 keys_dir::=$(machine_dir)/keys
