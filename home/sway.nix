@@ -1,38 +1,41 @@
-{ ... }:
 {
   services = {
-    swayidle = {
-      enable = true;
-      # idlehint 300 # TODO ask for implementation
-      timeouts = [
-        {
-          timeout = 300;
-          command = "swaylock  -f";
-        }
-        {
-          timeout = 600;
-          command = "swaymsg   'output * dpms off'";
-          resumeCommand = "swaymsg 'output * dpms on'";
-        }
-        {
-          timeout = 999999;
-          command = "systemctl suspend";
-        }
-      ];
-
-      events =
-        let
-          lock = "swaylock -f";
-
-        in
-        [
+    swayidle =
+      let
+        lock = "swaylock -f";
+        lockKeys = "gpg-connect-agent reloadagent /bye";
+        unlock = "pkill -USR1 swaylock";
+        sleep = "systemctl suspend";
+        screenOff = "swaymsg 'output * dpms off'";
+        screenOn = "swaymsg 'output * dpms on'";
+      in
+      {
+        enable = true;
+        # idlehint = 300; # TODO ask for implementation
+        # TODO maybe also turn command into commands in events and timeouts
+        timeouts = [
+          {
+            timeout = 300;
+            command = lock;
+          }
+          {
+            timeout = 600;
+            command = screenOff;
+            resumeCommand = screenOn;
+          }
+          {
+            timeout = 999999;
+            command = sleep;
+          }
+        ];
+        events = [
           {
             event = "before-sleep";
             command = lock;
           }
           {
             event = "unlock";
-            command = "pkill -USR1 swaylock";
+            command = unlock;
           }
           {
             event = "lock";
@@ -40,10 +43,10 @@
           }
           {
             event = "lock";
-            command = "gpg-connect-agent reloadagent /bye";
+            command = lockKeys;
           }
         ];
-    };
+      };
   };
   # wayland.windowManager.sway = {
   #   config = {
