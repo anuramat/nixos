@@ -116,6 +116,12 @@ run() {
 	nix run "nixpkgs-unstable#$name" -- "$@"
 }
 
+shell() {
+	local -r name=$1
+	shift
+	nix shell "nixpkgs-unstable#$name" -- "$@"
+}
+
 ho() {
 	manix "$*" --source hm_options
 }
