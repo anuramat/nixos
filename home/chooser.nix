@@ -24,13 +24,12 @@ in
 
   # point it to the file manager
   home.file.".config/xdg-desktop-portal-termfilechooser/config".text = # ini
-      ''
-        [filechooser]
-        cmd=${chooser}/share/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh
-        default_dir=$HOME/Downloads
-        env=TERMCMD=foot
-      '';
-  };
+    ''
+      [filechooser]
+      cmd=${chooser}/share/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh
+      default_dir=$HOME/Downloads
+      env=TERMCMD=foot
+    '';
 
   # set as default
   xdg = {

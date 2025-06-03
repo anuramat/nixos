@@ -69,8 +69,6 @@
     glpaper # shader
 
     # unfiled {{{2
-    swayidle # lock/sleep on idle
-    swaylock # lockscreen
     udiskie # udisk2 applet frontend
     waypipe # gui forwarding
     wl-clip-persist # otherwise clipboard contents disappear on exit
