@@ -291,10 +291,12 @@ in
       enable = true;
       settings = {
         plugin.preloaders = [ ];
-        plugin.prepend_previewers = {
-          name = "/media/**";
-          run = "noop";
-        };
+        plugin.prepend_previewers = [
+          {
+            name = "/media/**";
+            run = "noop";
+          }
+        ];
         manager.sort_by = "natural";
       };
       keymap = {
