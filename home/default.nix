@@ -127,10 +127,10 @@ in
     bash = {
       enable = true;
       # TODO move everything around ffs
-      profileExtra = # bash
-        ''
-          source ${./files/sway_autostart.sh}
-        '';
+      # profileExtra = # bash
+      #   ''
+      #     source ${./files/sway_autostart.sh}
+      #   '';
       bashrcExtra = # bash
         ''
           source ${./files/xdg_shims.sh}
