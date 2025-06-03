@@ -50,6 +50,18 @@
           modules = mkModules name ++ [
             ./nix/generic
             inputs.stylix.nixosModules.stylix
+            inputs.home-manager.nixosModules.home-manager
+            (
+              { config, ... }:
+              {
+                home-manager = {
+                  backupFileExtension = "hmbackup";
+                  useGlobalPkgs = true;
+                  useUserPackages = true;
+                  users.${config.user.username} = import ./home; # WARN value is a home manager module, not nixos
+                };
+              }
+            )
           ];
         };
     in
@@ -62,7 +74,9 @@
         })
         |> builtins.listToAttrs;
       homeConfigurations.${username} = inputs.home-manager.lib.homeManagerConfiguration {
-        modules = [  ];
+        modules = [
+          ./hm
+        ];
       };
     };
 }

@@ -65,7 +65,7 @@
     nodePackages_latest.vscode-json-languageserver
     pyright
     texlab
-    nixd # XXX waiting for pipe support
+    nixd
     yaml-language-server
 
     # linters {{{1

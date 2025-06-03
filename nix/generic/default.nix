@@ -1,13 +1,11 @@
 {
-  inputs,
-pkgs,
+  pkgs,
   config,
   cluster,
   ...
 }:
 {
   imports = [
-    inputs.home-manager.nixosModules.home-manager
     ./common
     ./mime
     ./shell
@@ -20,15 +18,11 @@ pkgs,
     useUserPackages = true;
     # WARN -- home manager expects a module
     # so if you pass a function, it's gonna apply it to the home manager args, not nixos
-    # TODO pass a function, so that the hm stuff is properly separated from nixos
+    # TODO separate hm from nixos completely
     # the first step would be to move config.user option entirely to home manager
     # in some places it's gonna have to be hardcoded, but that probably makes more sense
     users.${config.user.username} = import ./home;
   };
 
-  stylix = {
-    base16Scheme = {
-      stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-hard.yaml";
-    };
-  };
+  stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-hard.yaml";
 }
