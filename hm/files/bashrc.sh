@@ -116,12 +116,16 @@ run() {
 	nix run "nixpkgs-unstable#$name" -- "$@"
 }
 
-mho() {
+ho() {
 	manix "$*" --source hm_options
 }
 
-mno() {
+no() {
 	manix "$*" --source nixos_options
+}
+
+np() {
+	manix "$*" --source nixpkgs_tree
 }
 
 # vim: fdl=0
