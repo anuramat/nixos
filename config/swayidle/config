@@ -6,4 +6,5 @@ timeout 999999 "systemctl suspend"
 before-sleep "swaylock -f"
 
 lock "swaylock -f"
+lock "gpg-connect-agent reloadagent /bye"
 unlock "pkill -USR1 swaylock"
