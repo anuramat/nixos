@@ -1,6 +1,4 @@
 {
-  pkgs,
-  config,
   cluster,
   ...
 }:
@@ -12,25 +10,51 @@
     ./overlays
   ] ++ (if cluster.this.server then [ ./server ] else [ ./desktop ]);
 
-  stylix.base16Scheme = {
-    scheme = "zaibatsu";
+  stylix = {
+    enable = true;
+    autoEnable = false;
+    polarity = "dark";
+    homeManagerIntegration = {
+      followSystem = true;
+    };
+    fonts = {
+      monospace = {
+        name = "Hack Nerd Font";
+      };
+      serif = {
+        name = "Hack Nerd Font";
+      };
+      sansSerif = {
+        name = "Hack Nerd Font";
+      };
+      sizes = {
+        applications = 13;
+        desktop = 10;
+        popups = 10;
+        terminal = 13;
+      };
+    };
 
-    base00 = "#0e0024";
-    base01 = "#d7005f";
-    base02 = "#00af5f";
-    base03 = "#ffaf00";
-    base04 = "#5f5fff";
-    base05 = "#d700ff";
-    base06 = "#00afff";
-    base07 = "#d7d5db";
-    base08 = "#878092";
-    base09 = "#ff5faf";
-    base0A = "#00d700";
-    base0B = "#ffd700";
-    base0C = "#8787ff";
-    base0D = "#ff87ff";
-    base0E = "#00ffff";
-    base0F = "#ffffff";
+    base16Scheme = {
+      scheme = "zaibatsu";
+
+      base00 = "#0e0024";
+      base01 = "#d7005f";
+      base02 = "#00af5f";
+      base03 = "#ffaf00";
+      base04 = "#5f5fff";
+      base05 = "#d700ff";
+      base06 = "#00afff";
+      base07 = "#d7d5db";
+      base08 = "#878092";
+      base09 = "#ff5faf";
+      base0A = "#00d700";
+      base0B = "#ffd700";
+      base0C = "#8787ff";
+      base0D = "#ff87ff";
+      base0E = "#00ffff";
+      base0F = "#ffffff";
+    };
   };
   # "${pkgs.base16-schemes}/share/themes/gruvbox-dark-hard.yaml";
   programs.npm = {
