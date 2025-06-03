@@ -1,5 +1,6 @@
 { pkgs, lib, ... }:
 let
+  # TODO refactor or contribute
   chooser = pkgs.xdg-desktop-portal-termfilechooser;
   binPath = pkgs: "PATH=${lib.concatMapStringsSep ":" (v: "${v}/bin") pkgs}";
 
