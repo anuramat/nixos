@@ -14,7 +14,7 @@ in
 {
   # make sure the dependencies are available
   systemd.user.services."xdg-desktop-portal-termfilechooser" = {
-    overrideStrategy = "asDropin";
+    # overrideStrategy = "asDropin"; # not supported in home manager, TODO contrib?
     serviceConfig = {
       Environment = [
         (binPath dependencies)
