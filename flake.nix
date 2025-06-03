@@ -55,10 +55,10 @@
               { config, ... }:
               {
                 home-manager = {
-                  backupFileExtension = "hmbackup";
+                  backupFileExtension = "HMBAK";
                   useGlobalPkgs = true;
                   useUserPackages = true;
-                  users.${config.user.username} = import ./hm; # WARN value is a home manager module, not nixos
+                  users.${config.user.username} = import ./home; # WARN value is a home manager module, not nixos
                 };
               }
             )
@@ -75,7 +75,7 @@
         |> builtins.listToAttrs;
       homeConfigurations.${username} = inputs.home-manager.lib.homeManagerConfiguration {
         modules = [
-          ./hm
+          ./home
         ];
       };
     };
