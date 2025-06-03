@@ -116,4 +116,12 @@ run() {
 	nix run "nixpkgs-unstable#$name" -- "$@"
 }
 
+mho() {
+	manix "$*" --source hm_options
+}
+
+mno() {
+	manix "$*" --source nixos_options
+}
+
 # vim: fdl=0
