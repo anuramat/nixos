@@ -51,7 +51,6 @@ let
       tgpt
       wallust
       wezterm
-      xdg-desktop-portal-termfilechooser # not in stable yet
       xdg-ninja
       yazi
       ;
