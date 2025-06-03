@@ -65,4 +65,10 @@
       init-module=''${XDG_CONFIG_HOME}/npm/config/npm-init.js
     '';
   };
+
+  # add login later
+  security.pam.services.swaylock.gnupg = {
+    enable = true;
+    noAutostart = true;
+  };
 }
