@@ -236,6 +236,22 @@ in
         synctex-editor-command = "texlab inverse-search -i %{input} -l %{line}"; # result should be quoted I think
       };
     };
+    foot = {
+      enable = true;
+      settings = {
+        main.font = "Hack Nerd Font:size=13";
+
+        scrollback.lines = 13337;
+
+        bell.urgent = "yes";
+        bell.visual = "yes";
+        bell.notify = "no";
+
+        key-bindings.show-urls-copy = "Control+Shift+y";
+        key-bindings.scrollback-home = "Shift+Home";
+        key-bindings.scrollback-end = "Shift+End";
+      };
+    };
     ghostty = {
       enable = true;
       clearDefaultKeybinds = true;
