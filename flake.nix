@@ -58,7 +58,7 @@
                   backupFileExtension = "hmbackup";
                   useGlobalPkgs = true;
                   useUserPackages = true;
-                  users.${config.user.username} = import ./home; # WARN value is a home manager module, not nixos
+                  users.${config.user.username} = import ./hm; # WARN value is a home manager module, not nixos
                 };
               }
             )
