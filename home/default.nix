@@ -16,6 +16,7 @@ in
     ./git.nix
     ./neovim.nix
     ./stylix.nix
+    ./chooser.nix
     ./sway.nix
     ./pass.nix
   ];
