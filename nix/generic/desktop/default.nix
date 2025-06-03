@@ -122,7 +122,6 @@
     dracula-icon-theme # for the bar
     # }}}
   ];
-  programs.seahorse.enable = true; # gnome keyring frontend
 
   services.protonmail-bridge = {
     enable = true;
