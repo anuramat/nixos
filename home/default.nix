@@ -29,8 +29,8 @@ in
         lib.hm.dag.entryBefore [ "writeBoundary" ] # bash
           ''
             args=("${config.xdg.configHome}" -maxdepth 1 -xtype l)
-            [ -z "$DRY_RUN" ] && args+=(-delete) 
-            [ -n "$VERBOSE" ] && args+=(-print)
+            [ -z "''${DRY_RUN:+set}" ] && args+=(-delete) 
+            [ -n "''${VERBOSE:+set}" ] && args+=(-print)
             run find "''${args[@]}"
           '';
     };
