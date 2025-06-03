@@ -51,7 +51,7 @@ git_rm() {
 	echo "$selected" | xargs -I{} bash -c 'yes | ghq rm {} 2>/dev/null'
 }
 
-git_clone() {
+clone() {
 	[ "$1" = -h ] && {
 		echo '`ghq get` with picker and zoxide init'
 		echo '$1 - repo as interpreted by ghq, optional'
