@@ -21,6 +21,7 @@
   outputs =
     inputs:
     let
+      username = "anuramat";
       epsilon =
         path: path |> builtins.readDir |> builtins.attrNames |> builtins.filter (a: a != "default.nix");
 
@@ -60,5 +61,8 @@
           value = mkSystem name;
         })
         |> builtins.listToAttrs;
+      homeConfigurations.${username} = inputs.home-manager.lib.homeManagerConfiguration {
+        modules = [  ];
+      };
     };
 }
