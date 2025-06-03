@@ -12,5 +12,6 @@
     pinentry = {
       package = pkgs.pinentry-bemenu;
     };
+    defaultCacheTtl = 999999;
   };
 }

@@ -3,7 +3,7 @@
     swayidle =
       let
         lock = "swaylock -f";
-        lockKeys = "gpg-connect-agent reloadagent /bye";
+        lockKeys = "pkill -SIGHUP gpg-agent";
         unlock = "pkill -USR1 swaylock";
         sleep = "systemctl suspend";
         screenOff = "swaymsg 'output * dpms off'";
