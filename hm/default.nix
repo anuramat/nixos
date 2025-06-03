@@ -15,17 +15,10 @@ in
     ./git.nix
     ./neovim.nix
     ./stylix.nix
+    ./sway.nix
   ];
 
   xdg.enable = true; # set XDG vars in .profile
-  wayland.windowManager.sway = {
-    config = {
-      modifier = "Mod1";
-      bindkeysToCode = true;
-    };
-    checkConfig = true;
-  };
-
   home = {
     packages = with pkgs; [
       pinentry-tty # just in case
