@@ -14,8 +14,7 @@
 
   stylix = {
     enable = true;
-    # autoEnable = false;
-    polarity = "dark";
+    autoEnable = true;
     homeManagerIntegration = {
       followSystem = true;
     };
@@ -36,9 +35,11 @@
         terminal = 13;
       };
     };
-
+    # stella
+    # black-metal
     base16Scheme = "${pkgs.base16-schemes}/share/themes/tokyo-night-dark.yaml";
   };
+  # TODO uhh
   programs.npm = {
     npmrc = ''
       prefix=''${XDG_DATA_HOME}/npm
