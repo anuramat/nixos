@@ -33,21 +33,18 @@
         startup = [
           # { command = ""; always = true; notification = false; }
         ];
-        # for_window [shell="xwayland"] title_format "%title [XWayland]"
-        # title_align center
-        # mouse_warping container
-        # default_orientation auto
-        # # TODO relative size
-        # floating_maximum_size 1420 x 980
-        # floating_minimum_size 600 x 480
-        # force_display_urgency_hint 300
-        # set $cursor_size 30
-        # default_border pixel 3
-        # seat * {
-        #     hide_cursor when-typing enable
-        #     xcursor_theme $cursor_theme $cursor_size
-        # }
-        # set $cursor_theme Hackneyed
+        extraConfig = [
+          "title_align center"
+          ''for_window [shell="xwayland"] title_format "%title [XWayland]"''
+          # TODO relative size
+          "floating_maximum_size 1420 x 980"
+          "floating_minimum_size 600 x 480"
+        ];
+        seat = {
+          "*" = {
+            hide_cursor = "when-typing enable";
+          };
+        };
         bindkeysToCode = true;
         up = "k";
         down = "j";

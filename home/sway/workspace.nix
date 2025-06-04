@@ -1,5 +1,6 @@
 { lib, ... }:
 let
+
   internal = "eDP-1";
   externals = builtins.concatStringsSep " " [
     "DP-1"
@@ -19,20 +20,29 @@ let
 
 in
 {
-  wayland.windowManager.sway.config.workspaceOutputAssign =
+  wayland.windowManager.sway.config = {
 
-    mkAssign internal [
-      1
-      2
-      3
-      4
-      5
-    ]
-    ++ mkAssign externals [
-      6
-      7
-      8
-      9
-      10
+    extraConfig = [
+      "bindswitch --locked lid:on output ${internal} disable"
+      "bindswitch --locked lid:off output ${internal} enable"
     ];
+    workspaceOutputAssign =
+
+      mkAssign internal [
+        1
+        2
+        3
+        4
+        5
+      ]
+      ++ mkAssign externals [
+        6
+        7
+        8
+        9
+        10
+      ];
+
+  };
+
 }
