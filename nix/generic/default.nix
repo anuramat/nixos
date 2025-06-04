@@ -4,6 +4,7 @@
   ...
 }:
 {
+  hardware.graphics.enable = true;
   imports = [
     ./common
     ./mime

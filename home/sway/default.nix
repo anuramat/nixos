@@ -27,4 +27,5 @@
     # };
     # checkConfig = true;
   };
+  # include /etc/sway/config.d/*
 }
