@@ -4,15 +4,23 @@ return {
   {
     'NeogitOrg/neogit',
     dependencies = {
-      'nvim-lua/plenary.nvim', -- required
-      'sindrets/diffview.nvim', -- optional - Diff integration
-      'ibhagwan/fzf-lua', -- optional
+      'sindrets/diffview.nvim',
+      'ibhagwan/fzf-lua',
     },
-    lazy = false,
+    event = 'VeryLazy',
     opts = {
       kind = 'floating',
     },
+    keys = { { '<leader>go', '<cmd>Neogit<cr>', desc = 'Neogit' } },
   },
+  -- neogit is unstable as of 03-2024
+  'tpope/vim-fugitive',
+  keys = { {
+    '<leader>G',
+    '<cmd>Git<cr>',
+    event = 'VeryLazy',
+    desc = 'Fugitive',
+  } },
   -- gitsigns - gutter, binds, etc.
   {
     -- tanvirtin/vgit.nvim

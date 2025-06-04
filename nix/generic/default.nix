@@ -12,33 +12,8 @@
     ./overlays
   ] ++ (if cluster.this.server then [ ./server ] else [ ./desktop ]);
 
-  stylix = {
-    enable = true;
-    autoEnable = true;
-    homeManagerIntegration = {
-      followSystem = true;
-    };
-    fonts = {
-      monospace = {
-        name = "Hack Nerd Font";
-      };
-      serif = {
-        name = "Hack Nerd Font";
-      };
-      sansSerif = {
-        name = "Hack Nerd Font";
-      };
-      sizes = {
-        applications = 13;
-        desktop = 10;
-        popups = 10;
-        terminal = 13;
-      };
-    };
-    # stella
-    # black-metal
-    base16Scheme = "${pkgs.base16-schemes}/share/themes/tokyo-night-dark.yaml";
-  };
+  stylix.homeManagerIntegration.followSystem = true;
+
   # TODO uhh
   programs.npm = {
     npmrc = ''
