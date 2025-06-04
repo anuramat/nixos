@@ -15,7 +15,7 @@
       enable = true;
       notify = true;
       tray = "auto";
-      automount = "true";
+      automount = true;
     };
   };
   services.network-manager-applet.enable = true;

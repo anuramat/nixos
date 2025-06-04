@@ -6,7 +6,7 @@
     settings = [
       {
         mode = "overlay";
-        margin = 0;
+        margin = "0";
         ipc = true;
         position = "bottom";
         spacing = 5;
