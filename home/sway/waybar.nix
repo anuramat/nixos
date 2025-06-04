@@ -1,7 +1,7 @@
 {
-  waybar = {
+  programs.waybar = {
     enable = true;
-    systemd = false;
+    systemd.enable = false;
     style = ./waybar/style.css;
     settings = [
       {

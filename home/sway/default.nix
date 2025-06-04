@@ -4,6 +4,8 @@
     ./swayidle.nix
     ./swaylock.nix
     ./input.nix
+    ./workspace.nix
+    ./waybar.nix
     ./output.nix
   ];
   wayland.windowManager.sway =
@@ -12,8 +14,9 @@
     in
     {
       enable = true;
+      checkConfig = true;
+      wrapperFeatures.gtk = true;
       config = {
-        wrapperFeatures.gtk = true;
         # systemd.xdgAutostart = true;
         inherit modifier;
         focus = {
@@ -68,7 +71,6 @@
             { app_id = "Proton Pass"; }
           ];
         };
-        checkConfig = true;
         bars = [
           {
             command = "${pkgs.waybar}/bin/waybar";
