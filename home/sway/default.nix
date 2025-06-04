@@ -89,12 +89,13 @@
         keybindings = { };
       };
       # TODO relative size
-      extraConfig = ''
-        title_align center
-        for_window [shell="xwayland"] title_format "%title [XWayland]"
-        floating_maximum_size 1420 x 980
-        floating_minimum_size 600 x 480
-      '';
+      extraConfig = # sway
+        ''
+          title_align center
+          for_window [shell="xwayland"] title_format "%title [XWayland]"
+          floating_maximum_size 1420 x 980
+          floating_minimum_size 600 x 480
+        '';
     };
   # include /etc/sway/config.d/*
 }
