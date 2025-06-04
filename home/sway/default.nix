@@ -1,5 +1,24 @@
-{ pkgs, ... }:
+{ pkgs, osConfig, ... }:
 {
+  services = {
+    blueman-applet.enable = osConfig.services.blueman.enable;
+    avizo = {
+      enable = true;
+      settings = {
+        default = {
+          time = 0.5;
+        };
+      };
+
+    };
+    udiskie2 = {
+      enable = true;
+      notify = true;
+      tray = "auto";
+      automount = "true";
+    };
+  };
+  services.network-manager-applet.enable = true;
   imports = [
     ./swayidle.nix
     ./keys.nix
@@ -8,6 +27,7 @@
     ./workspace.nix
     ./waybar.nix
     ./output.nix
+    ./kanshi.nix
   ];
   wayland.windowManager.sway =
     let
@@ -32,7 +52,10 @@
           resize = { }; # TODO
         };
         startup = [
-          # { command = ""; always = true; notification = false; }
+          {
+            command = "pkill wl-clip-persist; wl-clip-persist --clipboard regular";
+            always = true;
+          }
         ];
         extraConfig = [
           "title_align center"

@@ -93,11 +93,11 @@ in
       "${mod}+semicolon" = term;
       "${mod}+${mod2}+semicolon" = term_float;
       "${mod}+apostrophe" =
-        "exec ${term_float} --working-directory=\"$HOME/notes\" -e bash $EDITOR ~/notes/scratchpad.md";
+        "${term_float} --working-directory=\"$HOME/notes\" -e bash $EDITOR ~/notes/scratchpad.md";
       "${mod}+slash" = "reload";
       "${mod}+q" = "kill";
       "${mod}+${mod2}+q" = lock;
-      "${mod}+Shift+q" = sleep;
+      "${mod}+${mod3}+q" = sleep;
       "${mod}+space" = drun;
       "${mod}+r" = books;
       "${mod}+t" = todo_add;

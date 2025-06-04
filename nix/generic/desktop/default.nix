@@ -36,8 +36,6 @@
   # packages {{{1
   environment.systemPackages = with pkgs; [
     # essentials {{{2
-    avizo # brightness/volume control with overlay indicator
-    kanshi # display config daemon
     wdisplays # GUI kanshi config generator
     libnotify # notify-send etc
     playerctl # cli media player controls
@@ -69,7 +67,6 @@
     glpaper # shader
 
     # unfiled {{{2
-    udiskie # udisk2 applet frontend
     waypipe # gui forwarding
     wl-clip-persist # otherwise clipboard contents disappear on exit
     wl-clipboard # wl-copy/wl-paste: copy from stdin/paste to stdout
