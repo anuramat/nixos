@@ -17,7 +17,7 @@ let
 
   rawProfiles = {
     ll7 = [
-      (ll7 // { scale = 1.5; })
+      ll7
     ];
     ll7-home = [
       (ll7 // { scale = 2.0; })
