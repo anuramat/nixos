@@ -31,6 +31,7 @@
   ];
   wayland.windowManager.sway =
     let
+      border = 3;
       modifier = "Mod4"; # logo
     in
     {
@@ -45,11 +46,6 @@
           wrapping = "no";
           mouseWarping = true;
           newWindow = "none"; # TODO
-        };
-        terminal = "foot";
-        menu = "bemenu-run";
-        modes = {
-          resize = { }; # TODO
         };
         startup = [
           {
@@ -69,12 +65,11 @@
         right = "l";
         window = {
           titlebar = false;
-          border = 3;
+          inherit border;
         };
         floating = {
-          inherit modifier;
-          border = { }; # TODO
-          titlebar = { }; # TODO
+          inherit modifier border;
+          titlebar = true;
           criteria = [
             { app_id = "xdg-desktop-portal-gtk"; }
             { app_id = "nm-connection-editor"; }
