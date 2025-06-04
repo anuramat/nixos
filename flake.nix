@@ -61,7 +61,7 @@
                   users.${config.user.username} = import ./home; # WARN value is a home manager module, not nixos
                 };
                 environment.pathsToLink = [
-                  # required because of useUserPackages = true and
+                  # required because of useUserPackages and xdg.portal
                   "/share/xdg-desktop-portal"
                   "/share/applications"
                 ];

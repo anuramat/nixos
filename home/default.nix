@@ -15,10 +15,10 @@ in
   imports = [
     ./git.nix
     ./neovim.nix
-    ./stylix.nix
-    ./chooser.nix
-    ./sway.nix
     ./pass.nix
+    ./portal.nix
+    ./rice.nix
+    ./sway
   ];
 
   xdg.enable = true; # set XDG vars in .profile
@@ -127,10 +127,10 @@ in
     bash = {
       enable = true;
       # TODO move everything around ffs
-      # profileExtra = # bash
-      #   ''
-      #     source ${./files/sway_autostart.sh}
-      #   '';
+      profileExtra = # bash
+        ''
+          source ${./files/sway_autostart.sh}
+        '';
       bashrcExtra = # bash
         ''
           source ${./files/xdg_shims.sh}
