@@ -1,4 +1,8 @@
 {
+  imports = [
+    ./swayidle.nix
+    ./swaylock.nix
+  ];
   wayland.windowManager.sway = {
     enable = true;
     config = {
