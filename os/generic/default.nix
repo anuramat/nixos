@@ -1,11 +1,13 @@
 {
   cluster,
+  inputs,
   pkgs,
   ...
 }:
 {
   hardware.graphics.enable = true;
   imports = [
+    inputs.home-manager.nixosModules.home-manager
     ./common
     ./mime
     ./shell

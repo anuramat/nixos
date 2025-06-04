@@ -1,18 +1,14 @@
 {
   cluster,
+  config,
   ...
 }:
 let
-  user = {
-    username = "anuramat";
-    fullname = "Arsen Nuramatov";
-    email = "x@ctrl.sn";
-  };
   tz = "Europe/Berlin";
   locale = "en_US.UTF-8";
+  user = config.user
 in
 {
-  inherit user;
   time.timeZone = tz;
   i18n.defaultLocale = locale;
   services.openssh.settings.AllowUsers = [ user.username ];

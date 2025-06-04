@@ -25,62 +25,58 @@
       epsilon =
         path: path |> builtins.readDir |> builtins.attrNames |> builtins.filter (a: a != "default.nix");
 
-      inherit ((import ./nix/machines) { inherit inputs epsilon; })
+      inherit ((import ./os/machines) { inherit inputs epsilon; })
         hostnames
         mkCluster
         mkModules
         ;
 
+      user = {
+        username = "anuramat";
+        fullname = "Arsen Nuramatov";
+        email = "x@ctrl.sn";
+      };
+      args = {
+        inherit inputs;
+        helpers = import ./nix/helpers { inherit (inputs.nixpkgs) lib; };
+        dummy = path: path |> epsilon |> map (name: path + /${name});
+      };
       mkSystem =
         name:
-        let
-          pkgscfg = inputs.self.nixosConfigurations.${name}.config.nixpkgs;
-        in
         inputs.nixpkgs.lib.nixosSystem {
-          specialArgs = {
+          specialArgs = args // {
             cluster = mkCluster name;
-            inherit inputs;
-            helpers = import ./nix/helpers { inherit (inputs.nixpkgs) lib; };
-            dummy = path: path |> epsilon |> map (name: path + /${name});
-            old = import inputs.nixpkgs-old {
-              inherit (pkgscfg) config;
-              inherit (pkgscfg.hostPlatform) system;
-            };
+            old =
+              let
+                pkgscfg = inputs.self.nixosConfigurations.${name}.config.nixpkgs;
+              in
+              import inputs.nixpkgs-old {
+                inherit (pkgscfg) config;
+                inherit (pkgscfg.hostPlatform) system;
+              };
           };
           modules = mkModules name ++ [
-            ./nix/generic
+            ./os/generic
+            ./common
             inputs.stylix.nixosModules.stylix
             inputs.home-manager.nixosModules.home-manager
-            (
-              { config, ... }:
-              {
-                home-manager = {
-                  backupFileExtension = "HMBAK";
-                  useGlobalPkgs = true;
-                  useUserPackages = true;
-                  users.${config.user.username} = import ./home; # WARN value is a home manager module, not nixos
-                };
-                environment.pathsToLink = [
-                  # required because of useUserPackages and xdg.portal
-                  "/share/xdg-desktop-portal"
-                  "/share/applications"
-                ];
-              }
-            )
+            { users.${username} = import ./home; }
           ];
         };
     in
     {
       nixosConfigurations =
         hostnames
-        |> map (name: {
-          inherit name;
-          value = mkSystem name;
+        |> map (hostname: {
+          name = hostname;
+          value = mkSystem hostname;
         })
         |> builtins.listToAttrs;
       homeConfigurations.${username} = inputs.home-manager.lib.homeManagerConfiguration {
+        specialArgs = args;
         modules = [
           ./home
+          ./common
         ];
       };
     };
