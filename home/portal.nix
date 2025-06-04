@@ -2,7 +2,7 @@
 let
   # TODO refactor or contribute
   chooser = pkgs.xdg-desktop-portal-termfilechooser;
-  binPath = pkgs: "PATH=${lib.concatMapStringsSep ":" (v: "${v}/bin") pkgs}";
+  binPath = v: "PATH=${lib.makeBinPath v}";
 
   dependencies = with pkgs; [
     foot
