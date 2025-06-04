@@ -57,13 +57,6 @@
             always = true;
           }
         ];
-        extraConfig = [
-          "title_align center"
-          ''for_window [shell="xwayland"] title_format "%title [XWayland]"''
-          # TODO relative size
-          "floating_maximum_size 1420 x 980"
-          "floating_minimum_size 600 x 480"
-        ];
         seat = {
           "*" = {
             hide_cursor = "when-typing enable";
@@ -100,14 +93,12 @@
         ];
         keybindings = { };
       };
+      # TODO relative size
       extraConfig = ''
-        include /etc/nixos/config/sway/config.d/00-external_commands
-        include /etc/nixos/config/sway/config.d/00-outputs
-        include /etc/nixos/config/sway/config.d/01-keys
-        include /etc/nixos/config/sway/config.d/xx-autostart
-        include /etc/nixos/config/sway/config.d/xx-inputs
-        include /etc/nixos/config/sway/config.d/xx-misc
-        include /etc/nixos/config/sway/config.d/xx-per_app
+        title_align center
+        for_window [shell="xwayland"] title_format "%title [XWayland]"
+        floating_maximum_size 1420 x 980
+        floating_minimum_size 600 x 480
       '';
     };
   # include /etc/sway/config.d/*
