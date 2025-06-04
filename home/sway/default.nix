@@ -11,7 +11,7 @@
       };
 
     };
-    udiskie2 = {
+    udiskie = {
       enable = true;
       notify = true;
       tray = "auto";
@@ -96,17 +96,6 @@
           {
             command = "${pkgs.waybar}/bin/waybar";
             mode = "hide";
-            # wayland.windowManager.sway.config.bars.*.command
-            # wayland.windowManager.sway.config.bars.*.extraConfig
-            # wayland.windowManager.sway.config.bars.*.fonts
-            # wayland.windowManager.sway.config.bars.*.hiddenState
-            # wayland.windowManager.sway.config.bars.*.id
-            # wayland.windowManager.sway.config.bars.*.position
-            # wayland.windowManager.sway.config.bars.*.statusCommand
-            # wayland.windowManager.sway.config.bars.*.trayOutput
-            # wayland.windowManager.sway.config.bars.*.trayPadding
-            # wayland.windowManager.sway.config.bars.*.workspaceButtons
-            # wayland.windowManager.sway.config.bars.*.workspaceNumbers
           }
         ];
         keybindings = { };

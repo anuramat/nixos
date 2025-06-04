@@ -34,7 +34,7 @@
         outputs = [
           {
             criteria = "ll7";
-            scale = 2;
+            scale = 2.0;
           }
           {
             criteria = "ext";
