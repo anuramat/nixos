@@ -1,22 +1,30 @@
 { pkgs, lib, ... }:
 let
-  # TODO refactor or contribute
   chooser = pkgs.xdg-desktop-portal-termfilechooser;
-  binPath = v: "PATH=${lib.makeBinPath v}";
 
+  # TODO contribute
   dependencies = with pkgs; [
-    foot
     yazi
     gnused
     bash
   ];
+  wrapper = pkgs.writeTextFile {
+    name = "nix_wrapper.sh";
+    text = ''
+      #!/bin/sh
+      export PATH=${lib.makeBinPath dependencies}
+      ${chooser}/share/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh "$@"
+    '';
+    executable = true;
+  };
+
 in
 {
   # point it to the file manager
   home.file.".config/xdg-desktop-portal-termfilechooser/config".text = # ini
     ''
       [filechooser]
-      cmd=${chooser}/share/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh
+      cmd=${wrapper}
       default_dir=$HOME/Downloads
       env=TERMCMD=foot
     '';
