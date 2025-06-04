@@ -1,8 +1,8 @@
 { config, ... }:
 let
   # Terminal commands
-  term = "foot";
-  term_float = "foot -a foot-float -W 88x28";
+  term = "exec foot";
+  term_float = "exec foot -a foot-float -W 88x28";
 
   # Menu and applications
   bookdir = "~/books";
@@ -10,31 +10,31 @@ let
   zathura = "zathura";
   j4 = "j4-dmenu-desktop";
 
-  books = "killall ${bemenu} || swaymsg exec \"echo \\\"$(cd $bookdir && fd -t f | ${bemenu} -p read -l 20)\\\" | xargs -rI{} ${zathura} '$bookdir/{}'\"";
-  drun = "killall ${bemenu} || swaymsg exec \"$(${j4} -d '${bemenu} -p drun' -t $term -x --no-generic)\"";
-  todo_add = "killall ${bemenu} || swaymsg exec \"$(echo '' | ${bemenu} -p task -l 0 | xargs -I{} todo add \\\"{}\\\")\"";
-  todo_done = "killall ${bemenu} || swaymsg exec \"$(todo ls | tac | ${bemenu} -p done | sed 's/^\\s*//' | cut -d ' ' -f 1 | xargs todo rm)\"";
+  books = "exec killall ${bemenu} || swaymsg exec \"echo \\\"$(cd $bookdir && fd -t f | ${bemenu} -p read -l 20)\\\" | xargs -rI{} ${zathura} '$bookdir/{}'\"";
+  drun = "exec killall ${bemenu} || swaymsg exec \"$(${j4} -d '${bemenu} -p drun' -t $term -x --no-generic)\"";
+  todo_add = "exec killall ${bemenu} || swaymsg exec \"$(echo '' | ${bemenu} -p task -l 0 | xargs -I{} todo add \\\"{}\\\")\"";
+  todo_done = "exec killall ${bemenu} || swaymsg exec \"$(todo ls | tac | ${bemenu} -p done | sed 's/^\\s*//' | cut -d ' ' -f 1 | xargs todo rm)\"";
   lock = "exec loginctl lock-session";
 
   # Notifications
-  invoke_notification = "makoctl invoke";
-  dismiss_notification = "makoctl dismiss";
-  dismiss_all_notifications = "makoctl dismiss --all";
+  invoke_notification = "exec makoctl invoke";
+  dismiss_notification = "exec makoctl dismiss";
+  dismiss_all_notifications = "exec makoctl dismiss --all";
 
   # Screenshots
-  screenshot_mouse = "swaymsg -t get_tree | jq -r '.. | (.nodes? // empty)[] | select(.pid and .visible) | .rect | \"\\(.x),\\(.y) \\(.width)x\\(.height)\"' | slurp | xargs -I {} grim -g \"{}\" - | swappy -f -";
-  screenshot_focused_window = "swaymsg -t get_tree | jq -r '.. | (.nodes? // empty)[] | select(.focused) | .rect | \"\\(.x),\\(.y) \\(.width)x\\(.height)\"' | xargs -I {} grim -g \"{}\" - | swappy -f -";
-  screenshot_all_outputs = "grim - | swappy -f -";
-  screenshot_focused_output = "grim -o $(swaymsg -t get_outputs | jq -r '.[] | select(.focused) | .name') - | swappy -f -";
+  screenshot_mouse = "exec swaymsg -t get_tree | jq -r '.. | (.nodes? // empty)[] | select(.pid and .visible) | .rect | \"\\(.x),\\(.y) \\(.width)x\\(.height)\"' | slurp | xargs -I {} grim -g \"{}\" - | swappy -f -";
+  screenshot_focused_window = "exec swaymsg -t get_tree | jq -r '.. | (.nodes? // empty)[] | select(.focused) | .rect | \"\\(.x),\\(.y) \\(.width)x\\(.height)\"' | xargs -I {} grim -g \"{}\" - | swappy -f -";
+  screenshot_all_outputs = "exec grim - | swappy -f -";
+  screenshot_focused_output = "exec grim -o $(swaymsg -t get_outputs | jq -r '.[] | select(.focused) | .name') - | swappy -f -";
 
   # Screencasting
-  screencast_mouse = "swaymsg -t get_tree | jq -r '.. | (.nodes? // empty)[] | select(.pid and .visible) | .rect | \"\\(.x),\\(.y) \\(.width)x\\(.height)\"' | slurp | xargs -I {} wf-recorder -g \"{}\" -f \"~/vid/screen/$(date +%Y-%m-%d_%H-%M-%S).mp4\"";
-  screencast_stop = "killall wf-recorder";
+  screencast_mouse = "exec swaymsg -t get_tree | jq -r '.. | (.nodes? // empty)[] | select(.pid and .visible) | .rect | \"\\(.x),\\(.y) \\(.width)x\\(.height)\"' | slurp | xargs -I {} wf-recorder -g \"{}\" -f \"~/vid/screen/$(date +%Y-%m-%d_%H-%M-%S).mp4\"";
+  screencast_stop = "exec killall wf-recorder";
 
   # Special keys - brightness
   brightness =
     let
-      l = v: "lightctl ${v}";
+      l = v: "exec lightctl ${v}";
     in
     {
       up = l "up";
@@ -44,7 +44,7 @@ let
   # Special keys - sound
   sound =
     let
-      l = v: "volumectl ${v}";
+      l = v: "exec volumectl ${v}";
     in
     {
       up = l "-u up";
@@ -56,7 +56,7 @@ let
   # Special keys - audio control
   audio =
     let
-      l = v: "playerctl -p spotify ${v}";
+      l = v: "exec playerctl -p spotify ${v}";
     in
     {
       prev = l "previous";
@@ -66,8 +66,8 @@ let
     };
 
   # Special keys - toggles
-  wlan = "wifi toggle";
-  bluetooth = "bluetooth toggle";
+  wlan = "exec wifi toggle";
+  bluetooth = "exec bluetooth toggle";
 
   config = config.wayland.windowManager.sway.config;
   inherit (config)
@@ -90,18 +90,18 @@ in
     # Keybindings
     keybindings = {
       # Terminal and basic commands
-      "${mod}+semicolon" = "exec ${term}";
-      "${mod}+${mod2}+semicolon" = "exec ${term_float}";
+      "${mod}+semicolon" = term;
+      "${mod}+${mod2}+semicolon" = term_float;
       "${mod}+apostrophe" =
         "exec ${term_float} --working-directory=\"$HOME/notes\" -e bash $EDITOR ~/notes/scratchpad.md";
       "${mod}+slash" = "reload";
       "${mod}+q" = "kill";
-      "${mod}+${mod2}+q" = "${lock}";
+      "${mod}+${mod2}+q" = lock;
       "${mod}+Shift+q" = sleep;
-      "${mod}+space" = "exec ${drun}";
-      "${mod}+r" = "exec ${books}";
-      "${mod}+t" = "exec ${todo_add}";
-      "${mod}+${mod2}+t" = "exec ${todo_done}";
+      "${mod}+space" = drun;
+      "${mod}+r" = books;
+      "${mod}+t" = todo_add;
+      "${mod}+${mod2}+t" = todo_done;
       "${mod}+y" = "sticky toggle";
 
       # Layout
@@ -123,44 +123,44 @@ in
       "${mod}+${mod2}+u" = "move scratchpad";
 
       # Notifications
-      "${mod}+n" = "exec ${invoke_notification}";
-      "${mod}+${mod2}+n" = "exec ${dismiss_notification}";
-      "${mod}+Shift+n" = "exec ${dismiss_all_notifications}";
+      "${mod}+n" = invoke_notification;
+      "${mod}+${mod2}+n" = dismiss_notification;
+      "${mod}+Shift+n" = dismiss_all_notifications;
 
       # Screenshots
-      "${mod}+p" = "exec ${screenshot_mouse}";
-      "${mod}+${mod2}+p" = "exec ${screenshot_focused_output}";
-      "${mod}+Shift+p" = "exec ${screencast_mouse}";
-      "${mod}+Alt+p" = "exec ${screencast_stop}";
+      "${mod}+p" = screenshot_mouse;
+      "${mod}+${mod2}+p" = screenshot_focused_output;
+      "${mod}+${mod3}+p" = screencast_mouse;
+      "${mod}+${mod4}+p" = screencast_stop;
 
       # Moving focus
-      "${mod}+h" = "focus left";
-      "${mod}+j" = "focus down";
-      "${mod}+k" = "focus up";
-      "${mod}+l" = "focus right";
+      "${mod}+${left}" = "focus left";
+      "${mod}+${down}" = "focus down";
+      "${mod}+${up}" = "focus up";
+      "${mod}+${right}" = "focus right";
 
       # Moving windows
-      "${mod}+${mod2}+h" = "move left 200 ppt";
-      "${mod}+${mod2}+j" = "move down 200 ppt";
-      "${mod}+${mod2}+k" = "move up 200 ppt";
-      "${mod}+${mod2}+l" = "move right 200 ppt";
-      "${mod}+${mod2}+Tab" = "move workspace back_and_forth";
+      "${mod}+${mod2}+${left}" = "move left 200 ppt";
+      "${mod}+${mod2}+${down}" = "move down 200 ppt";
+      "${mod}+${mod2}+${up}" = "move up 200 ppt";
+      "${mod}+${mod2}+${right}" = "move right 200 ppt";
+      "${mod}+${mod2}+tab" = "move workspace back_and_forth";
       "${mod}+${mod2}+c" = "move position cursor";
 
       # Moving workspaces
-      "${mod}+Shift+h" = "move workspace to output left";
-      "${mod}+Shift+j" = "move workspace to output down";
-      "${mod}+Shift+k" = "move workspace to output up";
-      "${mod}+Shift+l" = "move workspace to output right";
+      "${mod}+${mod3}+${left}" = "move workspace to output left";
+      "${mod}+${mod3}+${down}" = "move workspace to output down";
+      "${mod}+${mod3}+${up}" = "move workspace to output up";
+      "${mod}+${mod3}+${right}" = "move workspace to output right";
 
       # Resizing
-      "${mod}+Alt+h" = "resize shrink width 50 px";
-      "${mod}+Alt+j" = "resize shrink height 50 px";
-      "${mod}+Alt+k" = "resize grow height 50 px";
-      "${mod}+Alt+l" = "resize grow width 50 px";
+      "${mod}+${mod4}+${left}" = "resize shrink width 50 px";
+      "${mod}+${mod4}+${down}" = "resize shrink height 50 px";
+      "${mod}+${mod4}+${up}" = "resize grow height 50 px";
+      "${mod}+${mod4}+${right}" = "resize grow width 50 px";
 
       # Switching between workspaces
-      "${mod}+Tab" = "workspace back_and_forth";
+      "${mod}+tab" = "workspace back_and_forth";
       "${mod}+1" = "workspace 1:1";
       "${mod}+2" = "workspace 2:2";
       "${mod}+3" = "workspace 3:3";
@@ -185,18 +185,18 @@ in
       "${mod}+${mod2}+0" = "move container to workspace 10:0";
 
       # Special keys (media and hardware controls)
-      "XF86MonBrightnessDown" = "exec ${brightness.down}";
-      "XF86MonBrightnessUp" = "exec ${brightness.up}";
-      "XF86AudioMicMute" = "exec volumectl ${sound.muteMic}";
-      "XF86AudioMute" = "exec volumectl ${sound.mute}";
-      "XF86AudioLowerVolume" = "exec volumectl ${sound.down}";
-      "XF86AudioRaiseVolume" = "exec volumectl ${sound.up}";
-      "XF86AudioPrev" = "exec ${audio.prev}";
-      "XF86AudioNext" = "exec ${audio.next}";
-      "XF86AudioStop" = "exec ${audio.stop}";
-      "XF86AudioPlay" = "exec ${audio.playPause}";
-      "XF86Wlan" = "exec ${wlan}";
-      "XF86Bluetooth" = "exec ${bluetooth}";
+      "XF86MonBrightnessDown" = brightness.down;
+      "XF86MonBrightnessUp" = brightness.up;
+      "XF86AudioMicMute" = sound.muteMic;
+      "XF86AudioMute" = sound.mute;
+      "XF86AudioLowerVolume" = sound.down;
+      "XF86AudioRaiseVolume" = sound.up;
+      "XF86AudioPrev" = audio.prev;
+      "XF86AudioNext" = audio.next;
+      "XF86AudioStop" = audio.stop;
+      "XF86AudioPlay" = audio.playPause;
+      "XF86Wlan" = wlan;
+      "XF86Bluetooth" = bluetooth;
     };
   };
 }
