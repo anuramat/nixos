@@ -9,7 +9,7 @@
     config = {
       bars = [
         {
-          command = "waybar";
+          command = "${pkgs.waybar}/bin/waybar";
           mode = "hide";
         }
       ];

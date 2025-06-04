@@ -8,6 +8,18 @@
 {
   imports = dummy ./.;
   security.rtkit.enable = true; # realtime kit, hands out realtime priority to user processes
+  services = {
+    pipewire = {
+      enable = true;
+      alsa = {
+        enable = true;
+      };
+      pulse.enable = true;
+      wireplumber = {
+        enable = true;
+      };
+    };
+  };
 
   # external pkgs {{{1
   programs.appimage = {
