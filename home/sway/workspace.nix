@@ -20,29 +20,32 @@ let
 
 in
 {
-  wayland.windowManager.sway.config = {
+  wayland.windowManager.sway = {
 
     extraConfig = [
       "bindswitch --locked lid:on output ${internal} disable"
       "bindswitch --locked lid:off output ${internal} enable"
     ];
-    workspaceOutputAssign =
+    config = {
 
-      mkAssign internal [
-        1
-        2
-        3
-        4
-        5
-      ]
-      ++ mkAssign externals [
-        6
-        7
-        8
-        9
-        10
-      ];
+      workspaceOutputAssign =
+
+        mkAssign internal [
+          1
+          2
+          3
+          4
+          5
+        ]
+        ++ mkAssign externals [
+          6
+          7
+          8
+          9
+          10
+        ];
+
+    };
 
   };
-
 }
