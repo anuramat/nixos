@@ -17,19 +17,15 @@ let
       workspace = "${toString n}:${n |> mod 10 |> toString}";
       output = output;
     }) numbers;
-
 in
 {
   wayland.windowManager.sway = {
-
     extraConfig = [
       "bindswitch --locked lid:on output ${internal} disable"
       "bindswitch --locked lid:off output ${internal} enable"
     ];
     config = {
-
       workspaceOutputAssign =
-
         mkAssign internal [
           1
           2
@@ -44,8 +40,6 @@ in
           9
           10
         ];
-
     };
-
   };
 }
