@@ -26,7 +26,7 @@ in
       [filechooser]
       cmd=${wrapper}
       default_dir=$HOME/Downloads
-      env=TERMCMD=foot
+      env=TERMCMD=${pkgs.foot}/bin/foot
     '';
 
   # set as default
