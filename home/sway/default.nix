@@ -6,7 +6,12 @@
   wayland.windowManager.sway = {
     enable = true;
     config = {
-      bars = [ ];
+      bars = [
+        {
+          command = "waybar";
+          mode = "hide";
+        }
+      ];
       keybindings = { };
     };
     extraConfig = ''
