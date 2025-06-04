@@ -10,7 +10,6 @@
   security.rtkit.enable = true; # realtime kit, hands out realtime priority to user processes
 
   # external pkgs {{{1
-  services.flatpak.enable = true;
   programs.appimage = {
     enable = true;
     binfmt = true;
@@ -112,24 +111,6 @@
 
   services.protonmail-bridge = {
     enable = true;
-  };
-
-  # xdg {{{1
-  xdg = {
-    portal = {
-      enable = true;
-      wlr.enable = true; # screen capture
-      extraPortals = [
-        pkgs.xdg-desktop-portal-gtk # the rest: <https://wiki.archlinux.org/title/XDG_Desktop_Portal>
-      ];
-    };
-    # TODO somewhere around here declare TERMCMD, reuse in termfilechooser
-    terminal-exec = {
-      enable = true;
-      settings = {
-        default = [ "foot.desktop" ];
-      };
-    };
   };
 
   # disks {{{1

@@ -13,5 +13,8 @@
       package = pkgs.pinentry-bemenu;
     };
     defaultCacheTtl = 999999;
+    extraConfig = ''
+      allow-preset-passphrase
+    '';
   };
 }
