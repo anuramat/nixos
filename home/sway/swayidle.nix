@@ -20,6 +20,7 @@
         enable = true;
         # idlehint = 300; # TODO ask for implementation
         # TODO maybe also turn command into commands in events and timeouts
+        # maybe contribute to events working properly https://github.com/nix-community/home-manager/issues/4432
         timeouts = [
           {
             timeout = 300;
@@ -46,11 +47,7 @@
           }
           {
             event = "lock";
-            command = lock;
-          }
-          {
-            event = "lock";
-            command = lockKeys;
+            command = "${lock}; ${lockKeys}";
           }
         ];
       };
