@@ -2,6 +2,7 @@
 {
   imports = [
     ./swayidle.nix
+    ./keys.nix
     ./swaylock.nix
     ./input.nix
     ./workspace.nix
