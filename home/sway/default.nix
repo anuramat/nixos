@@ -3,6 +3,8 @@
   imports = [
     ./swayidle.nix
     ./swaylock.nix
+    ./input.nix
+    ./output.nix
   ];
   wayland.windowManager.sway =
     let
@@ -21,11 +23,9 @@
           newWindow = "none"; # TODO
         };
         terminal = "foot";
-        output = { };
-        input = { };
         menu = "bemenu-run";
         modes = {
-          resize = {}; # TODO
+          resize = { }; # TODO
         };
         startup = [
           # { command = ""; always = true; notification = false; }
