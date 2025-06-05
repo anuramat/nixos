@@ -5,6 +5,11 @@
   ...
 }:
 {
+  machine = {
+    remote = false;
+    portable = true;
+    static = false;
+  };
   nix.distributedBuilds = true;
   system.stateVersion = "24.05";
   home-manager.users.${user.username}.home.stateVersion = "24.11";

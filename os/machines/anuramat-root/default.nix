@@ -1,6 +1,10 @@
 # vim: fdm=marker fdl=0
 { config, user, ... }:
 {
+  machine = {
+    remote = true;
+    portable = false;
+  };
   imports = [
     ./web
     ./hardware-configuration.nix

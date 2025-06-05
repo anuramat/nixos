@@ -12,15 +12,16 @@
       ./shell
       ./overlays
       ./home.nix
+      ./options.nix
     ]
     ++ (
-      if cluster.this.server then
+      if cluster.this.remote then
         [
-          ./server
+          ./remote
         ]
       else
         [
-          ./desktop
+          ./local
         ]
     );
 

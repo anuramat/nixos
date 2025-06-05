@@ -6,6 +6,11 @@
   ...
 }:
 {
+  machine = {
+    remote = false;
+    portable = true;
+    static = true;
+  };
   system.stateVersion = "24.05";
   home-manager.users.${user.username}.home.stateVersion = "24.11";
 

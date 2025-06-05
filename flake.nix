@@ -22,9 +22,11 @@
     inputs:
     let
 
-      hostnames = with builtins; ./os/machines |> readDir |> attrNames |> filter (a: a != "default.nix");
-
-      inherit ((import ./helpers/machines.nix) { inherit inputs hostnames; })
+      inherit
+        ((import ./helpers/machines.nix) {
+          inherit inputs;
+          machinesPath = ./os/machines;
+        })
         mkCluster
         mkModules
         ;
