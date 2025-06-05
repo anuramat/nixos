@@ -1,4 +1,9 @@
-{ config, inputs, ... }:
+{
+  config,
+  user,
+  inputs,
+  ...
+}:
 {
   imports = [
     inputs.home-manager.nixosModules.home-manager
@@ -9,7 +14,6 @@
     backupFileExtension = "HMBAK";
     useGlobalPkgs = true;
     useUserPackages = true;
-    users.${config.user.username} = import ./home;
   };
   environment.pathsToLink = [
     # required because of useUserPackages and xdg.portal

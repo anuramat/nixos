@@ -21,7 +21,6 @@
   outputs =
     inputs:
     let
-      username = "anuramat";
       epsilon =
         path: path |> builtins.readDir |> builtins.attrNames |> builtins.filter (a: a != "default.nix");
 
@@ -37,7 +36,7 @@
         email = "x@ctrl.sn";
       };
       args = {
-        inherit inputs;
+        inherit inputs user;
         helpers = import ./nix/helpers { inherit (inputs.nixpkgs) lib; };
         dummy = path: path |> epsilon |> map (name: path + /${name});
       };
@@ -58,7 +57,7 @@
           modules = mkModules name ++ [
             ./os/generic
             ./common
-            { home-manager.users.${username} = import ./home; }
+            { home-manager.users.${user.username} = import ./home; }
           ];
         };
     in
@@ -70,7 +69,7 @@
           value = mkSystem hostname;
         })
         |> builtins.listToAttrs;
-      homeConfigurations.${username} = inputs.home-manager.lib.homeManagerConfiguration {
+      homeConfigurations.${user.username} = inputs.home-manager.lib.homeManagerConfiguration {
         specialArgs = args;
         modules = [
           ./home

@@ -17,7 +17,7 @@ links: deadlinks
 	# bash env will not work anymore, xdg vars are in personal profile now TODO
 	# prob don't touch, delete after transitioning to home manager
 	BASH_ENV=/etc/profile ./scripts/install.sh
-machine_dir::=$(shell pwd)/nix/machines/$(shell hostname)
+machine_dir::=$(shell pwd)/os/machines/$(shell hostname)
 keys_dir::=$(machine_dir)/keys
 init:
 	./scripts/heading.sh "Initial install"

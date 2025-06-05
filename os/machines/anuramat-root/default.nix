@@ -1,5 +1,5 @@
 # vim: fdm=marker fdl=0
-{ config, ... }:
+{ config, user, ... }:
 {
   imports = [
     ./web
@@ -10,7 +10,7 @@
   boot.loader.grub.device = "/dev/vda";
   nix.distributedBuilds = true;
   system.stateVersion = "24.11";
-  home-manager.users.${config.user.username}.home.stateVersion = "24.11";
+  home-manager.users.${user.username}.home.stateVersion = "24.11";
   swapDevices = [
     {
       device = "/var/lib/swapfile";

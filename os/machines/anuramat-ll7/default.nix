@@ -1,12 +1,13 @@
 {
   pkgs,
+  user,
   config,
   inputs,
   ...
 }:
 {
   system.stateVersion = "24.05";
-  home-manager.users.${config.user.username}.home.stateVersion = "24.11";
+  home-manager.users.${user.username}.home.stateVersion = "24.11";
 
   # tis a big boy
   nix.distributedBuilds = false;

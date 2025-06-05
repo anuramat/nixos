@@ -2,6 +2,7 @@
 {
   lib,
   pkgs,
+  user,
   cluster,
   dummy,
   config,
@@ -82,7 +83,7 @@
     knownHostsFiles = cluster.hostKeysFiles;
     extraConfig =
       let
-        prefix = config.user.username + "-";
+        prefix = user.username + "-";
         mkAliasEntry =
           hostname: # ssh_config
           ''

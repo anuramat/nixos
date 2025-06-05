@@ -1,5 +1,6 @@
 {
   pkgs,
+  user,
   config,
   cluster,
   inputs,
@@ -16,7 +17,7 @@ let
     "https://nix-community.cachix.org"
     "https://nixpkgs-python.cachix.org"
   ] ++ cluster.substituters;
-  keyPath = "${config.users.users.${config.user.username}.home}/.ssh/id_ed25519";
+  keyPath = "${config.users.users.${user.username}.home}/.ssh/id_ed25519";
 in
 {
   nixpkgs = {

@@ -1,12 +1,12 @@
 {
   cluster,
   config,
+  user,
   ...
 }:
 let
   tz = "Europe/Berlin";
   locale = "en_US.UTF-8";
-  user = config.user
 in
 {
   time.timeZone = tz;
