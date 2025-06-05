@@ -16,12 +16,17 @@ red() {
 while IFS= read -r path; do
 	filename=$(basename "$path")
 	use_counter=0
+	exp="(\./.*$filename)"
+	rg_args=(--no-config -g '*.nix' -r '${1}' --only-matching --with-filename)
 	while IFS=: read -r matchfile matchstring; do
 		if [ "$path" = "$(realpath "$(dirname "$matchfile")/$matchstring")" ]; then
 			((use_counter++)) && true
 			[ -n "$onlyfails" ] && break
 		fi
-	done < <(rg --no-config -g '*.nix' "^\s*(\./.*$filename)$" -r '${1}' --only-matching --with-filename /etc/nixos)
+	done < <(
+		rg "${rg_args[@]}" "^\s*$exp$" /etc/nixos
+		rg "${rg_args[@]}" "import $exp" /etc/nixos
+	)
 	if ((use_counter > 0)); then
 		[ -z "$onlyfails" ] && {
 			echo "$path: $use_counter references"
