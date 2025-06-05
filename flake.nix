@@ -21,11 +21,10 @@
   outputs =
     inputs:
     let
-      epsilon =
-        path: path |> builtins.readDir |> builtins.attrNames |> builtins.filter (a: a != "default.nix");
 
-      inherit ((import ./os/machines) { inherit inputs epsilon; })
-        hostnames
+      hostnames = with builtins; ./os/machines |> readDir |> attrNames |> filter (a: a != "default.nix");
+
+      inherit ((import ./helpers/machines.nix) { inherit inputs hostnames; })
         mkCluster
         mkModules
         ;
@@ -35,15 +34,16 @@
         fullname = "Arsen Nuramatov";
         email = "x@ctrl.sn";
       };
-      args = {
+      commonArgs = {
         inherit inputs user;
-        helpers = import ./nix/helpers { inherit (inputs.nixpkgs) lib; };
+        helpers = import ./helpers;
       };
       mkSystem =
         name:
         inputs.nixpkgs.lib.nixosSystem {
-          specialArgs = args // {
+          specialArgs = commonArgs // {
             cluster = mkCluster name;
+            # {{{1
             old =
               let
                 pkgscfg = inputs.self.nixosConfigurations.${name}.config.nixpkgs;
@@ -52,12 +52,13 @@
                 inherit (pkgscfg) config;
                 inherit (pkgscfg.hostPlatform) system;
               };
+            # }}}
           };
-          modules = mkModules name ++ [
-            ./os/generic
-            ./common
+          modules = [
             { home-manager.users.${user.username} = import ./home; }
-          ];
+            ./common
+            ./os/generic
+          ] ++ mkModules name;
         };
     in
     {
@@ -69,7 +70,7 @@
         })
         |> builtins.listToAttrs;
       homeConfigurations.${user.username} = inputs.home-manager.lib.homeManagerConfiguration {
-        specialArgs = args;
+        specialArgs = commonArgs;
         modules = [
           ./home
           ./common
@@ -77,3 +78,4 @@
       };
     };
 }
+# vim: fdl=0 fdm=marker

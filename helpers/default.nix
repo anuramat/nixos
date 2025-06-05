@@ -1,15 +1,5 @@
-{ lib, ... }:
-let
-  common = import ./common.nix {
-    inherit lib;
-  };
-in
-common
-// {
+args: {
+  common = import ./common.nix args;
   web = import ./web.nix;
-  mime = import ./mime.nix {
-    inherit lib;
-    inherit common;
-  };
-  overlays = import ./overlays.nix;
+  mime = import ./mime.nix args;
 }

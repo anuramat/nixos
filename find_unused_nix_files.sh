@@ -2,11 +2,6 @@
 
 set -euo pipefail
 
-paths=""
-paths+=$(fd -ae nix | grep 'default.nix$' | xargs -I{} dirname {})
-paths+=$'\n'
-paths+=$(fd -ae nix | grep -v 'default.nix$' | grep -v '^flake.nix$')
-
 onlyfails=t
 
 red() {
@@ -14,7 +9,7 @@ red() {
 }
 
 while IFS= read -r path; do
-	echo "$path" | grep -vq '/machines/' || continue
+	echo "$path" | rg --no-config -vq 'machines/[^/]+$' || continue
 	filename=$(basename "$path")
 	use_counter=0
 	# TODO escape dot in .nix
@@ -41,4 +36,7 @@ while IFS= read -r path; do
 			echo "$path"
 		fi
 	fi
-done < <(echo "$paths")
+done < <(
+	fd -ae nix | grep '/default.nix$' | xargs -I{} dirname {}
+	fd -ae nix | rg --no-config -v '(/flake\.nix$|/default\.nix)'
+)
