@@ -5,13 +5,24 @@
   ...
 }:
 {
-  imports = [
-    ./common
-    ./mime
-    ./shell
-    ./overlays
-    ./home.nix
-  ] ++ (if cluster.this.server then [ ./server ] else [ ./desktop ]);
+  imports =
+    [
+      ./common
+      ./mime
+      ./shell
+      ./overlays
+      ./home.nix
+    ]
+    ++ (
+      if cluster.this.server then
+        [
+          ./server
+        ]
+      else
+        [
+          ./desktop
+        ]
+    );
 
   # TODO uhh
   programs.npm = {
