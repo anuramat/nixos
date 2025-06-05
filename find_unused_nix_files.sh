@@ -14,6 +14,7 @@ red() {
 }
 
 while IFS= read -r path; do
+	echo "$path" | grep -vq '/machines/' || continue
 	filename=$(basename "$path")
 	use_counter=0
 	# TODO escape dot in .nix
