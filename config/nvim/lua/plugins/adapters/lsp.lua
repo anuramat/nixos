@@ -28,7 +28,7 @@ local configs = function()
         },
       },
     },
-    -- nil_ls = {}, -- nice code actions, but kinda stale: no pipe in stable
+    nil_ls = {}, -- nice code actions, but kinda stale: no pipe in stable
     yamlls = {
       -- natively supports schema store
       -- we can use schemastore plugin if we need more logic
