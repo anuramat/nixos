@@ -58,9 +58,7 @@
           modules = mkModules name ++ [
             ./os/generic
             ./common
-            inputs.stylix.nixosModules.stylix
-            inputs.home-manager.nixosModules.home-manager
-            { users.${username} = import ./home; }
+            { home-manager.users.${username} = import ./home; }
           ];
         };
     in

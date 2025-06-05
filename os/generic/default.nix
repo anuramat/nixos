@@ -5,16 +5,13 @@
   ...
 }:
 {
-  hardware.graphics.enable = true;
   imports = [
-    inputs.home-manager.nixosModules.home-manager
     ./common
     ./mime
     ./shell
     ./overlays
+    ./home.nix
   ] ++ (if cluster.this.server then [ ./server ] else [ ./desktop ]);
-
-  stylix.homeManagerIntegration.followSystem = true;
 
   # TODO uhh
   programs.npm = {
