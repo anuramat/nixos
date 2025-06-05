@@ -5,3 +5,4 @@
 /config/ipython/profile_default/history.sqlite
 /config/jupyter/lab/workspaces
 /config/ghc/ghci_history
+.aider*
