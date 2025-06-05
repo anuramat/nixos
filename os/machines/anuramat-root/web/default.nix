@@ -1,9 +1,12 @@
-{ dummy, ... }:
+{ ... }:
 let
   email = "x@ctrl.sn";
 in
 {
-  imports = dummy ./.;
+  imports = [
+    ./index.nix
+    ./pastebin.nix
+  ];
 
   # TODO: if this works, unboilerplate with a function
   networking.firewall.allowedTCPPorts = [

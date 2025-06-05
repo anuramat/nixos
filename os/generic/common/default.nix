@@ -4,12 +4,18 @@
   pkgs,
   user,
   cluster,
-  dummy,
   config,
   ...
 }:
 {
-  imports = dummy ./.;
+  imports = [
+    ./builder.nix
+    ./cli.nix
+    ./lang.nix
+    ./llm.nix
+    ./nix.nix
+    ./user.nix
+  ];
   hardware.enableAllFirmware = true; # as in "regardless of license"
 
   # virtualization {{{1

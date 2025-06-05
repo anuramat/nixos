@@ -38,7 +38,6 @@
       args = {
         inherit inputs user;
         helpers = import ./nix/helpers { inherit (inputs.nixpkgs) lib; };
-        dummy = path: path |> epsilon |> map (name: path + /${name});
       };
       mkSystem =
         name:

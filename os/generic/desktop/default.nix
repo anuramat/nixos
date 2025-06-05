@@ -2,11 +2,14 @@
 {
   lib,
   pkgs,
-  dummy,
   ...
 }:
 {
-  imports = dummy ./.;
+  imports = [
+    ./misc.nix
+    ./peripherals.nix
+    ./remaps.nix
+  ];
   security.rtkit.enable = true; # realtime kit, hands out realtime priority to user processes
   services = {
     pipewire = {
