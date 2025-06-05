@@ -17,7 +17,7 @@ let
     rec {
       inherit name;
       builder = !config.nix.distributedBuilds;
-      server = meta.server;
+      server = config.machine.remote;
       desktop = !server;
       platform = config.nixpkgs.hostPlatform.system;
       cacheKey = if builder then readFile (keysPath + "/${cacheFilename}") else null;
