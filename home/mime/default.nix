@@ -1,10 +1,11 @@
 {
   helpers,
   pkgs,
+  lib,
   ...
 }:
 let
-  inherit (helpers.mime) setMany generateMimeTypes mimeFromDesktop;
+  inherit (import ./helpers.nix { inherit lib; }) setMany generateMimeTypes mimeFromDesktop;
 
   applications = {
     browser = "librewolf.desktop";

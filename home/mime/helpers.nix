@@ -1,6 +1,15 @@
-{ lib, common, ... }:
+{ lib, ... }:
 with lib;
 with builtins;
+let
+  readLines = v: v |> readFile |> splitString "\n" |> filter (x: x != "");
+  getSchema = attrsets.mapAttrsRecursive (path: v: typeOf (v));
+  getMatches =
+    patterns: x:
+    mapAttrs (
+      name: schema: if typeOf x == "set" then schema == getSchema x else schema == typeOf x
+    ) patterns;
+in
 {
   mimeFromDesktop =
     package:
@@ -20,7 +29,7 @@ with builtins;
     in
     package
     |> desktopFiles
-    |> map common.readLines
+    |> map readLines
     |> concatLists
     |> filter (v: strings.hasPrefix "MimeType" v)
     |> map lineToMimes
@@ -56,7 +65,7 @@ with builtins;
     |> map (
       v:
       let
-        matches = common.getMatches mimePatterns v;
+        matches = getMatches mimePatterns v;
       in
       if matches.parts then
         map (suffix: "${v.prefix}/${suffix}") v.suffixes
@@ -65,7 +74,7 @@ with builtins;
       else if matches.exactList then
         v
       else if matches.file then
-        v |> common.readLines
+        v |> readLines
       else
         throw "illegal pattern: ${toJSON v}"
     )
