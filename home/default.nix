@@ -11,8 +11,8 @@ let
   realName = "Arsen Nuramatov";
 in
 {
-
   imports = [
+    ./mime.nix
     ./git.nix
     ./neovim.nix
     ./pass.nix
@@ -20,6 +20,13 @@ in
     ./rice.nix
     ./sway
   ];
+
+  programs = {
+    direnv = {
+      enable = true;
+      silent = true;
+    };
+  };
 
   xdg.enable = true; # set XDG vars in .profile
   home = {

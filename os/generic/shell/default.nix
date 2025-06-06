@@ -4,18 +4,13 @@
   ...
 }:
 {
-  programs = {
-    direnv = {
-      enable = true;
-      silent = true;
-    };
+  # login exec order:
+  # - /etc/profile: bash.shellInit, shellInit, bash.loginShellInit, loginShellInit, /etc/profile.local, /etc/bashrc
+  #   - where /etc/bashrc: /etc/profile, bash.interactiveShellInit, bash.promptInit, (?hooks from software options?), interactiveShellInit, /etc/bashrc.local
 
+  # TODO move to hm
+  programs = {
     bash = {
-      shellAliases = lib.mkForce { };
-      promptInit = "# placeholder: bash.promptInit";
-      enableLsColors = false;
-      shellInit = "# placeholder: bash.shellInit";
-      loginShellInit = "# placeholder: bash.loginShellInit";
       interactiveShellInit = # bash
         ''
           # bash.interactiveShellInit {{{1
@@ -27,21 +22,14 @@
     };
   };
 
-  # login exec order:
-  # - /etc/profile: bash.shellInit, shellInit, bash.loginShellInit, loginShellInit, /etc/profile.local, /etc/bashrc
-  #   - where /etc/bashrc: /etc/profile, bash.interactiveShellInit, bash.promptInit, (?hooks from software options?), interactiveShellInit, /etc/bashrc.local
-
   environment = {
     shellAliases = lib.mkForce { };
-    shellInit = "# placeholder: environment.shellInit";
     loginShellInit = # sh
       ''
         # placeholder: environment.loginShellInit {{{1
         source ${./profile.sh}
         # end }}}
       '';
-    interactiveShellInit = "# placeholder: environment.interactiveShellInit";
-    extraInit = "# placeholder: environment.extraInit";
   };
 }
 # vim: fdl=3

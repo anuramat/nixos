@@ -6,7 +6,6 @@
 {
   imports = [
     ./common
-    ./mime
     ./shell
     ./overlays
     ./home.nix

@@ -1,7 +1,6 @@
 {
   helpers,
   pkgs,
-  inputs,
   ...
 }:
 let
@@ -50,9 +49,6 @@ let
   };
 
   special = {
-    # TODO test if these were required after all
-    # "x-scheme-handler/tg" = "org.telegram.desktop.desktop";
-    # "x-scheme-handler/vscode" = "code-url-handler.desktop";
     "x-scheme-handler/magnet" = applications.torrentClient;
     "inode/directory" = applications.fileManager;
   };
