@@ -12,7 +12,7 @@ let
 in
 {
   imports = [
-    ./mime.nix
+    ./mime
     ./git.nix
     ./neovim.nix
     ./pass.nix
