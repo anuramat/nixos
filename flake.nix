@@ -63,7 +63,12 @@
           };
           modules =
             [
-              { home-manager.users.${user.username} = import ./home; }
+              {
+                home-manager = {
+                  extraSpecialArgs = commonArgs;
+                  users.${user.username} = import ./home;
+                };
+              }
               ./common
               ./os/generic
             ]

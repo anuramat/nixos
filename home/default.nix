@@ -3,7 +3,7 @@
   pkgs,
   lib,
   ...
-}@args:
+}:
 let
 
   font-family = "Hack Nerd Font";

@@ -14,6 +14,9 @@
     backupFileExtension = "HMBAK";
     useGlobalPkgs = true;
     useUserPackages = true;
+    # extraSpecialArgs = {
+    #   inherit user;
+    # };
   };
   environment.pathsToLink = [
     # required because of useUserPackages and xdg.portal
