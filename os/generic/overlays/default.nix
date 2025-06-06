@@ -16,16 +16,9 @@ let
 
   unstablePkgs = final: prev: {
     inherit (import inputs.nixpkgs-unstable { inherit (pkgs) config system; })
-      cheese
-      foot
-      ghostty
       github-mcp-server
       keymapp
-      nixd
       tgpt
-      wallust
-      wezterm
-      xdg-ninja
       yazi
       ;
   };
