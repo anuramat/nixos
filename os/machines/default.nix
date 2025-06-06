@@ -1,40 +1,40 @@
-{ machinesPath, inputs }:
+{ inputs, epsilon }:
 with builtins;
 let
   lib = inputs.nixpkgs.lib;
   inherit (lib.strings) hasSuffix;
   inherit (lib.lists) findFirst;
 
-  hostnames =
-    machinesPath |> builtins.readDir |> builtins.attrNames |> builtins.filter (a: a != "default.nix");
+  hostnames = epsilon ./.;
   mkMachine =
     name:
     let
       inherit (inputs.self.nixosConfigurations.${name}) config;
+      meta = import ./${name}/meta.nix;
       cacheFilename = "cache.pem.pub";
-      keysPath = machinesPath + /${name}/keys;
+      path = ./${name}/keys;
     in
     rec {
       inherit name;
       builder = !config.nix.distributedBuilds;
-      server = config.machine.remote;
+      server = meta.server;
       desktop = !server;
       platform = config.nixpkgs.hostPlatform.system;
-      cacheKey = if builder then readFile (keysPath + "/${cacheFilename}") else null;
+      cacheKey = if builder then readFile (path + "/${cacheFilename}") else null;
       clientKeyFiles = (
-        readDir keysPath
+        readDir path
         |> attrNames
         |> filter (x: hasSuffix ".pub" x && x != cacheFilename)
-        |> map (x: keysPath + /${x})
+        |> map (x: path + /${x})
       );
-      hostKeysFile = keysPath + "/host_keys";
+      hostKeysFile = path + "/host_keys";
     };
 in
 {
   inherit hostnames;
 
   mkModules = name: [
-    (machinesPath + /${name})
+    ./${name}
     (_: {
       networking.hostName = name;
     })

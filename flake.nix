@@ -22,12 +22,12 @@
     inputs:
     let
 
+      epsilon = with builtins; path: path |> readDir |> attrNames |> filter (a: a != "default.nix");
       inherit
         ((import ./helpers/machines.nix) {
-          inherit inputs;
-          machinesPath = ./os/machines;
+          inherit inputs epsilon;
         })
-      hostnames
+        hostnames
         mkCluster
         mkModules
         ;
