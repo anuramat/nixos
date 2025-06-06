@@ -1,10 +1,11 @@
 # vim: fdl=0 fdm=marker
 {
+  config,
   lib,
   pkgs,
   ...
 }:
-{
+lib.mkIf (!config.machine.remote) {
   imports = [
     ./misc.nix
     ./peripherals.nix

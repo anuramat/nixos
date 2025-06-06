@@ -1,30 +1,15 @@
+{ ... }:
 {
-  config,
-  cluster,
-  inputs,
-  pkgs,
-  ...
-}:
-{
-  imports =
-    [
-      ./common
-      ./mime
-      ./shell
-      ./overlays
-      ./home.nix
-      ./options.nix
-    ]
-    ++ (
-      if config.machine.remote then
-        [
-          ./remote
-        ]
-      else
-        [
-          ./local
-        ]
-    );
+  imports = [
+    ./common
+    ./mime
+    ./shell
+    ./overlays
+    ./home.nix
+    ./options.nix
+    ./remote.nix
+    ./local
+  ];
 
   # TODO uhh
   programs.npm = {
