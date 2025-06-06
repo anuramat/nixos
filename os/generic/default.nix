@@ -1,5 +1,6 @@
 {
   config,
+  cluster,
   ...
 }:
 {
@@ -13,7 +14,7 @@
       ./options.nix
     ]
     ++ (
-      if config.machine.remote then
+      if cluster.this.server then
         [
           ./remote.nix
         ]

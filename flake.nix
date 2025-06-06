@@ -24,7 +24,7 @@
 
       epsilon = with builtins; path: path |> readDir |> attrNames |> filter (a: a != "default.nix");
       inherit
-        ((import ./helpers/machines.nix) {
+        ((import ./os/machines) {
           inherit inputs epsilon;
         })
         hostnames
