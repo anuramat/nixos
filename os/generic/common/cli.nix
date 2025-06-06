@@ -66,9 +66,6 @@
     # editors {{{1
     helix
     vis
-    code-cursor
-    vscode
-    windsurf
 
     # core {{{1
     inputs.subcat.packages.${pkgs.system}.default
