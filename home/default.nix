@@ -51,85 +51,12 @@ in
     };
   };
 
-  accounts.email.accounts.primary =
-    let
-      address = "x@ctrl.sn";
-    in
-    {
-      inherit address;
-      primary = true;
-      inherit realName;
-      himalaya = {
-        enable = true;
-        settings =
-          let
-            backend = {
-              login = address;
-              type = "imap";
-              host = "127.0.0.1";
-              port = 1143;
-              encryption.type = "start-tls";
-              auth = {
-                type = "password";
-                cmd = "pass show manualBridge";
-              };
-            };
-          in
-          {
-            email = address;
-            inherit backend;
-            message.send.backend = backend // {
-              type = "smtp";
-              port = 1025;
-            };
-          };
-      };
-    };
-
   programs = {
     gpg = {
       enable = true;
       homedir = "${config.xdg.dataHome}/gnupg";
     };
-    himalaya = {
-      # BUG doesn't work yet with protonmail-bridge <https://github.com/pimalaya/himalaya/issues/574>
-      enable = true;
-      settings = {
-        display-name = realName;
-        signature = "Regards,\n";
-        signature-delim = "-- \n";
-        downloads-dir = "~/Downloads";
-      };
-    };
-    bemenu = {
-      enable = true;
-      settings = {
-        line-height = 28;
-        prompt = "open";
-        list = 5;
-        fn = lib.mkForce "Hack Nerd Font 16";
-        ignorecase = true;
-      };
-    };
     home-manager.enable = true; # TODO huh?
-
-    gh = {
-      enable = true;
-      settings = {
-        aliases = {
-          login = "auth login --skip-ssh-key --hostname github.com --git-protocol ssh --web";
-        };
-        extensions = with pkgs; [
-          gh-f
-          gh-copilot
-          # # wait until they appear
-          # copilot-insights
-          # token
-        ];
-        git_protocol = "ssh";
-        prompt = true;
-      };
-    };
 
     bash = {
       enable = true;
@@ -144,9 +71,6 @@ in
           [[ $- == *i* ]] || return
           for f in "${./files/bashrc.d}"/*; do source "$f"; done
           source ${./files/bashrc.sh}
-
-
-
 
           export _ZO_FZF_OPTS="
           --no-sort
