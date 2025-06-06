@@ -34,7 +34,7 @@ in
   inherit hostnames;
 
   mkModules = name: [
-    ./${name}
+    (machinesPath + /${name})
     (_: {
       networking.hostName = name;
     })
