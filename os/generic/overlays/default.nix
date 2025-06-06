@@ -20,6 +20,7 @@ let
       keymapp
       tgpt
       yazi
+      proton-pass
       ;
   };
 
