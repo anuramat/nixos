@@ -28,6 +28,7 @@
     ./waybar.nix
     ./output.nix
     ./kanshi.nix
+    ./menu.nix
   ];
   wayland.windowManager.sway =
     let
