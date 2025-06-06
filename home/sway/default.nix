@@ -45,7 +45,7 @@
         focus = {
           followMouse = "no";
           wrapping = "no";
-          mouseWarping = true;
+          mouseWarping = "container";
           newWindow = "none"; # TODO
         };
         startup = [

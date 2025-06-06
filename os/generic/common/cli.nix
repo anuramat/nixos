@@ -88,13 +88,17 @@
     rmtrash # rm but to trash
     trashy
     tealdeer # tldr reimplementation: rust + xdg
-    tgpt
     devenv
     eza # ls++
     watchman # another file watcher TODO try and compare to entr
     wayidle # runs a command on idle
     zellij # tmux++
     expect # automating tuis
+
+    # ai {{{1
+    tgpt
+    aider-chat-full
+    claude-code
 
     # misc {{{1
     asciinema
