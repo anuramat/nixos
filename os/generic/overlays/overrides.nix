@@ -1,4 +1,3 @@
-{ ... }:
 (final: prev: {
   ollama = prev.ollama.overrideAttrs (oldAttrs: rec {
     version = "0.9.0-rc0";

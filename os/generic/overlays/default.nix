@@ -5,42 +5,16 @@
 }:
 let
 
-  # TODO move to helpers
-  # HACK here we pepegapray that the pname and attrname in nixpkgs are equal (I think it's not true for neovim for example, pname is neovim-unwrapped or something)
-  mkUnstablePackages =
-    pkgfunc: final: prev:
-    let
-      unstable = import inputs.nixpkgs-unstable { inherit (prev) config system; };
-    in
-    prev.lib.listToAttrs (
-      map (pkg: {
-        name = pkg.pname; # BUG this fucking line ruined my entire day
-        value = pkg;
-      }) (pkgfunc unstable)
-    );
-  # # Intended usage:
-  # unstablePackages = mkUnstablePackages (
-  #   unstable: with unstable; [
-  #   ]
-  # );
-  unwrapOverlays = map (input: input.overlays.default);
-  unwrapPackages = (
-    inputs: final: prev:
-    map (
-      input:
-      let
-        pkg = input.packages.${prev.system}.default;
-      in
-      {
-        name = pkg.pname;
-        value = pkg;
-      }
-    ) inputs
-    |> builtins.listToAttrs
-  );
-  # ------------------- end of helpers
+  flakes =
+    final: prev:
+    (builtins.mapAttrs (n: v: v.packages.${prev.system}.default) {
+      inherit (inputs)
+        mcp-nixos
+        nil
+        ;
+    });
 
-  unstablePackages = final: prev: {
+  unstablePkgs = final: prev: {
     inherit (import inputs.nixpkgs-unstable { inherit (pkgs) config system; })
       cheese
       foot
@@ -55,21 +29,21 @@ let
       yazi
       ;
   };
-  overlays = unwrapOverlays (
-    with inputs;
-    [
+
+  overlays =
+    (with inputs; [
       neovim-nightly-overlay
-    ]
-  );
-  manual = import ./manual.nix { };
+    ])
+    |> map (v: v.overlays.default)
+
+  ;
+
+  overrides = import ./overrides.nix;
 in
 {
   nixpkgs.overlays = overlays ++ [
-    manual
-    unstablePackages
-    (final: prev: {
-      mcp-nixos = inputs.mcp-nixos.packages.${prev.system}.default;
-      nil = inputs.nil.packages.${prev.system}.default;
-    })
+    overrides
+    unstablePkgs
+    flakes
   ];
 }
