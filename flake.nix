@@ -22,6 +22,7 @@
     inputs:
     let
 
+      inherit (inputs.nixpkgs) lib;
       epsilon = with builtins; path: path |> readDir |> attrNames |> filter (a: a != "default.nix");
       inherit
         ((import ./os/machines) {
@@ -39,14 +40,14 @@
       };
       commonArgs = {
         inherit inputs user;
-        helpers = import ./helpers;
+        helpers = import ./helpers { inherit lib; };
       };
       mkSystem =
         name:
         let
           cluster = mkCluster name;
         in
-        inputs.nixpkgs.lib.nixosSystem {
+        lib.nixosSystem {
           specialArgs = commonArgs // {
             inherit cluster;
             # {{{1

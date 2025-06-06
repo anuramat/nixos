@@ -1,5 +1,5 @@
-args: {
+args: rec {
   common = import ./common.nix args;
   web = import ./web.nix;
-  mime = import ./mime.nix args;
+  mime = import ./mime.nix (args // common);
 }
