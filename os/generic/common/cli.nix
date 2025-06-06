@@ -96,6 +96,7 @@
     tgpt
     aider-chat-full
     claude-code
+    llama-cpp
 
     # misc {{{1
     asciinema
