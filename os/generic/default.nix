@@ -1,4 +1,5 @@
 {
+  config,
   cluster,
   inputs,
   pkgs,
@@ -15,7 +16,7 @@
       ./options.nix
     ]
     ++ (
-      if cluster.this.remote then
+      if config.machine.remote then
         [
           ./remote
         ]

@@ -27,6 +27,7 @@
           inherit inputs;
           machinesPath = ./os/machines;
         })
+      hostnames
         mkCluster
         mkModules
         ;
