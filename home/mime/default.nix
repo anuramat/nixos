@@ -62,7 +62,7 @@ let
     // setMany applications.documentViewer mimeTypes.documents;
 in
 {
-  xdg.mime = {
+  xdg.mimeApps = {
     enable = true;
     defaultApplications = special // bulk;
   };
