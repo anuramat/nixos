@@ -1,15 +1,27 @@
-{ ... }:
 {
-  imports = [
-    ./common
-    ./mime
-    ./shell
-    ./overlays
-    ./home.nix
-    ./options.nix
-    ./remote.nix
-    ./local
-  ];
+  config,
+  ...
+}:
+{
+  imports =
+    [
+      ./common
+      ./mime
+      ./shell
+      ./overlays
+      ./home.nix
+      ./options.nix
+    ]
+    ++ (
+      if config.machine.remote then
+        [
+          ./remote.nix
+        ]
+      else
+        [
+          ./local
+        ]
+    );
 
   # TODO uhh
   programs.npm = {

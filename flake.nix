@@ -60,6 +60,7 @@
           modules = [
             { home-manager.users.${user.username} = import ./home; }
             ./common
+            ./os/options.nix
             ./os/generic
           ] ++ mkModules name;
         };
