@@ -75,8 +75,7 @@ in
       };
       push.autoSetupRemote = true;
 
-      # WARN: XDGBDSV
-      ghq.root = "~/.local/share/ghq";
+      ghq.root = "${config.xdg.dataHome}/ghq";
 
       merge = {
         todo.driver = "todo merge %A %O %B";

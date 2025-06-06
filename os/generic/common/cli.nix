@@ -75,7 +75,6 @@
     bat # cat++: syntax hl
     wallust # better pywal TODO go back to stable when xdg compliant version gets merged
     delta # pretty diff
-    difftastic # diff++: syntax aware using TS
     du-dust # du++
     duf # df++
     entr # file watcher - runs command on change
