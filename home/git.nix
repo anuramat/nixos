@@ -79,6 +79,8 @@
         # direnv
         ".direnv/"
         ".envrc"
+
+        ".aider*"
       ];
       attributes = [
         "*.ipynb diff=jupyternotebook merge=jupyternotebook"

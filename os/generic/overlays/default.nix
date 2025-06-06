@@ -22,7 +22,6 @@ let
       yazi
       proton-pass
       aider-chat-full
-      claude-code
       ollama
       ;
   };
