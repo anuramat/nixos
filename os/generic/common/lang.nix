@@ -45,28 +45,9 @@
     treefmt # aggregator
     yamlfmt
 
-    # servers {{{1
-    # (haskell-language-server.override {
-    #   supportedGhcVersions =
-    #     [
-    #     ];
-    # })
-    superhtml
-    typescript-language-server
-    stylelint-lsp # css
-    haskell-language-server
-    bash-language-server
-    ccls
-    clang-tools
-    gopls
-    lua-language-server
-    marksman
-    nil
-    nodePackages_latest.vscode-json-languageserver
-    pyright
-    texlab
-    nixd
-    yaml-language-server
+    # mcp {{{1
+    github-mcp-server
+    mcp-nixos
 
     # linters {{{1
     checkmake # makefile
