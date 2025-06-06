@@ -3,9 +3,10 @@
   config,
   lib,
   pkgs,
+  cluster,
   ...
 }:
-lib.mkIf (!config.machine.remote) {
+{
   imports = [
     ./misc.nix
     ./peripherals.nix

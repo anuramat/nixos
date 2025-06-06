@@ -43,9 +43,12 @@
       };
       mkSystem =
         name:
+        let
+          cluster = mkCluster name;
+        in
         inputs.nixpkgs.lib.nixosSystem {
           specialArgs = commonArgs // {
-            cluster = mkCluster name;
+            inherit cluster;
             # {{{1
             old =
               let
@@ -57,12 +60,23 @@
               };
             # }}}
           };
-          modules = [
-            { home-manager.users.${user.username} = import ./home; }
-            ./common
-            ./os/options.nix
-            ./os/generic
-          ] ++ mkModules name;
+          modules =
+            [
+              { home-manager.users.${user.username} = import ./home; }
+              ./common
+              ./os/generic
+            ]
+            ++ mkModules name
+            ++ (
+              if cluster.this.server then
+                [
+                  ./os/remote.nix
+                ]
+              else
+                [
+                  ./os/local
+                ]
+            );
         };
     in
     {

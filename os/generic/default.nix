@@ -4,25 +4,13 @@
   ...
 }:
 {
-  imports =
-    [
-      ./common
-      ./mime
-      ./shell
-      ./overlays
-      ./home.nix
-      ./options.nix
-    ]
-    ++ (
-      if cluster.this.server then
-        [
-          ./remote.nix
-        ]
-      else
-        [
-          ./local
-        ]
-    );
+  imports = [
+    ./common
+    ./mime
+    ./shell
+    ./overlays
+    ./home.nix
+  ];
 
   # TODO uhh
   programs.npm = {
