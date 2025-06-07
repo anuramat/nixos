@@ -18,12 +18,12 @@ while IFS= read -r path; do
 	while IFS=: read -r matchfile matchstring; do
 		normalized=$(realpath -q "$(dirname "$matchfile")/$matchstring") || continue
 		if [ "$path" = "$normalized" ]; then
-			((use_counter++)) && true
+			((use_counter++)) || true
 			[ -n "$onlyfails" ] && break
 		fi
 	done < <(
-		rg "${rg_args[@]}" "^\s*$exp$" /etc/nixos && true
-		rg "${rg_args[@]}" "import $exp" /etc/nixos && true
+		rg "${rg_args[@]}" "^\s*$exp$" /etc/nixos || true
+		rg "${rg_args[@]}" "import $exp" /etc/nixos || true
 	)
 	if ((use_counter > 0)); then
 		[ -z "$onlyfails" ] && {
