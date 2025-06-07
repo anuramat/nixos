@@ -4,16 +4,11 @@
   lib,
   ...
 }:
-let
-
-  font-family = "Hack Nerd Font";
-  font-size = "13";
-  realName = "Arsen Nuramatov";
-in
 {
   imports = [
     ./email.nix
     ./mime
+    ./term.nix
     ./git.nix
     ./neovim.nix
     ./pass.nix
@@ -91,7 +86,6 @@ in
       in
       {
         enable = true;
-        enableBashIntegration = true;
         defaultCommand = fd;
 
         changeDirWidgetCommand = "${fd} -t d";
@@ -126,7 +120,6 @@ in
       };
 
     zoxide = {
-      enableBashIntegration = true;
       enable = true;
       options = [
         "--cmd j"
@@ -186,35 +179,6 @@ in
         pager = "less -F";
       };
     };
-    foot = {
-      enable = true;
-      settings = {
-        main.font = "Hack Nerd Font:size=13";
-
-        scrollback.lines = 13337;
-
-        bell.urgent = "yes";
-        bell.visual = "yes";
-        bell.notify = "no";
-
-        key-bindings.show-urls-copy = "Control+Shift+y";
-        key-bindings.scrollback-home = "Shift+Home";
-        key-bindings.scrollback-end = "Shift+End";
-      };
-    };
-    ghostty = {
-      enable = true;
-      clearDefaultKeybinds = true;
-      # enableBashIntegration = true; TODO huh?
-      settings = {
-        inherit font-size font-family;
-        cursor-style = "block";
-        cursor-style-blink = "false";
-        shell-integration-features = "no-cursor";
-        resize-overlay = "never";
-        window-decoration = "false";
-      };
-    };
     info.enable = true;
     less = {
       enable = true;
@@ -250,7 +214,6 @@ in
           }
         ];
       };
-      enableBashIntegration = true;
     };
     htop = {
       enable = true;
