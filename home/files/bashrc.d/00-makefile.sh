@@ -5,7 +5,7 @@ __clean_style() {
 }
 
 __dot() {
-	__clean_style | xargs -a "$XDG_CACHE_HOME/wallust/graphviz" dot -Tpng -Gdpi=300
+	__clean_style | xargs -a "$XDG_CACHE_HOME/graphviz.colors" dot -Tpng -Gdpi=300
 }
 
 deps() {

@@ -1,14 +1,5 @@
 -- vim: fdl=1
-local function transparent_bg()
-  local file = io.open(vim.fn.expand('$XDG_CACHE_HOME/wallust/alpha'), 'r')
-  local chars
-  if file ~= nil then
-    chars = vim.trim(file:read('*a'))
-    file:close()
-    return chars ~= '100'
-  end
-  return false
-end
+local function transparent_bg() return false end -- TODO stylix
 return {
   -- rainbow-delimiters.nvim - TS rainbow parentheses
   {
@@ -28,24 +19,6 @@ return {
     'NvChad/nvim-colorizer.lua',
     ft = { 'css', 'yaml' },
     opts = {},
-  },
-  -- neopywal.nvim
-  {
-    'RedsXDD/neopywal.nvim',
-    name = 'neopywal',
-    lazy = false,
-    priority = 1000,
-    config = function()
-      local neopywal = require('neopywal')
-      neopywal.setup({
-        use_wallust = true,
-        transparent_background = transparent_bg(),
-        dim_inactive = true,
-        show_end_of_buffer = true,
-        show_split_lines = true,
-      })
-      vim.cmd.colorscheme('neopywal')
-    end,
   },
   -- todo-comments.nvim - highlights "todo", "hack", etc
   {

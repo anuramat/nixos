@@ -8,6 +8,7 @@
   imports = [
     ./email.nix
     ./mime
+    ./lang.nix
     ./term.nix
     ./git.nix
     ./neovim.nix
@@ -153,9 +154,7 @@
     };
 
     zathura = {
-
       enable = true;
-
       options = {
         adjust-open = "width";
         window-title-home-tilde = true;
@@ -177,6 +176,63 @@
       config = {
         italic-text = "always";
         pager = "less -F";
+      };
+    };
+    zellij = {
+      enable = true;
+    };
+    tmux = {
+      enable = true;
+      escapeTime = 50;
+    };
+    matplotlib = {
+      enable = true;
+      config = { };
+    };
+    mpv = {
+      config = {
+        profile = "gpu-hq";
+        gpu-context = "wayland";
+        hwdec = "auto-safe";
+        vo = "gpu";
+        force-window = true;
+        ytdl-format = "bestvideo+bestaudio";
+        cache-default = 4000000;
+      };
+    };
+    ripgrep = {
+      enable = true;
+      arguments = [
+        # search over working tree
+
+        # include .*
+        "--hidden"
+        # symlinks
+        "--follow"
+        # revert with -s for sensitive
+        "--smart-case"
+
+        # with exceptions:
+
+        # VCS
+        "--glob=!{.git,.svn}"
+        # codegen
+        "--glob=!*.pb.go"
+      ];
+    };
+    ripgrep-all = {
+      enable = true;
+    };
+    tealdeer = {
+      enable = true;
+      settings = {
+        display = {
+          compact = false;
+          use_pager = true;
+        };
+        updates = {
+          auto_update = true;
+        };
       };
     };
     info.enable = true;

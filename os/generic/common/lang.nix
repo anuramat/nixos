@@ -49,15 +49,6 @@
     github-mcp-server
     mcp-nixos
 
-    # linters {{{1
-    checkmake # makefile
-    deadnix # nix dead code
-    golangci-lint # go
-    luajitPackages.luacheck # lua
-    shellcheck # *sh
-    statix # nix
-    yamllint
-
     # misc {{{1
     bats # bash testing
     bear # compilation database generator for clangd

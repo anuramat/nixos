@@ -45,20 +45,30 @@ let
   ];
 in
 {
-  programs.neovim = {
-    enable = true;
-    defaultEditor = true;
-    extraLuaPackages = moltenLua;
-    extraPackages =
-      with pkgs;
-      [
-        # molten:
-        imagemagick
-        python3Packages.jupytext
-        # mdmath.nvim
-        librsvg
-      ]
-      ++ lsp;
-    extraPython3Packages = moltenPython;
+  programs = {
+    neovim = {
+      enable = true;
+      defaultEditor = true;
+      extraLuaPackages = moltenLua;
+      extraPackages =
+        with pkgs;
+        [
+          # molten:
+          imagemagick
+          python3Packages.jupytext
+          # mdmath.nvim
+          librsvg
+        ]
+        ++ lsp;
+      extraPython3Packages = moltenPython;
+    };
+    helix = {
+      enable = true;
+      settings = {
+        editor = {
+          line-number = "relative";
+        };
+      };
+    };
   };
 }
