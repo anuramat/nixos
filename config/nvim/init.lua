@@ -5,4 +5,5 @@ vim.diagnostic.config({
   signs = false,
 })
 vim.deprecate = function() end -- shut up
-require('plugins')
+-- require('plugins') -- Removed lazy.nvim initialization
+require('lze').load(require('lze_specs')) -- Initialize LZE
