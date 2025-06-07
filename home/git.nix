@@ -81,7 +81,7 @@
         ".envrc"
 
         ".aider*"
-        ".claude*"
+        ".claude/settings.local.json"
       ];
       attributes = [
         "*.ipynb diff=jupyternotebook merge=jupyternotebook"
