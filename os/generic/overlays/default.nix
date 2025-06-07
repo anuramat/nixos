@@ -19,7 +19,6 @@ let
       github-mcp-server
       keymapp
       tgpt
-      yazi
       proton-pass
       aider-chat-full
       ollama
