@@ -11,7 +11,7 @@
     ./lang.nix
     ./term.nix
     ./git.nix
-    ./neovim.nix
+    ./editor.nix
     ./pass.nix
     ./portal.nix
     ./rice.nix

@@ -64,7 +64,6 @@
     openconnect_openssl
 
     # editors {{{1
-    helix
     vis
 
     # core {{{1

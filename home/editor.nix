@@ -70,5 +70,12 @@ in
         };
       };
     };
+    # vscode = {
+    #   enable = true;
+    # };
   };
+  # home.packages = with pkgs; [
+    # code-cursor
+    # windsurf
+  # ];
 }
