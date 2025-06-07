@@ -53,6 +53,11 @@
       enable = true;
       homedir = "${config.xdg.dataHome}/gnupg";
     };
+    swayimg = {
+      # enable = true;
+      # settings = {
+      # };
+    };
     home-manager.enable = true; # TODO huh?
 
     bash = {
