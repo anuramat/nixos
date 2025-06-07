@@ -81,6 +81,7 @@
         ".envrc"
 
         ".aider*"
+        ".claude*"
       ];
       attributes = [
         "*.ipynb diff=jupyternotebook merge=jupyternotebook"
