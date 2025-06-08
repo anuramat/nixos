@@ -69,7 +69,7 @@ let
         
         # Jupyter/Data Science
         molten-nvim
-        # jupytext-nvim  # May need to be added to nixpkgs
+        jupytext-nvim  # May need to be added to nixpkgs
         otter-nvim
         quarto-nvim
         image-nvim

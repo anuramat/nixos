@@ -13,7 +13,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
-    nixCats.url = "github:BirdeeHub/nixCats-nvim";
     subcat.url = "github:anuramat/subcat";
     ctrlsn.url = "git+ssh://git@github.com/anuramat/ctrl.sn?ref=main";
     mcp-nixos.url = "github:utensils/mcp-nixos";
