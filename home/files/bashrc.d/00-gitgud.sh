@@ -224,7 +224,7 @@ __gitgud_git_prompt() {
 		return
 	fi
 
-	local -r git_root=$(dirname "$(realpath "$(git rev-parse --git-dir)")")
+	local -r git_root=$(git rev-parse --show-toplevel)
 	(
 		cd "$git_root" || exit
 		local -r raw=$(git status --porcelain=v2 --show-stash --branch)
