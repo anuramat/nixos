@@ -18,9 +18,11 @@
     lua
     nodejs_20
     perl
-    (python3.withPackages (p: with p; [
-      mcp
-    ])
+    (python3.withPackages (
+      p: with p; [
+        mcp
+      ]
+    ))
     ruby
     rustc
     old.sageWithDoc # computer algebra system
