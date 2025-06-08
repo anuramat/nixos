@@ -32,7 +32,8 @@ The system automatically creates a cluster of all machines with:
 ```bash
 make all          # Full rebuild: flake + links + code quality checks
 make flake        # Core system rebuild (copy keys + nixos-rebuild switch)
-make code         # Run all formatting and linting (nix + lua + shell)
+make links        # Install symlinks from links/ directory structure
+make code         # Run all formatting and linting (nix + lua + shell + misc)
 make nvim         # Run standalone Neovim with full configuration
 ```
 
@@ -53,6 +54,7 @@ make nix          # Format with nixfmt (linting disabled due to pipe operators)
 make lua          # Format with stylua + lint with luacheck
 make sh           # Format with shfmt + lint with shellcheck
 make misc         # YAML formatting and linting (yamlfmt + yamllint + checkmake)
+make code         # Run all formatting and linting tools (nix + lua + sh + misc)
 ```
 
 ### Testing and Validation
@@ -80,8 +82,10 @@ sudo nixos-rebuild switch --option extra-experimental-features pipe-operators --
   - Full configuration: `make nvim` (includes all features)
   - Minimal configuration: `nvim-minimal` (for servers)
   - Jupyter integration with Molten, Quarto, and Otter
+  - Modern completion with Blink.cmp replacing nvim-cmp
 - **Shell**: Bash with FZF, Zoxide, custom functions and aliases
-- **Languages**: Comprehensive support for Nix, Lua, Go, Haskell, Python, etc.
+- **Languages**: Comprehensive support for Nix, Lua, Go, Haskell, Python (with MCP), etc.
+- **AI Tools**: Aider integration with GitHub Copilot token extraction script
 
 ## Important Notes
 
@@ -95,17 +99,21 @@ When adapting this configuration:
 - SSH keys in `nix.buildMachines` are ignored due to upstream bug
 - Manual SSH config required in `/root/.ssh/config` for distributed builds
 - Transitioning from legacy symlinks to Home Manager (some configs in both places)
+- Legacy `config/` and `bin/` directories moved to `links/` structure for cleaner organization
 
 ### Special Features
 - Uses Nix pipe operators (`|>`) - requires `--option extra-experimental-features pipe-operators`
 - Binary cache generation and sharing between machines
 - Automatic hardware detection and optimization per machine type
 - Integrated password manager and security tools (fail2ban, GPG)
+- Claude Code integration with custom commands and permissions in `links/home/.claude/`
 
 ## File Organization
 
 ### Application Configurations
-- `config/`: Dotfiles and application configs (Neovim, Jupyter, shell, etc.)
+- `links/config/`: Dotfiles and application configs (Neovim, Jupyter, shell, etc.)
+- `links/bin/`: Custom scripts and utilities (aider, todo, etc.)
+- `links/home/`: User home directory symlinks including Claude Code configuration
 - `home/`: Home Manager modules for user environment
 - `home/sway/`: Complete Wayland desktop environment setup
 
@@ -132,6 +140,15 @@ When adapting this configuration:
 - Plugin categories: `general`, `treesitter`, `git`, `lazy`
 - Two variants: full (`nvim`) and minimal (`nvim-minimal`)
 - Lua configuration in `nvim/lua/` with modular plugin loading
+- Modern completion system using Blink.cmp instead of nvim-cmp
+- Enhanced git integration with Neogit, Fugitive, Gitsigns, and Diffview
+
+### Claude Code Integration
+The repository includes full Claude Code integration with:
+- **Configuration**: `links/home/.claude/` contains settings and commands
+- **Custom Commands**: `update.md` for automated CLAUDE.md memory updates
+- **Permissions**: Carefully configured permissions for safe AI assistance
+- **Global Instructions**: User preferences in `~/.claude/CLAUDE.md` for git workflow
 
 ### Code Quality Workflow
 Always run `make code` before committing to ensure:

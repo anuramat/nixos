@@ -41,3 +41,5 @@ proceed to step 4:
 ## step 4
 
 read the CLAUDE.md and update it with the changes you analyzed.
+
+commit the changes with the message `docs(CLAUDE.md): update memory`
