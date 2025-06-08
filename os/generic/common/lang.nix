@@ -18,7 +18,9 @@
     lua
     nodejs_20
     perl
-    python3
+    (python3.withPackages (p: with p; [
+      mcp
+    ])
     ruby
     rustc
     old.sageWithDoc # computer algebra system
@@ -48,7 +50,6 @@
     # mcp {{{1
     github-mcp-server
     mcp-nixos
-    python3Packages.mcp
 
     # misc {{{1
     bats # bash testing
