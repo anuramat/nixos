@@ -1,6 +1,6 @@
 # vim: fdm=marker fdl=0
 .SILENT:
-.PHONY: clean test
+.PHONY: clean test nvim
 
 .PHONY: all flake links code init deadlinks
 all: flake links code
@@ -25,6 +25,8 @@ init:
 	./scripts/heading.sh "Generating keys"
 	./scripts/keygen.sh
 code: nix lua sh
+nvim:
+	nix run --option builders '' --option substituters '' .#nvim
 
 # nix {{{1
 .PHONY: nix nixlint nixfmt

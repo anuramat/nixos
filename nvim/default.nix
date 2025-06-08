@@ -207,10 +207,6 @@ let
     nvim =
       { pkgs, ... }:
       {
-        settings = {
-          wrapRc = true;
-          configDirName = "nvim";
-        };
         categories = {
           general = true;
           treesitter = true;
