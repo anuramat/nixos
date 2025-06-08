@@ -2,7 +2,6 @@
 .SILENT:
 MAKEFLAGS += --always-make
 
-.PHONY: all flake links code init deadlinks
 all: flake links code
 flake:
 	./scripts/heading.sh "Copying public keys"
@@ -29,7 +28,6 @@ nvim:
 	nix run --option builders '' --option substituters '' .#nvim
 
 # nix {{{1
-.PHONY: nix nixlint nixfmt
 nix: nixfmt nixlint
 nixfmt:
 	./scripts/heading.sh "Formatting Nix files"
@@ -41,7 +39,6 @@ nixlint:
 	# deadnix || true
 
 # lua {{{1
-.PHONY: lua lualint luafmt
 lua: luafmt lualint
 luafmt:
 	./scripts/heading.sh "Formatting Lua files"
@@ -51,7 +48,6 @@ lualint:
 	luacheck . --codes --globals=vim -q | head -n -1
 
 # shell {{{1
-.PHONY: sh shlint shfmt
 sh: shfmt shlint
 shfmt:
 	./scripts/heading.sh "Formatting shell scripts"
@@ -61,7 +57,6 @@ shlint:
 	./scripts/shrun.sh shellcheck --color=always -o all
 
 # misc {{{1
-.PHONY: misc misclint miscfmt
 misc: misclint miscfmt
 misclint:
 	yamllint . || true
