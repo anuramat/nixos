@@ -5,7 +5,6 @@ return {
   -- Neogit
   {
     "neogit",
-    event = "VeryLazy",
     after = function()
       require("neogit").setup({
         kind = 'floating',
@@ -19,7 +18,6 @@ return {
   -- Vim fugitive
   {
     "vim-fugitive",
-    event = "VeryLazy",
     keys = { 
       {
         '<leader>G',
@@ -32,7 +30,6 @@ return {
   -- Gitsigns
   {
     "gitsigns.nvim",
-    event = "VeryLazy",
     after = function()
       require("gitsigns").setup({
         sign_priority = 1000,
@@ -76,13 +73,11 @@ return {
   -- Diffview
   {
     "diffview.nvim",
-    event = "VeryLazy",
   },
 
   -- Gitlinker
   {
     "gitlinker.nvim",
-    event = "VeryLazy",
     after = function()
       require("gitlinker").setup({
         opts = {

@@ -2,31 +2,25 @@
 
 return {
   -- Rainbow delimiters (loaded at startup since it's in treesitter category)
-  
+
   -- Dressing.nvim
   {
-    "dressing.nvim",
-    event = "VeryLazy",
-    after = function()
-      require("dressing").setup({})
-    end,
+    'dressing.nvim',
+    after = function() require('dressing').setup({}) end,
   },
 
   -- Colorizer
   {
-    "nvim-colorizer.lua",
-    ft = { "css", "yaml" },
-    after = function()
-      require("colorizer").setup({})
-    end,
+    'nvim-colorizer.lua',
+    ft = { 'css', 'yaml' },
+    after = function() require('colorizer').setup({}) end,
   },
 
   -- Todo comments
   {
-    "todo-comments.nvim",
-    event = "VeryLazy",
+    'todo-comments.nvim',
     after = function()
-      require("todo-comments").setup({
+      require('todo-comments').setup({
         signs = false,
         highlight = {
           keyword = 'bg',
@@ -42,10 +36,10 @@ return {
 
   -- Lightbulb
   {
-    "nvim-lightbulb",
-    event = "LspAttach",
+    'nvim-lightbulb',
+    event = 'LspAttach',
     after = function()
-      require("nvim-lightbulb").setup({
+      require('nvim-lightbulb').setup({
         autocmd = { enabled = true },
         ignore = {
           ft = { 'markdown' },
@@ -58,10 +52,8 @@ return {
 
   -- Fidget
   {
-    "fidget.nvim",
-    event = "LspAttach",
-    after = function()
-      require("fidget").setup({})
-    end,
+    'fidget.nvim',
+    event = 'LspAttach',
+    after = function() require('fidget').setup({}) end,
   },
 }

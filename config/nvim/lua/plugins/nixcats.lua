@@ -5,33 +5,32 @@ local u = require('utils.helpers')
 vim.g.lze = {
   verbose = false,
   load = vim.cmd.packadd,
-  default_priority = 50
+  default_priority = 50,
 }
 
 -- Configure lze with our plugins
-require("lze").load {
+require('lze').load({
   -- Core UI plugins
   {
-    "aerial.nvim",
-    event = "BufEnter",
+    'aerial.nvim',
+    event = 'BufEnter',
     after = function()
-      require("aerial").setup({
+      require('aerial').setup({
         filter_kind = {
           nix = false,
         },
       })
     end,
-    keys = { 
-      { "gO", "<cmd>AerialToggle!<cr>", desc = "Show Aerial Outline" } 
+    keys = {
+      { 'gO', '<cmd>AerialToggle!<cr>', desc = 'Show Aerial Outline' },
     },
   },
 
   -- Fuzzy finder
   {
-    "fzf-lua",
-    event = "VeryLazy",
+    'fzf-lua',
     after = function()
-      require("fzf-lua").setup({
+      require('fzf-lua').setup({
         grep = {
           fd_opts = '-c never -t f -HL',
           RIPGREP_CONFIG_PATH = vim.env.RIPGREP_CONFIG_PATH,
@@ -86,15 +85,15 @@ require("lze").load {
 
   -- File tree
   {
-    "neo-tree.nvim",
-    cmd = "Neotree",
+    'neo-tree.nvim',
+    cmd = 'Neotree',
   },
 
   -- TreeSJ - splits/joins code
   {
-    "treesj",
+    'treesj',
     after = function()
-      require("treesj").setup({
+      require('treesj').setup({
         use_default_keymaps = false,
         max_join_length = 500,
       })
@@ -110,9 +109,9 @@ require("lze").load {
 
   -- Mini.align
   {
-    "mini.align",
+    'mini.align',
     after = function()
-      require("mini.align").setup({
+      require('mini.align').setup({
         mappings = {
           start = '<leader>a',
           start_with_preview = '<leader>A',
@@ -127,10 +126,9 @@ require("lze").load {
 
   -- Flash.nvim - jump around
   {
-    "flash.nvim",
-    event = "VeryLazy",
+    'flash.nvim',
     after = function()
-      require("flash").setup({
+      require('flash').setup({
         modes = {
           char = {
             enabled = false,
@@ -165,12 +163,12 @@ require("lze").load {
 
   -- Undotree
   {
-    "undotree",
+    'undotree',
     cmd = {
-      "UndotreeHide",
-      "UndotreeShow", 
-      "UndotreeFocus",
-      "UndotreeToggle",
+      'UndotreeHide',
+      'UndotreeShow',
+      'UndotreeFocus',
+      'UndotreeToggle',
     },
     keys = {
       {
@@ -183,9 +181,9 @@ require("lze").load {
 
   -- Wastebin
   {
-    "wastebin.nvim",
+    'wastebin.nvim',
     after = function()
-      require("wastebin").setup({
+      require('wastebin').setup({
         url = 'https://bin.ctrl.sn',
         open_cmd = '__wastebin() { wl-copy "$1" && xdg-open "$1"; }; __wastebin',
         ask = false,
@@ -208,4 +206,4 @@ require("lze").load {
   require('plugins.core.git-nixcats'),
   require('plugins.core.ui-nixcats'),
   -- require('plugins.core.rare-nixcats'),
-}
+})
