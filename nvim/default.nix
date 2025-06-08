@@ -251,24 +251,11 @@ let
           allowUnfree = true;
         };
       } categoryDefinitions packageDefinitions;
-
-      defaultCats = nixCatsBuilder "nvim";
     in
     {
-      packages = {
-        default = defaultCats;
-        nvim = defaultCats;
-        nvim-minimal = nixCatsBuilder "nvim-minimal";
-      };
-
-      # Development shell for working on the config
-      devShells.default = pkgs.mkShell {
-        buildInputs = with pkgs; [
-          lua-language-server
-          stylua
-          luajitPackages.luacheck
-        ];
-      };
+      packages = builtins.mapAttrs (n: v: nixCatsBuilder n) packageDefinitions;
     };
 in
 forEachSystem buildNeovim
+
+# vim: fdl=3
