@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git diff:*)",
+      "Bash(git status:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git log:*)",
+      "Bash(find:*)",
+      "NotebookEdit",
+      "WebFetch",
+      "WebSearch",
+      "Write",
+      "Edit",
+      "MultiEdit",
+      "Bash(ls:*)"
+    ],
+    "deny": []
+  },
+  "includeCoAuthoredBy": true,
+  "env": {}
+}
+

@@ -11,7 +11,7 @@ flake:
 	cp -ft "$(keys_dir)" "/etc/nix/cache.pem.pub" 2>/dev/null || true
 	./scripts/heading.sh "Building NixOS"
 	sudo nixos-rebuild switch --option extra-experimental-features pipe-operators --show-trace
-links: deadlinks
+links:
 	./scripts/heading.sh "Setting up links"
 	# bash env will not work anymore, xdg vars are in personal profile now TODO
 	# prob don't touch, delete after transitioning to home manager
