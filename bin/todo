@@ -169,6 +169,12 @@ def tag_overview():
     print(header + result)
 
 
+def edit():
+    editor = os.environ.get("EDITOR") or "vi"
+    line_nr = len(read())
+    os.system(f"{editor} +{line_nr} {TASK_FILE}")
+
+
 def merge(left_name: str, root_name: str, right_name: str):
     # to be used as git merge driver
     left_lines = read(left_name)
@@ -219,6 +225,7 @@ def _setup_parser():
     subparsers.add_parser("ls", help="List all tasks")
     subparsers.add_parser("norm", help="Normalize the file")
     subparsers.add_parser("unfiled", help="List unfiled tasks")
+    subparsers.add_parser("edit", help="Edit tasks file")
 
     return parser
 
@@ -239,6 +246,7 @@ def _dispatch_command(args):
         "norm": lambda: write(norm(read())),
         "merge": lambda: merge(args.left, args.root, args.right),
         "unfiled": lambda: ls_tag("unfiled"),
+        "edit": edit,
     }
 
     if args.command in command_handlers:
