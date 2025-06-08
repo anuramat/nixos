@@ -56,6 +56,7 @@
     htmlq
     gomodifytags
     jq # json processor
+    jsonschema # `jv`
     luajitPackages.luarocks
     markdown-link-check
     pup # html
