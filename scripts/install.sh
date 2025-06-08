@@ -16,3 +16,4 @@ lndir() (
 
 lndir "$PWD/config" "$XDG_CONFIG_HOME"
 lndir "$PWD/bin" "$XDG_BIN_HOME"
+lndir "$PWD/claude" ~/.claude
