@@ -33,13 +33,14 @@ The system automatically creates a cluster of all machines with:
 make all          # Full rebuild: flake + links + code quality checks
 make flake        # Core system rebuild (copy keys + nixos-rebuild switch)
 make code         # Run all formatting and linting (nix + lua + shell)
+make nvim         # Run standalone Neovim with full configuration
 ```
 
 ### Initial Setup (New Machine)
 ```bash
 make init         # Guard prompt + SSH key generation
 # Manual steps after init:
-wal sex xterm     # Set basic theme
+wal sex xterm     # Set basic theme to compile templates
 nvim              # Fetch plugins, install TreeSitter parsers
 gh auth login     # GitHub CLI authentication
 git remote set-url origin git@github.com:anuramat/nixos
@@ -51,7 +52,13 @@ sudo tailscale up "--operator=$(whoami)"
 make nix          # Format with nixfmt (linting disabled due to pipe operators)
 make lua          # Format with stylua + lint with luacheck
 make sh           # Format with shfmt + lint with shellcheck
-make misc         # YAML formatting and linting
+make misc         # YAML formatting and linting (yamlfmt + yamllint + checkmake)
+```
+
+### Testing and Validation
+```bash
+sudo nixos-rebuild switch --option extra-experimental-features pipe-operators --show-trace
+# Full system rebuild with experimental pipe operators and detailed trace output
 ```
 
 ## Key Technologies
@@ -69,7 +76,10 @@ make misc         # YAML formatting and linting
 - **Application Suite**: LibreWolf, Zathura, MPV, development tools
 
 ### Development Tools
-- **Neovim**: Heavily customized with LSP, DAP, TreeSitter, and plugins
+- **Neovim**: Built with nixCats, featuring LSP, DAP, TreeSitter, and lazy-loaded plugins
+  - Full configuration: `make nvim` (includes all features)
+  - Minimal configuration: `nvim-minimal` (for servers)
+  - Jupyter integration with Molten, Quarto, and Otter
 - **Shell**: Bash with FZF, Zoxide, custom functions and aliases
 - **Languages**: Comprehensive support for Nix, Lua, Go, Haskell, Python, etc.
 
@@ -107,3 +117,25 @@ When adapting this configuration:
 ### Scripts and Maintenance
 - `scripts/`: Setup and maintenance scripts
 - `Makefile`: Primary interface for build and development commands
+
+## Development Patterns
+
+### Adding New Machines
+1. Create directory in `os/machines/` matching hostname
+2. Add `default.nix` with machine-specific configuration
+3. Generate `hardware-configuration.nix` using nixos-generate-config
+4. Create `meta.nix` with `{ server = true/false; }` to determine role
+5. Add SSH keys to `keys/` subdirectory
+
+### Neovim Configuration Structure
+- Built using nixCats framework for reproducible plugin management
+- Plugin categories: `general`, `treesitter`, `git`, `lazy`
+- Two variants: full (`nvim`) and minimal (`nvim-minimal`)
+- Lua configuration in `nvim/lua/` with modular plugin loading
+
+### Code Quality Workflow
+Always run `make code` before committing to ensure:
+- Nix files are formatted with nixfmt
+- Lua files are formatted with stylua and linted with luacheck
+- Shell scripts are formatted with shfmt and linted with shellcheck
+- YAML files are formatted and validated
