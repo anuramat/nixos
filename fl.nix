@@ -15,7 +15,7 @@
     }@inputs:
     let
       inherit (nixCats) utils;
-      luaPath = "${./.}";
+      luaPath = "${./config/nvim}";
       forEachSystem = utils.eachSystem nixpkgs.lib.platforms.all;
 
       # Define categories of plugins and dependencies
@@ -227,7 +227,7 @@
           { pkgs, ... }:
           {
             settings = {
-              wrapRc = true;
+              wrapRc = false;
               configDirName = "nvim";
             };
             categories = {
