@@ -1,5 +1,5 @@
 /config/btop/btop.log
 /config/qalculate/qalc.history
-/config/ipython/profile_default/history.sqlite
+*.sqlite
 /config/jupyter/lab/workspaces
 /config/ghc/ghci_history

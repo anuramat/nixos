@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 set -e
 
+LINKDIR=$(realpath "$1")
+
 lndir() (
 	source="$1"
 	directory="$2"
+	printf "$2: %s\n" "$(find "$1" -maxdepth 1 -mindepth 1 | xargs -n 1 basename | tr '\n' ' ')"
 	[ -z "$directory" ] && {
 		echo "can't link $1: target not set"
 		return 1
@@ -14,6 +17,7 @@ lndir() (
 	shopt -u dotglob
 )
 
-lndir "$PWD/config" "$XDG_CONFIG_HOME"
-lndir "$PWD/bin" "$XDG_BIN_HOME"
-lndir "$PWD/claude" ~/.claude
+source "$HOME/.profile"
+lndir "$LINKDIR/config" "$XDG_CONFIG_HOME"
+lndir "$LINKDIR/bin" "$XDG_BIN_HOME"
+lndir "$LINKDIR/home" "$HOME"

@@ -13,9 +13,7 @@ flake:
 	sudo nixos-rebuild switch --option extra-experimental-features pipe-operators --show-trace
 links:
 	./scripts/heading.sh "Setting up links"
-	# bash env will not work anymore, xdg vars are in personal profile now TODO
-	# prob don't touch, delete after transitioning to home manager
-	BASH_ENV=/etc/profile ./scripts/install.sh
+	./scripts/install.sh ./links
 machine_dir::=$(shell pwd)/os/machines/$(shell hostname)
 keys_dir::=$(machine_dir)/keys
 init:
