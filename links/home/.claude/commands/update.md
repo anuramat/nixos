@@ -8,7 +8,7 @@ Follow these steps:
 Get the short summary:
 
 ```bash
-git diff $(git log -1 --format=%H CLAUDE.md --shortstat
+git diff $(git log -1 --format=%H CLAUDE.md) --shortstat
 ```
 
 If there are no potentially significant changes, stop and tell the user that
@@ -19,7 +19,7 @@ there were no significant changes. otherwise, proceed to step 2:
 let a more detailed per-file summary:
 
 ```bash
-git diff $(git log -1 --format=%H CLAUDE.md --numstat
+git diff $(git log -1 --format=%H CLAUDE.md) --numstat
 ```
 
 If there are no potentially significant changes, stop and tell the user that
@@ -30,7 +30,7 @@ there were no significant changes. otherwise, proceed to step 3:
 get the full diff:
 
 ```bash
-git diff $(git log -1 --format=%H CLAUDE.md --
+git diff $(git log -1 --format=%H CLAUDE.md) --no-ext-diff
 ```
 
 If necessary, read the files that were changed, or even other files. then
