@@ -1,33 +1,31 @@
-# memory update
+# Memory update
 
-this is a command that lets the user update the CLAUDE.md memory file when the
-project accumulates significant changes. to do that, claude takes a
-progressively more detailed look at the git history since the last change in
-CLAUDE.md, and updates it accordingly.
+Update memory in ./CLAUDE.md if the project accumulated significant changes.
+Follow these steps:
 
-## step 1
+## Step 1
 
-get the short summary:
+Get the short summary:
 
 ```bash
 git diff $(git log -1 --format=%H CLAUDE.md --shortstat
 ```
 
-if there are no potentially significant changes, stop and tell the user that
+If there are no potentially significant changes, stop and tell the user that
 there were no significant changes. otherwise, proceed to step 2:
 
-## step 2
+## Step 2
 
-get a more detailed per-file summary:
+let a more detailed per-file summary:
 
 ```bash
 git diff $(git log -1 --format=%H CLAUDE.md --numstat
 ```
 
-if there are no potentially significant changes, stop and tell the user that
+If there are no potentially significant changes, stop and tell the user that
 there were no significant changes. otherwise, proceed to step 3:
 
-## step 3
+## Step 3
 
 get the full diff:
 
@@ -35,11 +33,19 @@ get the full diff:
 git diff $(git log -1 --format=%H CLAUDE.md --
 ```
 
-if necessary, read the files that were changed, or even other files. then
+If necessary, read the files that were changed, or even other files. then
 proceed to step 4:
 
-## step 4
+## Step 4
 
-read the CLAUDE.md and update it with the changes you analyzed.
+Read the CLAUDE.md and update it with the changes you analyzed, then commit the
+changes with the message
 
-commit the changes with the message `docs(CLAUDE.md): update memory`
+```gitcommit
+docs(CLAUDE.md): update memory
+
+<short_summary>
+```
+
+where `<short_summary>` should be a short description of the changes in the
+project since the last memory update.
