@@ -1,6 +1,6 @@
 # vim: fdm=marker fdl=0
 .SILENT:
-.PHONY: clean test nvim
+MAKEFLAGS += --always-make
 
 .PHONY: all flake links code init deadlinks
 all: flake links code

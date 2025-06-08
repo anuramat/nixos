@@ -48,6 +48,7 @@
     # mcp {{{1
     github-mcp-server
     mcp-nixos
+    python3Packages.mcp
 
     # misc {{{1
     bats # bash testing
