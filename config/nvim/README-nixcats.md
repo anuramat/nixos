@@ -5,6 +5,7 @@ This directory contains the migrated Neovim configuration using [nixcats](https:
 ## Structure
 
 ### Key Files
+
 - `init.lua` - Main entry point, detects nixcats vs fallback to lazy.nvim
 - `flake.nix` - Standalone nixcats flake (alternative approach)  
 - `lua/plugins/nixcats.lua` - Main plugin loader using lze
@@ -12,12 +13,14 @@ This directory contains the migrated Neovim configuration using [nixcats](https:
 - `lua/plugins/core/*-nixcats.lua` - Migrated core plugin configs
 
 ### Integration
+
 - `home/editor-nixcats.nix` - NixOS/Home Manager integration
 - Modified main `flake.nix` to include nixCats input
 
 ## Migration Status
 
 ### ✅ Completed
+
 - Basic nixcats flake structure
 - Core plugins (oil, surround, etc.)
 - Git plugins (fugitive, gitsigns, neogit)
@@ -27,6 +30,7 @@ This directory contains the migrated Neovim configuration using [nixcats](https:
 - FZF integration
 
 ### 🚧 TODO
+
 - DAP (debugging) configuration
 - TreeSitter configuration  
 - Language-specific configurations
@@ -37,6 +41,7 @@ This directory contains the migrated Neovim configuration using [nixcats](https:
 ## Usage
 
 ### Option 1: Replace Current Config
+
 ```bash
 # Backup current config
 cp home/editor.nix home/editor-backup.nix
@@ -49,6 +54,7 @@ make flake
 ```
 
 ### Option 2: Test Standalone
+
 ```bash
 # Build nixcats config
 cd config/nvim
@@ -59,7 +65,9 @@ nix build
 ```
 
 ### Option 3: Gradual Migration
-The current `init.lua` detects if running under nixcats and falls back to lazy.nvim otherwise, allowing gradual testing.
+
+The current `init.lua` detects if running under nixcats and falls back to
+lazy.nvim otherwise, allowing gradual testing.
 
 ## Benefits
 
