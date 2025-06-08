@@ -170,10 +170,9 @@ def tag_overview():
 
 
 def edit():
-    lines = read()
-    line_number = len(lines) + 1
-    editor = os.environ.get("EDITOR", "vi")
-    os.system(f"{editor} +{line_number} {TASK_FILE}")
+    editor = os.environ.get("EDITOR") or "vi"
+    line_nr = len(read())
+    os.system(f"{editor} +{line_nr} {TASK_FILE}")
 
 
 def merge(left_name: str, root_name: str, right_name: str):
