@@ -4,11 +4,6 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nixCats.url = "github:BirdeeHub/nixCats-nvim";
-    # Optional: pin specific plugin versions
-    # lze = {
-    #   url = "github:BirdeeHub/lze";
-    #   flake = false;
-    # };
   };
 
   outputs = { self, nixpkgs, nixCats, ... }@inputs: let
@@ -21,12 +16,9 @@
       # Plugins that are always loaded at startup
       startupPlugins = {
         general = with pkgs.vimPlugins; [
-          # Core dependencies that need to be loaded early
           plenary-nvim
           nvim-web-devicons
           nui-nvim
-          
-          # Essential plugins that should always be available
           oil-nvim
           vim-eunuch
           vim-fetch
@@ -34,13 +26,11 @@
           ts-comments-nvim
           lsp-format-nvim
           mini-bracketed
-          
-          # Theming
-          neopywal-nvim
+          # neopywal-nvim  # Not in nixpkgs
         ];
         
         treesitter = with pkgs.vimPlugins; [
-          nvim-treesitter
+          nvim-treesitter.withAllGrammars
           nvim-treesitter-context
           nvim-treesitter-textobjects
           nvim-ts-autotag
@@ -59,6 +49,9 @@
       # Plugins that can be lazy-loaded
       optionalPlugins = {
         lazy = with pkgs.vimPlugins; [
+          # Core lazy loading
+          lze
+          
           # UI and Navigation
           aerial-nvim
           fzf-lua
@@ -73,7 +66,7 @@
           nvim-lightbulb
           fidget-nvim
           lazydev-nvim
-          schemastore-nvim
+          SchemaStore-nvim
           
           # Language specific
           clangd_extensions-nvim
@@ -82,11 +75,11 @@
           # AI/LLM
           copilot-lua
           avante-nvim
-          blink-cmp-avante
+          # blink-cmp-avante  # May not be in nixpkgs yet
           
           # Jupyter/Data Science
           molten-nvim
-          jupytext-nvim
+          # jupytext-nvim  # May not be in nixpkgs yet
           otter-nvim
           quarto-nvim
           image-nvim
@@ -106,13 +99,14 @@
           overseer-nvim
           grug-far-nvim
           sniprun
-          wastebin-nvim
-          namu-nvim
-          mcphub-nvim
-          mdmath-nvim
-          nvim-FeMaco-lua
-          figtree-nvim
           vim-table-mode
+          nvim-FeMaco-lua
+          # Custom plugins may need to be added manually
+          # wastebin-nvim
+          # namu-nvim
+          # mcphub-nvim
+          # mdmath-nvim
+          # figtree-nvim
         ];
       };
 
@@ -126,6 +120,15 @@
           gopls
           clang-tools
           haskell-language-server
+          bash-language-server
+          marksman
+          nodePackages_latest.vscode-json-languageserver
+          pyright
+          texlab
+          yaml-language-server
+          superhtml
+          typescript-language-server
+          stylelint-lsp
           
           # Formatters
           stylua
@@ -135,8 +138,10 @@
           ripgrep
           fd
           fzf
+          imagemagick
+          librsvg
           
-          # Python stuff for Jupyter
+          # Python for Jupyter
           python3Packages.pynvim
           python3Packages.jupyter
         ];
@@ -149,16 +154,27 @@
         };
       };
 
-      # Extra lua packages that might be needed
+      # Extra lua packages
       extraLuaPackages = {
-        general = [ ];
+        general = ps: with ps; [
+          magick
+        ];
       };
 
       # Extra python packages for molten/jupyter
-      extraPython3Packages = {
+      python3.libraries = {
         general = ps: with ps; [
           pynvim
-          jupyter
+          jupyter-client
+          cairosvg
+          pillow
+          pnglatex
+          plotly
+          kaleido
+          requests
+          websocket-client
+          pyperclip
+          nbformat
           matplotlib
           numpy
           pandas
@@ -173,10 +189,6 @@
         settings = {
           wrapRc = true;
           configDirName = "nvim";
-          # Add extra runtime paths if needed
-          # extraRcLua = ''
-          #   -- Extra Lua configuration
-          # '';
         };
         categories = {
           general = true;
@@ -203,23 +215,27 @@
 
   in
   forEachSystem (system: let
-    inherit (utils) baseBuilder;
+    dependencyOverlays = [ ];
     pkgs = import nixpkgs { 
       inherit system; 
       config.allowUnfree = true;
+      overlays = dependencyOverlays;
     };
-    nixCatsBuilder = baseBuilder luaPath {
-      inherit nixpkgs system;
+    nixCatsBuilder = utils.baseBuilder luaPath {
+      inherit nixpkgs system dependencyOverlays;
       extra_pkg_config = {
         allowUnfree = true;
       };
-    } categoryDefinitions;
+    } categoryDefinitions packageDefinitions;
+    
+    defaultCats = nixCatsBuilder "nvim";
     
   in {
-    packages = utils.mkPackages nixpkgs inputs categoryDefinitions packageDefinitions "nvim" system;
-    
-    # Default package
-    defaultPackage = nixCatsBuilder packageDefinitions.nvim;
+    packages = {
+      default = defaultCats;
+      nvim = defaultCats;
+      nvim-minimal = nixCatsBuilder "nvim-minimal";
+    };
     
     # Development shell for working on the config
     devShells.default = pkgs.mkShell {
