@@ -4,37 +4,37 @@ local u = require('utils.helpers')
 return {
   -- Neogit
   {
-    "neogit",
-    cmd = "Neogit",
+    'neogit',
+    cmd = 'Neogit',
     after = function()
-      require("neogit").setup({
+      require('neogit').setup({
         kind = 'floating',
       })
     end,
-    keys = { 
-      { '<leader>go', '<cmd>Neogit<cr>', desc = 'Neogit' } 
+    keys = {
+      { '<leader>go', '<cmd>Neogit<cr>', desc = 'Neogit' },
     },
   },
 
   -- Vim fugitive
   {
-    "vim-fugitive",
-    cmd = { "Git", "G" },
-    keys = { 
+    'vim-fugitive',
+    cmd = { 'Git', 'G' },
+    keys = {
       {
         '<leader>G',
         '<cmd>Git<cr>',
         desc = 'Fugitive',
-      } 
+      },
     },
   },
 
   -- Gitsigns
   {
-    "gitsigns.nvim",
-    event = "BufRead",
+    'gitsigns.nvim',
+    event = 'BufRead',
     after = function()
-      require("gitsigns").setup({
+      require('gitsigns').setup({
         sign_priority = 1000,
         signs_staged = {
           add = { text = '▎' },
@@ -75,16 +75,16 @@ return {
 
   -- Diffview
   {
-    "diffview.nvim",
-    cmd = { "DiffviewOpen", "DiffviewClose" },
+    'diffview.nvim',
+    cmd = { 'DiffviewOpen', 'DiffviewClose' },
   },
 
   -- Gitlinker
   {
-    "gitlinker.nvim",
-    event = "BufRead",
+    'gitlinker.nvim',
+    event = 'BufRead',
     after = function()
-      require("gitlinker").setup({
+      require('gitlinker').setup({
         opts = {
           add_current_line_on_normal_mode = false,
           print_url = true,

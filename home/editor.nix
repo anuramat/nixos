@@ -75,7 +75,7 @@ in
     # };
   };
   # home.packages = with pkgs; [
-    # code-cursor
-    # windsurf
+  # code-cursor
+  # windsurf
   # ];
 }

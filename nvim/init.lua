@@ -14,9 +14,7 @@ vim.deprecate = function() end
 -- Check if we're running under nixcats
 if nixCats then
   -- We're running under nixcats, use the new configuration
-  if nixCats('lazy') then
-    require('plugins.nixcats')
-  end
+  if nixCats('lazy') then require('plugins.nixcats') end
 else
   -- Fallback to old lazy.nvim configuration for development/testing
   require('plugins')

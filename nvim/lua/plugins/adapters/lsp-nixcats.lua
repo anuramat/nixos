@@ -140,8 +140,8 @@ local configs = function()
 end
 
 return {
-  "nvim-lspconfig",
-  event = { "BufReadPost", "BufNewFile" },
+  'nvim-lspconfig',
+  event = { 'BufReadPost', 'BufNewFile' },
   after = function()
     local lspconfig = require('lspconfig')
     for name, cfg in pairs(configs()) do

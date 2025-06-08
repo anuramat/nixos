@@ -6,7 +6,7 @@ return {
   -- Dressing.nvim
   {
     'dressing.nvim',
-    event = "BufEnter",
+    event = 'BufEnter',
     after = function() require('dressing').setup({}) end,
   },
 
@@ -20,7 +20,7 @@ return {
   -- Todo comments
   {
     'todo-comments.nvim',
-    event = "BufRead",
+    event = 'BufRead',
     after = function()
       require('todo-comments').setup({
         signs = false,
