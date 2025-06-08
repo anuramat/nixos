@@ -5,6 +5,7 @@ return {
   -- Neogit
   {
     "neogit",
+    cmd = "Neogit",
     after = function()
       require("neogit").setup({
         kind = 'floating',
@@ -18,6 +19,7 @@ return {
   -- Vim fugitive
   {
     "vim-fugitive",
+    cmd = { "Git", "G" },
     keys = { 
       {
         '<leader>G',
@@ -30,6 +32,7 @@ return {
   -- Gitsigns
   {
     "gitsigns.nvim",
+    event = "BufRead",
     after = function()
       require("gitsigns").setup({
         sign_priority = 1000,
@@ -73,11 +76,13 @@ return {
   -- Diffview
   {
     "diffview.nvim",
+    cmd = { "DiffviewOpen", "DiffviewClose" },
   },
 
   -- Gitlinker
   {
     "gitlinker.nvim",
+    event = "BufRead",
     after = function()
       require("gitlinker").setup({
         opts = {
