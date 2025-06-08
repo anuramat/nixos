@@ -27,6 +27,9 @@
           lsp-format-nvim
           mini-bracketed
           # neopywal-nvim  # Not in nixpkgs
+          
+          # Core lazy loading - must be loaded at startup
+          lze
         ];
         
         treesitter = with pkgs.vimPlugins; [
@@ -49,9 +52,6 @@
       # Plugins that can be lazy-loaded
       optionalPlugins = {
         lazy = with pkgs.vimPlugins; [
-          # Core lazy loading
-          lze
-          
           # UI and Navigation
           aerial-nvim
           fzf-lua
