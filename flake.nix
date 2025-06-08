@@ -17,6 +17,7 @@
     ctrlsn.url = "git+ssh://git@github.com/anuramat/ctrl.sn?ref=main";
     mcp-nixos.url = "github:utensils/mcp-nixos";
     nil.url = "github:oxalica/nil/main";
+    nixCats.url = "github:BirdeeHub/nixCats-nvim";
   };
   outputs =
     inputs:
@@ -84,6 +85,8 @@
                 ]
             );
         };
+
+      nvimOutputs = import ./nvim inputs;
     in
     {
       nixosConfigurations =
@@ -100,6 +103,7 @@
           ./common
         ];
       };
-    };
+    }
+    // import ./nvim inputs;
 }
 # vim: fdl=0 fdm=marker
