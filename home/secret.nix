@@ -8,10 +8,16 @@
       enable = true;
       homedir = "${config.xdg.dataHome}/gnupg";
     };
+    # TODO trans to rust ver
     password-store = {
       enable = true;
       # uses gpg-agent to encrypt/decrypt secrets
     };
+  };
+  home = {
+    packages = with pkgs; [
+      pinentry-tty # just in case
+    ];
   };
   services.gpg-agent = {
     enable = true;

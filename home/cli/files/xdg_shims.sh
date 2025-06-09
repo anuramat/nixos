@@ -6,7 +6,6 @@ export STACK_ROOT="$XDG_DATA_HOME"/stack # Haskell stack (old)
 export STACK_XDG=1                       # Haskel stack (new variable, any non empty value will do)
 export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
 export DOT_SAGE="$XDG_CONFIG_HOME"/sage # sage math
-export INPUTRC="$XDG_CONFIG_HOME"/readline/inputrc
 export PYTHONSTARTUP="${XDG_CONFIG_HOME}/python/pythonrc"
 # TODO append old file to the new file or whatever
 export XCOMPOSECACHE="${XDG_CACHE_HOME}"/X11/xcompose # not using this either AFAIK

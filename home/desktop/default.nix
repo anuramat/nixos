@@ -1,12 +1,13 @@
 {
   imports = [
+    ./input.nix
+    ./menu.nix
     ./notifications.nix
+    ./output.nix
+    ./portal.nix
+    ./sway
     ./swayidle.nix
     ./swaylock.nix
-    ./input.nix
     ./waybar
-    ./output.nix
-    ./menu.nix
-    ./sway
   ];
 }
