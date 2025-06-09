@@ -18,7 +18,7 @@ return {
   },
   {
     'yetone/avante.nvim',
-    version = false,
+    vejsion = false,
     keys = { '<leader>a' },
     opts = {
       provider = provider,
@@ -49,6 +49,23 @@ return {
         return hub and hub:get_active_servers_prompt() or ''
       end,
       custom_tools = function() return { require('mcphub.extensions.avante').mcp_tool() } end,
+      windows = {
+        position = 'right', -- the position of the sidebar
+        wrap = true,
+        width = 40,
+        sidebar_header = {
+          enabled = false, -- true, false to enable/disable the header
+        },
+        input = {
+          prefix = '',
+          height = 12, -- Height of the input window in vertical layout
+        },
+        edit = { start_insert = false },
+        ask = {
+          floating = false, -- Open the 'AvanteAsk' prompt in a floating window
+          start_insert = false,
+        },
+      },
     },
     build = 'make',
     dependencies = {
