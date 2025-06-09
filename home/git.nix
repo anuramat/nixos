@@ -60,6 +60,8 @@
         "result" # nix
         "tags"
         "venv/"
+        "/.aider*"
+        "/.claude/settings.local.json"
 
         # pytorch lightning
         "*.ckpt"
@@ -79,9 +81,6 @@
         # direnv
         ".direnv/"
         ".envrc"
-
-        ".aider*"
-        ".claude/settings.local.json"
       ];
       attributes = [
         "*.ipynb diff=jupyternotebook merge=jupyternotebook"
