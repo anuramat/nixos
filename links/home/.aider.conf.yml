@@ -1,4 +1,4 @@
-# openai-api-base: https://api.githubcopilot.com
-# model: copilot/claude-sonnet-4
-# weak-model: copilot/gpt-4.1
-# show-model-warnings: false
+openai-api-base: https://api.githubcopilot.com
+model: copilot/claude-sonnet-4
+weak-model: copilot/gpt-4.1
+show-model-warnings: false
