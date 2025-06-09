@@ -32,22 +32,18 @@ return {
         -- NOTE do we need this? cline people (iirc) say we don't
         enabled = false,
       },
-      copilot = {
-        model = copilot.gpt41,
-      },
-      vendors = {
+      providers = {
         pollinations = {
           __inherited_from = 'openai',
           api_key_name = '',
           endpoint = 'https://text.pollinations.ai/openai',
           model = 'openai',
         },
-        copilot2 = {
-          __inherited_from = 'copilot',
-          model = copilot.claude40,
+        ollama = ollama,
+        copilot = {
+          model = copilot.gpt41,
         },
       },
-      ollama = ollama,
       system_prompt = function()
         local hub = require('mcphub').get_hub_instance()
         return hub and hub:get_active_servers_prompt() or ''

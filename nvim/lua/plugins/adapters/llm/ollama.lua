@@ -19,14 +19,14 @@ local models = {
 local config = {
   reasoning_effort = 'low', -- low|medium|high, only used for reasoning models
   think = false,
-  options = {},
+  extra_request_body = { options = {} },
   endpoint = 'http://localhost:11434',
 }
 
 local function wrapQwen(model)
   config.model = model.name
   if not config.think then config.reasoning_effort = nil end
-  config.options.num_ctx = model.num_ctx
+  config.extra_request_body.options.num_ctx = model.num_ctx
   return config
 end
 
