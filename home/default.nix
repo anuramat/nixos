@@ -40,12 +40,6 @@
             run find "''${args[@]}"
           '';
     };
-    file = {
-      # made for nvi
-      ".exrc" = {
-        source = ./files/exrc;
-      };
-    };
   };
 
   programs = {

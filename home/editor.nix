@@ -74,8 +74,11 @@ in
     #   enable = true;
     # };
   };
-  # home.packages = with pkgs; [
-  # code-cursor
-  # windsurf
-  # ];
+  home.packages = with pkgs; [
+    # editors {{{1
+    vis
+    vscode
+    code-cursor
+    zed-editor
+  ];
 }
