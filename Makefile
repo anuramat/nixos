@@ -11,9 +11,11 @@ flake:
 	cp -ft "$(keys_dir)" "/etc/nix/cache.pem.pub" 2>/dev/null || true
 	./scripts/heading.sh "Building NixOS"
 	sudo nixos-rebuild switch --option extra-experimental-features pipe-operators --show-trace
+	./scripts/heading.sh "Great success"
 links:
 	./scripts/heading.sh "Setting up links"
 	./scripts/install.sh ./links
+	./scripts/heading.sh "Great success"
 machine_dir::=$(shell pwd)/os/machines/$(shell hostname)
 keys_dir::=$(machine_dir)/keys
 init:
@@ -21,7 +23,9 @@ init:
 	./scripts/guard.sh
 	./scripts/heading.sh "Generating keys"
 	./scripts/keygen.sh
+	./scripts/heading.sh "Great success"
 code: nix lua sh
+	./scripts/heading.sh "Great success"
 nvim:
 	nix run --option builders '' --option substituters '' .#nvim
 
