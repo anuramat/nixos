@@ -19,6 +19,7 @@
   xdg.enable = true; # set xdg basedir vars in .profile
 
   home = {
+    preferXdgDirectories = true; # this might have made some of the xdg references needless
     activation = {
       removeBrokenConfigLinks =
         lib.hm.dag.entryBefore [ "writeBoundary" ] # bash
