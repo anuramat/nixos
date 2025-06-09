@@ -70,9 +70,24 @@ in
         };
       };
     };
-    # vscode = {
-    #   enable = true;
-    # };
+    vscode = {
+      enable = true;
+    };
+    zed-editor = {
+      enable = true;
+      installRemoteServer = true;
+      extensions = [
+        "lua"
+        "nix"
+        "make"
+        "dockerfile"
+        "latex"
+        "go"
+        "haskell"
+        "github"
+      ];
+      extraPackages = lsp;
+    };
   };
   home.packages = with pkgs; [
     # editors {{{1
