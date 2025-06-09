@@ -22,7 +22,7 @@ let
       proton-pass
       aider-chat-full
       ollama
-      code-cursor
+      vscode
       windsurf
       zed-editor
       ;
