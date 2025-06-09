@@ -92,6 +92,7 @@
     kdePackages.okular # aio doc reader with pdf form support
     zathura # keyboard-centric pdf/djvu reader
     gnumeric # spreadsheets
+    # khoj # ai stuff
     libreoffice # just in case
 
     # img {{{2
