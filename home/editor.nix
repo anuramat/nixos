@@ -90,10 +90,7 @@ in
     };
   };
   home.packages = with pkgs; [
-    # editors {{{1
     vis
-    vscode
     code-cursor
-    zed-editor
   ];
 }
