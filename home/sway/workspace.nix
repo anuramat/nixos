@@ -1,6 +1,5 @@
 { lib, ... }:
 let
-
   internal = "eDP-1";
   externals = [
     "DP-1"
