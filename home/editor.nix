@@ -74,8 +74,6 @@ in
   home.packages = with pkgs; [
     vscode
     vis
-    windsurf
-    code-cursor
     zed-editor
   ];
 }
