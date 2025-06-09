@@ -13,191 +13,219 @@
       settings = {
       };
     };
-  };
 
-  bash = {
-    enable = true;
-    # TODO move everything around ffs
-    profileExtra = # bash
-      ''
-        source ${./files/sway_autostart.sh}
-      '';
-    bashrcExtra = # bash
-      ''
-        source ${./files/xdg_shims.sh}
-        [[ $- == *i* ]] || return
-        for f in "${./files/bashrc.d}"/*; do source "$f"; done
-        source ${./files/bashrc.sh}
-
-        export _ZO_FZF_OPTS="
-        --no-sort
-        --exit-0
-        --select-1
-        --preview='${./files/fzf_preview.sh} {2..}'
-        "
-        export _ZO_RESOLVE_SYMLINKS="1"
-        export _ZO_ECHO=1
-        export _ZO_EXCLUDE_DIRS="${config.xdg.cacheHome}/*:/nix/store/*"
-      '';
-  };
-
-  fd = {
-    enable = true;
-    ignores = [
-      ".git/"
-      "*.pb.go"
-    ];
-  };
-
-  bat = {
-    enable = true;
-    config = {
-      italic-text = "always";
-      pager = "less -F";
-    };
-  };
-
-  zellij = {
-    enable = true;
-  };
-  tmux = {
-    enable = true;
-    escapeTime = 50;
-  };
-
-  ripgrep = {
-    enable = true;
-    arguments = [
-      # search over working tree
-
-      # include .*
-      "--hidden"
-      # symlinks
-      "--follow"
-      # revert with -s for sensitive
-      "--smart-case"
-
-      # with exceptions:
-
-      # VCS
-      "--glob=!{.git,.svn}"
-      # codegen
-      "--glob=!*.pb.go"
-    ];
-  };
-
-  ripgrep-all = {
-    enable = true;
-  };
-
-  tealdeer = {
-    enable = true;
-    settings = {
-      display = {
-        compact = false;
-        use_pager = true;
-      };
-      updates = {
-        auto_update = true;
-      };
-    };
-  };
-
-  info.enable = true;
-
-  less = {
-    enable = true;
-    keys = ''
-      #env
-      LESS = -ir
-    '';
-  };
-
-  yazi = {
-    enable = true;
-    settings = {
-      plugin.preloaders = [ ];
-      plugin.prepend_previewers = [
-        {
-          name = "/media/**";
-          run = "noop";
-        }
-      ];
-      manager.sort_by = "natural";
-    };
-    keymap = {
-      manager.prepend_keymap = [
-        {
-          on = "y";
-          run = [
-            ''shell -- for path in "$@"; do echo "file://$path"; done | wl-copy -t text/uri-list''
-            "yank"
-          ];
-        }
-        {
-          on = "<C-n>";
-          run = ''shell -- dragon -x -i -T "$1"'';
-        }
-      ];
-    };
-  };
-
-  htop = {
-    enable = true;
-  };
-
-  btop = {
-    enable = true;
-  };
-
-  fzf =
-    let
-      fd = "fd -u --exclude .git/";
-    in
-    {
+    bash = {
       enable = true;
-      defaultCommand = fd;
+      # TODO move everything around ffs
+      profileExtra = # bash
+        ''
+          source ${./files/sway_autostart.sh}
+        '';
+      bashrcExtra = # bash
+        ''
+          source ${./files/xdg_shims.sh}
+          [[ $- == *i* ]] || return
+          for f in "${./files/bashrc.d}"/*; do source "$f"; done
+          source ${./files/bashrc.sh}
 
-      changeDirWidgetCommand = "${fd} -t d";
-      # changeDirWidgetOptions = "$default_preview";
-      # fileWidgetCommand = "$FZF_DEFAULT_COMMAND";
-      # fileWidgetOptions = "$default_preview";
+          export _ZO_FZF_OPTS="
+          --no-sort
+          --exit-0
+          --select-1
+          --preview='${./files/fzf_preview.sh} {2..}'
+          "
+          export _ZO_RESOLVE_SYMLINKS="1"
+          export _ZO_ECHO=1
+          export _ZO_EXCLUDE_DIRS="${config.xdg.cacheHome}/*:/nix/store/*"
+        '';
+    };
 
-      defaultOptions = [
-        "--layout=reverse"
-        "--keep-right"
-        "--info=inline"
-        "--tabstop=2"
-        "--multi"
-        "--height=50%"
-
-        "--tmux=center,90%,80%"
-
-        "--bind='ctrl-/:change-preview-window(down|hidden|)'"
-        "--bind='ctrl-j:accept'"
-        "--bind='tab:toggle+down'"
-        "--bind='btab:toggle+up'"
-
-        "--bind='ctrl-y:preview-up'"
-        "--bind='ctrl-e:preview-down'"
-        "--bind='ctrl-u:preview-half-page-up'"
-        "--bind='ctrl-d:preview-half-page-down'"
-        "--bind='ctrl-b:preview-page-up'"
-        "--bind='ctrl-f:preview-page-down'"
-
-        "--preview='${./files/fzf_preview.sh} {}'"
+    fd = {
+      enable = true;
+      ignores = [
+        ".git/"
+        "*.pb.go"
       ];
     };
 
-  zoxide = {
-    enable = true;
-    options = [
-      "--cmd j"
-    ];
-  };
+    bat = {
+      enable = true;
+      config = {
+        italic-text = "always";
+        pager = "less -F";
+      };
+    };
 
-  readline = {
-    enable = true;
-    extraConfig = builtins.readFile ./files/inputrc;
+    zellij = {
+      enable = true;
+    };
+    tmux = {
+      enable = true;
+      escapeTime = 50;
+    };
+
+    ripgrep = {
+      enable = true;
+      arguments = [
+        # search over working tree
+
+        # include .*
+        "--hidden"
+        # symlinks
+        "--follow"
+        # revert with -s for sensitive
+        "--smart-case"
+
+        # with exceptions:
+
+        # VCS
+        "--glob=!{.git,.svn}"
+        # codegen
+        "--glob=!*.pb.go"
+      ];
+    };
+
+    ripgrep-all = {
+      enable = true;
+    };
+
+    tealdeer = {
+      enable = true;
+      settings = {
+        display = {
+          compact = false;
+          use_pager = true;
+        };
+        updates = {
+          auto_update = true;
+        };
+      };
+    };
+
+    info.enable = true;
+
+    less = {
+      enable = true;
+      keys = ''
+        #env
+        LESS = -ir
+      '';
+    };
+
+    yazi = {
+      enable = true;
+      settings = {
+        plugin.preloaders = [ ];
+        plugin.prepend_previewers = [
+          {
+            name = "/media/**";
+            run = "noop";
+          }
+        ];
+        manager.sort_by = "natural";
+      };
+      keymap = {
+        manager.prepend_keymap = [
+          {
+            on = "y";
+            run = [
+              ''shell -- for path in "$@"; do echo "file://$path"; done | wl-copy -t text/uri-list''
+              "yank"
+            ];
+          }
+          {
+            on = "<C-n>";
+            run = ''shell -- dragon -x -i -T "$1"'';
+          }
+        ];
+      };
+    };
+
+    htop = {
+      enable = true;
+    };
+
+    btop = {
+      enable = true;
+    };
+
+    fzf =
+      let
+        fd = "fd -u --exclude .git/";
+      in
+      {
+        enable = true;
+        defaultCommand = fd;
+
+        changeDirWidgetCommand = "${fd} -t d";
+        # changeDirWidgetOptions = "$default_preview";
+        # fileWidgetCommand = "$FZF_DEFAULT_COMMAND";
+        # fileWidgetOptions = "$default_preview";
+
+        defaultOptions = [
+          "--layout=reverse"
+          "--keep-right"
+          "--info=inline"
+          "--tabstop=2"
+          "--multi"
+          "--height=50%"
+
+          "--tmux=center,90%,80%"
+
+          "--bind='ctrl-/:change-preview-window(down|hidden|)'"
+          "--bind='ctrl-j:accept'"
+          "--bind='tab:toggle+down'"
+          "--bind='btab:toggle+up'"
+
+          "--bind='ctrl-y:preview-up'"
+          "--bind='ctrl-e:preview-down'"
+          "--bind='ctrl-u:preview-half-page-up'"
+          "--bind='ctrl-d:preview-half-page-down'"
+          "--bind='ctrl-b:preview-page-up'"
+          "--bind='ctrl-f:preview-page-down'"
+
+          "--preview='${./files/fzf_preview.sh} {}'"
+        ];
+      };
+
+    zoxide = {
+      enable = true;
+      options = [
+        "--cmd j"
+      ];
+    };
+
+    readline = {
+      extraConfig = # readline
+        ''
+          # completion: logic
+          set match-hidden-files on
+          set skip-completed-text on
+          set completion-ignore-case on
+          # '-' == '_':
+          set completion-map-case on
+
+          # completion: visuals
+          set visible-stats on
+          set colored-stats on
+          set mark-symlinked-directories on
+          set completion-display-width -1
+          set colored-completion-prefix on
+          set completion-prefix-display-length 5
+
+          # history
+          # reset history modifications after running a command:
+          set revert-all-at-newline on
+          set history-size -1
+
+          # stfu
+          set completion-query-items 0
+          set page-completions off
+          set show-all-if-ambiguous on
+          set show-all-if-unmodified on
+        '';
+      variables = {
+      };
+    };
   };
 }
