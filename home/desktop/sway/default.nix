@@ -1,5 +1,10 @@
 { pkgs, osConfig, ... }:
 {
+  imports = [
+    ./input.nix
+    ./keys.nix
+    ./workspace.nix
+  ];
   services = {
     blueman-applet.enable = osConfig.services.blueman.enable;
     avizo = {
@@ -19,17 +24,6 @@
     };
   };
   services.network-manager-applet.enable = true;
-  imports = [
-    ./swayidle.nix
-    ./keys.nix
-    ./swaylock.nix
-    ./input.nix
-    ./workspace.nix
-    ./waybar.nix
-    ./output.nix
-    ./kanshi.nix
-    ./menu.nix
-  ];
   wayland.windowManager.sway =
     let
       border = 3;

@@ -1,6 +1,5 @@
 { ... }:
 {
-
   wayland.windowManager.sway.config.input = {
     "*" = {
       repeat_delay = "250";

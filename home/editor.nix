@@ -124,13 +124,6 @@ in
           single_file_review = false;
           version = "2";
         };
-        buffer_font_size = 16;
-        theme = {
-          dark = "One Dark";
-          light = "One Light";
-          mode = "dark";
-        };
-        ui_font_size = 16;
         vim = {
           default_mode = "normal";
           highlight_on_yank_duration = 100;

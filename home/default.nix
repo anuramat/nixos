@@ -12,10 +12,10 @@
     ./term.nix
     ./git.nix
     ./editor.nix
-    ./pass.nix
+    ./secret.nix
     ./portal.nix
-    ./rice.nix
-    ./sway
+    ./theme.nix
+    ./desktop
   ];
 
   programs = {
@@ -43,14 +43,10 @@
   };
 
   programs = {
-    gpg = {
-      enable = true;
-      homedir = "${config.xdg.dataHome}/gnupg";
-    };
     swayimg = {
-      # enable = true;
-      # settings = {
-      # };
+      enable = true;
+      settings = {
+      };
     };
     home-manager.enable = true; # TODO huh?
 
