@@ -63,7 +63,6 @@
     wirelesstools # iwconfig etc
     openconnect_openssl
 
-
     # core {{{1
     inputs.subcat.packages.${pkgs.system}.default
     bat # cat++: syntax hl
