@@ -86,7 +86,7 @@
         "*.ipynb diff=jupyternotebook merge=jupyternotebook"
       ];
 
-      # TODO check jupyter notebook and nbdime later
+      # TODO check jupyter notebook and nbdime later; `git diff` works
       extraConfig = {
         pull.ff = "only";
         core.pager = "less -F";
