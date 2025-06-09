@@ -65,6 +65,9 @@
 
     # editors {{{1
     vis
+    vscode
+    code-cursor
+    zed-editor
 
     # core {{{1
     inputs.subcat.packages.${pkgs.system}.default
