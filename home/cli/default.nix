@@ -196,35 +196,32 @@
     };
 
     readline = {
-      extraConfig = # readline
-        ''
-          # completion: logic
-          set match-hidden-files on
-          set skip-completed-text on
-          set completion-ignore-case on
-          # '-' == '_':
-          set completion-map-case on
-
-          # completion: visuals
-          set visible-stats on
-          set colored-stats on
-          set mark-symlinked-directories on
-          set completion-display-width -1
-          set colored-completion-prefix on
-          set completion-prefix-display-length 5
-
-          # history
-          # reset history modifications after running a command:
-          set revert-all-at-newline on
-          set history-size -1
-
-          # stfu
-          set completion-query-items 0
-          set page-completions off
-          set show-all-if-ambiguous on
-          set show-all-if-unmodified on
-        '';
       variables = {
+        # completion: logic
+        match-hidden-files = true;
+        skip-completed-text = true;
+        completion-ignore-case = true;
+        # '-' == '_':
+        completion-map-case = true;
+
+        # completion: visuals
+        visible-stats = true;
+        colored-stats = true;
+        mark-symlinked-directories = true;
+        completion-display-width = -1;
+        colored-completion-prefix = true;
+        completion-prefix-display-length = 5;
+
+        # history
+        # reset history modifications after running a command:
+        revert-all-at-newline = true;
+        history-size = -1;
+
+        # stfu
+        completion-query-items = 0;
+        page-completions = false;
+        show-all-if-ambiguous = true;
+        show-all-if-unmodified = true;
       };
     };
   };
