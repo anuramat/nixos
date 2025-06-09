@@ -91,6 +91,7 @@ in
   };
   home.packages = with pkgs; [
     vis
+    windsurf
     code-cursor
   ];
 }
