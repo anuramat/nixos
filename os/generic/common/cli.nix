@@ -104,6 +104,7 @@
     croc # send/receive files through relay with encryption TODO might be broken, unstable worked tho
     makefile2graph
     mermaid-cli
+    ddgr # ddg search
     mermaid-filter
     graphviz
     graph-easy
