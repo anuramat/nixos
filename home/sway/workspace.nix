@@ -2,7 +2,7 @@
 let
 
   internal = "eDP-1";
-  externals = builtins.concatStringsSep " " [
+  externals = [
     "DP-1"
     "DP-2"
     "DP-3"
