@@ -1,38 +1,11 @@
 {
   "agent": {
+    "always_allow_tool_actions": true,
     "default_model": {
-      "model": "gpt-4.1",
+      "model": "claude-sonnet-4",
       "provider": "copilot_chat"
     },
-    "default_profile": "write-dumb",
-    "model_parameters": [],
     "preferred_completion_mode": "max",
-    "profiles": {
-      "write-dumb": {
-        "context_servers": {},
-        "enable_all_context_servers": true,
-        "name": "Write (no CoT)",
-        "tools": {
-          "open": true,
-          "copy_path": true,
-          "create_directory": true,
-          "create_file": true,
-          "delete_path": true,
-          "diagnostics": true,
-          "edit_file": true,
-          "fetch": true,
-          "find_path": true,
-          "grep": true,
-          "list_directory": true,
-          "move_path": true,
-          "now": true,
-          "read_file": true,
-          "terminal": true,
-          "thinking": true,
-          "web_search": true
-        }
-      }
-    },
     "single_file_review": false,
     "version": "2"
   },

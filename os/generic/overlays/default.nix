@@ -22,6 +22,9 @@ let
       proton-pass
       aider-chat-full
       ollama
+      code-cursor
+      windsurf
+      zed-editor
       ;
   };
 
