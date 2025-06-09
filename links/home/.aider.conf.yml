@@ -1,10 +1,16 @@
 openai-api-base: https://api.githubcopilot.com
+
 model: openai/claude-sonnet-4
 weak-model: openai/gpt-4.1
 show-model-warnings: false
-dark-mode: true
+
 cache-prompts: true
 cache-keepalive-pings: "3"
+
+map-tokens: "0"
 read:
   - CLAUDE.md
   - ~/.claude/CLAUDE.md
+
+dark-mode: true
+light-mode: false
