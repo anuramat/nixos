@@ -1,0 +1,62 @@
+{
+  "agent": {
+    "default_model": {
+      "model": "gpt-4.1",
+      "provider": "copilot_chat"
+    },
+    "default_profile": "write-dumb",
+    "model_parameters": [],
+    "preferred_completion_mode": "max",
+    "profiles": {
+      "write-dumb": {
+        "context_servers": {},
+        "enable_all_context_servers": true,
+        "name": "Write (no CoT)",
+        "tools": {
+          "open": true,
+          "copy_path": true,
+          "create_directory": true,
+          "create_file": true,
+          "delete_path": true,
+          "diagnostics": true,
+          "edit_file": true,
+          "fetch": true,
+          "find_path": true,
+          "grep": true,
+          "list_directory": true,
+          "move_path": true,
+          "now": true,
+          "read_file": true,
+          "terminal": true,
+          "thinking": true,
+          "web_search": true
+        }
+      }
+    },
+    "single_file_review": false,
+    "version": "2"
+  },
+  "auto_install_extensions": {
+    "dockerfile": true,
+    "github": true,
+    "go": true,
+    "haskell": true,
+    "latex": true,
+    "lua": true,
+    "make": true,
+    "nix": true
+  },
+  "buffer_font_family": "Hack Nerd Font",
+  "buffer_font_size": 17.333333333333332,
+  "theme": "Base16 Tokyo Night Dark",
+  "ui_font_family": "Hack Nerd Font",
+  "ui_font_size": 17.333333333333332,
+  "vim": {
+    "default_mode": "normal",
+    "highlight_on_yank_duration": 100,
+    "toggle_relative_line_numbers": true,
+    "use_multiline_find": false,
+    "use_smartcase_find": true
+  },
+  "vim_mode": true
+}

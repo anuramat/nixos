@@ -41,7 +41,7 @@ return {
         },
         ollama = ollama,
         copilot = {
-          model = copilot.gpt41,
+          model = copilot.claude40,
         },
       },
       system_prompt = function()
