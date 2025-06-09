@@ -67,15 +67,17 @@ sudo nixos-rebuild switch --option extra-experimental-features pipe-operators --
 
 ### Nix Flake Inputs
 - Multiple nixpkgs channels (stable 25.05, unstable, old 24.11)
-- Home Manager for user configurations
-- Stylix for system-wide theming
+- Home Manager (release-25.05) for user configurations
+- Stylix (release-25.05) for system-wide theming
 - Hardware-specific modules (nixos-hardware)
 - Custom packages (subcat, ctrlsn, mcp-nixos)
+- Development tools (neovim-nightly-overlay, nil, nixCats)
 
 ### Desktop Environment (Local Machines)
 - **Wayland + Sway**: Tiling window manager with custom keybindings
 - **Waybar**: Custom status bar configuration
 - **Application Suite**: LibreWolf, Zathura, MPV, development tools
+- **MIME Management**: Comprehensive MIME type associations with XDG defaults
 
 ### Development Tools
 - **Neovim**: Built with nixCats, featuring LSP, DAP, TreeSitter, and lazy-loaded plugins
@@ -116,17 +118,25 @@ When adapting this configuration:
 - `links/home/`: User home directory symlinks including Claude Code configuration
 - `home/`: Home Manager modules for user environment
 - `home/sway/`: Complete Wayland desktop environment setup
+- `home/mime/`: MIME type associations and XDG default applications
 
 ### System Configuration
 - `os/generic/common/`: Core system packages and services
 - `os/machines/`: Per-machine hardware and specific settings
 - `helpers/`: Utility functions used across configurations
+- `nvim/`: Complete Neovim configuration with nixCats integration
 
 ### Scripts and Maintenance
 - `scripts/`: Setup and maintenance scripts
 - `Makefile`: Primary interface for build and development commands
 
 ## Development Patterns
+
+### Current Machines
+The repository currently manages three machines:
+- **anuramat-ll7**: Desktop machine (server = false)
+- **anuramat-root**: Server machine (server = true) with web services
+- **anuramat-t480**: ThinkPad T480 laptop (server = false)
 
 ### Adding New Machines
 1. Create directory in `os/machines/` matching hostname
@@ -146,9 +156,10 @@ When adapting this configuration:
 ### Claude Code Integration
 The repository includes full Claude Code integration with:
 - **Configuration**: `links/home/.claude/` contains settings and commands
-- **Custom Commands**: `update.md` for automated CLAUDE.md memory updates
+- **Custom Commands**: `update.md` for automated CLAUDE.md memory updates via git diff analysis
 - **Permissions**: Carefully configured permissions for safe AI assistance
-- **Global Instructions**: User preferences in `~/.claude/CLAUDE.md` for git workflow
+- **Global Instructions**: User preferences in `~/.claude/CLAUDE.md` for git workflow and commit practices
+- **Memory Management**: Automated documentation updates using git history analysis
 
 ### Code Quality Workflow
 Always run `make code` before committing to ensure:
