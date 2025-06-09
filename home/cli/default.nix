@@ -1,6 +1,8 @@
 { config, ... }:
 {
-  imports = [ ./git.nix ];
+  imports = [
+    ./git.nix
+  ];
   programs = {
     direnv = {
       enable = true;
