@@ -70,11 +70,9 @@ in
         };
       };
     };
-    vscode = {
-      enable = true;
-    };
   };
   home.packages = with pkgs; [
+    vscode
     vis
     windsurf
     code-cursor
