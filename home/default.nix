@@ -9,7 +9,6 @@
     ./mime
     ./lang.nix
     ./term.nix
-    ./git.nix
     ./editor.nix
     ./secret.nix
     ./theme.nix

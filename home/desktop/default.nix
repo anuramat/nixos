@@ -1,6 +1,5 @@
 {
   imports = [
-    ./input.nix
     ./menu.nix
     ./notifications.nix
     ./output.nix
