@@ -1,0 +1,5 @@
+- name: aider/extra_params
+  extra_params:
+    extra_headers:
+      Editor-Version: "aider 0.84.0"
+      Copilot-Integration-Id: "Iv1.b507a08c87ecfe98"
