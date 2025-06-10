@@ -17,10 +17,8 @@
           };
         in
         {
-          keys = {
-            viewer = binds;
-            galllery = binds;
-          };
+          "keys.viewer" = binds;
+          "keys.galllery" = binds;
         };
     };
 
