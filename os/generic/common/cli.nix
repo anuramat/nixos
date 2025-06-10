@@ -92,6 +92,7 @@
     aider-chat-full
     claude-code
     llama-cpp
+    codex
 
     # misc {{{1
     asciinema
