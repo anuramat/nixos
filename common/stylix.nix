@@ -7,12 +7,12 @@
       monospace = {
         name = "Hack Nerd Font";
       };
-      serif = {
-        name = "Hack Nerd Font";
-      };
-      sansSerif = {
-        name = "Hack Nerd Font";
-      };
+      # serif = {
+      #   name = "Hack Nerd Font";
+      # };
+      # sansSerif = {
+      #   name = "Hack Nerd Font";
+      # };
       sizes = {
         applications = 13;
         desktop = 10;
