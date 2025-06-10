@@ -1,3 +1,7 @@
+# friendly snippets
+# none-ls
+# ? nvim-nio?
+# vim-sleuth?
 {
   nixCats,
   ...
@@ -32,6 +36,7 @@ let
           ts-comments-nvim
           vim-eunuch
           vim-fetch
+          base16-nvim
         ];
 
         treesitter = with pkgs.vimPlugins; [
