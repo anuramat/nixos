@@ -8,11 +8,13 @@ import argparse
 import os
 import re
 import sys
+import tempfile
 
 DATE_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}(?= )")
 MIN_CELL_HEIGHT = 10
 MIN_CELL_WIDTH = 30
-TAG_PATTERN = re.compile(r"(?<!\S)@\S+")
+TAG_LOOKBEHIND = r"(?<!\S@)(?<=@)"
+TAG_PATTERN = re.compile(TAG_LOOKBEHIND + r"\S+")
 TASK_FILE = os.path.expanduser("~/notes/todo.txt")
 TERM_HEIGHT_OFFSET = 5  # terminal prompt etc
 
@@ -28,6 +30,42 @@ def get_date(line: str) -> str:
     if m:
         return m.group()
     return ""
+
+
+def filter_lines_by_tag(lines: list[str], tag: str) -> tuple[list[str], list[str]]:
+    """
+    Split lines into two lists: those matching the tag and the rest
+    Returns (matching_lines, remaining_lines)
+    """
+    predicate = lambda x: not TAG_PATTERN.search(x)
+    if tag != "unfiled":
+        pat = re.compile(r"(?<!\S)" + re.escape(tag) + r"(?!\S)")
+        predicate = lambda x: pat.search(x)
+
+    matching = []
+    remaining = []
+
+    for line in lines:
+        if predicate(line):
+            matching.append(line)
+        else:
+            remaining.append(line)
+
+    sys.exit()
+
+    return matching, remaining
+
+
+        raw_tag = sys.argv[2]
+        if len(raw_tag) < 2 or raw_tag[0] != "@":
+            raise Exception
+        edit_tag(raw_tag[1:])
+        return True
+    return False
+
+
+
+
 
 
 def add(line: str):
@@ -127,8 +165,6 @@ def _shorten(line: str, symbol: str, max_width: int) -> str:
 
 
 def ls_tag(item: str):
-    if item == "@":
-        item = "unfiled"
     file_lines = number(read())
     lines_by_tags = _get_tag_dict(file_lines)
     print("\n".join(lines_by_tags[item]))
@@ -239,22 +275,33 @@ def _setup_parser():
     return parser
 
 
-def _handle_tag_command():
-    if len(sys.argv) > 1 and sys.argv[1].startswith("@"):
-        ls_tag(sys.argv[1])
+def _handle_edit_tag_command():
+    if len(sys.argv) == 3 and sys.argv[1] == "edit":
+        tag = sys.argv[2]
+        if len(tag) == 0:
+            raise Exception
+        edit_tag(tag)
+        return True
+    return False
+
+
+def _handle_ls_tag_command():
+    if len(sys.argv) == 3 and sys.argv[1] == "ls":
+        tag = sys.argv[2]
+        if len(tag) == 0:
+            raise Exception
+        ls_tag(tag)
         return True
     return False
 
 
 def _dispatch_command(args):
-    """Dispatch to appropriate command handler based on parsed arguments."""
     command_handlers = {
         "add": lambda: add(args.task_text),
         "rm": lambda: rm(args.task_number),
         "ls": ls,
         "norm": lambda: write(norm(read())),
         "merge": lambda: merge(args.left, args.root, args.right),
-        "unfiled": lambda: ls_tag("unfiled"),
         "edit": edit,
     }
 
@@ -265,11 +312,12 @@ def _dispatch_command(args):
 
 
 def main():
-    # Handle special case: tag commands (e.g., @work, @home)
+    # special cases
     if _handle_tag_command():
         return
+    if _handle_edit_tag_command():
+        return
 
-    # Parse arguments and dispatch to appropriate handler
     parser = _setup_parser()
     args = parser.parse_args()
     _dispatch_command(args)
