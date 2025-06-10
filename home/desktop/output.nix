@@ -39,6 +39,11 @@ in
 {
   services.kanshi = {
     enable = true;
-    profiles = profiles;
+    settings = lib.mapAttrsToList (n: v: {
+      profile = {
+        name = n;
+        outputs = v.outputs;
+      };
+    }) profiles;
   };
 }
