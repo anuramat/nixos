@@ -2,7 +2,6 @@
   programs.waybar = {
     enable = true;
     systemd.enable = false;
-    # style = ./waybar/style.css;
     settings = [
       {
         mode = "overlay";
