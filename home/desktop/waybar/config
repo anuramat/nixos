@@ -13,17 +13,14 @@
       "mpris"
     ],
     "modules-center": [
-      "sway/mode",
       "sway/workspaces",
       "sway/scratchpad",
-      "sway/mode"
     ],
     "modules-right": [
       "sway/window",
       "tray",
-      // "battery#internal",
-      // "battery#external",
       "battery",
+      "disk",
       "sway/language",
       "clock"
     ],
@@ -33,9 +30,6 @@
     "sway/workspaces": {
       "disable-scroll": true,
       "format": "{name}"
-    },
-    "sway/mode": {
-      "format": "{}"
     },
     "sway/scratchpad": {
       "format": "{icon} {count}",
@@ -47,8 +41,8 @@
     "idle_inhibitor": {
       "format": "{icon}",
       "format-icons": {
-        "activated": "",
-        "deactivated": ""
+        "activated": " ",
+        "deactivated": " "
       }
     },
     "clock": {
@@ -59,8 +53,8 @@
     "sway/language": {
       "tooltip-format": "{flag} {long} {variant}"
     },
+    "margin": 0,
     "tray": {
-      // "icon-size":24,
       "spacing": 10
     },
     "cpu": {
@@ -90,12 +84,6 @@
       "format-alt": "{time} {icon}",
       "format-icons": ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
       "interval": 1
-    },
-    "battery#internal": {
-      "bat": "BAT0"
-    },
-    "battery#external": {
-      "bat": "BAT1"
     },
     "pulseaudio": {
       "format": "{volume}% {icon}  {format_source}",
