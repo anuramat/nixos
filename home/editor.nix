@@ -26,6 +26,7 @@ let
       # }}}
     ];
   lsp = with pkgs; [
+    rust-analyzer
     superhtml
     typescript-language-server
     stylelint-lsp # css
