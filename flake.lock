@@ -834,11 +834,11 @@
         "nixpkgs": "nixpkgs_8"
       },
       "locked": {
-        "lastModified": 1749570834,
-        "narHash": "sha256-RVH5RWiDguZXUeIU+bL28tgmzHYMYfMJ92AXsyR4qZM=",
+        "lastModified": 1749572679,
+        "narHash": "sha256-aL+a9rI2efofNWSmJvjKKny5qycLz1i59WnnYqdH+Aw=",
         "owner": "anuramat",
         "repo": "pass-secret-service",
-        "rev": "6ce15ec6e25d77335500025278238b49b1befb32",
+        "rev": "39df0a529cd7a3694d42e718e2adf72c2b84f5b5",
         "type": "github"
       },
       "original": {

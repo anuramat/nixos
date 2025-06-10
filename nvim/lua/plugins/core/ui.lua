@@ -50,7 +50,9 @@ return {
   },
   -- figlet based greeter
   {
+    -- conflicts with fzf-lua for some reason
     'anuramat/figtree.nvim',
+    enabled = false,
     priority = 999,
     lazy = false,
     dev = false,
