@@ -3,6 +3,7 @@
     enable = true;
     systemd.enable = false;
     settings = [
+      # TODO sort fields
       {
         backlight = {
           format = "{percent}% {icon}";
