@@ -18,6 +18,7 @@
     mcp-nixos.url = "github:utensils/mcp-nixos";
     nil.url = "github:oxalica/nil/main";
     nixCats.url = "github:BirdeeHub/nixCats-nvim";
+    codex.url = "github:anuramat/codex";
   };
   outputs =
     inputs:
