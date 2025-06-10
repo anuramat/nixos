@@ -35,12 +35,9 @@ let
     |> map (v: v.overlays.default)
 
   ;
-
-  overrides = import ./overrides.nix args;
 in
 {
   nixpkgs.overlays = overlays ++ [
-    overrides
     unstablePkgs
     flakes
     (final: prev: {
