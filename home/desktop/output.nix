@@ -15,7 +15,7 @@ let
     adaptiveSync = false;
   };
 
-  rawProfiles = {
+  profiles = {
     ll7 = [
       ll7
     ];
@@ -31,10 +31,6 @@ let
       (ext // { position = "0,-2000"; })
     ];
   };
-  profiles = lib.mapAttrs (n: v: {
-    outputs = v;
-    name = n;
-  }) rawProfiles;
 in
 {
   services.kanshi = {
@@ -42,7 +38,7 @@ in
     settings = lib.mapAttrsToList (n: v: {
       profile = {
         name = n;
-        outputs = v.outputs;
+        outputs = v;
       };
     }) profiles;
   };
