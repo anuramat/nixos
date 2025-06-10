@@ -32,13 +32,20 @@ nvim:
 mcp:
 	jq --slurpfile mcp ./mcp.json '.mcpServers = $$mcp[0]' ~/.claude.json | sponge ~/.claude.json
 
+
+# python {{{1
+python: pythonfmt
+pythonfmt:
+	./scripts/heading.sh "Formatting Python"
+	black -q .
+
 # nix {{{1
 nix: nixfmt nixlint
 nixfmt:
-	./scripts/heading.sh "Formatting Nix files"
+	./scripts/heading.sh "Formatting Nix"
 	nixfmt $(shell fd -e nix)
 nixlint:
-	./scripts/heading.sh "Checking Nix files"
+	./scripts/heading.sh "Checking Nix"
 	echo Skipping nix linters due to lack of pipe operator support
 	# statix check -i hardware-configuration.nix || true
 	# deadnix || true
@@ -46,19 +53,19 @@ nixlint:
 # lua {{{1
 lua: luafmt lualint
 luafmt:
-	./scripts/heading.sh "Formatting Lua files"
+	./scripts/heading.sh "Formatting Lua"
 	stylua .
 lualint:
-	./scripts/heading.sh "Checking Lua files"
+	./scripts/heading.sh "Checking Lua"
 	luacheck . --codes --globals=vim -q | head -n -1
 
 # shell {{{1
 sh: shfmt shlint
 shfmt:
-	./scripts/heading.sh "Formatting shell scripts"
+	./scripts/heading.sh "Formatting shell"
 	./scripts/shrun.sh shfmt --write --simplify --case-indent --binary-next-line --space-redirects
 shlint:
-	./scripts/heading.sh "Checking shell scripts"
+	./scripts/heading.sh "Checking shell"
 	./scripts/shrun.sh shellcheck --color=always -o all
 
 # misc {{{1

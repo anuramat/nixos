@@ -16,6 +16,7 @@
 - don't write too much code -- try to be as concise as possible
 - when making architecture decisions, go for minimalism
 - only add comments where descriptive names are not enough
+- always use formatters if available
 
 ### Nix
 
