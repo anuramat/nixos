@@ -23,7 +23,7 @@
             '';
           in
           "${gpgLockScript} ${config.programs.password-store.settings.PASSWORD_STORE_DIR}/.gpg-id";
-        unlockPass = "printf '\n\n' | pass insert dummy; pass show dummy";
+        unlockPass = ''printf '\n\n' | pass insert dummy; pass show dummy'';
 
         lock = "${lockScreen}; ${lockPass}";
         unlock = "${unlockScreen}; ${unlockPass}";
