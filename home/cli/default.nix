@@ -10,8 +10,18 @@
     };
     swayimg = {
       enable = true;
-      settings = {
-      };
+      settings =
+        let
+          binds = {
+            "Shift+Delete" = ''exec rmtrash '%' && echo "File removed: %"; skip_file'';
+          };
+        in
+        {
+          keys = {
+            viewer = binds;
+            galllery = binds;
+          };
+        };
     };
 
     bash = {
