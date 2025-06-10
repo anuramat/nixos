@@ -11,6 +11,7 @@
       settings = {
         aliases = {
           login = "auth login --skip-ssh-key --hostname github.com --git-protocol ssh --web";
+          fork = "repo fork --default-branch-only";
         };
         extensions = with pkgs; [
           gh-f
