@@ -1,0 +1,8 @@
+{
+  "NixOS": {
+    "type": "stdio",
+    "command": "mcp-nixos",
+    "args": [],
+    "env": {}
+  }
+}
