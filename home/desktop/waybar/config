@@ -2,10 +2,8 @@
 [
   {
     "mode": "overlay",
-    "margin": 0,
     "ipc": true,
     "position": "bottom",
-    "spacing": 5,
     "modules-left": [
       "pulseaudio",
       "backlight",
@@ -52,10 +50,6 @@
     },
     "sway/language": {
       "tooltip-format": "{flag} {long} {variant}"
-    },
-    "margin": 0,
-    "tray": {
-      "spacing": 10
     },
     "cpu": {
       "format": "{usage}% ",
