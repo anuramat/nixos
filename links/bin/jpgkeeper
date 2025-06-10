@@ -3,7 +3,7 @@
 set -e
 
 # Default values
-MODELNAME="gemma3:12b"
+MODELNAME="gemma3:4b"
 VERBOSE=false
 JSON_OUTPUT=false
 
@@ -109,21 +109,11 @@ if ! ollama list | grep -q "$MODELNAME"; then
 	exit 1
 fi
 
-# Find all PNG files in current directory
-PNG_FILES=(*.png *.jpg)
-
-# Check if any PNG files exist
-if [[ ${#PNG_FILES[@]} -eq 1 && ${PNG_FILES[0]} == "*.png" ]]; then
-	echo "No PNG files found in current directory" >&2
-	exit 1
-fi
-
 # Arrays to store results
 MATCHING_FILES=()
 ALL_RESULTS=()
 
-# Process each PNG file
-for png_file in "${PNG_FILES[@]}"; do
+for png_file in $(fd -e jpg -e png); do
 	if [[ ! -f $png_file ]]; then
 		continue
 	fi
