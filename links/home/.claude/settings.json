@@ -16,6 +16,7 @@
       "Bash(ls:*)",
       "Bash(rg:*)",
       "Bash(cargo:*)",
+      "NixOS"
     ],
     "deny": []
   },
