@@ -1,0 +1,179 @@
+#!/usr/bin/env bash
+
+set -e
+
+# Default values
+MODELNAME="gemma3:12b"
+VERBOSE=false
+JSON_OUTPUT=false
+
+# JSON schema for structured output
+JSON_SCHEMA='{
+  "type": "object",
+  "properties": {
+    "matches_predicate": {
+      "type": "boolean",
+      "description": "Whether the image matches the given predicate"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Confidence level from 0 to 1"
+    },
+    "reasoning": {
+      "type": "string",
+      "description": "Brief explanation of the decision"
+    }
+  },
+  "required": ["matches_predicate", "confidence", "reasoning"]
+}'
+
+usage() {
+	cat << EOF
+Usage: $0 [OPTIONS] "PROMPT_PREDICATE"
+
+Filter PNG images in current directory using Ollama with structured output.
+
+Arguments:
+    PROMPT_PREDICATE    The question/predicate to ask about each image
+                       (e.g., "is this image blurry", "does this contain text")
+
+Options:
+    -m, --model MODEL   Ollama model to use (default: gemma3:4b)
+    -v, --verbose       Show confidence scores and reasoning
+    -j, --json          Output full JSON results instead of just filenames
+    -h, --help          Show this help message
+
+Examples:
+    $0 "is this image blurry"
+    $0 --verbose "does this image contain text"
+    $0 --json --model gemma3:4b "is this a screenshot"
+EOF
+}
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+	case $1 in
+		-m | --model)
+			MODELNAME="$2"
+			shift 2
+			;;
+		-v | --verbose)
+			VERBOSE=true
+			shift
+			;;
+		-j | --json)
+			JSON_OUTPUT=true
+			shift
+			;;
+		-h | --help)
+			usage
+			exit 0
+			;;
+		-*)
+			echo "Unknown option: $1" >&2
+			usage >&2
+			exit 1
+			;;
+		*)
+			if [[ -z ${PROMPT_PREDICATE:-} ]]; then
+				PROMPT_PREDICATE="$1"
+			else
+				echo "Error: Multiple prompt predicates provided" >&2
+				usage >&2
+				exit 1
+			fi
+			shift
+			;;
+	esac
+done
+
+# Validate required arguments
+if [[ -z ${PROMPT_PREDICATE:-} ]]; then
+	echo "Error: PROMPT_PREDICATE is required" >&2
+	usage >&2
+	exit 1
+fi
+
+# Check if ollama is available
+if ! command -v ollama &> /dev/null; then
+	echo "Error: ollama command not found. Please install Ollama first." >&2
+	exit 1
+fi
+
+# Check if model is available
+if ! ollama list | grep -q "$MODELNAME"; then
+	echo "Error: Model '$MODELNAME' not found. Please pull it first:" >&2
+	echo "  ollama pull $MODELNAME" >&2
+	exit 1
+fi
+
+# Find all PNG files in current directory
+PNG_FILES=(*.png *.jpg)
+
+# Check if any PNG files exist
+if [[ ${#PNG_FILES[@]} -eq 1 && ${PNG_FILES[0]} == "*.png" ]]; then
+	echo "No PNG files found in current directory" >&2
+	exit 1
+fi
+
+# Arrays to store results
+MATCHING_FILES=()
+ALL_RESULTS=()
+
+# Process each PNG file
+for png_file in "${PNG_FILES[@]}"; do
+	if [[ ! -f $png_file ]]; then
+		continue
+	fi
+
+	# Get absolute path
+	abs_path=$(realpath "$png_file")
+
+	# Create the prompt with image path
+	full_prompt="$PROMPT_PREDICATE
+
+Image: $abs_path"
+
+	# Call Ollama with structured output
+	echo "Processing: $png_file..." >&2
+
+	if response=$(ollama run "$MODELNAME" --format "$JSON_SCHEMA" "$full_prompt" 2> /dev/null); then
+		# Parse JSON response
+		if matches_predicate=$(echo "$response" | jq -r '.matches_predicate' 2> /dev/null); then
+			if [[ $matches_predicate == "true" ]]; then
+				MATCHING_FILES+=("$png_file")
+			fi
+
+			# Store full result for potential JSON output
+			if [[ $JSON_OUTPUT == "true" ]]; then
+				# Add filename to the JSON object
+				result=$(echo "$response" | jq --arg filename "$png_file" '. + {filename: $filename}')
+				ALL_RESULTS+=("$result")
+			elif [[ $VERBOSE == "true" ]]; then
+				confidence=$(echo "$response" | jq -r '.confidence' 2> /dev/null)
+				reasoning=$(echo "$response" | jq -r '.reasoning' 2> /dev/null)
+				if [[ $matches_predicate == "true" ]]; then
+					echo "$png_file (confidence: $confidence, reasoning: $reasoning)" >&2
+				fi
+			fi
+		else
+			echo "Warning: Failed to parse JSON response for $png_file" >&2
+		fi
+	else
+		echo "Warning: Failed to analyze $png_file" >&2
+	fi
+done
+
+# Output results
+if [[ $JSON_OUTPUT == "true" ]]; then
+	# Output as JSON array
+	printf '%s\n' "${ALL_RESULTS[@]}" | jq -s '.'
+else
+	# Output matching filenames
+	printf '%s\n' "${MATCHING_FILES[@]}"
+fi
+
+# Summary to stderr
+echo "Processed ${#PNG_FILES[@]} PNG files, ${#MATCHING_FILES[@]} matched the predicate" >&2
