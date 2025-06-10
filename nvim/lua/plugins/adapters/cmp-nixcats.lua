@@ -19,13 +19,8 @@ return {
             module = 'lazydev.integrations.blink',
             score_offset = 100,
           },
-          avante = {
-            module = 'blink-cmp-avante',
-            name = 'Avante',
-            opts = {},
-          },
         },
-        default = { 'avante', 'lazydev', 'lsp', 'path', 'snippets', 'buffer' },
+        default = { 'lazydev', 'lsp', 'path', 'snippets', 'buffer' },
       },
     })
   end,

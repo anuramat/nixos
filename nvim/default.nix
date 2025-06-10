@@ -23,8 +23,8 @@ let
     }:
     {
       # Plugins that are always loaded at startup
-      startupPlugins = {
-        general = with pkgs.vimPlugins; [
+      startupPlugins = with pkgs.vimPlugins; {
+        general = [
           lsp-format-nvim
           lze
           mini-bracketed
@@ -39,7 +39,7 @@ let
           base16-nvim
         ];
 
-        treesitter = with pkgs.vimPlugins; [
+        treesitter = [
           nvim-treesitter-context
           nvim-treesitter-textobjects
           nvim-treesitter.withAllGrammars
@@ -47,24 +47,16 @@ let
           rainbow-delimiters-nvim
         ];
 
-        git = with pkgs.vimPlugins; [
+        git = [
           diffview-nvim
           gitlinker-nvim
           gitsigns-nvim
           neogit
           vim-fugitive
         ];
-      };
 
-      extraLuaPackages = {
-        general =
-          ps: with ps; [
-            magick
-          ];
-      };
-      # Plugins that can be lazy-loaded
-      optionalPlugins = {
-        lazy = with pkgs.vimPlugins; [
+        lazy = [
+
           # UI and Navigation
           aerial-nvim
           fzf-lua
@@ -88,7 +80,6 @@ let
           # AI/LLM
           copilot-lua
           avante-nvim
-          # blink-cmp-avante  # May not be in nixpkgs yet
 
           # Jupyter/Data Science
           molten-nvim
@@ -121,6 +112,19 @@ let
           # wastebin-nvim
         ];
       };
+
+      extraLuaPackages = {
+        general =
+          ps: with ps; [
+            magick
+          ];
+      };
+
+      # # Plugins that can be lazy-loaded
+      # optionalPlugins = {
+      #   lazy = [
+      #   ];
+      # };
 
       # LSP servers, formatters, linters, and other runtime dependencies
       general = with pkgs; [
@@ -187,46 +191,33 @@ let
       };
     };
 
-  # Define different package configurations
   packageDefinitions = {
-    # Full configuration with all features
-    nvim =
-      { pkgs, ... }:
-      {
-        categories = {
-          general = true;
-          treesitter = true;
-          git = true;
-          lazy = true;
-        };
+    nvim = _: {
+      categories = {
+        general = true;
+        treesitter = true;
+        git = true;
+        lazy = true;
       };
-
-    # Minimal configuration for servers
-    nvim-minimal =
-      { pkgs, ... }:
-      {
-        settings = {
-          wrapRc = true;
-          configDirName = "nvim";
-        };
-        categories = {
-          general = true;
-          treesitter = false;
-          git = true;
-          lazy = false;
-        };
+    };
+    nvim-minimal = _: {
+      settings = {
+        wrapRc = true;
+        configDirName = "nvim";
       };
+      categories = {
+        general = true;
+        treesitter = false;
+        git = true;
+        lazy = false;
+      };
+    };
   };
 
   buildNeovim =
     system:
     let
       dependencyOverlays = [ ];
-      pkgs = import nixpkgs {
-        inherit system;
-        config.allowUnfree = true;
-        overlays = dependencyOverlays;
-      };
       nixCatsBuilder = utils.baseBuilder luaPath {
         inherit nixpkgs system dependencyOverlays;
         extra_pkg_config = {
