@@ -113,7 +113,7 @@
     openconnect_openssl
 
     # core
-    inputs.subcat.packages.${pkgs.system}.default
+    subcat
     bat # cat++: syntax hl
     delta # pretty diff
     du-dust # du++

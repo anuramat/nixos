@@ -9,6 +9,7 @@ let
     final: prev:
     (builtins.mapAttrs (n: v: v.packages.${prev.system}.default) {
       inherit (inputs)
+      subcat
         mcp-nixos
         nil
         ;
