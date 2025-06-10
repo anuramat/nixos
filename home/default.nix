@@ -15,7 +15,7 @@
     ./theme.nix
     ./desktop
     ./cli
-    inputs.stylix.homeManagerModules.pass-secret-service-rs
+    inputs.pss.homeManagerModules.pass-secret-service-rs
   ];
 
   xdg.enable = true; # set xdg basedir vars in .profile
