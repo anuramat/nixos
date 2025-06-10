@@ -19,7 +19,6 @@
     nil.url = "github:oxalica/nil/main";
     nixCats.url = "github:BirdeeHub/nixCats-nvim";
     codex.url = "github:anuramat/codex";
-    pss.url = "github:anuramat/pass-secret-service/nix";
   };
   outputs =
     inputs:

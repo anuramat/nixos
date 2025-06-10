@@ -15,7 +15,6 @@
     ./theme.nix
     ./desktop
     ./cli
-    inputs.pss.homeManagerModules.pass-secret-service-rs
   ];
 
   xdg.enable = true; # set xdg basedir vars in .profile
