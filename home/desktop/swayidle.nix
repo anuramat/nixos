@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 {
   services = {
     swayidle =
@@ -9,12 +9,29 @@
           killall
           systemd
           ;
-        lock = "${swaylock}/bin/swaylock -f";
-        lockKeys = "${killall}/bin/killall -s SIGHUP gpg-agent";
-        unlock = "${killall}/bin/killall -s USR1 swaylock";
-        sleep = "${systemd}/bin/systemctl suspend";
+
+        lockScreen = "${swaylock}/bin/swaylock -f";
+        unlockScreen = "${killall}/bin/killall -s USR1 swaylock";
+
+        lockPass =
+          let
+            gpgLockScript = pkgs.writeShellScript "lockGpgId" ''
+              # takes a path to a .gpg-id file, clears the corresponding agent cache
+              xargs -r gpg --list-keys --with-colons --with-keygrip < "$1" \
+              	| awk -F: '/^sub/{x=1} x&&/^grp/{print $10;x=0}' \
+              	| xargs -I{} gpg-connect-agent "clear_passphrase --mode=normal {}" /bye
+            '';
+          in
+          "${gpgLockScript} ${config.programs.password-store.settings.PASSWORD_STORE_DIR}/.gpg-id";
+        unlockPass = "printf '\n\n' | pass insert dummy; pass show dummy";
+
+        lock = "${lockScreen}; ${lockPass}";
+        unlock = "${unlockScreen}; ${unlockPass}";
+
         screenOff = "${sway}/bin/swaymsg 'output * dpms off'";
         screenOn = "${sway}/bin/swaymsg 'output * dpms on'";
+
+        sleep = "${systemd}/bin/systemctl suspend";
       in
       {
         enable = true;
@@ -47,7 +64,7 @@
           }
           {
             event = "lock";
-            command = "${lock}; ${lockKeys}";
+            command = lock;
           }
         ];
       };
