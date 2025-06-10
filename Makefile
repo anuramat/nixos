@@ -30,7 +30,7 @@ code: nix lua sh
 nvim:
 	nix run --option builders '' --option substituters '' .#nvim
 mcp:
-	jq --slurpfile mcp ./mcp.json '.mcpServers = $$mcp' ~/.claude.json | sponge ~/.claude.json
+	jq --slurpfile mcp ./mcp.json '.mcpServers = $$mcp[0]' ~/.claude.json | sponge ~/.claude.json
 
 # nix {{{1
 nix: nixfmt nixlint
