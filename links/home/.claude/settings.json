@@ -13,7 +13,9 @@
       "Write",
       "Edit",
       "MultiEdit",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(rg:*)",
+      "Bash(cargo:*)",
     ],
     "deny": []
   },
