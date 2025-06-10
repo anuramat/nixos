@@ -82,6 +82,10 @@
           "idle_inhibitor"
           "mpris"
         ];
+        spacing = 5;
+        tray = {
+          spacing = 10;
+        };
         modules-right = [
           "sway/window"
           "tray"
