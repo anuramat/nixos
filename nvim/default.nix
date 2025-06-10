@@ -57,25 +57,6 @@ let
             magick
           ];
       };
-      extraPython3Packages = {
-        general =
-          ps: with ps; [
-            pynvim
-            jupyter-client
-            cairosvg
-            pillow
-            pnglatex
-            plotly
-            kaleido
-            requests
-            websocket-client
-            pyperclip
-            nbformat
-            matplotlib
-            numpy
-            pandas
-          ];
-      };
       # Plugins that can be lazy-loaded
       optionalPlugins = {
         lazy = with pkgs.vimPlugins; [
@@ -183,20 +164,20 @@ let
       python3.libraries = {
         general =
           ps: with ps; [
-            pynvim
-            jupyter-client
             cairosvg
-            pillow
-            pnglatex
-            plotly
+            jupyter-client
             kaleido
-            requests
-            websocket-client
-            pyperclip
-            nbformat
             matplotlib
+            nbformat
             numpy
             pandas
+            pillow
+            plotly
+            pnglatex
+            pynvim
+            pyperclip
+            requests
+            websocket-client
           ];
       };
     };
