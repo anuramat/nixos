@@ -4,6 +4,7 @@ MAKEFLAGS += --always-make
 
 all: flake links code
 flake:
+	sudo true
 	./scripts/heading.sh "Copying public keys"
 	mkdir -p "$(keys_dir)"
 	LC_ALL=C ssh-keyscan -q "$(shell hostname)" | sort > "$(keys_dir)/host_keys"
