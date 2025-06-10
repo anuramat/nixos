@@ -1,6 +1,7 @@
 {
   config,
   user,
+  lib,
   pkgs,
   ...
 }:
@@ -91,7 +92,16 @@
       # TODO check jupyter notebook and nbdime later; `git diff` works
       extraConfig = {
         pull.ff = "only";
-        core.pager = "less -F";
+        core.pager = {
+          diff =
+            let
+              pattern = ''(?<! --- ([2-9]|\d{2,6})/\d{1,6}) --- \S+(?![/\d]* ---)'';
+              # this is for lesskey:
+              # escaped = lib.replaceStrings [ ''\'' ] [ ''\\'' ] pattern;
+              # LESS = -ir +/${escaped}\ng
+            in
+            "less '+/${pattern}'$'\ng'";
+        };
         init.defaultBranch = "main";
         advice = {
           addEmptyPathspec = false;

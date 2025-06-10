@@ -60,7 +60,7 @@
       enable = true;
       config = {
         italic-text = "always";
-        pager = "less -F";
+        pager = "less";
       };
     };
 
@@ -115,14 +115,10 @@
     less = {
       enable = true;
       keys =
-        let
-          pattern = ''+/(?<! --- ([2-9]|\d{2,6})/\d{1,6}) --- \S+(?![/\d]* ---)'';
-          escaped = lib.replaceStrings [ ''\'' ] [ ''\\'' ] pattern;
-        in
         # less
         ''
           #env
-          LESS = -ir +/${pattern}\ng
+          LESS = -ir
         '';
     };
 
