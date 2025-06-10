@@ -4,7 +4,7 @@ let
 in
 {
   services.mako = {
-    enabled = true;
+    enable = true;
     settings = {
       default-timeout = "0";
       layer = "overlay";
