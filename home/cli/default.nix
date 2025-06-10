@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, lib, ... }:
 {
   imports = [
     ./git.nix
@@ -114,10 +114,16 @@
 
     less = {
       enable = true;
-      keys = ''
-        #env
-        LESS = -ir
-      '';
+      keys =
+        let
+          pattern = ''+/(?<! --- ([2-9]|\d{2,6})/\d{1,6}) --- \S+(?![/\d]* ---)'';
+          escaped = lib.replaceStrings [ ''\'' ] [ ''\\'' ] pattern;
+        in
+        # less
+        ''
+          #env
+          LESS = -ir +/${pattern}\ng
+        '';
     };
 
     yazi = {

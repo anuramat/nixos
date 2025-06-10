@@ -85,6 +85,7 @@
       ];
       attributes = [
         "*.ipynb diff=jupyternotebook merge=jupyternotebook"
+        "flake.lock diff=nodiff"
       ];
 
       # TODO check jupyter notebook and nbdime later; `git diff` works
