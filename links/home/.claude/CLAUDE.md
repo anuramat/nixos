@@ -10,3 +10,14 @@
 - feel free to write to project memory whenever there are significant changes
 - after editing memory file, you MUST make a git commit with ALL changes in the
   repository checked in
+
+## Code
+
+- don't write too much code -- try to be as concise as possible
+- when making architecture decisions, go for minimalism
+- only add comments where descriptive names are not enough
+
+### Nix
+
+- when working on flakes in git repositories, don't forget to `git add` new
+  files, otherwise they are ignored by the flake
