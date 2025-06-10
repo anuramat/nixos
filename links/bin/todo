@@ -1,38 +1,45 @@
 #!/usr/bin/env python3
 
 from collections import defaultdict
+from datetime import datetime, UTC
 from itertools import zip_longest
-import argparse
 from math import ceil
+import argparse
 import os
 import re
 import sys
 
-# TODO move to a env var
-TASK_FILE = os.path.expanduser("~/notes/todo.txt")
-
-TERM_HEIGHT_OFFSET = 5  # terminal prompt etc
+DATE_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}(?= )")
 MIN_CELL_HEIGHT = 10
 MIN_CELL_WIDTH = 30
+TAG_PATTERN = re.compile(r"(?<!\S)@\S+")
+TASK_FILE = os.path.expanduser("~/notes/todo.txt")
+TERM_HEIGHT_OFFSET = 5  # terminal prompt etc
 
 
-def add(line: str, strip=True):
-    """
-    add a new task
-    """
-    # TODO autoappend date, hide on view
-    if strip:
-        line = line.strip()
-        if not line:
-            return
+def set_date(line) -> str:
+    if bool(DATE_PATTERN.match(line)):
+        return line
+    return f"{datetime.now(UTC).strftime("%Y-%m-%d")} {line}"
+
+
+def get_date(line: str) -> str:
+    m = DATE_PATTERN.search(line)
+    if m:
+        return m.group()
+    return ""
+
+
+def add(line: str):
+    line = line.strip()
+    if not line:
+        return
+    set_date(line)
     with open(TASK_FILE, "a") as file:
         file.write(line + "\n")
 
 
 def rm(task_number: int):
-    """
-    delete a task
-    """
     lines = read()
 
     if task_number < 1 or task_number > len(lines):
@@ -45,25 +52,29 @@ def rm(task_number: int):
 
 def norm(lines: list[str]) -> list[str]:
     """
-    strip, remove empty, deduplicate
+    strip, remove empty, deduplicate, ensure date, sort
     """
     result = []
     for line in lines:
         line = line.strip()
         if line:
-            result.append(line + "\n")
-    return dedupe(result)
+            result.append(set_date(line) + "\n")
+
+    result.sort()
+    result = dedupe(result)
+    return result
 
 
 def dedupe(lines: list[str]) -> list[str]:
     """
-    deduplicate lines, keeping the first appearance, and preserving the ordering
+    deduplicate SORTED lines
     """
-    seen = set()
+    prev = ""
     result = []
     for line in lines:
-        if line not in seen:
+        if line != prev:
             result.append(line)
+            prev = line
     return result
 
 
@@ -95,11 +106,9 @@ def number(lines: list[str]) -> list[str]:
 
 
 def _get_tag_dict(tasks: list[str]) -> dict[str, list[str]]:
-    exp = r"(?<!\S)@\S+"
-    pattern = re.compile(exp)
     tasks_by_tags = defaultdict(list)
     for task in tasks:
-        tags = pattern.findall(task)
+        tags = TAG_PATTERN.findall(task)
         task = task.rstrip()
         for tag in tags:
             tasks_by_tags[tag].append(task)
