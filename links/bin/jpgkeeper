@@ -17,9 +17,8 @@ JSON_SCHEMA='{
     },
     "confidence": {
       "type": "number",
-      "minimum": 0,
-      "maximum": 1,
-      "description": "Confidence level from 0 to 1"
+	  "enum": [1,2,3,4,5]
+      "description": "Confidence level"
     },
     "reasoning": {
       "type": "string",
