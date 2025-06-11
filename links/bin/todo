@@ -16,11 +16,11 @@ MIN_CELL_HEIGHT = 10
 MIN_CELL_WIDTH = 30
 TAG_LOOKBEHIND = r"(?<!\S@)(?<=@)"
 TAG_PATTERN = re.compile(TAG_LOOKBEHIND + r"\S+")
-TASK_FILE = os.path.expanduser("~/notes/todo.txt")
-TERM_HEIGHT_OFFSET = 5  # terminal prompt etc
+TODO_FILE = os.environ.get("TODO_FILE") or os.path.expanduser("~/notes/todo.txt")
+TERM_HEIGHT_OFFSET = 5  # 2 * (prompt_lines = 2) + 1 * (divider_lines = 1)
 
 
-def set_date(line) -> str:
+def date_wrap(line) -> str:
     if bool(DATE_PATTERN.match(line)):
         return line
     return f"{datetime.now(UTC).strftime("%Y-%m-%d")} {line}"
@@ -87,9 +87,8 @@ def add(line: str):
     line = line.strip()
     if not line:
         return
-    set_date(line)
-    with open(TASK_FILE, "a") as file:
-        file.write(line + "\n")
+    with open(TODO_FILE, "a") as file:
+        file.write(date_wrap(line) + "\n")
 
 
 def rm(task_number: int):
@@ -109,7 +108,7 @@ def norm(lines: list[str]) -> list[str]:
     for line in lines:
         line = line.strip()
         if line:
-            result.append(set_date(line))
+            result.append(date_wrap(line))
     result.sort()
     result = dedupe(result)
     return result
@@ -128,12 +127,12 @@ def dedupe(lines: list[str]) -> list[str]:
     return result
 
 
-def read(filename=TASK_FILE) -> list[str]:
+def read(filename=TODO_FILE) -> list[str]:
     with open(filename, "r") as file:
         return [line.strip() for line in file.readlines()]
 
 
-def write(lines: list[str], filename=TASK_FILE):
+def write(lines: list[str], filename=TODO_FILE):
     with open(filename, "w") as file:
         file.write("\n".join(lines) + "\n")
 
@@ -232,7 +231,7 @@ def tag_overview():
 
 def edit():
     line_nr = len(read())
-    os.system(f"{EDITOR} +{line_nr} {TASK_FILE}")
+    os.system(f"{EDITOR} +{line_nr} {TODO_FILE}")
 
 
 def merge(left_name: str, root_name: str, right_name: str):
