@@ -4,7 +4,7 @@
 }:
 {
   # packages {{{1
-  environment.systemPackages = with pkgs; [
+  home.packages = with pkgs; [
     # essentials {{{2
     wdisplays # GUI kanshi config generator
     libnotify # notify-send etc
