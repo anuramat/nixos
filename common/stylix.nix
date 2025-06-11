@@ -14,9 +14,11 @@
         terminal = 13;
       };
     };
-    # stella
-    # black-metal
-    # tokyo-night-dark.yaml
-    base16Scheme = "${pkgs.base16-schemes}/share/themes/stella";
+    base16Scheme =
+      let
+        # stella black-metal tokyo-night-dark
+        name = "stella";
+      in
+      "${pkgs.base16-schemes}/share/themes/${name}.yaml";
   };
 }
