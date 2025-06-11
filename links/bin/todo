@@ -74,10 +74,10 @@ def edit_tag(tag: str):
     with tempfile.TemporaryDirectory() as dir:
         path = os.path.join(dir, "todo.txt")
         with open(path, "w") as file:
-            file.writelines(before)
+            write(before, path)
         os.system(f"{EDITOR} {path}")
         with open(path, "r") as file:
-            after = norm(file.readlines())
+            after = norm(read(path))
         changes = count_changes(before, after)
         print(f"{changes} changes")
         write(norm(remaining + after))
@@ -109,7 +109,7 @@ def norm(lines: list[str]) -> list[str]:
     for line in lines:
         line = line.strip()
         if line:
-            result.append(set_date(line) + "\n")
+            result.append(set_date(line))
     result.sort()
     result = dedupe(result)
     return result
@@ -130,17 +130,21 @@ def dedupe(lines: list[str]) -> list[str]:
 
 def read(filename=TASK_FILE) -> list[str]:
     with open(filename, "r") as file:
-        return file.readlines()
+        return [line.strip() for line in file.readlines()]
 
 
 def write(lines: list[str], filename=TASK_FILE):
     with open(filename, "w") as file:
-        file.writelines(lines)
+        file.write("\n".join(lines) + "\n")
+
+
+def strip_date(lines):
+    # shift to skip the space that is not caught by lookahead
+    return [DATE_PATTERN.sub("", i)[1:] for i in lines]
 
 
 def ls():
-    lines = read()
-    result = number(lines)
+    result = number(strip_date(read()))
     print("\n".join(result))
 
 
@@ -151,7 +155,7 @@ def number(lines: list[str]) -> list[str]:
     w = len(str(len(lines)))
     result = []
     for i, line in enumerate(lines, 1):
-        result.append(f"{str(i).rjust(w)} {line.strip()}")
+        result.append(f"{str(i).rjust(w)} {line}")
     return result
 
 
