@@ -81,7 +81,6 @@
 
     # theme
     # TODO apply
-    hackneyed # windows inspired cursor theme
     dracula-icon-theme # for the bar
 
     # comms
