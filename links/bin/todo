@@ -77,7 +77,7 @@ def edit_tag(tag: str):
             file.writelines(before)
         os.system(f"{EDITOR} {path}")
         with open(path, "r") as file:
-            after = file.readlines()
+            after = norm(file.readlines())
         changes = count_changes(before, after)
         print(f"{changes} changes")
         write(norm(remaining + after))
