@@ -79,7 +79,7 @@
         bars = [
           {
             command = "${pkgs.waybar}/bin/waybar";
-            mode = "hide";
+            # mode = "hide";
           }
         ];
         keybindings = { };

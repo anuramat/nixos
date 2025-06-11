@@ -2,6 +2,12 @@
   programs.waybar = {
     enable = true;
     systemd.enable = false;
+    style = # css
+      ''
+        #waybar > box {
+          padding: 0px 10px;
+        }
+      '';
     settings = [
       # TODO sort fields
       {
@@ -114,7 +120,7 @@
             playing = "󰐊";
           };
         };
-        position = "bottom";
+        position = "top";
         pulseaudio = {
           format = "{volume}% {icon}  {format_source}";
           format-bluetooth = "{volume}% {icon}   {format_source}";
