@@ -26,6 +26,8 @@
     }
   ];
 
+  programs.captive-browser.interface = "wlp3s0";
+
   # services = {
   #   tlp.settings = {
   #     CPU_MAX_PERF_ON_BAT = 30;
