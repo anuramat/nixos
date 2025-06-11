@@ -34,7 +34,7 @@ local configs = function()
       -- we can use schemastore plugin if we need more logic
       -- eg replacements or custom schemas
     },
-    'rust_analyzer' = {},
+    rust_analyzer = {},
     superhtml = {},
     ts_ls = {},
     stylelint_lsp = {
