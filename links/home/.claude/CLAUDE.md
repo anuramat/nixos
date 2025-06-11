@@ -2,6 +2,8 @@
 
 ## Tools
 
+- ALWAYS do a basic test before asking the user for feedback -- check that it
+  starts/compiles.
 - NEVER modify anything outside of the current directory, directly or not; if
   that's necessary, ask the user to do it instead.
 
