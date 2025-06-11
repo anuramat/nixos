@@ -85,8 +85,8 @@
 
     # comms
     element-desktop # matrix client
-    onionshare # tor-based file-sharing etc
-    onionshare-gui # p2p file sharing, chat, website hosting
+    # onionshare # tor-based file-sharing etc
+    # onionshare-gui # p2p file sharing, chat, website hosting
     # qtox # p2p IM XXX broken
     # slack # XXX broken
     telegram-desktop
