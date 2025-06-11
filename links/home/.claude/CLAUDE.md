@@ -11,6 +11,10 @@
 - after editing memory file, you MUST make a git commit with ALL changes in the
   repository checked in
 
+## Markdown
+
+- make sure headings always are surrounded with blank lines, like here
+
 ## Code
 
 - don't write too much code -- try to be as concise as possible
@@ -18,7 +22,7 @@
 - only add comments where descriptive names are not enough
 - always use formatters if available
 
-### Nix
+## Nix
 
 - when working on flakes in git repositories, don't forget to `git add` new
   files, otherwise they are ignored by the flake
