@@ -10,6 +10,7 @@ import re
 import sys
 import tempfile
 
+EDITOR = os.environ.get("EDITOR") or "vi"
 DATE_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}(?= )")
 MIN_CELL_HEIGHT = 10
 MIN_CELL_WIDTH = 30
@@ -32,40 +33,54 @@ def get_date(line: str) -> str:
     return ""
 
 
-def filter_lines_by_tag(lines: list[str], tag: str) -> tuple[list[str], list[str]]:
-    """
-    Split lines into two lists: those matching the tag and the rest
-    Returns (matching_lines, remaining_lines)
-    """
-    predicate = lambda x: not TAG_PATTERN.search(x)
-    if tag != "unfiled":
-        pat = re.compile(r"(?<!\S)" + re.escape(tag) + r"(?!\S)")
-        predicate = lambda x: pat.search(x)
-
-    matching = []
-    remaining = []
-
+def partition_by_tag(lines: list[str], tag: str) -> tuple[list[str], list[str]]:
+    match = []
+    rest = []
     for line in lines:
-        if predicate(line):
-            matching.append(line)
+        matches = TAG_PATTERN.findall(line)
+        if (not matches and tag == "unfiled") or tag in matches:
+            match.append(line)
         else:
-            remaining.append(line)
-
-    sys.exit()
-
-    return matching, remaining
+            rest.append(line)
+    return match, rest
 
 
-        raw_tag = sys.argv[2]
-        if len(raw_tag) < 2 or raw_tag[0] != "@":
-            raise Exception
-        edit_tag(raw_tag[1:])
-        return True
-    return False
+def count_changes(inp: list[str], out: list[str]) -> int:
+    """
+    count changes
+    expects SORTED lines
+    """
+    out = sorted(out)
+    i = j = 0
+    n_unchanged = 0
+    while i < len(inp) and j < len(out):
+        if inp[i] == out[j]:
+            i += 1
+            j += 1
+            n_unchanged += 1
+        elif inp[i] < out[j]:
+            i += 1
+        else:
+            j += 1
+    return max(len(inp) - n_unchanged, len(out) - n_unchanged)
 
 
-
-
+def edit_tag(tag: str):
+    lines = read()
+    before, remaining = partition_by_tag(lines, tag)
+    if not before:
+        print(f"No tasks found for tag: {tag}")
+        return
+    with tempfile.TemporaryDirectory() as dir:
+        path = os.path.join(dir, "todo.txt")
+        with open(path, "w") as file:
+            file.writelines(before)
+        os.system(f"{EDITOR} {path}")
+        with open(path, "r") as file:
+            after = file.readlines()
+        changes = count_changes(before, after)
+        print(f"{changes} changes")
+        write(norm(remaining + after))
 
 
 def add(line: str):
@@ -79,11 +94,9 @@ def add(line: str):
 
 def rm(task_number: int):
     lines = read()
-
     if task_number < 1 or task_number > len(lines):
         print("invalid n")
         return
-
     del lines[task_number - 1]
     write(lines)
 
@@ -97,7 +110,6 @@ def norm(lines: list[str]) -> list[str]:
         line = line.strip()
         if line:
             result.append(set_date(line) + "\n")
-
     result.sort()
     result = dedupe(result)
     return result
@@ -215,9 +227,8 @@ def tag_overview():
 
 
 def edit():
-    editor = os.environ.get("EDITOR") or "vi"
     line_nr = len(read())
-    os.system(f"{editor} +{line_nr} {TASK_FILE}")
+    os.system(f"{EDITOR} +{line_nr} {TASK_FILE}")
 
 
 def merge(left_name: str, root_name: str, right_name: str):
@@ -313,7 +324,7 @@ def _dispatch_command(args):
 
 def main():
     # special cases
-    if _handle_tag_command():
+    if _handle_ls_tag_command():
         return
     if _handle_edit_tag_command():
         return

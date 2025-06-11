@@ -43,6 +43,7 @@
           newWindow = "none"; # TODO
         };
         startup = [
+          # TODO find the corresponding home-manager option?
           {
             command = "pkill wl-clip-persist; wl-clip-persist --clipboard regular";
             always = true;
