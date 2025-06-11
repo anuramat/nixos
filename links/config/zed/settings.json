@@ -1,4 +1,14 @@
 {
+  "context_servers": {
+    "NixOS": {
+      "command": {
+        "path": "mcp-nixos",
+        "args": [],
+        "env": null
+      },
+      "settings": {}
+    }
+  },
   "agent": {
     "always_allow_tool_actions": true,
     "default_model": {

@@ -20,12 +20,12 @@ let
   # MIME type definitions organized by category
   mimeTypes = {
     text = generateMimeTypes [
-      # TODO somehow abstract this away
       (mimeFromDesktop pkgs.neovim)
     ];
 
     browser = generateMimeTypes [
       (mimeFromDesktop pkgs.librewolf)
+      (mimeFromDesktop pkgs.google-chrome)
     ];
 
     images = generateMimeTypes [
