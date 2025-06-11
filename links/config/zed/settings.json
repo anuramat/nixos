@@ -22,7 +22,6 @@
   "buffer_font_family": "Hack Nerd Font",
   "buffer_font_size": 17.333333333333332,
   "theme": "Base16 Tokyo Night Dark",
-  "ui_font_family": "Hack Nerd Font",
   "ui_font_size": 17.333333333333332,
   "vim": {
     "default_mode": "normal",
