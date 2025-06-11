@@ -1,28 +1,24 @@
 {
+  "env": {},
+  "includeCoAuthoredBy": true,
   "permissions": {
     "allow": [
-      "Bash(git diff:*)",
-      "Bash(git status:*)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(git log:*)",
+      "Bash(cargo:*)",
       "Bash(find:*)",
+      "Bash(git commit:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git status:*)",
+      "Bash(ls:*)",
+      "Bash(rg:*)",
+      "Edit",
+      "MultiEdit",
       "NotebookEdit",
       "WebFetch",
       "WebSearch",
       "Write",
-      "Edit",
-      "MultiEdit",
-      "Bash(ls:*)",
-      "Bash(rg:*)",
-      "Bash(cargo:*)",
-      "WebFetch",
-      "WebSearch",
       "mcp__NixOS"
     ],
     "deny": []
-  },
-  "includeCoAuthoredBy": true,
-  "env": {}
+  }
 }
-
