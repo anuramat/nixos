@@ -29,32 +29,3 @@ alias info="info --init-file $XDG_CONFIG_HOME/infokey"
 export VIRTUAL_ENV_DISABLE_PROMPT="1" # TODO maybe we don't need this either? # Don't let python venvs change the PS1
 export VIMTEX_OUTPUT_DIRECTORY="/tmp/"
 export NO_AT_BRIDGE=1 # TODO do we still need this # hides gnomeWARNING **: Couldn't connect to accessibility bus:
-
-# rsync wrapper
-rs() {
-	local -r errmsg='error: %s\nusage: rs HOST (up/down) [rsync options] PATH\n'
-	local host=$1 && shift
-	local direction=$1 && shift
-	local path=$(realpath -- "${*: -1:1}")
-	[ -d "$path" ] || {
-		printf "$errmsg" 'path does not exist'
-		return 1
-	}
-	local args=("${@:1:$#-1}")
-	case "$direction" in
-		down)
-			from="$host:$path"
-			to="$path"
-			;;
-		up)
-			from="$path"
-			to="$host:$path"
-			;;
-		*)
-			printf "$errmsg" "invalid direction"
-			return 1
-			;;
-	esac
-
-	rsync "${args[@]}" "$from/" "$to/"
-}

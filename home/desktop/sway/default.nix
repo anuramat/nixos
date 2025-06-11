@@ -17,13 +17,13 @@
 
     };
     udiskie = {
-      enable = true;
+      enable = osConfig.services.udisks2.enable;
       notify = true;
       tray = "auto";
       automount = true;
     };
   };
-  services.network-manager-applet.enable = true;
+  services.network-manager-applet.enable = osConfig.networking.networkmanager.enable;
   wayland.windowManager.sway =
     let
       border = 3;

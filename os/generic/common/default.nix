@@ -75,13 +75,12 @@
     };
   };
 
-  # BUG breaks rebuilds sometimes: <https://github.com/NixOS/nixpkgs/issues/180175>
-  # HACK:
+  # BUG workaround 2025-06-11:  breaks rebuilds sometimes: <https://github.com/NixOS/nixpkgs/issues/180175>
   systemd.services.NetworkManager-wait-online.enable = false;
 
   services.resolved = {
     enable = true;
-    # dnssec = "true";
+    # dnssec = "true"; # TODO breaks sometimes
   };
 
   # ssh etc {{{1
