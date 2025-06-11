@@ -16,16 +16,11 @@
 - After editing memory file, you MUST make a git commit with ALL changes in the
   repository checked in.
 
-## Markdown
-
-- ALWAYS make sure headings always are surrounded with blank lines, like here:
-
 ## Code
 
 - Don't write too much code -- try to be as concise as possible.
 - When making architecture decisions, go for minimalism.
 - Only add comments where descriptive names are not enough.
-- Always use formatters if available.
 
 ## Nix
 
