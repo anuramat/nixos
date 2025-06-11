@@ -9,7 +9,7 @@ let
     final: prev:
     (builtins.mapAttrs (n: v: v.packages.${prev.system}.default) {
       inherit (inputs)
-      subcat
+        subcat
         mcp-nixos
         nil
         ;
@@ -53,7 +53,7 @@ in
       #   };
       # });
       claude-code = prev.claude-code.overrideAttrs (oldAttrs: rec {
-        version = "1.0.17";
+        version = "1.0.21";
         src = prev.fetchzip {
           url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
           hash = "sha256-RxbsAehJ4zIt86ppmMB1MPg/XFrGWuumNdQbT+ytg8A=";

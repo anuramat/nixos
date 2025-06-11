@@ -12,7 +12,7 @@ let
 
   books = "exec killall ${bemenu} || swaymsg exec \"echo \\\"$(cd $bookdir && fd -t f | ${bemenu} -p read -l 20)\\\" | xargs -rI{} ${zathura} '$bookdir/{}'\"";
   drun = "exec killall ${bemenu} || swaymsg exec \"$(${j4} -d '${bemenu} -p drun' -t $term -x --no-generic)\"";
-  todo_add = "exec killall ${bemenu} || swaymsg exec \"$(echo '' | ${bemenu} -p task -l 0 | xargs -I{} todo add \\\"{}\\\")\"";
+  todo_add = "exec killall ${bemenu} || swaymsg exec \"$(echo '' | ${bemenu} -p todo -l 0 | xargs -I{} todo add \\\"{}\\\")\"";
   todo_done = "exec killall ${bemenu} || swaymsg exec \"$(todo ls | tac | ${bemenu} -p done | sed 's/^\\s*//' | cut -d ' ' -f 1 | xargs todo rm)\"";
   lock = "exec loginctl lock-session";
 
