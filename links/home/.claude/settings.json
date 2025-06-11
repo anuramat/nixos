@@ -16,7 +16,9 @@
       "Bash(ls:*)",
       "Bash(rg:*)",
       "Bash(cargo:*)",
-      "mcp__NixOS__*"
+      "WebFetch",
+      "WebSearch",
+      "mcp__NixOS"
     ],
     "deny": []
   },
