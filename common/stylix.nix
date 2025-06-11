@@ -7,12 +7,6 @@
       monospace = {
         name = "Hack Nerd Font";
       };
-      # serif = {
-      #   name = "Hack Nerd Font";
-      # };
-      # sansSerif = {
-      #   name = "Hack Nerd Font";
-      # };
       sizes = {
         applications = 13;
         desktop = 10;
@@ -22,6 +16,7 @@
     };
     # stella
     # black-metal
-    base16Scheme = "${pkgs.base16-schemes}/share/themes/tokyo-night-dark.yaml";
+    # tokyo-night-dark.yaml
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/stella";
   };
 }
