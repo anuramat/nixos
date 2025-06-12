@@ -34,5 +34,6 @@
     util-linux # I think it's already installed but whatever
     wget
     zip
+    bubblewrap
   ];
 }
