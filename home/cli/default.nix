@@ -153,9 +153,6 @@
       };
     };
 
-    iotop = {
-      enable = true;
-    };
     htop = {
       # basic
       enable = true;

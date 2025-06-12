@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+bwrap --bind / / --dev /dev \
+	--ro-bind "$HOME" "$HOME" \
+	--bind "$XDG_CACHE_HOME" "$XDG_CACHE_HOME" \
+	--bind "$HOME/.claude/" "$HOME/.claude/" \
+	--bind "$HOME/.claude.json" "$HOME/.claude.json" \
+	--bind "$(ghq root)" "$(ghq root)" \
+	claude --dangerously-skip-permissions "$@"

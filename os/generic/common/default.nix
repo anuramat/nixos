@@ -18,6 +18,10 @@
   ];
   hardware.enableAllFirmware = true; # as in "regardless of license"
 
+  programs.iotop = {
+    enable = true;
+  };
+
   # virtualization {{{1
   virtualisation = {
     virtualbox = {
