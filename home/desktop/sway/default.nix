@@ -55,6 +55,7 @@
           };
         };
         bindkeysToCode = true;
+        # move to keys
         up = "k";
         down = "j";
         left = "h";
@@ -76,7 +77,7 @@
             { app_id = "Proton Pass"; }
           ];
         };
-        keybindings = { };
+        bars = [ ];
       };
       # TODO relative size
       extraConfig = # sway
