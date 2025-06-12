@@ -76,12 +76,6 @@
             { app_id = "Proton Pass"; }
           ];
         };
-        bars = [
-          {
-            command = "${pkgs.waybar}/bin/waybar";
-            # mode = "hide";
-          }
-        ];
         keybindings = { };
       };
       # TODO relative size
