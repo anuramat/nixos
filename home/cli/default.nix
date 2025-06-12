@@ -207,6 +207,7 @@
     };
 
     readline = {
+      enable = true;
       variables = {
         # completion: logic
         match-hidden-files = true;
