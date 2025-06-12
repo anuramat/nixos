@@ -2,10 +2,8 @@
 {
   home.packages = with pkgs; [
     # tops
-    btop # best
     ctop # containers
     gotop # cute
-    htop # basic
     iotop # detailed io info, requires sudo
     nvitop # nvidia gpu
     podman-tui # podman container status
@@ -55,10 +53,6 @@
     yt-dlp # download youtube videos
 
     # file managers
-    yazi # big, simple, hackable/lua -- ~ for help
-    felix-fm # smallest, image previews -- :help<cr> for help; waiting for picker: <https://github.com/kyoheiu/felix/issues/261>
-    nnn # small, simple, ubiquitous -- ? for help
-    yazi # big, simple, hackable/lua -- ~ for help
     felix-fm # smallest, image previews -- :help<cr> for help; waiting for picker: <https://github.com/kyoheiu/felix/issues/261>
     nnn # small, simple, ubiquitous -- ? for help
 
@@ -114,26 +108,19 @@
 
     # core
     subcat
-    bat # cat++: syntax hl
-    delta # pretty diff
     du-dust # du++
     duf # df++
     entr # file watcher - runs command on change
-    fd # find++
     ghq # git repository manager
     libqalculate # `qalc` - advanced calculator
     ncdu # du++: interactive
     parallel # run parallel jobs
-    ripgrep # grep++
-    ripgrep-all # ripgrep over docs, archives, etc
-    rmtrash # rm but to trash
-    trashy
-    tealdeer # tldr reimplementation: rust + xdg
-    devenv
+    rmtrash # `rmtrash`
+    trashy # `trash`
+    devenv # nix for retards
     eza # ls++
     watchman # another file watcher TODO try and compare to entr
-    wayidle # runs a command on idle
-    zellij # tmux++
+    wayidle # runs a command on idle (one-off, orthogonal to swayidle)
     expect # automating tuis
 
     # hardware
