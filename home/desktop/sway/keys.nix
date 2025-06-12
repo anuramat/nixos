@@ -18,6 +18,7 @@ let
   swappy = "swappy";
   wf-recorder = "wf-recorder";
   slurp = "slurp";
+  jq = "jq";
 
   books = ''exec ${killall} ${bemenu} || swaymsg exec "echo \"$(cd ${bookdir} && ${fd} -t f | ${bemenu} -p read -l 20)\" | xargs -rI{} ${zathura} '${bookdir}/{}'"'';
   drun = ''exec ${killall} ${bemenu} || swaymsg exec "$(${j4} -d '${bemenu} -p drun' -t ${term} -x --no-generic)"'';

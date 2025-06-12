@@ -1,4 +1,5 @@
-local copilot = require('plugins.adapters.llm.copilot')
+-- https://docs.github.com/en/copilot/managing-copilot/monitoring-usage-and-entitlements/about-premium-requests
+-- 300 premium requests per month
 local ollama = require('plugins.adapters.llm.ollama')
 
 local provider = 'copilot'
@@ -25,23 +26,10 @@ return {
       behaviour = {
         auto_suggestions = false,
       },
-      rag_service = { -- experimental: <https://github.com/yetone/avante.nvim/issues/1587>
-        -- implemented as a tool
-        -- runs on localhost:20250
-        -- BUG: 1. not reachable from outside; 2. docker logs full of shit (persist_dir is invalid): <https://github.com/yetone/avante.nvim/issues/1634>
-        -- NOTE do we need this? cline people (iirc) say we don't
-        enabled = false,
-      },
       providers = {
-        pollinations = {
-          __inherited_from = 'openai',
-          api_key_name = '',
-          endpoint = 'https://text.pollinations.ai/openai',
-          model = 'openai',
-        },
         ollama = ollama,
         copilot = {
-          model = copilot.claude40,
+          model = 'claude-sonnet-4',
         },
       },
       system_prompt = function()
@@ -50,19 +38,16 @@ return {
       end,
       custom_tools = function() return { require('mcphub.extensions.avante').mcp_tool() } end,
       windows = {
-        position = 'right', -- the position of the sidebar
+        position = 'bottom', -- the position of the sidebar
         wrap = true,
         width = 40,
-        sidebar_header = {
-          enabled = false, -- true, false to enable/disable the header
-        },
         input = {
           prefix = '',
-          height = 12, -- Height of the input window in vertical layout
+          height = 12,
         },
         edit = { start_insert = false },
         ask = {
-          floating = false, -- Open the 'AvanteAsk' prompt in a floating window
+          floating = true,
           start_insert = false,
         },
       },

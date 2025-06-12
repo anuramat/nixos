@@ -66,7 +66,6 @@
     # krita # raster graphics, digital art # XXX not in cache, takes ages to build
     inkscape-with-extensions # vector graphics
     # mypaint # not-ms-paint # XXX broken
-    swayimg # image viewer
     xfig # vector graphics, old as FUCK
     gimp-with-plugins # raster graphics
     darktable # lightroom

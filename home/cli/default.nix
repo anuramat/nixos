@@ -99,6 +99,7 @@
     };
 
     tealdeer = {
+      # tldr but rust+xdg
       enable = true;
       settings = {
         display = {
@@ -153,10 +154,11 @@
     };
 
     htop = {
+      # basic
       enable = true;
     };
-
     btop = {
+      # fav
       enable = true;
     };
 
