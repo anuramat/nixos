@@ -30,12 +30,11 @@ local null_sources = function() -- {{{1
     f.black,
     f.nixfmt,
     f.yamlfmt,
-    f.markdownlint,
+    f.mdformat,
     ormolu,
     -- diagnostics
     -- d.statix, -- TODO turn on when they introduce pipe operator
     d.protolint,
-    d.markdownlint,
     d.yamllint,
     -- actions
     a.statix,

@@ -41,7 +41,7 @@
     gofumpt # stricter go
     haskellPackages.ormolu
     html-tidy
-    markdownlint-cli # also, remark sounds promising
+    mdformat
     nixfmt-rfc-style
     nodePackages.prettier # just in case
     shfmt # posix/bash/mksh
