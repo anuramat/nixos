@@ -11,6 +11,7 @@
       "Bash(grep:*)", "Bash(rg:*)",
 
       "Bash(nix flake check:*)",
+      "Bash(devenv test:*)",
 
       "WebFetch", "WebSearch",
 
