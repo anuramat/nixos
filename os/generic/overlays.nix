@@ -17,6 +17,7 @@ let
 
   unstablePkgs = final: prev: {
     inherit (import inputs.nixpkgs-unstable { inherit (pkgs) config system; })
+      fuse-overlayfs
       github-mcp-server
       keymapp
       tgpt
