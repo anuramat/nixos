@@ -1,4 +1,5 @@
 {
+  "theme": "Tokyo Night Storm",
   "context_servers": {
     "NixOS": {
       "command": {
@@ -10,9 +11,50 @@
     }
   },
   "agent": {
+    "profiles": {
+      "write": {
+        "name": "Write",
+        "tools": {
+          "copy_path": true,
+          "create_directory": true,
+          "create_file": true,
+          "delete_path": true,
+          "diagnostics": true,
+          "edit_file": true,
+          "fetch": true,
+          "list_directory": true,
+          "move_path": true,
+          "now": true,
+          "find_path": true,
+          "read_file": true,
+          "grep": true,
+          "terminal": true,
+          "thinking": true,
+          "web_search": true
+        },
+        "enable_all_context_servers": true,
+        "context_servers": {
+          "NixOS": {
+            "tools": {
+              "home_manager_stats": false,
+              "nixos_channels": false,
+              "nixos_flakes_stats": false,
+              "nixos_stats": false,
+              "nixhub_package_versions": false,
+              "nixhub_find_version": false,
+              "darwin_stats": false,
+              "darwin_search": false,
+              "darwin_options_by_prefix": false,
+              "darwin_list_options": false,
+              "darwin_info": false
+            }
+          }
+        }
+      }
+    },
     "always_allow_tool_actions": true,
     "default_model": {
-      "model": "claude-sonnet-4",
+      "model": "gpt-4.1",
       "provider": "copilot_chat"
     },
     "preferred_completion_mode": "max",
@@ -31,7 +73,6 @@
   },
   "buffer_font_family": "Hack Nerd Font",
   "buffer_font_size": 17.333333333333332,
-  "theme": "Base16 Tokyo Night Dark",
   "ui_font_size": 17.333333333333332,
   "vim": {
     "default_mode": "normal",
