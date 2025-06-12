@@ -77,7 +77,11 @@
             { app_id = "Proton Pass"; }
           ];
         };
-        bars = [ ];
+        bars = [
+          {
+            command = "${pkgs.waybar}/bin/waybar";
+          }
+        ];
       };
       # TODO relative size
       extraConfig = # sway
