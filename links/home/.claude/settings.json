@@ -3,13 +3,16 @@
   "includeCoAuthoredBy": true,
   "permissions": {
     "allow": [
+      "Bash(awk:*)",
       "Bash(cargo:*)",
       "Bash(find:*)",
       "Bash(git commit:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)",
       "Bash(git status:*)",
+      "Bash(grep:*)",
       "Bash(ls:*)",
+      "Bash(nix:*)",
       "Bash(rg:*)",
       "Edit",
       "MultiEdit",
@@ -19,6 +22,8 @@
       "Write",
       "mcp__NixOS"
     ],
-    "deny": []
+    "deny": [
+      "Bash(git add:*)"
+    ]
   }
 }
