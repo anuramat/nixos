@@ -1,6 +1,7 @@
 {
   config,
   inputs,
+  pkgs,
   lib,
   ...
 }:
@@ -30,6 +31,25 @@
             [ -n "''${VERBOSE:+set}" ] && args+=(-print)
             run find "''${args[@]}"
           '';
+    };
+  };
+  # services.podman = {
+  #   settings.storage = {
+  #     storage.driver = "overlay";
+  #     storage.options.overlay.mount_program = "${pkgs.fuse-overlayfs}/bin/fuse-overlayfs";
+  #   };
+  # };
+  xdg.configFile = {
+    podman = {
+      text = # conf
+        ''
+          # magic stolen from <https://github.com/containers/podman/issues/11220> to speed up --userns=keep-id
+          [storage]
+          driver = "overlay"
+          [storage.options.overlay]
+          mount_program = "${pkgs.fuse-overlayfs}/bin/fuse-overlayfs"
+        '';
+      target = "containers/storage.conf";
     };
   };
 

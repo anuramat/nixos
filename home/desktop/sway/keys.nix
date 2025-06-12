@@ -1,40 +1,49 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 let
   # Terminal commands
   term = "exec foot";
   term_float = "exec foot -a foot-float -W 88x28";
 
   # Menu and applications
+  # TODO move package references here, remove from sys pkgs
   bookdir = "~/books";
   bemenu = "bemenu";
   zathura = "zathura";
   j4 = "j4-dmenu-desktop";
+  todo = "todo";
+  fd = "fd";
+  killall = "killall";
+  makoctl = "makoctl";
+  grim = "grim";
+  swappy = "swappy";
+  wf-recorder = "wf-recorder";
+  slurp = "slurp";
 
-  books = "exec killall ${bemenu} || swaymsg exec \"echo \\\"$(cd $bookdir && fd -t f | ${bemenu} -p read -l 20)\\\" | xargs -rI{} ${zathura} '$bookdir/{}'\"";
-  drun = "exec killall ${bemenu} || swaymsg exec \"$(${j4} -d '${bemenu} -p drun' -t $term -x --no-generic)\"";
-  todo_add = "exec killall ${bemenu} || swaymsg exec \"$(echo '' | ${bemenu} -p todo -l 0 | xargs -I{} todo add \\\"{}\\\")\"";
-  todo_done = "exec killall ${bemenu} || swaymsg exec \"$(todo ls | tac | ${bemenu} -p done | sed 's/^\\s*//' | cut -d ' ' -f 1 | xargs todo rm)\"";
+  books = ''exec ${killall} ${bemenu} || swaymsg exec "echo \"$(cd ${bookdir} && ${fd} -t f | ${bemenu} -p read -l 20)\" | xargs -rI{} ${zathura} '${bookdir}/{}'"'';
+  drun = ''exec ${killall} ${bemenu} || swaymsg exec "$(${j4} -d '${bemenu} -p drun' -t ${term} -x --no-generic)"'';
+  todo_add = ''exec ${killall} ${bemenu} || swaymsg exec "$(echo ''' | ${bemenu} -p ${todo} -l 0 | xargs -I{} ${todo} add \"{}\")"'';
+  todo_done = ''exec ${killall} ${bemenu} || swaymsg exec "$(${todo} ls | tac | ${bemenu} -p done | sed 's/^\s*//' | cut -d ' ' -f 1 | xargs ${todo} rm)"'';
   lock = "exec loginctl lock-session";
 
   # Notifications
-  invoke_notification = "exec makoctl invoke";
-  dismiss_notification = "exec makoctl dismiss";
-  dismiss_all_notifications = "exec makoctl dismiss --all";
+  invoke_notification = "exec ${makoctl} invoke";
+  dismiss_notification = "exec ${makoctl} dismiss";
+  dismiss_all_notifications = "exec ${makoctl} dismiss --all";
 
   # Screenshots
-  screenshot_mouse = "exec swaymsg -t get_tree | jq -r '.. | (.nodes? // empty)[] | select(.pid and .visible) | .rect | \"\\(.x),\\(.y) \\(.width)x\\(.height)\"' | slurp | xargs -I {} grim -g \"{}\" - | swappy -f -";
-  screenshot_focused_window = "exec swaymsg -t get_tree | jq -r '.. | (.nodes? // empty)[] | select(.focused) | .rect | \"\\(.x),\\(.y) \\(.width)x\\(.height)\"' | xargs -I {} grim -g \"{}\" - | swappy -f -";
-  screenshot_all_outputs = "exec grim - | swappy -f -";
-  screenshot_focused_output = "exec grim -o $(swaymsg -t get_outputs | jq -r '.[] | select(.focused) | .name') - | swappy -f -";
+  screenshot_mouse = "exec swaymsg -t get_tree | jq -r '.. | (.nodes? // empty)[] | select(.pid and .visible) | .rect | \"\\(.x),\\(.y) \\(.width)x\\(.height)\"' | ${slurp} | xargs -I {} ${grim} -g \"{}\" - | ${swappy} -f -";
+  screenshot_focused_window = "exec swaymsg -t get_tree | jq -r '.. | (.nodes? // empty)[] | select(.focused) | .rect | \"\\(.x),\\(.y) \\(.width)x\\(.height)\"' | xargs -I {} ${grim} -g \"{}\" - | ${swappy} -f -";
+  screenshot_all_outputs = "exec ${grim} - | ${swappy} -f -";
+  screenshot_focused_output = "exec ${grim} -o $(swaymsg -t get_outputs | ${jq} -r '.[] | select(.focused) | .name') - | ${swappy} -f -";
 
   # Screencasting
-  screencast_mouse = "exec swaymsg -t get_tree | jq -r '.. | (.nodes? // empty)[] | select(.pid and .visible) | .rect | \"\\(.x),\\(.y) \\(.width)x\\(.height)\"' | slurp | xargs -I {} wf-recorder -g \"{}\" -f \"~/vid/screen/$(date +%Y-%m-%d_%H-%M-%S).mp4\"";
-  screencast_stop = "exec killall wf-recorder";
+  screencast_mouse = "exec swaymsg -t get_tree | ${jq} -r '.. | (.nodes? // empty)[] | select(.pid and .visible) | .rect | \"\\(.x),\\(.y) \\(.width)x\\(.height)\"' | ${slurp} | xargs -I {} ${wf-recorder} -g \"{}\" -f \"~/vid/screen/$(date +%Y-%m-%d_%H-%M-%S).mp4\"";
+  screencast_stop = "exec ${killall} ${wf-recorder}";
 
   # Special keys - brightness
   brightness =
     let
-      l = v: "exec lightctl ${v}";
+      l = v: "exec ${pkgs.avizo}/bin/lightctl ${v}";
     in
     {
       up = l "up";
@@ -44,7 +53,7 @@ let
   # Special keys - sound
   sound =
     let
-      l = v: "exec volumectl ${v}";
+      l = v: "exec ${pkgs.avizo}/bin/volumectl ${v}";
     in
     {
       up = l "-u up";
@@ -56,7 +65,7 @@ let
   # Special keys - audio control
   audio =
     let
-      l = v: "exec playerctl -p spotify ${v}";
+      l = v: "exec ${pkgs.playerctl}/bin/playerctl -p spotify ${v}";
     in
     {
       prev = l "previous";
@@ -66,8 +75,8 @@ let
     };
 
   # Special keys - toggles
-  wlan = "exec wifi toggle";
-  bluetooth = "exec bluetooth toggle";
+  wlan = "exec ${pkgs.tlp}/bin/wifi toggle";
+  bluetooth = "exec ${pkgs.tlp}/bin/bluetooth toggle";
 
   inherit (config.wayland.windowManager.sway.config)
     down

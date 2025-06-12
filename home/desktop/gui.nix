@@ -8,7 +8,6 @@
     # essentials
     wdisplays # GUI kanshi config generator
     libnotify # notify-send etc
-    playerctl # cli media player controls
     mako # notifications - smaller than fnott and dunst
     waybar # status bar
 
