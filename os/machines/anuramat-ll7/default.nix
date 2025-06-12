@@ -9,6 +9,8 @@
   system.stateVersion = "24.05";
   home-manager.users.${user.username}.home.stateVersion = "24.11";
 
+  programs.captive-browser.interface = "wlp0s20f3";
+
   # tis a big boy
   nix.distributedBuilds = false;
 
