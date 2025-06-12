@@ -3,23 +3,17 @@
   "includeCoAuthoredBy": true,
   "permissions": {
     "allow": [
-      "Bash(awk:*)",
-      "Bash(cargo:*)",
-      "Bash(find:*)",
+      "Bash(git status:*)", "Bash(git diff:*)", "Bash(git log:*)",
       "Bash(git commit:*)",
-      "Bash(git diff:*)",
-      "Bash(git log:*)",
-      "Bash(git status:*)",
-      "Bash(grep:*)",
+
       "Bash(ls:*)",
-      "Bash(nix:*)",
-      "Bash(rg:*)",
-      "Edit",
-      "MultiEdit",
-      "NotebookEdit",
-      "WebFetch",
-      "WebSearch",
-      "Write",
+      "Bash(find:*)", "Bash(fd:*)",
+      "Bash(grep:*)", "Bash(rg:*)",
+
+      "Bash(nix flake check:*)",
+
+      "WebFetch", "WebSearch",
+
       "mcp__NixOS"
     ],
     "deny": [
