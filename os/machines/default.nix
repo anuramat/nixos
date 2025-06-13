@@ -20,7 +20,7 @@ let
       server = meta.server;
       desktop = !server;
       platform = config.nixpkgs.hostPlatform.system;
-      cacheKey = if builder then readFile (path + "/${cacheFilename}") else null;
+      cacheKey = readFile (path + "/${cacheFilename}");
       clientKeyFiles = (
         readDir path
         |> attrNames
@@ -63,6 +63,6 @@ in
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINBre248H/l0+aS5MJ+nr99m10g44y+UsaKTruszS6+D anuramat-ipad"
       ];
       hostKeysFiles = otherMachines |> map (x: x.hostKeysFile);
-      trusted-public-keys = builders |> map (x: x.cacheKey) |> filter (x: x != null);
+      trusted-public-keys = otherMachines |> map (x: x.cacheKey) |> filter (x: x != null);
     };
 }
