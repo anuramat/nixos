@@ -2,7 +2,7 @@
 .SILENT:
 MAKEFLAGS += --always-make
 
-all: flake links code mcp
+all: flake links mcp lint
 flake:
 	sudo true
 	./scripts/heading.sh "Copying public keys"
@@ -25,53 +25,20 @@ init:
 	./scripts/heading.sh "Generating keys"
 	./scripts/keygen.sh
 	./scripts/heading.sh "Great success"
-code: nix lua sh
-	./scripts/heading.sh "Great success"
-nvim:
-	nix run --option builders '' --option substituters '' .#nvim
 mcp:
 	jq --slurpfile mcp ./mcp.json '.mcpServers = $$mcp[0]' ~/.claude.json | sponge ~/.claude.json
+nvim:
+	nix run --option builders '' --option substituters '' .#nvim
 
-
-# python {{{1
-python: pythonfmt
-pythonfmt:
-	./scripts/heading.sh "Formatting Python"
-	black -q .
-
-# nix {{{1
-nix: nixfmt nixlint
-nixfmt:
-	./scripts/heading.sh "Formatting Nix"
-	nixfmt $(shell fd -e nix)
-nixlint:
+lint:
 	./scripts/heading.sh "Checking Nix"
 	echo Skipping nix linters due to lack of pipe operator support
 	# statix check -i hardware-configuration.nix || true
 	# deadnix || true
-
-# lua {{{1
-lua: luafmt lualint
-luafmt:
-	./scripts/heading.sh "Formatting Lua"
-	stylua .
-lualint:
 	./scripts/heading.sh "Checking Lua"
 	luacheck . --codes --globals=vim -q | head -n -1
-
-# shell {{{1
-sh: shfmt shlint
-shfmt:
-	./scripts/heading.sh "Formatting shell"
-	./scripts/shrun.sh shfmt --write --simplify --case-indent --binary-next-line --space-redirects
-shlint:
 	./scripts/heading.sh "Checking shell"
 	./scripts/shrun.sh shellcheck --color=always -o all
-
-# misc {{{1
-misc: misclint miscfmt
-misclint:
+	./scripts/heading.sh "Yaml"
 	yamllint . || true
 	checkmake Makefile
-miscfmt:
-	yamlfmt .
