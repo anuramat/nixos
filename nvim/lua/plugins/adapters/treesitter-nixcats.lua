@@ -81,7 +81,7 @@ return {
         -- separator = '―', -- Separator between context and content. nil or a single character
         zindex = 20, -- The Z-index of the context window
       })
-      
+
       vim.api.nvim_create_autocmd('FileType', {
         callback = function(ev)
           if vim.treesitter.language.add(ev.match) then

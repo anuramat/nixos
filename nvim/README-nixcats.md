@@ -1,13 +1,15 @@
 # NixCats + lze Migration
 
-This directory contains the migrated Neovim configuration using [nixcats](https://nixcats.org/) and [lze](https://github.com/BirdeeHub/lze) instead of lazy.nvim.
+This directory contains the migrated Neovim configuration using
+[nixcats](https://nixcats.org/) and [lze](https://github.com/BirdeeHub/lze)
+instead of lazy.nvim.
 
 ## Structure
 
 ### Key Files
 
 - `init.lua` - Main entry point, detects nixcats vs fallback to lazy.nvim
-- `flake.nix` - Standalone nixcats flake (alternative approach)  
+- `flake.nix` - Standalone nixcats flake (alternative approach)
 - `lua/plugins/nixcats.lua` - Main plugin loader using lze
 - `lua/plugins/adapters/*-nixcats.lua` - Migrated adapter configs
 - `lua/plugins/core/*-nixcats.lua` - Migrated core plugin configs
@@ -32,7 +34,7 @@ This directory contains the migrated Neovim configuration using [nixcats](https:
 ### 🚧 TODO
 
 - DAP (debugging) configuration
-- TreeSitter configuration  
+- TreeSitter configuration
 - Language-specific configurations
 - LLM/AI plugins (copilot, avante)
 - Jupyter/data science plugins
@@ -72,16 +74,16 @@ lazy.nvim otherwise, allowing gradual testing.
 ## Benefits
 
 1. **Reproducible**: All plugins managed by Nix
-2. **Faster startup**: No plugin downloads at runtime
-3. **Better dependency management**: LSP servers, formatters included
-4. **Declarative**: Plugin versions pinned in flake.lock
-5. **Modular**: Categories allow different configurations per machine
+1. **Faster startup**: No plugin downloads at runtime
+1. **Better dependency management**: LSP servers, formatters included
+1. **Declarative**: Plugin versions pinned in flake.lock
+1. **Modular**: Categories allow different configurations per machine
 
 ## Plugin Categories
 
 - `general`: Core plugins always loaded
 - `treesitter`: Syntax highlighting and text objects
-- `git`: Git integration plugins  
+- `git`: Git integration plugins
 - `lazy`: Plugins that can be lazy-loaded with lze
 
 ## Notes

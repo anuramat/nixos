@@ -63,9 +63,7 @@ return {
   },
   {
     'otter.nvim',
-    after = function()
-      require('otter').setup({})
-    end,
+    after = function() require('otter').setup({}) end,
     keys = u.wrap_lazy_keys({
       { 'o', function(m) m.activate() end, 'activate' },
       { 'O', function(m) m.deactivate() end, 'deactivate' },

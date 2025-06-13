@@ -5,9 +5,7 @@ return {
   -- find and replace
   {
     'grug-far.nvim',
-    after = function()
-      require('grug-far').setup({})
-    end,
+    after = function() require('grug-far').setup({}) end,
     cmd = { 'GrugFar', 'GrugFarWithin' },
   },
   -- task runner (tasks.json, dap integration, etc)
@@ -30,9 +28,7 @@ return {
     event = 'VeryLazy',
     'sniprun',
     build = 'sh install.sh',
-    after = function()
-      require('sniprun').setup({})
-    end,
+    after = function() require('sniprun').setup({}) end,
   },
   -- harpoon - project-local file marks
   {

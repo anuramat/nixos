@@ -14,7 +14,7 @@ return {
     'nvim-dap',
     after = function()
       require('nvim-dap-virtual-text').setup({})
-      
+
       -- some of these are used in catppuccin
       local sign = vim.fn.sign_define
       sign('DapBreakpoint', { text = '', texthl = 'DapBreakpoint', linehl = '', numhl = '' })

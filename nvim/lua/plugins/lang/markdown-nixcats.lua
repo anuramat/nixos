@@ -19,9 +19,7 @@ return {
   },
   {
     'nvim-FeMaco.lua',
-    after = function()
-      require('femaco').setup({})
-    end,
+    after = function() require('femaco').setup({}) end,
     keys = {
       { '<localleader>e', '<cmd>FeMaco<cr>', ft = 'markdown', desc = 'Edit Code Block' },
     },

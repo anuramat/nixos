@@ -31,7 +31,9 @@ TODO, but long story short:
 
 ### Builder setup
 
-- sshKey and sshUser in nix.buildMachines are ignored: <https://github.com/NixOS/nix/issues/3423>
+- sshKey and sshUser in nix.buildMachines are ignored:
+  <https://github.com/NixOS/nix/issues/3423>
+
 - for now add those to /root/.ssh/config:
 
   ```ssh_config
