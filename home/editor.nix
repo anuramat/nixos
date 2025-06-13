@@ -46,7 +46,6 @@ let
   ];
 in
 {
-  imports = [ inputs.nvf.homeManagerModules.default ];
   programs = {
     helix = {
       enable = true;

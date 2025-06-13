@@ -54,7 +54,7 @@
     },
     "always_allow_tool_actions": true,
     "default_model": {
-      "model": "gpt-4.1",
+      "model": "claude-sonnet-4",
       "provider": "copilot_chat"
     },
     "preferred_completion_mode": "max",

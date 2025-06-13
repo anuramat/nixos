@@ -1,6 +1,65 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
   config.vim = {
+    keymaps =
+      let
+  inherit (lib.nvim.binds) mkKeymap;
+        mkmap =
+          key: subcmd:
+          (mkKeymap "n" "<leader>f${key}" "<cmd>FzfLua ${subcmd}<cr>" { desc = "fzf: ${subcmd}"; });
+      in
+      [
+        # { RIPGREP_CONFIG_PATH = "vim.env.RIPGREP_CONFIG_PATH"; fd_opts = "-c never -t f -HL"; multiline = 2; }
+        # { files = { 1 = true; ctrl-q = { fn = "require('fzf-lua').actions.file_sel_to_qf"; prefix = "select-all"; }; }; }
+        # { 'G', 'grep' }, -- useful on large projects
+        (mkmap "o" "files")
+        (mkmap "O" "oldfiles")
+        (mkmap "a" "args")
+        (mkmap "b" "buffers")
+        (mkmap "m" "marks")
+
+        (mkmap "/" "curbuf")
+        (mkmap "g" "live_grep")
+        (mkmap "G" "grep_last")
+
+        (mkmap "d" "diagnostics_document")
+        (mkmap "D" "diagnostics_workspace")
+        (mkmap "s" "lsp_document_symbols")
+        (mkmap "S" "lsp_workspace_symbols")
+        (mkmap "t" "treesitter")
+
+        (mkmap "r" "resume")
+        (mkmap "h" "helptags")
+        (mkmap "k" "keymaps")
+        (mkmap "p" "builtin")
+
+        (mkKeymap "n" "<C-x><C-f>"
+          ''
+            function()
+              require('fzf-lua').complete_file({
+                cmd = 'fd -t f -HL',
+                winopts = { preview = { hidden = 'nohidden' } },
+              })
+            end
+          ''
+          {
+            desc = "path completion";
+            lua = true;
+          }
+        )
+      ];
+
+    luaConfigPost = # lua
+      ''
+        vim.cmd('runtime ${./base.vim}')
+        vim.diagnostic.config({
+          severity_sort = true,
+          update_in_insert = true,
+          signs = false,
+        })
+        vim.deprecate = function() end
+      '';
+
     # why two?
     # treesitter.autotagHtml = true;
     # languages.html.treesitter.autotagHtml = true;
@@ -28,7 +87,10 @@
       textobjects.enable = true;
     };
     utility = {
-      images.image-nvim.enable = true;
+      images.image-nvim = {
+      enable = true;
+      setupOpts.backend = "kitty";
+      };
       outline.aerial-nvim.enable = true;
       diffview-nvim.enable = true;
       oil-nvim.enable = true;
