@@ -1,0 +1,28 @@
+walk = "git"
+
+[formatter.nix]
+command = "nixfmt"
+includes = [ "*.nix" ]
+
+[formatter.lua]
+command = "stylua"
+includes = [ "*.lua" ]
+
+[formatter.shell]
+includes = [ "*.sh" ]
+command = "shfmt"
+options = [ "--write", "--simplify", "--case-indent", "--binary-next-line", "--space-redirects" ]
+
+[formatter.yaml]
+includes = [ "*.yaml" ]
+command = "yamlfmt"
+
+[formatter.python]
+command = "black"
+includes = [ "*.py" ]
+options = [ "-q" ]
+
+[formatter.markdown]
+command = "mdformat"
+options = [ "--wrap", "80" ]
+includes = [ "*.md" ]
