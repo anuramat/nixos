@@ -52,8 +52,28 @@ in
       enable = true;
       settings = {
         vim = {
+
           filetree.neo-tree.enable = true;
+
+          mini.ai.enable = true;
+          treesitter.context.enable = true;
+          treesitter.textobjects.enable = true;
+
+          # why two?
+          # treesitter.autotagHtml = true;
+          # languages.html.treesitter.autotagHtml = true;
+          visuals.rainbow-delimiters.enable = true;
+          utility.diffview-nvim.enable = true;
+          git.gitlinker-nvim.enable = true;
+          git.gitsigns.enable = true;
+          git.vim-fugitive.enable = true;
+
+          utility.oil-nvim.enable = true;
+          utility.surround.enable = true;
+          mini.bracketed.enable = true;
+          lazy.enable = true;
           fzf-lua.enable = true;
+          formatter.conform-nvim.enable = true;
           mini.align.enable = true;
           notes.todo-comments.enable = true;
           ui.colorizer.enable = true;
@@ -126,3 +146,22 @@ in
     zed-editor
   ];
 }
+# # missing:
+# treesj
+# ts-comments-nvim
+# dressing-nvim
+# undotree
+# SchemaStore-nvim
+# clangd_extensions-nvim
+# molten-nvim
+# jupytext-nvim
+# quarto-nvim
+# nvim-dap-virtual-text
+# overseer-nvim
+# grug-far-nvim
+# vim-table-mode
+# figtree-nvim
+# mcphub-nvim
+# mdmath-nvim
+# namu-nvim
+# wastebin-nvim
