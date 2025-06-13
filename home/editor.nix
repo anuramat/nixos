@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 let
   # TODO nixcats or nvf
   moltenLua = ps: [
@@ -46,7 +46,24 @@ let
   ];
 in
 {
+  imports = [ inputs.nvf.nixosModules.default ];
   programs = {
+    programs.nvf = {
+      enable = true;
+      # your settings need to go into the settings attribute set
+      # most settings are documented in the appendix
+      settings = {
+        vim = {
+          fzf-lua.enable = true;
+          # package =
+          viAlias = false;
+          vimAlias = false;
+          lsp = {
+            enable = true;
+          };
+        };
+      };
+    };
     neovim = {
       enable = true;
       defaultEditor = true;

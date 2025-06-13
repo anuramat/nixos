@@ -19,6 +19,12 @@
     nil.url = "github:oxalica/nil/main";
     nixCats.url = "github:BirdeeHub/nixCats-nvim";
     codex.url = "github:anuramat/codex";
+     nvf = {
+      url = "github:notashelf/nvf";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+
   };
   outputs =
     inputs:
