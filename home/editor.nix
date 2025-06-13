@@ -46,7 +46,7 @@ let
   ];
 in
 {
-  imports = [ inputs.nvf.nixosModules.default ];
+  imports = [ inputs.nvf.homeManagerModules.default ];
   programs = {
     programs.nvf = {
       enable = true;
@@ -134,7 +134,7 @@ in
       };
     };
     neovim = {
-      enable = true;
+      enable = false;
       defaultEditor = true;
       extraLuaPackages = moltenLua;
       extraPackages =
