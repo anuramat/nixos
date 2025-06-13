@@ -50,17 +50,48 @@ in
   programs = {
     programs.nvf = {
       enable = true;
-      # your settings need to go into the settings attribute set
-      # most settings are documented in the appendix
       settings = {
         vim = {
+          filetree.neo-tree.enable = true;
           fzf-lua.enable = true;
-          # package =
-          viAlias = false;
-          vimAlias = false;
+          mini.align.enable = true;
+          notes.todo-comments.enable = true;
+          ui.colorizer.enable = true;
+          visuals.fidget-nvim.enable = true;
+
+          languages = {
+            haskell.enable = true;
+          };
+
+          autocomplete.blink-cmp = {
+            enable = true;
+            friendly-snippets.enable = true;
+          };
+
           lsp = {
             enable = true;
+            lspconfig.enable = true;
+            lightbulb.enable = true;
+            otter-nvim.enable = true;
           };
+
+          utility = {
+            images.image-nvim.enable = true;
+            outline.aerial-nvim.enable = true;
+          };
+
+          debugger.nvim-dap = {
+            enable = true;
+            ui.enable = true;
+          };
+
+          assistant = {
+            avante-nvim.enable = true;
+            copilot.enable = true;
+          };
+
+          viAlias = false;
+          vimAlias = false;
         };
       };
     };

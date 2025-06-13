@@ -52,47 +52,26 @@ let
       optionalPlugins = {
         lazy = with pkgs.vimPlugins; [
           # UI and Navigation
-          aerial-nvim
           dressing-nvim
-          flash-nvim # unused
-          fzf-lua
-          harpoon2 # unused
-          neo-tree-nvim # unused XXX conf
-          nvim-colorizer-lua
           undotree
 
           # Completion and LSP
-          blink-cmp
-          friendly-snippets
-          nvim-lspconfig
-          nvim-lightbulb
-          fidget-nvim
           SchemaStore-nvim
 
           # Language specific
           clangd_extensions-nvim
-          haskell-tools-nvim
 
           # AI
-          copilot-lua
-          avante-nvim
 
           # Jupyter
           molten-nvim
           jupytext-nvim
-          otter-nvim
           quarto-nvim
-          image-nvim
 
           # Debugging
-          # XXX unused; conf check
-          nvim-dap
-          nvim-dap-ui
           nvim-dap-virtual-text
 
           # Utilities
-          todo-comments-nvim
-          mini-align
           overseer-nvim
           grug-far-nvim
           vim-table-mode
