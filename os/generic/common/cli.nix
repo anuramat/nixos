@@ -11,6 +11,7 @@
     man-pages
     man-pages-posix
     manix # nix doc search with caching
+    nix-index # search for files in in derivations
 
     # minimal set of tools
     bc # simple calculator

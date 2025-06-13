@@ -41,7 +41,6 @@ in
 
     settings = {
       secret-key-files = "/etc/nix/cache.pem";
-      # how the fuck is this not default BUG
       fallback = true;
       experimental-features = [
         "nix-command"
@@ -80,8 +79,4 @@ in
       protocol = "ssh-ng";
     }) cluster.builders;
   };
-
-  environment.systemPackages = [
-    pkgs.nix-index
-  ];
 }
