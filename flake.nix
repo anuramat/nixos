@@ -25,10 +25,17 @@
     };
   };
   outputs =
-    inputs:
+    {
+      nixpkgs,
+      self,
+      nixpkgs-old,
+      home-manager,
+      nvf,
+      ...
+    }@inputs:
     let
 
-      inherit (inputs.nixpkgs) lib;
+      inherit (nixpkgs) lib;
       epsilon = with builtins; path: path |> readDir |> attrNames |> filter (a: a != "default.nix");
       inherit
         ((import ./os/machines) {
@@ -59,9 +66,9 @@
             # {{{1
             old =
               let
-                pkgscfg = inputs.self.nixosConfigurations.${name}.config.nixpkgs;
+                pkgscfg = self.nixosConfigurations.${name}.config.nixpkgs;
               in
-              import inputs.nixpkgs-old {
+              import nixpkgs-old {
                 inherit (pkgscfg) config;
                 inherit (pkgscfg.hostPlatform) system;
               };
@@ -101,14 +108,28 @@
           value = mkSystem hostname;
         })
         |> builtins.listToAttrs;
-      homeConfigurations.${user.username} = inputs.home-manager.lib.homeManagerConfiguration {
+      homeConfigurations.${user.username} = home-manager.lib.homeManagerConfiguration {
         specialArgs = commonArgs;
+
+        # TODO stylix module sharing between home-manager and nixos
         modules = [
           ./home
           ./common
+          (
+            { pkgs, ... }:
+            {
+              home.packages = [ self.packages.${pkgs.stdenv.system}.neovim ];
+            }
+          )
         ];
       };
-    }
-    // import ./nvim inputs;
+      packages.x86_64-linux.neovim =
+        (nvf.lib.neovimConfiguration {
+          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          modules = [
+            ./nvf
+          ];
+        }).neovim;
+    };
 }
 # vim: fdl=0 fdm=marker
