@@ -1,50 +1,35 @@
-# friendly snippets
-# none-ls
-# ? nvim-nio?
-# vim-sleuth?
+# TODO tidy up deps
 {
   nixCats,
+  nixpkgs-unstable,
   ...
-}@inputs:
+}:
 let
-  inherit (inputs.nixCats) utils;
-  nixpkgs = inputs.nixpkgs-unstable;
-  luaPath = "${./.}";
-  forEachSystem = utils.eachSystem nixpkgs.lib.platforms.all;
-
-  # Define categories of plugins and dependencies
   categoryDefinitions =
     {
       pkgs,
-      settings,
-      categories,
-      name,
       ...
     }:
     {
-      # Plugins that are always loaded at startup
       startupPlugins = with pkgs.vimPlugins; {
         general = [
-          lsp-format-nvim
+          base16-nvim
+          lsp-format-nvim # todo replace conform
           lze
           mini-bracketed
-          nui-nvim
           nvim-surround
-          nvim-web-devicons
           oil-nvim
-          plenary-nvim
-          ts-comments-nvim
-          vim-eunuch
-          vim-fetch
-          base16-nvim
         ];
 
         treesitter = [
+          mini-ai
           nvim-treesitter-context
           nvim-treesitter-textobjects
           nvim-treesitter.withAllGrammars
           nvim-ts-autotag
           rainbow-delimiters-nvim
+          treesj
+          ts-comments-nvim
         ];
 
         git = [
@@ -53,63 +38,6 @@ let
           gitsigns-nvim
           neogit
           vim-fugitive
-        ];
-
-        lazy = [
-
-          # UI and Navigation
-          aerial-nvim
-          fzf-lua
-          neo-tree-nvim
-          harpoon2
-          flash-nvim
-          undotree
-
-          # Completion and LSP
-          blink-cmp
-          nvim-lspconfig
-          nvim-lightbulb
-          fidget-nvim
-          lazydev-nvim
-          SchemaStore-nvim
-
-          # Language specific
-          clangd_extensions-nvim
-          haskell-tools-nvim
-
-          # AI/LLM
-          copilot-lua
-          avante-nvim
-
-          # Jupyter/Data Science
-          molten-nvim
-          # jupytext-nvim  # May not be in nixpkgs yet
-          otter-nvim
-          quarto-nvim
-          image-nvim
-
-          # Debugging
-          nvim-dap
-          nvim-dap-ui
-          nvim-dap-virtual-text
-
-          # Utilities
-          todo-comments-nvim
-          nvim-colorizer-lua
-          treesj
-          mini-ai
-          mini-align
-          dressing-nvim
-          overseer-nvim
-          grug-far-nvim
-          sniprun
-          nvim-FeMaco-lua
-          vim-table-mode
-          # figtree-nvim
-          # mcphub-nvim
-          # mdmath-nvim
-          # namu-nvim
-          # wastebin-nvim
         ];
       };
 
@@ -120,13 +48,66 @@ let
           ];
       };
 
-      # # Plugins that can be lazy-loaded
-      # optionalPlugins = {
-      #   lazy = [
-      #   ];
-      # };
+      # Plugins that can be lazy-loaded
+      optionalPlugins = {
+        lazy = with pkgs.vimPlugins; [
+          # UI and Navigation
+          aerial-nvim
+          dressing-nvim
+          flash-nvim # unused
+          fzf-lua
+          harpoon2 # unused
+          neo-tree-nvim # unused XXX conf
+          nvim-colorizer-lua
+          undotree
+
+          # Completion and LSP
+          blink-cmp
+          friendly-snippets
+          nvim-lspconfig
+          nvim-lightbulb
+          fidget-nvim
+          SchemaStore-nvim
+
+          # Language specific
+          clangd_extensions-nvim
+          haskell-tools-nvim
+
+          # AI
+          copilot-lua
+          avante-nvim
+
+          # Jupyter
+          molten-nvim
+          jupytext-nvim
+          otter-nvim
+          quarto-nvim
+          image-nvim
+
+          # Debugging
+          # XXX unused; conf check
+          nvim-dap
+          nvim-dap-ui
+          nvim-dap-virtual-text
+
+          # Utilities
+          todo-comments-nvim
+          mini-align
+          overseer-nvim
+          grug-far-nvim
+          vim-table-mode
+
+          # # Not there yet
+          # figtree-nvim
+          # mcphub-nvim
+          # mdmath-nvim
+          # namu-nvim
+          # wastebin-nvim
+        ];
+      };
 
       # LSP servers, formatters, linters, and other runtime dependencies
+      # todo triple check
       general = with pkgs; [
         # LSP servers
         lua-language-server
@@ -145,14 +126,12 @@ let
         typescript-language-server
         stylelint-lsp
 
-        # Formatters
-        stylua
-        nixfmt-rfc-style
-
         # Tools
         ripgrep
         fd
         fzf
+
+        # Write down where this is coming from
         imagemagick
         librsvg
 
@@ -162,19 +141,15 @@ let
         python3Packages.jupytext
       ];
 
-      # Environment variables and settings
-      environmentVariables = {
-        general = {
-          NVIM_CONFIG_TYPE = "nixcats";
-        };
-      };
-
       # Extra python packages for molten/jupyter
       python3.libraries = {
         general =
           ps: with ps; [
+            # TODO mention where this is from
             cairosvg
+            jupyter
             jupyter-client
+            jupytext
             kaleido
             matplotlib
             nbformat
@@ -203,7 +178,6 @@ let
     nvim-minimal = _: {
       settings = {
         wrapRc = true;
-        configDirName = "nvim";
       };
       categories = {
         general = true;
@@ -213,22 +187,18 @@ let
       };
     };
   };
-
   buildNeovim =
     system:
     let
-      dependencyOverlays = [ ];
-      nixCatsBuilder = utils.baseBuilder luaPath {
-        inherit nixpkgs system dependencyOverlays;
-        extra_pkg_config = {
-          allowUnfree = true;
-        };
+      nixCatsBuilder = nixCats.utils.baseBuilder "${./.}" {
+        inherit system;
+        nixpkgs = nixpkgs-unstable;
       } categoryDefinitions packageDefinitions;
     in
     {
       packages = builtins.mapAttrs (n: v: nixCatsBuilder n) packageDefinitions;
     };
 in
-forEachSystem buildNeovim
+(nixCats.utils.eachSystem nixpkgs-unstable.lib.platforms.all) buildNeovim
 
 # vim: fdl=3

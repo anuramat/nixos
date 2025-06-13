@@ -65,6 +65,7 @@
         "venv/"
         "/.aider*"
         "/.claude/settings.local.json"
+        ".pytest_cache"
 
         # pytorch lightning
         "*.ckpt"

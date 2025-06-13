@@ -1,7 +1,34 @@
 -- vim: fdl=0 fdm=marker
 
 -- haskell formatter {{{1
--- TODO contrib
+
+-- require("conform").setup({
+--   formatters_by_ft = {
+--     lua = { "stylua" },
+--     -- Conform will run multiple formatters sequentially
+--     python = { "isort", "black" },
+--     -- You can customize some of the format options for the filetype (:help conform.format)
+--     rust = { "rustfmt", lsp_format = "fallback" },
+--     -- Conform will run the first available formatter
+--     javascript = { "prettierd", "prettier", stop_after_first = true },
+--   },
+-- })
+
+local function ormolu()
+  local null_ls = require('null-ls')
+  local helpers = require('null-ls.helpers')
+  null_ls.register({
+    name = 'mdformat',
+    method = null_ls.methods.FORMATTING,
+    filetypes = { 'markdown' },
+    generator = helpers.formatter_factory({
+      to_stdin = true,
+      command = 'ormolu',
+      args = { '--stdin-input-file', '.' },
+    }),
+  })
+end
+
 local function ormolu()
   local null_ls = require('null-ls')
   local helpers = require('null-ls.helpers')

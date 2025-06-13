@@ -23,6 +23,9 @@
 - Don't write too much code -- try to be as concise as possible.
 - When making architecture decisions, go for minimalism.
 - Only add comments where descriptive names are not enough.
+- After finishing the task you were assigned, you MUST check that the code
+  compiles and runs. If it doesn't, you MUST NOT ask if the user wants you to
+  fix the problem; instead, you MUST immediately start working on a solution.
 
 ## Nix
 
