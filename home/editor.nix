@@ -92,6 +92,18 @@ in
 
           languages = {
             haskell.enable = true;
+            nix.enable = true;
+            python.enable = true;
+            lua.enable = true;
+            markdown.enable = true;
+
+            go.enable = true;
+            bash.enable = true;
+            json.enable = true;
+            yalm.enable = true;
+            html.enable = true;
+            clang.enable = true;
+
           };
 
           autocomplete.blink-cmp = {
