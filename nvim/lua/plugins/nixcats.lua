@@ -1,7 +1,5 @@
--- nixcats plugin loader using lze
 local u = require('utils.helpers')
 
--- Load lze for lazy loading
 vim.g.lze = {
   verbose = false,
   load = vim.cmd.packadd,
