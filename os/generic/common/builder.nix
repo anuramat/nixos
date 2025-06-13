@@ -21,8 +21,5 @@ lib.mkIf (!config.nix.distributedBuilds) {
   services.openssh.settings.AllowUsers = [
     cluster.builderUsername
   ];
-  # sign the derivations so that we can use the builder as a cache
-  # unsigned derivations don't get saved to nix store (evidently, but not 100% sure)
-  nix.settings.secret-key-files = "/etc/nix/cache.pem";
   # NOTE might wanna add gc and autoUpgrade later
 }

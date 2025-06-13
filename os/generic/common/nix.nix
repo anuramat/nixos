@@ -40,6 +40,7 @@ in
     # note that input names matter now
 
     settings = {
+      secret-key-files = "/etc/nix/cache.pem";
       # how the fuck is this not default BUG
       fallback = true;
       experimental-features = [
@@ -78,7 +79,6 @@ in
       system = x.platform;
       protocol = "ssh-ng";
     }) cluster.builders;
-
   };
 
   environment.systemPackages = [
