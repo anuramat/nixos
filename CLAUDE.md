@@ -45,10 +45,10 @@ The system automatically creates a cluster of all machines with:
 ### Primary Development Workflow
 
 ```bash
-make all          # Full rebuild: flake + links + code quality checks
+make all          # Full rebuild: flake + links + linting
 make flake        # Core system rebuild (copy keys + nixos-rebuild switch)
 make links        # Install symlinks from links/ directory structure
-make code         # Run all formatting and linting (nix + lua + shell + misc)
+make lint         # Run linting checks (nix + lua + shell + yaml)
 make nvim         # Run standalone Neovim with full configuration
 ```
 
@@ -67,11 +67,11 @@ sudo tailscale up "--operator=$(whoami)"
 ### Code Quality Tools
 
 ```bash
-make nix          # Format with nixfmt (linting disabled due to pipe operators)
-make lua          # Format with stylua + lint with luacheck
-make sh           # Format with shfmt + lint with shellcheck
-make misc         # YAML formatting and linting (yamlfmt + yamllint + checkmake)
-make code         # Run all formatting and linting tools (nix + lua + sh + misc)
+make lint         # Run all linting checks (nix + lua + shell + yaml + misc)
+                  # - Nix linting disabled due to pipe operator support issues
+                  # - Lua linting with luacheck
+                  # - Shell linting with shellcheck  
+                  # - YAML validation with yamllint and checkmake
 ```
 
 ### Testing and Validation
@@ -86,11 +86,11 @@ sudo nixos-rebuild switch --option extra-experimental-features pipe-operators --
 ### Nix Flake Inputs
 
 - Multiple nixpkgs channels (stable 25.05, unstable, old 24.11)
-- Home Manager (release-25.05) for user configurations
+- Home Manager (release-25.05) for user configurations  
 - Stylix (release-25.05) for system-wide theming
 - Hardware-specific modules (nixos-hardware)
 - Custom packages (subcat, ctrlsn, mcp-nixos)
-- Development tools (neovim-nightly-overlay, nil, nixCats)
+- Development tools (neovim-nightly-overlay, nil, nvf)
 
 ### Desktop Environment (Local Machines)
 
@@ -101,12 +101,11 @@ sudo nixos-rebuild switch --option extra-experimental-features pipe-operators --
 
 ### Development Tools
 
-- **Neovim**: Built with nixCats, featuring LSP, DAP, TreeSitter, and
-  lazy-loaded plugins
+- **Neovim**: Built with nvf (neovim flake framework), featuring LSP, DAP, TreeSitter, and plugins
   - Full configuration: `make nvim` (includes all features)
-  - Minimal configuration: `nvim-minimal` (for servers)
-  - Jupyter integration with Molten, Quarto, and Otter
-  - Modern completion with Blink.cmp replacing nvim-cmp
+  - Declarative configuration in `nvf/default.nix` using nvf modules
+  - Legacy nixCats configuration preserved in `legacyNvimConfig/`
+  - FzfLua integration for fuzzy finding with custom keymaps
 - **Shell**: Bash with FZF, Zoxide, custom functions and aliases
 - **Languages**: Comprehensive support for Nix, Lua, Go, Haskell, Python (with
   MCP), etc.
@@ -145,9 +144,8 @@ When adapting this configuration:
 
 ### Application Configurations
 
-- `links/config/`: Dotfiles and application configs (Neovim, Jupyter, shell,
-  etc.)
-- `links/bin/`: Custom scripts and utilities (aider, todo, etc.)
+- `links/config/`: Dotfiles and application configs (Jupyter, shell, etc.)
+- `links/bin/`: Custom scripts and utilities (aider, todo, lua-to-nix, etc.)
 - `links/home/`: User home directory symlinks including Claude Code
   configuration
 - `home/`: Home Manager modules for user environment
@@ -159,7 +157,8 @@ When adapting this configuration:
 - `os/generic/common/`: Core system packages and services
 - `os/machines/`: Per-machine hardware and specific settings
 - `helpers/`: Utility functions used across configurations
-- `nvim/`: Complete Neovim configuration with nixCats integration
+- `nvf/`: Neovim configuration using nvf framework
+- `legacyNvimConfig/`: Preserved nixCats-based Neovim configuration
 
 ### Scripts and Maintenance
 
@@ -186,12 +185,11 @@ The repository currently manages three machines:
 
 ### Neovim Configuration Structure
 
-- Built using nixCats framework for reproducible plugin management
-- Plugin categories: `general`, `treesitter`, `git`, `lazy`
-- Two variants: full (`nvim`) and minimal (`nvim-minimal`)
-- Lua configuration in `nvim/lua/` with modular plugin loading
-- Modern completion system using Blink.cmp instead of nvim-cmp
-- Enhanced git integration with Neogit, Fugitive, Gitsigns, and Diffview
+- Built using nvf (neovim flake framework) for declarative configuration
+- Configuration defined in `nvf/default.nix` with nvf modules and options
+- FzfLua integration with custom leader key mappings (`<leader>f*`)
+- Legacy nixCats configuration preserved in `legacyNvimConfig/` directory
+- Base vim configuration in `nvf/base.vim` for fundamental settings
 
 ### Claude Code Integration
 
@@ -208,9 +206,9 @@ The repository includes full Claude Code integration with:
 
 ### Code Quality Workflow
 
-Always run `make code` before committing to ensure:
+Always run `make lint` before committing to ensure:
 
-- Nix files are formatted with nixfmt
-- Lua files are formatted with stylua and linted with luacheck
-- Shell scripts are formatted with shfmt and linted with shellcheck
-- YAML files are formatted and validated
+- Nix files pass linting checks (formatting not automated due to pipe operators)
+- Lua files are linted with luacheck
+- Shell scripts are linted with shellcheck
+- YAML files are validated with yamllint and checkmake
