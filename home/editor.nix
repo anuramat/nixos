@@ -52,32 +52,43 @@ in
       enable = true;
       settings = {
         vim = {
-
-          filetree.neo-tree.enable = true;
-
-          mini.ai.enable = true;
-          treesitter.context.enable = true;
-          treesitter.textobjects.enable = true;
-
           # why two?
           # treesitter.autotagHtml = true;
           # languages.html.treesitter.autotagHtml = true;
-          visuals.rainbow-delimiters.enable = true;
-          utility.diffview-nvim.enable = true;
-          git.gitlinker-nvim.enable = true;
-          git.gitsigns.enable = true;
-          git.vim-fugitive.enable = true;
 
-          utility.oil-nvim.enable = true;
-          utility.surround.enable = true;
-          mini.bracketed.enable = true;
-          lazy.enable = true;
-          fzf-lua.enable = true;
+          git = {
+            gitlinker-nvim.enable = true;
+            gitsigns.enable = true;
+            vim-fugitive.enable = true;
+          };
+
+          filetree.neo-tree.enable = true;
           formatter.conform-nvim.enable = true;
-          mini.align.enable = true;
+          fzf-lua.enable = true;
+          lazy.enable = true;
           notes.todo-comments.enable = true;
           ui.colorizer.enable = true;
-          visuals.fidget-nvim.enable = true;
+
+          mini = {
+            ai.enable = true;
+            align.enable = true;
+            bracketed.enable = true;
+          };
+          treesitter = {
+            context.enable = true;
+            textobjects.enable = true;
+          };
+          utility = {
+            images.image-nvim.enable = true;
+            outline.aerial-nvim.enable = true;
+            diffview-nvim.enable = true;
+            oil-nvim.enable = true;
+            surround.enable = true;
+          };
+          visuals = {
+            fidget-nvim.enable = true;
+            rainbow-delimiters.enable = true;
+          };
 
           languages = {
             haskell.enable = true;
@@ -93,11 +104,6 @@ in
             lspconfig.enable = true;
             lightbulb.enable = true;
             otter-nvim.enable = true;
-          };
-
-          utility = {
-            images.image-nvim.enable = true;
-            outline.aerial-nvim.enable = true;
           };
 
           debugger.nvim-dap = {
