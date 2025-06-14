@@ -1,5 +1,9 @@
-{ pkgs, lib, ... }:
+{ lib, ... }:
+# TODO use nightly
 {
+  imports = [
+    ./git.nix
+  ];
   config.vim = {
     keymaps =
       let
@@ -62,58 +66,6 @@
     # treesitter.autotagHtml = true;
     # languages.html.treesitter.autotagHtml = true;
 
-    git = {
-      gitlinker-nvim = {
-        enable = true;
-        setupOpts = {
-          opts = {
-            add_current_line_on_normal_mode = false;
-            print_url = true;
-          };
-        };
-      };
-      gitsigns = {
-        enable = true;
-        setupOpts = {
-          sign_priority = 1000;
-          signs_staged = {
-            add = {
-              text = "▎";
-            };
-            change = {
-              text = "▎";
-            };
-            delete = {
-              text = "▎";
-            };
-            topdelete = {
-              text = "▎";
-            };
-            changedelete = {
-              text = "▎";
-            };
-            untracked = {
-              text = "▎";
-            };
-          };
-        };
-        mappings = {
-          stageHunk = "<leader>gs";
-          stageBuffer = "<leader>gS";
-          resetHunk = "<leader>gr";
-          resetBuffer = "<leader>gR";
-          blameLine = "<leader>gb";
-          previewHunk = "<leader>gp";
-          diffThis = "<leader>gd";
-          nextHunk = "]h";
-          previousHunk = "[h";
-          # { 'ih', function() require('gitsigns').select_hunk() end,                  'Select hunk',  mode = { 'o', 'x' } },
-          # { 'ah', function() require('gitsigns').select_hunk({ greedy = true }) end, 'Select hunk',  mode = { 'o', 'x' } },
-        };
-      };
-      vim-fugitive.enable = true;
-    };
-
     filetree.neo-tree.enable = true;
     formatter.conform-nvim.enable = true;
     fzf-lua = {
@@ -127,7 +79,10 @@
         files = {
           "1" = true; # means "merge with defaults"
           ctrl-q = {
-            fn = "require('fzf-lua').actions.file_sel_to_qf";
+            fn = {
+              _type = "lua-inline";
+              expr = "require('fzf-lua').actions.file_sel_to_qf";
+            };
             prefix = "select-all";
           };
         };
