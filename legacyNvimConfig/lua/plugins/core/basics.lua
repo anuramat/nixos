@@ -2,64 +2,11 @@
 local u = require('utils.helpers')
 
 return {
-        -- surround
-        {
-                'kylechui/nvim-surround',
-                opts = {
-                        keymaps = {
-                                insert = '<C-g>s',
-                                insert_line = '<C-g>S',
-                                normal = 's',
-                                normal_cur = 'ss',
-                                normal_line = 'S',
-                                normal_cur_line = 'SS',
-                                visual = 's',
-                                visual_line = 'S',
-                                delete = 'ds',
-                                change = 'cs',
-                                change_line = 'cS',
-                        },
-                },
-                event = 'BufEnter',
-        },
         -- improves native commenting
         {
                 'folke/ts-comments.nvim',
                 opts = {},
                 event = 'VeryLazy',
-        },
-        -- oil.nvim - file manager
-        {
-                'stevearc/oil.nvim',
-                lazy = false, -- so that it overrides `nvim <path>`
-                opts = {
-                        default_file_explorer = true,
-                        columns = {
-                                'icon',
-                                'permissions',
-                                'size',
-                                'mtime',
-                        },
-                        delete_to_trash = true,
-                        skip_confirm_for_simple_edits = true,
-                        constrain_cursor = 'editable', -- name false editable
-                        experimental_watch_for_changes = true,
-                        view_options = {
-                                -- Show files and directories that start with "."
-                                show_hidden = true,
-                                natural_order = true,
-                                sort = {
-                                        -- sort order can be "asc" or "desc"
-                                        -- see :help oil-columns to see which columns are sortable
-                                        { 'type', 'asc' },
-                                        { 'name', 'asc' },
-                                },
-                        },
-                },
-                keys = {
-                        { '<leader>o', '<cmd>Oil<cr>',   desc = 'File CWD' },
-                        { '<leader>O', '<cmd>Oil .<cr>', desc = 'Open Parent Directory' },
-                },
         },
         -- eunuch - rm, mv, etc
         {

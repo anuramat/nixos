@@ -237,8 +237,44 @@
       };
       outline.aerial-nvim.enable = true;
       diffview-nvim.enable = true;
-      oil-nvim.enable = true;
-      surround.enable = true;
+      oil-nvim = {
+        enable = true;
+        setupOpts = {
+          default_file_explorer = true;
+          columns = ["icon" "permissions" "size" "mtime"];
+          delete_to_trash = true;
+          skip_confirm_for_simple_edits = true;
+          constrain_cursor = "editable";
+          experimental_watch_for_changes = true;
+          view_options = {
+            show_hidden = true;
+            natural_order = true;
+            sort = [
+              { type = "asc"; }
+              { name = "asc"; }
+            ];
+          };
+        };
+      };
+      surround = {
+        enable = true;
+        useVendoredKeybindings = false;
+        setupOpts = {
+          keymaps = {
+            insert = "<C-g>s";
+            insert_line = "<C-g>S";
+            normal = "s";
+            normal_cur = "ss";
+            normal_line = "S";
+            normal_cur_line = "SS";
+            visual = "s";
+            visual_line = "S";
+            delete = "ds";
+            change = "cs";
+            change_line = "cS";
+          };
+        };
+      };
     };
     visuals = {
       fidget-nvim.enable = true;
