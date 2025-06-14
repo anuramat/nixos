@@ -1,6 +1,7 @@
 -- vim: fdl=3
 
 -- BUG E490: no fold found <https://github.com/neovim/neovim/issues/28692>
+-- treesitter and context configuration migrated to nvf
 return {
   require('plugins.adapters.treesitter.textobjects'),
   {
@@ -14,20 +15,6 @@ return {
         'nvim-treesitter/nvim-treesitter-textobjects',
         branch = 'main',
         opts = {},
-      },
-      {
-        'nvim-treesitter/nvim-treesitter-context',
-        opts = {
-          enable = true,
-          max_lines = 1, -- How many lines the window should span. Values <= 0 mean no limit.
-          min_window_height = 20, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
-          line_numbers = true,
-          multiline_threshold = 1, -- Maximum number of lines to show for a single context
-          trim_scope = 'outer', -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
-          mode = 'cursor', -- Line used to calculate context. Choices: 'cursor', 'topline'
-          -- separator = '―', -- Separator between context and content. nil or a single character
-          zindex = 20, -- The Z-index of the context window
-        },
       },
     },
     config = function()
