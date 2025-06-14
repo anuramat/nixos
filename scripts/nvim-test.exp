@@ -1,6 +1,0 @@
-#!/usr/bin/expect -f
-# Expect script to test Neovim in a proper terminal environment
-
-set timeout 10
-spawn nvim --headless -c "echo 'Testing Neovim configuration'" -c "quit"
-expect eof
