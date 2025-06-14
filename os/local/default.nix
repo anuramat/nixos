@@ -80,10 +80,10 @@
     HandlePowerKeyLongPress=ignore
     HandleSuspendKey=suspend
     HandleHibernateKey=suspend
-    HandleLidSwitch=suspend
-    HandleLidSwitchDocked=ignore
-    HandleLidSwitchExternalPower=ignore
   '';
+  # HandleLidSwitch=suspend
+  # HandleLidSwitchDocked=ignore
+  # HandleLidSwitchExternalPower=ignore
   services = {
     thermald.enable = true; # cooling
     tlp = {
