@@ -77,14 +77,25 @@
         setupOpts = {
           sign_priority = 1000;
           signs_staged = {
-            add = { text = "▎"; };
-            change = { text = "▎"; };
-            delete = { text = "▎"; };
-            topdelete = { text = "▎"; };
-            changedelete = { text = "▎"; };
-            untracked = { text = "▎"; };
+            add = {
+              text = "▎";
+            };
+            change = {
+              text = "▎";
+            };
+            delete = {
+              text = "▎";
+            };
+            topdelete = {
+              text = "▎";
+            };
+            changedelete = {
+              text = "▎";
+            };
+            untracked = {
+              text = "▎";
+            };
           };
-          on_attach = "function() end";
         };
         mappings = {
           stageHunk = "<leader>gs";
@@ -140,8 +151,8 @@
       enable = true;
       setupOpts = {
         filetypes = {
-          css = {};
-          yaml = {};
+          css = { };
+          yaml = { };
         };
       };
     };
@@ -241,7 +252,12 @@
         enable = true;
         setupOpts = {
           default_file_explorer = true;
-          columns = ["icon" "permissions" "size" "mtime"];
+          columns = [
+            "icon"
+            "permissions"
+            "size"
+            "mtime"
+          ];
           delete_to_trash = true;
           skip_confirm_for_simple_edits = true;
           constrain_cursor = "editable";
