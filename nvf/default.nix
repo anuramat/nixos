@@ -74,7 +74,10 @@
       enable = true;
       setupOpts = {
         grep = {
-          RIPGREP_CONFIG_PATH = "vim.env.RIPGREP_CONFIG_PATH";
+          RIPGREP_CONFIG_PATH = {
+            _type = "lua-inline";
+            expr = "vim.env.RIPGREP_CONFIG_PATH";
+          };
           fd_opts = "-c never -t f -HL";
           multiline = 2;
         };
@@ -235,7 +238,7 @@
       lightbulb.enable = true;
       otter-nvim = {
         enable = true;
-        vim.lsp.otter-nvim.mappings.toggle = lib.mkForce null; # mkforce doesn't work
+        mappings.toggle = lib.mkForce null; # mkforce doesn't work
       };
     };
 

@@ -1,5 +1,4 @@
 #!/usr/bin/env sh
-export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/ripgreprc"
 export NODE_REPL_HISTORY="$XDG_DATA_HOME/node_repl_history" # node.js
 export GOPATH="$XDG_DATA_HOME/go"
 export STACK_ROOT="$XDG_DATA_HOME"/stack # Haskell stack (old)
