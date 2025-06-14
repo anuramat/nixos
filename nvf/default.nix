@@ -10,7 +10,7 @@
         inherit (lib.nvim.binds) mkKeymap;
         mkmap =
           key: subcmd:
-          (mkKeymap "n" "<leader>f${key}" "<cmd>FzfLua ${subcmd}<cr>" { desc = "fzf: ${subcmd}"; });
+          (mkKeymap "n" "<leader>f${key}" "<cmd>FzfLua ${subcmd}<cr>" { desc = "${subcmd} [fzf]"; });
       in
       [
         # { 'G', 'grep' }, -- useful on large projects
@@ -51,6 +51,8 @@
         )
       ];
 
+    enableLuaLoader = true;
+    options = lib.mkForce { }; # XXX kinda works, kills some of the attributes
     luaConfigPost = # lua
       ''
         vim.cmd('runtime ${./base.vim}')
@@ -90,11 +92,18 @@
       # { 'G', 'grep' }, -- useful on large projects
     };
     lazy.enable = true;
+    pluginOverrides = {
+      # lazydev-nvim = pkgs.fetchFromGitHub {
+      #   owner = "folke";
+      #   repo = "lazydev.nvim";
+      #   rev = "";
+      #   hash = "";
+    };
     notes.todo-comments = {
       enable = true;
       setupOpts = {
         signs = false;
-        # TODO turn off mappings
+        mappings = lib.mkForce null; # XXX doesn't work
         highlight = {
           keyword = "bg"; # only highlight the word itself
           pattern = ''<(KEYWORDS)>''; # vim regex
@@ -120,6 +129,13 @@
       bracketed.enable = true;
     };
     treesitter = {
+      # XXX mkforce doesn't work
+      mappings.incrementalSelection = lib.mkForce {
+        decrementByNode = "<bs>";
+        incrementByNode = "<c-space>";
+        incrementByScope = null;
+        init = null;
+      };
       context = {
         enable = true;
         setupOpts = {
@@ -217,10 +233,14 @@
       lspconfig.enable = true;
       formatOnSave = true;
       lightbulb.enable = true;
-      otter-nvim.enable = true;
+      otter-nvim = {
+        enable = true;
+        vim.lsp.otter-nvim.mappings.toggle = lib.mkForce null; # mkforce doesn't work
+      };
     };
 
     debugger.nvim-dap = {
+      mappings = { }; # TODO set proper keymaps
       enable = true;
       ui.enable = true;
     };

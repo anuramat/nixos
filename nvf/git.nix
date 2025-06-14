@@ -36,7 +36,8 @@
             };
           };
         };
-        mappings = {
+        mappings = lib.mkForce {
+          # XXX doesn't work
           stageHunk = "<leader>gs";
           stageBuffer = "<leader>gS";
           resetHunk = "<leader>gr";
