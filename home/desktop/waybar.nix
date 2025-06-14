@@ -25,6 +25,14 @@
             ""
           ];
         };
+        "battery#internal" = {
+          bat = "BAT0";
+          format = "I:{capacity}%";
+        };
+        "battery#external" = {
+          bat = "BAT1";
+          format = "E:{capacity}%";
+        };
         battery = {
           format = "{capacity}% {icon}";
           format-alt = "{time} {icon}";
@@ -96,6 +104,8 @@
           "sway/window"
           "tray"
           "battery"
+          "battery#internal"
+          "battery#external"
           "disk"
           "sway/language"
           "clock"
