@@ -9,8 +9,6 @@
           (mkKeymap "n" "<leader>f${key}" "<cmd>FzfLua ${subcmd}<cr>" { desc = "fzf: ${subcmd}"; });
       in
       [
-        # { RIPGREP_CONFIG_PATH = "vim.env.RIPGREP_CONFIG_PATH"; fd_opts = "-c never -t f -HL"; multiline = 2; }
-        # { files = { 1 = true; ctrl-q = { fn = "require('fzf-lua').actions.file_sel_to_qf"; prefix = "select-all"; }; }; }
         # { 'G', 'grep' }, -- useful on large projects
         (mkmap "o" "files")
         (mkmap "O" "oldfiles")
@@ -138,7 +136,9 @@
 
     lsp = {
       enable = true;
+      inlayHints.enable = true;
       lspconfig.enable = true;
+      formatOnSave = true;
       lightbulb.enable = true;
       otter-nvim.enable = true;
     };

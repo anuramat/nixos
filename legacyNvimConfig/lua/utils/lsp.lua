@@ -13,11 +13,6 @@ local function set_lsp_keys(buffer)
   -- set(']d', vim.diagnostic.goto_next, 'Next Diagnostic')
 end
 
-m.on_attach = function(client, buffer)
-  set_lsp_keys(buffer)
-  require('lsp-format').on_attach(client, buffer)
-  vim.lsp.inlay_hint.enable()
-end
 
 --- Root directory function with a fallback
 --- @param opts { primary: string[], fallback: string[] }
