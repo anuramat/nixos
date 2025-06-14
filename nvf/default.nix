@@ -107,6 +107,8 @@
           diffThis = "<leader>gd";
           nextHunk = "]h";
           previousHunk = "[h";
+          # { 'ih', function() require('gitsigns').select_hunk() end,                  'Select hunk',  mode = { 'o', 'x' } },
+          # { 'ah', function() require('gitsigns').select_hunk({ greedy = true }) end, 'Select hunk',  mode = { 'o', 'x' } },
         };
       };
       vim-fugitive.enable = true;
