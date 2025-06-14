@@ -8,85 +8,6 @@ vim.g.lze = {
 
 -- Configure lze with our plugins
 require('lze').load({
-  -- Core UI plugins
-  {
-    'aerial.nvim',
-    event = 'BufEnter',
-    after = function()
-      require('aerial').setup({
-        filter_kind = {
-          nix = false,
-        },
-      })
-    end,
-    keys = {
-      { 'gO', '<cmd>AerialToggle!<cr>', desc = 'Show Aerial Outline' },
-    },
-  },
-
-  -- Fuzzy finder
-  {
-    'fzf-lua',
-    after = function()
-      require('fzf-lua').setup({
-        grep = {
-          fd_opts = '-c never -t f -HL',
-          RIPGREP_CONFIG_PATH = vim.env.RIPGREP_CONFIG_PATH,
-          multiline = 2,
-        },
-        actions = {
-          files = {
-            true,
-            ['ctrl-q'] = { fn = require('fzf-lua').actions.file_sel_to_qf, prefix = 'select-all' },
-          },
-        },
-      })
-    end,
-    keys = u.wrap_lazy_keys({
-      { 'o', 'files' },
-      { 'O', 'oldfiles' },
-      { 'a', 'args' },
-      { 'b', 'buffers' },
-      { 'm', 'marks' },
-      { '/', 'curbuf' },
-      { 'g', 'live_grep' },
-      { 'G', 'grep_last' },
-      { 'd', 'diagnostics_document' },
-      { 'D', 'diagnostics_workspace' },
-      { 's', 'lsp_document_symbols' },
-      { 'S', 'lsp_workspace_symbols' },
-      { 't', 'treesitter' },
-      { 'r', 'resume' },
-      { 'h', 'helptags' },
-      { 'k', 'keymaps' },
-      { 'p', 'builtin' },
-    }, {
-      lhs_prefix = '<leader>f',
-      module = 'fzf-lua',
-      cmd_prefix = 'FzfLua ',
-      exceptions = {
-        {
-          '<C-x><C-f>',
-          function()
-            require('fzf-lua').complete_file({
-              cmd = 'fd -t f -HL',
-              winopts = { preview = { hidden = 'nohidden' } },
-            })
-          end,
-          mode = 'i',
-          silent = true,
-          desc = 'path completion',
-        },
-      },
-    }),
-  },
-
-  -- File tree
-  {
-    'neo-tree.nvim',
-    cmd = 'Neotree',
-  },
-
   -- TreeSJ - splits/joins code
   {
     'treesj',
@@ -102,23 +23,6 @@ require('lze').load({
         function() require('treesj').toggle() end,
         desc = 'TreeSJ: Split/Join a Treesitter node',
       },
-    },
-  },
-
-  -- Mini.align
-  {
-    'mini.align',
-    after = function()
-      require('mini.align').setup({
-        mappings = {
-          start = '<leader>a',
-          start_with_preview = '<leader>A',
-        },
-      })
-    end,
-    keys = {
-      { mode = { 'v', 'n' }, '<leader>a', desc = 'Align' },
-      { mode = { 'v', 'n' }, '<leader>A', desc = 'Interactive align' },
     },
   },
 

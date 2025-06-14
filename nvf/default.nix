@@ -3,7 +3,7 @@
   config.vim = {
     keymaps =
       let
-  inherit (lib.nvim.binds) mkKeymap;
+        inherit (lib.nvim.binds) mkKeymap;
         mkmap =
           key: subcmd:
           (mkKeymap "n" "<leader>f${key}" "<cmd>FzfLua ${subcmd}<cr>" { desc = "fzf: ${subcmd}"; });
@@ -33,7 +33,7 @@
         (mkmap "k" "keymaps")
         (mkmap "p" "builtin")
 
-        (mkKeymap "n" "<C-x><C-f>"
+        (mkKeymap "i" "<C-x><C-f>"
           ''
             function()
               require('fzf-lua').complete_file({
@@ -72,7 +72,24 @@
 
     filetree.neo-tree.enable = true;
     formatter.conform-nvim.enable = true;
-    fzf-lua.enable = true;
+    fzf-lua = {
+      enable = true;
+      setupOpts = {
+        grep = {
+          RIPGREP_CONFIG_PATH = "vim.env.RIPGREP_CONFIG_PATH";
+          fd_opts = "-c never -t f -HL";
+          multiline = 2;
+        };
+        files = {
+          "1" = true;
+          ctrl-q = {
+            fn = "require('fzf-lua').actions.file_sel_to_qf";
+            prefix = "select-all";
+          };
+        };
+      };
+      # { 'G', 'grep' }, -- useful on large projects
+    };
     lazy.enable = true;
     notes.todo-comments.enable = true;
     ui.colorizer.enable = true;
@@ -88,8 +105,8 @@
     };
     utility = {
       images.image-nvim = {
-      enable = true;
-      setupOpts.backend = "kitty";
+        enable = true;
+        setupOpts.backend = "kitty";
       };
       outline.aerial-nvim.enable = true;
       diffview-nvim.enable = true;
@@ -102,17 +119,16 @@
     };
 
     languages = {
-      haskell.enable = true;
-      nix.enable = true;
-      python.enable = true;
+      clang.enable = true;
+      go.enable = true;
+      html.enable = true;
       lua.enable = true;
       markdown.enable = true;
-
-      go.enable = true;
-      bash.enable = true;
-      html.enable = true;
-      clang.enable = true;
-
+      nix.enable = true;
+      python.enablee = true;
+      rust.enable = true;
+      ts.enable = true;
+      zig.enable = true;
     };
 
     autocomplete.blink-cmp = {
