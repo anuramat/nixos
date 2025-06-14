@@ -56,10 +56,10 @@
         inherit (lib.nvim.binds) mkKeymap;
       in
       [
-        (mkKeymap "ih" [ "o" "x" ] "function() require('gitsigns').select_hunk() end" {
+        (mkKeymap [ "o" "x" ] "ih" "function() require('gitsigns').select_hunk() end" {
           desc = "select inside hunk";
         })
-        (mkKeymap "ah" [ "o" "x" ] "function() require('gitsigns').select_hunk({ greedy = true }) end" {
+        (mkKeymap [ "o" "x" ] "ah" "function() require('gitsigns').select_hunk({ greedy = true }) end" {
           desc = "select around hunk";
         })
       ];

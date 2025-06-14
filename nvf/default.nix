@@ -120,10 +120,10 @@
     ui.colorizer = {
       enable = true;
       setupOpts = {
-        filetypes = [
-          "css"
-          "yaml"
-        ];
+        filetypes = {
+          "css" = { };
+          "yaml" = { };
+        };
       };
     };
 

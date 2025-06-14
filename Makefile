@@ -28,7 +28,7 @@ init:
 mcp:
 	jq --slurpfile mcp ./mcp.json '.mcpServers = $$mcp[0]' ~/.claude.json | sponge ~/.claude.json
 nvim:
-	nix run --option builders '' --option substituters '' .#nvim
+	nix run --option builders '' --option substituters '' .#neovim
 
 lint:
 	./scripts/heading.sh "Checking Nix"
