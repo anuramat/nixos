@@ -1,13 +1,6 @@
 -- vim: fdl=1
 local function transparent_bg() return false end -- TODO stylix
 return {
-  -- rainbow-delimiters.nvim - TS rainbow parentheses
-  {
-    'HiPhish/rainbow-delimiters.nvim',
-    dependencies = 'nvim-treesitter/nvim-treesitter',
-    event = 'BufEnter',
-    submodules = false,
-  },
   -- dressing.nvim -- vim.ui.select (choice menus), vim.ui.input (lsp rename)
   {
     'stevearc/dressing.nvim',
@@ -34,11 +27,6 @@ return {
     priority = 999,
     lazy = false,
     dev = false,
-    opts = {},
-  },
-  {
-    'j-hui/fidget.nvim',
-    event = 'LspAttach',
     opts = {},
   },
 }
