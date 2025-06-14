@@ -137,91 +137,28 @@
       enable = true;
       setupOpts = {
         signs = false;
+        # TODO turn off mappings
         highlight = {
-          keyword = "bg";
-          pattern = ''<(KEYWORDS)>'';
+          keyword = "bg"; # only highlight the word itself
+          pattern = ''<(KEYWORDS)>''; # vim regex
           multiline = false;
         };
         search = {
-          pattern = ''\b(KEYWORDS)\b'';
+          pattern = ''\b(KEYWORDS)\b''; # ripgrep
         };
       };
     };
     ui.colorizer = {
       enable = true;
       setupOpts = {
-        filetypes = {
-          css = { };
-          yaml = { };
-        };
+        filetypes = [
+          "css"
+          "yaml"
+        ];
       };
     };
 
     mini = {
-      ai = {
-        enable = true;
-        setupOpts = {
-          n_lines = 500;
-          silent = true;
-          custom_textobjects = {
-            q = false;
-            F = ''
-              require('mini.ai').gen_spec.treesitter({
-                a = { '@function.outer' },
-                i = { '@function.inner' },
-              }, {})
-            '';
-            f = ''
-              require('mini.ai').gen_spec.treesitter({
-                a = { '@call.outer' },
-                i = { '@call.inner' },
-              })
-            '';
-            a = ''
-              require('mini.ai').gen_spec.treesitter({
-                a = { '@parameter.outer' },
-                i = { '@parameter.inner' },
-              })
-            '';
-            e = ''
-              require('mini.ai').gen_spec.treesitter({
-                a = { '@assignment.outer' },
-                i = { '@assignment.rhs' },
-              })
-            '';
-            r = ''
-              require('mini.ai').gen_spec.treesitter({
-                a = { '@return.outer' },
-                i = { '@return.inner' },
-              })
-            '';
-            b = ''
-              require('mini.ai').gen_spec.treesitter({
-                a = { '@code_block.outer' },
-                i = { '@code_block.inner' },
-              })
-            '';
-            s = ''
-              require('mini.ai').gen_spec.treesitter({
-                a = { '@class.outer' },
-                i = { '@class.inner' },
-              }, {})
-            '';
-            c = ''
-              require('mini.ai').gen_spec.treesitter({
-                a = { '@comment.outer' },
-                i = { '@comment.inner' },
-              })
-            '';
-            o = ''
-              require('mini.ai').gen_spec.treesitter({
-                a = { '@block.outer', '@conditional.outer', '@loop.outer', '@frame.outer' },
-                i = { '@block.inner', '@conditional.inner', '@loop.inner', '@frame.inner' },
-              }, {})
-            '';
-          };
-        };
-      };
       align.enable = true;
       bracketed.enable = true;
     };
@@ -236,7 +173,7 @@
           multiline_threshold = 1;
           trim_scope = "outer";
           mode = "cursor";
-          zindex = 20;
+          zindex = 20; # TODO why 20?
         };
       };
       textobjects.enable = true;
@@ -249,6 +186,7 @@
       outline.aerial-nvim.enable = true;
       diffview-nvim.enable = true;
       oil-nvim = {
+        # TODO leader o/O - Oil, Oil.
         enable = true;
         setupOpts = {
           default_file_explorer = true;
@@ -275,6 +213,7 @@
       surround = {
         enable = true;
         useVendoredKeybindings = false;
+        # TODO check default keymaps
         setupOpts = {
           keymaps = {
             insert = "<C-g>s";
