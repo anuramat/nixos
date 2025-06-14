@@ -79,7 +79,7 @@
           multiline = 2;
         };
         files = {
-          "1" = true;
+          "1" = true; # means "merge with defaults"
           ctrl-q = {
             fn = "require('fzf-lua').actions.file_sel_to_qf";
             prefix = "select-all";
