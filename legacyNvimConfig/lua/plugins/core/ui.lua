@@ -20,22 +20,6 @@ return {
     ft = { 'css', 'yaml' },
     opts = {},
   },
-  -- todo-comments.nvim - highlights "todo", "hack", etc
-  {
-    'folke/todo-comments.nvim',
-    event = 'VeryLazy',
-    opts = {
-      signs = false,
-      highlight = {
-        keyword = 'bg', -- only highlight the word
-        pattern = [[<(KEYWORDS)>]], -- vim regex
-        multiline = false,
-      },
-      search = {
-        pattern = [[\b(KEYWORDS)\b]], -- ripgrep regex
-      },
-    },
-  },
   -- lightbulb - code action indicator
   {
     'kosayoda/nvim-lightbulb',

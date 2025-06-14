@@ -122,7 +122,20 @@
       # { 'G', 'grep' }, -- useful on large projects
     };
     lazy.enable = true;
-    notes.todo-comments.enable = true;
+    notes.todo-comments = {
+      enable = true;
+      setupOpts = {
+        signs = false;
+        highlight = {
+          keyword = "bg";
+          pattern = ''<(KEYWORDS)>'';
+          multiline = false;
+        };
+        search = {
+          pattern = ''\b(KEYWORDS)\b'';
+        };
+      };
+    };
     ui.colorizer.enable = true;
 
     mini = {
