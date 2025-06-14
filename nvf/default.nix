@@ -123,7 +123,7 @@
       lua.enable = true;
       markdown.enable = true;
       nix.enable = true;
-      python.enablee = true;
+      python.enable = true;
       rust.enable = true;
       ts.enable = true;
       zig.enable = true;
