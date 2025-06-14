@@ -136,7 +136,15 @@
         };
       };
     };
-    ui.colorizer.enable = true;
+    ui.colorizer = {
+      enable = true;
+      setupOpts = {
+        filetypes = {
+          css = {};
+          yaml = {};
+        };
+      };
+    };
 
     mini = {
       ai.enable = true;

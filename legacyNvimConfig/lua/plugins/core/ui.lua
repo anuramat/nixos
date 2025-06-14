@@ -14,12 +14,6 @@ return {
     opts = {},
     event = 'VeryLazy',
   },
-  -- nvim-colorizer.lua - highlights colors, eg #012345
-  {
-    'NvChad/nvim-colorizer.lua',
-    ft = { 'css', 'yaml' },
-    opts = {},
-  },
   -- lightbulb - code action indicator
   {
     'kosayoda/nvim-lightbulb',
