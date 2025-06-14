@@ -34,6 +34,7 @@
         sleep = "${systemd}/bin/systemctl suspend";
       in
       {
+        # TODO robustly turn on the screen st dpms doesn't kill the session
         enable = true;
         # idlehint = 300; # TODO ask for implementation
         # TODO maybe also turn command into commands in events and timeouts
