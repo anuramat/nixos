@@ -48,7 +48,7 @@ in
         version = "0.0.1749960449-gc74a77";
         src = prev.fetchzip {
           url = "https://registry.npmjs.org/@sourcegraph/amp/-/amp-${version}.tgz";
-          hash = "sha256-YoyuZX41l21eTGi9t0rYb4vEE3rSqiue2kIf0PDbaKc=";
+          hash = "sha256-Bl6FAwhUF5pdS6a8YNlRU8DyD8FPCPpBWBX6/gc/TTI=";
         };
       });
       claude-code = prev.claude-code.overrideAttrs (oldAttrs: rec {
