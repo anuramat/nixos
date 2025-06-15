@@ -2,7 +2,7 @@
 .SILENT:
 MAKEFLAGS += --always-make
 
-all: flake links mcp lint
+all: flake links claude lint
 flake:
 	sudo true
 	./scripts/heading.sh "Copying public keys"
