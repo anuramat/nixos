@@ -57,6 +57,7 @@
     nnn # small, simple, ubiquitous -- ? for help
 
     # misc TODO categorize
+    ansifilter
     asciinema
     ansifilter
     pstree
