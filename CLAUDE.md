@@ -1,7 +1,6 @@
 # Imports 
 
 @AGENTS.md
-@~/.claude/AGENTS.md
 
 # Memory
 
