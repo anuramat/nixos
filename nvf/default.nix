@@ -1,7 +1,5 @@
 {
-  pkgs,
   lib,
-  inputs,
   ...
 }:
 {
@@ -16,7 +14,6 @@
     ./ui.nix
     ./vimim.nix
   ];
-  package = inputs.neovim-nightly-overlay.packages.${pkgs.stdenv.system}.default;
   vim = {
     enableLuaLoader = true;
     lazy.enable = true;

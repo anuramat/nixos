@@ -1,5 +1,8 @@
 {
   inputs = {
+    flake-utils = {
+      url = "github:numtide/flake-utils";
+    };
     wastebin-nvim = {
       url = "github:anuramat/wastebin.nvim/flake";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -35,6 +38,7 @@
       nixpkgs-old,
       home-manager,
       nvf,
+      flake-utils,
       ...
     }@inputs:
     let
@@ -101,8 +105,6 @@
                 ]
             );
         };
-
-      nvimOutputs = import ./nvim inputs;
     in
     {
       nixosConfigurations =
@@ -127,22 +129,20 @@
           )
         ];
       };
-      packages.x86_64-linux.neovim =
+    }
+    // (flake-utils.lib.eachDefaultSystem (system: {
+      packages.neovim =
         let
-          nvimConfig = nvf.lib.neovimConfiguration {
-            pkgs = nixpkgs.legacyPackages.x86_64-linux;
-            specialArgs = commonArgs;
+          nvfConfig = nvf.lib.neovimConfiguration {
+            pkgs = import nixpkgs {
+              inherit system;
+            };
             modules = [
               ./nvf
             ];
           };
         in
-        nvimConfig.neovim
-        // {
-          passthru = nvimConfig.neovim.passthru // {
-            inherit (nvimConfig) options config;
-          };
-        };
-    };
+        nvfConfig.neovim // { options = nvfConfig.options; };
+    }));
 }
 # vim: fdl=0 fdm=marker
