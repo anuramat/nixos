@@ -3,6 +3,7 @@
 {
   imports = [
     ./git.nix
+    ./fzf.nix
   ];
   vim = {
     keymaps =
