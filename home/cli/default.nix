@@ -71,6 +71,10 @@
     tmux = {
       enable = true;
       escapeTime = 50;
+      extraConfig = # tmux
+        ''
+          set -g allow-passthrough on
+        '';
     };
 
     ripgrep = {
