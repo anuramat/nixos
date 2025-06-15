@@ -11,7 +11,7 @@
       in
       [
         (mkKeymap "n" "<leader>o" "<cmd>Oil<cr>" { })
-        (mkKeymap "n" "<leader>o" "<cmd>Oil .<cr>" { })
+        (mkKeymap "n" "<leader>O" "<cmd>Oil .<cr>" { })
       ];
     enableLuaLoader = true;
     options = lib.mkForce { }; # XXX kinda works, kills some of the attributes
