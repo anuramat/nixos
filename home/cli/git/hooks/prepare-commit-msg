@@ -10,7 +10,7 @@ COMMIT_MSG_FILE=$1
 COMMIT_SOURCE=$2
 SHA1=$3
 
-# NOTE note that COMMIT_MSG_FILE only has comments when it's invoked interactively
+# NOTE that COMMIT_MSG_FILE only has comments when it's invoked interactively
 # meanwhile with `commit -m` it already contains the message
 signature="Co-Authored-By: Claude <noreply@anthropic.com>" 
 if [ -n "$CLAUDE" ]; then
