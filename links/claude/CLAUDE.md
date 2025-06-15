@@ -1,9 +1,11 @@
 # General rules
 
-- You MUST NOT modify anything outside of the current directory; if that's
-  necessary, ask the user to do it instead.
+@AGENTS.md
+
+- You MUST NOT modify anything outside of the current directory other than the
+  global memory file; if that's necessary, ask the user to do it instead.
 - After finishing the task you were assigned, you MUST check that the code
-  compiles and runs, and the requested changes are implemented correctly.
+  compiles and runs, and that the requested changes are implemented correctly.
   - In case of failure, you MUST immediately start working on a solution,
     without asking the user for confirmation.
 
@@ -14,9 +16,10 @@
 
 ## Memory
 
-- You are responsible for memory files `CLAUDE.md`.
+- You are responsible for memory files `CLAUDE.md`
 - You MUST NOT edit `AGENTS.md` files, as they are only to be edited by the
   user.
+- You MUST NOT edit import lines (`@filepath`) in memory files
 
 ### Global memory
 
