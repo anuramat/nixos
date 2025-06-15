@@ -31,12 +31,10 @@ let
   };
 
   overlays =
-    (with inputs; [
-      neovim-nightly-overlay
-    ])
-    |> map (v: v.overlays.default)
-
-  ;
+    [
+      # list of inputs
+    ]
+    |> map (v: v.overlays.default);
 in
 {
   nixpkgs.overlays = overlays ++ [

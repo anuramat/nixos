@@ -1,5 +1,9 @@
 {
   inputs = {
+    inputs.wastebin-nvim = {
+      url = "github:anuramat/wastebin.nvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixpkgs-old.url = "github:nixos/nixpkgs/nixos-24.11";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";

@@ -1,10 +1,15 @@
-{ pkgs, lib, ... }:
-# TODO use nightly
+{
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 {
   imports = [
     ./git.nix
     ./fzf.nix
   ];
+  package = inputs.neovim-nightly.packages.${pkgs.stdenv.system}.default;
   vim = {
     keymaps =
       let
@@ -34,19 +39,13 @@
     filetree.neo-tree.enable = true;
     formatter.conform-nvim.enable = true;
     lazy.enable = true;
-    pluginOverrides = {
-      lazydev-nvim = pkgs.fetchFromGitHub {
-        owner = "matze";
-        repo = "wastebin.nvim";
-        rev = "main";
-        hash = "";
-      };
-    };
     notes.todo-comments = {
       enable = true;
       setupOpts = {
         signs = false;
-        mappings = lib.mkForce null; # XXX doesn't work
+        mappings = {
+          quickFix = lib.mkForce null;
+        };
         highlight = {
           keyword = "bg"; # only highlight the word itself
           pattern = ''<(KEYWORDS)>''; # vim regex
@@ -72,11 +71,11 @@
       bracketed.enable = true;
     };
     treesitter = {
-      mappings.incrementalSelection = lib.mkForce {
+      mappings.incrementalSelection = {
         decrementByNode = "<bs>";
         incrementByNode = "<c-space>";
-        # incrementByScope = null;
-        # init = null;
+        incrementByScope = lib.mkForce null;
+        init = lib.mkForce null;
       };
       context = {
         enable = true;

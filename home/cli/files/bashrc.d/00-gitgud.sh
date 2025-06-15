@@ -38,16 +38,20 @@ g() {
 __gitgud_picker() {
 	[ "$1" = -h ] && {
 		echo 'pick a subset of a list with confirmation'
-		echo 'stdin - NL separated list of repos'
+		echo 'stdin - NL separated list of repos (optional)'
 		echo '$1 - prompt question'
-		echo '$2 - query (optional)'
+		echo '$2 - query (empty |-> auto-accept)'
 		echo 'stdout - NL separated list of repos'
 		return
 	}
+
 	local repos
 	repos="$(fzf -1 -q "$2")" || return 1
 	echo "$repos"
 	echo $'\t'"${repos//$'\n'/$'\n\t'}" >&2
+
+	[ -z "$1" ] && return
+
 	read -rs -n 1 -p $"$1 (y/*):"$'\n' choice <&2
 	[ "$choice" = 'y' ]
 }
