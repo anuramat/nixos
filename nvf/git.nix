@@ -2,8 +2,8 @@
 {
   vim = {
     git = {
+      enable = true;
       gitlinker-nvim = {
-        enable = true;
         setupOpts = {
           opts = {
             add_current_line_on_normal_mode = false;
@@ -12,7 +12,6 @@
         };
       };
       gitsigns = {
-        enable = true;
         setupOpts = {
           sign_priority = 1000;
           signs_staged = {
@@ -37,7 +36,6 @@
           };
         };
         mappings = lib.mkForce {
-          # XXX doesn't work
           stageHunk = "<leader>gs";
           stageBuffer = "<leader>gS";
           resetHunk = "<leader>gr";
@@ -47,9 +45,12 @@
           diffThis = "<leader>gd";
           nextHunk = "]h";
           previousHunk = "[h";
+          diffProject = "";
+          undoStageHunk = "";
+          toggleBlame = "";
+          toggleDeleted = "";
         };
       };
-      vim-fugitive.enable = true;
     };
     keymaps =
       let
