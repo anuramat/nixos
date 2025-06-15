@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+export CLAUDE=true
 bwrap --ro-bind / / --dev /dev \
 	--bind /tmp /tmp
 	--bind "$XDG_CACHE_HOME" "$XDG_CACHE_HOME" \

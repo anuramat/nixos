@@ -1,32 +1,14 @@
 #!/usr/bin/env bash
-#
-# Global git hook dispatcher with local hook fallback support
-# This hook runs both local repository hooks and global functionality
 
 COMMIT_MSG_FILE=$1
 COMMIT_SOURCE=$2
 SHA1=$3
 
-# Get the git repository root
-GIT_DIR=$(git rev-parse --git-dir)
-LOCAL_HOOK="$GIT_DIR/hooks/prepare-commit-msg.local"
+signature="Co-Authored-By: Claude <noreply@anthropic.com>" 
+commit_msg=$(perl -0777 -pe "s/\n${signature/@/\\@}//g" "$COMMIT_MSG_FILE")
 
-# First, try to execute local repository hook if it exists
-if [ -x "$LOCAL_HOOK" ]; then
-    "$LOCAL_HOOK" "$@"
-fi
-
-# Then execute global hook functionality
-# COMMIT_SUFFIX support: append suffix when environment variable is set
-if [ -n "$COMMIT_SUFFIX" ]; then
-    # Only modify the commit message for regular commits (not merge, template, etc.)
-    case "$COMMIT_SOURCE" in
-        "" | "message")
-            # Read the current commit message
-            if [ -s "$COMMIT_MSG_FILE" ]; then
-                # Append the suffix to the existing message
-                echo "$COMMIT_SUFFIX" >> "$COMMIT_MSG_FILE"
-            fi
-            ;;
-    esac
+if [ -n "$CLAUDE" ]; then
+    if [ -s "$COMMIT_MSG_FILE" ]; then
+	printf '%s\n\n%s' "$0 $commit_msg" "$signature" > "$COMMIT_MSG_FILE"
+    fi
 fi
