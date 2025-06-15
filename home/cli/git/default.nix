@@ -96,6 +96,11 @@
       };
       # TODO check jupyter notebook and nbdime later; `git diff` works
       extraConfig = {
+        fetch = {
+          all = true;
+          prune = true;
+          pruneTags = true;
+        };
         pull.ff = "only";
         core.pager = {
           diff =

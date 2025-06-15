@@ -57,11 +57,11 @@
     };
     lazy.enable = true;
     pluginOverrides = {
-      # lazydev-nvim = pkgs.fetchFromGitHub {
-      #   owner = "folke";
-      #   repo = "lazydev.nvim";
-      #   rev = "";
-      #   hash = "";
+      lazydev-nvim = pkgs.fetchFromGitHub {
+        owner = "anuramat";
+        repo = "wastebin.nvim";
+        rev = "";
+        hash = "";
     };
     notes.todo-comments = {
       enable = true;
