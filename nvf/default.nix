@@ -5,52 +5,6 @@
     ./git.nix
   ];
   vim = {
-    keymaps =
-      let
-        inherit (lib.nvim.binds) mkKeymap;
-        mkmap =
-          key: subcmd:
-          (mkKeymap "n" "<leader>f${key}" "<cmd>FzfLua ${subcmd}<cr>" { desc = "${subcmd} [fzf]"; });
-      in
-      [
-        # { 'G', 'grep' }, -- useful on large projects
-        (mkmap "o" "files")
-        (mkmap "O" "oldfiles")
-        (mkmap "a" "args")
-        (mkmap "b" "buffers")
-        (mkmap "m" "marks")
-
-        (mkmap "/" "curbuf")
-        (mkmap "g" "live_grep")
-        (mkmap "G" "grep_last")
-
-        (mkmap "d" "diagnostics_document")
-        (mkmap "D" "diagnostics_workspace")
-        (mkmap "s" "lsp_document_symbols")
-        (mkmap "S" "lsp_workspace_symbols")
-        (mkmap "t" "treesitter")
-
-        (mkmap "r" "resume")
-        (mkmap "h" "helptags")
-        (mkmap "k" "keymaps")
-        (mkmap "p" "builtin")
-
-        (mkKeymap "i" "<C-x><C-f>"
-          ''
-            function()
-              require('fzf-lua').complete_file({
-                cmd = 'fd -t f -HL',
-                winopts = { preview = { hidden = 'nohidden' } },
-              })
-            end
-          ''
-          {
-            desc = "path completion";
-            lua = true;
-          }
-        )
-      ];
-
     enableLuaLoader = true;
     options = lib.mkForce { }; # XXX kinda works, kills some of the attributes
     luaConfigPre = # lua
@@ -149,7 +103,6 @@
           multiline_threshold = 1;
           trim_scope = "outer";
           mode = "cursor";
-          zindex = 20; # TODO why 20?
         };
       };
       textobjects.enable = true;
@@ -189,7 +142,6 @@
       surround = {
         enable = true;
         useVendoredKeybindings = false;
-        # TODO check default keymaps
         setupOpts = {
           keymaps = {
             insert = "<C-g>s";
@@ -243,7 +195,7 @@
     };
 
     debugger.nvim-dap = {
-      mappings = { }; # TODO set proper keymaps
+      # XXX report broken key descriptions
       enable = true;
       ui.enable = true;
     };

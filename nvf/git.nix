@@ -35,21 +35,25 @@
             };
           };
         };
-        mappings = lib.mkForce {
-          stageHunk = "<leader>gs";
-          stageBuffer = "<leader>gS";
-          resetHunk = "<leader>gr";
-          resetBuffer = "<leader>gR";
-          blameLine = "<leader>gb";
-          previewHunk = "<leader>gp";
-          diffThis = "<leader>gd";
-          nextHunk = "]h";
-          previousHunk = "[h";
-          diffProject = "";
-          undoStageHunk = "";
-          toggleBlame = "";
-          toggleDeleted = "";
-        };
+        mappings =
+          let
+            nil = lib.mkForce null;
+          in
+          {
+            stageHunk = "<leader>gs";
+            stageBuffer = "<leader>gS";
+            resetHunk = "<leader>gr";
+            resetBuffer = "<leader>gR";
+            blameLine = "<leader>gb";
+            previewHunk = "<leader>gp";
+            diffThis = "<leader>gd";
+            nextHunk = "]h";
+            previousHunk = "[h";
+            diffProject = nil;
+            undoStageHunk = nil;
+            toggleBlame = nil;
+            toggleDeleted = nil;
+          };
       };
     };
     keymaps =
