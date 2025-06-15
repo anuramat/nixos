@@ -124,12 +124,19 @@
         ];
       };
       packages.x86_64-linux.neovim =
-        (nvf.lib.neovimConfiguration {
-          pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          modules = [
-            ./nvf
-          ];
-        }).neovim;
+        let
+          nvimConfig = nvf.lib.neovimConfiguration {
+            pkgs = nixpkgs.legacyPackages.x86_64-linux;
+            modules = [
+              ./nvf
+            ];
+          };
+        in
+        nvimConfig.neovim // {
+          passthru = nvimConfig.neovim.passthru // {
+            inherit (nvimConfig) options config;
+          };
+        };
     };
 }
 # vim: fdl=0 fdm=marker
