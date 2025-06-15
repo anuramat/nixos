@@ -1,5 +1,14 @@
 # Instructions
 
+- You are running in a `bubblewrap` sandbox. Most of the paths are
+  mounted in read-only mode, with a few exceptions:
+  ```txt
+  ~/.claude.json
+  ~/.claude/
+  $PWD
+  /tmp/
+  $XDG_CACHE_HOME
+  ```
 - You MUST NOT modify anything outside of the current directory other than the
   global memory file; for all the other files ask the user instead
 - After finishing the task you were assigned, you MUST check that the code

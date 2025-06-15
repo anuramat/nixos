@@ -1,13 +1,23 @@
 #!/usr/bin/env bash
 #
-# Global git hook to append COMMIT_SUFFIX environment variable to commit messages
-# when the variable is set.
+# Global git hook dispatcher with local hook fallback support
+# This hook runs both local repository hooks and global functionality
 
 COMMIT_MSG_FILE=$1
 COMMIT_SOURCE=$2
 SHA1=$3
 
-# If COMMIT_SUFFIX is set and not empty, append it to the commit message
+# Get the git repository root
+GIT_DIR=$(git rev-parse --git-dir)
+LOCAL_HOOK="$GIT_DIR/hooks/prepare-commit-msg.local"
+
+# First, try to execute local repository hook if it exists
+if [ -x "$LOCAL_HOOK" ]; then
+    "$LOCAL_HOOK" "$@"
+fi
+
+# Then execute global hook functionality
+# COMMIT_SUFFIX support: append suffix when environment variable is set
 if [ -n "$COMMIT_SUFFIX" ]; then
     # Only modify the commit message for regular commits (not merge, template, etc.)
     case "$COMMIT_SOURCE" in
