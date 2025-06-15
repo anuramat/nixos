@@ -42,20 +42,13 @@ se updatetime=100 " period in ms for swap writes and CursorHold autocmd
 se undofile " persistent undo
 se backupdir-=. " don't write backups to CWD
 se virtualedit=block " move beyond line end in v-block mode
-" se nrformats=bin,hex,blank " ^a/^x number formats " TODO wait until blank gets merged into stable
-se nrformats=bin,hex,unsigned " ^a/^x number formats
+se nrformats=bin,hex,blank " ^a/^x number formats
 let g:markdown_fenced_languages = ['python', 'lua', 'vim', 'haskell', 'bash', 'sh', 'json5=json', 'tex']
 se synmaxcol=300
 " se spl=en,ru " spelling languages (russian will trigger download)
 " se path+=** " recurse in path - bad idea
 se mouse= " disable mouse
 
-" shell {{{2
-" se shcf=-ic " use an interactive shell for "!" so that background jobs work
-" source everything; breaks plenary:
-" let &shell='/usr/bin/env bash --login'
-" TODO figure out
-" }}}
 
 " visuals {{{1
 se nowrap
@@ -117,12 +110,8 @@ function! MessageBuffer()
   setlocal nomodifiable
 endfunction
 
-" todo.txt {{{2
 " trim spaces
 com! Trim %s/\ \+$//g
-" sort todo.txt by projects
-com! SortProj sort /\v(^|\s)\zs\+\S+\ze/ r
-" }}}
 
 " misc {{{1
 " hide qf buffers:
