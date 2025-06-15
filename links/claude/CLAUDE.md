@@ -1,33 +1,54 @@
 # General rules
 
-## Tools
-
-- ALWAYS do a basic test before asking the user for feedback -- check that it
-  starts/compiles.
-- NEVER modify anything outside of the current directory, directly or not; if
-  that's necessary, ask the user to do it instead.
+- You MUST NOT modify anything outside of the current directory; if that's
+  necessary, ask the user to do it instead.
+- After finishing the task you were assigned, you MUST check that the code
+  compiles and runs, and the requested changes are implemented correctly.
+  - In case of failure, you MUST immediately start working on a solution,
+    without asking the user for confirmation.
 
 ## Git
 
-- Make commits after each distinct successful step in the solution.
-- Keep commit messages concise, ideally -- a single line.
+- You MUST make commits after each successful step.
+- Keep commit messages as concise as possible, ideally -- a single line.
 
 ## Memory
 
-- Feel free to write to project memory whenever there are significant changes.
-- After editing memory file, you MUST make a git commit with ALL changes in the
-  repository checked in.
+- You are responsible for memory files `CLAUDE.md`.
+- You MUST NOT edit `AGENTS.md` files, as they are only to be edited by the
+  user.
+
+### Global memory
+
+You are responsible for storing useful facts, ideas, and snippets in global
+memory for future reference:
+
+- Whenever you find yourself using the same *complex* construction, programming
+  idiom, bash oneliner, or any other non-trivial idea that might be useful
+  later, you MUST save it in the global memory together with a concise
+  description: what it does and when you might find it useful.
+
+### Project memory
+
+You are responsible for keeping project memory consistent with the state of the
+project:
+
+- If you make significant changes or otherwise notice inconsistencies in the
+  project memory, you MUST immediately edit it such that it reflects the current
+  state of the project.
+  - You MUST NOT remove correct statements from the project memory.
+  - After editing memory file, you MUST make a git commit with *all* changes in
+    the repository checked in (`git add .`, then `git commit`).
+- You MUST NOT blindly trust project memory, as it gets outdated quick. The
+  source of truth is the code. Use the project memory as the starting point.
 
 ## Code
 
 - Don't write too much code -- try to be as concise as possible.
 - When making architecture decisions, go for minimalism.
 - Only add comments where descriptive names are not enough.
-- After finishing the task you were assigned, you MUST check that the code
-  compiles and runs. If it doesn't, you MUST NOT ask if the user wants you to
-  fix the problem; instead, you MUST immediately start working on a solution.
 
 ## Nix
 
-- When working on flakes in git repositories, don't forget to `git add` new
-  files, otherwise they are ignored by the flake
+- When creating a new file in a nix flake repository, you MUST run `git add .`,
+  otherwise it is ignored by the flake

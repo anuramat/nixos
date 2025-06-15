@@ -53,10 +53,9 @@
 
     enableLuaLoader = true;
     options = lib.mkForce { }; # XXX kinda works, kills some of the attributes
-    luaConfigPost = # lua
-      # TODO this is ignored for some reason
+    luaConfigPre = # lua
       ''
-        vim.cmd('runtime ${./base.vim}')
+        vim.cmd('source ${./base.vim}')
         vim.diagnostic.config({
           severity_sort = true,
           update_in_insert = true,
