@@ -2,7 +2,9 @@
 .SILENT:
 MAKEFLAGS += --always-make
 
-all: flake links claude lint
+keys_dir::=$(shell pwd)/os/machines/$(shell hostname)/keys
+
+all: format flake links claude lint
 flake:
 	sudo true
 	./scripts/heading.sh "Copying public keys"
@@ -12,35 +14,26 @@ flake:
 	cp -ft "$(keys_dir)" "/etc/nix/cache.pem.pub" 2>/dev/null || true
 	./scripts/heading.sh "Building NixOS"
 	sudo nixos-rebuild switch --option extra-experimental-features pipe-operators --show-trace
-	./scripts/heading.sh "Great success"
 links:
 	./scripts/heading.sh "Setting up links"
 	./scripts/install.sh ./links
-	./scripts/heading.sh "Great success"
-machine_dir::=$(shell pwd)/os/machines/$(shell hostname)
-keys_dir::=$(machine_dir)/keys
-init:
-	./scripts/heading.sh "Initial install"
-	./scripts/guard.sh
-	./scripts/heading.sh "Generating keys"
-	./scripts/keygen.sh
-	./scripts/heading.sh "Great success"
 claude:
 	jq --slurpfile mcp ./mcp.json '.mcpServers = $$mcp[0]' ~/.claude.json | sponge ~/.claude.json
 	jq '.projects |= map (. + {hasClaudeMdExternalIncludesApproved:true})' ~/.claude.json | sponge ~/.claude.json
 
-nvim:
-	nix run --option builders '' --option substituters '' .#neovim
-
 lint:
-	./scripts/heading.sh "Checking Nix"
+	./scripts/heading.sh "Checking Nix files"
 	echo Skipping nix linters due to lack of pipe operator support
 	# statix check -i hardware-configuration.nix || true
 	# deadnix || true
-	./scripts/heading.sh "Checking Lua"
+	./scripts/heading.sh "Checking Lua files"
 	luacheck . --codes --globals=vim -q | head -n -1
-	./scripts/heading.sh "Checking shell"
+	./scripts/heading.sh "Checking shell scripts"
 	./scripts/shrun.sh shellcheck --color=always -o all
-	./scripts/heading.sh "Yaml"
+	./scripts/heading.sh "Checking yaml files"
 	yamllint . || true
+	./scripts/heading.sh "Checking Makefile"
 	checkmake Makefile
+format:
+	./scripts/heading.sh "Formatting"
+	treefmt

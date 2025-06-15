@@ -10,10 +10,20 @@ for i in "${__free_repos_cand[@]}"; do
 	[ -d "$i" ] && __free_repos+=("$i")
 done
 
+ghooks() {
+	[ "$1" = -h ] && {
+		echo 'lists hooks in ghq repos'
+		echo 'if $1 is provided - lists hooks in $1'
+		return
+	}
+	find "${1:-$(ghq root)}" -wholename '*/.git/hooks/*' -not -name '*.sample'
+}
+
 g() {
 	[ "$1" = -h ] && {
 		echo 'cd to ghq repo'
 		echo 'optional: $1 - query (best match is picked)'
+		return
 	}
 	# TODO rewrite with less assumptions, use ghq queries
 	local -r root="$(ghq root)"
@@ -32,6 +42,7 @@ __gitgud_picker() {
 		echo '$1 - prompt question'
 		echo '$2 - query (optional)'
 		echo 'stdout - NL separated list of repos'
+		return
 	}
 	local repos
 	repos="$(fzf -1 -q "$2")" || return 1
@@ -45,6 +56,7 @@ git_rm() {
 	[ "$1" = -h ] && {
 		echo '`ghq rm` with picker'
 		echo '$1 - repo (optional)'
+		return
 	}
 	local selected
 	selected=$(ghq list | __gitgud_picker "delete?" "$1") || return
@@ -142,6 +154,7 @@ __check() {
 up() (
 	[ "$1" = -h ] && {
 		echo 'fast push+commit for personal repos'
+		return
 	}
 	cd "$1" || return 1
 
@@ -196,6 +209,7 @@ github_create() {
 		echo 'creates a repo with minimum amount of gh features turned on'
 		echo '$1 - name'
 		echo '$2 - visibility (optional)'
+		return
 	}
 	name=$1
 	visibility=private

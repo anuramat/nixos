@@ -1,3 +1,9 @@
 #!/usr/bin/env bash
 
+hook_name=$(basename $0)
+local=./.git/hooks/$hook_name
+[ -x $local ] && [ -f $local ] && {
+    exec $local
+}
+
 treefmt --fail-on-change

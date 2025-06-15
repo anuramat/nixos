@@ -48,6 +48,7 @@
         lg = "log --ext-diff --oneline --graph --all --decorate";
         df = "diff";
         ds = "diff --staged";
+        lh = "!lh() { find .git/hooks -mindepth 1 -maxdepth 1 | grep -v sample; }; lh";
       };
       ignores = [
         "*.db" # jupyter-lab, maybe etc
