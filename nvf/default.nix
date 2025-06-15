@@ -33,30 +33,6 @@
 
     filetree.neo-tree.enable = true;
     formatter.conform-nvim.enable = true;
-    fzf-lua = {
-      enable = true;
-      setupOpts = {
-        grep = {
-          RIPGREP_CONFIG_PATH = {
-            _type = "lua-inline";
-            expr = "vim.env.RIPGREP_CONFIG_PATH";
-          };
-          fd_opts = "-c never -t f -HL";
-          multiline = 2;
-        };
-        files = {
-          "1" = true; # means "merge with defaults"
-          ctrl-q = {
-            fn = {
-              _type = "lua-inline";
-              expr = "require('fzf-lua').actions.file_sel_to_qf";
-            };
-            prefix = "select-all";
-          };
-        };
-      };
-      # { 'G', 'grep' }, -- useful on large projects
-    };
     lazy.enable = true;
     pluginOverrides = {
       lazydev-nvim = pkgs.fetchFromGitHub {
