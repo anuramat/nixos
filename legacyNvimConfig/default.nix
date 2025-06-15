@@ -106,7 +106,6 @@ let
 in
 (nixCats.utils.eachSystem nixpkgs-unstable.lib.platforms.all) buildNeovim
 
-
 # let
 #   # TODO nixcats or nvf
 #   moltenLua = ps: [

@@ -13,7 +13,6 @@ local function set_lsp_keys(buffer)
   -- set(']d', vim.diagnostic.goto_next, 'Next Diagnostic')
 end
 
-
 --- Root directory function with a fallback
 --- @param opts { primary: string[], fallback: string[] }
 m.root_dir_with_fallback = function(opts)

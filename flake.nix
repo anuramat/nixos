@@ -132,7 +132,8 @@
             ];
           };
         in
-        nvimConfig.neovim // {
+        nvimConfig.neovim
+        // {
           passthru = nvimConfig.neovim.passthru // {
             inherit (nvimConfig) options config;
           };

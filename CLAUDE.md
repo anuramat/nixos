@@ -1,4 +1,4 @@
-# Imports 
+# Imports
 
 @AGENTS.md
 
@@ -90,7 +90,7 @@ sudo nixos-rebuild switch --option extra-experimental-features pipe-operators --
 ### Nix Flake Inputs
 
 - Multiple nixpkgs channels (stable 25.05, unstable, old 24.11)
-- Home Manager (release-25.05) for user configurations  
+- Home Manager (release-25.05) for user configurations
 - Stylix (release-25.05) for system-wide theming
 - Hardware-specific modules (nixos-hardware)
 - Custom packages (subcat, ctrlsn, mcp-nixos)
@@ -105,7 +105,8 @@ sudo nixos-rebuild switch --option extra-experimental-features pipe-operators --
 
 ### Development Tools
 
-- **Neovim**: Built with nvf (neovim flake framework), featuring LSP, DAP, TreeSitter, and plugins
+- **Neovim**: Built with nvf (neovim flake framework), featuring LSP, DAP,
+  TreeSitter, and plugins
   - Full configuration: `make nvim` (includes all features)
   - Declarative configuration in `nvf/default.nix` using nvf modules
   - Legacy nixCats configuration preserved in `legacyNvimConfig/`

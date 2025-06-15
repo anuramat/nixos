@@ -1,7 +1,7 @@
 # Instructions
 
-- You are running in a `bubblewrap` sandbox. Most of the paths are
-  mounted in read-only mode, with a few exceptions:
+- You are running in a `bubblewrap` sandbox. Most of the paths are mounted in
+  read-only mode, with a few exceptions:
   ```txt
   ~/.claude.json
   ~/.claude/
