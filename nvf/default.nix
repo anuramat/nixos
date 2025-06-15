@@ -1,17 +1,18 @@
-{ lib, ... }:
+{ pkgs, lib, ... }:
 # TODO use nightly
 {
   imports = [
     ./git.nix
   ];
   vim = {
-    keymaps = let 
-    inherit (lib.nvim.binds) mkKeymap;
-    in
-    {
-        (mkKeymap "n" "<leader>o" "<cmd>Oil<cr>" {})
-        (mkKeymap "n" "<leader>o" "<cmd>Oil .<cr>" {})
-    };
+    keymaps =
+      let
+        inherit (lib.nvim.binds) mkKeymap;
+      in
+      [
+        (mkKeymap "n" "<leader>o" "<cmd>Oil<cr>" { })
+        (mkKeymap "n" "<leader>o" "<cmd>Oil .<cr>" { })
+      ];
     enableLuaLoader = true;
     options = lib.mkForce { }; # XXX kinda works, kills some of the attributes
     luaConfigPre = # lua
@@ -58,10 +59,11 @@
     lazy.enable = true;
     pluginOverrides = {
       lazydev-nvim = pkgs.fetchFromGitHub {
-        owner = "anuramat";
+        owner = "matze";
         repo = "wastebin.nvim";
-        rev = "";
+        rev = "main";
         hash = "";
+      };
     };
     notes.todo-comments = {
       enable = true;
@@ -137,10 +139,10 @@
           view_options = {
             show_hidden = true;
             natural_order = true;
-            sort = [
-              { type = "asc"; }
-              { name = "asc"; }
-            ];
+            sort = {
+              type = "asc";
+              name = "asc";
+            };
           };
         };
       };

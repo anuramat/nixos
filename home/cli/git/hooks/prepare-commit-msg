@@ -4,8 +4,10 @@ COMMIT_MSG_FILE=$1
 COMMIT_SOURCE=$2
 SHA1=$3
 
+# prefer local hook
+
 signature="Co-Authored-By: Claude <noreply@anthropic.com>" 
-commit_msg=$(perl -0777 -pe "s/\n${signature/@/\\@}//g" "$COMMIT_MSG_FILE")
+commit_msg=$(perl -0777 -pe "s/\n${signature/@/\\@}\n/\n/g" "$COMMIT_MSG_FILE")
 
 if [ -n "$CLAUDE" ]; then
     if [ -s "$COMMIT_MSG_FILE" ]; then
