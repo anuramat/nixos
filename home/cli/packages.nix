@@ -31,6 +31,7 @@
     claude-code
     llama-cpp
     codex
+    amp-cli
 
     # backend
     dive # look into docker image layers

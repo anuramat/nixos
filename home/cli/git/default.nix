@@ -92,7 +92,7 @@
       ];
 
       hooks = {
-        prepare-commit = ./hooks/prepare-commit-msg;
+        prepare-commit-msg = ./hooks/prepare-commit-msg;
       };
       # TODO check jupyter notebook and nbdime later; `git diff` works
       extraConfig = {

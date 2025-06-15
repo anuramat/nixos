@@ -44,15 +44,13 @@ in
     flakes
     (final: prev: {
       codex = inputs.codex.packages.x86_64-linux.codex-cli;
-      # ollama = prev.ollama.overrideAttrs (oldAttrs: rec {
-      #   version = "0.9.0-rc0";
-      #   src = prev.fetchFromGitHub {
-      #     owner = "ollama";
-      #     repo = "ollama";
-      #     rev = "v${version}";
-      #     sha256 = "sha256-+8UHE9M2JWUARuuIRdKwNkn1hoxtuitVH7do5V5uEg0=";
-      #   };
-      # });
+      amp-cli = prev.amp-cli.overrideAttrs (oldAttrs: rec {
+        version = "0.0.1749960449-gc74a77";
+        src = prev.fetchzip {
+          url = "https://registry.npmjs.org/@sourcegraph/amp/-/amp-${version}.tgz";
+          hash = "sha256-YoyuZX41l21eTGi9t0rYb4vEE3rSqiue2kIf0PDbaKc=";
+        };
+      });
       claude-code = prev.claude-code.overrideAttrs (oldAttrs: rec {
         version = "1.0.21";
         src = prev.fetchzip {
