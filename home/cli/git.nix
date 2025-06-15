@@ -93,6 +93,7 @@
 
       # TODO check jupyter notebook and nbdime later; `git diff` works
       extraConfig = {
+        core.hooksPath = "${config.xdg.configHome}/git/hooks";
         pull.ff = "only";
         core.pager = {
           diff =

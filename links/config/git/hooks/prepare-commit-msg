@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+#
+# Global git hook to append COMMIT_SUFFIX environment variable to commit messages
+# when the variable is set.
+
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+SHA1=$3
+
+# If COMMIT_SUFFIX is set and not empty, append it to the commit message
+if [ -n "$COMMIT_SUFFIX" ]; then
+    # Only modify the commit message for regular commits (not merge, template, etc.)
+    case "$COMMIT_SOURCE" in
+        "" | "message")
+            # Read the current commit message
+            if [ -s "$COMMIT_MSG_FILE" ]; then
+                # Append the suffix to the existing message
+                echo "$COMMIT_SUFFIX" >> "$COMMIT_MSG_FILE"
+            fi
+            ;;
+    esac
+fi
