@@ -75,15 +75,15 @@
   services.blueman.enable = true; # bluetooth gui
 
   # power {{{1
+  # HandlePowerKeyLongPress=ignore
   services.logind.extraConfig = ''
-    HandlePowerKey=hybrid-sleep
-    HandlePowerKeyLongPress=ignore
+    HandlePowerKey=suspend
     HandleSuspendKey=suspend
     HandleHibernateKey=suspend
+    HandleLidSwitch=ignore
+    HandleLidSwitchDocked=ignore
+    HandleLidSwitchExternalPower=ignore
   '';
-  # HandleLidSwitch=suspend
-  # HandleLidSwitchDocked=ignore
-  # HandleLidSwitchExternalPower=ignore
   services = {
     thermald.enable = true; # cooling
     tlp = {

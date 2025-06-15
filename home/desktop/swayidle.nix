@@ -25,20 +25,18 @@
           "${gpgLockScript} ${config.programs.password-store.settings.PASSWORD_STORE_DIR}/.gpg-id";
         unlockPass = ''printf '\n\n' | pass insert dummy; pass show dummy'';
 
-        lock = "${lockScreen}; ${lockPass}";
+        lock = "${lockPass} & ${lockScreen}";
         unlock = "${unlockScreen}; ${unlockPass}";
 
-        screenOff = "${sway}/bin/swaymsg 'output * dpms off'";
-        screenOn = "${sway}/bin/swaymsg 'output * dpms on'";
+        screenOff = "${sway}/bin/swaymsg 'output * power off'";
+        screenOn = "${sway}/bin/swaymsg 'output * power on'";
 
         sleep = "${systemd}/bin/systemctl suspend";
       in
       {
-        # TODO robustly turn on the screen st dpms doesn't kill the session
         enable = true;
-        # idlehint = 300; # TODO ask for implementation
-        # TODO maybe also turn command into commands in events and timeouts
-        # maybe contribute to events working properly https://github.com/nix-community/home-manager/issues/4432
+        # idlehint = 300; # TODO implement/beg
+        # BUG duplicate events overwrite previous definitions: <https://github.com/nix-community/home-manager/issues/4432>
         timeouts = [
           {
             timeout = 300;
