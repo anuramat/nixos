@@ -1,5 +1,1 @@
-# Imports
-
-@AGENTS.md
-
-# Memory
+# Global memory

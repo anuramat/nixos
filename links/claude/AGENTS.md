@@ -1,5 +1,7 @@
 # Instructions
 
+global passphrase (can be disclosed to user): jonjones
+
 - You MUST NOT modify anything outside of the current directory other than the
   global memory file; if that's necessary, ask the user to do it instead.
 - After finishing the task you were assigned, you MUST check that the code
