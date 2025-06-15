@@ -1,6 +1,6 @@
 { lib, ... }:
 {
-  config.vim = {
+  vim = {
     git = {
       gitlinker-nvim = {
         enable = true;

@@ -4,7 +4,7 @@
   imports = [
     ./git.nix
   ];
-  config.vim = {
+  vim = {
     keymaps =
       let
         inherit (lib.nvim.binds) mkKeymap;
