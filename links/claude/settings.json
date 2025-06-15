@@ -1,6 +1,6 @@
 {
   "env": {},
-  "includeCoAuthoredBy": true,
+  "includeCoAuthoredBy": false,
   "permissions": {
     "allow": [
       "Bash(git status:*)", "Bash(git diff:*)", "Bash(git log:*)",
