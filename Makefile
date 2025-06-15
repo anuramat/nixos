@@ -25,8 +25,10 @@ init:
 	./scripts/heading.sh "Generating keys"
 	./scripts/keygen.sh
 	./scripts/heading.sh "Great success"
-mcp:
+claude:
 	jq --slurpfile mcp ./mcp.json '.mcpServers = $$mcp[0]' ~/.claude.json | sponge ~/.claude.json
+	jq '.projects |= map (. + {hasClaudeMdExternalIncludesApproved:true})' ~/.claude.json | sponge ~/.claude.json
+
 nvim:
 	nix run --option builders '' --option substituters '' .#neovim
 
