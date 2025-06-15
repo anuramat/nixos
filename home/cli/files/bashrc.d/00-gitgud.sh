@@ -56,7 +56,7 @@ __gitgud_picker() {
 	[ "$choice" = 'y' ]
 }
 
-git_rm() {
+grm() {
 	[ "$1" = -h ] && {
 		echo '`ghq rm` with picker'
 		echo '$1 - repo (optional)'
@@ -67,7 +67,7 @@ git_rm() {
 	echo "$selected" | xargs -I{} bash -c 'yes | ghq rm {} 2>/dev/null'
 }
 
-clone() {
+gclone() {
 	[ "$1" = -h ] && {
 		echo '`ghq get` with picker and zoxide init'
 		echo '$1 - repo as interpreted by ghq, optional'
@@ -208,7 +208,7 @@ up() (
 	echo "status:$prompt"
 )
 
-github_create() {
+gcreate() {
 	[ "$1" = -h ] && {
 		echo 'creates a repo with minimum amount of gh features turned on'
 		echo '$1 - name'
