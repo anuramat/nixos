@@ -6,4 +6,6 @@ local=./.git/hooks/$hook_name
     exec $local
 }
 
-treefmt --fail-on-change
+if [ -f ./treefmt.toml ]; then
+        treefmt
+fi
