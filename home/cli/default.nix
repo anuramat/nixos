@@ -1,7 +1,7 @@
 { config, lib, ... }:
 {
   imports = [
-    ./git.nix
+    ./git
     ./packages.nix
   ];
   programs = {
