@@ -9,6 +9,6 @@ commit_msg=$(perl -0777 -pe "s/\n${signature/@/\\@}//g" "$COMMIT_MSG_FILE")
 
 if [ -n "$CLAUDE" ]; then
     if [ -s "$COMMIT_MSG_FILE" ]; then
-	printf '%s\n\n%s' "$0 $commit_msg" "$signature" > "$COMMIT_MSG_FILE"
+	printf '%s\n\n%s' "$commit_msg" "$signature" > "$COMMIT_MSG_FILE"
     fi
 fi

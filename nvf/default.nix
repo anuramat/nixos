@@ -5,6 +5,13 @@
     ./git.nix
   ];
   vim = {
+    keymaps = let 
+    inherit (lib.nvim.binds) mkKeymap;
+    in
+    {
+        (mkKeymap "n" "<leader>o" "<cmd>Oil<cr>" {})
+        (mkKeymap "n" "<leader>o" "<cmd>Oil .<cr>" {})
+    };
     enableLuaLoader = true;
     options = lib.mkForce { }; # XXX kinda works, kills some of the attributes
     luaConfigPre = # lua
@@ -86,12 +93,11 @@
       bracketed.enable = true;
     };
     treesitter = {
-      # XXX mkforce doesn't work
       mappings.incrementalSelection = lib.mkForce {
         decrementByNode = "<bs>";
         incrementByNode = "<c-space>";
-        incrementByScope = null;
-        init = null;
+        # incrementByScope = null;
+        # init = null;
       };
       context = {
         enable = true;
@@ -115,7 +121,6 @@
       outline.aerial-nvim.enable = true;
       diffview-nvim.enable = true;
       oil-nvim = {
-        # TODO leader o/O - Oil, Oil.
         enable = true;
         setupOpts = {
           default_file_explorer = true;
