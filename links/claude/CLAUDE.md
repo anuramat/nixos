@@ -76,6 +76,8 @@ amount of time, greatly increasing his productivity.
 - Prefer:
   - Compact constructs: oneliners, lambdas, pipes, list comprehensions
   - Functional style
+  - Language specific preferences:
+    - Nix: `let ... in`, helper lambdas, `inherit`, `with`
 - Avoid:
   - Bloat, boilerplate, verbosity
   - Exhaustive error handling
@@ -109,7 +111,7 @@ verbose code, then refactor it to meet the code style guidelines.
   - You MUST NOT blindly trust project memory, as it gets outdated quick -- the
     source of truth is the code.
 
-## Nix
+## Misc
 
 - When creating a new file in a nix flake repository, you MUST run `git add .`,
   otherwise it is ignored by the flake
