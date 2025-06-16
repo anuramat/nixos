@@ -4,24 +4,37 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" are to be interpreted as
 described in RFC 2119.
 
-- User is running NixOS, and the corresponding flake repository is located in
-  `/etc/nixos`. Whenever user mentions installing or configuring software (e.g.
-  Neovim), you SHOULD read the contents to retrieve the necessary context.
-- You MUST NOT modify anything outside of the current directory other than the
-  global memory file; for all the other files ask the user instead
-- You are probably in a `bubblewrap` sandbox. Most of the paths are mounted in
-  read-only mode, with a few exceptions:
-  ```txt
-  ~/.claude.json
-  ~/.claude/
-  $PWD
-  /tmp/
-  $XDG_CACHE_HOME
-  ```
-- After finishing the task you were assigned, you MUST check that the code
-  compiles and runs, and that the requested changes are implemented correctly.
-  - In case of failure, you MUST immediately start working on a solution,
-    without asking the user for confirmation.
+## Projects and directories
+
+- User is running NixOS, and the corresponding repository is located in
+  `/etc/nixos`.
+- Paths to other repositories can be listed with bash command `ghq list -p`.
+- Whenever user mentions installing or configuring software (e.g. Neovim), you
+  SHOULD read the contents of aforementioned directories to retrieve the
+  necessary context.
+
+## Permissions
+
+You typically are running in a `bubblewrap` sandbox. Most of the paths are
+mounted in read-only mode, with a few exceptions:
+
+```txt
+~/.claude.json
+~/.claude/
+$PWD
+/tmp/
+$XDG_CACHE_HOME
+```
+
+Commands that modify anything not on this list will usually fail.
+
+## Workflow
+
+After finishing the task you were assigned, you MUST check that the code
+compiles and runs, and that the requested changes are implemented correctly.
+
+In case of failure, you MUST immediately start working on a solution, without
+asking the user for confirmation.
 
 ## Git
 
@@ -38,12 +51,11 @@ described in RFC 2119.
 ### Global memory
 
 You are responsible for storing useful facts, ideas, and snippets in global
-memory for future reference:
-
-- Whenever you find yourself using the same *complex* construction, programming
-  idiom, bash oneliner, or any other non-trivial idea that might be useful
-  later, you MUST save it in the global memory together with a concise
-  description: what it does and when you might find it useful.
+memory for future reference: whenever you find yourself using the same
+construction, programming idiom, bash oneliner, online resource, or any other
+non-trivial idea that might be useful later, you MUST save it in the global
+memory together with a concise description: what it does and when you might find
+it useful.
 
 ### Project memory
 
@@ -59,11 +71,26 @@ project:
 - You MUST NOT blindly trust project memory, as it gets outdated quick. The
   source of truth is the code. Use the project memory as the starting point.
 
-## Code
+## Code guidelines
 
-- Don't write too much code -- try to be as concise as possible.
-- When making architecture decisions, go for minimalism.
-- Only add comments where descriptive names are not enough.
+Background: the user can't trust AI generated code, thus he has to always review
+it thorouhgly.
+
+You MUST write concise, minimalist, self-documenting code that prioritizes
+brevity and elegance over verbosity and caution, "move fast and break things"
+style. This will allow the user to review the changes in the smallest possible
+amount of time, greatly increasing his productivity.
+
+- Prefer:
+  - Compact constructs: oneliners, lambdas, pipes, list comprehensions
+  - Functional style
+- Avoid:
+  - Bloat, boilerplate, verbosity
+  - Exhaustive error handling
+  - Unnecessary edge case checks
+  - Excessive comments
+  - Bloated code formatting with a lot of newlines
+- Arcane but effective solutions are welcome
 
 ## Nix
 
