@@ -127,19 +127,19 @@
             nixd = {
               options =
                 let
-                  hostname = "";
+                  # hostname = "";
                   root = ''(builtins.getFlake "/etc/nixos/")'';
-                  nixosExpr = ''${root}.nixosConfigurations.${hostname}.options'';
-                  homeExpr = "${nixosExpr}.home-manager.users.type.getSubOptions []";
+                  # nixosExpr = ''${root}.nixosConfigurations.${hostname}.options'';
+                  # homeExpr = "${nixosExpr}.home-manager.users.type.getSubOptions []";
                   vimExpr = "${root}.packages.${pkgs.system}.neovim.options";
                 in
                 {
-                  nixos = {
-                    expr = nixosExpr;
-                  };
-                  home-manager = {
-                    expr = homeExpr;
-                  };
+                  # nixos = {
+                  #   expr = nixosExpr;
+                  # };
+                  # home-manager = {
+                  #   expr = homeExpr;
+                  # };
                   nixvim = {
                     expr = vimExpr;
                   };
