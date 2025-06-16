@@ -43,8 +43,20 @@ in
         hash = "sha256-udiozhDynBCA0vDLnPsAdYCdiYKlFlnCgpzvbblQRuM=";
       };
     };
+    extraPlugins = {
+      wastebin-nvim = {
+        package = myInputs.wastebin-nvim.packages.${pkgs.system}.default;
+        setup = ''
+          require('wastebin').setup({
+            url = 'https://bin.ctrl.sn',
+            open_cmd = '__wastebin() { wl-copy "$1" && xdg-open "$1"; }; __wastebin',
+            ask = false,
+          })
+        '';
+      };
+    };
+
     extraPackages = [
-      myInputs.wastebin-nvim.packages.${pkgs.system}.default
     ];
   };
 }
