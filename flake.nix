@@ -139,7 +139,7 @@
       packages.neovim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
         pkgs = import nixpkgs { inherit system; };
         extraSpecialArgs = {
-          myInputs = inputs;
+          inherit inputs;
         };
         module = ./nixvim;
       };

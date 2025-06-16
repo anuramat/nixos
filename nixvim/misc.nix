@@ -1,6 +1,6 @@
 {
   lib,
-  myInputs,
+  inputs,
   pkgs,
   ...
 }:
@@ -23,7 +23,7 @@
   };
 
   extraPlugins = [
-    myInputs.wastebin-nvim.packages.${pkgs.system}.default
+    inputs.wastebin-nvim.packages.${pkgs.system}.default
   ];
 
   extraConfigLua = ''

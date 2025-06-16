@@ -1,7 +1,7 @@
 {
   lib,
   pkgs,
-  myInputs,
+  inputs,
   ...
 }:
 {
@@ -18,7 +18,7 @@
     ./llm.nix
   ];
 
-  package = myInputs.neovim-nightly-overlay.packages.${pkgs.system}.neovim;
+  package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.neovim;
 
   # TODO lazy
   # TODO lualoader
