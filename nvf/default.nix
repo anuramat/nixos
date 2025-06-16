@@ -17,6 +17,10 @@
     ./vimim.nix
   ];
   vim = {
+    additionalRuntimePaths = [
+      ./rtp
+      ./after
+    ];
     package = myInputs.neovim-nightly-overlay.packages.${pkgs.system}.neovim;
     enableLuaLoader = true;
     lazy.enable = false;
