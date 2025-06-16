@@ -3,10 +3,6 @@
     flake-utils = {
       url = "github:numtide/flake-utils";
     };
-    avante = {
-      url = "github:anuramat/avante.nvim/flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     wastebin-nvim = {
       url = "github:anuramat/wastebin.nvim/flake";
       inputs.nixpkgs.follows = "nixpkgs";

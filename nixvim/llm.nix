@@ -8,6 +8,15 @@
   plugins = {
     avante = {
       enable = true;
+      package = pkgs.vimPlugins.avante-nvim.overrideAttrs (old: {
+        src = pkgs.fetchFromGitHub {
+          owner = "yetone";
+          repo = "avante.nvim";
+          rev = "v0.0.25";
+          hash = "sha256-lmyooXvQ+Cqv/6iMVlwToJZMFePSWoVzuGVV7jsSOZc=";
+        };
+        version = "v0.0.25";
+      });
       settings = {
         behaviour = {
           auto_suggestions = false;
