@@ -117,8 +117,8 @@
         |> builtins.listToAttrs;
       homeConfigurations.${user.username} = home-manager.lib.homeManagerConfiguration {
         specialArgs = commonArgs;
-
-        # TODO stylix module sharing between home-manager and nixos
+        # TODO check stylix module sharing between home-manager and nixos
+        # TODO check home-manager on a non-nixos system
         modules = [
           ./home
           ./common
@@ -135,13 +135,11 @@
       packages.neovim =
         let
           nvfConfig = nvf.lib.neovimConfiguration {
-            pkgs = import nixpkgs {
-              inherit system;
+            pkgs = import nixpkgs { inherit system; };
+            extraSpecialArgs = {
+              myInputs = inputs; # WARN I can't fucking believe this shit
             };
-            modules = [
-              ./nvf
-              { vim.package = neovim-nightly-overlay.packages.${system}.neovim; }
-            ];
+            modules = [ ./nvf ];
           };
         in
         nvfConfig.neovim // { options = nvfConfig.options; };

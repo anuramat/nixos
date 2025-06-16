@@ -1,4 +1,9 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  myInputs,
+  pkgs,
+  ...
+}:
 let
   inherit (lib) mkForce;
 in
@@ -38,5 +43,8 @@ in
         hash = "sha256-udiozhDynBCA0vDLnPsAdYCdiYKlFlnCgpzvbblQRuM=";
       };
     };
+    extraPackages = [
+      myInputs.wastebin-nvim.packages.${pkgs.system}.default
+    ];
   };
 }
