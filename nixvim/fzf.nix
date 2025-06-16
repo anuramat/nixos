@@ -1,127 +1,45 @@
-{ lib, ... }:
+{ ... }:
 {
-  keymaps = [
-    # FzfLua keymaps
-    {
-      mode = "n";
-      key = "<leader>fo";
-      action = "<cmd>FzfLua files<cr>";
-      options.desc = "files [fzf]";
-    }
-    {
-      mode = "n";
-      key = "<leader>fO";
-      action = "<cmd>FzfLua oldfiles<cr>";
-      options.desc = "oldfiles [fzf]";
-    }
-    {
-      mode = "n";
-      key = "<leader>fa";
-      action = "<cmd>FzfLua args<cr>";
-      options.desc = "args [fzf]";
-    }
-    {
-      mode = "n";
-      key = "<leader>fb";
-      action = "<cmd>FzfLua buffers<cr>";
-      options.desc = "buffers [fzf]";
-    }
-    {
-      mode = "n";
-      key = "<leader>fm";
-      action = "<cmd>FzfLua marks<cr>";
-      options.desc = "marks [fzf]";
-    }
-
-    {
-      mode = "n";
-      key = "<leader>f/";
-      action = "<cmd>FzfLua curbuf<cr>";
-      options.desc = "curbuf [fzf]";
-    }
-    {
-      mode = "n";
-      key = "<leader>fg";
-      action = "<cmd>FzfLua live_grep<cr>";
-      options.desc = "live_grep [fzf]";
-    }
-    {
-      mode = "n";
-      key = "<leader>fG";
-      action = "<cmd>FzfLua grep_last<cr>";
-      options.desc = "grep_last [fzf]";
-    }
-
-    {
-      mode = "n";
-      key = "<leader>fd";
-      action = "<cmd>FzfLua diagnostics_document<cr>";
-      options.desc = "diagnostics_document [fzf]";
-    }
-    {
-      mode = "n";
-      key = "<leader>fD";
-      action = "<cmd>FzfLua diagnostics_workspace<cr>";
-      options.desc = "diagnostics_workspace [fzf]";
-    }
-    {
-      mode = "n";
-      key = "<leader>fs";
-      action = "<cmd>FzfLua lsp_document_symbols<cr>";
-      options.desc = "lsp_document_symbols [fzf]";
-    }
-    {
-      mode = "n";
-      key = "<leader>fS";
-      action = "<cmd>FzfLua lsp_workspace_symbols<cr>";
-      options.desc = "lsp_workspace_symbols [fzf]";
-    }
-    {
-      mode = "n";
-      key = "<leader>ft";
-      action = "<cmd>FzfLua treesitter<cr>";
-      options.desc = "treesitter [fzf]";
-    }
-
-    {
-      mode = "n";
-      key = "<leader>fr";
-      action = "<cmd>FzfLua resume<cr>";
-      options.desc = "resume [fzf]";
-    }
-    {
-      mode = "n";
-      key = "<leader>fh";
-      action = "<cmd>FzfLua helptags<cr>";
-      options.desc = "helptags [fzf]";
-    }
-    {
-      mode = "n";
-      key = "<leader>fk";
-      action = "<cmd>FzfLua keymaps<cr>";
-      options.desc = "keymaps [fzf]";
-    }
-    {
-      mode = "n";
-      key = "<leader>fp";
-      action = "<cmd>FzfLua builtin<cr>";
-      options.desc = "builtin [fzf]";
-    }
-
-    {
-      mode = "i";
-      key = "<C-x><C-f>";
-      action.__raw = ''
-        function()
-          require('fzf-lua').complete_file({
-            cmd = 'fd -t f -HL',
-            winopts = { preview = { hidden = 'nohidden' } },
-          })
-        end
-      '';
-      options.desc = "path completion";
-    }
-  ];
+  keymaps =
+    let
+      map = key: action: desc: {
+        mode = "n";
+        inherit key action;
+        options = { inherit desc; };
+      };
+    in
+    [
+      (map "<leader>fo" "<cmd>FzfLua files<cr>" "files [fzf]")
+      (map "<leader>fO" "<cmd>FzfLua oldfiles<cr>" "oldfiles [fzf]")
+      (map "<leader>fa" "<cmd>FzfLua args<cr>" "args [fzf]")
+      (map "<leader>fb" "<cmd>FzfLua buffers<cr>" "buffers [fzf]")
+      (map "<leader>fm" "<cmd>FzfLua marks<cr>" "marks [fzf]")
+      (map "<leader>f/" "<cmd>FzfLua curbuf<cr>" "curbuf [fzf]")
+      (map "<leader>fg" "<cmd>FzfLua live_grep<cr>" "live_grep [fzf]")
+      (map "<leader>fG" "<cmd>FzfLua grep_last<cr>" "grep_last [fzf]")
+      (map "<leader>fd" "<cmd>FzfLua diagnostics_document<cr>" "diagnostics_document [fzf]")
+      (map "<leader>fD" "<cmd>FzfLua diagnostics_workspace<cr>" "diagnostics_workspace [fzf]")
+      (map "<leader>fs" "<cmd>FzfLua lsp_document_symbols<cr>" "lsp_document_symbols [fzf]")
+      (map "<leader>fS" "<cmd>FzfLua lsp_workspace_symbols<cr>" "lsp_workspace_symbols [fzf]")
+      (map "<leader>ft" "<cmd>FzfLua treesitter<cr>" "treesitter [fzf]")
+      (map "<leader>fr" "<cmd>FzfLua resume<cr>" "resume [fzf]")
+      (map "<leader>fh" "<cmd>FzfLua helptags<cr>" "helptags [fzf]")
+      (map "<leader>fk" "<cmd>FzfLua keymaps<cr>" "keymaps [fzf]")
+      (map "<leader>fp" "<cmd>FzfLua builtin<cr>" "builtin [fzf]")
+      {
+        mode = "i";
+        key = "<C-x><C-f>";
+        action.__raw = ''
+          function()
+            require('fzf-lua').complete_file({
+              cmd = 'fd -t f -HL',
+              winopts = { preview = { hidden = 'nohidden' } },
+            })
+          end
+        '';
+        options.desc = "path completion";
+      }
+    ];
 
   plugins.fzf-lua = {
     enable = true;

@@ -2,7 +2,6 @@
 {
   plugins = {
     neo-tree.enable = true;
-
     oil = {
       enable = true;
       settings = {
@@ -34,17 +33,16 @@
       };
     };
   };
-
-  keymaps = [
-    {
-      mode = "n";
-      key = "<leader>o";
-      action = "<cmd>Oil<cr>";
-    }
-    {
-      mode = "n";
-      key = "<leader>O";
-      action = "<cmd>Oil .<cr>";
-    }
-  ];
+  keymaps =
+    let
+      map = key: action: desc: {
+        mode = "n";
+        inherit key action;
+        options = { inherit desc; };
+      };
+    in
+    [
+      (map "<leader>o" "<cmd>Oil<cr>" "Oil: parent directory of the file")
+      (map "<cmd>Oil .<cr>" "Oil: CWD")
+    ];
 }
