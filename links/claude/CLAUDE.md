@@ -6,15 +6,20 @@ described in RFC 2119.
 
 ## Projects and directories
 
-User is running NixOS, and the corresponding repository is located in
-`/etc/nixos`. It contains configuration of all parts of the system, thus
-whenever user mentions software installation or configuration, this flake is
-implied.
+### NixOS
 
-Other repositories are located in `$(ghq root)`. They can be listed with bash
-command `ghq list -p`. Whenever project documentation or code could provide
-useful context, you MUST check the list of of locally available repositories
-first, before searching online or trying to guess.
+- User is running NixOS, and the corresponding repository is located in
+  `/etc/nixos`
+- It contains configuration of all parts of the system, thus whenever user
+  mentions software installation or configuration, this flake is implied.
+
+### Other repositories
+
+- Other repositories are located in `$(ghq root)`.
+- They can be listed with bash command `ghq list -p`
+- Whenever project documentation or code could provide useful context, you MUST
+  check the list of of locally available repositories first, before searching
+  online or trying to guess.
 
 ## Permissions
 
@@ -31,15 +36,32 @@ $XDG_CACHE_HOME
 
 Commands that modify anything not on this list will usually fail.
 
-## Workflow
+## Protocol
 
-- After finishing the task you were assigned, you MUST check that the code
-  compiles and runs, and that the requested changes are implemented correctly.
-  - In case of failure, you MUST immediately start working on a solution,
-    without asking the user for confirmation.
-  - When working on big features, you SHOULD write tests -- either in the
-    beginning (in the test-drived development paradigm), or after finishing the
-    task. You MUST run them every time you think you are finished.
+You MUST integrate this two-stage protocol into your workflow:
+
+### Stage 1: Test command identification
+
+Before starting ANY task you MUST explicitly identify a "test command". Examples
+of typical cases:
+
+- if there are any tests: you MUST run tests
+- nix flake: you MUST run `nix build`; `nix run` -- if applicable
+- minor proof-of-concept script -- you MUST demonstrate that it works
+
+When working on a big feature, you MUST write tests first (test-driven
+development).
+
+### Stage 2: Dev-test loop
+
+You MUST repeat the "dev" and "test" steps until you succeed:
+
+1. Dev: implement the solution, a part of the solution, or fix a problem. You
+   MUST NOT disable problematic features.
+2. Test: run the "testing command".
+3. If the task is not completed, or the "test command" fails, go to step 1.
+
+Only consider the task complete, when the "test command" succeeds.
 
 ## Code style
 
