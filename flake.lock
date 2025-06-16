@@ -9,11 +9,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1750046421,
-        "narHash": "sha256-7u0cpf7qL69hgw77HyAc41JqUdoUBlL0nbuKbAW6B8M=",
+        "lastModified": 1750048518,
+        "narHash": "sha256-denzwgsH1BXZeUKoLPsWmOct8CqFvm/aVxhri+PUp6c=",
         "owner": "anuramat",
         "repo": "avante.nvim",
-        "rev": "1e33de399652745c6b15203fe2c332b6d75d6288",
+        "rev": "cd09b0fc65a09015d82c3b8457ef57f64682ba58",
         "type": "github"
       },
       "original": {
