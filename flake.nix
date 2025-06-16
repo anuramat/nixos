@@ -143,7 +143,9 @@
             extraSpecialArgs = {
               myInputs = inputs; # WARN I can't fucking believe this shit
             };
-            modules = [ ./nvf ];
+            modules = [
+              ./nvf
+            ];
           };
         in
         nvfConfig.neovim // { options = nvfConfig.options; };
