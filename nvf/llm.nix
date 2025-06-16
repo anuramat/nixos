@@ -22,7 +22,6 @@
   vim.extraPlugins = {
     avante = {
       package = myInputs.avante.packages.${pkgs.system}.default;
-
       setup =
         let
           inherit (lib.nvim.lua) toLuaObject;
@@ -54,7 +53,7 @@
           };
         in
         ''
-          require('plugin').setup(${toLuaObject setupOpts})
+          require('avante').setup(${toLuaObject setupOpts})
         '';
     };
   };
