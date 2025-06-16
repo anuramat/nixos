@@ -1,0 +1,3 @@
+WRN 2025-06-16T23:34:52.266 ?.1867556  server_start:193: Failed to start server: read-only file system: /run/user/1000/nvim.1867556.0
+WRN 2025-06-16T23:34:52.317 ?.1867556  server_start:193: Failed to start server: read-only file system: /run/user/1000/fzf-lua.1750109692.1867556.1
+ERR 2025-06-16T23:34:55.260 ui.1867552 tui_stop:626: TUI already stopped (race?)

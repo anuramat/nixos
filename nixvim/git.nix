@@ -1,5 +1,6 @@
 { lib, ... }:
 {
+  # TODO gitlinker-nvim
   plugins = {
     gitsigns = {
       enable = true;
@@ -36,17 +37,20 @@
         inherit key action;
         options = { inherit desc; };
       };
+      mapWrap = key: action: map "<leader>g${key}" "<cmd>Gitsigns ${action}<cr>" "${action} [Gitsigns]";
     in
     [
-      (map "<leader>gs" "<cmd>Gitsigns stage_hunk<cr>" "stage hunk")
-      (map "<leader>gS" "<cmd>Gitsigns stage_buffer<cr>" "stage buffer")
-      (map "<leader>gr" "<cmd>Gitsigns reset_hunk<cr>" "reset hunk")
-      (map "<leader>gR" "<cmd>Gitsigns reset_buffer<cr>" "reset buffer")
-      (map "<leader>gb" "<cmd>Gitsigns blame_line<cr>" "blame line")
-      (map "<leader>gp" "<cmd>Gitsigns preview_hunk<cr>" "preview hunk")
-      (map "<leader>gd" "<cmd>Gitsigns diffthis<cr>" "diff this")
+      (mapWrap "s" "stage_hunk")
+      (mapWrap "S" "stage_buffer")
+      (mapWrap "r" "reset_hunk")
+      (mapWrap "R" "reset_buffer")
+      (mapWrap "b" "blame_line")
+      (mapWrap "p" "preview_hunk")
+      (mapWrap "d" "diffthis")
+
       (map "]h" "<cmd>Gitsigns next_hunk<cr>" "next hunk")
       (map "[h" "<cmd>Gitsigns prev_hunk<cr>" "previous hunk")
+
       {
         mode = [
           "o"
@@ -54,7 +58,7 @@
         ];
         key = "ih";
         action.__raw = "function() require('gitsigns').select_hunk() end";
-        options.desc = "select inside hunk";
+        options.desc = "Inside hunk [gitsigns]";
       }
       {
         mode = [
@@ -63,7 +67,7 @@
         ];
         key = "ah";
         action.__raw = "function() require('gitsigns').select_hunk({ greedy = true }) end";
-        options.desc = "select around hunk";
+        options.desc = "Around hunk [gitsigns]";
       }
     ];
 }

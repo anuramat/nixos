@@ -43,6 +43,6 @@
     in
     [
       (map "<leader>o" "<cmd>Oil<cr>" "Oil: parent directory of the file")
-      (map "<cmd>Oil .<cr>" "Oil: CWD")
+      (map "<leader>O" "<cmd>Oil .<cr>" "Oil: CWD")
     ];
 }

@@ -20,11 +20,14 @@
 
   package = myInputs.neovim-nightly-overlay.packages.${pkgs.system}.neovim;
 
+  # TODO lazy
+  # TODO lualoader
+
   viAlias = false;
   vimAlias = false;
 
   extraConfigLuaPre = ''
-    vim.cmd('source ${../nvf/base.vim}')
+    vim.cmd('source ${./base.vim}')
     vim.diagnostic.config({
       severity_sort = true,
       update_in_insert = true,
