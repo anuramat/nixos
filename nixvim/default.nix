@@ -18,10 +18,7 @@
   ];
 
   package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.neovim;
-
-  # TODO lazy
-  # TODO lualoader
-
+  luaLoader.enable = true;
   viAlias = false;
   vimAlias = false;
 
