@@ -16,7 +16,7 @@ flake:
 	sudo nixos-rebuild switch --option extra-experimental-features pipe-operators --show-trace
 links:
 	./scripts/heading.sh "Setting up links"
-	./scripts/install.sh ./links
+	./scripts/install_links.sh ./links
 claude:
 	jq --slurpfile mcp ./mcp.json '.mcpServers = $$mcp[0]' ~/.claude.json | sponge ~/.claude.json
 	jq '.projects |= map (. + {hasClaudeMdExternalIncludesApproved:true})' ~/.claude.json | sponge ~/.claude.json
