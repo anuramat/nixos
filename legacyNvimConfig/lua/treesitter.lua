@@ -1,7 +1,6 @@
 -- vim: fdl=3
 
 -- BUG E490: no fold found <https://github.com/neovim/neovim/issues/28692>
--- treesitter and context configuration migrated to nvf
 return {
   require('plugins.adapters.treesitter.textobjects'),
   {

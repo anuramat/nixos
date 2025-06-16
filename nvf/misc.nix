@@ -29,19 +29,52 @@ in
 
     assistant = {
       avante-nvim = {
-        setupOpts = lib.mkOverride 0 { };
         enable = true;
+        setupOpts = mkForce {
+          behaviour = {
+            auto_suggestions = false;
+          };
+          providers = {
+            copilot = {
+              model = "claude-sonnet-4";
+            };
+          };
+          windows = {
+            ask = {
+              floating = true;
+              start_insert = false;
+            };
+            edit = {
+              start_insert = false;
+            };
+            input = {
+              height = 12;
+              prefix = "";
+            };
+            position = "bottom";
+            width = 40;
+            wrap = true;
+          };
+        };
       };
       copilot.enable = true;
+      # opts = {
+      #   suggestion = {
+      #     enabled = false,
+      #   },
+      #   panel = {
+      #     enabled = false,
+      #   },
+      # },
     };
 
     pluginOverrides = {
-      avante-nvim = pkgs.fetchFromGitHub {
-        owner = "yetone";
-        repo = "avante.nvim";
-        rev = "main";
-        hash = "sha256-udiozhDynBCA0vDLnPsAdYCdiYKlFlnCgpzvbblQRuM=";
-      };
+      # avante-nvim = pkgs.fetchFromGitHub {
+      #   owner = "yetone";
+      #   repo = "avante.nvim";
+      #   rev = "main";
+      #   hash = "sha256-udiozhDynBCA0vDLnPsAdYCdiYKlFlnCgpzvbblQRuM=";
+      # };
     };
     extraPlugins = {
       wastebin-nvim = {

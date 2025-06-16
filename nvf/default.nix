@@ -19,7 +19,7 @@
   vim = {
     package = myInputs.neovim-nightly-overlay.packages.${pkgs.system}.neovim;
     enableLuaLoader = true;
-    lazy.enable = true;
+    lazy.enable = false;
     viAlias = false;
     vimAlias = false;
     options = lib.mkForce { }; # XXX kinda works, kills some of the attributes

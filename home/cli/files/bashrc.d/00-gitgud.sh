@@ -57,7 +57,7 @@ gclone() {
 	local repos=$1
 	[ -z "$repos" ] && repos=$(gh repo list | cut -f 1)
 	local selected
-	selected="$(echo "$repos" | cut -f 1 | __gitgud_picker "download?")" || return
+	selected="$(echo "$repos" | cut -f 1 | __gitgud_picker "")" || return
 	echo "$selected" | xargs ghq get --no-recursive --parallel -p --silent || {
 		echo "Couldn't clone"
 		return 1
