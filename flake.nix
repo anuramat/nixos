@@ -39,6 +39,7 @@
       home-manager,
       nvf,
       flake-utils,
+      neovim-nightly-overlay,
       ...
     }@inputs:
     let
@@ -139,6 +140,7 @@
             };
             modules = [
               ./nvf
+              { vim.package = neovim-nightly-overlay.packages.${system}.neovim; }
             ];
           };
         in
