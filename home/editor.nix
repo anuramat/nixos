@@ -1,5 +1,6 @@
 { pkgs, inputs, ... }:
 {
+  home.packages = [ inputs.nixvim-config.packages.${system}.default ];
   programs = {
     helix = {
       enable = true;

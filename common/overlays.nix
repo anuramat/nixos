@@ -4,7 +4,6 @@
   ...
 }@args:
 let
-
   flakes =
     final: prev:
     (builtins.mapAttrs (n: v: v.packages.${prev.system}.default) {
@@ -29,7 +28,6 @@ let
       zed-editor
       ;
   };
-
   overlays =
     [
       # list of inputs
