@@ -1,8 +1,8 @@
 { lib, ... }:
 {
   plugins = {
-  gitlinker = {};
-  fugitive = {};
+    gitlinker = { };
+    fugitive = { };
     gitsigns = {
       enable = true;
       settings = {

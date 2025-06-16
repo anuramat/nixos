@@ -1,8 +1,12 @@
 {
   plugins = {
-  nvim-lightbulb.enable = true;
-    conform-nvim = {enable = true;
-    settings.format_on_save = {lsp_format = "fallback";};};
+    nvim-lightbulb.enable = true;
+    conform-nvim = {
+      enable = true;
+      settings.format_on_save = {
+        lsp_format = "fallback";
+      };
+    };
     blink-cmp = {
       enable = true;
       luaConfig.post = ''

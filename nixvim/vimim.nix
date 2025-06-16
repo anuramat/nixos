@@ -1,7 +1,5 @@
 {
   plugins = {
-    aerial.enable = true;
-    diffview.enable = true;
     mini = {
       enable = true;
       modules = {

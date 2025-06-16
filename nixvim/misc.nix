@@ -6,7 +6,10 @@
 }:
 {
   plugins = {
-  undotree.enable= true;
+    undotree.enable = true;
+    ts-comments.enable = true;
+    # vim-eunuch.enable = true;
+    treesj.enable = true;
     todo-comments = {
       enable = true;
       settings = {
