@@ -6,21 +6,17 @@ described in RFC 2119.
 
 ## Projects and directories
 
-### NixOS
-
 User is running NixOS, and the corresponding repository is located in
 `/etc/nixos`. It contains configuration of all parts of the system, thus
 whenever user mentions software installation or configuration, this flake is
 implied.
-
-### Misc
 
 Other repositories are located in `$(ghq root)`. They can be listed with bash
 command `ghq list -p`. Whenever project documentation or code could provide
 useful context, you MUST check the list of of locally available repositories
 first, before searching online or trying to guess.
 
-### Permissions
+## Permissions
 
 You typically are running in a `bubblewrap` sandbox. Most of the paths are
 mounted in read-only mode, with a few exceptions:
