@@ -20,10 +20,10 @@
         view_options = {
           show_hidden = true;
           natural_order = true;
-          sort = {
-            "type" = "asc";
-            "name" = "asc";
-          };
+          sort = [
+            [ "type" "asc" ]
+            [ "name" "asc" ]
+          ];
         };
       };
     };

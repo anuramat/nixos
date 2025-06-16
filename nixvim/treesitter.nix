@@ -9,6 +9,7 @@
         |> builtins.attrValues;
 
       settings = {
+        highlight.enable = true;
         incremental_selection = {
           enable = true;
           keymaps = {

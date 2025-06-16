@@ -33,19 +33,27 @@
     vim.deprecate = function() end
   '';
 
-  plugins.lsp = {
-    enable = true;
-    inlayHints = true;
-    servers = {
-      clangd.enable = true;
-      gopls.enable = true;
-      html.enable = true;
-      lua_ls.enable = true;
-      nixd.enable = true;
-      pyright.enable = true;
-      rust_analyzer.enable = true;
-      ts_ls.enable = true;
-      zls.enable = true;
+  plugins = {
+    web-devicons.enable = true;
+    
+    lsp = {
+      enable = true;
+      inlayHints = true;
+      servers = {
+        clangd.enable = true;
+        gopls.enable = true;
+        html.enable = true;
+        lua_ls.enable = true;
+        nixd.enable = true;
+        pyright.enable = true;
+        rust_analyzer = {
+          enable = true;
+          installCargo = false;
+          installRustc = false;
+        };
+        ts_ls.enable = true;
+        zls.enable = true;
+      };
     };
   };
 }
