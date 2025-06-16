@@ -179,10 +179,10 @@ The repository currently manages three machines:
 ### Adding New Machines
 
 1. Create directory in `os/machines/` matching hostname
-1. Add `default.nix` with machine-specific configuration
-1. Generate `hardware-configuration.nix` using nixos-generate-config
-1. Create `meta.nix` with `{ server = true/false; }` to determine role
-1. Add SSH keys to `keys/` subdirectory
+2. Add `default.nix` with machine-specific configuration
+3. Generate `hardware-configuration.nix` using nixos-generate-config
+4. Create `meta.nix` with `{ server = true/false; }` to determine role
+5. Add SSH keys to `keys/` subdirectory
 
 ### Neovim Configuration Structure
 
