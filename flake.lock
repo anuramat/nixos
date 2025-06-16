@@ -616,11 +616,11 @@
         "pyproject-nix": "pyproject-nix"
       },
       "locked": {
-        "lastModified": 1748298613,
-        "narHash": "sha256-NwP+zM1VGLOzIm+mLZVK9/9ImFwuiWhRJ9QK3hGpQsY=",
+        "lastModified": 1749407536,
+        "narHash": "sha256-UJi507otgx69CbEGpioXPURg2iBjHoPskF+zIxlUP6Y=",
         "owner": "utensils",
         "repo": "mcp-nixos",
-        "rev": "651e7e2d088af252a8aff338882e80001cf0d366",
+        "rev": "bc28db075244b97bd14c72e49b35fb4aef502c94",
         "type": "github"
       },
       "original": {

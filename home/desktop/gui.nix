@@ -5,7 +5,7 @@
 
 {
 
-  progams.swayimg = {
+  programs.swayimg = {
     enable = true;
     settings =
       let
