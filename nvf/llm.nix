@@ -57,7 +57,7 @@
         '';
     };
   };
-
+  # good commit 574b0d37a32fcaf7ade1f76422ac4c8793af0301
   # pluginOverrides = {
   # avante-nvim = pkgs.fetchFromGitHub {
   #   owner = "yetone";
