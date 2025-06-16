@@ -40,7 +40,6 @@
       servers = {
         clangd.enable = true;
         html.enable = true;
-        lua_ls.enable = true;
         nil_ls.enable = true;
         pyright.enable = true;
         rust_analyzer = {
@@ -98,10 +97,12 @@
           };
         };
         jsonls = {
+        enable = true;
           cmd = "{ 'vscode-json-languageserver', '--stdio' }";
           # schemas = "require('schemastore').json.schemas()"; # TODO
         };
         lua_ls = {
+          enable = true;
           settings = {
             Lua = {
               format = {
@@ -147,7 +148,8 @@
             };
           };
         };
-        stylelint_lsp = {
+        stylelint_lsp = { # css
+          enable = true;
         };
         superhtml.enable = true;
         texlab = {
@@ -174,8 +176,6 @@
         };
         yamlls.enable = true;
       };
-
     };
-
   };
 }
