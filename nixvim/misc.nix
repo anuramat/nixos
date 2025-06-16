@@ -6,6 +6,7 @@
 }:
 {
   plugins = {
+  undotree.enable= true;
     todo-comments = {
       enable = true;
       settings = {

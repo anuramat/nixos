@@ -1,7 +1,8 @@
 { lib, ... }:
 {
-  # TODO gitlinker-nvim
   plugins = {
+  gitlinker = {};
+  fugitive = {};
     gitsigns = {
       enable = true;
       settings = {

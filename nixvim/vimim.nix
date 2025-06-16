@@ -1,7 +1,7 @@
 {
-  # TODO outline.aerial-nvim.enable = true;
-  # TODO diffview-nvim.enable = true;
   plugins = {
+    aerial.enable = true;
+    diffview.enable = true;
     mini = {
       enable = true;
       modules = {
