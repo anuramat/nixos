@@ -180,7 +180,7 @@ up() (
 
 gfork() {
 	yes N | gh repo fork --default-branch-only "$1"
-        gclone "$(basename $1)"
+	gclone "$(basename $1)"
 }
 
 gcreate() {
