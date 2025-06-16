@@ -15,6 +15,7 @@
     ./treesitter.nix
     ./ui.nix
     ./vimim.nix
+    ./llm.nix
   ];
   vim = {
     additionalRuntimePaths = [
