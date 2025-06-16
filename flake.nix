@@ -30,8 +30,8 @@
     nil.url = "github:oxalica/nil/main";
     nixCats.url = "github:BirdeeHub/nixCats-nvim";
     codex.url = "github:anuramat/codex";
-    nvf = {
-      url = "github:notashelf/nvf";
+    nixvim = {
+      url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -41,7 +41,7 @@
       self,
       nixpkgs-old,
       home-manager,
-      nvf,
+      nixvim,
       flake-utils,
       neovim-nightly-overlay,
       ...
@@ -136,19 +136,13 @@
       };
     }
     // (flake-utils.lib.eachDefaultSystem (system: {
-      packages.neovim =
-        let
-          nvfConfig = nvf.lib.neovimConfiguration {
-            pkgs = import nixpkgs { inherit system; };
-            extraSpecialArgs = {
-              myInputs = inputs; # WARN I can't fucking believe this shit
-            };
-            modules = [
-              ./nvf
-            ];
-          };
-        in
-        nvfConfig.neovim // { options = nvfConfig.options; };
+      packages.neovim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
+        pkgs = import nixpkgs { inherit system; };
+        extraSpecialArgs = {
+          myInputs = inputs;
+        };
+        module = ./nixvim;
+      };
     }));
 }
 # vim: fdl=0 fdm=marker
