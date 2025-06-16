@@ -94,7 +94,7 @@ sudo nixos-rebuild switch --option extra-experimental-features pipe-operators --
 - Stylix (release-25.05) for system-wide theming
 - Hardware-specific modules (nixos-hardware)
 - Custom packages (subcat, ctrlsn, mcp-nixos)
-- Development tools (neovim-nightly-overlay, nil, nvf)
+- Development tools (neovim-nightly-overlay, nil, nixvim)
 
 ### Desktop Environment (Local Machines)
 
@@ -105,11 +105,11 @@ sudo nixos-rebuild switch --option extra-experimental-features pipe-operators --
 
 ### Development Tools
 
-- **Neovim**: Built with nvf (neovim flake framework), featuring LSP, DAP,
-  TreeSitter, and plugins
+- **Neovim**: Built with nixvim (community neovim configuration framework),
+  featuring LSP, DAP, TreeSitter, and plugins
   - Full configuration: `make nvim` (includes all features)
-  - Declarative configuration in `nvf/default.nix` using nvf modules
-  - Legacy nixCats configuration preserved in `legacyNvimConfig/`
+  - Declarative configuration in `nixvim/default.nix` using nixvim modules
+  - Legacy nvf configuration preserved in `nvf/` directory
   - FzfLua integration for fuzzy finding with custom keymaps
 - **Shell**: Bash with FZF, Zoxide, custom functions and aliases
 - **Languages**: Comprehensive support for Nix, Lua, Go, Haskell, Python (with
@@ -162,8 +162,8 @@ When adapting this configuration:
 - `os/generic/common/`: Core system packages and services
 - `os/machines/`: Per-machine hardware and specific settings
 - `helpers/`: Utility functions used across configurations
-- `nvf/`: Neovim configuration using nvf framework
-- `legacyNvimConfig/`: Preserved nixCats-based Neovim configuration
+- `nixvim/`: Neovim configuration using nixvim framework
+- `nvf/`: Legacy nvf-based Neovim configuration (preserved)
 
 ### Scripts and Maintenance
 
@@ -190,11 +190,12 @@ The repository currently manages three machines:
 
 ### Neovim Configuration Structure
 
-- Built using nvf (neovim flake framework) for declarative configuration
-- Configuration defined in `nvf/default.nix` with nvf modules and options
+- Built using nixvim (community neovim configuration framework) for declarative
+  configuration
+- Configuration defined in `nixvim/default.nix` with nixvim modules and options
 - FzfLua integration with custom leader key mappings (`<leader>f*`)
-- Legacy nixCats configuration preserved in `legacyNvimConfig/` directory
-- Base vim configuration in `nvf/base.vim` for fundamental settings
+- Legacy nvf configuration preserved in `nvf/` directory
+- Base vim configuration in `nvf/base.vim` for fundamental settings (shared)
 
 ### Claude Code Integration
 

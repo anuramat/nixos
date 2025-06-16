@@ -2,7 +2,7 @@
 {
   plugins = {
     neo-tree.enable = true;
-    
+
     oil = {
       enable = true;
       settings = {
@@ -28,9 +28,17 @@
       };
     };
   };
-  
+
   keymaps = [
-    { mode = "n"; key = "<leader>o"; action = "<cmd>Oil<cr>"; }
-    { mode = "n"; key = "<leader>O"; action = "<cmd>Oil .<cr>"; }
+    {
+      mode = "n";
+      key = "<leader>o";
+      action = "<cmd>Oil<cr>";
+    }
+    {
+      mode = "n";
+      key = "<leader>O";
+      action = "<cmd>Oil .<cr>";
+    }
   ];
 }

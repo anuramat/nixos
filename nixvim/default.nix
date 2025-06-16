@@ -19,10 +19,10 @@
   ];
 
   package = myInputs.neovim-nightly-overlay.packages.${pkgs.system}.neovim;
-  
+
   viAlias = false;
   vimAlias = false;
-  
+
   extraConfigLuaPre = ''
     vim.cmd('source ${../nvf/base.vim}')
     vim.diagnostic.config({

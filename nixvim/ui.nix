@@ -2,7 +2,7 @@
   plugins = {
     fidget.enable = true;
     rainbow-delimiters.enable = true;
-    
+
     colorizer = {
       enable = true;
       settings = {

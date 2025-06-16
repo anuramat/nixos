@@ -1,7 +1,7 @@
 {
   plugins = {
     conform-nvim.enable = true;
-    
+
     blink-cmp = {
       enable = true;
       luaConfig.post = ''

@@ -3,11 +3,11 @@
   plugins = {
     treesitter = {
       enable = true;
-      grammarPackages = 
+      grammarPackages =
         pkgs.vimPlugins.nvim-treesitter.builtGrammars
         |> lib.filterAttrs (n: v: lib.strings.hasPrefix "tree-sitter" n)
         |> builtins.attrValues;
-        
+
       settings = {
         incremental_selection = {
           enable = true;
@@ -18,7 +18,7 @@
         };
       };
     };
-    
+
     treesitter-context = {
       enable = true;
       settings = {
@@ -31,7 +31,7 @@
         mode = "cursor";
       };
     };
-    
+
     treesitter-textobjects.enable = true;
   };
 }

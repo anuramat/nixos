@@ -21,7 +21,7 @@
       };
     };
   };
-  
+
   extraPlugins = [
     {
       plugin = myInputs.wastebin-nvim.packages.${pkgs.system}.default;

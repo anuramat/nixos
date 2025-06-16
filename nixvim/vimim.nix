@@ -3,19 +3,19 @@
     mini = {
       enable = true;
       modules = {
-        align = {};
-        bracketed = {};
+        align = { };
+        bracketed = { };
       };
     };
-    
+
     image = {
       enable = true;
       backend = "kitty";
     };
-    
+
     aerial.enable = true;
     diffview.enable = true;
-    
+
     nvim-surround = {
       enable = true;
       settings = {
