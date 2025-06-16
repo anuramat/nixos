@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+export CLAUDE=true
+bwrap --ro-bind / / --dev /dev \
+	--bind /tmp /tmp \
+	--bind "$XDG_CACHE_HOME" "$XDG_CACHE_HOME" \
+	--bind "$HOME/.cache/zed" "$HOME/.cache/zed" \
+	--bind "$HOME/.local/share/zed" "$HOME/.local/share/zed" \
+	--bind "$HOME/.config/zed" "$HOME/.config/zed" \
+	--bind "$PWD" "$PWD" \
+        zeditor "$@"
