@@ -1,4 +1,7 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
+let
+  inherit (lib) mkForce;
+in
 {
   vim = {
     notes.todo-comments = {
@@ -6,7 +9,7 @@
       setupOpts = {
         signs = false;
         mappings = {
-          quickFix = lib.mkForce null;
+          quickFix = mkForce null;
         };
         highlight = {
           keyword = "bg"; # only highlight the word itself
@@ -18,9 +21,22 @@
         };
       };
     };
+
     assistant = {
-      avante-nvim.enable = true;
+      avante-nvim = {
+        setupOpts = lib.mkOverride 0 { };
+        enable = true;
+      };
       copilot.enable = true;
+    };
+
+    pluginOverrides = {
+      avante-nvim = pkgs.fetchFromGitHub {
+        owner = "yetone";
+        repo = "avante.nvim";
+        rev = "main";
+        hash = "sha256-udiozhDynBCA0vDLnPsAdYCdiYKlFlnCgpzvbblQRuM=";
+      };
     };
   };
 }

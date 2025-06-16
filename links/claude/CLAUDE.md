@@ -1,6 +1,15 @@
 # Instructions
 
-- You are running in a `bubblewrap` sandbox. Most of the paths are mounted in
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+"SHOULD NOT", "RECOMMENDED",  "MAY", and "OPTIONAL" are to be interpreted as
+described in RFC 2119.
+
+- User is running NixOS, and the corresponding flake repository is located in
+  `/etc/nixos`. Whenever user mentions installing or configuring software (e.g.
+    Neovim), you SHOULD read the contents to retrieve the necessary context.
+- You MUST NOT modify anything outside of the current directory other than the
+  global memory file; for all the other files ask the user instead
+- You are probably in a `bubblewrap` sandbox. Most of the paths are mounted in
   read-only mode, with a few exceptions:
   ```txt
   ~/.claude.json
@@ -9,8 +18,6 @@
   /tmp/
   $XDG_CACHE_HOME
   ```
-- You MUST NOT modify anything outside of the current directory other than the
-  global memory file; for all the other files ask the user instead
 - After finishing the task you were assigned, you MUST check that the code
   compiles and runs, and that the requested changes are implemented correctly.
   - In case of failure, you MUST immediately start working on a solution,

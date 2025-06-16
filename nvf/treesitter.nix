@@ -1,7 +1,11 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 {
   vim = {
     treesitter = {
+      grammars =
+        pkgs.vimPlugins.nvim-treesitter.builtGrammars
+        |> lib.filterAttrs (n: v: lib.strings.hasPrefix "tree-sitter" n)
+        |> builtins.attrValues;
       mappings.incrementalSelection = {
         decrementByNode = "<bs>";
         incrementByNode = "<c-space>";
