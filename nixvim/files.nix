@@ -21,8 +21,14 @@
           show_hidden = true;
           natural_order = true;
           sort = [
-            [ "type" "asc" ]
-            [ "name" "asc" ]
+            [
+              "type"
+              "asc"
+            ]
+            [
+              "name"
+              "asc"
+            ]
           ];
         };
       };

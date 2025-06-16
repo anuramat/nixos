@@ -35,7 +35,6 @@
 
   plugins = {
     web-devicons.enable = true;
-    
     lsp = {
       enable = true;
       inlayHints = true;

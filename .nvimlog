@@ -1,0 +1,7 @@
+WRN 2025-06-16T22:46:11.270 ?.1833359  server_start:193: Failed to start server: read-only file system: /run/user/1000/nvim.1833359.0
+ERR 2025-06-16T22:46:14.264 ui.1833355 tui_stop:626: TUI already stopped (race?)
+WRN 2025-06-16T22:48:20.659 ?.1840020  server_start:193: Failed to start server: read-only file system: /run/user/1000/nvim.1840020.0
+ERR 2025-06-16T22:48:23.655 ui.1840016 tui_stop:626: TUI already stopped (race?)
+WRN 2025-06-16T22:49:06.144 ?.1847076  server_start:193: Failed to start server: read-only file system: /run/user/1000/nvim.1847076.0
+WRN 2025-06-16T22:49:06.205 ?.1847076  server_start:193: Failed to start server: read-only file system: /run/user/1000/fzf-lua.1750106946.1847076.1
+ERR 2025-06-16T22:49:09.138 ui.1847072 tui_stop:626: TUI already stopped (race?)

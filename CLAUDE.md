@@ -50,6 +50,7 @@ make flake        # Core system rebuild (copy keys + nixos-rebuild switch)
 make links        # Install symlinks from links/ directory structure
 make lint         # Run linting checks (nix + lua + shell + yaml)
 make nvim         # Run standalone Neovim with full configuration
+make nvim-expect  # Build Neovim and use expect to show first screen (debugging)
 ```
 
 ### Initial Setup (New Machine)
