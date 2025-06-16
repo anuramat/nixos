@@ -4,6 +4,7 @@
   ...
 }:
 {
+  # TODO move as much as possible to home-manager (make sure not to break the system)
   environment.systemPackages = with pkgs; [
     # compilers {{{1
     cabal-install
@@ -69,11 +70,6 @@
     tidy-viewer # csv viewer
     universal-ctags # maintained ctags
     yq # basic yaml, json, xml, csv, toml processor
-    # mathematica requires the .sh installer to be in the nix store
-    # `nix-store --add-fixed sha256 Mathematica_14.0.0_BNDL_LINUX.sh`
-    # TODO move to notes
-    # mathematica
-    # }}}
   ];
 }
 # vim: fdm=marker fdl=0

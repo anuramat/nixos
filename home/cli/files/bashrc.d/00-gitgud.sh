@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-# TODO unsafe path handling
 # TODO reconsider stderr/stdout depending on usecases
 # TODO more local/readonly
 
@@ -11,20 +10,13 @@ for i in "${__free_repos_cand[@]}"; do
 done
 
 ghooks() {
-	[ "$1" = -h ] && {
-		echo 'lists hooks in ghq repos'
-		echo 'if $1 is provided - lists hooks in $1'
-		return
-	}
-	find "${1:-$(ghq root)}" -wholename '*/.git/hooks/*' -not -name '*.sample'
+	# lists hooks in ghq repos
+	find "$(ghq root)" -wholename '*/.git/hooks/*' -not -name '*.sample'
 }
 
 g() {
-	[ "$1" = -h ] && {
-		echo 'cd to ghq repo'
-		echo 'optional: $1 - query (best match is picked)'
-		return
-	}
+	# cd to ghq repo
+	# $1? - prefill query
 	# TODO rewrite with less assumptions, use ghq queries
 	local -r root="$(ghq root)"
 	local -r repo_relative_paths="$(fd . "$root" --exact-depth 3 | sed "s#${root}/##")"
@@ -36,15 +28,11 @@ g() {
 }
 
 __gitgud_picker() {
-	[ "$1" = -h ] && {
-		echo 'pick a subset of a list with confirmation'
-		echo 'stdin - NL separated list of repos (optional)'
-		echo '$1 - prompt question'
-		echo '$2 - query (empty |-> auto-accept)'
-		echo 'stdout - NL separated list of repos'
-		return
-	}
-
+	# pick a subset of a list with confirmation
+	# stdin - NL separated list
+	# $1? - prompt question (empty |-> auto-accept)
+	# $2? - prefill query
+	# stdout - NL separated list
 	local repos
 	repos="$(fzf -1 -q "$2")" || return 1
 	echo "$repos"
@@ -57,23 +45,14 @@ __gitgud_picker() {
 }
 
 grm() {
-	[ "$1" = -h ] && {
-		echo '`ghq rm` with picker'
-		echo '$1 - repo (optional)'
-		return
-	}
+	# $1? - prefill query
 	local selected
 	selected=$(ghq list | __gitgud_picker "delete?" "$1") || return
 	echo "$selected" | xargs -I{} bash -c 'yes | ghq rm {} 2>/dev/null'
 }
 
 gclone() {
-	[ "$1" = -h ] && {
-		echo '`ghq get` with picker and zoxide init'
-		echo '$1 - repo as interpreted by ghq, optional'
-		return
-	}
-
+	# $1? - repo name
 	local -r before_dirs="$(ghq list -p | sort)"
 	local repos=$1
 	[ -z "$repos" ] && repos=$(gh repo list | cut -f 1)
@@ -91,22 +70,15 @@ gclone() {
 }
 
 check() {
-	[ "$1" = -h ] && {
-		echo "prints status of all repos"
-		return
-	}
 	__check nopull
 }
 
 down() {
-	[ "$1" = -h ] && {
-		echo "pulls and prints status of all repos"
-		return
-	}
 	__check
 }
 
 __check() {
+	# (pulls and) prints status of all repos
 	case "$1" in
 		"nopull" | "") ;;
 		*)
@@ -156,10 +128,8 @@ __check() {
 }
 
 up() (
-	[ "$1" = -h ] && {
-		echo 'fast push+commit for personal repos'
-		return
-	}
+	# fast push+commit for personal repos
+	# $1? - repo path
 	cd "$1" || return 1
 
 	local ok
@@ -208,13 +178,14 @@ up() (
 	echo "status:$prompt"
 )
 
+gfork() {
+	yes N | gh repo fork --default-branch-only "$1" && gclone "$1"
+}
+
 gcreate() {
-	[ "$1" = -h ] && {
-		echo 'creates a repo with minimum amount of gh features turned on'
-		echo '$1 - name'
-		echo '$2 - visibility (optional)'
-		return
-	}
+	# creates and clones a repo with minimum amount of gh features turned on
+	# $1 - name
+	# $2? - visibility
 	name=$1
 	visibility=private
 	[ -n "$2" ] && visibility=$2
