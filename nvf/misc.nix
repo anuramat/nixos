@@ -55,8 +55,5 @@ in
         '';
       };
     };
-
-    extraPackages = [
-    ];
   };
 }
