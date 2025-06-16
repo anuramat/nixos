@@ -69,7 +69,7 @@ amount of time, greatly increasing his productivity.
 With complex multi-step problems you SHOULD prefer a two stage approach: write
 verbose code, then refactor it to meet the code style guidelines.
 
-### Git
+## Git
 
 - You MUST make commits after each successful step, so that the user can
   backtrack the trajectory of the changes step by step.
@@ -77,37 +77,21 @@ verbose code, then refactor it to meet the code style guidelines.
 
 ## Memory
 
-- You are responsible for memory files `CLAUDE.md`
-- You MUST NOT edit `AGENTS.md` files, as they are only to be edited by the
-  user.
+- You MUST NOT edit global memory or `AGENTS.md` files, as they contain user
+  instructions.
 - You MUST NOT edit import lines (`@filepath`) in memory files
-
-### Global memory
-
-You are responsible for storing useful facts, ideas, and snippets in global
-memory for future reference: whenever you find yourself using the same
-construction, programming idiom, bash oneliner, online resource, or any other
-non-trivial idea that might be useful later, you MUST save it in the global
-memory together with a concise description: what it does and when you might find
-it useful.
-
-### Project memory
-
-You are responsible for keeping project memory consistent with the state of the
-project:
-
-- If you make significant changes or otherwise notice inconsistencies in the
-  project memory, you MUST immediately edit it such that it reflects the current
-  state of the project.
+- You are responsible for keeping project memory consistent with the state of
+  the project
+  - If you make significant changes or otherwise notice inconsistencies in the
+    project memory, you MUST immediately edit it such that it reflects the
+    current state of the project.
   - You MUST NOT remove correct statements from the project memory.
-  - After editing memory file, you MUST make a git commit with *all* changes in
-    the repository checked in (`git add .`, then `git commit`).
-- You MUST NOT blindly trust project memory, as it gets outdated quick. The
-  source of truth is the code. Use the project memory as the starting point.
+  - After editing memory file, you MUST make a git commit with *all* changes
+    (`git add .`) in the repository checked in.
+  - You MUST NOT blindly trust project memory, as it gets outdated quick -- the
+    source of truth is the code.
 
 ## Nix
 
 - When creating a new file in a nix flake repository, you MUST run `git add .`,
   otherwise it is ignored by the flake
-
-# Global memory
