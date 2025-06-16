@@ -7,7 +7,6 @@
   imports = [
     ./common
     ./shell
-    ./overlays.nix
     ./home.nix
   ];
 

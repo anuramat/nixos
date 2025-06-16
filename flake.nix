@@ -122,12 +122,6 @@
         modules = [
           ./home
           ./common
-          (
-            { pkgs, ... }:
-            {
-              home.packages = [ self.packages.${pkgs.stdenv.system}.neovim ];
-            }
-          )
         ];
       };
     }
