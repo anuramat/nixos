@@ -15,6 +15,7 @@ lndir() (
 	mkdir -p "$directory"
 	ln -sft "$directory" "$source"/*
 	shopt -u dotglob
+	find "$directory" -maxdepth 1 -xtype l -delete
 )
 
 source "$HOME/.profile"

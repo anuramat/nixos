@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+commit=$(git log -1 --format=%H CLAUDE.md)
+
+cat <<EOF
+
+# Project memory update
+
+I want you to check if the project memory in ./CLAUDE.md is significantly
+outdated, and if so -- update it. 
+
+For that, use git history. Last commit where the memory was updated is:
+
+$commit
+
+and the corresponding diff summary is:
+
+$(git diff $commit --numstat)
+
+EOF
+cat <<'EOF'
+
+If there are no significant changes (the only files edited are e.g. formatter
+settings, `.gitignore`, `README.md`), do nothing. Otherwise, start exploring the changes
+history by executing:
+
+```bash
+git diff $commit --no-ext-diff
+```
+
+If necessary, you MAY read the files that were changed, or related files that
+contain important context.
+
+Update the project memory with the changes you analyzed, then commit the changes
+with the message
+
+```gitcommit
+docs(CLAUDE.md): update memory
+
+<short_summary>
+```
+
+where `<short_summary>` is a short description of the changes in the
+project since the last memory update.
+
+EOF
