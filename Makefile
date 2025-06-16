@@ -37,3 +37,6 @@ lint:
 format:
 	./scripts/heading.sh "Formatting"
 	treefmt
+nvim-expect:
+	nix build ".#neovim"
+	./scripts/expect_run.sh ./result/bin/nvim
