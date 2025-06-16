@@ -1,4 +1,6 @@
 {
+  # TODO outline.aerial-nvim.enable = true;
+  # TODO diffview-nvim.enable = true;
   plugins = {
     mini = {
       enable = true;

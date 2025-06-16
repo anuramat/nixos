@@ -3,6 +3,7 @@
   plugins = {
     treesitter = {
       enable = true;
+      # TODO maybe it's not that ugly here
       grammarPackages =
         pkgs.vimPlugins.nvim-treesitter.builtGrammars
         |> lib.filterAttrs (n: v: lib.strings.hasPrefix "tree-sitter" n)

@@ -1,7 +1,9 @@
 {
+  # TODO formatOnSave = true;
+  # TODO lspconfig.enable = true;
+  # TODO lightbulb.enable = true;
   plugins = {
     conform-nvim.enable = true;
-
     blink-cmp = {
       enable = true;
       luaConfig.post = ''

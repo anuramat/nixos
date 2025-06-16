@@ -11,7 +11,7 @@
       settings = {
         signs = false;
         highlight = {
-          keyword = "bg";
+          keyword = "bg"; # only highlight the KEYWORD
           pattern = ''<(KEYWORDS)>'';
           multiline = false;
         };
