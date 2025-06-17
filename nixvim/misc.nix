@@ -132,49 +132,49 @@ in
   };
 
   # TODO finish
-  extraPlugins = [
-    (pkgs.vimUtils.buildVimPlugin {
-      pname = "wastebin.nvim";
-      src = pkgs.fetchFromGitHub {
-        owner = "matze";
-        repo = "wastebin.nvim";
-        rev = "HEAD";
-        sha256 = lib.fakeSha256;
-      };
-    })
-    (pkgs.vimUtils.buildVimPlugin {
-      pname = "figtree.nvim";
-      src = pkgs.fetchFromGitHub {
-        owner = "anuramat";
-        repo = "figtree.nvim";
-        rev = "HEAD";
-        sha256 = lib.fakeSha256;
-      };
-    })
-    (pkgs.vimUtils.buildVimPlugin {
-      pname = "namu.nvim";
-      src = pkgs.fetchFromGitHub {
-        owner = "namu-nvim";
-        repo = "namu.nvim";
-        rev = "HEAD";
-        sha256 = lib.fakeSha256;
-      };
-    })
-    (pkgs.vimUtils.buildVimPlugin {
-      pname = "mdmath.nvim";
-      src = pkgs.fetchFromGitHub {
-        owner = "anuramat";
-        repo = "mdmath.nvim";
-        rev = "HEAD";
-        sha256 = lib.fakeSha256;
-      };
-    })
-  ];
-  extraConfigLua = ''
-    require('wastebin').setup({
-      url = 'https://bin.ctrl.sn',
-      open_cmd = '__wastebin() { wl-copy "$1" && xdg-open "$1"; }; __wastebin',
-      ask = false,
-    })
-  '';
+  # extraPlugins = [
+  #   (pkgs.vimUtils.buildVimPlugin {
+  #     pname = "wastebin.nvim";
+  #     src = pkgs.fetchFromGitHub {
+  #       owner = "matze";
+  #       repo = "wastebin.nvim";
+  #       rev = "HEAD";
+  #       sha256 = lib.fakeSha256;
+  #     };
+  #   })
+  #   (pkgs.vimUtils.buildVimPlugin {
+  #     pname = "figtree.nvim";
+  #     src = pkgs.fetchFromGitHub {
+  #       owner = "anuramat";
+  #       repo = "figtree.nvim";
+  #       rev = "HEAD";
+  #       sha256 = lib.fakeSha256;
+  #     };
+  #   })
+  #   (pkgs.vimUtils.buildVimPlugin {
+  #     pname = "namu.nvim";
+  #     src = pkgs.fetchFromGitHub {
+  #       owner = "namu-nvim";
+  #       repo = "namu.nvim";
+  #       rev = "HEAD";
+  #       sha256 = lib.fakeSha256;
+  #     };
+  #   })
+  #   (pkgs.vimUtils.buildVimPlugin {
+  #     pname = "mdmath.nvim";
+  #     src = pkgs.fetchFromGitHub {
+  #       owner = "anuramat";
+  #       repo = "mdmath.nvim";
+  #       rev = "HEAD";
+  #       sha256 = lib.fakeSha256;
+  #     };
+  # })
+  # ];
+  # extraConfigLua = ''
+  #   require('wastebin').setup({
+  #     url = 'https://bin.ctrl.sn',
+  #     open_cmd = '__wastebin() { wl-copy "$1" && xdg-open "$1"; }; __wastebin',
+  #     ask = false,
+  #   })
+  # '';
 }

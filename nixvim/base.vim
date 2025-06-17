@@ -76,8 +76,7 @@ se signcolumn=yes " gutter
 se winborder=double
 let g:nonfiles=['NeogitStatus', 'NeogitPopup', 'oil', 'lazy', 'lspinfo', 'null-ls-info', 'NvimTree', 'neo-tree', 'alpha', 'help', 'fzf']
 se ph=20 " popup max height
-se notgc
-colorscheme default
+se tgc
 
 " pseudo/transparency, sucks in terminal {{{2
 " se winbl=30 " floating window transparency

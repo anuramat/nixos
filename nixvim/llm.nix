@@ -39,7 +39,6 @@
             height = 12;
             prefix = "";
           };
-          position = "bottom";
           width = 40;
           wrap = true;
         };
