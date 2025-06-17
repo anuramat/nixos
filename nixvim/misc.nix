@@ -130,50 +130,54 @@ in
     };
   };
 
-  # TODO finish
-  # extraPlugins = [
-  #   (pkgs.vimUtils.buildVimPlugin {
-  #     pname = "wastebin.nvim";
-  #     src = pkgs.fetchFromGitHub {
-  #       owner = "matze";
-  #       repo = "wastebin.nvim";
-  #       rev = "HEAD";
-  #       sha256 = lib.fakeSha256;
-  #     };
-  #   })
-  #   (pkgs.vimUtils.buildVimPlugin {
-  #     pname = "figtree.nvim";
-  #     src = pkgs.fetchFromGitHub {
-  #       owner = "anuramat";
-  #       repo = "figtree.nvim";
-  #       rev = "HEAD";
-  #       sha256 = lib.fakeSha256;
-  #     };
-  #   })
-  #   (pkgs.vimUtils.buildVimPlugin {
-  #     pname = "namu.nvim";
-  #     src = pkgs.fetchFromGitHub {
-  #       owner = "namu-nvim";
-  #       repo = "namu.nvim";
-  #       rev = "HEAD";
-  #       sha256 = lib.fakeSha256;
-  #     };
-  #   })
-  #   (pkgs.vimUtils.buildVimPlugin {
-  #     pname = "mdmath.nvim";
-  #     src = pkgs.fetchFromGitHub {
-  #       owner = "anuramat";
-  #       repo = "mdmath.nvim";
-  #       rev = "HEAD";
-  #       sha256 = lib.fakeSha256;
-  #     };
-  # })
-  # ];
-  # extraConfigLua = ''
-  #   require('wastebin').setup({
-  #     url = 'https://bin.ctrl.sn',
-  #     open_cmd = '__wastebin() { wl-copy "$1" && xdg-open "$1"; }; __wastebin',
-  #     ask = false,
-  #   })
-  # '';
+  extraPlugins = [
+    (pkgs.vimUtils.buildVimPlugin {
+      pname = "wastebin.nvim";
+      version = "7a70a7e";
+      src = pkgs.fetchFromGitHub {
+        owner = "matze";
+        repo = "wastebin.nvim";
+        rev = "7a70a7e5efc2af5025134c395bd27e3ada9b8629";
+        sha256 = "0r5vhmd30zjnfld9xvcpyjfdai1bqsbw9w6y51d36x3nsxhjbm2y";
+      };
+    })
+    (pkgs.vimUtils.buildVimPlugin {
+      pname = "figtree.nvim";
+      version = "062fd90";
+      src = pkgs.fetchFromGitHub {
+        owner = "anuramat";
+        repo = "figtree.nvim";
+        rev = "062fd90490ddd9c2c5b749522b0906d4a2d74f72";
+        sha256 = "08xzv1h3v3xkyx4v0l068i65qvly9mxjnpswd33gb5al1mfqdmbg";
+      };
+    })
+    (pkgs.vimUtils.buildVimPlugin {
+      pname = "namu.nvim";
+      version = "a3a3d81";
+      src = pkgs.fetchFromGitHub {
+        owner = "bassamsdata";
+        repo = "namu.nvim";
+        rev = "a3a3d81d12b61a38f131253bcd3ce5e2c6599850";
+        sha256 = "04s6gh0ryhc6b487szqj3pkgynnx0xfr0b1q4c7kynf62bb4h4xa";
+      };
+    })
+    (pkgs.vimUtils.buildVimPlugin {
+      pname = "mdmath.nvim";
+      version = "6bc34b0";
+      src = pkgs.fetchFromGitHub {
+        owner = "anuramat";
+        repo = "mdmath.nvim";
+        rev = "6bc34b0d71eb119a731f1ee1fd23b939fe1242b2";
+        sha256 = "1r57dvf39qkzs9fnjvpbal95zr7lp9gcm0vkpg7hnzvzh55m6770";
+      };
+      doCheck = false;
+    })
+  ];
+  extraConfigLua = ''
+    require('wastebin').setup({
+      url = 'https://bin.ctrl.sn',
+      open_cmd = '__wastebin() { wl-copy "$1" && xdg-open "$1"; }; __wastebin',
+      ask = false,
+    })
+  '';
 }
