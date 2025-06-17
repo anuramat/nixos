@@ -38,56 +38,52 @@ in
 
     # Glow markdown viewer configuration
     "glow/glow.yml".text = generators.toYAML { } {
-      style = "auto";
-      local = false;
-      mouse = false;
-      pager = true;
-      width = 80;
     };
 
     # Jupyter server configuration
-    "jupyter/jupyter_server_config.py".text = ''
-      c = get_config()  # pyright: ignore[reportUndefinedVariable]
+    # TODO make an attrSet -> py helper
+    "jupyter/jupyter_server_config.py".text = # python
+      ''
+        c = get_config()  # pyright: ignore[reportUndefinedVariable]
 
-      c.ServerApp.ip = "0.0.0.0"
-      c.ServerApp.port = 8888
-      c.ServerApp.open_browser = False
+        c.ServerApp.ip = "0.0.0.0"
+        c.ServerApp.port = 8888
+        c.ServerApp.open_browser = False
 
-      # disables auth; deprecated
-      c.ServerApp.password = ""
-      c.ServerApp.token = ""
+        # disables auth; deprecated
+        c.ServerApp.password = ""
+        c.ServerApp.token = ""
 
-      # allow access to hidden files
-      c.ContentsManager.allow_hidden = False
+        # allow access to hidden files
+        c.ContentsManager.allow_hidden = False
 
-      # to make remote molten work
-      c.ServerApp.disable_check_xsrf = True
-    '';
+        # to make remote molten work
+        c.ServerApp.disable_check_xsrf = True
+      '';
 
-    # Python startup configuration
-    "python/pythonrc".text = ''
-      import os
-      import atexit
-      import readline
+    # Python startup configuration (xdg shim)
+    "python/pythonrc".text = # python
+      ''
+        import os
+        import atexit
+        import readline
 
-      history = os.path.join(os.environ["XDG_CACHE_HOME"], "python_history")
-      try:
-          readline.read_history_file(history)
-      except OSError:
-          pass
-
-
-      def write_history():
-          try:
-              readline.write_history_file(history)
-          except OSError:
-              pass
+        history = os.path.join(os.environ["XDG_CACHE_HOME"], "python_history")
+        try:
+            readline.read_history_file(history)
+        except OSError:
+            pass
 
 
-      atexit.register(write_history)
+        def write_history():
+            try:
+                readline.write_history_file(history)
+            except OSError:
+                pass
 
-      # vim: ft=python
-    '';
+
+        atexit.register(write_history)
+      '';
 
     # QRCP configuration
     "qrcp/config.yml".text = generators.toYAML { } {
@@ -97,42 +93,34 @@ in
     };
 
     # Shellcheck configuration
-    "shellcheckrc".text = ''
-      enable=all
-      external-sources=true
-      # quote even if not necessary
-      disable=SC2250
-      # this masks return value
-      disable=SC2312
-      # prefer [[]] over
-      disable=SC2292
-      # variable referenced but not assigned
-      disable=SC2154
-      # incorrect attempt at escaping a single quote?
-      disable=SC1003
-      # incorrect attempt at expansion?
-      disable=SC2016
-      # A && B || C is not an if-then-else
-      disable=SC2015
-      # "local" masks return values
-      disable=SC2155
-      # unintended? expansion in an alias (alias a="$test" instead of '$test')
-      disable=SC2139
-      # can't follow non constant source
-      disable=SC1090
-      # don't use variables in printf format string
-      disable=SC2059
-    '';
+    "shellcheckrc".text =
+      ''
+        enable=all
+        external-sources=true
+      ''
+      + lib.strings.concatMapStrings (p: "disable=${p}\n") [
+        "SC1003" # incorrect attempt at escaping a single quote?
+        "SC1090" # can't follow non constant source
+        "SC2015" # A && B || C is not an if-then-else
+        "SC2016" # incorrect attempt at expansion?
+        "SC2059" # don't use variables in printf format string
+        "SC2139" # unintended? expansion in an alias (alias a="$test" instead of '$test')
+        "SC2154" # variable referenced but not assigned
+        "SC2155" # "local" masks return values
+        "SC2250" # quote even if not necessary
+        "SC2292" # prefer [[]] over
+        "SC2312" # this masks return value
+      ];
 
     # Swappy screenshot annotation configuration
     "swappy/config".text = generators.toINI { } {
       Default = {
-        save_dir = "\${HOME}/img/screen";
+        save_dir = "${config.home.homeDirectory}/img/screen";
         save_filename_format = "swappy-%Y-%m-%d_%Hh%Mm%Ss.png";
         show_panel = true;
         line_size = 5;
         text_size = 20;
-        text_font = "Hack Nerd Font";
+        text_font = "${config.stylix.fonts.serif}";
         paint_mode = "brush";
         early_exit = false;
         fill_shape = false;
@@ -194,7 +182,9 @@ in
     };
 
     # MCP Hub configuration (example)
-    "mcphub/servers.json.example".text = generators.toJSON { } {
+    # TODO agenix for secrets
+    # TODO write to claude mcps on activation
+    "mcphub/servers.json".text = generators.toJSON { } {
       nativeMCPServers = {
         mcphub = {
           disabled_tools = [ "toggle_mcp_server" ];
@@ -211,23 +201,6 @@ in
         nixos = {
           command = "mcp-nixos";
           args = [ ];
-        };
-        github = {
-          custom_instructions.text = "you can get repositories starred by user with a get request:\nhttps://api.github.com/users/$USER/starred";
-          env.GITHUB_PERSONAL_ACCESS_TOKEN = "<TOKEN>";
-          command = "github-mcp-server";
-          args = [ "stdio" ];
-        };
-        duckduckgo-mcp-server = {
-          command = "npx";
-          args = [
-            "-y"
-            "@smithery/cli@latest"
-            "run"
-            "@nickclyde/duckduckgo-mcp-server"
-            "--key"
-            "<TOKEN: smithery>"
-          ];
         };
       };
     };
@@ -317,18 +290,7 @@ in
     '';
 
     # IPython startup directory README
-    "ipython/profile_default/startup/README".text = ''
-      This is the IPython startup directory
-
-      .py and .ipy files in this directory will be run *prior* to any code or files specified
-      via the exec_lines or exec_files configurables whenever you load this profile.
-
-      Files will be run in lexicographical order, so you can control the execution order of files
-      with a prefix, e.g.::
-
-          00-first.py
-          50-middle.py
-          99-last.ipy
-    '';
+    "ipython/profile_default/startup/00-default.py".text = # python
+      '''';
   };
 }
