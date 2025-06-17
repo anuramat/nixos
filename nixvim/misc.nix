@@ -4,6 +4,27 @@
   pkgs,
   ...
 }:
+let
+  _mkMap =
+    key: action: desc:
+    {
+      mode = "n";
+      key = "key";
+      inherit action;
+    }
+    // (
+      if builtins.typeOf action == "string" then
+        {
+          action = "<cmd>${action}<cr>";
+          desc = action;
+        }
+      else
+        { }
+    );
+  mkMap =
+    k: a: d:
+    _mkMap ("<leader>hk") a d;
+in
 {
   keymaps = [
     {

@@ -88,10 +88,10 @@ in
       lazyLoad = {
         enable = true;
         settings.keys = [
-          (mkMap "c" "function(m) m.run_cell() end," "run cell")
-          (mkMap "a" "function(m) m.run_above() end," "run all above including current one")
-          (mkMap "b" "function(m) m.run_below() end," "run all below including current one")
-          (mkMap "A" "function(m) m.run_all() end," "run all")
+          (mkMap "c" "function() require('quarto').run_cell() end," "run cell")
+          (mkMap "a" "function() require('quarto').run_above() end," "run all above including current one")
+          (mkMap "b" "function() require('quarto').run_below() end," "run all below including current one")
+          (mkMap "A" "function() require('quarto').run_all() end," "run all")
         ];
       };
     };

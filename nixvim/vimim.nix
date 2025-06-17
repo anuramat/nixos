@@ -40,7 +40,7 @@
   plugins.harpoon.enable = true;
   keymaps =
     let
-      mkMap =
+      _mkMap =
         key: action: desc:
         {
           mode = "n";
@@ -56,11 +56,14 @@
           else
             { }
         );
+      mkMap =
+        k: a: d:
+        _mkMap ("<leader>hk") a d;
     in
     [
-      (mkMap "a" { __raw = "function(m) m:list():add() end"; } "Add")
-      (mkMap "l" { __raw = "function(m) m.ui:toggle_quick_menu(m:list()) end"; } "List")
-      (mkMap "n" { __raw = "function(m) m:list():next() end"; } "Next")
-      (mkMap "p" { __raw = "function(m) m:list():prev() end"; } "Previous")
+      (mkMap "a" { __raw = "function() require('harpoon'):list():add() end"; } "Add")
+      (mkMap "l" { __raw = "function() require('harpoon').ui:toggle_quick_menu(m:list()) end"; } "List")
+      (mkMap "n" { __raw = "function() require('harpoon'):list():next() end"; } "Next")
+      (mkMap "p" { __raw = "function() require('harpoon'):list():prev() end"; } "Previous")
     ];
 }
