@@ -21,6 +21,7 @@
   luaLoader.enable = true;
   viAlias = false;
   vimAlias = false;
+  plugins.lz-n.enable = true;
 
   extraConfigLuaPre = ''
     vim.cmd('source ${./base.vim}')
