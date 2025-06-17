@@ -114,6 +114,8 @@
   extraPlugins = [
     inputs.wastebin-nvim.packages.${pkgs.system}.default
   ];
+  # pkgs.vimUtils.buildVimPlugin
+  # matze/wastebin.nvim
   # anuramat/figtree.nvim
   # anuramat/mdmath.nvim
   extraConfigLua = ''
