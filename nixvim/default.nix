@@ -3,6 +3,9 @@
   inputs,
   ...
 }:
+let
+  inherit (builtins) readFile;
+in
 {
   imports = [
     ./files.nix
@@ -23,16 +26,12 @@
   vimAlias = false;
   plugins.lz-n.enable = true;
 
-  extraConfigLuaPre = ''
-    vim.cmd('source ${./base.vim}')
-    vim.diagnostic.config({
-      severity_sort = true,
-      update_in_insert = true,
-      signs = false,
-    })
-    vim.deprecate = function() end
-  '';
-
+  extraConfigVim = readFile ./base.vim;
+  diagnostic.settings = {
+    severity_sort = true;
+    update_in_insert = true;
+    signs = false;
+  };
   plugins = {
     web-devicons.enable = true;
     lsp = {
