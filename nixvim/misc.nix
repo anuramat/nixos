@@ -9,8 +9,7 @@ let
     key: action: desc:
     {
       mode = "n";
-      key = "key";
-      inherit action;
+      inherit key action;
     }
     // (
       if builtins.typeOf action == "string" then
