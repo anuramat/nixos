@@ -13,10 +13,10 @@
     # TODO move these somewhere else?
     bashrcExtra = # bash
       ''
-        source ${./files/xdg_shims.sh}
+        source ${./xdg_shims.sh}
         [[ $- == *i* ]] || return
-        for f in "${./files/bashrc.d}"/*; do source "$f"; done
-        source ${./files/bashrc.sh}
+        for f in "${./bashrc.d}"/*; do source "$f"; done
+        source ${./bashrc.sh}
 
         PROMPT_COMMAND="''${PROMPT_COMMAND:+$PROMPT_COMMAND;}history -a"
         source ${./osc.sh}
@@ -27,7 +27,7 @@
         --no-sort
         --exit-0
         --select-1
-        --preview='${./files/fzf_preview.sh} {2..}'
+        --preview='${./fzf_preview.sh} {2..}'
         "
         export _ZO_RESOLVE_SYMLINKS="1"
         export _ZO_ECHO=1
