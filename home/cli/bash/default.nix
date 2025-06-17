@@ -7,7 +7,7 @@
     historyFileSize = -1;
     profileExtra = # bash
       ''
-        source ${./files/sway_autostart.sh}
+        source ${./sway_autostart.sh}
       '';
     # TODO transfer as much as possible from ./files to options
     # TODO move these somewhere else?
