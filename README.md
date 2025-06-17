@@ -1,5 +1,8 @@
 # anuramat/nixos
 
+![bug counter](https://img.shields.io/github/search?query=repo%3Aanuramat%2Fnixos%20BUG&style=flat-square&label=BUG%20counter)
+![TODO counter](https://img.shields.io/github/search?query=repo%3Aanuramat%2Fnixos%20TODO&style=flat-square&label=TODO%20counter)
+![fuck counter](https://img.shields.io/github/search?query=repo%3Aanuramat%2Fnixos%20fuck&style=flat-square&label=fuck%20counter)
 ## Install
 
 - make sure the hostname matches the target
