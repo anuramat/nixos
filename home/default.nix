@@ -7,6 +7,7 @@
 }:
 {
   imports = [
+    ./config.nix
     ./email.nix
     ./mime
     ./lang.nix
