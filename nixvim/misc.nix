@@ -131,6 +131,7 @@ in
     };
   };
 
+  # TODO finish
   extraPlugins = [
     (pkgs.vimUtils.buildVimPlugin {
       pname = "wastebin.nvim";
