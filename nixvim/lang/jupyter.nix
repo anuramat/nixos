@@ -22,7 +22,7 @@ let
         require('otter').activate()
       end
     '';
-  mkMap =
+  _mkMap =
     key: action: desc:
     {
       mode = "n";
@@ -33,11 +33,14 @@ let
       if builtins.typeOf action == "string" then
         {
           action = "<cmd>${action}<cr>";
-          options.desc = action;
+          options.desc = if desc == "" then action else desc;
         }
       else
         { }
     );
+  mkMap =
+    k: a: d:
+    _mkMap k a (d + " [jupyter]");
 in
 {
   plugins = {
@@ -71,13 +74,6 @@ in
       };
     };
     otter = {
-      lazyLoad = {
-        enable = true;
-        settings.keys = [
-          (mkMap "o" "OtterActivate" "activate")
-          (mkMap "O" "OtterDeactivate" "deactivate")
-        ];
-      };
     };
     quarto = {
       settings = {
@@ -102,7 +98,10 @@ in
   };
 
   keymaps = [
-    (mkMap "d" "MoltenDelete" "delete cell")
-    (mkMap "i" { __raw = "${mkInit file}"; } "init and start otter")
+    (mkMap "d" "MoltenDelete" "delete ipynb cell")
+    (mkMap "i" { __raw = "${mkInit file}"; } "init molten and start otter")
+
+    (mkMap "o" "OtterActivate" "")
+    (mkMap "O" "OtterDeactivate" "")
   ];
 }
