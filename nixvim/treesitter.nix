@@ -29,5 +29,21 @@
     };
 
     treesitter-textobjects.enable = true;
+
+    treesj = {
+      enable = true;
+      lazyLoad = {
+        enable = true;
+        settings = {
+          keys = [
+            {
+              __unkeyed-1 = "<leader>j";
+              __unkeyed-2.__raw = ''function() require('treesj').toggle() end'';
+              desc = "TreeSJ: Split/Join a Treesitter node";
+            }
+          ];
+        };
+      };
+    };
   };
 }

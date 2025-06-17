@@ -14,6 +14,7 @@
     };
 
     aerial.enable = true;
+
     diffview.enable = true;
 
     nvim-surround = {
@@ -35,4 +36,21 @@
       };
     };
   };
+
+  plugins.harpoon.enable = true;
+  keymaps =
+    let
+      map = key: action: desc: {
+        mode = "n";
+        inherit key action;
+        options = { inherit desc; };
+      };
+      mapWrap = key: action: map "<leader>g${key}" "<cmd>Gitsigns ${action}<cr>" "${action} [Gitsigns]";
+    in
+    [
+      (mapWrap "a" "function(m) m:list():add() end" "Add")
+      (mapWrap "l" "function(m) m.ui:toggle_quick_menu(m:list()) end" "List")
+      (mapWrap "n" "function(m) m:list():next() end" "Next")
+      (mapWrap "p" "function(m) m:list():prev() end" "Previous")
+    ];
 }

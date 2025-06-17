@@ -42,20 +42,6 @@
     #   },
     # },
 
-    # {
-    #   'ThePrimeagen/harpoon',
-    #   branch = 'harpoon2',
-    #   keys = u.wrap_lazy_keys({
-    #     { 'a', function(m) m:list():add() end, 'Add' },
-    #     { 'l', function(m) m.ui:toggle_quick_menu(m:list()) end, 'List' },
-    #     { 'n', function(m) m:list():next() end, 'Next' },
-    #     { 'p', function(m) m:list():prev() end, 'Previous' },
-    #     { '%d', function(i, m) m:list():select(i) end, 'Go to #%d', iterator = true },
-    #   }, {
-    #     module = 'harpoon',
-    #     lhs_prefix = '<leader>h',
-    #   }),
-    # },
 
     # {
     #   event = 'VeryLazy',

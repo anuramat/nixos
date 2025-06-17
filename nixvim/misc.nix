@@ -5,7 +5,6 @@
   ...
 }:
 {
-
   keymaps = [
     {
       key = "<leader>u";
@@ -13,11 +12,14 @@
       desc = "Undotree";
     }
   ];
+
   plugins = {
     undotree.enable = true;
+
     ts-comments.enable = true;
-    plugins.schemastore.enable = true;
-    # TODO mdmath mcphub figtree
+
+    schemastore.enable = true;
+
     flash = {
       enable = true;
       settings = {
@@ -58,25 +60,7 @@
         };
       };
     };
-    ts-autotag = {
-      enable = true;
-    };
 
-    treesj = {
-      enable = true;
-      lazyLoad = {
-        enable = true;
-        settings = {
-          keys = [
-            {
-              __unkeyed-1 = "<leader>j";
-              __unkeyed-2.__raw = ''function() require('treesj').toggle() end'';
-              desc = "TreeSJ: Split/Join a Treesitter node";
-            }
-          ];
-        };
-      };
-    };
     todo-comments = {
       enable = true;
       settings = {
@@ -96,10 +80,6 @@
   extraPlugins = [
     inputs.wastebin-nvim.packages.${pkgs.system}.default
   ];
-
-  # TODO
-  # { '<leader>w', '<cmd>WastePaste<cr>' },
-  # { '<leader>w', [[<cmd>'<,'>WastePaste<cr>]], mode = 'v' },
   extraConfigLua = ''
     require('wastebin').setup({
       url = 'https://bin.ctrl.sn',
@@ -108,20 +88,3 @@
     })
   '';
 }
-
-# annotation generation: <https://github.com/danymat/neogen>
-# indentation <https://github.com/lukas-reineke/indent-blankline.nvim>
-# tests 'nvim-neotest/neotest'
-# db stuff:
-# * <https://github.com/kristijanhusak/vim-dadbod-completion>
-# * <https://github.com/tpope/vim-dadbod>
-# * <https://github.com/kristijanhusak/vim-dadbod-ui>
-
-# 'ray-x/go.nvim', -- golang aio plugin
-
-# haskell
-# s('b', repl_toggler(ht, buffer), 'Toggle Buffer REPL')
-# s('e', ht.lsp.buf_eval_all, 'Evaluate All')
-# s('h', ht.hoogle.hoogle_signature, 'Show Hoogle Signature')
-# s('p', ht.repl.toggle, 'Toggle Package REPL')
-# s('q', ht.repl.quit, 'Quit REPL')
