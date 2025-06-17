@@ -1,7 +1,7 @@
-{ lib, ... }:
 {
   plugins = {
     neo-tree.enable = true;
+
     oil = {
       enable = true;
       settings = {

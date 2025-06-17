@@ -38,6 +38,7 @@
 
     # formatters {{{1
     black # python
+    isort
     formatjson5
     gofumpt # stricter go
     haskellPackages.ormolu

@@ -1,4 +1,3 @@
-{ ... }:
 {
   keymaps =
     let
@@ -12,8 +11,6 @@
       };
     in
     [
-      # (map "G" "grep") # useful on large projects
-
       (map "o" "files")
       (map "O" "oldfiles")
       (map "a" "args")
@@ -23,6 +20,7 @@
       (map "/" "curbuf")
       (map "g" "live_grep")
       (map "G" "grep_last")
+      # (map "G" "grep") # useful on large projects
 
       (map "d" "diagnostics_document")
       (map "D" "diagnostics_workspace")

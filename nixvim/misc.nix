@@ -14,6 +14,41 @@
   ];
 
   plugins = {
+    web-devicons.enable = true;
+
+    sniprun.enable = true;
+
+    nvim-lightbulb.enable = true;
+
+    grug-far.enable = true;
+
+    dressing.enable = true;
+
+    namu = {
+      keys = [
+        [
+          "<leader>s"
+          "<cmd>Namu symbols<cr>"
+          {
+            desc = "Jump to LSP symbol";
+            silent = true;
+          }
+        ]
+      ];
+      opts = {
+        colorscheme = {
+          enable = true;
+        };
+        namu_symbols = {
+          enable = true;
+          options = [ ];
+        };
+        ui_select = {
+          enable = true;
+        };
+      };
+    };
+
     undotree.enable = true;
 
     ts-comments.enable = true;
@@ -80,6 +115,8 @@
   extraPlugins = [
     inputs.wastebin-nvim.packages.${pkgs.system}.default
   ];
+  # anuramat/figtree.nvim
+  # anuramat/mdmath.nvim
   extraConfigLua = ''
     require('wastebin').setup({
       url = 'https://bin.ctrl.sn',

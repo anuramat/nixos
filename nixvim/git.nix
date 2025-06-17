@@ -2,7 +2,9 @@
 {
   plugins = {
     gitlinker = { };
+
     fugitive = { };
+
     gitsigns = {
       enable = true;
       settings = {
