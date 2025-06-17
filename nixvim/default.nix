@@ -1,3 +1,5 @@
+# hover.nvim
+# nvim-genghis
 # https://github.com/netmute/ctags-lsp.nvim
 # https://github.com/netmute/ctags-lsp
 # https://github.com/dhananjaylatkar/cscope_maps.nvim
