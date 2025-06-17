@@ -132,13 +132,43 @@ in
   };
 
   extraPlugins = [
-    inputs.wastebin-nvim.packages.${pkgs.system}.default
+    (pkgs.vimUtils.buildVimPlugin {
+      pname = "wastebin.nvim";
+      src = pkgs.fetchFromGitHub {
+        owner = "matze";
+        repo = "wastebin.nvim";
+        rev = "HEAD";
+        sha256 = lib.fakeSha256;
+      };
+    })
+    (pkgs.vimUtils.buildVimPlugin {
+      pname = "figtree.nvim";
+      src = pkgs.fetchFromGitHub {
+        owner = "anuramat";
+        repo = "figtree.nvim";
+        rev = "HEAD";
+        sha256 = lib.fakeSha256;
+      };
+    })
+    (pkgs.vimUtils.buildVimPlugin {
+      pname = "namu.nvim";
+      src = pkgs.fetchFromGitHub {
+        owner = "namu-nvim";
+        repo = "namu.nvim";
+        rev = "HEAD";
+        sha256 = lib.fakeSha256;
+      };
+    })
+    (pkgs.vimUtils.buildVimPlugin {
+      pname = "mdmath.nvim";
+      src = pkgs.fetchFromGitHub {
+        owner = "anuramat";
+        repo = "mdmath.nvim";
+        rev = "HEAD";
+        sha256 = lib.fakeSha256;
+      };
+    })
   ];
-  # pkgs.vimUtils.buildVimPlugin
-  # matze/wastebin.nvim
-  # anuramat/figtree.nvim
-  # namu.nvim
-  # anuramat/mdmath.nvim
   extraConfigLua = ''
     require('wastebin').setup({
       url = 'https://bin.ctrl.sn',
