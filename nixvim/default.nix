@@ -12,13 +12,15 @@ in
     ./files.nix
     ./fzf.nix
     ./git.nix
+    ./ide
     ./ide.nix
+    ./lang
+    ./llm.nix
     ./markdown.nix
     ./misc.nix
     ./treesitter.nix
     ./ui.nix
     ./vimim.nix
-    ./llm.nix
   ];
 
   extraConfigVim = readFile ./base.vim;
