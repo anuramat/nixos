@@ -24,30 +24,31 @@
 
     dressing.enable = true;
 
-    namu = {
-      keys = [
-        [
-          "<leader>s"
-          "<cmd>Namu symbols<cr>"
-          {
-            desc = "Jump to LSP symbol";
-            silent = true;
-          }
-        ]
-      ];
-      opts = {
-        colorscheme = {
-          enable = true;
-        };
-        namu_symbols = {
-          enable = true;
-          options = [ ];
-        };
-        ui_select = {
-          enable = true;
-        };
-      };
-    };
+    # TODO
+    # namu = {
+    #   keys = [
+    #     [
+    #       "<leader>s"
+    #       "<cmd>Namu symbols<cr>"
+    #       {
+    #         desc = "Jump to LSP symbol";
+    #         silent = true;
+    #       }
+    #     ]
+    #   ];
+    #   opts = {
+    #     colorscheme = {
+    #       enable = true;
+    #     };
+    #     namu_symbols = {
+    #       enable = true;
+    #       options = [ ];
+    #     };
+    #     ui_select = {
+    #       enable = true;
+    #     };
+    #   };
+    # };
 
     undotree.enable = true;
 
