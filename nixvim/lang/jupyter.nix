@@ -39,7 +39,7 @@ let
     );
   mkMap =
     k: a: d:
-    _mkMap k a (d + " [jupyter]");
+    _mkMap ("<localleader>" + k) a (d + " [jupyter]");
 in
 {
   plugins = {
