@@ -24,7 +24,6 @@
 
     dressing.enable = true;
 
-    # TODO
     # namu = {
     #   keys = [
     #     [
@@ -117,6 +116,7 @@
   # pkgs.vimUtils.buildVimPlugin
   # matze/wastebin.nvim
   # anuramat/figtree.nvim
+  # namu.nvim
   # anuramat/mdmath.nvim
   extraConfigLua = ''
     require('wastebin').setup({
