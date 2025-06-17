@@ -1,4 +1,5 @@
-{ config, ... }:
+{ config, pkgs, ... }:
+
 {
   programs.bash = {
     enable = true;
@@ -14,6 +15,11 @@
         [[ $- == *i* ]] || return
         for f in "${./files/bashrc.d}"/*; do source "$f"; done
         source ${./files/bashrc.sh}
+
+        PROMPT_COMMAND="''${PROMPT_COMMAND:+$PROMPT_COMMAND;}history -a"
+        source ${./osc.sh}
+        source ${./history.sh}
+        source ${pkgs.bash-preexec}/share/bash/bash-preexec.sh
 
         export _ZO_FZF_OPTS="
         --no-sort

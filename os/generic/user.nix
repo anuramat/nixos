@@ -1,16 +1,9 @@
 {
   cluster,
-  config,
   user,
   ...
 }:
-let
-  tz = "Europe/Berlin";
-  locale = "en_US.UTF-8";
-in
 {
-  time.timeZone = tz;
-  i18n.defaultLocale = locale;
   services.openssh.settings.AllowUsers = [ user.username ];
   users.users = {
     ${user.username} = {
@@ -27,7 +20,6 @@ in
         "syncthing" # just in case default syncthing settings are used
         "plugdev" # pluggable devices : required by zsa voyager
         "vboxusers" # virtualbox
-        # "input" # le unsecure (?), supposed to be used to get lid state, apparently not required
         "dialout" # serial ports
         "networkmanager"
         "scanner"

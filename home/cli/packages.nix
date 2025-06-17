@@ -65,9 +65,32 @@
     nix-index # search for files in in derivations
     cht-sh
 
+    # sys
+    bc # simple calculator
+    coreutils-full
+    curl
+    file
+    gcc
+    git
+    gnumake
+    killall
+    less
+    lsof
+    moreutils # random unixy goodies
+    nix-bash-completions
+    p7zip
+    tmux # just in case
+    tree
+    unrar-wrapper
+    unzip
+    util-linux # TODO check; I think it's already installed
+    wget
+    zip
+
     # misc TODO categorize
     ansifilter
     asciinema
+    bubblewrap
     ansifilter
     pstree
     age # file encryption

@@ -53,6 +53,8 @@
         username = "anuramat";
         fullname = "Arsen Nuramatov";
         email = "x@ctrl.sn";
+        tz = "Europe/Berlin";
+        locale = "en_US.UTF-8";
       };
       commonArgs = {
         inherit inputs user;
