@@ -5,10 +5,4 @@
     "args": [],
     "env": {}
   },
-  "Neovim": {
-    "type": "stdio",
-    "command": "nvim-mcp",
-    "args": [],
-    "env": {}
-  }
 }

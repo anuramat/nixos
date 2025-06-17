@@ -70,7 +70,7 @@
         };
       };
       jsonls = {
-        enable = true;
+        enable = false; # TODO fix
         cmd = [
           "vscode-json-languageserver"
           "--stdio"
