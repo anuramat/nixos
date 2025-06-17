@@ -35,21 +35,44 @@ in
       style = "markdown";
     };
   };
-  molten = {
-    settings = {
-      auto_open_output = true;
-      image_provider = "image.nvim";
-      wrap_output = true;
-      virt_text_output = false;
-    };
-    lazyLoad = {
-      enable = true;
-      keys = [
-        (map "d" "MoltenDelete" "delete cell")
-        (map "i" { __raw = "${mkInit file}"; } "init and start otter")
+  molten =
+    let
+      moltenLua = ps: [
+        # molten:
+        ps.magick
       ];
+      moltenPython =
+        ps: with ps; [
+          # images:
+          pillow # open images with :MoltenImagePopup
+          pnglatex # latex formulas
+          # plotly figures:
+          plotly
+          kaleido
+          # remote molten:
+          requests
+          websocket-client
+          # misc:
+          pyperclip # clipboard support
+        ];
+    in
+    {
+      settings = {
+        auto_open_output = true;
+        image_provider = "image.nvim";
+        wrap_output = true;
+        virt_text_output = false;
+        packages = [
+        ];
+      };
+      lazyLoad = {
+        enable = true;
+        keys = [
+          (map "d" "MoltenDelete" "delete cell")
+          (map "i" { __raw = "${mkInit file}"; } "init and start otter")
+        ];
+      };
     };
-  };
   otter = {
     lazyLoad = {
       enable = true;
