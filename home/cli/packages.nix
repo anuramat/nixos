@@ -11,6 +11,7 @@
     zenith-nvidia # top WITH nvidia GPUs
 
     # docs
+    # TODO euporie (tui jupyter notebooks)
     slides # markdown presentation in terminal
     glow # markdown viewer
     poppler_utils # pdf utils
