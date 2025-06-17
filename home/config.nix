@@ -6,6 +6,28 @@
 }:
 let
   inherit (lib) generators;
+
+  # Convert nested attrset to Python config assignment statements
+  pythonConfig =
+    root: cfg:
+    let
+      formatValue =
+        v:
+        if builtins.isBool v then
+          (if v then "True" else "False")
+        else if builtins.isString v then
+          ''"${v}"''
+        else
+          toString v;
+
+      formatAssignment =
+        prefix: name: value:
+        if builtins.isAttrs value then
+          lib.concatStringsSep "\n" (lib.mapAttrsToList (formatAssignment "${prefix}.${name}") value)
+        else
+          "${prefix}.${name} = ${formatValue value}";
+    in
+    lib.concatStringsSep "\n" (lib.mapAttrsToList (formatAssignment root) cfg);
 in
 {
 
@@ -41,42 +63,25 @@ in
     };
 
     # Jupyter server configuration
-    # TODO use the let expression
     "jupyter/jupyter_server_config.py".text =
       let
         cfg = {
-          ContentsManager.allow_hidden = false;
+          ContentsManager.allow_hidden = false; # show .files
           ServerApp = {
             ip = "0.0.0.0";
             port = 8888;
             open_browser = false;
-
-            # disable auth; deprecated
             password = "";
             token = "";
-
-            # required by molten
-            disable_check_xsrf = true;
+            disable_check_xsrf = true; # required by molten
           };
         };
+        root = "c";
       in
       # python
       ''
-        c = get_config()  # pyright: ignore[reportUndefinedVariable]
-
-        c.ServerApp.ip = "0.0.0.0"
-        c.ServerApp.port = 8888
-        c.ServerApp.open_browser = False
-
-        # disables auth; deprecated
-        c.ServerApp.password = ""
-        c.ServerApp.token = ""
-
-        # allow access to hidden files
-        c.ContentsManager.allow_hidden = False
-
-        # to make remote molten work
-        c.ServerApp.disable_check_xsrf = True
+        ${root} = get_config()
+        ${pythonConfig root cfg}
       '';
 
     # Python startup configuration (xdg shim)
