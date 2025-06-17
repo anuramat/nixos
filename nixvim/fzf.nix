@@ -55,7 +55,7 @@
         fd_opts = "-c never -t f -HL";
         multiline = 2;
       };
-      files = {
+      actions.files = {
         __unkeyed-1 = true; # merge with defaults
         "ctrl-q" = {
           fn.__raw = "require('fzf-lua').actions.file_sel_to_qf";
