@@ -97,8 +97,11 @@
           };
         };
         jsonls = {
-        enable = true;
-          cmd = "{ 'vscode-json-languageserver', '--stdio' }";
+          enable = true;
+          cmd = [
+            "vscode-json-languageserver"
+            "--stdio"
+          ];
           # schemas = "require('schemastore').json.schemas()"; # TODO
         };
         lua_ls = {
@@ -148,7 +151,8 @@
             };
           };
         };
-        stylelint_lsp = { # css
+        stylelint_lsp = {
+          # css
           enable = true;
         };
         superhtml.enable = true;

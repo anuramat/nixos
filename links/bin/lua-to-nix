@@ -11,7 +11,7 @@ json_file=$(mktemp)
 trap 'rm -f "$lua_file" "$json_file"' EXIT
 
 # Read stdin to lua file
-cat > "$lua_file"
+cat <(echo "return") - | sed '$ s/,\s*$//' > "$lua_file"
 
 # Convert lua to JSON
 lua -e "
