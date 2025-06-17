@@ -41,8 +41,26 @@ in
     };
 
     # Jupyter server configuration
-    # TODO make an attrSet -> py helper
-    "jupyter/jupyter_server_config.py".text = # python
+    # TODO use the let expression
+    "jupyter/jupyter_server_config.py".text =
+      let
+        cfg = {
+          ContentsManager.allow_hidden = false;
+          ServerApp = {
+            ip = "0.0.0.0";
+            port = 8888;
+            open_browser = false;
+
+            # disable auth; deprecated
+            password = "";
+            token = "";
+
+            # required by molten
+            disable_check_xsrf = true;
+          };
+        };
+      in
+      # python
       ''
         c = get_config()  # pyright: ignore[reportUndefinedVariable]
 
