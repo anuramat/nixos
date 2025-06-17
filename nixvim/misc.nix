@@ -5,38 +5,19 @@
   ...
 }:
 {
-  plugins = {
 
-    # {
-    #   -- uses mathjax
-    #   'anuramat/mdmath.nvim',
-    #   cond = os.getenv('TERM') == 'xterm-ghostty',
-    #   dependencies = 'nvim-treesitter/nvim-treesitter',
-    #   ft = 'markdown',
-    #   build = ':MdMath build', -- BUG doesn't work; because of lazy loading? have to call manually
-    #   opts = function()
-    #     local filename = vim.fn.expand('$XDG_CONFIG_HOME/latex/mathjax_preamble.tex')
-    #     local file = io.open(filename, 'r')
-    #     local chars = ''
-    #     if file ~= nil then
-    #       chars = file:read('*a')
-    #       file:close()
-    #     end
-    #     return {
-    #       filetypes = {},
-    #       preamble = chars,
-    #     }
-    #   end,
-    # },
+  keymaps = [
+    {
+      key = "<leader>u";
+      action = "<cmd>UndotreeToggle<cr>";
+      desc = "Undotree";
+    }
+  ];
+  plugins = {
     undotree.enable = true;
-    # keys = [
-    #   {
-    #     __unkeyed-1 = "<leader>u";
-    #     __unkeyed-3 = "<cmd>UndotreeToggle<cr>";
-    #     desc = "Undotree";
-    #   }
-    # ];
     ts-comments.enable = true;
+    plugins.schemastore.enable = true;
+    # TODO mdmath mcphub figtree
     flash = {
       enable = true;
       settings = {
@@ -49,6 +30,7 @@
             enabled = false;
           };
           treesitter = {
+            grammars = [ pkgs.vimPlugins.nvim-treesitter-parsers.todotxt ];
             label = {
               rainbow = {
                 enabled = true;
@@ -135,51 +117,6 @@
 # * <https://github.com/tpope/vim-dadbod>
 # * <https://github.com/kristijanhusak/vim-dadbod-ui>
 
-# { 'b', function(m) m.toggle_breakpoint() end, 'Toggle Breakpoint' },
-# { 'c', function(m) m.continue() end, 'Continue' },
-# { 'd', function(m) m.run_last() end, 'Run Last Debug Session' },
-# { 'i', function(m) m.step_into() end, 'Step Into' },
-# { 'l', log_point, 'Set Log Point' },
-# { 'n', function(m) m.step_over() end, 'Step Over' },
-# { 'o', function(m) m.step_out() end, 'Step Out' },
-# { 'r', function(m) m.repl.open() end, 'Open Debug REPL' },
-
-# local function log_point(m) m.set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end
-
-# config = function()
-#   -- some of these are used in catppuccin
-#   local sign = vim.fn.sign_define
-#   sign('DapBreakpoint', { text = '', texthl = 'DapBreakpoint', linehl = '', numhl = '' })
-#   sign('DapBreakpointCondition', { text = 'C', texthl = 'DapBreakpointCondition', linehl = '', numhl = '' })
-#   sign('DapLogPoint', { text = 'L', texthl = 'DapLogPoint', linehl = '', numhl = '' })
-#   sign('DapStopped', { text = '→', texthl = 'DapStopped', linehl = '', numhl = '' })
-#   -- sign('DapBreakpointRejected', { text = 'R', texthl = 'DapBreakpointRejected', linehl = '', numhl = '' })
-# end,
-
-# keys = u.wrap_lazy_keys({
-#   { 'u', function(m) m.toggle() end, 'Toggle Dap UI' },
-#   { 'e', function(m) m.eval() end,   'Evaluate',     mode = { 'n', 'v' } },
-# }, {
-
-# dapui
-# opts = {
-#   -- setting up default settings explicitly just in case
-#   floating = {
-#     border = 'single',
-#     mappings = {
-#       close = { 'q', '<Esc>' },
-#     },
-#   },
-#   {
-#     edit = 'e',
-#     expand = { '<CR>', '<2-LeftMouse>' },
-#     open = 'o',
-#     remove = 'd',
-#     repl = 'r',
-#     toggle = 't',
-#   },
-# },
-
 # 'ray-x/go.nvim', -- golang aio plugin
 
 # haskell
@@ -188,8 +125,3 @@
 # s('h', ht.hoogle.hoogle_signature, 'Show Hoogle Signature')
 # s('p', ht.repl.toggle, 'Toggle Package REPL')
 # s('q', ht.repl.quit, 'Quit REPL')
-
-# -- ctags-lsp configuration https://github.com/netmute/ctags-lsp.nvim
-# -- lsp adapter for ctags https://github.com/netmute/ctags-lsp
-# -- cscope support <https://github.com/dhananjaylatkar/cscope_maps.nvim>
-# -- regenerates tag files <https://github.com/ludovicchabant/vim-gutentags>

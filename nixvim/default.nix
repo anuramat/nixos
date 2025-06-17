@@ -25,6 +25,9 @@ in
   viAlias = false;
   vimAlias = false;
   plugins.lz-n.enable = true;
+  filetype = {
+
+  };
 
   extraConfigVim = readFile ./base.vim;
   diagnostic.settings = {
