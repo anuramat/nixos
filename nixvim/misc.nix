@@ -52,8 +52,6 @@
 
     undotree.enable = true;
 
-    ts-comments.enable = true;
-
     schemastore.enable = true;
 
     flash = {

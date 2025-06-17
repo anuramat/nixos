@@ -15,6 +15,10 @@
       };
     };
 
+    treesitter-textobjects.enable = true;
+
+    ts-comments.enable = true;
+
     treesitter-context = {
       enable = true;
       settings = {
@@ -27,8 +31,6 @@
         mode = "cursor";
       };
     };
-
-    treesitter-textobjects.enable = true;
 
     treesj = {
       enable = true;
