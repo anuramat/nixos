@@ -24,7 +24,7 @@ in
     #   host = "0.0.0.0";
     #   enable = true;
     #   port = 12345;
-    #   package = old.open-webui;
+    #   package = open-webui;
     #   # openFirewall = false; # disable to limit the interfaces
     # };
   };

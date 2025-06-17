@@ -66,7 +66,7 @@
     luajitPackages.luarocks
     markdown-link-check
     pup # html
-    old.python311Packages.nbdime # ipynb diff, merge
+    python3Packages.nbdime # ipynb diff, merge
     python3Packages.jupytext
     tidy-viewer # csv viewer
     universal-ctags # maintained ctags

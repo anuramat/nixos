@@ -3,7 +3,6 @@
     flake-utils = {
       url = "github:numtide/flake-utils";
     };
-    nixpkgs-old.url = "github:nixos/nixpkgs/nixos-24.11";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
@@ -31,7 +30,6 @@
     {
       nixpkgs,
       self,
-      nixpkgs-old,
       home-manager,
       nixvim,
       flake-utils,
@@ -68,23 +66,13 @@
         lib.nixosSystem {
           specialArgs = commonArgs // {
             inherit cluster;
-            # {{{1
-            old =
-              let
-                pkgscfg = self.nixosConfigurations.${name}.config.nixpkgs;
-              in
-              import nixpkgs-old {
-                inherit (pkgscfg) config;
-                inherit (pkgscfg.hostPlatform) system;
-              };
-            # }}}
           };
           modules =
             [
               {
                 home-manager = {
                   extraSpecialArgs = commonArgs;
-                  users.${user.username} = import ./home;
+                  users.${user.username} = self.homeConfigurations.${user.username}.config;
                 };
               }
               ./common
