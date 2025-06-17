@@ -75,7 +75,6 @@
           "vscode-json-languageserver"
           "--stdio"
         ];
-        # schemas = "require('schemastore').json.schemas()"; # TODO
       };
       lua_ls = {
         enable = true;
