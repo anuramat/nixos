@@ -74,7 +74,7 @@
               {
                 home-manager = {
                   extraSpecialArgs = commonArgs;
-                  users.${user.username} = self.homeConfigurations.${user.username}.config;
+                  users.${user.username} = ./home;
                 };
               }
               ./common

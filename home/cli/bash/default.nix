@@ -3,6 +3,8 @@
 {
   programs.bash = {
     enable = true;
+    historySize = -1;
+    historyFileSize = -1;
     profileExtra = # bash
       ''
         source ${./files/sway_autostart.sh}

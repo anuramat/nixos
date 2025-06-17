@@ -1,6 +1,6 @@
 {
   imports = [
-    ./bash.nix
+    ./bash
     ./fzf.nix
     ./git
     ./misc.nix
