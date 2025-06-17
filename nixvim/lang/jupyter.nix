@@ -18,12 +18,11 @@ let
     prepKern: # lua
     ''
       function()
-          ${prepKern}
-          require('otter').activate()
-        end
+        ${prepKern}
+        require('otter').activate()
       end
     '';
-  map =
+  mkMap =
     key: action: desc:
     {
       mode = "n";
@@ -34,7 +33,7 @@ let
       if builtins.typeOf action == "string" then
         {
           action = "<cmd>${action}<cr>";
-          desc = action;
+          options.desc = action;
         }
       else
         { }
@@ -75,8 +74,8 @@ in
       lazyLoad = {
         enable = true;
         settings.keys = [
-          (map "o" "OtterActivate" "activate")
-          (map "O" "OtterDeactivate" "deactivate")
+          (mkMap "o" "OtterActivate" "activate")
+          (mkMap "O" "OtterDeactivate" "deactivate")
         ];
       };
     };
@@ -93,17 +92,17 @@ in
       lazyLoad = {
         enable = true;
         settings.keys = [
-          (map "c" "function(m) m.run_cell() end," "run cell")
-          (map "a" "function(m) m.run_above() end," "run all above including current one")
-          (map "b" "function(m) m.run_below() end," "run all below including current one")
-          (map "A" "function(m) m.run_all() end," "run all")
+          (mkMap "c" "function(m) m.run_cell() end," "run cell")
+          (mkMap "a" "function(m) m.run_above() end," "run all above including current one")
+          (mkMap "b" "function(m) m.run_below() end," "run all below including current one")
+          (mkMap "A" "function(m) m.run_all() end," "run all")
         ];
       };
     };
   };
 
   keymaps = [
-    (map "d" "MoltenDelete" "delete cell")
-    (map "i" { __raw = "${mkInit file}"; } "init and start otter")
+    (mkMap "d" "MoltenDelete" "delete cell")
+    (mkMap "i" { __raw = "${mkInit file}"; } "init and start otter")
   ];
 }

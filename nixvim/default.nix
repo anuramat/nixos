@@ -30,9 +30,13 @@
   plugins.lz-n.enable = true;
   luaLoader.enable = true;
   performance = {
-    combinePlugins.enable = true;
+    combinePlugins = {
+      enable = false;
+      standalonePlugins = [
+      ];
+    };
     byteCompileLua = {
-      enable = true;
+      enable = false;
       initLua = true;
       configs = true;
       plugins = true;

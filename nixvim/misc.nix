@@ -9,7 +9,7 @@
     {
       key = "<leader>u";
       action = "<cmd>UndotreeToggle<cr>";
-      desc = "Undotree";
+      options.desc = "Undotree";
     }
   ];
 
