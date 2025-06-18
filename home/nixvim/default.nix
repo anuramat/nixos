@@ -26,7 +26,8 @@
     ./misc.nix
     ./treesitter.nix
     ./ui.nix
-    ./vimim.nix
+    ./vim.nix
+    ./custom
   ];
 
   extraConfigVim = builtins.readFile ./base.vim;

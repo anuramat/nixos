@@ -5,7 +5,6 @@
   ...
 }:
 let
-  sub = rev: builtins.substring 0 7 rev;
   _mkMap =
     key: action: desc:
     {
@@ -130,62 +129,4 @@ in
       };
     };
   };
-
-  extraPlugins = [
-    (
-      let
-        rev = "7a70a7e5efc2af5025134c395bd27e3ada9b8629";
-      in
-      pkgs.vimUtils.buildVimPlugin {
-        pname = "wastebin.nvim";
-        version = "7a70a7e";
-        src = pkgs.fetchFromGitHub {
-          inherit rev;
-          owner = "matze";
-          repo = "wastebin.nvim";
-          sha256 = "0r5vhmd30zjnfld9xvcpyjfdai1bqsbw9w6y51d36x3nsxhjbm2y";
-        };
-      }
-    )
-    (
-      let
-        rev = "062fd90490ddd9c2c5b749522b0906d4a2d74f72";
-      in
-      pkgs.vimUtils.buildVimPlugin {
-        pname = "figtree.nvim";
-        version = sub rev;
-        src = pkgs.fetchFromGitHub {
-          inherit rev;
-          owner = "anuramat";
-          repo = "figtree.nvim";
-          sha256 = "08xzv1h3v3xkyx4v0l068i65qvly9mxjnpswd33gb5al1mfqdmbg";
-        };
-      }
-    )
-    (
-      let
-        rev = "a3a3d81d12b61a38f131253bcd3ce5e2c6599850";
-      in
-      pkgs.vimUtils.buildVimPlugin {
-        pname = "namu.nvim";
-        version = sub rev;
-        src = pkgs.fetchFromGitHub {
-          inherit rev;
-          owner = "bassamsdata";
-          repo = "namu.nvim";
-          sha256 = "04s6gh0ryhc6b487szqj3pkgynnx0xfr0b1q4c7kynf62bb4h4xa";
-        };
-      }
-    )
-    inputs.mdmath.packages.${pkgs.system}.default
-  ];
-  extraConfigLua = ''
-    require('wastebin').setup({
-      url = 'https://bin.ctrl.sn',
-      open_cmd = '__wastebin() { wl-copy "$1" && xdg-open "$1"; }; __wastebin',
-      ask = false,
-    })
-    require('figtree.nvim').setup({
-    })
-  '';
 }

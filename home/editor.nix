@@ -13,7 +13,12 @@
       imports = [
         ./nixvim
       ];
-      nixpkgs.overlays = config.nixpkgs.overlays;
+      nixpkgs.overlays =
+        let
+          hm-overlays = config.nixpkgs.overlays;
+          os-overlays = osConfig.nixpkgs.overlays;
+        in
+        if hm-overlays != null then hm-overlays else os-overlays;
       defaultEditor = true;
       _module.args = {
         inherit inputs hax;
