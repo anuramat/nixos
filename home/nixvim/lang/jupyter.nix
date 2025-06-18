@@ -66,6 +66,7 @@ in
     };
     otter = {
       enable = true;
+      # autoActivate = false;
     };
     quarto = {
       enable = true;

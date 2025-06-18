@@ -5,32 +5,51 @@
   ...
 }:
 {
-  home.sessionVariables = {
-    XDG_BIN_HOME = "${config.home.homeDirectory}/.local/bin";
-  };
+  home =
+    let
+      XDG_BIN_HOME = "${config.home.homeDirectory}/.local/bin";
+    in
+    {
+      sessionVariables = {
+        inherit XDG_BIN_HOME;
+
+        # TODO just in case; verify/move
+        LC_ALL = "en_US.UTF-8";
+        PAGER = "less";
+        MANPAGER = "less";
+
+        VIRTUAL_ENV_DISABLE_PROMPT = "1"; # TODO maybe we don't need this either? # Don't let python venvs change the PS1
+        VIMTEX_OUTPUT_DIRECTORY = "/tmp/"; # TODO parameterize? do I need this even?
+      };
+      sessionPath = [
+        XDG_BIN_HOME
+      ];
+      shellAliases =
+        let
+          ezacmd = "eza --group-directories-first --group --header --git --icons=always --color=always --color-scale=all --sort=name";
+        in
+        {
+          ls = "${ezacmd}";
+          ll = "${ezacmd} --long";
+          la = "${ezacmd} --long --all";
+          tree = "${ezacmd} --tree";
+          treedir = "${ezacmd} --tree --only-dirs";
+
+          diff = "diff --color=auto";
+          grep = "grep --color=auto";
+          ip = "ip -c=auto";
+
+          fd = "fd -HL"; # working tree minus junk
+        };
+    };
   programs.bash = {
     enable = true;
     historySize = -1;
     historyFileSize = -1;
-    profileExtra = # bash
-      ''
-        # TODO CLEAN
-        source ${./profile.sh}
-        source ${./sway_autostart.sh}
-      '';
-    # TODO move these somewhere else?
+    # TODO move more bash stuff
     bashrcExtra = # bash
       ''
-        source ${./xdg_shims.sh}
-        [[ $- == *i* ]] || return
-        for f in "${./bashrc.d}"/*; do source "$f"; done
-        source ${./bashrc.sh}
-
-        PROMPT_COMMAND="''${PROMPT_COMMAND:+$PROMPT_COMMAND;}history -a"
-        source ${./osc.sh}
-        source ${./history.sh}
-        source ${pkgs.bash-preexec}/share/bash/bash-preexec.sh
-
+        # TODO put in vars
         export _ZO_FZF_OPTS="
         --no-sort
         --exit-0

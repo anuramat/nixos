@@ -2,6 +2,7 @@
 
 # TODO reconsider stderr/stdout depending on usecases
 # TODO more local/readonly
+# TODO total rehaul, then move
 
 __free_repos_cand=("$HOME/notes" "/etc/nixos" "/var/www")
 __free_repos=()
