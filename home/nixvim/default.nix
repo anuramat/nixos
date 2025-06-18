@@ -30,7 +30,6 @@
   ];
 
   extraConfigVim = builtins.readFile ./base.vim;
-  filetype = { }; # move rtp stuff
   diagnostic.settings = {
     severity_sort = true;
     update_in_insert = true;

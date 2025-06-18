@@ -103,11 +103,7 @@
       };
     }
     // (flake-utils.lib.eachDefaultSystem (system: {
-      packages.neovim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
-        pkgs = import nixpkgs { inherit system; };
-        extraSpecialArgs = args;
-        module = ./home/nixvim;
-      };
+      packages.neovim = nixvim.legacyPackages.${system}.makeNixvim (import ./home/nixvim (args // { pkgs = import nixpkgs { inherit system; }; }));
     }));
 }
 # vim: fdl=0 fdm=marker
