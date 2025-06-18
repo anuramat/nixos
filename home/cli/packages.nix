@@ -147,7 +147,7 @@
     # compilers {{{1
     cabal-install
     cargo
-    clang
+    # clang # collision with gcc
     ghc
     gcc
     cudaPackages.cuda_nvcc
