@@ -27,7 +27,6 @@
         "adbusers" # adb (android)
       ];
       openssh.authorizedKeys = {
-        keys = cluster.miscKeys;
         keyFiles = cluster.clientKeyFiles;
       };
     };

@@ -39,16 +39,8 @@
     let
 
       inherit (nixpkgs) lib;
-      epsilon = with builtins; path: path |> readDir |> attrNames |> filter (a: a != "default.nix");
-      inherit
-        ((import ./hosts) {
-          inherit inputs epsilon;
-        })
-        hostnames
-        mkCluster
-        mkModules
-        ;
-
+      hostnames = with builtins; ./hosts |> readDir |> attrNames |> filter (a: a != "external_keys.nix");
+      helpers = import ./helpers { inherit lib inputs; };
       user = {
         username = "anuramat";
         fullname = "Arsen Nuramatov";
@@ -57,14 +49,13 @@
         locale = "en_US.UTF-8";
       };
       args = {
-        inherit inputs user;
-        helpers = import ./helpers { inherit lib; };
+        inherit inputs user helpers;
       };
       mkSystem =
         name:
         let
           args2 = args // {
-            cluster = mkCluster name;
+            cluster = helpers.root.mkCluster ./hosts hostnames name;
           };
         in
         lib.nixosSystem {
@@ -74,19 +65,23 @@
               (
                 { config, ... }:
                 {
+                  networking.hostName = name;
                   home-manager = {
                     extraSpecialArgs = args2;
                     users.${user.username} = ./home;
                   };
+
                 }
               )
-              ./base
-              inputs.stylix.nixosModules.stylix
+              ./system
               ./overlays.nix
+              ./hosts/external_keys.nix
+              inputs.stylix.nixosModules.stylix
               ./stylix.nix
             ]
-            ++ mkModules name
-            ++ (if args2.cluster.this.server then [ ./remote ] else [ ./local ]);
+            ++ [
+              ./hosts/${name}
+            ];
         };
     in
     {
