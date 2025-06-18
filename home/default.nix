@@ -10,6 +10,7 @@
 {
   imports = [
     inputs.nixvim.homeModules.nixvim
+    inputs.agenix.homeManagerModules.default
     ./lang
     ./misc.nix
     ./email.nix
