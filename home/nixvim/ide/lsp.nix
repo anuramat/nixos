@@ -4,7 +4,8 @@
     let
       _mkMap = key: action: desc: {
         mode = "n";
-        inherit key action desc;
+        inherit key action;
+        options = { inherit desc; };
       };
       mkMap =
         k: a: d:
