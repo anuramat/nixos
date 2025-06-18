@@ -105,13 +105,20 @@
         ];
       };
     }
-    // (flake-utils.lib.eachDefaultSystem (system: {
-      packages.neovim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
-        inherit system;
-        extraSpecialArgs = { inherit inputs; };
-        # TODO figure out how to add overlays.nix to standalone nixvim
-        module = ./home/nixvim;
-      };
-    }));
+    // (flake-utils.lib.eachDefaultSystem (system: 
+      let
+        overlayConfig = import ./overlays.nix { inherit inputs; pkgs = nixpkgs.legacyPackages.${system}; };
+        pkgsWithOverlays = import nixpkgs {
+          inherit system;
+          overlays = overlayConfig.nixpkgs.overlays;
+        };
+      in {
+        packages.neovim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
+          inherit system;
+          pkgs = pkgsWithOverlays;
+          extraSpecialArgs = { inherit inputs; };
+          module = ./home/nixvim;
+        };
+      }));
 }
 # vim: fdl=0 fdm=marker
