@@ -25,7 +25,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     mdmath = {
-      url = "github:anuramat/mdmath.nvim/flake";
+      url = "github:anuramat/mdmath.nvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

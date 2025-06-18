@@ -627,16 +627,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1750230821,
-        "narHash": "sha256-d6uCawgJi3N8o6ihZyKxiEeGAkA673zR7h5mNUTFzds=",
+        "lastModified": 1750232717,
+        "narHash": "sha256-HH7BPpH44Up5NcF1r4DIgc5ik+ZCDwiqCZkrF58vhos=",
         "owner": "anuramat",
         "repo": "mdmath.nvim",
-        "rev": "67dacacc93e85c2c11a7c5c130f750661d9e7700",
+        "rev": "06572b4828276a32a6fc5911803eae4a3d024e7b",
         "type": "github"
       },
       "original": {
         "owner": "anuramat",
-        "ref": "flake",
         "repo": "mdmath.nvim",
         "type": "github"
       }
