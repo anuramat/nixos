@@ -11,6 +11,8 @@
       imports = [
         ./nixvim
       ];
+      defaultEditor = true;
+      extraSpecialArgs = { inherit inputs; };
 
       extraPlugins = [
         inputs.mdmath.packages.${pkgs.system}.default
