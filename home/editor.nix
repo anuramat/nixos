@@ -11,7 +11,7 @@
       imports = [
         ./nixvim
       ];
-      settings.plugins.lsp.servers.nixd.settings.options =
+      plugins.lsp.servers.nixd.settings.options =
         let
           nixosExpr = ''(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.${osConfig.networking.hostName}.options'';
         in
