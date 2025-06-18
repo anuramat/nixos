@@ -1,3 +1,4 @@
+# TODO rename file
 { lib, ... }:
 with lib;
 with builtins;
@@ -9,4 +10,24 @@ rec {
     mapAttrs (
       name: schema: if typeOf x == "set" then schema == getSchema x else schema == typeOf x
     ) patterns;
+  # TODO maybe move
+  pythonConfig =
+    root: cfg:
+    let
+      formatValue =
+        v:
+        if builtins.isBool v then
+          (if v then "True" else "False")
+        else if builtins.isString v then
+          ''"${v}"''
+        else
+          toString v;
+      formatAssignment =
+        prefix: name: value:
+        if builtins.isAttrs value then
+          lib.concatStringsSep "\n" (lib.mapAttrsToList (formatAssignment "${prefix}.${name}") value)
+        else
+          "${prefix}.${name} = ${formatValue value}";
+    in
+    lib.concatStringsSep "\n" (lib.mapAttrsToList (formatAssignment root) cfg);
 }

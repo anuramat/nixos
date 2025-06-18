@@ -1,25 +1,7 @@
-{ lib, ... }:
+{ lib, helpers, ... }:
 let
   # Convert nested attrset to Python config assignment statements
-  pythonConfig =
-    root: cfg:
-    let
-      formatValue =
-        v:
-        if builtins.isBool v then
-          (if v then "True" else "False")
-        else if builtins.isString v then
-          ''"${v}"''
-        else
-          toString v;
-      formatAssignment =
-        prefix: name: value:
-        if builtins.isAttrs value then
-          lib.concatStringsSep "\n" (lib.mapAttrsToList (formatAssignment "${prefix}.${name}") value)
-        else
-          "${prefix}.${name} = ${formatValue value}";
-    in
-    lib.concatStringsSep "\n" (lib.mapAttrsToList (formatAssignment root) cfg);
+  toYAML = lib.generators.toYAML { };
 in
 {
   xdg.configFile = {
@@ -52,7 +34,7 @@ in
       # python
       ''
         ${root} = get_config()
-        ${pythonConfig root cfg}
+        ${helpers.common.pythonConfig root cfg}
       '';
 
     "ipython/profile_default/startup/00-default.py".text = # python

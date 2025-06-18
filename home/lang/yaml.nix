@@ -1,3 +1,7 @@
+{ lib, ... }:
+let
+  toYAML = lib.generators.toYAML { };
+in
 {
   xdg.configFile = {
     # YAML formatter configuration
