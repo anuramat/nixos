@@ -1,0 +1,3 @@
+{
+  "testSecret.age".publicKeys = [ ];
+}

@@ -5,33 +5,25 @@ rec {
   root =
     let
       cacheFilename = "cache.pem.pub";
-      clientKeyFiles =
+      getClientKeyFiles =
         keyPath:
-        with builtins;
         (
-          readDir keyPath
-          |> attrNames
-          |> filter (x: hasSuffix ".pub" x && x != cacheFilename)
-          |> map (x: keyPath + /${x})
+          builtins.readDir keyPath
+          |> builtins.attrNames
+          |> builtins.filter (x: lib.strings.hasSuffix ".pub" x && x != cacheFilename)
+          |> builtins.map (x: keyPath + /${x})
         );
     in
     {
-
       allKeys = {
-
       };
       mkCluster =
         root: hostnames: name:
-        with builtins;
         let
           allMachines = map mkMachine hostnames;
-          otherMachines = filter (x: x.name != name) allMachines;
-          inherit (lib.strings) hasSuffix;
-          inherit (lib.lists) findFirst;
-
+          otherMachines = builtins.filter (x: x.name != name) allMachines;
           mkMachine =
             name:
-            with builtins;
             let
               inherit (args.inputs.self.nixosConfigurations.${name}) config;
               path = root + "/${name}";
@@ -43,24 +35,25 @@ rec {
               builder = !config.nix.distributedBuilds;
               server = meta.server;
               desktop = !server;
+              clientKeyFiles = getClientKeyFiles keyPath;
               platform = config.nixpkgs.hostPlatform.system;
-              cacheKey = readFile (keyPath + "/${cacheFilename}");
+              cacheKey = builtins.readFile (keyPath + "/${cacheFilename}");
               hostKeysFile = keyPath + "/host_keys";
             };
         in
         rec {
-          this = findFirst (x: x.name == name) null allMachines;
+          this = lib.lists.findFirst (x: x.name == name) null allMachines;
           inherit hostnames;
 
           builderUsername = "builder";
-          builders = filter (x: x.builder) otherMachines;
+          builders = builtins.filter (x: x.builder) otherMachines;
           substituters = builders |> map (x: "ssh-ng://${x.name}?priority=50");
           # lower number -- used earlier
           # cache.nixos.org has priority of 40, cachix -- 41
 
-          clientKeyFiles = otherMachines |> map (x: x.clientKeyFiles) |> concatLists;
+          clientKeyFiles = otherMachines |> map (x: x.clientKeyFiles) |> builtins.concatLists;
           hostKeysFiles = otherMachines |> map (x: x.hostKeysFile);
-          trusted-public-keys = otherMachines |> map (x: x.cacheKey) |> filter (x: x != null);
+          trusted-public-keys = otherMachines |> map (x: x.cacheKey) |> builtins.filter (x: x != null);
         };
 
     };

@@ -105,20 +105,26 @@
         ];
       };
     }
-    // (flake-utils.lib.eachDefaultSystem (system: 
+    // (flake-utils.lib.eachDefaultSystem (
+      system:
       let
-        overlayConfig = import ./overlays.nix { inherit inputs; pkgs = nixpkgs.legacyPackages.${system}; };
+        overlayConfig = import ./overlays.nix {
+          inherit inputs;
+          pkgs = nixpkgs.legacyPackages.${system};
+        };
         pkgsWithOverlays = import nixpkgs {
           inherit system;
           overlays = overlayConfig.nixpkgs.overlays;
         };
-      in {
+      in
+      {
         packages.neovim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
           inherit system;
           pkgs = pkgsWithOverlays;
           extraSpecialArgs = { inherit inputs; };
           module = ./home/nixvim;
         };
-      }));
+      }
+    ));
 }
 # vim: fdl=0 fdm=marker
