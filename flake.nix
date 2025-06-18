@@ -109,7 +109,8 @@
       packages.neovim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
         inherit system;
         extraSpecialArgs = { inherit inputs; };
-        module = import ./home/nixvim;
+        # TODO figure out how to add overlays.nix to standalone nixvim
+        module = ./home/nixvim;
       };
     }));
 }

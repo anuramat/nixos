@@ -61,7 +61,7 @@
         );
       mkMap =
         k: a: d:
-        _mkMap ("<leader>hk") a d;
+        _mkMap ("<leader>h" + k) a d;
     in
     [
       (mkMap "a" { __raw = "function() require('harpoon'):list():add() end"; } "Add")

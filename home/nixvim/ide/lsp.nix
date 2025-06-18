@@ -1,13 +1,22 @@
 { pkgs, ... }:
 {
+  keymaps =
+    let
+      _mkMap = key: action: desc: {
+        mode = "n";
+        inherit key action desc;
+      };
+      mkMap =
+        k: a: d:
+        _mkMap ("gr" + k) { __raw = a; } d;
+    in
+    [
+      (mkMap "d" "vim.lsp.buf.declaration" "Goto Declaration")
+      (mkMap "t" "vim.lsp.buf.type_definition" "Goto Type Definition")
+      (mkMap "q" "vim.diagnostic.setqflist" "Diagnostic QF List")
+      (mkMap "l" "vim.lsp.codelens.run" "CodeLens")
+    ];
   plugins.lsp = {
-    onAttach = ''
-      vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-        vim.lsp.diagnostic.on_publish_diagnostics, {
-          update_in_insert = true,
-        }
-      )
-    '';
     enable = true;
     inlayHints = false;
     servers = {
