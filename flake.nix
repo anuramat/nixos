@@ -48,10 +48,10 @@
               )
               ./system
 
-              ./overlays.nix
+              ./common/overlays.nix
 
               inputs.stylix.nixosModules.stylix
-              ./stylix.nix
+              ./common/stylix.nix
 
               ./hosts/external_keys.nix
             ]
@@ -74,9 +74,9 @@
         modules = [
           ./home
 
-          ./overlays.nix
+          ./common/overlays.nix
           inputs.stylix.nixosModules.stylix
-          ./stylix.nix
+          ./common/stylix.nix
         ];
       };
     }
@@ -84,7 +84,7 @@
     // (flake-utils.lib.eachDefaultSystem (
       system:
       let
-        overlayConfig = import ./overlays.nix {
+        overlayConfig = import ./common/overlays.nix {
           inherit inputs;
           pkgs = nixpkgs.legacyPackages.${system};
         };
