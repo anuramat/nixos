@@ -18,6 +18,8 @@
         "--glob=!{.git,.svn}"
         # codegen
         "--glob=!*.pb.go"
+        # lockfiles
+        "--glob=!*.lock"
       ];
     };
 
