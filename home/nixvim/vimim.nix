@@ -10,7 +10,11 @@
 
     image = {
       enable = true;
-      settings.backend = "kitty";
+      settings = {
+        backend = "kitty";
+        only_render_image_at_cursor = true;
+        integrations.markdown.only_render_image_at_cursor = true;
+      };
     };
 
     aerial.enable = true;
