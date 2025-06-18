@@ -88,6 +88,7 @@
     zip
 
     # misc TODO categorize
+    geteduroam-cli
     ansifilter
     asciinema
     bubblewrap
