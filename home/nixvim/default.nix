@@ -16,7 +16,6 @@
   ...
 }:
 {
-  package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.neovim;
   imports = [
     ./files.nix
     ./fzf.nix

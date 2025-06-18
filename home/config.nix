@@ -143,7 +143,7 @@ in
         show_panel = true;
         line_size = 5;
         text_size = 20;
-        text_font = "${config.stylix.fonts.serif}";
+        text_font = "${config.stylix.fonts.serif.name}";
         paint_mode = "brush";
         early_exit = false;
         fill_shape = false;

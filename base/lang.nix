@@ -26,7 +26,7 @@
     ))
     ruby
     rustc
-    old.sageWithDoc # computer algebra system
+    sageWithDoc # computer algebra system
     stack
     texliveFull
     yarn

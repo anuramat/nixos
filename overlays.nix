@@ -30,7 +30,7 @@ let
   };
   overlays =
     [
-      # list of inputs
+      inputs.neovim-nightly-overlay
     ]
     |> map (v: v.overlays.default);
 in

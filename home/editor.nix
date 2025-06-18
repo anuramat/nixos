@@ -3,7 +3,9 @@
   programs = {
     nixvim = {
       enable = true;
-      config = inputs.self.packages.${pkgs.stdenv.system}.neovim.config;
+      imports = [
+        ./nixvim
+      ];
     };
     helix = {
       enable = true;
