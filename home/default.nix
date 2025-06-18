@@ -12,6 +12,7 @@
     ./config.nix
     ./email.nix
     ./mime
+    ./llm
     ./lang.nix
     ./term.nix
     ./editor.nix

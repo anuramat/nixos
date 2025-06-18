@@ -4,7 +4,7 @@
   ...
 }:
 let
-  inherit (lib) generators;
+  toYAML = lib.generators.toYAML { };
   # Convert nested attrset to Python config assignment statements
   pythonConfig =
     root: cfg:
@@ -32,7 +32,7 @@ in
 
   xdg.configFile = {
     # Conda configuration
-    "conda/condarc".text = generators.toYAML { } {
+    "conda/condarc".text = toYAML { } {
       channels = [
         "conda-forge"
         "conda"
@@ -42,7 +42,7 @@ in
     };
 
     # Felix file manager configuration
-    "felix/config.yaml".text = generators.toYAML { } {
+    "felix/config.yaml".text = toYAML { } {
       default = "nvim";
       exec = {
         zathura = [ "pdf" ];
@@ -58,7 +58,7 @@ in
     };
 
     # Glow markdown viewer configuration
-    "glow/glow.yml".text = generators.toYAML { } {
+    "glow/glow.yml".text = toYAML { } {
     };
 
     # Jupyter server configuration
@@ -108,7 +108,7 @@ in
       '';
 
     # QRCP configuration
-    "qrcp/config.yml".text = generators.toYAML { } {
+    "qrcp/config.yml".text = toYAML { } {
       interface = "any";
       keepalive = true;
       port = 9000;
@@ -135,7 +135,7 @@ in
       ];
 
     # Swappy screenshot annotation configuration
-    "swappy/config".text = generators.toINI { } {
+    "swappy/config".text = toINI { } {
       Default = {
         save_dir = "${config.home.homeDirectory}/img/screen";
         save_filename_format = "swappy-%Y-%m-%d_%Hh%Mm%Ss.png";
@@ -150,12 +150,12 @@ in
     };
 
     # YAML formatter configuration
-    "yamlfmt/yamlfmt.yaml".text = generators.toYAML { } {
+    "yamlfmt/yamlfmt.yaml".text = toYAML { } {
       gitignore_excludes = true;
     };
 
     # YAML linter configuration
-    "yamllint/config".text = generators.toYAML { } {
+    "yamllint/config".text = toYAML { } {
       yaml-files = [
         "*.yaml"
         "*.yml"
@@ -189,7 +189,7 @@ in
     };
 
     # OpenRazer configuration
-    "openrazer/persistence.conf".text = generators.toINI { } {
+    "openrazer/persistence.conf".text = toINI { } {
       PM2143H14804655 = {
         dpi_x = 1800;
         dpi_y = 1800;
@@ -205,31 +205,5 @@ in
 
     "ipython/profile_default/startup/00-default.py".text = # python
       '''';
-  };
-  home.file = {
-    ".aider.conf.yml".text = "";
-    # openai-api-base: https://api.githubcopilot.com
-    #
-    # model: openai/claude-sonnet-4
-    # weak-model: openai/gpt-4.1
-    # show-model-warnings: false
-    #
-    # cache-prompts: true
-    # cache-keepalive-pings: "3"
-    #
-    # map-tokens: "0"
-    # read:
-    #   - CLAUDE.md
-    #   - ~/.claude/CLAUDE.md
-    #
-    # dark-mode: true
-    # light-mode: false
-
-    ".aider.model.settings.yml".text = "";
-    # - name: aider/extra_params
-    #   extra_params:
-    #     extra_headers:
-    #       Editor-Version: "aider/0.84.0"
-    #       Copilot-Integration-Id: "vscode-chat"
   };
 }
