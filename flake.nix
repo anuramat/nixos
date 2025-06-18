@@ -77,10 +77,13 @@
                 }
               )
               ./system
+
               ./overlays.nix
-              ./hosts/external_keys.nix
+
               inputs.stylix.nixosModules.stylix
               ./stylix.nix
+
+              ./hosts/external_keys.nix
             ]
             ++ [
               ./hosts/${name}
@@ -100,6 +103,8 @@
         specialArgs = args;
         modules = [
           ./home
+
+          ./overlays.nix
           inputs.stylix.nixosModules.stylix
           ./stylix.nix
         ];
