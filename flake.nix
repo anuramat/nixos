@@ -58,7 +58,7 @@
         name:
         let
           args2 = args // {
-            cluster = helpers.root.mkCluster ./hosts hostnames name;
+            cluster = helpers.hosts.mkCluster ./hosts hostnames name;
           };
         in
         lib.nixosSystem {
