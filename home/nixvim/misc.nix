@@ -162,7 +162,6 @@ in
         };
       }
     )
-
     (
       let
         rev = "a3a3d81d12b61a38f131253bcd3ce5e2c6599850";
@@ -178,69 +177,7 @@ in
         };
       }
     )
-    (
-      let
-        rev = "6bc34b0dcf9e12066c15cc29c4b33a8066e4dc37";
-
-        # Pre-build the Node.js dependencies
-        nodeDeps = pkgs.buildNpmPackage {
-          pname = "mdmath-js-deps";
-          version = "1.0.0";
-          src =
-            pkgs.fetchFromGitHub {
-              inherit rev;
-              owner = "anuramat";
-              repo = "mdmath.nvim";
-              sha256 = "sha256-HesDrwB0u2fKvdJzTuZqBi1MBVVBFWBi4ysnJ84PiWQ=";
-            }
-            + "/mdmath-js";
-          npmDepsHash = "sha256-yUyLKZQGIibS/9nHWnh0yvtZqza3qEpN9UNqRaNK53Y=";
-          dontNpmBuild = true;
-          installPhase = ''
-            mkdir -p $out
-            cp -r . $out/
-            chmod +x $out/src/processor.js
-          '';
-        };
-      in
-      pkgs.vimUtils.buildVimPlugin {
-        pname = "mdmath.nvim";
-        version = sub rev;
-        src = pkgs.fetchFromGitHub {
-          inherit rev;
-          owner = "anuramat";
-          repo = "mdmath.nvim";
-          sha256 = "sha256-HesDrwB0u2fKvdJzTuZqBi1MBVVBFWBi4ysnJ84PiWQ=";
-        };
-        doCheck = false;
-        postPatch = ''
-                    # Replace mdmath-js with pre-built version
-                    rm -rf mdmath-js
-                    cp -r ${nodeDeps} mdmath-js
-                    chmod -R u+w mdmath-js
-                    
-                    # Create a wrapper for processor.js with proper PATH
-                    mv mdmath-js/src/processor.js mdmath-js/src/processor-unwrapped.js
-                    cat > mdmath-js/src/processor.js << 'EOF'
-          #!/usr/bin/env node
-          process.env.PATH = "${
-            pkgs.lib.makeBinPath [
-              pkgs.librsvg
-              pkgs.imagemagick
-              pkgs.nodejs
-            ]
-          }" + ":" + (process.env.PATH || "");
-          import('./processor-unwrapped.js');
-          EOF
-                    chmod +x mdmath-js/src/processor.js
-        '';
-        propagatedBuildInputs = with pkgs; [
-          nodejs
-          imagemagick
-          librsvg
-        ];
-      }
-    )
+    inputs.mdmath.packages.${pkgs.system}.default
   ];
   extraConfigLua = ''
     require('wastebin').setup({

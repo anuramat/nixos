@@ -19,10 +19,13 @@
     ctrlsn.url = "git+ssh://git@github.com/anuramat/ctrl.sn?ref=main";
     mcp-nixos.url = "github:utensils/mcp-nixos";
     nil.url = "github:oxalica/nil/main";
-    nixCats.url = "github:BirdeeHub/nixCats-nvim";
     codex.url = "github:anuramat/codex";
     nixvim = {
       url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    mdmath = {
+      url = "github:anuramat/mdmath.nvim/flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -103,9 +106,11 @@
       };
     }
     // (flake-utils.lib.eachDefaultSystem (system: {
-      packages.neovim = nixvim.legacyPackages.${system}.makeNixvim (
-        import ./home/nixvim (args // { pkgs = import nixpkgs { inherit system; }; })
-      );
+      packages.neovim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
+        inherit system;
+        extraSpecialArgs = { inherit inputs; };
+        module = import ./home/nixvim;
+      };
     }));
 }
 # vim: fdl=0 fdm=marker
