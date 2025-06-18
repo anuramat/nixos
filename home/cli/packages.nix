@@ -89,6 +89,21 @@
     zip
 
     # misc TODO categorize
+    bats # bash testing
+    bear # compilation database generator for clangd
+    haskellPackages.hoogle
+    htmlq
+    gomodifytags
+    jq # json processor
+    jsonschema # `jv`
+    luajitPackages.luarocks
+    markdown-link-check
+    pup # html
+    python3Packages.nbdime # ipynb diff, merge
+    python3Packages.jupytext
+    tidy-viewer # csv viewer
+    universal-ctags # maintained ctags
+    yq # basic yaml, json, xml, csv, toml processor
     geteduroam-cli
     ansifilter
     asciinema
@@ -99,7 +114,7 @@
     wine
     aria # downloader
     banner
-    croc # send/receive files through relay with encryption TODO might be broken, unstable worked tho
+    croc # send/receive files through relay with encryption TODO test if it needs setup
     makefile2graph
     mermaid-cli
     ddgr # ddg search
@@ -122,12 +137,32 @@
     xdg-ninja # checks $HOME for junk
     git-filter-repo # rewrite/analyze repository history
     mosh # ssh over unstable connections
-    python311Packages.pyicloud
+    python3Packages.pyicloud
     qrcp # send files to mobile over Wi-Fi using QR
     rclone # rsync for cloud
     tree-sitter
     cowsay
     fortune # random quotes
+
+    # compilers {{{1
+    cabal-install
+    cargo
+    clang
+    ghc
+    gcc
+    cudaPackages.cuda_nvcc
+    go
+    julia
+    llvm
+    lua
+    nodejs_20
+    perl
+    ruby
+    rustc
+    sageWithDoc # computer algebra system
+    stack
+    texliveFull
+    yarn
 
     # network
     aircrack-ng
@@ -172,5 +207,36 @@
     smem # ram usage
     usbutils
     v4l-utils # camera stuff
+
+    # mcp {{{1
+    github-mcp-server
+    mcp-nixos
+
+    # debuggers {{{1
+    delve # Go debugger
+    gdb # C
+    python3Packages.debugpy
+
+    # formatters {{{1
+    black # python
+    isort
+    formatjson5
+    gofumpt # stricter go
+    haskellPackages.ormolu
+    html-tidy
+    mdformat
+    nixfmt-rfc-style
+    nodePackages.prettier # just in case
+    shfmt # posix/bash/mksh
+    stylua # lua
+    treefmt # aggregator
+    yamlfmt
+
+    # python libraries for random scripts
+    (python3.withPackages (
+      p: with p; [
+        mcp
+      ]
+    ))
   ];
 }
