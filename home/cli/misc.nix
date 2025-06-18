@@ -24,7 +24,7 @@ in
       target = "containers/storage.conf";
     };
     # Felix file manager configuration
-    "felix/config.yaml".text = toYAML { } {
+    "felix/config.yaml".text = toYAML {
       default = "nvim";
       exec = {
         zathura = [ "pdf" ];
@@ -39,10 +39,10 @@ in
       };
     };
     # Glow markdown viewer configuration
-    "glow/glow.yml".text = toYAML { } {
+    "glow/glow.yml".text = toYAML {
     };
     # QRCP configuration
-    "qrcp/config.yml".text = toYAML { } {
+    "qrcp/config.yml".text = toYAML {
       interface = "any";
       keepalive = true;
       port = 9000;

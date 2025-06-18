@@ -4,4 +4,5 @@ args: {
   mime = import ./mime.nix args;
   hosts = import ./hosts.nix args;
   vim = import ./vim.nix args;
+  home = import ./home.nix args;
 }

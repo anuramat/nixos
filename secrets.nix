@@ -1,3 +1,6 @@
+let
+  keys = import ./helpers/hosts ./hosts;
+in
 {
-  "testSecret.age".publicKeys = [ ];
+  "testSecret.age".publicKeys = keys;
 }

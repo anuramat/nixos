@@ -29,10 +29,14 @@
 
   home = {
     preferXdgDirectories = true;
-    activation = {
-      removeBrokenLinksConfig = helpers.common.removeBrokenLinks config.xdg.configHome;
-      removeBrokenLinksHome = helpers.common.removeBrokenLinks config.home.homeDirectory;
-      removeBrokenLinksBin = helpers.common.removeBrokenLinks config.home.sessionVariables.XDG_BIN_HOME;
-    };
+    activation =
+      let
+        rm = (helpers.home lib).removeBrokenLinks;
+      in
+      {
+        removeBrokenLinksConfig = rm config.xdg.configHome;
+        removeBrokenLinksHome = rm config.home.homeDirectory;
+        removeBrokenLinksBin = rm config.home.sessionVariables.XDG_BIN_HOME;
+      };
   };
 }

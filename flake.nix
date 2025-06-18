@@ -42,8 +42,8 @@
     let
 
       inherit (nixpkgs) lib;
-      hostnames = with builtins; ./hosts |> readDir |> attrNames |> filter (a: a != "external_keys.nix");
       helpers = import ./helpers { inherit lib inputs; };
+      hostnames = helpers.hosts.getHostnames ./hosts;
       user = {
         username = "anuramat";
         fullname = "Arsen Nuramatov";

@@ -81,9 +81,6 @@ in
       ];
     };
 
-    home.shellAliases = {
-      fd = "fd -HL"; # working tree minus junk TODO sure?
-    };
     fd = {
       enable = true;
       ignores = [
@@ -91,5 +88,8 @@ in
         "*.pb.go"
       ];
     };
+  };
+  home.shellAliases = {
+    fd = "fd -HL"; # working tree minus junk TODO sure?
   };
 }

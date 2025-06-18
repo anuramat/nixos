@@ -4,13 +4,12 @@
   ...
 }:
 let
-  toYAML = lib.generators.toYAML { };
   toINI = lib.generators.toINI { };
 in
 {
   xdg.configFile = {
     # Swappy screenshot annotation configuration
-    "swappy/config".text = toINI { } {
+    "swappy/config".text = toINI {
       Default = {
         save_dir = "${config.home.homeDirectory}/img/screen";
         save_filename_format = "swappy-%Y-%m-%d_%Hh%Mm%Ss.png";
@@ -25,7 +24,7 @@ in
     };
 
     # OpenRazer configuration
-    "openrazer/persistence.conf".text = toINI { } {
+    "openrazer/persistence.conf".text = toINI {
       PM2143H14804655 = {
         dpi_x = 1800;
         dpi_y = 1800;

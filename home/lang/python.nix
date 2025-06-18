@@ -6,7 +6,7 @@ in
 {
   xdg.configFile = {
     # Conda configuration
-    "conda/condarc".text = toYAML { } {
+    "conda/condarc".text = toYAML {
       channels = [
         "conda-forge"
         "conda"

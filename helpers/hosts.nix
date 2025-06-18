@@ -11,8 +11,10 @@ let
     );
 in
 {
-  allKeys = {
-  };
+  # TODO deduplicate keypath
+  hostnames = with builtins; path |> readDir |> attrNames |> filter (a: a != "external_keys.nix");
+  getAllKeys =
+    path: hostnames path |> map (v: "${path}/keys") |> getClientKeyFiles |> builtins.concatLists;
   mkCluster =
     root: hostnames: name:
     let

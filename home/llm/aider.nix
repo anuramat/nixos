@@ -7,7 +7,7 @@ let
 in
 {
   home.file = {
-    ".aider.conf.yml".text = toYAML { } {
+    ".aider.conf.yml".text = toYAML {
       openai-api-base = "https://api.githubcopilot.com";
       model = "openai/claude-sonnet-4";
       weak-model = "openai/gpt-4.1";
@@ -23,7 +23,7 @@ in
       light-mode = false;
     };
 
-    ".aider.model.settings.yml".text = toYAML { } [
+    ".aider.model.settings.yml".text = toYAML [
       {
         name = "aider/extra_params";
         extra_params = {

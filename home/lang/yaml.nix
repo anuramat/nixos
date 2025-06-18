@@ -5,12 +5,12 @@ in
 {
   xdg.configFile = {
     # YAML formatter configuration
-    "yamlfmt/yamlfmt.yaml".text = toYAML { } {
+    "yamlfmt/yamlfmt.yaml".text = toYAML {
       gitignore_excludes = true;
     };
 
     # YAML linter configuration
-    "yamllint/config".text = toYAML { } {
+    "yamllint/config".text = toYAML {
       yaml-files = [
         "*.yaml"
         "*.yml"
