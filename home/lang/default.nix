@@ -1,5 +1,9 @@
 { pkgs, ... }:
 {
+  imports = [
+    ./python.nix
+    ./yaml.nix
+  ];
   home.packages = with pkgs; [
     # compilers
     cabal-install
