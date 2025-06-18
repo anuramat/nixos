@@ -86,8 +86,8 @@ in
     (set "d" "MoltenDelete" "delete ipynb cell")
     (set "i" (file |> mkInit |> lua) "init molten and start otter")
 
-    (set "o" "OtterActivate" "")
-    (set "O" "OtterDeactivate" "")
+    (set "o" "OtterActivate" "activate") # HACK FUCK TODO
+    (set "O" "OtterDeactivate" "deactivate ")
 
     (set "c" (lua "function() require('quarto').run_cell() end") "run selected cell")
     (set "a" (lua "function() require('quarto').run_above() end") "run all cells above")

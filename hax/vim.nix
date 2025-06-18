@@ -13,7 +13,9 @@ _: {
       if type == "string" then
         {
           action = "<cmd>${action}<cr>";
-          options.desc = (if desc == "" then action else desc);
+          options = {
+            desc = (if desc == "" then action else desc);
+          };
         }
       else if type == "set" then
         { }
