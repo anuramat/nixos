@@ -2,6 +2,7 @@
 rec {
   common = import ./common.nix args;
   web = import ./web.nix;
+  mime = import ./mime.nix args;
   root =
     let
       cacheFilename = "cache.pem.pub";
