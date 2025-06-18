@@ -9,11 +9,11 @@
 {
   imports = [
     inputs.nixvim.homeModules.nixvim
+    ./lang
     ./config.nix
     ./email.nix
     ./mime
     ./llm
-    ./lang.nix
     ./term.nix
     ./editor.nix
     ./secret.nix
