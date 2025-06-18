@@ -1,3 +1,4 @@
+_:
 let
   acme =
     let

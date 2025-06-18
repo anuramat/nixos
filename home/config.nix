@@ -5,6 +5,7 @@
 }:
 let
   toYAML = lib.generators.toYAML { };
+  toINI = lib.generators.toINI { };
   # Convert nested attrset to Python config assignment statements
   pythonConfig =
     root: cfg:

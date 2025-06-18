@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, ... }@args:
 let
   cacheFilename = "cache.pem.pub";
   getClientKeyFiles =

@@ -1,4 +1,6 @@
+{ helpers, ... }:
 let
+  inherit (helpers.vim) lua;
   localhost = "vim.cmd('MoltenInit http://localhost:8888')";
   file = # lua
     ''
@@ -22,24 +24,9 @@ let
         require('otter').activate()
       end
     '';
-  _mkMap =
-    key: action: desc:
-    {
-      mode = "n";
-      inherit key action;
-    }
-    // (
-      if builtins.typeOf action == "string" then
-        {
-          action = "<cmd>${action}<cr>";
-          options.desc = if desc == "" then action else desc;
-        }
-      else
-        { }
-    );
-  mkMap =
+  set =
     k: a: d:
-    _mkMap ("<localleader>" + k) a (d + " [jupyter]");
+    helpers.vim.map ("<localleader>" + k) a (d + " [jupyter]");
 in
 {
   plugins = {
@@ -78,8 +65,10 @@ in
       };
     };
     otter = {
+      enable = true;
     };
     quarto = {
+      enable = true;
       settings = {
         closePreviewOnExit = true;
         codeRunner = {
@@ -89,23 +78,19 @@ in
           languages = [ "python" ];
         };
       };
-      lazyLoad = {
-        enable = true;
-        settings.keys = [
-          (mkMap "c" "function() require('quarto').run_cell() end," "run cell")
-          (mkMap "a" "function() require('quarto').run_above() end," "run all above including current one")
-          (mkMap "b" "function() require('quarto').run_below() end," "run all below including current one")
-          (mkMap "A" "function() require('quarto').run_all() end," "run all")
-        ];
-      };
     };
   };
 
   keymaps = [
-    (mkMap "d" "MoltenDelete" "delete ipynb cell")
-    (mkMap "i" { __raw = "${mkInit file}"; } "init molten and start otter")
+    (set "d" "MoltenDelete" "delete ipynb cell")
+    (set "i" (file |> mkInit |> lua) "init molten and start otter")
 
-    (mkMap "o" "OtterActivate" "")
-    (mkMap "O" "OtterDeactivate" "")
+    (set "o" "OtterActivate" "")
+    (set "O" "OtterDeactivate" "")
+
+    (set "c" (lua "function() require('quarto').run_cell() end") "run selected cell")
+    (set "a" (lua "function() require('quarto').run_above() end") "run all cells above")
+    (set "b" (lua "function() require('quarto').run_below() end") "run all cells below")
+    (set "A" (lua "function() require('quarto').run_all() end") "run all cells")
   ];
 }
