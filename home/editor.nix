@@ -1,4 +1,9 @@
-{ pkgs, inputs, ... }:
+{
+  pkgs,
+  inputs,
+  osConfig,
+  ...
+}:
 {
   programs = {
     nixvim = {
@@ -6,6 +11,14 @@
       imports = [
         ./nixvim
       ];
+      settings.plugins.lsp.servers.nixd.settings.options =
+        let
+          nixosExpr = ''(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.${osConfig.networking.hostName}.options'';
+        in
+        {
+          nixos = nixosExpr;
+          home-manager.expr = "${nixosExpr}.home-manager.users.type.getSubOptions []";
+        };
     };
     helix = {
       enable = true;

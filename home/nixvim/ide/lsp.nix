@@ -101,27 +101,7 @@
           "--inlay-hints=false"
         ];
         settings = {
-          nixd = {
-            options =
-              let
-                # hostname = "";
-                root = ''(builtins.getFlake "/etc/nixos/")'';
-                # nixosExpr = ''${root}.nixosConfigurations.${hostname}.options'';
-                # homeExpr = "${nixosExpr}.home-manager.users.type.getSubOptions []";
-                vimExpr = "${root}.packages.${pkgs.system}.neovim.options";
-              in
-              {
-                # nixos = {
-                #   expr = nixosExpr;
-                # };
-                # home-manager = {
-                #   expr = homeExpr;
-                # };
-                nixvim = {
-                  expr = vimExpr;
-                };
-              };
-          };
+          options.nixvim.expr = "(builtins.getFlake (builtins.toString ./.)).packages.${pkgs.system}.neovim.options";
         };
       };
       stylelint_lsp = {
