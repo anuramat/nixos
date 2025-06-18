@@ -15,7 +15,7 @@ _: {
           action = "<cmd>${action}<cr>";
           options.desc = if desc == "" then action else desc;
         }
-      else if type "set" then
+      else if type == "set" then
         { }
       else
         throw "type ${type} is invalid for vim keymaps"
