@@ -13,6 +13,15 @@ let
       args = [ ];
       env = { };
     };
+    # TODO
+    GitHub = {
+      args = [
+      ];
+      command = "github-mcp-server";
+      env = {
+        GITHUB_PERSONAL_ACCESS_TOKEN = "fuck";
+      };
+    };
   };
   mcpServersJSON = toJSON mcpServers;
   mcpServersPath = pkgs.writeTextFile {
@@ -28,7 +37,6 @@ in
     mcp-nixos
   ];
 
-  # TODO agenix for secrets
   xdg.configFile."mcphub/servers.json".text = toJSON {
     nativeMCPServers = {
       mcphub = {
