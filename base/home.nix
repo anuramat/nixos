@@ -8,7 +8,6 @@
   imports = [
     inputs.home-manager.nixosModules.home-manager
   ];
-  stylix.homeManagerIntegration.followSystem = true;
   hardware.graphics.enable = true;
   home-manager = {
     backupFileExtension = "HMBAK";

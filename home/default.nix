@@ -3,10 +3,12 @@
   pkgs,
   lib,
   user,
+  inputs,
   ...
 }:
 {
   imports = [
+    inputs.nixvim.homeModules.nixvim
     ./config.nix
     ./email.nix
     ./mime

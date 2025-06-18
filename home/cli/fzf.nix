@@ -1,6 +1,31 @@
 {
+  lib,
+  config,
+  pkgs,
+  ...
+}:
+let
+  eza = "${config.programs.eza.package}/bin/eza";
+  timg = "${pkgs.timg}/bin/timg";
+  bat = "${pkgs.bat}/bin/bat";
+in
+{
   programs.fzf =
     let
+      preview =
+        pkgs.writeShellScript "fzf_preview"
+          # bash
+          ''
+            # directory
+            if [ -d "$1" ]; then
+              ${eza} ${lib.strings.concatStringsSep " " config.programs.eza.extraOptions} --grid "$1"
+              exit
+            # file
+            elif [ -f "$1" ]; then
+            	${timg} -p s "-g''${FZF_PREVIEW_COLUMNS}x$FZF_PREVIEW_LINES" "$1" && exit
+              ${bat} --style=numbers --color=always "$1" && exit
+            fi
+          '';
       fd = "fd -u --exclude .git/";
     in
     {
@@ -34,7 +59,7 @@
         "--bind='ctrl-b:preview-page-up'"
         "--bind='ctrl-f:preview-page-down'"
 
-        "--preview='${./files/fzf_preview.sh} {}'"
+        "--preview='${preview} {}'"
       ];
     };
 }

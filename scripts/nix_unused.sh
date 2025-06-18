@@ -9,7 +9,7 @@ red() {
 }
 
 while IFS= read -r path; do
-	echo "$path" | rg --no-config -vq 'machines/[^/]+$' || continue
+	echo "$path" | rg --no-config -vq 'hosts/[^/]+$' || continue
 	filename=$(basename "$path")
 	use_counter=0
 	# TODO escape dot in .nix

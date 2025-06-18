@@ -1,6 +1,10 @@
 { pkgs, inputs, ... }:
 {
   programs = {
+    nixvim = {
+      enable = true;
+      config = inputs.self.packages.${pkgs.stdenv.system}.neovim.config;
+    };
     helix = {
       enable = true;
       settings = {
@@ -14,6 +18,5 @@
     vscode
     vis
     zed-editor
-    inputs.self.packages.${pkgs.stdenv.system}.neovim
   ];
 }

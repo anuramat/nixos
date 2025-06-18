@@ -2,7 +2,7 @@
 .SILENT:
 MAKEFLAGS += --always-make
 
-keys_dir::=$(shell pwd)/os/machines/$(shell hostname)/keys
+keys_dir::=$(shell pwd)/hosts/$(shell hostname)/keys
 
 all: format flake links claude lint
 flake:

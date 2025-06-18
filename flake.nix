@@ -41,7 +41,7 @@
       inherit (nixpkgs) lib;
       epsilon = with builtins; path: path |> readDir |> attrNames |> filter (a: a != "default.nix");
       inherit
-        ((import ./os/machines) {
+        ((import ./hosts) {
           inherit inputs epsilon;
         })
         hostnames
@@ -56,41 +56,37 @@
         tz = "Europe/Berlin";
         locale = "en_US.UTF-8";
       };
-      commonArgs = {
+      args = {
         inherit inputs user;
         helpers = import ./helpers { inherit lib; };
       };
       mkSystem =
         name:
         let
-          cluster = mkCluster name;
+          args2 = args // {
+            cluster = mkCluster name;
+          };
         in
         lib.nixosSystem {
-          specialArgs = commonArgs // {
-            inherit cluster;
-          };
+          specialArgs = args2;
           modules =
             [
-              {
-                home-manager = {
-                  extraSpecialArgs = commonArgs;
-                  users.${user.username} = ./home;
-                };
-              }
-              ./common
-              ./os/generic
+              (
+                { config, ... }:
+                {
+                  home-manager = {
+                    extraSpecialArgs = args2;
+                    users.${user.username} = ./home;
+                  };
+                }
+              )
+              ./base
+              inputs.stylix.nixosModules.stylix
+              ./overlays.nix
+              ./stylix.nix
             ]
             ++ mkModules name
-            ++ (
-              if cluster.this.server then
-                [
-                  ./os/remote.nix
-                ]
-              else
-                [
-                  ./os/local
-                ]
-            );
+            ++ (if args2.cluster.this.server then [ ./remote ] else [ ./local ]);
         };
     in
     {
@@ -102,21 +98,19 @@
         })
         |> builtins.listToAttrs;
       homeConfigurations.${user.username} = home-manager.lib.homeManagerConfiguration {
-        specialArgs = commonArgs;
-        # TODO check stylix module sharing between home-manager and nixos
-        # TODO check home-manager on a non-nixos system
+        # TODO check if this even builds
+        specialArgs = args;
         modules = [
           ./home
-          ./common
+          inputs.stylix.nixosModules.stylix
+          ./stylix.nix
         ];
       };
     }
     // (flake-utils.lib.eachDefaultSystem (system: {
       packages.neovim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
         pkgs = import nixpkgs { inherit system; };
-        extraSpecialArgs = {
-          inherit inputs;
-        };
+        extraSpecialArgs = args;
         module = ./nixvim;
       };
     }));
