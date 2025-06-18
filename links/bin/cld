@@ -1,10 +1,17 @@
 #!/usr/bin/env bash
 
+export XDG_DATA_HOME=$(mktemp -d)
+export XDG_CONFIG_HOME=$(mktemp -d)
+export XDG_STATE_HOME=$(mktemp -d)
+export XDG_CACHE_HOME=$(mktemp -d)
+export XDG_RUNTIME_DIR=$(mktemp -d)
+
 export CLAUDE=true
 bwrap --ro-bind / / --dev /dev \
-	--bind /tmp /tmp \
-	--bind "$XDG_CACHE_HOME" "$XDG_CACHE_HOME" \
-	--bind "$HOME/.claude" "$HOME/.claude" \
-	--bind "$HOME/.claude.json" "$HOME/.claude.json" \
-	--bind "$PWD" "$PWD" \
-	claude --dangerously-skip-permissions "$@"
+  --bind /tmp /tmp \
+  --bind "$XDG_CACHE_HOME" "$XDG_CACHE_HOME" \
+  --bind "$HOME/.claude" "$HOME/.claude" \
+  --bind "$HOME/.claude.json" "$HOME/.claude.json" \
+  --bind "$PWD" "$PWD" \
+  --bind /etc/nixos /etc/nixos \
+  claude --dangerously-skip-permissions "$@"

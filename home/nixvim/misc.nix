@@ -180,7 +180,7 @@ in
     )
     (
       let
-        rev = "flake";
+        rev = "2fa5e31e0e0a6216f603df2d62710efadc241907";
       in
       pkgs.vimUtils.buildVimPlugin {
         pname = "mdmath.nvim";
@@ -189,7 +189,7 @@ in
           inherit rev;
           owner = "anuramat";
           repo = "mdmath.nvim";
-          sha256 = "1r57dvf39qkzs9fnjvpbal95zr7lp9gcm0vkpg7hnzvzh55m6770";
+          sha256 = "sha256-HesDrwB0u2fKvdJzTuZqBi1MBVVBFWBi4ysnJ84PiWQ=";
         };
         doCheck = false;
       }
