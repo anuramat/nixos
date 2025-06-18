@@ -48,12 +48,15 @@ in
     let
       home = config.home.homeDirectory;
     in
-    lib.hm.dag.entryBefore [ "writeBoundary" ] # bash
-      ''
-        success=""
-        temp=$(mktemp)
-        jq --slurpfile mcp ${mcpServersPath} '.mcpServers = $mcp[0]' "${home}/.claude.json" > "$temp" && success=true
-        [ -n "''${VERBOSE:+set}" ] && args+=(-print)
-        [ -z "''${DRY_RUN:+set}" ] && [ -n "$success" ] && mv "$temp" "${home}/.claude.json"
-      '';
+    {
+      claudeMcp =
+        lib.hm.dag.entryBefore [ "writeBoundary" ] # bash
+          ''
+            success=""
+            temp=$(mktemp)
+            jq --slurpfile mcp ${mcpServersPath} '.mcpServers = $mcp[0]' "${home}/.claude.json" > "$temp" && success=true
+            [ -n "''${VERBOSE:+set}" ] && args+=(-print)
+            [ -z "''${DRY_RUN:+set}" ] && [ -n "$success" ] && mv "$temp" "${home}/.claude.json"
+          '';
+    };
 }

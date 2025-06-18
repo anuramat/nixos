@@ -1,5 +1,6 @@
 {
   config,
+  helpers,
   pkgs,
   lib,
   user,
@@ -29,14 +30,9 @@
   home = {
     preferXdgDirectories = true;
     activation = {
-      removeBrokenConfigLinks =
-        lib.hm.dag.entryBefore [ "writeBoundary" ] # bash
-          ''
-            args=("${config.xdg.configHome}" -maxdepth 1 -xtype l)
-            [ -z "''${DRY_RUN:+set}" ] && args+=(-delete) 
-            [ -n "''${VERBOSE:+set}" ] && args+=(-print)
-            run find "''${args[@]}"
-          '';
+      removeBrokenLinksConfig = helpers.common.removeBrokenLinks config.xdg.configHome;
+      removeBrokenLinksHome = helpers.common.removeBrokenLinks config.home.homeDirectory;
+      removeBrokenLinksBin = helpers.common.removeBrokenLinks config.home.sessionVariables.XDG_BIN_HOME;
     };
   };
 }

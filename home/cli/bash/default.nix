@@ -5,12 +5,17 @@
   ...
 }:
 {
+  home.sessionVariables = {
+    XDG_BIN_HOME = "${config.home.homeDirectory}/.local/bin";
+  };
   programs.bash = {
     enable = true;
     historySize = -1;
     historyFileSize = -1;
     profileExtra = # bash
       ''
+        # TODO CLEAN
+        source ${./profile.sh}
         source ${./sway_autostart.sh}
       '';
     # TODO move these somewhere else?
