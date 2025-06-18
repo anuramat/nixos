@@ -29,7 +29,7 @@ let
     in
     lib.concatStringsSep "\n" (lib.mapAttrsToList (formatAssignment root) cfg);
 
-  mcpCfg = generators.toJSON {
+  mcpServersJSON = generators.toJSON {
     NixOS = {
       type = "stdio";
       command = "mcp-nixos";
@@ -37,7 +37,10 @@ let
       env = { };
     };
   };
-  # TODO write to store
+  mcpServersPath = pkgs.writeTextfile {
+    name = "mcp_servers.json";
+    text = mcpServersJSON;
+  };
 in
 {
 
@@ -250,7 +253,6 @@ in
     lib.hm.dag.entryBefore [ "writeBoundary" ] # bash
       ''
         temp=$(mktemp)
-        jq --slurpfile mcp ${mcpCfgPath} '.mcpServers = $mcp[0]' "${home}/.claude.json" > "$temp" && mv "$temp" "${home}/.claude.json"
+        jq --slurpfile mcp ${mcpServersPath} '.mcpServers = $mcp[0]' "${home}/.claude.json" > "$temp" && mv "$temp" "${home}/.claude.json"
       '';
-  # TODO use
 }
