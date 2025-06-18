@@ -1,6 +1,6 @@
-{ helpers, ... }:
+{ heh, ... }:
 let
-  inherit (helpers.vim) lua;
+  inherit (heh.vim) lua;
   localhost = "vim.cmd('MoltenInit http://localhost:8888')";
   file = # lua
     ''
@@ -26,7 +26,7 @@ let
     '';
   set =
     k: a: d:
-    helpers.vim.map ("<localleader>" + k) a (d + " [jupyter]");
+    heh.vim.map ("<localleader>" + k) a (d + " [jupyter]");
 in
 {
   plugins = {

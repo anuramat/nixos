@@ -13,7 +13,10 @@
         ./nixvim
       ];
       defaultEditor = true;
-      _module.args = { inherit inputs helpers; };
+      _module.args = {
+        inherit inputs helpers;
+        heh = helpers; # TODO HACK XXX TEST
+      };
       plugins.lsp.servers.nixd.settings.options =
         let
           nixosExpr = ''(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.${osConfig.networking.hostName}.options'';
