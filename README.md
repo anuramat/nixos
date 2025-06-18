@@ -4,12 +4,15 @@
 ![BUG](https://img.shields.io/github/search?query=repo%3Aanuramat%2Fnixos%20BUG&style=flat-square&logo=gnubash&color=purple&labelColor=black&label=BUG&link=&link=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Drepo%253Aanuramat%252Fnixos%2520BUG%26type%3Dcode)
 ![FUCK](https://img.shields.io/github/search?query=repo%3Aanuramat%2Fnixos%20FUCK&style=flat-square&logo=cplusplus&color=red&labelColor=black&label=FUCK&link=&link=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Drepo%253Aanuramat%252Fnixos%2520FUCK%26type%3Dcode)
 
-## Development
+## The Ugly
 
 - 2 entrypoints for home-manager: nixos module and standalone
 - 2 entrypoints for nixvim: home-manager module and standalone
 
 thus new specialArgs and modules need to be added to both.
+
+- `..` imports in `/secrets`
+- magic in `/hosts`
 
 ## Install
 
