@@ -180,7 +180,28 @@ in
     )
     (
       let
-        rev = "2fa5e31e0e0a6216f603df2d62710efadc241907";
+        rev = "6bc34b0dcf9e12066c15cc29c4b33a8066e4dc37";
+
+        # Pre-build the Node.js dependencies
+        nodeDeps = pkgs.buildNpmPackage {
+          pname = "mdmath-js-deps";
+          version = "1.0.0";
+          src =
+            pkgs.fetchFromGitHub {
+              inherit rev;
+              owner = "anuramat";
+              repo = "mdmath.nvim";
+              sha256 = "sha256-HesDrwB0u2fKvdJzTuZqBi1MBVVBFWBi4ysnJ84PiWQ=";
+            }
+            + "/mdmath-js";
+          npmDepsHash = "sha256-yUyLKZQGIibS/9nHWnh0yvtZqza3qEpN9UNqRaNK53Y=";
+          dontNpmBuild = true;
+          installPhase = ''
+            mkdir -p $out
+            cp -r . $out/
+            chmod +x $out/src/processor.js
+          '';
+        };
       in
       pkgs.vimUtils.buildVimPlugin {
         pname = "mdmath.nvim";
@@ -192,6 +213,17 @@ in
           sha256 = "sha256-HesDrwB0u2fKvdJzTuZqBi1MBVVBFWBi4ysnJ84PiWQ=";
         };
         doCheck = false;
+        postPatch = ''
+          # Replace mdmath-js with pre-built version
+          rm -rf mdmath-js
+          cp -r ${nodeDeps} mdmath-js
+          chmod -R u+w mdmath-js
+        '';
+        propagatedBuildInputs = with pkgs; [
+          nodejs
+          imagemagick
+          librsvg
+        ];
       }
     )
   ];
