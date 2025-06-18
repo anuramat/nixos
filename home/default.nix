@@ -18,7 +18,7 @@
     ./llm
     ./term.nix
     ./editor.nix
-    ./secret.nix
+    ./keyring.nix
     ./theme.nix
     ./desktop
     ./cli
