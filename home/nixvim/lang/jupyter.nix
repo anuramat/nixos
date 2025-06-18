@@ -44,6 +44,7 @@ in
 {
   plugins = {
     jupytext = {
+      enable = true;
       settings = {
         force_ft = "markdown";
         output_extension = "md";
@@ -51,6 +52,7 @@ in
       };
     };
     molten = {
+      enable = true;
       python3Dependencies =
         ps: with ps; [
           # images:

@@ -12,24 +12,13 @@
   programs.captive-browser.interface = "wlp0s20f3";
 
   # tis a big boy
+  # TODO abstract away into a meta.nix variable
   nix.distributedBuilds = false;
 
   services = {
     keyd.keyboards.main.ids = [
       "048d:c997:193096a7"
     ];
-    # proprietary drivers TODO huh
-    xserver = {
-      # dpi = 236; # TODO test if we need this
-    };
-    tlp.settings = {
-      # turn on battery charge threshold
-      # `tlp fullcharge` to charge to 100% once
-      # values taken from <https://linrunner.de/tlp/faq/battery.html>
-      START_CHARGE_THRESH_BAT0 = 40;
-      STOP_CHARGE_THRESH_BAT0 = 50;
-      CPU_MAX_PERF_ON_BAT = 20;
-    };
   };
 
   imports = [
