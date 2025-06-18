@@ -1,4 +1,4 @@
-{ lib, helpers, ... }:
+{ lib, hax, ... }:
 let
   # Convert nested attrset to Python config assignment statements
   toYAML = lib.generators.toYAML { };
@@ -34,7 +34,7 @@ in
       # python
       ''
         ${root} = get_config()
-        ${helpers.common.pythonConfig root cfg}
+        ${hax.common.pythonConfig root cfg}
       '';
 
     "ipython/profile_default/startup/00-default.py".text = # python

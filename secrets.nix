@@ -1,5 +1,5 @@
 let
-  keys = import ./helpers/hosts ./hosts;
+  keys = import ./hax/hosts ./hosts;
 in
 {
   "testSecret.age".publicKeys = keys;

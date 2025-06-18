@@ -1,4 +1,4 @@
-{ helpers, lib, ... }:
+{ hax, lib, ... }:
 let
   w = {
     root = "ctrl.sn";
@@ -8,7 +8,7 @@ let
   };
 in
 lib.mkMerge (
-  (helpers.web.serve w)
+  (hax.web.serve w)
   ++ [
     ({
       services.wastebin = {

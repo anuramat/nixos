@@ -42,8 +42,8 @@
     let
 
       inherit (nixpkgs) lib;
-      helpers = import ./helpers { inherit lib inputs; };
-      hostnames = helpers.hosts.getHostnames ./hosts;
+      hax = import ./hax { inherit lib inputs; };
+      hostnames = hax.hosts.getHostnames ./hosts;
       user = {
         username = "anuramat";
         fullname = "Arsen Nuramatov";
@@ -52,13 +52,13 @@
         locale = "en_US.UTF-8";
       };
       args = {
-        inherit inputs user helpers;
+        inherit inputs user hax;
       };
       mkSystem =
         name:
         let
           args2 = args // {
-            cluster = helpers.hosts.mkCluster ./hosts hostnames name;
+            cluster = hax.hosts.mkCluster ./hosts hostnames name;
           };
         in
         lib.nixosSystem {
@@ -126,7 +126,7 @@
         packages.neovim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
           inherit system;
           pkgs = pkgsWithOverlays;
-          extraSpecialArgs = { inherit inputs helpers; };
+          extraSpecialArgs = { inherit inputs hax; };
           module = ./home/nixvim;
         };
       }

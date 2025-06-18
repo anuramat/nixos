@@ -2,11 +2,11 @@
   pkgs,
   lib,
   inputs,
-  helpers,
+  hax,
   ...
 }:
 lib.mkMerge (
-  helpers.web.serveBinary rec {
+  hax.web.serveBinary rec {
     noRobots = true;
     domain = "ctrl.sn";
     root = domain;

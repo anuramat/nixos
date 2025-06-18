@@ -1,6 +1,6 @@
 {
   pkgs,
-  helpers,
+  hax,
   inputs,
   osConfig,
   ...
@@ -14,8 +14,7 @@
       ];
       defaultEditor = true;
       _module.args = {
-        inherit inputs helpers;
-        heh = helpers; # TODO HACK XXX TEST
+        inherit inputs hax;
       };
       plugins.lsp.servers.nixd.settings.options =
         let

@@ -1,6 +1,6 @@
 {
   config,
-  helpers,
+  hax,
   pkgs,
   lib,
   user,
@@ -31,7 +31,7 @@
     preferXdgDirectories = true;
     activation =
       let
-        rm = (helpers.home lib).removeBrokenLinks;
+        rm = (hax.home lib).removeBrokenLinks;
       in
       {
         removeBrokenLinksConfig = rm config.xdg.configHome;
