@@ -185,5 +185,7 @@ in
       open_cmd = '__wastebin() { wl-copy "$1" && xdg-open "$1"; }; __wastebin',
       ask = false,
     })
+    require('figtree.nvim').setup({
+    })
   '';
 }

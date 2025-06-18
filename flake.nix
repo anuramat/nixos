@@ -80,28 +80,18 @@
         ];
       };
     }
-    # I think it still doesn't pass the overlay
-    // (flake-utils.lib.eachDefaultSystem (
-      system:
-      let
-        overlayConfig = import ./common/overlays.nix {
-          inherit inputs;
-          pkgs = nixpkgs.legacyPackages.${system};
+    // (flake-utils.lib.eachDefaultSystem (system: {
+      packages.neovim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
+        inherit system;
+        extraSpecialArgs = { inherit inputs hax; };
+        module = {
+          imports = [
+            ./common/overlays.nix
+            ./home/nixvim
+          ];
         };
-        pkgsWithOverlays = import nixpkgs {
-          inherit system;
-          overlays = overlayConfig.nixpkgs.overlays;
-        };
-      in
-      {
-        packages.neovim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
-          inherit system;
-          pkgs = pkgsWithOverlays;
-          extraSpecialArgs = { inherit inputs hax; };
-          module = ./home/nixvim;
-        };
-      }
-    ));
+      };
+    }));
 
   inputs = {
     # TODO make everything follow? make a helper?

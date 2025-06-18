@@ -2,6 +2,7 @@
   pkgs,
   hax,
   inputs,
+  config,
   osConfig,
   ...
 }:
@@ -12,6 +13,7 @@
       imports = [
         ./nixvim
       ];
+      nixpkgs.overlays = config.nixpkgs.overlays;
       defaultEditor = true;
       _module.args = {
         inherit inputs hax;
