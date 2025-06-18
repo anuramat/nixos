@@ -30,6 +30,12 @@ let
 in
 {
   plugins = {
+    plugins.conform-nvim.settings.formatters_by_ft.python = [
+      "isort"
+      "black"
+    ];
+    lsp.servers.pyright.enable = true;
+
     jupytext = {
       enable = true;
       # BUG TODO jupytext doesn't get installed automatically, report

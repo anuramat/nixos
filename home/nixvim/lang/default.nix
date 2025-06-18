@@ -2,7 +2,7 @@
   imports = [
     ./go.nix
     ./haskell.nix
-    ./jupyter.nix
+    ./python.nix
     ./web.nix
   ];
 }
