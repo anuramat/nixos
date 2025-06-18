@@ -122,7 +122,7 @@ in
 {
   home.file = {
     ".claude/CLAUDE.md".text = prompt;
-    ".claude/settings.json".text = lib.generators.toJSON {
+    ".claude/settings.json".text = lib.generators.toJSON { } {
       env = { };
       includeCoAuthoredBy = false;
       permissions = {
