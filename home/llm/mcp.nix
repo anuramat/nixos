@@ -6,7 +6,7 @@
 }:
 let
   toJSON = lib.generators.toJSON { };
-  mcpServers = toJSON {
+  mcpServers = {
     NixOS = {
       type = "stdio";
       command = "mcp-nixos";
@@ -14,9 +14,10 @@ let
       env = { };
     };
   };
+  mcpServersJSON = toJSON mcpServersJSON;
   mcpServersPath = pkgs.writeTextFile {
     name = "mcp_servers.json";
-    text = mcpServers;
+    text = mcpServersJSON;
   };
 in
 

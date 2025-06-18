@@ -6,5 +6,5 @@ let
   keys = map (v: builtins.readFile v) keyPaths;
 in
 {
-  "secret.age".publicKeys = keys;
+  "ghmcp.age".publicKeys = keys;
 }
