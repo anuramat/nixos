@@ -18,7 +18,8 @@ in
 {
   inherit getHostnames;
   getAllKeys =
-    path: getHostnames path |> map (v: "${path}/keys") |> getClientKeyFiles |> builtins.concatLists;
+    path:
+    getHostnames path |> map (v: path + "/${v}/keys") |> map getClientKeyFiles |> builtins.concatLists;
   mkCluster =
     root: hostnames: name:
     let
