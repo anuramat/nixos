@@ -19,7 +19,6 @@ links:
 	./scripts/install_links.sh ./links
 claude:
 	jq --slurpfile mcp ./mcp.json '.mcpServers = $$mcp[0]' ~/.claude.json | sponge ~/.claude.json
-	jq '.projects |= map (. + {hasClaudeMdExternalIncludesApproved:true})' ~/.claude.json | sponge ~/.claude.json
 
 lint:
 	./scripts/heading.sh "Checking Nix files"
