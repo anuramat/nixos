@@ -11,7 +11,10 @@ bwrap --ro-bind / / --dev /dev \
   --bind /tmp /tmp \
   --bind "$XDG_CACHE_HOME" "$XDG_CACHE_HOME" \
   --bind "$HOME/.claude" "$HOME/.claude" \
+  --bind "/run/user/1000" "/run/user/1000" \
   --bind "$HOME/.claude.json" "$HOME/.claude.json" \
   --bind "$PWD" "$PWD" \
   --bind /etc/nixos /etc/nixos \
   claude --dangerously-skip-permissions "$@"
+
+# run -- for tmux
