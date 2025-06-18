@@ -26,7 +26,8 @@
     lame # mp3
     piper-tts # good neural TTS
 
-    # ai
+    # ai / llm
+    goose-cli
     tgpt
     aider-chat-full
     claude-code
