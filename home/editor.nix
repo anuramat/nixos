@@ -12,11 +12,7 @@
         ./nixvim
       ];
       defaultEditor = true;
-      extraSpecialArgs = { inherit inputs; };
-
-      extraPlugins = [
-        inputs.mdmath.packages.${pkgs.system}.default
-      ];
+      _module.args = { inherit inputs; };
       plugins.lsp.servers.nixd.settings.options =
         let
           nixosExpr = ''(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.${osConfig.networking.hostName}.options'';
