@@ -9,12 +9,16 @@ let
       |> builtins.filter (x: lib.strings.hasSuffix ".pub" x && x != cacheFilename)
       |> builtins.map (x: keyPath + /${x})
     );
+
+  # TODO deduplicate keypath
+  getHostnames =
+    with builtins;
+    path: path |> readDir |> attrNames |> filter (a: a != "external_keys.nix");
 in
 {
-  # TODO deduplicate keypath
-  hostnames = with builtins; path |> readDir |> attrNames |> filter (a: a != "external_keys.nix");
+  inherit getHostnames;
   getAllKeys =
-    path: hostnames path |> map (v: "${path}/keys") |> getClientKeyFiles |> builtins.concatLists;
+    path: getHostnames path |> map (v: "${path}/keys") |> getClientKeyFiles |> builtins.concatLists;
   mkCluster =
     root: hostnames: name:
     let
