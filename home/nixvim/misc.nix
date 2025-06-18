@@ -214,10 +214,25 @@ in
         };
         doCheck = false;
         postPatch = ''
-          # Replace mdmath-js with pre-built version
-          rm -rf mdmath-js
-          cp -r ${nodeDeps} mdmath-js
-          chmod -R u+w mdmath-js
+                    # Replace mdmath-js with pre-built version
+                    rm -rf mdmath-js
+                    cp -r ${nodeDeps} mdmath-js
+                    chmod -R u+w mdmath-js
+                    
+                    # Create a wrapper for processor.js with proper PATH
+                    mv mdmath-js/src/processor.js mdmath-js/src/processor-unwrapped.js
+                    cat > mdmath-js/src/processor.js << 'EOF'
+          #!/usr/bin/env node
+          process.env.PATH = "${
+            pkgs.lib.makeBinPath [
+              pkgs.librsvg
+              pkgs.imagemagick
+              pkgs.nodejs
+            ]
+          }" + ":" + (process.env.PATH || "");
+          import('./processor-unwrapped.js');
+          EOF
+                    chmod +x mdmath-js/src/processor.js
         '';
         propagatedBuildInputs = with pkgs; [
           nodejs
