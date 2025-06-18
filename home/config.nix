@@ -1,12 +1,10 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 let
   inherit (lib) generators;
-
   # Convert nested attrset to Python config assignment statements
   pythonConfig =
     root: cfg:
@@ -29,18 +27,6 @@ let
     in
     lib.concatStringsSep "\n" (lib.mapAttrsToList (formatAssignment root) cfg);
 
-  mcpServers = generators.toJSON {
-    NixOS = {
-      type = "stdio";
-      command = "mcp-nixos";
-      args = [ ];
-      env = { };
-    };
-  };
-  mcpServersPath = pkgs.writeTextfile {
-    name = "mcp_servers.json";
-    text = mcpServers;
-  };
 in
 {
 
@@ -217,37 +203,7 @@ in
       };
     };
 
-    # MCP Hub configuration (example)
-    # TODO agenix for secrets
-    # TODO write to claude mcps on activation
-    "mcphub/servers.json".text = generators.toJSON { } {
-      nativeMCPServers = {
-        mcphub = {
-          disabled_tools = [ "toggle_mcp_server" ];
-          disabled_resources = [
-            "mcphub://docs"
-            "mcphub://changelog"
-            "mcphub://native_server_guide"
-          ];
-          disabled_prompts = [ "create_native_server" ];
-        };
-        neovim.disabled_prompts = [ "parrot" ];
-      };
-      inherit mcpServers;
-    };
-
-    # IPython startup directory README
     "ipython/profile_default/startup/00-default.py".text = # python
       '''';
   };
-
-  home.activation =
-    let
-      home = config.home.homeDirectory;
-    in
-    lib.hm.dag.entryBefore [ "writeBoundary" ] # bash
-      ''
-        temp=$(mktemp)
-        jq --slurpfile mcp ${mcpServersPath} '.mcpServers = $mcp[0]' "${home}/.claude.json" > "$temp" && mv "$temp" "${home}/.claude.json"
-      '';
 }
