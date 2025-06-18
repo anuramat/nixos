@@ -62,7 +62,7 @@
     librewolf = {
       enable = true;
       settings = {
-        "browser.urlbar.suggest.history" = false;
+        "browser.urlbar.suggest.history" = true;
         "widget.use-xdg-desktop-portal.file-picker" = 1;
         "identity.fxaccounts.enabled" = true;
 

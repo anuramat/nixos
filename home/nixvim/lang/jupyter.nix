@@ -45,6 +45,7 @@ in
   plugins = {
     jupytext = {
       enable = true;
+      python3Dependencies = ps: with ps; [ jupytext ];
       settings = {
         force_ft = "markdown";
         output_extension = "md";
