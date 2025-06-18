@@ -115,3 +115,6 @@ verbose code, then refactor it to meet the code style guidelines.
 
 - When creating a new file in a nix flake repository, you MUST run `git add .`,
   otherwise it is ignored by the flake
+- If you need tools that are not available on the system initially, you can use
+  `nix run nixpkgs#packagename -- arg1 arg2 ...`. You can use NixOS MCP server
+  to find the required package.
