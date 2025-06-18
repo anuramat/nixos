@@ -8,27 +8,38 @@ let
   eza = "${config.programs.eza.package}/bin/eza";
   timg = "${pkgs.timg}/bin/timg";
   bat = "${pkgs.bat}/bin/bat";
+
+  preview =
+    pkgs.writeShellScript "preview"
+      # bash
+      ''
+        # directory
+        if [ -d "$1" ]; then
+          ${eza} ${lib.strings.concatStringsSep " " config.programs.eza.extraOptions} --grid "$1"
+          exit
+        # file
+        elif [ -f "$1" ]; then
+        	${timg} -p s "-g''${FZF_PREVIEW_COLUMNS}x$FZF_PREVIEW_LINES" "$1" && exit
+          ${bat} --style=numbers --color=always "$1" && exit
+        fi
+      '';
+  fd = "fd -u --exclude .git/";
 in
 {
-  programs.fzf =
-    let
-      preview =
-        pkgs.writeShellScript "fzf_preview"
-          # bash
-          ''
-            # directory
-            if [ -d "$1" ]; then
-              ${eza} ${lib.strings.concatStringsSep " " config.programs.eza.extraOptions} --grid "$1"
-              exit
-            # file
-            elif [ -f "$1" ]; then
-            	${timg} -p s "-g''${FZF_PREVIEW_COLUMNS}x$FZF_PREVIEW_LINES" "$1" && exit
-              ${bat} --style=numbers --color=always "$1" && exit
-            fi
-          '';
-      fd = "fd -u --exclude .git/";
-    in
-    {
+
+  home.sessionVariables = {
+    _ZO_FZF_OPTS = lib.strings.concatStringsSep " " [
+      "--no-sort"
+      "--exit-0"
+      "--select-1"
+      "--preview='${preview} {2..}'"
+    ];
+    _ZO_RESOLVE_SYMLINKS = 1;
+    _ZO_ECHO = 1;
+    _ZO_EXCLUDE_DIRS = "${config.xdg.cacheHome}/*:${config.xdg.stateHome}:/nix/store/*";
+  };
+  programs = {
+    fzf = {
       enable = true;
       defaultCommand = fd;
 
@@ -62,4 +73,24 @@ in
         "--preview='${preview} {}'"
       ];
     };
+
+    zoxide = {
+      enable = true;
+      options = [
+        "--cmd j"
+      ];
+    };
+
+    home.shellAliases = {
+      fd = "fd -HL"; # working tree minus junk TODO sure?
+    };
+    fd = {
+      enable = true;
+      ignores = [
+        ".git/"
+        "*.pb.go"
+      ];
+    };
+
+  };
 }

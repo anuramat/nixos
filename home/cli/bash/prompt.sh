@@ -3,49 +3,49 @@
 # deps: __gitgud_git_prompt defined in gitgud.sh
 
 __git_user_ps1() {
-  local -r prompt=$(__gitgud_git_prompt)
-  printf '%s' "${prompt:+ $(tput setaf 5)$prompt$(tput sgr0)}"
+	local -r prompt=$(__gitgud_git_prompt)
+	printf '%s' "${prompt:+ $(tput setaf 5)$prompt$(tput sgr0)}"
 }
 
 __code_user_ps1() {
-  local -r err=$__last_return_code
-  [ "$err" -ne 0 ] && printf ' %s\n' "$(tput bold setaf 1)ERR:$err"
-  tput sgr0 # TODO for some reason if we put this into a printf arg, it eats the newline???
+	local -r err=$__last_return_code
+	[ "$err" -ne 0 ] && printf ' %s\n' "$(tput bold setaf 1)ERR:$err"
+	tput sgr0 # TODO for some reason if we put this into a printf arg, it eats the newline???
 }
 
 __jobs_user_ps1() {
-  ((__n_bg_jobs > 0)) && printf %s " $(tput setaf 3)J:$__n_bg_jobs$(tput sgr0)"
+	((__n_bg_jobs > 0)) && printf %s " $(tput setaf 3)J:$__n_bg_jobs$(tput sgr0)"
 }
 
 __time_user_ps1() {
-  printf %s " $(tput bold setaf 7)$(date +%H:%M)$(tput sgr0)"
+	printf %s " $(tput bold setaf 7)$(date +%H:%M)$(tput sgr0)"
 }
 
 __ssh_user_ps1() {
-  if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
-    printf ' %s\n' "$(whoami)@$(hostname)"
-  fi
+	if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+		printf ' %s\n' "$(whoami)@$(hostname)"
+	fi
 }
 
 __path_user_ps1() {
-  cwd=$(pwd)
-  len=${#HOME}
-  [[ $cwd == "$HOME"* ]] \
-    && cwd="~${cwd:len}"
-  printf %s "$(tput bold)$cwd$(tput sgr0)"
+	cwd=$(pwd)
+	len=${#HOME}
+	[[ $cwd == "$HOME"* ]] \
+		&& cwd="~${cwd:len}"
+	printf %s "$(tput bold)$cwd$(tput sgr0)"
 }
 
 __shlvl_user_ps1() {
-  ((SHLVL > 1)) && printf %s " $(tput setaf 2)L$SHLVL$(tput sgr0)"
+	((SHLVL > 1)) && printf %s " $(tput setaf 2)L$SHLVL$(tput sgr0)"
 }
 
 __nix_user_ps1() {
-  printf %s "${IN_NIX_SHELL:+ $(tput setaf 2)$IN_NIX_SHELL$(tput sgr0)}"
+	printf %s "${IN_NIX_SHELL:+ $(tput setaf 2)$IN_NIX_SHELL$(tput sgr0)}"
 }
 
 __set_vars() {
-  __last_return_code=$?
-  __n_bg_jobs=$(jobs | wc -l)
+	__last_return_code=$?
+	__n_bg_jobs=$(jobs | wc -l)
 }
 precmd_functions=(__set_vars "${precmd_functions[@]}")
 

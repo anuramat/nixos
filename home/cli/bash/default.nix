@@ -5,6 +5,9 @@
   ...
 }:
 {
+  imports = [
+    ./bashrc.nix
+  ];
   home =
     let
       XDG_BIN_HOME = "${config.home.homeDirectory}/.local/bin";
@@ -24,6 +27,7 @@
       sessionPath = [
         XDG_BIN_HOME
       ];
+
       shellAliases =
         let
           ezacmd = "eza --group-directories-first --group --header --git --icons=always --color=always --color-scale=all --sort=name";
@@ -38,28 +42,24 @@
           diff = "diff --color=auto";
           grep = "grep --color=auto";
           ip = "ip -c=auto";
-
-          fd = "fd -HL"; # working tree minus junk
         };
     };
-  programs.bash = {
-    enable = true;
-    historySize = -1;
-    historyFileSize = -1;
-    # TODO move more bash stuff
-    bashrcExtra = # bash
-      ''
-        # TODO put in vars
-        export _ZO_FZF_OPTS="
-        --no-sort
-        --exit-0
-        --select-1
-        --preview='${./fzf_preview.sh} {2..}'
-        "
-        export _ZO_RESOLVE_SYMLINKS="1"
-        export _ZO_ECHO=1
-        export _ZO_EXCLUDE_DIRS="${config.xdg.cacheHome}/*:/nix/store/*"
-      '';
+
+  programs = {
+    bash = {
+      enable = true;
+      historySize = -1;
+      historyFileSize = -1;
+    };
+    less = {
+      enable = true;
+      keys =
+        # less
+        ''
+          #env
+          LESS = -ir
+        '';
+    };
   };
 
   # Shellcheck configuration

@@ -2,6 +2,7 @@
 let
   toYAML = lib.generators.toYAML { };
 in
+# TODO reformat file
 {
   xdg.configFile = {
     # TODO why not use this instead?
@@ -66,31 +67,6 @@ in
     direnv = {
       enable = true;
       silent = true;
-    };
-
-    less = {
-      enable = true;
-      keys =
-        # less
-        ''
-          #env
-          LESS = -ir
-        '';
-    };
-
-    zoxide = {
-      enable = true;
-      options = [
-        "--cmd j"
-      ];
-    };
-
-    fd = {
-      enable = true;
-      ignores = [
-        ".git/"
-        "*.pb.go"
-      ];
     };
 
     bat = {
