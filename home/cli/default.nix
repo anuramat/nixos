@@ -1,7 +1,7 @@
 {
   imports = [
     ./bash
-    ./fuzzy
+    ./fuzzy.nix
     ./git
     ./misc.nix
     ./packages.nix
