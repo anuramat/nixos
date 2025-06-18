@@ -14,7 +14,7 @@ let
       env = { };
     };
   };
-  mcpServersJSON = toJSON mcpServersJSON;
+  mcpServersJSON = toJSON mcpServers;
   mcpServersPath = pkgs.writeTextFile {
     name = "mcp_servers.json";
     text = mcpServersJSON;
