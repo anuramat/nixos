@@ -11,6 +11,7 @@
     image = {
       enable = true;
       settings = {
+        settings.integrations.markdown.enabled = false;
         backend = "kitty";
         only_render_image_at_cursor = true;
         integrations.markdown.only_render_image_at_cursor = true;

@@ -126,7 +126,7 @@
         packages.neovim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
           inherit system;
           pkgs = pkgsWithOverlays;
-          extraSpecialArgs = { inherit inputs; };
+          extraSpecialArgs = { inherit inputs helpers; };
           module = ./home/nixvim;
         };
       }
