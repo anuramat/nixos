@@ -17,8 +17,6 @@ flake:
 links:
 	./scripts/heading.sh "Setting up links"
 	./scripts/install_links.sh ./links
-claude:
-	./scripts/mcp.sh
 
 lint:
 	./scripts/heading.sh "Checking Nix files"

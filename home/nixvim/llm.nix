@@ -7,7 +7,7 @@
 {
   plugins = {
     avante = {
-      enable = false; # TODO enable
+      enable = true;
       package = pkgs.vimPlugins.avante-nvim.overrideAttrs (old: {
         src = pkgs.fetchFromGitHub {
           owner = "yetone";

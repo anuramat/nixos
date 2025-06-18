@@ -28,6 +28,16 @@ let
           "${prefix}.${name} = ${formatValue value}";
     in
     lib.concatStringsSep "\n" (lib.mapAttrsToList (formatAssignment root) cfg);
+
+  mcpCfg = generators.toJSON {
+    NixOS = {
+      type = "stdio";
+      command = "mcp-nixos";
+      args = [ ];
+      env = { };
+    };
+  };
+  # TODO write to store
 in
 {
 
@@ -232,4 +242,15 @@ in
     "ipython/profile_default/startup/00-default.py".text = # python
       '''';
   };
+
+  home.activation =
+    let
+      home = config.home.homeDirectory;
+    in
+    lib.hm.dag.entryBefore [ "writeBoundary" ] # bash
+      ''
+        temp=$(mktemp)
+        jq --slurpfile mcp ${mcpCfgPath} '.mcpServers = $mcp[0]' "${home}/.claude.json" > "$temp" && mv "$temp" "${home}/.claude.json"
+      '';
+  # TODO use
 }
