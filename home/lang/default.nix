@@ -1,5 +1,6 @@
 { pkgs, ... }:
 {
+  programs.go.enable = true;
   imports = [
     ./python.nix
     ./yaml.nix
@@ -12,7 +13,6 @@
     ghc
     gcc
     cudaPackages.cuda_nvcc
-    go
     julia
     llvm
     lua

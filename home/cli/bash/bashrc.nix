@@ -143,8 +143,7 @@ in
     +
       # bash
       ''
-        source ${./xdg_shims.sh}
-
+        source ${./xdg_shims.sh} # go through, verify, then move to env vars
         [[ $- == *i* ]] || return
         # WARN here order matters for sure
         source ${./git.sh}
