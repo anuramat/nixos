@@ -37,6 +37,7 @@
           '';
     };
   };
+  # TODO what
   # services.podman = {
   #   settings.storage = {
   #     storage.driver = "overlay";
@@ -58,7 +59,7 @@
   };
 
   programs = {
-    home-manager.enable = true; # TODO huh?
+    home-manager.enable = true; # TODO huh? what does this do
 
     librewolf = {
       enable = true;

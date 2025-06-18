@@ -1,5 +1,9 @@
-{ config, pkgs, ... }:
-
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   programs.bash = {
     enable = true;
@@ -9,7 +13,6 @@
       ''
         source ${./sway_autostart.sh}
       '';
-    # TODO transfer as much as possible from ./files to options
     # TODO move these somewhere else?
     bashrcExtra = # bash
       ''
@@ -34,4 +37,24 @@
         export _ZO_EXCLUDE_DIRS="${config.xdg.cacheHome}/*:/nix/store/*"
       '';
   };
+
+  # Shellcheck configuration
+  xdg.configFile."shellcheckrc".text =
+    ''
+      enable=all
+      external-sources=true
+    ''
+    + lib.strings.concatMapStrings (p: "disable=${p}\n") [
+      "SC1003" # incorrect attempt at escaping a single quote?
+      "SC1090" # can't follow non constant source
+      "SC2015" # A && B || C is not an if-then-else
+      "SC2016" # incorrect attempt at expansion?
+      "SC2059" # don't use variables in printf format string
+      "SC2139" # unintended? expansion in an alias (alias a="$test" instead of '$test')
+      "SC2154" # variable referenced but not assigned
+      "SC2155" # "local" masks return values
+      "SC2250" # quote even if not necessary
+      "SC2292" # prefer [[]] over
+      "SC2312" # this masks return value
+    ];
 }

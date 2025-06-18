@@ -36,26 +36,6 @@ in
       port = 9000;
     };
 
-    # Shellcheck configuration
-    "shellcheckrc".text =
-      ''
-        enable=all
-        external-sources=true
-      ''
-      + lib.strings.concatMapStrings (p: "disable=${p}\n") [
-        "SC1003" # incorrect attempt at escaping a single quote?
-        "SC1090" # can't follow non constant source
-        "SC2015" # A && B || C is not an if-then-else
-        "SC2016" # incorrect attempt at expansion?
-        "SC2059" # don't use variables in printf format string
-        "SC2139" # unintended? expansion in an alias (alias a="$test" instead of '$test')
-        "SC2154" # variable referenced but not assigned
-        "SC2155" # "local" masks return values
-        "SC2250" # quote even if not necessary
-        "SC2292" # prefer [[]] over
-        "SC2312" # this masks return value
-      ];
-
     # Swappy screenshot annotation configuration
     "swappy/config".text = toINI { } {
       Default = {
