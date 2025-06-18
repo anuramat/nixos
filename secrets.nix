@@ -5,5 +5,5 @@ let
   keys = getAllKeys ./hosts;
 in
 {
-  "testSecret.age".publicKeys = keys;
+  "secret.age".publicKeys = keys;
 }
