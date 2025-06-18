@@ -1,13 +1,14 @@
 _: {
   lua = action: { __raw = action; };
-  map =
+  set =
     key: action: desc:
     let
       type = builtins.typeOf action;
     in
     {
       mode = "n";
-      inherit key action desc;
+      inherit key action;
+      options = { inherit desc; };
     }
     // (
       if type == "string" then
