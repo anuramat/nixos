@@ -29,7 +29,7 @@ let
     in
     lib.concatStringsSep "\n" (lib.mapAttrsToList (formatAssignment root) cfg);
 
-  mcpServersJSON = generators.toJSON {
+  mcpServers = generators.toJSON {
     NixOS = {
       type = "stdio";
       command = "mcp-nixos";
@@ -39,7 +39,7 @@ let
   };
   mcpServersPath = pkgs.writeTextfile {
     name = "mcp_servers.json";
-    text = mcpServersJSON;
+    text = mcpServers;
   };
 in
 {
@@ -233,12 +233,7 @@ in
         };
         neovim.disabled_prompts = [ "parrot" ];
       };
-      mcpServers = {
-        nixos = {
-          command = "mcp-nixos";
-          args = [ ];
-        };
-      };
+      inherit mcpServers;
     };
 
     # IPython startup directory README
