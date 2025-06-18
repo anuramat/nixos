@@ -16,7 +16,7 @@
           nixosExpr = ''(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.${osConfig.networking.hostName}.options'';
         in
         {
-          nixos = nixosExpr;
+          nixos.expr = nixosExpr;
           home-manager.expr = "${nixosExpr}.home-manager.users.type.getSubOptions []";
         };
     };
