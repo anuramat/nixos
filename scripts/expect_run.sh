@@ -2,7 +2,7 @@
 
 stty rows 80 cols 80
 expect <(
-  cat << EOF
+	cat << EOF
 set timeout 1
 spawn $*
 sleep 1
