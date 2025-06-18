@@ -147,7 +147,6 @@
     ghq # git repository manager
     libqalculate # `qalc` - advanced calculator
     ncdu # du++: interactive
-    # parallel # run parallel jobs # BUG conflict with moreutils
     rmtrash # `rmtrash`
     trashy # `trash`
     devenv # nix for retards
