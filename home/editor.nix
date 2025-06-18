@@ -1,5 +1,6 @@
 {
   pkgs,
+  helpers,
   inputs,
   osConfig,
   ...
@@ -12,7 +13,7 @@
         ./nixvim
       ];
       defaultEditor = true;
-      _module.args = { inherit inputs; };
+      _module.args = { inherit inputs helpers; };
       plugins.lsp.servers.nixd.settings.options =
         let
           nixosExpr = ''(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.${osConfig.networking.hostName}.options'';

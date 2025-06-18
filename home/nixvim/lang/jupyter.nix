@@ -66,7 +66,7 @@ in
     };
     otter = {
       enable = true;
-      # autoActivate = false;
+      autoActivate = false; # breaks on nix often
     };
     quarto = {
       enable = true;
