@@ -10,7 +10,7 @@
   imports = [
     inputs.nixvim.homeModules.nixvim
     ./lang
-    ./config.nix
+    ./misc.nix
     ./email.nix
     ./mime
     ./llm
@@ -24,8 +24,10 @@
 
   xdg.enable = true; # set xdg basedir vars in .profile
 
+  programs.home-manager.enable = true; # TODO huh? what does this do
+
   home = {
-    preferXdgDirectories = true; # this might have made some of the xdg references needless
+    preferXdgDirectories = true;
     activation = {
       removeBrokenConfigLinks =
         lib.hm.dag.entryBefore [ "writeBoundary" ] # bash
@@ -35,79 +37,6 @@
             [ -n "''${VERBOSE:+set}" ] && args+=(-print)
             run find "''${args[@]}"
           '';
-    };
-  };
-  # TODO what
-  # services.podman = {
-  #   settings.storage = {
-  #     storage.driver = "overlay";
-  #     storage.options.overlay.mount_program = "${pkgs.fuse-overlayfs}/bin/fuse-overlayfs";
-  #   };
-  # };
-  xdg.configFile = {
-    podman = {
-      text = # conf
-        ''
-          # magic stolen from <https://github.com/containers/podman/issues/11220> to speed up --userns=keep-id
-          [storage]
-          driver = "overlay"
-          [storage.options.overlay]
-          mount_program = "${pkgs.fuse-overlayfs}/bin/fuse-overlayfs"
-        '';
-      target = "containers/storage.conf";
-    };
-  };
-
-  programs = {
-    home-manager.enable = true; # TODO huh? what does this do
-
-    librewolf = {
-      enable = true;
-      settings = {
-        "browser.urlbar.suggest.history" = true;
-        "widget.use-xdg-desktop-portal.file-picker" = 1;
-        "identity.fxaccounts.enabled" = true;
-
-        # since it breaks a lot of pages
-        "privacy.resistFingerprinting" = false;
-
-        "sidebar.verticalTabs" = true;
-        # required by vertical tabs
-        "sidebar.revamp" = true;
-
-        # rejecting all; fallback -- do nothing
-        "cookiebanners.service.mode" = 1;
-        "cookiebanners.service.mode.privateBrowsing" = 1;
-      };
-    };
-
-    zathura = {
-      enable = true;
-      options = {
-        adjust-open = "width";
-        window-title-home-tilde = true;
-        statusbar-basename = true;
-        selection-clipboard = "clipboard";
-        synctex = true;
-        synctex-editor-command = "texlab inverse-search -i %{input} -l %{line}"; # result should be quoted I think
-      };
-    };
-
-    matplotlib = {
-      enable = true;
-      config = { };
-    };
-
-    mpv = {
-      config = {
-        profile = "gpu-hq";
-        gpu-context = "wayland";
-        hwdec = "auto-safe";
-        vo = "gpu";
-        force-window = true;
-        ytdl-format = "bestvideo+bestaudio";
-        cache-default = 4000000;
-      };
     };
   };
 }

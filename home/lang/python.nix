@@ -82,4 +82,8 @@ in
         atexit.register(write_history)
       '';
   };
+  programs.matplotlib = {
+    enable = true;
+    config = { };
+  };
 }
