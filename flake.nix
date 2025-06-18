@@ -1,34 +1,4 @@
 {
-  inputs = {
-    flake-utils = {
-      url = "github:numtide/flake-utils";
-    };
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-    home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    stylix = {
-      url = "github:danth/stylix/release-25.05";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
-    subcat.url = "github:anuramat/subcat";
-    ctrlsn.url = "git+ssh://git@github.com/anuramat/ctrl.sn?ref=main";
-    mcp-nixos.url = "github:utensils/mcp-nixos";
-    nil.url = "github:oxalica/nil/main";
-    codex.url = "github:anuramat/codex";
-    nixvim = {
-      url = "github:nix-community/nixvim";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    mdmath = {
-      url = "github:anuramat/mdmath.nvim";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-  };
   outputs =
     {
       nixpkgs,
@@ -132,5 +102,37 @@
         };
       }
     ));
+
+  inputs = {
+    agenix.url = "github:ryantm/agenix";
+    flake-utils = {
+      url = "github:numtide/flake-utils";
+    };
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    home-manager = {
+      url = "github:nix-community/home-manager/release-25.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    stylix = {
+      url = "github:danth/stylix/release-25.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
+    subcat.url = "github:anuramat/subcat";
+    ctrlsn.url = "git+ssh://git@github.com/anuramat/ctrl.sn?ref=main";
+    mcp-nixos.url = "github:utensils/mcp-nixos";
+    nil.url = "github:oxalica/nil/main";
+    codex.url = "github:anuramat/codex";
+    nixvim = {
+      url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    mdmath = {
+      url = "github:anuramat/mdmath.nvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
 }
 # vim: fdl=0 fdm=marker
