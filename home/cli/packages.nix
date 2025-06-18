@@ -111,6 +111,7 @@
     ansifilter
     pstree
     age # file encryption
+    ragenix # (r)agenix cli
     wine
     aria # downloader
     banner

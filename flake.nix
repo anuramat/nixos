@@ -105,7 +105,7 @@
 
   inputs = {
     # TODO make everything follow? make a helper?
-    agenix.url = "github:ryantm/agenix";
+    agenix.url = "github:yaxitech/ragenix";
     flake-utils = {
       url = "github:numtide/flake-utils";
     };
