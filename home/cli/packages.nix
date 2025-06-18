@@ -144,26 +144,6 @@
     cowsay
     fortune # random quotes
 
-    # compilers {{{1
-    cabal-install
-    cargo
-    # clang # collision with gcc
-    ghc
-    gcc
-    cudaPackages.cuda_nvcc
-    go
-    julia
-    llvm
-    lua
-    nodejs_20
-    perl
-    ruby
-    rustc
-    sageWithDoc # computer algebra system
-    stack
-    texliveFull
-    yarn
-
     # network
     aircrack-ng
     mtr # net diagnostics
@@ -207,30 +187,6 @@
     smem # ram usage
     usbutils
     v4l-utils # camera stuff
-
-    # mcp {{{1
-    github-mcp-server
-    mcp-nixos
-
-    # debuggers {{{1
-    delve # Go debugger
-    gdb # C
-    python3Packages.debugpy
-
-    # formatters {{{1
-    black # python
-    isort
-    formatjson5
-    gofumpt # stricter go
-    haskellPackages.ormolu
-    html-tidy
-    mdformat
-    nixfmt-rfc-style
-    nodePackages.prettier # just in case
-    shfmt # posix/bash/mksh
-    stylua # lua
-    treefmt # aggregator
-    yamlfmt
 
     # python libraries for random scripts
     (python3.withPackages (

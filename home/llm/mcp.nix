@@ -21,8 +21,14 @@ let
 in
 
 {
+
+  home.packages = with pkgs; [
+    github-mcp-server
+    mcp-nixos
+  ];
+
   # TODO agenix for secrets
-  "mcphub/servers.json".text = toJSON {
+  xdg.configDir."mcphub/servers.json".text = toJSON {
     nativeMCPServers = {
       mcphub = {
         disabled_tools = [ "toggle_mcp_server" ];
