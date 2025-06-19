@@ -9,11 +9,11 @@ let
   inherit (lib) getExe getName;
 
   patchedBinary =
-    o:
-    pkgs.writeShellScript "${getName o.package}-agenix-patched" # bash
+    args:
+    pkgs.writeShellScript "${getName args.package}-agenix-patched" # bash
       ''
-        export ${o.name}=$(cat "${o.token}")
-        ${getExe o.package} "$@"
+        export ${args.name}=$(cat "${args.token}")
+        ${getExe args.package} "$@"
       '';
   githubPatched = patchedBinary {
     name = "GITHUB_PERSONAL_ACCESS_TOKEN";
