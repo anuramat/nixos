@@ -30,7 +30,7 @@ let
 in
 {
   plugins = {
-    plugins.conform-nvim.settings.formatters_by_ft.python = [
+    conform-nvim.settings.formatters_by_ft.python = [
       "isort"
       "black"
     ];
