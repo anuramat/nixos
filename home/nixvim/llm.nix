@@ -49,7 +49,7 @@
       settings = {
         # <https://github.com/microsoft/vscode/blob/be75065e817ebd7b6250a100cf5af78bb931265b/src/vs/platform/telemetry/common/telemetry.ts#L87>
         server_opts_overrides = {
-          telemetry.telemetryLevel = "off";
+          settings.telemetry.telemetryLevel = "off";
         };
         panel = {
           enabled = false;

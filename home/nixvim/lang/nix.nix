@@ -1,8 +1,9 @@
+{ pkgs, ... }:
 {
   plugins = {
     conform-nvim.settings.formatters_by_ft.nix = "nixfmt";
 
-    plugins.lsp.servers = {
+    lsp.servers = {
       nil_ls.enable = true;
 
       nixd = {
