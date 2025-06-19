@@ -24,6 +24,10 @@
     ./cli
   ];
 
+  age.secrets = {
+    ghmcp.file = ../secrets/ghmcp.age;
+  };
+
   xdg.enable = true; # set xdg basedir vars in .profile
 
   programs.home-manager.enable = true; # TODO huh? what does this do

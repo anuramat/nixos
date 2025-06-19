@@ -6,21 +6,31 @@
 }:
 let
   toJSON = lib.generators.toJSON { };
+  inherit (lib) getExe getName;
+
+  patchedBinary =
+    o:
+    pkgs.writeShellScript "${getName o.package}-agenix-patched" # bash
+      ''
+        export ${o.name}=$(cat "${o.token}")
+        ${getExe o.package} "$@"
+      '';
+  githubPatched = patchedBinary {
+    name = "GITHUB_PERSONAL_ACCESS_TOKEN";
+    token = config.age.secrets.ghmcp.path;
+    package = pkgs.github-mcp-server;
+  };
+
   mcpServers = {
     NixOS = {
-      type = "stdio";
-      command = "mcp-nixos";
-      args = [ ];
-      env = { };
+      command = getExe pkgs.mcp-nixos;
     };
     # TODO
     GitHub = {
+      command = githubPatched;
       args = [
+        "stdio"
       ];
-      command = "github-mcp-server";
-      env = {
-        GITHUB_PERSONAL_ACCESS_TOKEN = "fuck";
-      };
     };
   };
   mcpServersJSON = toJSON mcpServers;
@@ -31,9 +41,7 @@ let
 in
 
 {
-
   home.packages = with pkgs; [
-    github-mcp-server
     mcp-nixos
   ];
 
