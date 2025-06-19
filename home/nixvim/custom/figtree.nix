@@ -3,7 +3,7 @@
   extraPlugins = [
     (
       let
-        rev = "062fd90490ddd9c2c5b749522b0906d4a2d74f72";
+        rev = "68ecf23c9c161983a7ef4bf53b0d4051873b7386";
       in
       pkgs.vimUtils.buildVimPlugin {
         pname = "figtree.nvim";
@@ -12,7 +12,7 @@
           inherit rev;
           owner = "anuramat";
           repo = "figtree.nvim";
-          sha256 = "08xzv1h3v3xkyx4v0l068i65qvly9mxjnpswd33gb5al1mfqdmbg";
+          sha256 = "sha256-X5ZzbvztDG2S1gRl7zrhj1lcOi29dXjaZkCvvR6R/50=";
         };
       }
     )
