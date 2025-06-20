@@ -11,7 +11,7 @@
       homedir = "${config.xdg.dataHome}/gnupg";
     };
     wayprompt.enable = true;
-    # figure out rust version or keyring locking
+    # TODO figure out rust version or keyring locking
     password-store = {
       enable = true;
     };
