@@ -36,7 +36,6 @@ random() {
 	shuf -er -n "$1" {a..z} {0..9} | tr -d '\n'
 }
 z() {
-	# uhhh TODO unugly
 	zathura "$@" &> /dev/null &
 	disown
 }

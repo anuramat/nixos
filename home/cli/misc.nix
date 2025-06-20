@@ -2,7 +2,6 @@
 let
   toYAML = lib.generators.toYAML { };
 in
-# TODO reformat file
 {
   xdg.configFile = {
     # TODO why not use this instead?
@@ -23,7 +22,7 @@ in
         '';
       target = "containers/storage.conf";
     };
-    # Felix file manager configuration
+
     "felix/config.yaml".text = toYAML {
       default = "nvim";
       exec = {
@@ -38,16 +37,17 @@ in
         ];
       };
     };
-    # Glow markdown viewer configuration
+
     "glow/glow.yml".text = toYAML {
     };
-    # QRCP configuration
+
     "qrcp/config.yml".text = toYAML {
       interface = "any";
       keepalive = true;
       port = 9000;
     };
   };
+
   programs = {
     tealdeer = {
       enable = true;
@@ -91,12 +91,10 @@ in
     };
 
     htop = {
-      # basic
       enable = true;
     };
 
     btop = {
-      # fav
       enable = true;
     };
   };

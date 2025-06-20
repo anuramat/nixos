@@ -50,11 +50,6 @@ codebase, organized by complexity and priority.
   - Document pandoc citation processing options
   - Add examples and usage patterns
 
-- **home/cli/bash/bashrc.sh:39** - `# uhhh TODO unugly`
-
-  - Refactor zathura function for better code clarity
-  - Simple function cleanup
-
 ## Low Complexity (Quick Fixes)
 
 ### File Organization
