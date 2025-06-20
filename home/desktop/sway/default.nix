@@ -63,6 +63,10 @@
             command = "pkill wl-clip-persist; wl-clip-persist --clipboard regular";
             always = true;
           }
+          {
+            command = "kanshictl reload";
+            always = true;
+          }
         ];
         seat = {
           "*" = {
