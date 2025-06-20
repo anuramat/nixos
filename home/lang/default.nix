@@ -49,9 +49,20 @@
     treefmt # aggregator
     yamlfmt
 
-    # debuggers {{{1
+    # debuggers
     delve # Go debugger
     gdb # C
     python3Packages.debugpy
+
+    # misc TODO categorize
+    haskellPackages.hoogle
+    htmlq
+    jq # json processor
+    jsonschema # `jv`
+    nixtract # dependency graph of derivations
+    pup # html
+    python3Packages.jupytext
+    python3Packages.nbdime # ipynb diff, merge
+    yq # basic yaml, json, xml, csv, toml processor
   ];
 }

@@ -1,30 +1,34 @@
 { pkgs, ... }:
 {
+  # TODO euporie (tui jupyter notebooks)
   home.packages = with pkgs; [
     # tops
     ctop # containers
-    gotop # cute
+    gotop
     iotop # detailed io info, requires sudo
     nvitop # nvidia gpu
     podman-tui # podman container status
-    nvtopPackages.full # top for GPUs # maybe switch to .nvidia and .intel
+    nvtopPackages.full # top for GPUs
     zenith-nvidia # top WITH nvidia GPUs
 
-    # docs
-    # TODO euporie (tui jupyter notebooks)
+    # office
     slides # markdown presentation in terminal
-    glow # markdown viewer
+    tidy-viewer # csv viewer
+    glow # markdown tui viewer
     poppler_utils # pdf utils
+    pdftk # more pdf tools
     ghostscript # postscript/pdf utils
     readability-cli # extracts main content from pages
-    easyocr # neural OCR
-    pandoc # markup converter (latex, markdown, etc)
+    easyocr # neural ocr
+    pandoc # document converter
     djvulibre # djvu tools
+    markdown-link-check # find dead md links
+    mermaid-cli
+    mermaid-filter
 
     # audio
-    sox # CLI audio processing
+    sox # cli audio processing
     lame # mp3
-    piper-tts # good neural TTS
 
     # ai / llm
     goose-cli
@@ -35,14 +39,89 @@
     codex
     amp-cli
 
-    # backend
+    # containers
     dive # look into docker image layers
-    grpcui
-    grpcurl
-    httpie # curl++
     kubectl
     kubectx
     podman-compose
+
+    # development
+    bats # bash testing
+    bear # compilation database generator for clangd
+    gomodifytags
+    universal-ctags # maintained ctags
+    tree-sitter
+    ast-grep # structural regex
+
+    # security
+    age # file encryption
+    ragenix # (r)agenix cli
+    bubblewrap # sandboxing
+
+    # network/communication
+    aircrack-ng
+    grpcui
+    grpcurl
+    httpie # curl++
+    aria # downloader
+    croc # send/receive files through relay with encryption
+    ddgr # ddg search
+    dig # dns utils
+    gsocket # get shit through nat
+    inetutils # common network stuff
+    mosh # ssh over unstable connections
+    mtr # net diagnostics
+    netcat
+    nmap
+    openconnect_openssl
+    prettyping # ping++
+    qrcp # share files over qr
+    rclone # rsync for cloud
+    socat # socket cat
+    speedtest-cli
+    wirelesstools # iwconfig etc
+
+    # visualization/graphics
+    graphviz
+    graph-easy
+    gnuplot
+
+    # system utilities
+    asciinema
+    pstree
+    progress # progress status for cp etc
+    pv # pipe viewer
+    xdg-ninja # checks $HOME for junk
+
+    # fun
+    fastfetch
+    banner
+    figlet # fancy banners
+    cowsay
+    fortune # random quotes
+
+    # miscellaneous
+    exercism # cli for exercism.org
+    geteduroam-cli
+    libqalculate # `qalc` - advanced calculator
+    yt-dlp # download youtube videos
+
+    # dev
+    ansifilter # filter out scary chars
+    wine
+    distrobox
+    wayidle # runs a command on idle (one-off, thus orthogonal to swayidle)
+    makefile2graph
+    mprocs # job runner
+    rsbkb # rust blackbag - encode/decode tools
+    scc # sloc cloc and code: dick measuring tool
+    git-filter-repo # rewrite/analyze repository history
+    subcat
+    entr # file watcher - runs command on change
+    ghq # git repository manager
+    expect # automating tuis
+    devenv # nix for retards
+    watchman # another file watcher TODO try and compare to entr
 
     # img
     imagemagickBig # CLI image manipulation
@@ -54,18 +133,25 @@
 
     # video
     ffmpeg-full
-    yt-dlp # download youtube videos
 
     # file managers
     felix-fm # smallest, image previews -- :help<cr> for help; waiting for picker: <https://github.com/kyoheiu/felix/issues/261>
     nnn # small, simple, ubiquitous -- ? for help
 
-    # data
+    # manuals
     man-pages
     man-pages-posix
     cht-sh
 
-    # sys
+    # modern replacements
+    rmtrash # `rmtrash`
+    trashy # `trash`
+    du-dust # du++
+    duf # df++
+    ncdu # du++: interactive
+    eza # ls++
+
+    # absolute minimum
     bc # simple calculator
     coreutils-full
     curl
@@ -77,7 +163,7 @@
     less
     lsof
     moreutils # random unixy goodies
-    nix-bash-completions
+    nix-bash-completions # TODO this should be installed already
     p7zip
     tmux # just in case
     tree
@@ -86,92 +172,6 @@
     util-linux # TODO check; I think it's already installed
     wget
     zip
-
-    # misc TODO categorize
-    bats # bash testing
-    bear # compilation database generator for clangd
-    haskellPackages.hoogle
-    htmlq
-    gomodifytags
-    jq # json processor
-    jsonschema # `jv`
-    luajitPackages.luarocks
-    markdown-link-check
-    pup # html
-    python3Packages.nbdime # ipynb diff, merge
-    python3Packages.jupytext
-    tidy-viewer # csv viewer
-    universal-ctags # maintained ctags
-    yq # basic yaml, json, xml, csv, toml processor
-    geteduroam-cli
-    ansifilter
-    ast-grep # structural regex
-    asciinema
-    bubblewrap
-    ansifilter
-    pstree
-    age # file encryption
-    ragenix # (r)agenix cli
-    wine
-    aria # downloader
-    banner
-    croc # send/receive files through relay with encryption TODO test if it needs setup
-    makefile2graph
-    mermaid-cli
-    ddgr # ddg search
-    mermaid-filter
-    graphviz
-    graph-easy
-    distrobox
-    exercism # CLI for exercism.org
-    fastfetch
-    figlet # fancy banners
-    gnuplot
-    mprocs # job runner
-    prettyping # ping++
-    progress # progress status for cp etc
-    pv # pipe viewer
-    rsbkb # rust blackbag - encode/decode tools
-    nixtract # dependency graph of derivations
-    scc # sloc cloc and code: dick measuring tool
-    speedtest-cli
-    xdg-ninja # checks $HOME for junk
-    git-filter-repo # rewrite/analyze repository history
-    mosh # ssh over unstable connections
-    python3Packages.pyicloud
-    qrcp # send files to mobile over Wi-Fi using QR
-    rclone # rsync for cloud
-    tree-sitter
-    cowsay
-    fortune # random quotes
-
-    # network
-    aircrack-ng
-    mtr # net diagnostics
-    dig # dns utils
-    gsocket # get shit through nat
-    inetutils # common network stuff
-    netcat
-    nmap
-    socat # socket cat
-    wirelesstools # iwconfig etc
-    openconnect_openssl
-
-    # core
-    subcat
-    du-dust # du++
-    duf # df++
-    entr # file watcher - runs command on change
-    ghq # git repository manager
-    libqalculate # `qalc` - advanced calculator
-    ncdu # du++: interactive
-    rmtrash # `rmtrash`
-    trashy # `trash`
-    devenv # nix for retards
-    eza # ls++
-    watchman # another file watcher TODO try and compare to entr
-    wayidle # runs a command on idle (one-off, orthogonal to swayidle)
-    expect # automating tuis
 
     # hardware
     acpi # battery status etc
@@ -189,7 +189,7 @@
     usbutils
     v4l-utils # camera stuff
 
-    # python libraries for random scripts
+    # python libraries for random scripts TODO move
     (python3.withPackages (
       p: with p; [
         mcp
