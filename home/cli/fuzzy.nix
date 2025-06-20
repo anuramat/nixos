@@ -91,5 +91,6 @@ in
   };
   home.shellAliases = {
     fd = "fd -HL"; # working tree minus junk TODO sure?
+    wget = ''wget --hsts-file="$XDG_DATA_HOME/wget-hsts"'';
   };
 }

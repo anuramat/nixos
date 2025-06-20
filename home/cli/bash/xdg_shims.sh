@@ -6,7 +6,6 @@ export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
 export DOT_SAGE="$XDG_CONFIG_HOME"/sage # sage math
 export PYTHONSTARTUP="${XDG_CONFIG_HOME}/python/pythonrc"
 export CARGO_HOME="$XDG_DATA_HOME"/cargo
-export GTK2_RC_FILES="$XDG_CONFIG_HOME"/gtk-2.0/gtkrc
 export DVDCSS_CACHE="$XDG_DATA_HOME"/dvdcss    # VLC dependency
 export MPLAYER_HOME="$XDG_CONFIG_HOME"/mplayer # I don't use this but somehow ended up with this in my $HOME anyway
 export NODE_REPL_HISTORY="$XDG_DATA_HOME/node_repl_history"

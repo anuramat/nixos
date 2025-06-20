@@ -1,6 +1,13 @@
 { pkgs, ... }:
 {
   stylix = {
+    opacity.popups = 0.8;
+    polarity = "dark";
+    cursor = {
+      name = "Hackneyed";
+      package = pkgs.hackneyed;
+      size = 20;
+    };
     enable = true;
     autoEnable = true;
     fonts = {
@@ -9,8 +16,8 @@
       };
       sizes = {
         applications = 13;
-        desktop = 10;
-        popups = 10;
+        desktop = 11;
+        popups = 11;
         terminal = 13;
       };
     };

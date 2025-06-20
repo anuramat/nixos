@@ -105,6 +105,7 @@
   };
 
   # fonts {{{1
+  # TODO how does this not conflict with stylix
   fonts = {
     packages = with pkgs; [
       nerd-fonts.hack

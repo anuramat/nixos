@@ -1,17 +1,19 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
-  stylix = {
-    targets = {
-      neovim.plugin = "base16-nvim";
-      librewolf.profileNames = [ "default" ]; # TODO reference variable
+  stylix.iconTheme =
+    let
+      dark = "Dracula";
+    in
+    {
+      enable = true;
+      inherit dark;
+      light = dark;
+      package = pkgs.dracula-icon-theme;
+      # package = pkgs.xfce.xfce4-icon-theme;
     };
-  };
-  gtk.enable = true;
-  qt.enable = true;
-  home.pointerCursor = {
+  gtk = {
     enable = true;
-    size = 20;
-    name = "Hackneyed";
-    package = pkgs.hackneyed;
+    gtk2.configLocation = "${config.xdg.configHome}/gtk-2.0/gtkrc";
   };
+  qt.enable = true;
 }
