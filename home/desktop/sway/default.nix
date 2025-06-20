@@ -58,12 +58,13 @@
           newWindow = "none"; # TODO
         };
         startup = [
-          # TODO find the corresponding home-manager option?
           {
+            # TODO maybe use a different clipboard manager?
             command = "pkill wl-clip-persist; wl-clip-persist --clipboard regular";
             always = true;
           }
           {
+            # <https://github.com/nix-community/home-manager/issues/2797>
             command = "kanshictl reload";
             always = true;
           }
