@@ -54,11 +54,6 @@ codebase, organized by complexity and priority.
 
 ### File Organization
 
-- **home/cli/misc.nix:5** - `# TODO reformat file`
-
-  - Simple file formatting and organization
-  - Quick cleanup task
-
 - **home/cli/packages.nix:90** - `# misc TODO categorize`
 
   - Organize miscellaneous packages into logical categories
