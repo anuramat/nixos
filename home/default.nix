@@ -24,8 +24,11 @@
     ./cli
   ];
 
-  age.secrets = {
-    ghmcp.file = ../secrets/ghmcp.age;
+  age = {
+    secretsDir = config.xdg.dataDir;
+    secrets = {
+      ghmcp.file = ../secrets/ghmcp.age;
+    };
   };
 
   xdg.enable = true; # set xdg basedir vars in .profile
