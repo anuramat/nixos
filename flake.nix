@@ -1,6 +1,4 @@
 {
-
-  # bla bla
   outputs =
     {
       nixpkgs,
