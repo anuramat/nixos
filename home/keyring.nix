@@ -1,4 +1,9 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   services.pass-secret-service.enable = true; # secret service api -- exposes password-store over dbus
   programs = {
@@ -22,6 +27,7 @@
     defaultCacheTtl = 999999;
     extraConfig = ''
       allow-preset-passphrase
+      pinentry-program ${lib.findExe config.programs.wayprompt.package}
     '';
   };
 }
