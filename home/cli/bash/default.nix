@@ -21,8 +21,11 @@
         PAGER = "less";
         MANPAGER = "less";
 
-        VIRTUAL_ENV_DISABLE_PROMPT = "1"; # TODO maybe we don't need this either? # Don't let python venvs change the PS1
-        VIMTEX_OUTPUT_DIRECTORY = "/tmp/"; # TODO parameterize? do I need this even?
+        VIRTUAL_ENV_DISABLE_PROMPT = "1"; # hide python venv prompt
+
+        # XDG TODO move stuff here from the shims file
+        HISTFILE = "${config.xdg.stateHome}/bash/history"; # ~/.bash_history
+        CUDA_CACHE_PATH = "${config.xdg.stateHome}/nv"; # ~/.nv/
       };
       sessionPath = [
         XDG_BIN_HOME
