@@ -25,7 +25,7 @@
   ];
 
   age = {
-    secretsDir = config.xdg.dataDir;
+    secretsDir = "${config.xdg.dataHome}/agenix";
     secrets = {
       ghmcp.file = ../secrets/ghmcp.age;
     };
