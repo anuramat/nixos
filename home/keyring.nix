@@ -21,13 +21,12 @@
   services.gpg-agent = {
     enable = true;
     pinentry = {
-      # package = pkgs.pinentry-bemenu;
+      package = pkgs.wayprompt;
       program = "pinentry-wayprompt";
     };
     defaultCacheTtl = 999999;
     extraConfig = ''
       allow-preset-passphrase
-      pinentry-program ${lib.findExe config.programs.wayprompt.package}
     '';
   };
 }
