@@ -48,8 +48,9 @@
     imagemagickBig # CLI image manipulation
     libwebp # tools for WebP image format
     exiftool # read/write EXIF metadata
-    chafa # sixel, kitty, iterm2, unicode
-    timg # sixel, kitty, iterm2, unicode; faster than chafa
+    chafa # sixel, kitty, iterm2, blocks; faster than timg atm (ll7, 2025-06-20)
+    viu # kitty, iterm2, blocks, SOON sixel
+    timg # sixel, kitty, iterm2, blocks
 
     # video
     ffmpeg-full
@@ -106,6 +107,7 @@
     yq # basic yaml, json, xml, csv, toml processor
     geteduroam-cli
     ansifilter
+    ast-grep # structural regex
     asciinema
     bubblewrap
     ansifilter
