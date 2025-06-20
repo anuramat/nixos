@@ -25,7 +25,7 @@
 
         # XDG TODO move stuff here from the shims file
         HISTFILE = "${config.xdg.stateHome}/bash/history"; # ~/.bash_history
-        CUDA_CACHE_PATH = "${config.xdg.stateHome}/nv"; # ~/.nv/
+        CUDA_CACHE_PATH = "${config.xdg.cacheHome}/nv"; # ~/.nv/
       };
       sessionPath = [
         XDG_BIN_HOME
@@ -71,17 +71,17 @@
       enable=all
       external-sources=true
     ''
-    + lib.strings.concatMapStrings (p: "disable=${p}\n") [
-      "SC1003" # incorrect attempt at escaping a single quote?
-      "SC1090" # can't follow non constant source
-      "SC2015" # A && B || C is not an if-then-else
-      "SC2016" # incorrect attempt at expansion?
-      "SC2059" # don't use variables in printf format string
-      "SC2139" # unintended? expansion in an alias (alias a="$test" instead of '$test')
-      "SC2154" # variable referenced but not assigned
-      "SC2155" # "local" masks return values
-      "SC2250" # quote even if not necessary
-      "SC2292" # prefer [[]] over
-      "SC2312" # this masks return value
+    + lib.strings.concatMapStrings (v: "disable=SC${toString v}\n") [
+      1003 # incorrect attempt at escaping a single quote?
+      1090 # can't follow non constant source
+      2015 # A && B || C is not an if-then-else
+      2016 # incorrect attempt at expansion?
+      2059 # don't use variables in printf format string
+      2139 # unintended? expansion in an alias (alias a="$test" instead of '$test')
+      2154 # variable referenced but not assigned
+      2155 # "local" masks return values
+      2250 # quote even if not necessary
+      2292 # prefer [[]] over
+      2312 # this masks return value
     ];
 }
