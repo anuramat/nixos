@@ -51,17 +51,16 @@ in
       enable = true;
       python3Dependencies =
         ps: with ps; [
-          # images:
-          pillow # open images with :MoltenImagePopup
-          pnglatex # latex formulas
-          # plotly figures:
+          jupyter-client
+          pillow
+          cairosvg
+          pnglatex
+          pyperclip
           plotly
           kaleido
-          # remote molten:
+          # remote kernel, not checked by checkhealth
           requests
           websocket-client
-          # misc:
-          pyperclip # clipboard support
         ];
       settings = {
         auto_open_output = true;
