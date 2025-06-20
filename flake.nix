@@ -2,15 +2,12 @@
   outputs =
     {
       nixpkgs,
-      self,
       home-manager,
       nixvim,
       flake-utils,
-      neovim-nightly-overlay,
       ...
     }@inputs:
     let
-
       inherit (nixpkgs) lib;
       hax = import ./hax { inherit lib inputs; };
       hostnames = hax.hosts.getHostnames ./hosts;
@@ -101,6 +98,7 @@
     };
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-old.url = "github:nixos/nixpkgs/nixos-24.11";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     home-manager = {
       url = "github:nix-community/home-manager/release-25.05";

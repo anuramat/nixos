@@ -14,6 +14,11 @@ let
         ;
     });
 
+  oldPkgs = final: prev: {
+    inherit (import inputs.nixpkgs-old { inherit (pkgs) config system; })
+      nvi
+      ;
+  };
   unstablePkgs = final: prev: {
     inherit (import inputs.nixpkgs-unstable { inherit (pkgs) config system; })
       fuse-overlayfs
