@@ -22,30 +22,32 @@
     #   -- some of these are used in catppuccin
     #   -- sign('DapBreakpointRejected', { text = 'R', texthl = 'DapBreakpointRejected', linehl = '', numhl = '' })
     # end,
+    dap-virtual-text.enable = true;
+    dap-view.enable = true;
     dap-ui.enable = true;
-    dap-ui.settings = {
-      #   { 'u', function(m) m.toggle() end, 'Toggle Dap UI' },
-      #   { 'e', function(m) m.eval() end,   'Evaluate',     mode = { 'n', 'v' } },
-      keys = {
-        edit = "e";
-        expand = [
-          "<CR>"
-          "<2-LeftMouse>"
-        ];
-        open = "o";
-        remove = "d";
-        repl = "r";
-        toggle = "t";
-      };
-      floating = {
-        border = "single";
-        mappings = {
-          close = [
-            "q"
-            "<Esc>"
-          ];
-        };
-      };
-    };
+    #   dap-ui.settings = {
+    #     #   { 'u', function(m) m.toggle() end, 'Toggle Dap UI' },
+    #     #   { 'e', function(m) m.eval() end,   'Evaluate',     mode = { 'n', 'v' } },
+    #     keys = {
+    #       edit = "e";
+    #       expand = [
+    #         "<CR>"
+    #         "<2-LeftMouse>"
+    #       ];
+    #       open = "o";
+    #       remove = "d";
+    #       repl = "r";
+    #       toggle = "t";
+    #     };
+    #     floating = {
+    #       border = "single";
+    #       mappings = {
+    #         close = [
+    #           "q"
+    #           "<Esc>"
+    #         ];
+    #       };
+    #     };
+    #   };
   };
 }

@@ -2,8 +2,8 @@
 {
   stylix = {
     targets = {
-      bemenu.enable = true;
-      librewolf.profileNames = [ "default" ];
+      neovim.plugin = "base16-nvim";
+      librewolf.profileNames = [ "default" ]; # TODO reference variable
     };
   };
   gtk.enable = true;
