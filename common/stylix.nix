@@ -15,10 +15,10 @@
         name = "Hack Nerd Font";
       };
       sizes = {
-        applications = 12;
-        desktop = 10;
-        popups = 10;
-        terminal = 12;
+        applications = 13;
+        desktop = 11;
+        popups = 11;
+        terminal = 13;
       };
     };
     base16Scheme =
