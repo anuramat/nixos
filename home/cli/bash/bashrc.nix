@@ -148,6 +148,7 @@ in
     + reflake
     + mdoc
     + hotdoc
+    + flakeTemplates
     +
       # bash
       ''
