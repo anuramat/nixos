@@ -1,4 +1,9 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  hax,
+  ...
+}:
 {
   plugins = {
     treesitter = {
@@ -32,20 +37,16 @@
       };
     };
 
-    treesj = {
-      enable = true;
-      lazyLoad = {
-        enable = true;
-        settings = {
-          keys = [
-            {
-              __unkeyed-1 = "<leader>j";
-              __unkeyed-2.__raw = ''function() require('treesj').toggle() end'';
-              desc = "TreeSJ: Split/Join a Treesitter node";
-            }
-          ];
-        };
-      };
-    };
+    treesj.enable = true;
   };
+
+  keymaps =
+    let
+      inherit (hax.vim) set lua;
+    in
+    [
+      (set "<leader>j" (lua "function() require('treesj').toggle() end")
+        "TreeSJ: Split/Join a Treesitter node"
+      )
+    ];
 }
