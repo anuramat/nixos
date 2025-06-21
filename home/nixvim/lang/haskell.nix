@@ -5,5 +5,10 @@
 # s('p', ht.repl.toggle, 'Toggle Package REPL')
 # s('q', ht.repl.quit, 'Quit REPL')
 {
-  plugins.conform-nvim.settings.formatters_by_ft.haskell = [ "ormolu" ];
+  plugins = {
+    lsp.servers.hls = {
+      enable = true;
+    };
+    conform-nvim.settings.formatters_by_ft.haskell = [ "ormolu" ];
+  };
 }

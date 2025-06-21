@@ -25,6 +25,13 @@ let
       precmd_functions+=(__undistract)
     '';
 
+  flakeTemplates = # bash
+    ''
+      template() {
+        cp "$HOME/notes/flakes/$1/flake."* ./
+      }
+    '';
+
   reflake = # bash
     ''
       __jq_equals() {
