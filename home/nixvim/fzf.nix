@@ -1,37 +1,32 @@
+{ hax, ... }:
 {
   keymaps =
     let
-      map = key: action: {
-        mode = "n";
-        key = "<leader>f" + key;
-        action = "<cmd>FzfLua ${action}<cr>";
-        options = {
-          desc = "${action} [fzf]";
-        };
-      };
+      inherit (hax.vim) lua;
+      set = key: action: hax.vim.set key action "${action} [fzf]";
     in
     [
-      (map "o" "files")
-      (map "O" "oldfiles")
-      (map "a" "args")
-      (map "b" "buffers")
-      (map "m" "marks")
+      (set "o" "files")
+      (set "O" "oldfiles")
+      (set "a" "args")
+      (set "b" "buffers")
+      (set "m" "marks")
 
-      (map "/" "curbuf")
-      (map "g" "live_grep")
-      (map "G" "grep_last")
+      (set "/" "curbuf")
+      (set "g" "live_grep")
+      (set "G" "grep_last")
       # (map "G" "grep") # useful on large projects
 
-      (map "d" "diagnostics_document")
-      (map "D" "diagnostics_workspace")
-      (map "s" "lsp_document_symbols")
-      (map "S" "lsp_workspace_symbols")
-      (map "t" "treesitter")
+      (set "d" "diagnostics_document")
+      (set "D" "diagnostics_workspace")
+      (set "s" "lsp_document_symbols")
+      (set "S" "lsp_workspace_symbols")
+      (set "t" "treesitter")
 
-      (map "r" "resume")
-      (map "h" "helptags")
-      (map "k" "keymaps")
-      (map "p" "builtin")
+      (set "r" "resume")
+      (set "h" "helptags")
+      (set "k" "keymaps")
+      (set "p" "builtin")
       {
         mode = "i";
         key = "<C-x><C-f>";
