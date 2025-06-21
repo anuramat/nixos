@@ -1,4 +1,7 @@
-{ hax, ... }:
+{ hax, config, ... }:
+let
+  fo = config.opts.fo;
+in
 {
   filetype = {
     filename = {
@@ -12,18 +15,18 @@
     };
     lua.fo = null;
     markdown = {
-      cole = 0;
       cc = "+1";
-      formatoptions = "-=w";
       shiftwidth = 0;
       tabstop = 3;
-      # todo unmap gO
+      # TODO unmap gO
     };
     sh = {
-      fo = null;
       ts = 4;
       et = false;
+      inherit fo;
     };
-    vim.fo = null;
+    vim = {
+      inherit fo;
+    };
   };
 }

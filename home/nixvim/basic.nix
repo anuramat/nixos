@@ -8,6 +8,7 @@
   extraConfigVim = builtins.readFile ./base.vim;
 
   opts = {
+    formatoptions = "qj";
   };
   globals = {
     # tree style, symlinks are broken tho: https://github.com/neovim/neovim/issues/27301
