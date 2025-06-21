@@ -1,4 +1,4 @@
-_:
+{ lib, ... }:
 let
   lua = action: { __raw = action; };
 in
@@ -28,4 +28,7 @@ in
       else
         throw "type ${type} is invalid for vim keymaps"
     );
+  mkFTP =
+    with lib;
+    plugins: mapAttrs' (n: v: nameValuePair "after/ftplugin/${n}.lua" { localOpts = v; }) plugins;
 }

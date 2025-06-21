@@ -17,7 +17,7 @@
 }:
 {
   imports = [
-    ./files.nix
+    ./filemgr.nix
     ./fzf.nix
     ./git.nix
     ./ide
@@ -28,20 +28,9 @@
     ./ui.nix
     ./vim.nix
     ./custom
+    ./basic.nix
+    ./ft.nix
   ];
-
-  extraConfigVim = builtins.readFile ./base.vim;
-  diagnostic.settings = {
-    severity_sort = true;
-    update_in_insert = true;
-    signs = false;
-  };
-
-  filetype = {
-    filename = {
-      "todo.txt" = "todotxt";
-    };
-  };
 
   plugins.lz-n.enable = true;
   luaLoader.enable = true;
