@@ -2,8 +2,7 @@
 {
   keymaps =
     let
-      inherit (hax.vim) lua;
-      set = key: action: hax.vim.set key action "${action} [fzf]";
+      set = key: action: hax.vim.set ("<leader>f" + key) "${action} [fzf]";
     in
     [
       (set "o" "files")
