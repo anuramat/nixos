@@ -46,7 +46,7 @@
   plugins.harpoon.enable = true;
   keymaps =
     let
-      inherit (hax.vim) lua;
+      inherit (hax.vim) luaf;
       set = key: hax.vim.set ("<leader>h" + key);
     in
     [

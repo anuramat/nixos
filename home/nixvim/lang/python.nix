@@ -19,10 +19,8 @@ let
   mkInit =
     prepKern: # lua
     ''
-      function()
-        ${prepKern}
-        require('otter').activate()
-      end
+      ${prepKern}
+      require('otter').activate()
     '';
   set = key: hax.vim.set ("<localleader>" + key);
 in
@@ -87,7 +85,7 @@ in
 
   keymaps = [
     (set "d" "MoltenDelete" "delete ipynb cell")
-    (set "i" (file |> mkInit |> lua) "init molten and start otter")
+    (set "i" (file |> mkInit |> luaf) "init molten and start otter")
 
     (set "o" "OtterActivate" "activate otter")
     (set "O" "OtterDeactivate" "deactivate otter")
