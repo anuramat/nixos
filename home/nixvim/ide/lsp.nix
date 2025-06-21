@@ -35,31 +35,6 @@
           "--stdio"
         ];
       };
-      marksman.enable = true;
-      statix = { }; # enable when they have pipes: <https://github.com/oppiliappan/statix/issues/88>
-      texlab = {
-        settings = {
-          texlab = {
-            build = {
-              forwardSearchAfter = true;
-              onSave = true;
-            };
-            chktex = {
-              onEdit = true;
-              onOpenAndSave = true;
-            };
-            forwardSearch = {
-              args = [
-                "--synctex-forward"
-                "%l:1:%f"
-                "%p"
-              ];
-              executable = "zathura";
-            };
-          };
-        };
-      };
-      yamlls.enable = true;
     };
   };
 }
