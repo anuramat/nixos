@@ -1,3 +1,4 @@
+{ hax, ... }:
 {
   plugins = {
     mini = {
@@ -45,29 +46,14 @@
   plugins.harpoon.enable = true;
   keymaps =
     let
-      _mkMap =
-        key: action: desc:
-        {
-          mode = "n";
-          inherit key action;
-        }
-        // (
-          if builtins.typeOf action == "string" then
-            {
-              action = "<cmd>${action}<cr>";
-              desc = action;
-            }
-          else
-            { }
-        );
-      mkMap =
+      set =
         k: a: d:
-        _mkMap ("<leader>h" + k) a d;
+        hax.vim.set ("<leader>h" + k) a d;
     in
     [
-      (mkMap "a" { __raw = "function() require('harpoon'):list():add() end"; } "Add")
-      (mkMap "l" { __raw = "function() require('harpoon').ui:toggle_quick_menu(m:list()) end"; } "List")
-      (mkMap "n" { __raw = "function() require('harpoon'):list():next() end"; } "Next")
-      (mkMap "p" { __raw = "function() require('harpoon'):list():prev() end"; } "Previous")
+      (set "a" { __raw = "function() require('harpoon'):list():add() end"; } "Add")
+      (set "l" { __raw = "function() require('harpoon').ui:toggle_quick_menu(m:list()) end"; } "List")
+      (set "n" { __raw = "function() require('harpoon'):list():next() end"; } "Next")
+      (set "p" { __raw = "function() require('harpoon'):list():prev() end"; } "Previous")
     ];
 }

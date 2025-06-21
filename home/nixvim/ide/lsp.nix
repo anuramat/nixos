@@ -1,21 +1,14 @@
-{ pkgs, ... }:
+{ pkgs, hax, ... }:
 {
   keymaps =
     let
-      _mkMap = key: action: desc: {
-        mode = "n";
-        inherit key action;
-        options = { inherit desc; };
-      };
-      mkMap =
-        k: a: d:
-        _mkMap ("gr" + k) { __raw = a; } d;
+      inherit (hax.vim) lua set;
     in
     [
-      (mkMap "d" "vim.lsp.buf.declaration" "Goto Declaration")
-      (mkMap "t" "vim.lsp.buf.type_definition" "Goto Type Definition")
-      (mkMap "q" "vim.diagnostic.setqflist" "Diagnostic QF List")
-      (mkMap "l" "vim.lsp.codelens.run" "CodeLens")
+      (set "d" (lua "vim.lsp.buf.declaration") "Goto Declaration")
+      (set "t" (lua "vim.lsp.buf.type_definition") "Goto Type Definition")
+      (set "q" (lua "vim.diagnostic.setqflist") "Diagnostic QF List")
+      (set "l" (lua "vim.lsp.codelens.run") "CodeLens")
     ];
   plugins.lsp = {
     enable = true;

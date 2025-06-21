@@ -1,28 +1,12 @@
 {
   lib,
+  hax,
   inputs,
   pkgs,
   ...
 }:
 let
-  _mkMap =
-    key: action: desc:
-    {
-      mode = "n";
-      inherit key action;
-    }
-    // (
-      if builtins.typeOf action == "string" then
-        {
-          action = "<cmd>${action}<cr>";
-          desc = action;
-        }
-      else
-        { }
-    );
-  mkMap =
-    k: a: d:
-    _mkMap ("<leader>hk") a d;
+  inherit (hax.vim) lua set;
 in
 {
   keymaps = [
@@ -95,6 +79,7 @@ in
         };
       };
       lazyLoad = {
+        enable = true;
         settings = {
           keys = [
             {
@@ -113,6 +98,12 @@ in
         };
       };
     };
+    # keymaps = [
+    #   (set "<leader>r" (lua "function() require('flash').jump() end") "Jump")
+    #   (
+    #     (set "r" (lua "function() require('flash').treesitter() end") "Treesitter node") // { mode = "o"; }
+    #   )
+    # ];
 
     todo-comments = {
       enable = true;
