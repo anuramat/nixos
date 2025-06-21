@@ -28,6 +28,7 @@ let
   reflake = # bash
     ''
       __jq_equals() {
+        # checks if prop is equal in both jsons
         if [ "$#" -ne 3 ]; then
           echo 'error(usage): __jq_equals: not enough args'
           return 1
@@ -43,10 +44,6 @@ let
       reflake() {
         local target_file="$1"
         [ -z "$target_file" ] && target_file=./flake.lock
-        [ -f "$target_file" ] || {
-          echo "error(usage): no argument, no flake.lock in cwd"
-          return 1
-        }
 
         local source_file="/etc/nixos/flake.lock"
 
@@ -59,22 +56,26 @@ let
 
         while IFS= read -r -d ''' input_name; do
           local input=".nodes.\"$input_name\""
-          local prop="$input.locked"
+          local lockProp="$input.locked"
 
-          local source_has_prop=$(jq -r "$prop != null" "$source_file")
-          # indirect is deprecated, but just in case:
+          # skip inputs without lock
+          local source_has_prop=$(jq -r "$lockProp != null" "$source_file")
+          # NOTE indirect is deprecated
           local indirect=$(jq -r "$input.original.type == \"indirect\"" "$target_file")
+          [ "$indirect" == true ] && echo 'warning: deprecated input type "indirect" found'
           if [ "$source_has_prop" == false ] || [ "$indirect" == true ]; then
             continue
           fi
 
+          # make sure it's actually the same input (compare the sources)
           __jq_equals "$input.original" "$source_file" "$target_file" || {
             echo ".original mismatch on $input"
             return 1
           }
 
-          local new_value=$(jq -r "$prop | tojson" "$source_file")
-          local replace_expr="$prop = (\$arg | fromjson)"
+          # replace the lock
+          local new_value=$(jq -r "$lockProp | tojson" "$source_file")
+          local replace_expr="$lockProp = (\$arg | fromjson)"
           jq --arg arg "$new_value" "$replace_expr" "$target_file" | sponge "$target_file"
         done < <(jq --raw-output0 ".nodes | keys[]" "$target_file")
 
@@ -85,19 +86,19 @@ let
   mdoc = # bash
     ''
       pandoc-md() {
-      	# md -> pdf
-      	# usage: $0 $input $output
+        # md -> pdf
+        # usage: $0 $input $output
 
-      	local __markdown=markdown+wikilinks_title_after_pipe+short_subsuperscripts+mark
-      	# mark: ==highlighted text==
-      	# short_superscripts: x^2, O~2
-      	# alerts: > [!TIP] -- not supported for "markdown" yet, <https://github.com/jgm/pandoc/issues/9716>
-      	# even if they were, pdf output is ugly
-      	# --citeproc might be useful TODO document
-      	# also maybe switch to --pdf-engine xelatex
-      	notify-send -t 1000 $'\n\nrendering\n\n'
-      	pandoc -H "$XDG_CONFIG_HOME/latex/preamble.tex" "$1" -f "$__markdown" -t pdf -o "$2"
-      	notify-send -t 1000 $'\n\nrender done\n\n'
+        local __markdown=markdown+wikilinks_title_after_pipe+short_subsuperscripts+mark
+        # mark: ==highlighted text==
+        # short_superscripts: x^2, O~2
+        # alerts: > [!TIP] -- not supported for "markdown" yet, <https://github.com/jgm/pandoc/issues/9716>
+        # even if they were, pdf output is ugly
+        # --citeproc might be useful TODO document
+        # also maybe switch to --pdf-engine xelatex
+        notify-send -t 1000 $'\n\nrendering\n\n'
+        pandoc -H "$XDG_CONFIG_HOME/latex/preamble.tex" "$1" -f "$__markdown" -t pdf -o "$2"
+        notify-send -t 1000 $'\n\nrender done\n\n'
       }
     '';
   hotdoc = # bash
