@@ -13,6 +13,7 @@
 
     # office
     slides # markdown presentation in terminal
+    # lookatme -- slides with images; not in nixpkgs yet
     tidy-viewer # csv viewer
     glow # markdown tui viewer
     poppler_utils # pdf utils
