@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (hax.vim) lua set;
+  inherit (hax.vim) set;
 in
 {
   keymaps = [

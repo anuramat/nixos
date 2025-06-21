@@ -2,7 +2,8 @@
 {
   keymaps =
     let
-      inherit (hax.vim) lua set;
+      inherit (hax.vim) lua;
+      set = key: hax.vim.set ("gr" + key);
     in
     [
       (set "d" (lua "vim.lsp.buf.declaration") "Goto Declaration")

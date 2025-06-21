@@ -1,6 +1,6 @@
 { hax, ... }:
 let
-  inherit (hax.vim) lua;
+  inherit (hax.vim) luaf;
   localhost = "vim.cmd('MoltenInit http://localhost:8888')";
   file = # lua
     ''
@@ -24,9 +24,7 @@ let
         require('otter').activate()
       end
     '';
-  set =
-    k: a: d:
-    hax.vim.set ("<localleader>" + k) a (d + " [jupyter]");
+  set = key: hax.vim.set ("<localleader>" + key);
 in
 {
   plugins = {
@@ -91,12 +89,12 @@ in
     (set "d" "MoltenDelete" "delete ipynb cell")
     (set "i" (file |> mkInit |> lua) "init molten and start otter")
 
-    (set "o" "OtterActivate" "")
-    (set "O" "OtterDeactivate" "")
+    (set "o" "OtterActivate" "activate otter")
+    (set "O" "OtterDeactivate" "deactivate otter")
 
-    (set "c" (lua "function() require('quarto').run_cell() end") "run selected cell")
-    (set "a" (lua "function() require('quarto').run_above() end") "run all cells above")
-    (set "b" (lua "function() require('quarto').run_below() end") "run all cells below")
-    (set "A" (lua "function() require('quarto').run_all() end") "run all cells")
+    (set "c" (luaf "require('quarto').run_cell()") "run selected cell")
+    (set "a" (luaf "require('quarto').run_above()") "run all cells above")
+    (set "b" (luaf "require('quarto').run_below()") "run all cells below")
+    (set "A" (luaf "require('quarto').run_all()") "run all cells")
   ];
 }

@@ -42,11 +42,9 @@
 
   keymaps =
     let
-      inherit (hax.vim) set lua;
+      inherit (hax.vim) set luaf;
     in
     [
-      (set "<leader>j" (lua "function() require('treesj').toggle() end")
-        "TreeSJ: Split/Join a Treesitter node"
-      )
+      (set "<leader>j" (luaf "require('treesj').toggle()") "TreeSJ: Split/Join a Treesitter node")
     ];
 }

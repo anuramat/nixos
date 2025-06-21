@@ -1,5 +1,10 @@
-_: {
+_:
+let
   lua = action: { __raw = action; };
+in
+{
+  inherit lua;
+  luaf = action: (lua "function() ${action} end");
   set =
     key: action: desc:
     let

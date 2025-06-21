@@ -46,14 +46,13 @@
   plugins.harpoon.enable = true;
   keymaps =
     let
-      set =
-        k: a: d:
-        hax.vim.set ("<leader>h" + k) a d;
+      inherit (hax.vim) lua;
+      set = key: hax.vim.set ("<leader>h" + key);
     in
     [
-      (set "a" { __raw = "function() require('harpoon'):list():add() end"; } "Add")
-      (set "l" { __raw = "function() require('harpoon').ui:toggle_quick_menu(m:list()) end"; } "List")
-      (set "n" { __raw = "function() require('harpoon'):list():next() end"; } "Next")
-      (set "p" { __raw = "function() require('harpoon'):list():prev() end"; } "Previous")
+      (set "a" (luaf "require('harpoon'):list():add()") "Add")
+      (set "l" (luaf "require('harpoon').ui:toggle_quick_menu(m:list())") "List")
+      (set "n" (luaf "require('harpoon'):list():next()") "Next")
+      (set "p" (luaf "require('harpoon'):list():prev()") "Previous")
     ];
 }
