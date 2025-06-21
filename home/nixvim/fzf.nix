@@ -2,7 +2,7 @@
 {
   keymaps =
     let
-      set = key: action: hax.vim.set ("<leader>f" + key) "${action} [fzf]";
+      set = key: action: hax.vim.set ("<leader>f" + key) "<cmd>FzfLua ${action}<cr>" "${action} [fzf]";
     in
     [
       (set "o" "files")
