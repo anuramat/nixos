@@ -1,6 +1,6 @@
 { hax, config, ... }:
 let
-  fo = config.opts.fo;
+  fo = config.opts.formatoptions;
 in
 {
   filetype = {
