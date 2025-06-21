@@ -18,7 +18,6 @@ in
     };
     markdown = {
       cc = "+1";
-      # fo-=w
       shiftwidth = 0;
       tabstop = 3;
       # TODO unmap gO
