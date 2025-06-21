@@ -25,11 +25,16 @@ let
       precmd_functions+=(__undistract)
     '';
 
-  flakeTemplates = # bash
+  template = # bash
     ''
-      template() {
-        cp "$HOME/notes/flakes/$1/flake."* ./
-      }
+      template() (
+        path="$HOME/notes/templates/$1"
+        [ -d "$path" ] || {
+          echo "$path is not a directory"
+        }
+        shopt -s dotglob
+        cp "$path"/* ./
+      )
     '';
 
   reflake = # bash
@@ -148,7 +153,7 @@ in
     + reflake
     + mdoc
     + hotdoc
-    + flakeTemplates
+    + template
     +
       # bash
       ''
