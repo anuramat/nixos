@@ -14,8 +14,6 @@ function! ToggleQuickFix()
     endif
 endfunction
 nn <leader>q <cmd>call ToggleQuickFix()<cr>
-nn <c-j> <cmd>cnext<cr>
-nn <c-k> <cmd>cprev<cr>
 
 " formatting {{{1
 se shiftround shiftwidth=0 expandtab tabstop=2
@@ -43,24 +41,15 @@ se undofile " persistent undo
 se backupdir-=. " don't write backups to CWD
 se virtualedit=block " move beyond line end in v-block mode
 se nrformats=bin,hex,blank " ^a/^x number formats
-let g:markdown_fenced_languages = ['python', 'lua', 'vim', 'haskell', 'bash', 'sh', 'json5=json', 'tex']
 se synmaxcol=300
-" se spl=en,ru " spelling languages (russian will trigger download)
-" se path+=** " recurse in path - bad idea
 se mouse= " disable mouse
 
 
 " visuals {{{1
 se nowrap
-let g:matchparen_timeout=50
-let g:matchparen_insert_timeout=50
 " se mopt=wait:0,history:10000
 se nomore
 se cmdheight=1
-" tree style, symlinks are broken tho: https://github.com/neovim/neovim/issues/27301
-" let g:netrw_liststyle=3 
-let g:netrw_banner=0
-let g:netrw_winsize=25
 se cole=0
 se fcs=fold:\─,foldopen:,foldsep:\ ,foldclose:
 se foldtext=
@@ -74,43 +63,8 @@ se cursorline cursorlineopt=both
 se matchtime=1 showmatch " highlight matching bracket (deciseconds)
 se signcolumn=yes " gutter
 se winborder=double
-let g:nonfiles=['NeogitStatus', 'NeogitPopup', 'oil', 'lazy', 'lspinfo', 'null-ls-info', 'NvimTree', 'neo-tree', 'alpha', 'help', 'fzf']
 se ph=20 " popup max height
 se tgc
-
-" pseudo/transparency, sucks in terminal {{{2
-" se winbl=30 " floating window transparency
-" se pb=30 " popup transparency
-" }}}
-
-" typos {{{1
-com! -bang Q q<bang>
-com! -bang W w<bang>
-com! -bang WQ wq<bang>
-com! -bang Wq wq<bang>
-com! -bang Wqa wqa<bang>
-com! -bang WQa wqa<bang>
-com! -bang WQA wqa<bang>
-com! -bang QA qa<bang>
-com! -bang Qa qa<bang>
-
-" commands {{{1
-
-" open messages in a buffer {{{2
-com! Messages call MessageBuffer()
-function! MessageBuffer()
-  let messages = execute('messages')
-  execute 'enew'
-  call setline(1, split(messages, "\n"))
-  setlocal bufhidden=hide
-  setlocal buftype=nofile
-  setlocal noswapfile
-  setlocal nobuflisted
-  setlocal nomodifiable
-endfunction
-
-" trim spaces
-com! Trim %s/\ \+$//g
 
 " misc {{{1
 " hide qf buffers:
