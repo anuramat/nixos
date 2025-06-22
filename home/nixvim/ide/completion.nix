@@ -3,6 +3,7 @@
     friendly-snippets.enable = true;
     blink-cmp = {
       enable = true;
+      # TODO jesus christ that's ugly
       luaConfig.post = ''
         require('blink.cmp').setup({
           sources = {

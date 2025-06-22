@@ -1,4 +1,4 @@
-{ pkgs, hax, ... }:
+{ hax, ... }:
 {
   keymaps =
     let
@@ -14,21 +14,5 @@
   plugins.lsp = {
     enable = true;
     inlayHints = false;
-    servers = {
-      clangd.enable = true;
-      rust_analyzer = {
-        enable = true;
-        installCargo = false;
-        installRustc = false;
-      };
-      zls.enable = true;
-      jsonls = {
-        enable = false; # TODO fix
-        cmd = [
-          "vscode-json-languageserver"
-          "--stdio"
-        ];
-      };
-    };
   };
 }

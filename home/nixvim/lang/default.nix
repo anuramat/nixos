@@ -9,6 +9,7 @@
     ./python.nix
     ./tex.nix
     ./web.nix
-    ./yaml.nix
+    ./markup
+    ./misc.nix
   ];
 }
