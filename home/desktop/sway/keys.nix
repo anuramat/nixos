@@ -120,6 +120,9 @@ in
           exec = "exec,";
           execCmd = "hyprctl dispatch exec";
         };
+        todo_add =
+          o:
+          ''${o.exec} ${killall} ${bemenu} || ${o.execCmd} $(echo ''' | ${bemenu} -p ${todo} -l 0 | xargs -I{} ${todo} add "{}")'';
       in
       {
         windowrule = [
@@ -138,9 +141,6 @@ in
           "${modifier}, t, ${todo_add o}"
           "${modifier} ${mod2}, t, ${todo_done o}"
           "${modifier} ${mod2}, m, togglefloating"
-
-          "${modifier}, P, pseudo,"
-          "${modifier}, J, togglesplit,"
 
           "${modifier}, h, movefocus, l"
           "${modifier}, l, movefocus, r"
