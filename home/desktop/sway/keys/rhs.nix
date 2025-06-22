@@ -46,8 +46,8 @@ let
 
   term_cmd = getExe pkgs.foot;
   term = rec {
-    exec = "exec ${term_cmd}";
-    float = "${exec} -a foot-float -W 88x28";
+    default = "exec ${term_cmd}";
+    float = "${default} -a foot-float -W 88x28";
   };
 
   pickers =
