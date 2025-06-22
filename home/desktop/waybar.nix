@@ -1,7 +1,6 @@
 {
   programs.waybar = {
     enable = true;
-    systemd.enable = false;
     style = # css
       ''
         #waybar > box {

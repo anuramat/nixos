@@ -17,10 +17,6 @@
       inherit inputs;
     };
   };
-  programs = {
-    hyprland.enable = true;
-    # required: <https://wiki.hypr.land/Nix/Hyprland-on-NixOS/>
-  };
   environment.pathsToLink = [
     # required because of useUserPackages and xdg.portal
     "/share/xdg-desktop-portal"

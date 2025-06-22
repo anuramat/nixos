@@ -23,11 +23,8 @@
     # essentials
     wdisplays # GUI kanshi config generator
     libnotify # notify-send etc
-    mako # notifications - smaller than fnott and dunst
-    waybar # status bar
 
     # config utils
-    glib # gsettings (gtk etc)
     ddcutil # configure external monitors (eg brightness)
 
     # gui settings

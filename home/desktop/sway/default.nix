@@ -2,7 +2,7 @@
 {
   imports = [
     ./input.nix
-    ./keys.nix
+    ./keys
     ./workspace.nix
   ];
 
@@ -42,7 +42,6 @@
   wayland.windowManager.sway =
     let
       border = 3;
-      modifier = "Mod4"; # logo
     in
     {
       enable = true;
@@ -50,7 +49,6 @@
       wrapperFeatures.gtk = true;
       config = {
         # systemd.xdgAutostart = true;
-        inherit modifier;
         focus = {
           followMouse = "no";
           wrapping = "no";
@@ -74,18 +72,12 @@
             hide_cursor = "when-typing enable";
           };
         };
-        bindkeysToCode = true;
-        # move to keys
-        up = "k";
-        down = "j";
-        left = "h";
-        right = "l";
         window = {
           titlebar = false;
           inherit border;
         };
         floating = {
-          inherit modifier border;
+          inherit border;
           titlebar = true;
           criteria = [
             { app_id = "xdg-desktop-portal-gtk"; }
@@ -97,11 +89,6 @@
             { app_id = "Proton Pass"; }
           ];
         };
-        bars = [
-          {
-            command = "${pkgs.waybar}/bin/waybar";
-          }
-        ];
       };
       # TODO relative size
       extraConfig = # sway
