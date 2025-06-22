@@ -8,12 +8,10 @@ let
     "HDMI-A-2"
   ];
 
-  mod = x: y: y - x * (builtins.div y x); # TODO lib
-
   mkAssign =
     output: numbers:
     map (n: {
-      workspace = "${toString n}:${n |> mod 10 |> toString}";
+      workspace = "${toString n}:${n |> lib.mod 10 |> toString}";
       output = output;
     }) numbers;
 in
