@@ -1,4 +1,8 @@
-args:
+{
+  pkgs,
+  lib,
+  ...
+}@args:
 let
   modifier = "Mod4";
 
@@ -67,8 +71,8 @@ in
       "${modifier}+Shift+n" = notifications.dismiss_all;
 
       # Screenshots
-      "${modifier}+p" = screen.shot.mouse;
-      "${modifier}+${mod2}+p" = screen.shot.output;
+      "${modifier}+p" = screen.shot.selection;
+      "${modifier}+${mod2}+p" = screen.shot.focused.output;
       "${modifier}+${mod4}+p" = screen.cast.selection;
 
       # Moving focus

@@ -5,9 +5,9 @@
   ...
 }:
 let
-  bookdir = "${config.home.homeDir}/books";
+  bookdir = "${config.home.homeDirectory}/books";
 
-  inherit (lib) findExe;
+  inherit (lib) getExe;
 
   ctl = {
     brightness =
@@ -44,7 +44,7 @@ let
     wlan = "exec ${pkgs.tlp}/bin/wifi toggle";
   };
 
-  term_cmd = findExe pkgs.foot;
+  term_cmd = getExe pkgs.foot;
   term = rec {
     exec = "exec ${term_cmd}";
     float = "${exec} -a foot-float -W 88x28";
@@ -52,12 +52,12 @@ let
 
   pickers =
     let
-      j4 = findExe pkgs.j4-dmenu-desktop;
-      killall = findExe pkgs.killall;
+      j4 = getExe pkgs.j4-dmenu-desktop;
+      killall = getExe pkgs.killall;
       todo = "todo";
-      fd = findExe pkgs.fd;
-      zathura = findExe pkgs.zathura;
-      bemenu = findExe pkgs.bemenu;
+      fd = getExe pkgs.fd;
+      zathura = getExe pkgs.zathura;
+      bemenu = getExe pkgs.bemenu;
     in
     {
       books = ''exec ${killall} ${bemenu} || swaymsg exec "echo \"$(cd ${bookdir} && ${fd} -t f | ${bemenu} -p read -l 20)\" | xargs -rI{} ${zathura} '${bookdir}/{}'"'';
@@ -68,29 +68,29 @@ let
 
   screen =
     let
-      grim = findExe pkgs.grim;
-      jq = findExe pkgs.jq;
-      slurp = findExe pkgs.slurp;
+      grim = getExe pkgs.grim;
+      jq = getExe pkgs.jq;
+      slurp = getExe pkgs.slurp;
     in
     {
       shot =
         let
-          swappy = findExe pkgs.swappy;
+          swappy = getExe pkgs.swappy;
         in
         {
           selection = "exec swaymsg -t get_tree | jq -r '.. | (.nodes? // empty)[] | select(.pid and .visible) | .rect | \"\\(.x),\\(.y) \\(.width)x\\(.height)\"' | ${slurp} | xargs -I {} ${grim} -g \"{}\" - | ${swappy} -f -";
-          focused_output = "exec ${grim} -o $(swaymsg -t get_outputs | ${jq} -r '.[] | select(.focused) | .name') - | ${swappy} -f -";
+          focused.output = "exec ${grim} -o $(swaymsg -t get_outputs | ${jq} -r '.[] | select(.focused) | .name') - | ${swappy} -f -";
         };
       cast.selection =
         let
-          wf-recorder = findExe pkgs.wf-recorder;
+          wf-recorder = getExe pkgs.wf-recorder;
         in
         "exec swaymsg -t get_tree | ${jq} -r '.. | (.nodes? // empty)[] | select(.pid and .visible) | .rect | \"\\(.x),\\(.y) \\(.width)x\\(.height)\"' | ${slurp} | xargs -I {} ${wf-recorder} -g \"{}\" -f \"~/vid/screen/$(date +%Y-%m-%d_%H-%M-%S).mp4\"";
     };
 
   notifications =
     let
-      makoctl = "${pkgs.makoctl}/bin/makoctl";
+      makoctl = "${pkgs.mako}/bin/makoctl";
     in
     {
       invoke = "exec ${makoctl} invoke";
