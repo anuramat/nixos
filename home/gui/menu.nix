@@ -1,4 +1,4 @@
-{ config, ... }:
+{ lib, config, ... }:
 {
   programs = {
     bemenu = {
@@ -9,7 +9,7 @@
             font = config.stylix.fonts.monospace.name;
             size = toString config.stylix.fonts.sizes.applications;
           in
-          "${font} ${size}";
+          lib.mkForce "${font} ${size}";
         line-height = 28;
         prompt = "open";
         list = 5;

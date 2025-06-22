@@ -41,7 +41,11 @@
     gofumpt # stricter go
     haskellPackages.ormolu
     html-tidy
-    mdformat
+    (mdformat.withPlugins (
+      p: with p; [
+        mdformat-myst
+      ]
+    ))
     nixfmt-rfc-style
     nodePackages.prettier # just in case
     shfmt # posix/bash/mksh
