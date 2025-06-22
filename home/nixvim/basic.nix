@@ -53,6 +53,6 @@
     in
     [
       (set "<c-j>" "cnext" "next qf item")
-      (set "<c-k>" "cnext" "prev qf item")
+      (set "<c-k>" "cprev" "prev qf item")
     ];
 }
