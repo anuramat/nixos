@@ -5,7 +5,8 @@
       formatters_by_ft.markdown = [ "mdformat" ];
       formatters = {
         mdformat = {
-          args = [ "--number" ];
+          "inherit" = true;
+          prepend_args = [ "--number" ];
         };
       };
     };
