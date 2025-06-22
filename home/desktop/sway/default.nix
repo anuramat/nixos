@@ -49,6 +49,7 @@
       wrapperFeatures.gtk = true;
       config = {
         # systemd.xdgAutostart = true;
+        bars = [ ];
         focus = {
           followMouse = "no";
           wrapping = "no";
