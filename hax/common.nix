@@ -1,5 +1,5 @@
 # TODO rename file
-{ lib, ... }:
+{ lib, pkgs, ... }:
 with lib;
 with builtins;
 rec {
@@ -30,4 +30,15 @@ rec {
           "${prefix}.${name} = ${formatValue value}";
     in
     lib.concatStringsSep "\n" (lib.mapAttrsToList (formatAssignment root) cfg);
+  gitHook =
+    main:
+    pkgs.writeShellScript # bash
+      ''
+        hook_name=$(basename "$0")
+        local=./.git/hooks/$hook_name
+        [ -x "$local" ] && [ -f "$local" ] && {
+        	exec "$local"
+        }
+      ''
+    + main;
 }

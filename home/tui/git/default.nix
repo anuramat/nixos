@@ -1,7 +1,7 @@
 {
   config,
+  hax,
   user,
-  lib,
   pkgs,
   ...
 }:
@@ -92,8 +92,20 @@
       ];
 
       hooks = {
-        prepare-commit-msg = ./hooks/prepare-commit-msg;
-        pre-commit = ./hooks/pre-commit;
+        pre-commit =
+          hax.common.gitHook
+            # bash
+            ''
+              hook_name=$(basename "$0")
+              local=./.git/hooks/$hook_name
+              [ -x "$local" ] && [ -f "$local" ] && {
+              	exec "$local"
+              }
+
+              if [ -f ./treefmt.toml ]; then
+              	treefmt --fail-on-change
+              fi
+            '';
       };
       # TODO check jupyter notebook and nbdime later; `git diff` works
       extraConfig = {

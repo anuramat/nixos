@@ -35,8 +35,6 @@ lint:
 	./scripts/shrun.sh shellcheck --color=always -o all
 	./scripts/heading.sh "Checking yaml files"
 	yamllint . || true
-	./scripts/heading.sh "Checking Makefile"
-	checkmake Makefile
 format:
 	./scripts/heading.sh "Formatting"
 	treefmt

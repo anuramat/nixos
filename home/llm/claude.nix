@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, hax, ... }:
 let
   prompt = # markdown
     ''
@@ -144,4 +144,31 @@ in
       };
     };
   };
+  programs.git.hooks.prepare-commit-msg =
+    hax.common.gitHook
+      # bash
+      ''
+        COMMIT_MSG_FILE=$1
+        COMMIT_SOURCE=$2
+        SHA1=$3
+
+        # NOTE that COMMIT_MSG_FILE only has comments when it's invoked interactively
+        # meanwhile with `commit -m` it already contains the message
+        signature="Co-Authored-By: Claude <noreply@anthropic.com>"
+        if [ -n "$CLAUDE" ]; then
+        	if [ "$COMMIT_SOURCE" = "commit" ]; then
+        		echo 'permission error: `claude` is not allowed to use `git commit` with flags `-c`, `-C`, or `--amend`'
+        		exit 1
+        	fi
+        	if ! [ -s "$COMMIT_MSG_FILE" ]; then
+        		echo 'error: empty commit message'
+        		exit 1
+        	fi
+        	if grep -q "$signature" "$COMMIT_MSG_FILE"; then
+        		echo 'assertion error: commit already contains "Co-Authored-By: Claude" trailer'
+        		exit 1
+        	fi
+        	printf '\n%s' "$signature" >> "$COMMIT_MSG_FILE"
+        fi
+      '';
 }

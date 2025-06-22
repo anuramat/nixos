@@ -26,7 +26,6 @@
     yarn
 
     # linters
-    checkmake # makefile
     deadnix # nix dead code
     golangci-lint # go
     luajitPackages.luacheck # lua

@@ -73,7 +73,8 @@
     ''
     + lib.strings.concatMapStrings (v: "disable=SC${toString v}\n") [
       1003 # incorrect attempt at escaping a single quote?
-      1090 # can't follow non constant source
+      1090 # source: can't follow non constant
+      1091 # source: file doesn't exist
       2015 # A && B || C is not an if-then-else
       2016 # incorrect attempt at expansion?
       2059 # don't use variables in printf format string

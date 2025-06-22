@@ -67,7 +67,7 @@ gclone() {
 	# show the cloned repos; a bit of a hack but whatever, seems to be working
 	local -r new_dirs="$(comm -13 <(echo "$before_dirs") <(echo "$after_dirs"))"
 	echo "$new_dirs" | xargs zoxide add
-	gh repo set-default $(git config --get remote.origin.url | rev | cut -d "/" -f 1,2 | rev) 2> /dev/null || true
+	gh repo set-default "$(git config --get remote.origin.url | rev | cut -d "/" -f 1,2 | rev)" 2> /dev/null || true
 }
 
 check() {
@@ -181,7 +181,7 @@ up() (
 
 gfork() {
 	yes N | gh repo fork --default-branch-only "$1"
-	gclone "$(basename $1)"
+	gclone "$(basename "$1")"
 }
 
 gcreate() {
