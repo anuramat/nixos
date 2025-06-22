@@ -2,7 +2,7 @@
   imports = [
     ./bash
     ./fuzzy.nix
-    ./git
+    ./git.nix
     ./misc.nix
     ./packages.nix
     ./readline.nix

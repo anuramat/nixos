@@ -4,13 +4,12 @@ export XDG_DATA_HOME=$(mktemp -d)
 export XDG_STATE_HOME=$(mktemp -d)
 export XDG_CACHE_HOME=$(mktemp -d)
 export XDG_RUNTIME_DIR=$(mktemp -d) # tmux needs this one
-export XDG_CONFIG_HOME=$(mktemp -d) # breaks git etc
 
 export CLAUDE=true
 bwrap --ro-bind / / --dev /dev \
-  --bind /tmp /tmp \
-  --bind "$HOME/.claude" "$HOME/.claude" \
-  --bind "$HOME/.claude.json" "$HOME/.claude.json" \
-  --bind "$PWD" "$PWD" \
-  --bind /etc/nixos /etc/nixos \
-  claude --dangerously-skip-permissions "$@"
+	--bind /tmp /tmp \
+	--bind "$HOME/.claude" "$HOME/.claude" \
+	--bind "$HOME/.claude.json" "$HOME/.claude.json" \
+	--bind "$PWD" "$PWD" \
+	--bind /etc/nixos /etc/nixos \
+	claude --dangerously-skip-permissions "$@"

@@ -27,13 +27,8 @@ let
 
       ## Permissions
 
-      You typically are running in a `bubblewrap` sandbox. Most of the paths are
-      mounted in read-only mode, with a few exceptions:
-
-      ```txt
-      ```
-
-      Commands that modify anything not on this list will usually fail.
+      You typically are running in a `bubblewrap` sandbox. Most of the paths outside
+      of the `$PWD` are mounted in read-only mode, so some commands might fail.
 
       ## Protocol
 
@@ -150,10 +145,10 @@ in
       ''
         COMMIT_MSG_FILE=$1
         COMMIT_SOURCE=$2
-        SHA1=$3
 
         # NOTE that COMMIT_MSG_FILE only has comments when it's invoked interactively
         # meanwhile with `commit -m` it already contains the message
+        # claude always uses `commit -m`
         signature="Co-Authored-By: Claude <noreply@anthropic.com>"
         if [ -n "$CLAUDE" ]; then
         	if [ "$COMMIT_SOURCE" = "commit" ]; then
