@@ -1,9 +1,9 @@
-{ }:
 {
   plugins.vimtex = {
     enable = true;
   };
-  texlab = {
+  lsp.servers.texlab = {
+    enable = true;
     settings = {
       texlab = {
         build = {

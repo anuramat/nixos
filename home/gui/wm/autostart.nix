@@ -1,8 +1,8 @@
 { lib, pkgs, ... }:
 {
-  wayland.windowManager.sway.config = {
+  wayland.windowManager.sway = {
     systemd.xdgAutostart = true;
-    startup =
+    config.startup =
       let
         clip = lib.getExe pkgs.wl-clip-persist;
         killall = lib.getExe pkgs.killall;
