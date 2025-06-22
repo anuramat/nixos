@@ -44,10 +44,20 @@
     (mdformat.withPlugins (
       p: with p; [
         mdformat-myst
+        mdformat-footnote
+        mdformat-deflist
+        mdformat-frontmatter
+        # mdformat-simple-breaks # do not turn three dashes into 70
+        # mdformat-black
+        # mdformat-config
+        # mdformat-web
+        # mdformat-shfmt
+        # mdformat-gofmt
       ]
     ))
     nixfmt-rfc-style
     nodePackages.prettier # just in case
+    cbfmt # mdformat ought to be enough?
     shfmt # posix/bash/mksh
     stylua # lua
     treefmt # aggregator

@@ -19,7 +19,7 @@ in
     markdown = {
       cc = "+1";
       shiftwidth = 0;
-      tabstop = 3;
+      tabstop = 2;
       # TODO unmap gO
     };
     sh = {
