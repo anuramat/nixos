@@ -1,4 +1,5 @@
 {
+  # the only formatter I know that can do injection formatting
   plugins.conform-nvim = {
     enable = true;
     settings = {

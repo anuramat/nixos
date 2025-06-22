@@ -1,7 +1,10 @@
 { pkgs, ... }:
 {
   plugins = {
-    conform-nvim.settings.formatters_by_ft.nix = [ "nixfmt" ];
+    conform-nvim.settings.formatters_by_ft.nix = [
+      "nixfmt"
+      "injected"
+    ];
 
     lsp.servers = {
       statix = { }; # enable when they have pipes: <https://github.com/oppiliappan/statix/issues/88>
