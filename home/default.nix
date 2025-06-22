@@ -20,8 +20,8 @@
     ./editor.nix
     ./keyring.nix
     ./theme.nix
-    ./desktop
-    ./cli
+    ./gui
+    ./tui
   ];
 
   age = {
