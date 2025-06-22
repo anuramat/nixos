@@ -1,4 +1,9 @@
-{ lib, hax, ... }:
+{
+  lib,
+  hax,
+  pkgs,
+  ...
+}:
 let
   prompt = # markdown
     ''
@@ -140,7 +145,7 @@ in
     };
   };
   programs.git.hooks.prepare-commit-msg =
-    hax.common.gitHook
+    hax.common.gitHook pkgs
       # bash
       ''
         COMMIT_MSG_FILE=$1

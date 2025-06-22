@@ -93,7 +93,7 @@
 
       hooks = {
         pre-commit =
-          hax.common.gitHook
+          hax.common.gitHook pkgs
             # bash
             ''
               hook_name=$(basename "$0")
