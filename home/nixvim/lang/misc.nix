@@ -10,7 +10,7 @@
       ];
     };
 
-    plugins.lsp.servers = {
+    lsp.servers = {
       clangd.enable = true;
       rust_analyzer = {
         enable = true;

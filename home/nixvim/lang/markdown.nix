@@ -5,12 +5,15 @@
   ];
   plugins = {
     lsp.servers.marksman.enable = true;
-    lint.linters.lintersByFt.markdown = [
+    lint.lintersByFt.markdown = [
       "vale"
       # TODO more?
     ];
     conform-nvim.settings = {
-      formatters_by_ft.markdown = [ "mdformat" ];
+      formatters_by_ft.markdown = [
+        "mdformat"
+        "injected"
+      ];
       formatters = {
         mdformat = {
           "inherit" = true;
