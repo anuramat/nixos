@@ -32,7 +32,7 @@ rec {
     lib.concatStringsSep "\n" (lib.mapAttrsToList (formatAssignment root) cfg);
   gitHook =
     pkgs: main:
-    pkgs.writeShellScript # bash
+    pkgs.writeShellScript "hook" # bash
       ''
         hook_name=$(basename "$0")
         local=./.git/hooks/$hook_name

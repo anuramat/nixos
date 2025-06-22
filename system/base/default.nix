@@ -31,20 +31,13 @@
 
   hardware.enableAllFirmware = true; # as in "regardless of license"
 
+  # TODO why is this here and not home manager? remove the package also
   programs.iotop = {
     enable = true;
   };
 
-  # virtualization {{{1
+  # TODO check through virtualisation; also maybe we can move some of it
   virtualisation = {
-    virtualbox = {
-      host = {
-        enable = true;
-      };
-      guest = {
-        enable = true;
-      };
-    };
     # common container config files in /etc/containers
     containers.enable = true;
     podman = {
@@ -57,32 +50,31 @@
   };
   hardware.nvidia-container-toolkit = {
     enable = config.hardware.nvidia.enabled;
-    mount-nvidia-executables = true;
+    mount-nvidia-executables = true; # TODO ?
   };
 
-  # boot and tty {{{1
   # TODO remove values that mirror defaults
   boot = {
-    # silent boot, suggested by boot.initrd.verbose description:
+    # silent boot, taken from boot.initrd.verbose description:
     consoleLogLevel = 0;
     initrd = {
       verbose = false;
-      systemd.enable = true;
+      systemd.enable = true; # TODO idk why I have this
     };
     kernelParams = [
       "quiet"
       "udev.log_level=3"
     ];
-    plymouth.enable = true;
+    plymouth.enable = true; # rice
   };
   # autologin, tty prompt
+  # TODO check if this is the cleanest setup
   services.getty = {
     greetingLine = ''\l'';
     helpLine = "";
     autologinOnce = true;
   };
 
-  # networking {{{1
   networking = {
     firewall = {
       enable = true;
@@ -92,15 +84,11 @@
     };
   };
 
-  # BUG workaround 2025-06-11:  breaks rebuilds sometimes: <https://github.com/NixOS/nixpkgs/issues/180175>
-  systemd.services.NetworkManager-wait-online.enable = false;
-
   services.resolved = {
     enable = true;
-    # dnssec = "true"; # TODO breaks sometimes
+    # dnssec = "true"; # TODO breaks sometimes, try again with captive
   };
 
-  # ssh etc {{{1
   programs.ssh = {
     knownHostsFiles = cluster.hostKeysFiles;
     extraConfig =
@@ -133,5 +121,4 @@
       };
     };
   };
-  # }}}
 }
