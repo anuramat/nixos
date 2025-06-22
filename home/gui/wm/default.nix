@@ -12,7 +12,7 @@
       border = 3;
     in
     {
-      package = pkgs.swayfx;
+      # package = pkgs.swayfx;
       enable = true;
       checkConfig = true;
       wrapperFeatures.gtk = true;
