@@ -27,14 +27,14 @@ let
     ''${o.exec} ${killall} ${bemenu} || ${o.execCmd} "echo \"$(cd ${bookdir} && ${fd} -t f | ${bemenu} -p read -l 20)\" | xargs -rI{} ${zathura} '${bookdir}/{}'"'';
   drun =
     o:
-    ''${o.exec} ${killall} ${bemenu} || ${o.execCmd} "$(${j4} -d '${bemenu} -p drun' -t ${term} -x --no-generic)"'';
+    ''${o.exec} ${killall} ${bemenu} || ${o.execCmd} "$(${j4} -d '${bemenu} -p drun' -t ${term o} -x --no-generic)"'';
   todo_add =
     o:
     ''${o.exec} ${killall} ${bemenu} || ${o.execCmd} "$(echo ''' | ${bemenu} -p ${todo} -l 0 | xargs -I{} ${todo} add \"{}\")"'';
   todo_done =
     o:
     ''${o.exec} ${killall} ${bemenu} || ${o.execCmd} "$(${todo} ls | tac | ${bemenu} -p done | sed 's/^\s*//' | cut -d ' ' -f 1 | xargs ${todo} rm)"'';
-  lock = "loginctl lock-session";
+  lock = o: "${o.exec} loginctl lock-session";
 
   # Notifications
   invoke_notification = o: "${o.exec} ${makoctl} invoke";
@@ -51,7 +51,7 @@ let
   screencast_mouse = "exec killall --signal SIGINT || swaymsg -t get_tree | ${jq} -r '.. | (.nodes? // empty)[] | select(.pid and .visible) | .rect | \"\\(.x),\\(.y) \\(.width)x\\(.height)\"' | ${slurp} | xargs -I {} ${wf-recorder} -g \"{}\" -f \"~/vid/screen/$(date +%Y-%m-%d_%H-%M-%S).mp4\"";
 
   # Special keys - brightness
-  brightness =
+  brightnessFunc =
     o:
     let
       l = v: "${o.exec} ${pkgs.avizo}/bin/lightctl ${v}";
@@ -62,7 +62,7 @@ let
     };
 
   # Special keys - sound
-  sound =
+  soundFunc =
     o:
     let
       l = v: "${o.exec} ${pkgs.avizo}/bin/volumectl ${v}";
@@ -75,7 +75,7 @@ let
     };
 
   # Special keys - audio control
-  audio =
+  audioFunc =
     o:
     let
       l = v: "${o.exec} ${pkgs.playerctl}/bin/playerctl -p spotify ${v}";
@@ -111,32 +111,33 @@ in
 {
   wayland.windowManager.hyprland = {
     enable = true;
-    settings = {
-      windowrule = [
-        "float,title:^(foot-float)$"
-        "suppressevent maximize, class:.*"
-      ];
-      bind =
-        let
-          modifier = "SUPER";
-          mod2 = "CTRL";
-          o = {
-            exec = "exec,";
-            execCmd = "hyprctl dispatch exec";
-          };
-        in
-        [
-          "${modifier}, semicolon, exec, ${term o}"
+    settings =
+      let
+        modifier = "SUPER";
+        mod2 = "CTRL";
+        mod3 = "shift";
+        o = {
+          exec = "exec,";
+          execCmd = "hyprctl dispatch exec";
+        };
+      in
+      {
+        windowrule = [
+          "float,title:^(foot-float)$"
+          "suppressevent maximize, class:.*"
+        ];
+        bind = [
+          "${modifier}, semicolon, ${term o}"
           "${modifier} ${mod2}, semicolon, ${term_float o}"
           "${modifier}, apostrophe, ${floatNotes o}"
           "${modifier}, q, killactive"
-          "${modifier}, ${mod2}, q, ${lock o}"
-          "${modifier}, ${mod3}, q, ${sleep o}"
+          "${modifier} ${mod2}, q, ${lock o}"
+          "${modifier} ${mod3}, q, ${sleep o}"
           "${modifier}, space, ${drun o}"
           "${modifier}, r, ${books o}"
           "${modifier}, t, ${todo_add o}"
-          "${modifier}, ${mod2}, t, ${todo_done o}"
-          "${modifier}, ${mod2}, m, togglefloating"
+          "${modifier} ${mod2}, t, ${todo_done o}"
+          "${modifier} ${mod2}, m, togglefloating"
 
           "${modifier}, P, pseudo,"
           "${modifier}, J, togglesplit,"
@@ -172,26 +173,36 @@ in
           # bind = $mainMod, S, togglespecialworkspace, magic
           # bind = $mainMod SHIFT, S, movetoworkspace, special:magic
 
-          # # Laptop multimedia keys for volume and LCD brightness
-          # bindel = ,XF86AudioRaiseVolume, exec, wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+
-          # bindel = ,XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
-          # bindel = ,XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
-          # bindel = ,XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
-          # bindel = ,XF86MonBrightnessUp, exec, brightnessctl -e4 -n2 set 5%+
-          # bindel = ,XF86MonBrightnessDown, exec, brightnessctl -e4 -n2 set 5%-
-
           # # Requires playerctl
-          # bindl = , XF86AudioNext, exec, playerctl next
-          # bindl = , XF86AudioPause, exec, playerctl play-pause
-          # bindl = , XF86AudioPlay, exec, playerctl play-pause
-          # bindl = , XF86AudioPrev, exec, playerctl previous
-
         ];
-      bindm = [
-        "${modifier}, mouse:272, movewindow"
-        "${modifier}, mouse:273, resizewindow"
-      ];
-    };
+        bindl =
+          let
+            audio = audioFunc o;
+          in
+          [
+            ", XF86AudioNext, ${audio.next}"
+            ", XF86AudioPause, ${audio.stop}"
+            ", XF86AudioPlay, ${audio.playPause}"
+            ", XF86AudioPrev, ${audio.prev}"
+          ];
+        bindel =
+          let
+            sound = soundFunc o;
+            brightness = brightnessFunc o;
+          in
+          [
+            ",XF86AudioRaiseVolume, ${sound.up}"
+            ",XF86AudioLowerVolume, ${sound.down}"
+            ",XF86AudioMute, ${sound.mute}"
+            ",XF86AudioMicMute, ${sound.muteMic}"
+            ",XF86MonBrightnessUp, ${brightness.up}"
+            ",XF86MonBrightnessDown, ${brightness.down}"
+          ];
+        bindm = [
+          "${modifier}, mouse:272, movewindow"
+          "${modifier}, mouse:273, resizewindow"
+        ];
+      };
   };
 
   wayland.windowManager.sway.config = {
@@ -203,6 +214,9 @@ in
           exec = "exec";
           execCmd = "swaymsg exec";
         };
+        sound = soundFunc o;
+        brightness = brightnessFunc o;
+        audio = audioFunc o;
       in
       {
         # Terminal and basic commands
@@ -309,8 +323,8 @@ in
         "XF86AudioNext" = audio.next;
         "XF86AudioStop" = audio.stop;
         "XF86AudioPlay" = audio.playPause;
-        "XF86Wlan" = wlan;
-        "XF86Bluetooth" = bluetooth;
+        "XF86Wlan" = wlan o;
+        "XF86Bluetooth" = bluetooth o;
       };
   };
 }
