@@ -30,5 +30,6 @@
         name = "stella";
       in
       "${pkgs.base16-schemes}/share/themes/${name}.yaml";
+    # ./elflord.yaml;
   };
 }
