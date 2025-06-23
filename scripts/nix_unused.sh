@@ -40,5 +40,3 @@ done < <(
 	fd -ae nix | grep '/default.nix$' | xargs -I{} dirname {}
 	fd -ae nix | rg --no-config -v '(/flake\.nix$|/default\.nix)'
 )
-
-echo finished

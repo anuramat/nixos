@@ -1,5 +1,13 @@
-{ pkgs, ... }:
+{ pkgs, hax, ... }:
 {
+  files = hax.vim.files.ftp {
+    markdown = {
+      cc = "+1";
+      shiftwidth = 0;
+      tabstop = 2;
+      # TODO unmap gO
+    };
+  };
   extraPackages = with pkgs; [
     vale
   ];
@@ -21,5 +29,13 @@
         };
       };
     };
+  };
+  extraFiles = hax.vim.files.injections {
+    markdown = # query
+      ''
+        ;; extends
+
+        (fenced_code_block (code_fence_content) @code_block.inner) @code_block.outer
+      '';
   };
 }

@@ -1,4 +1,11 @@
+{ hax, config, ... }:
 {
+  files = hax.vim.files.ftp {
+    lua = {
+      fo = config.opts.formatoptions;
+    };
+  };
+
   plugins = {
     conform-nvim.settings.formatters_by_ft.lua = [ "stylua" ];
 

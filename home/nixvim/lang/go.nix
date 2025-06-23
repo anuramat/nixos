@@ -1,4 +1,11 @@
+{ hax, ... }:
 {
+  files = hax.vim.files.ftp {
+    go = {
+      et = false;
+      ts = 4;
+    };
+  };
   # TODO ray-x/go.nvim
   plugins.lsp.servers.gopls = {
     enable = true;

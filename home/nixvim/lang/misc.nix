@@ -1,4 +1,9 @@
-{ pkgs, ... }:
+{
+  hax,
+  config,
+  pkgs,
+  ...
+}:
 {
   extraPackages = with pkgs; [
     hadolint
@@ -18,6 +23,18 @@
         installRustc = false;
       };
       zls.enable = true;
+    };
+  };
+
+  files = hax.vim.files.ftp {
+    vim = {
+      fo = config.opts.formatoptions;
+    };
+  };
+
+  filetype = {
+    filename = {
+      "todo.txt" = "todotxt";
     };
   };
 }

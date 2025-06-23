@@ -1,10 +1,15 @@
 { lib, ... }:
 let
-  lua = action: { __raw = action; };
+  inherit (lib) id;
+  lua = action: { __raw = action; }; # mentioned in nix injections
+  mkFile =
+    prefix: suffix: f: input:
+    with lib;
+    mapAttrs' (n: v: nameValuePair (prefix + n + suffix) (f v)) input;
 in
 {
   inherit lua;
-  luaf = action: (lua "function() ${action} end");
+  luaf = action: (lua "function() ${action} end"); # mentioned in nix injections
   set =
     key: action: desc:
     let
@@ -28,7 +33,16 @@ in
       else
         throw "type ${type} is invalid for vim keymaps"
     );
-  mkFTP =
-    with lib;
-    plugins: mapAttrs' (n: v: nameValuePair "after/ftplugin/${n}.lua" { localOpts = v; }) plugins;
+  # signature: files.* { python = "text"; }
+  files = {
+    ftp = mkFile "after/ftplugin/" ".lua" (v: {
+      localOpts = v;
+    });
+    injections = mkFile "after/queries/" "/injections.scm" (v: {
+      text = v;
+    });
+    textobjects = mkFile "after/queries/" "/textobjects.scm" (v: {
+      text = v;
+    });
+  };
 }

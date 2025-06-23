@@ -8,7 +8,7 @@ in
       "todo.txt" = "todotxt";
     };
   };
-  files = hax.vim.mkFTP {
+  files = hax.vim.files.ftp {
     go = {
       et = false;
       ts = 4;

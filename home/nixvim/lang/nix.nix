@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, hax, ... }:
 {
   plugins = {
     conform-nvim.settings.formatters_by_ft.nix = [
@@ -22,5 +22,23 @@
         };
       };
     };
+  };
+  extraFiles = hax.vim.files.injections {
+    nix = # query
+      ''
+        ;; extends
+
+        (apply_expression
+          function: (_) @_func
+          argument: [
+            (string_expression
+              ((string_fragment) @injection.content
+                (#set! injection.language "lua")))
+            (indented_string_expression
+              ((string_fragment) @injection.content
+                (#set! injection.language "lua")))
+          ]
+          (#match? @_func "(^|\\.)luaf?$"))
+      '';
   };
 }

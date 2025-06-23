@@ -1,6 +1,6 @@
 {
   imports = [
-    ./bash.nix
+    ./sh.nix
     ./go.nix
     ./haskell.nix
     ./lua.nix

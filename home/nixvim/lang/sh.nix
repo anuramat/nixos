@@ -1,4 +1,12 @@
+{ hax, config, ... }:
 {
+  files = hax.vim.files.ftp {
+    sh = {
+      ts = 4;
+      et = false;
+      fo = config.opts.formatoptions;
+    };
+  };
   plugins.lsp.servers.bashls = {
     enable = true;
     settings = {
