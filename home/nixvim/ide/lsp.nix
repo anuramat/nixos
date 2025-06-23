@@ -11,8 +11,16 @@
       (set "q" (lua "vim.diagnostic.setqflist") "Diagnostic QF List")
       (set "l" (lua "vim.lsp.codelens.run") "CodeLens")
     ];
-  plugins.lsp = {
-    enable = true;
-    inlayHints = false;
+  plugins = {
+    lsp = {
+      enable = true;
+      inlayHints = false;
+    };
+    otter = {
+      enable = true;
+      settings = {
+        handle_leading_whitespace = true;
+      };
+    };
   };
 }

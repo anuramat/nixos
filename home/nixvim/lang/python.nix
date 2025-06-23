@@ -65,9 +65,6 @@ in
         virt_text_output = false;
       };
     };
-    otter = {
-      enable = true;
-    };
     quarto = {
       enable = true;
       settings = {
@@ -85,9 +82,6 @@ in
   keymaps = [
     (set "d" "MoltenDelete" "delete ipynb cell")
     (set "i" (file |> mkInit |> luaf) "init molten and start otter")
-
-    (set "o" "OtterActivate" "activate otter")
-    (set "O" "OtterDeactivate" "deactivate otter")
 
     (set "c" (luaf "require('quarto').run_cell()") "run selected cell")
     (set "a" (luaf "require('quarto').run_above()") "run all cells above")
