@@ -1,8 +1,7 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 {
   stylix = {
     opacity.popups = 0.8;
-    polarity = "dark";
     cursor = {
       name = "Hackneyed";
       package = pkgs.hackneyed;
@@ -51,8 +50,8 @@
         # windows-nt -- the highest contrast among windows, elf kinda
 
         # xcode-dusk -- grey + bright colors, very cool
-        name = "windows-nt";
+        name = "pandora";
       in
-      "${pkgs.base16-schemes}/share/themes/${name}.yaml";
+      "${inputs.tt-schemes}/base24/${name}.yaml";
   };
 }

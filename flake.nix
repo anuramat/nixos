@@ -127,7 +127,10 @@
     nil.url = "github:oxalica/nil/main";
     codex.url = "github:anuramat/codex";
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
-    tt-schemes.url = "github:tinted-theming/schemes";
+    tt-schemes = {
+      url = "github:tinted-theming/schemes";
+      flake = false;
+    };
   };
 }
 # vim: fdl=0 fdm=marker
