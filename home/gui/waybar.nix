@@ -84,7 +84,7 @@
         memory = {
           format = "{}% ";
         };
-        mode = "overlay";
+        mode = "dock";
         modules-center = [
           "sway/workspaces"
           "sway/scratchpad"
