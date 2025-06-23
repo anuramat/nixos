@@ -18,6 +18,10 @@
           command = "${pkgs.kanshi}/bin/kanshictl reload";
           always = true;
         }
+        {
+          command = "systemctl restart --user waybar.service";
+          always = true;
+        }
       ];
   };
 }
