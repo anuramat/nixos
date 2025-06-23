@@ -26,6 +26,7 @@
         # stella black-metal tokyo-night-dark
         name = "stella";
       in
-      "${pkgs.base16-schemes}/share/themes/${name}.yaml";
+      # "${pkgs.base16-schemes}/share/themes/${name}.yaml";
+      ./elflord.yaml;
   };
 }
