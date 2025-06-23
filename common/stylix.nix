@@ -27,7 +27,8 @@
         # stella -- pastel purple bg, otherwise dracula vibes
         # black-metal -- mostly black and white, shades of very faint pastel red and blue otherwise
         # paraiso -- pastel burgundy bg, almost monochrome
-        name = "stella";
+        # greenscreen -- green monochrome
+        name = "greenscreen";
       in
       "${pkgs.base16-schemes}/share/themes/${name}.yaml";
     # ./elflord.yaml;
