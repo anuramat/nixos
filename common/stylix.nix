@@ -23,10 +23,12 @@
     };
     base16Scheme =
       let
-        # stella black-metal tokyo-night-dark
+        # stella tokyo-night-dark paraiso
+        # stella --
+        # black-metal -- mostly black and white, pastel blue, red
+        # paraiso -- pastel burgundy bg, almost monochrome
         name = "stella";
       in
-      # "${pkgs.base16-schemes}/share/themes/${name}.yaml";
-      ./elflord.yaml;
+      "${pkgs.base16-schemes}/share/themes/${name}.yaml";
   };
 }
