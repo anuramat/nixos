@@ -19,6 +19,7 @@
           always = true;
         }
         {
+          # shouldn't be necessary but sometimes waybar bugs out
           command = "systemctl restart --user waybar.service";
           always = true;
         }
