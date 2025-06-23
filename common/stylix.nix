@@ -23,26 +23,34 @@
     };
     base16Scheme =
       let
-        # stella -- pastel purple bg, otherwise dracula vibes
         # black-metal -- mostly black and white, shades of very faint pastel red and blue otherwise
-        # paraiso -- pastel burgundy bg, almost monochrome
-        # greenscreen -- green monochrome
+        # saga -- almost b/w
         # grayscale-dark -- duh
-        # tokyo-night-dark -- colder dracula
+
+        # greenscreen -- green monochrome
+        # digital-rain -- tons of green
+
+        # paraiso -- pastel burgundy bg, almost monochrome
         # pandora -- pink/burgundy/red mostly
         # caroline -- warm tones, red/brown
-        # digital-rain -- tons of green
-        # eris -- navy + pastel red
         # heetch -- red with purple bg
         # tarot -- red, burgundy, purple, kinda like darker heetch
-        # saga -- almost b/w
-        # onedark-dark -- retro vibes, like elf
-        # pasque -- kinda like helix, purple mostly
+
+        # eris -- navy + pastel red
         # pinky -- very colorful, but looks mostly red/blue
-        # pop -- darker elflord kind?
-        # windows-nt -- the highest contrast among windowsk, reminds me of elflord
-        # shades-of-purple
-        # zenbones
+
+        # stella -- pastel purple bg, otherwise dracula vibes
+        # pasque -- kinda like helix, purple mostly
+        # shades-of-purple -- like colorful helix
+
+        # zenbones -- almost like shuffled dracula
+        # tokyo-night-dark -- colder dracula
+
+        # onedark-dark -- retro vibes, like elf
+        # pop -- kinda like elf, but darker
+        # windows-nt -- the highest contrast among windows, elf kinda
+
+        # xcode-dusk -- grey + bright colors, very cool
         name = "windows-nt";
       in
       "${pkgs.base16-schemes}/share/themes/${name}.yaml";
