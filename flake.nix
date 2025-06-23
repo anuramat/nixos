@@ -126,6 +126,7 @@
     mcp-nixos.url = "github:utensils/mcp-nixos";
     nil.url = "github:oxalica/nil/main";
     codex.url = "github:anuramat/codex";
+    spicetify-nix.url = "github:Gerg-L/spicetify-nix";
   };
 }
 # vim: fdl=0 fdm=marker

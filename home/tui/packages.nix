@@ -5,7 +5,6 @@
     # tops
     ctop # containers
     gotop
-    iotop # detailed io info, requires sudo
     nvitop # nvidia gpu
     podman-tui # podman container status
     nvtopPackages.full # top for GPUs

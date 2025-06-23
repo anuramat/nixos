@@ -1,16 +1,16 @@
 {
   config,
   hax,
-  pkgs,
   lib,
-  user,
   inputs,
   ...
 }:
 {
-  imports = [
-    inputs.nixvim.homeModules.nixvim
-    inputs.agenix.homeManagerModules.default
+  imports = with inputs; [
+    nixvim.homeModules.nixvim
+    agenix.homeManagerModules.default
+    spicetify-nix.homeManagerModules.spicetify
+    ./spotify.nix
     ./lang
     ./misc.nix
     ./email.nix

@@ -13,8 +13,11 @@
     ./nix.nix
     ./user.nix
     ./home.nix
+    ./rice.nix
+    ./net.nix
   ];
 
+  # TODO move?
   time.timeZone = user.tz;
   i18n.defaultLocale = user.locale;
 
@@ -29,12 +32,7 @@
     noAutostart = true;
   };
 
-  hardware.enableAllFirmware = true; # as in "regardless of license"
-
-  # TODO why is this here and not home manager? remove the package also
-  programs.iotop = {
-    enable = true;
-  };
+  boot.initrd.systemd.enable = true; # TODO idk why I have this
 
   # TODO check through virtualisation; also maybe we can move some of it
   virtualisation = {
@@ -53,72 +51,10 @@
     mount-nvidia-executables = true; # TODO ?
   };
 
-  # TODO remove values that mirror defaults
-  boot = {
-    # silent boot, taken from boot.initrd.verbose description:
-    consoleLogLevel = 0;
-    initrd = {
-      verbose = false;
-      systemd.enable = true; # TODO idk why I have this
-    };
-    kernelParams = [
-      "quiet"
-      "udev.log_level=3"
-    ];
-    plymouth.enable = true; # rice
-  };
-  # autologin, tty prompt
-  # TODO check if this is the cleanest setup
-  services.getty = {
-    greetingLine = ''\l'';
-    helpLine = "";
-    autologinOnce = true;
-  };
-
-  networking = {
-    firewall = {
-      enable = true;
-    };
-    networkmanager = {
-      enable = true;
-    };
-  };
-
-  services.resolved = {
+  services.getty.autologinOnce = true; # autologin on boot on the first tty (it's encrypted anyway)
+  hardware.enableAllFirmware = true; # as in "regardless of license"
+  programs.iotop = {
+    # setcap wrapper to use rootless
     enable = true;
-    # dnssec = "true"; # TODO breaks sometimes, try again with captive
-  };
-
-  programs.ssh = {
-    knownHostsFiles = cluster.hostKeysFiles;
-    extraConfig =
-      let
-        prefix = user.username + "-";
-        mkAliasEntry =
-          hostname: # ssh_config
-          ''
-            Host ${lib.strings.removePrefix prefix hostname}
-              HostName ${hostname}
-          '';
-      in
-      cluster.hostnames
-      |> lib.filter (x: lib.strings.hasPrefix prefix x)
-      |> map mkAliasEntry
-      |> lib.strings.intersperse "\n"
-      |> lib.concatStrings;
-  };
-  services = {
-    fail2ban.enable = true; # intrusion prevention
-    tailscale.enable = true;
-    openssh = {
-      enable = true;
-      ports = [ 22 ];
-      settings = {
-        PasswordAuthentication = false;
-        KbdInteractiveAuthentication = false;
-        PermitRootLogin = "no";
-        PrintLastLog = false;
-      };
-    };
   };
 }
