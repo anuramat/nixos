@@ -6,7 +6,7 @@ LINKDIR=$(realpath "$1")
 lndir() (
 	source="$1"
 	directory="$2"
-	printf "$2: %s\n" "$(find "$1" -maxdepth 1 -mindepth 1 | xargs -n 1 basename | tr '\n' ' ')"
+	printf "$2: %s\n" "$(find "$1" -maxdepth 1 -mindepth 1 -print0 | xargs -0n 1 basename | tr '\n' ' ')"
 	[ -z "$directory" ] && {
 		echo "can't link $1: target not set"
 		return 1

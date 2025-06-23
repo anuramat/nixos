@@ -2,7 +2,7 @@
 
 commit=$(git log -1 --format=%H CLAUDE.md)
 
-cat <<EOF
+cat << EOF
 
 # Project memory update
 
@@ -15,10 +15,10 @@ $commit
 
 and the corresponding diff summary is:
 
-$(git diff $commit --numstat)
+$(git diff "$commit" --numstat)
 
 EOF
-cat <<'EOF'
+cat << 'EOF'
 
 If there are no significant changes (the only files edited are e.g. formatter
 settings, `.gitignore`, `README.md`), do nothing. Otherwise, start exploring the changes
