@@ -1,6 +1,5 @@
 { lib, ... }:
 let
-  inherit (lib) id;
   lua = action: { __raw = action; }; # mentioned in nix injections
   mkFile =
     prefix: suffix: f: input:
