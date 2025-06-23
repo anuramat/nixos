@@ -23,9 +23,9 @@
     };
     base16Scheme =
       let
-        # stella tokyo-night-dark paraiso
-        # stella --
-        # black-metal -- mostly black and white, pastel blue, red
+        # tokyo-night-dark
+        # stella -- pastel purple bg, otherwise dracula vibes
+        # black-metal -- mostly black and white, shades of very faint pastel red and blue otherwise
         # paraiso -- pastel burgundy bg, almost monochrome
         name = "stella";
       in
