@@ -1,4 +1,7 @@
-scheme: "elflord"
+system: "base16"
+name: "elflord"
+author: "Ron Aaron <ron@ronware.org>"
+variant: "dark"
 palette:
   # Dark to light monotones
   base00: "#000000" # Default background - pure black for maximum contrast
