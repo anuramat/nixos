@@ -50,8 +50,10 @@
         # windows-nt -- the highest contrast among windows, elf kinda
 
         # xcode-dusk -- grey + bright colors, very cool
-        name = "pandora";
+
+        name = "saga";
       in
-      "${inputs.tt-schemes}/base24/${name}.yaml";
+      # "${inputs.tt-schemes}/base24/${name}.yaml";
+      ./elflord.yaml;
   };
 }
