@@ -9,10 +9,13 @@ let
     position = "0,0";
     scale = 1.5;
   };
-  ext = {
+  home = {
     criteria = "Dell Inc. DELL S2722QC 192SH24";
     scale = 1.5;
     adaptiveSync = false;
+  };
+  generic = {
+    criteria = "*";
   };
 
   profiles = {
@@ -21,14 +24,18 @@ let
     ];
     ll7-home = [
       (ll7 // { scale = 2.0; })
-      (ext // { position = "1600,0"; })
+      (home // { position = "1600,0"; })
+    ];
+    ll7-generic = [
+      ll7
+      (generic // { position = "0,-2000"; })
     ];
     t480 = [
       t480
     ];
     t480-home = [
       t480
-      (ext // { position = "0,-2000"; })
+      (home // { position = "0,-2000"; })
     ];
   };
 in

@@ -6,12 +6,13 @@ let
     "DP-2"
     "DP-3"
     "HDMI-A-2"
+    "HDMI-A-3"
   ];
 
   mkAssign =
     output: numbers:
     map (n: {
-      workspace = "${toString n}:${n |> lib.mod 10 |> toString}";
+      workspace = "${toString n}:${n |> (m: lib.mod m 10) |> toString}";
       output = output;
     }) numbers;
 in
