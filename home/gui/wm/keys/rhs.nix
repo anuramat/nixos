@@ -99,6 +99,14 @@ let
     };
 
   float_notes = "${term.float} --working-directory=\"$HOME/notes\" -e bash $EDITOR ~/notes/scratchpad.md";
+
+  cycle_outputs =
+    let
+      jq = getExe pkgs.jq;
+      jq_expr = ". as $arr | (map(.focused) | index(true)) as $focused_idx | if $focused_idx == (length - 1) then $arr[0].name else $arr[$focused_idx + 1].name end";
+      get_next_output = "swaymsg -t get_outputs | jq -r '${jq_expr}'";
+    in
+    "exec swaymsg focus output $(${get_next_output})";
 in
 {
   inherit
@@ -108,5 +116,6 @@ in
     pickers
     notifications
     ctl
+    cycle_outputs
     ;
 }

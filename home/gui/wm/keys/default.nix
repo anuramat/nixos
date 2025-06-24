@@ -16,6 +16,7 @@ let
   mod4 = "alt";
 
   inherit (import ./rhs.nix args)
+    get_next_output
     float_notes
     term
     screen
@@ -86,7 +87,7 @@ in
       "${modifier}+${mod2}+${down}" = "move down 200 ppt";
       "${modifier}+${mod2}+${up}" = "move up 200 ppt";
       "${modifier}+${mod2}+${right}" = "move right 200 ppt";
-      "${modifier}+${mod2}+tab" = "move workspace back_and_forth";
+      "${modifier}+${mod2}+tab" = get_next_output;
       "${modifier}+${mod2}+c" = "move position cursor";
 
       # Moving workspaces

@@ -101,7 +101,7 @@ in
           let
             swaymsg = "${config.wayland.windowManager.sway.package}/bin/swaymsg";
           in
-          pkgs.writeShellScript "move_workspaces" # bash
+          pkgs.writeShellScript "sway_move_workspaces" # bash
             ''
               outputs=$(${swaymsg} -t get_outputs | jq 'map(.name).[]' -r)
               external=$(grep -vF "${out.int}" <<< "$outputs")
