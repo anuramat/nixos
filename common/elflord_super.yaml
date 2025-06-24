@@ -1,0 +1,23 @@
+system: "base16"
+name: "elflord"
+author: "Ron Aaron <ron@ronware.org>"
+variant: "dark"
+palette:
+  # Colorful dark to light progression - no boring grays!
+  base00: "#001122" # Deep navy background with subtle blue tint
+  base01: "#2d1b69" # Dark purple for cursor line/selections
+  base02: "#4a0e4e" # Dark magenta for stronger selections
+  base03: "#008080" # Dark teal for comments/disabled - keeping the signature color
+  base04: "#ff6b35" # Bright orange for status elements
+  base05: "#00ffcc" # Electric teal for main foreground text
+  base06: "#ff44ff" # Hot pink for highlighted foreground
+  base07: "#ffffff" # Pure white for maximum contrast elements
+  # Accent colors - retro rainbow palette
+  base08: "#ff0000" # Red - errors, operators, special chars
+  base09: "#ff00ff" # Orange/Pink - constants, numbers (using magenta for retro feel)
+  base0A: "#ffff00" # Yellow - strings, search highlights
+  base0B: "#00ff00" # Green - types, questions
+  base0C: "#00ffff" # Cyan/Teal - identifiers, normal text (signature elflord color)
+  base0D: "#5c5cff" # Blue - comments, underlined text
+  base0E: "#cd00cd" # Purple/Magenta - preprocessor, constants
+  base0F: "#aa4444" # Brown/Dark Red - statements, keywords
