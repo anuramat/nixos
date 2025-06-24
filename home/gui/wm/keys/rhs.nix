@@ -101,7 +101,7 @@ let
 
   float_notes = "${term.float} --working-directory=\"$HOME/notes\" -e bash $EDITOR ~/notes/scratchpad.md";
 
-  cycle_outputs =
+  cycle =
     let
       jq_expr = hax.common.join ''
         sort_by(.name) as $outs | $outs |
@@ -109,9 +109,12 @@ let
         if . == ($outs | length) - 1 then $outs[0] else $outs[. + 1] end |
         .name
       '';
-      get_next_output = "swaymsg -t get_outputs | ${getExe pkgs.jq} -r '${jq_expr}'";
+      next_output = "$(swaymsg -t get_outputs | ${getExe pkgs.jq} -r '${jq_expr}')";
     in
-    "exec swaymsg focus output $(${get_next_output})";
+    {
+      focus = "exec swaymsg focus output ${next_output}";
+      move = "exec swaymsg move output ${next_output}";
+    };
 in
 {
   inherit
@@ -121,6 +124,6 @@ in
     pickers
     notifications
     ctl
-    cycle_outputs
+    cycle
     ;
 }

@@ -10,7 +10,7 @@ let
 in
 {
   keymaps = [
-    (set "<leader>u" "<cmd>UndotreeToggle<cr>" "Undotree")
+    (set "<leader>u" "UndotreeToggle" "Undotree")
   ];
 
   plugins = {

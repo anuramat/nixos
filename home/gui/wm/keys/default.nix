@@ -16,7 +16,7 @@ let
   mod4 = "alt";
 
   inherit (import ./rhs.nix args)
-    cycle_outputs
+    cycle
     float_notes
     term
     screen
@@ -87,7 +87,7 @@ in
       "${modifier}+${mod2}+${down}" = "move down 200 ppt";
       "${modifier}+${mod2}+${up}" = "move up 200 ppt";
       "${modifier}+${mod2}+${right}" = "move right 200 ppt";
-      "${modifier}+${mod2}+tab" = cycle_outputs;
+      "${modifier}+${mod2}+tab" = cycle.move;
       "${modifier}+${mod2}+c" = "move position cursor";
 
       # Moving workspaces
@@ -103,7 +103,7 @@ in
       "${modifier}+${mod4}+${right}" = "resize grow width 50 px";
 
       # Switching between workspaces
-      "${modifier}+tab" = "workspace back_and_forth";
+      "${modifier}+tab" = cycle.focus;
       "${modifier}+1" = "workspace 1:1";
       "${modifier}+2" = "workspace 2:2";
       "${modifier}+3" = "workspace 3:3";
