@@ -1,4 +1,9 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 let
   WSs =
     let
@@ -43,33 +48,11 @@ in
               inherit workspace output;
             }) WSs;
         in
-        assign out.int WSs.int ++ assign out.ext WSs.out;
+        assign out.int WSs.int ++ assign out.ext WSs.ext;
     };
   };
   services.kanshi = {
     enable = true;
-    extraConfig =
-      let
-        moveWSs =
-          pkgs.writeShellScript "move_workspaces" # bash
-            ''
-              internal="${out.int}"
-              external=$(swaymsg -t get_outputs | jq 'map(.name).[]' -r | grep -vF "$internal")
-              [[ $(wc -l <<< "$external") == 1 ]] || {
-              	echo "more than one external output connected, exiting"
-              	exit 0
-              }
-
-              outWSs=(${builtins.concatStringsSep " " WSs.out})
-              focused_ws=$(swaymsg -t get_workspaces | jq '.[] | select(.focused == true).name' -r)
-
-              for i in "''${outWSs[@]}"; do
-              	swaymsg workspace "$i", move workspace to output "$external"
-              done
-              swaymsg workspace "$focused_ws"
-            '';
-      in
-      "exec ${moveWSs}";
     settings =
       let
         profiles =
@@ -112,11 +95,42 @@ in
               (home // { position = "0,-2000"; })
             ];
           };
+
+        # NOTE that we could've used the output name, if we didn't have the "generic" profile with a wildcard
+        moveWSs =
+          let
+            swaymsg = "${config.wayland.windowManager.sway.package}/bin/swaymsg";
+          in
+          pkgs.writeShellScript "move_workspaces" # bash
+            ''
+              outputs=$(${swaymsg} -t get_outputs | jq 'map(.name).[]' -r)
+              external=$(grep -vF "${out.int}" <<< "$outputs")
+
+              grep -qF "${out.int}" <<< "$outputs" || {
+                echo "internal output ${out.int} not found"
+                exit 1
+              }
+              n_external=$(wc -l <<< "$external")
+              (( n_external == 1 )) || {
+              	echo "$n_external outputs, expected 2:"
+                echo "$outputs"
+              	exit 0
+              }
+
+              outWSs=(${builtins.concatStringsSep " " WSs.ext})
+              focused_ws=$(${swaymsg} -t get_workspaces | jq '.[] | select(.focused == true).name' -r)
+
+              for i in "''${outWSs[@]}"; do
+              	${swaymsg} workspace "$i", move workspace to output "$external"
+              done
+              ${swaymsg} workspace "$focused_ws"
+            '';
       in
       lib.mapAttrsToList (n: v: {
         profile = {
           name = n;
           outputs = v;
+          exec = [ (toString moveWSs) ];
         };
       }) profiles;
   };
