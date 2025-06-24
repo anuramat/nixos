@@ -3,7 +3,6 @@ name: "elflord"
 author: "Ron Aaron <ron@ronware.org>"
 variant: "dark"
 palette:
-  # Dark to light monotones
   base00: "#000000" # Default background - pure black for maximum contrast
   base01: "#3a3a3a" # Lighter background (cursor line, etc.)
   base02: "#666666" # Selection background 
@@ -12,7 +11,6 @@ palette:
   base05: "#e5e5e5" # Default foreground - light grey
   base06: "#ffffff" # Light foreground (not often used)
   base07: "#ffffff" # Lightest foreground - pure white
-  # Accent colors - retro rainbow palette
   base08: "#ff0000" # Red - errors, operators, special chars
   base09: "#ff00ff" # Orange/Pink - constants, numbers (using magenta for retro feel)
   base0A: "#ffff00" # Yellow - strings, search highlights
