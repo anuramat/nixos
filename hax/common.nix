@@ -5,6 +5,7 @@ with builtins;
 rec {
   readLines = v: v |> readFile |> splitString "\n" |> filter (x: x != "");
   getSchema = attrsets.mapAttrsRecursive (path: v: typeOf (v));
+  join = s: with lib; s |> splitString "\n" |> concatStringsSep " ";
   getMatches =
     patterns: x:
     mapAttrs (

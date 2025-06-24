@@ -2,6 +2,7 @@
   lib,
   config,
   pkgs,
+  hax,
   ...
 }:
 let
@@ -102,9 +103,13 @@ let
 
   cycle_outputs =
     let
-      jq = getExe pkgs.jq;
-      jq_expr = ". as $arr | (map(.focused) | index(true)) as $focused_idx | if $focused_idx == (length - 1) then $arr[0].name else $arr[$focused_idx + 1].name end";
-      get_next_output = "swaymsg -t get_outputs | jq -r '${jq_expr}'";
+      jq_expr = hax.common.join ''
+        sort_by(.name) as $outs | $outs |
+        map(.focused) | index(true) |
+        if . == ($outs | length) - 1 then $outs[0] else $outs[. + 1] end |
+        .name
+      '';
+      get_next_output = "swaymsg -t get_outputs | ${getExe pkgs.jq} -r '${jq_expr}'";
     in
     "exec swaymsg focus output $(${get_next_output})";
 in
