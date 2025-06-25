@@ -76,7 +76,8 @@ gclone() {
 
 	for repo in $repos; do
 		(
-			local -r owner=$(gh repo view "$repo" --json owner --jq '.owner.login') || return 1
+			local owner
+			owner=$(gh repo view "$repo" --json owner --jq '.owner.login') || return 1
 			__cd_gh_owner "$owner" || return 1
 			gh repo clone "$repo"
 		)
@@ -198,20 +199,15 @@ up() (
 	echo "status:$prompt"
 )
 
-# XXX checked
-__gh_user() {
-	# WARN this might fail spectacularly
-	gh auth status --active | grep -oP 'account \K\S+'
-}
-
 # XXX checked ok
 gfork() {
 	local -r repo=$1
-	(
-		__cd_gh_owner "$(__gh_user)" || return 1
-		gh repo fork "$repo" --default-branch-only --clone
-		cd "$(basename "$repo")" || return 1
-	)
+	local auth_output
+	auth_output=$(gh auth status --active) || return 1
+	local user=$(grep -oP 'account \K\S+' <<< "$auth_output")
+	__cd_gh_owner "$(__gh_user)" || return 1
+	gh repo fork "$repo" --default-branch-only --clone
+	cd "$(basename "$repo")" || return 1 # return to stfu the linter
 }
 
 # XXX checked ok
