@@ -1,15 +1,21 @@
 #!/usr/bin/env bash
 
+# custom block
+rw_dirs=(/etc/nixos)
+export CLAUDE=true # this is used in git hooks
+
+rw_dirs+=(/tmp "$XDG_CONFIG_HOME/claude" "$PWD" /etc/nixos "$HOME/.claude.json") # necessary stuff
+
 export XDG_DATA_HOME=$(mktemp -d)
 export XDG_STATE_HOME=$(mktemp -d)
 export XDG_CACHE_HOME=$(mktemp -d)
-export XDG_RUNTIME_DIR=$(mktemp -d) # tmux needs this one
+export XDG_RUNTIME_DIR=$(mktemp -d)
 
-export CLAUDE=true
-bwrap --ro-bind / / --dev /dev \
-	--bind /tmp /tmp \
-	--bind "$HOME/.claude" "$HOME/.claude" \
-	--bind "$HOME/.claude.json" "$HOME/.claude.json" \
-	--bind "$PWD" "$PWD" \
-	--bind /etc/nixos /etc/nixos \
-	claude --dangerously-skip-permissions "$@"
+args=()
+for i in "${rw_dirs[@]}"; do
+	args+=(--bind)
+	args+=("$i")
+	args+=("$i")
+done
+
+bwrap --ro-bind / / --dev /dev "${args[@]}" claude --dangerously-skip-permissions "$@"
