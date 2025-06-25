@@ -10,22 +10,23 @@ for i in "${__free_repos_cand[@]}"; do
 	[ -d "$i" ] && __free_repos+=("$i")
 done
 
+# XXX checked ok
 ghooks() {
 	# lists hooks in ghq repos
 	find "$(ghq root)" -wholename '*/.git/hooks/*' -not -name '*.sample'
 }
 
+# XXX checked ok
 g() {
 	# cd to ghq repo
-	# $1? - prefill query
-	# TODO rewrite with less assumptions, use ghq queries
-	local -r root="$(ghq root)"
-	local -r repo_relative_paths="$(fd . "$root" --exact-depth 3 | sed "s#${root}/##")"
-	local chosen_path
-	[ -n "$1" ] && {
-		chosen_path=$(cd "$root" && echo "$repo_relative_paths" | fzf -f "$1" | head -n 1) || return
-	} || chosen_path=$(cd "$root" && echo "$repo_relative_paths" | fzf) || return
-	cd "$root/$chosen_path" || return
+	# $1? - query (zoxide style)
+	local -r root=$(ghq root)
+	local -r repo_relative_paths=$(find "$root" -mindepth 3 -maxdepth 3 | sed "s#$root/\?##")
+	local path
+	local args=()
+	[ -n "$1" ] && args=(-f "$1")
+	path=$(fzf "${args[@]}" <<< "$repo_relative_paths") || return
+	cd "$root/$(head -n 1 <<< "$path")" || return
 }
 
 __gitgud_picker() {
@@ -45,29 +46,47 @@ __gitgud_picker() {
 	[ "$choice" = 'y' ]
 }
 
+# XXX checked, ok
 grm() {
 	# $1? - prefill query
 	local selected
 	selected=$(ghq list | __gitgud_picker "delete?" "$1") || return
-	echo "$selected" | xargs -I{} bash -c 'yes | ghq rm {} 2>/dev/null'
+	xargs -I{} bash -c 'yes | ghq rm {} 2>/dev/null' <<< "$selected"
 }
 
+# XXX checked ok
+__cd_gh_owner() {
+	local -r path="$(ghq root)/github.com/$1"
+	mkdir -p "$path" || return 1
+	cd "$path" || return 1
+}
+
+# XXX checked ok
 gclone() {
-	# $1? - repo name
-	local -r before_dirs="$(ghq list -p | sort)"
+	# $1? - a single repo name
 	local repos=$1
-	[ -z "$repos" ] && repos=$(gh repo list | cut -f 1)
-	local selected
-	selected="$(echo "$repos" | cut -f 1 | __gitgud_picker "")" || return
-	echo "$selected" | xargs ghq get --no-recursive --parallel -p --silent || {
-		echo "Couldn't clone"
-		return 1
+
+	# no repo name? open picker
+	[ -z "$repos" ] && {
+		repos=$(gh repo list | cut -f 1 | __gitgud_picker "") || {
+			echo "Selection cancelled"
+			return
+		}
 	}
-	local -r after_dirs="$(ghq list -p | sort)"
-	# show the cloned repos; a bit of a hack but whatever, seems to be working
-	local -r new_dirs="$(comm -13 <(echo "$before_dirs") <(echo "$after_dirs"))"
-	echo "$new_dirs" | xargs zoxide add
-	gh repo set-default "$(git config --get remote.origin.url | rev | cut -d "/" -f 1,2 | rev)" 2> /dev/null || true
+
+	for repo in $repos; do
+		(
+			local -r owner=$(gh repo view "$repo" --json owner --jq '.owner.login') || return 1
+			__cd_gh_owner "$owner" || return 1
+			gh repo clone "$repo"
+		)
+	done
+}
+
+# XXX checked, ok
+__zoxide_add_ghq() {
+	# add all ghq repos to zoxide
+	find "$(ghq root)" -maxdepth 3 -mindepth 3 -print0 | xargs -0 zoxide add
 }
 
 check() {
@@ -179,27 +198,37 @@ up() (
 	echo "status:$prompt"
 )
 
-gfork() {
-	yes N | gh repo fork --default-branch-only "$1"
-	gclone "$(basename "$1")"
+# XXX checked
+__gh_user() {
+	# WARN this might fail spectacularly
+	gh auth status --active | grep -oP 'account \K\S+'
 }
 
+# XXX checked ok
+gfork() {
+	local -r repo=$1
+	(
+		__cd_gh_owner "$(__gh_user)" || return 1
+		gh repo fork "$repo" --default-branch-only --clone
+		cd "$(basename "$repo")" || return 1
+	)
+}
+
+# XXX checked ok
 gcreate() {
 	# creates and clones a repo with minimum amount of gh features turned on
 	# $1 - name
-	# $2? - visibility
+	# $2? - public|private
 	name=$1
 	visibility=private
 	[ -n "$2" ] && visibility=$2
+	case "$2" in
+		private | public) ;;
+		*) return 1 ;;
+	esac
 
-	path=$(ghq create "$name") || {
-		echo "couldn't create the repo" >&2
-		return 1
-	}
-	cd "$path" || {
-		echo "couldn't cd" >&2
-		return 1
-	}
+	path=$(ghq create "$name") || return 1
+	cd "$path" || return 1
 	git commit --allow-empty -m "init"
 	gh repo create "--$visibility" --disable-issues --disable-wiki --push --source "$path"
 	gh repo set-default
