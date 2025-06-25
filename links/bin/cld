@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 
-# custom block
-rw_dirs=(/etc/nixos)
 export CLAUDE=true # this is used in git hooks
 
-rw_dirs+=(/tmp "$XDG_CONFIG_HOME/claude" "$PWD" /etc/nixos "$HOME/.claude.json") # necessary stuff
+rw_dirs+=(/tmp "$XDG_CONFIG_HOME/claude" "$PWD" "$HOME/.claude.json")
 
 export XDG_DATA_HOME=$(mktemp -d)
 export XDG_STATE_HOME=$(mktemp -d)
