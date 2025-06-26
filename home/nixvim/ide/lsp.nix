@@ -15,12 +15,17 @@
     lsp = {
       enable = true;
       inlayHints = false;
+      onAttach = # lua
+        ''
+          if vim.o.ft == 'markdown' then require('otter').activate() end
+        '';
     };
     otter = {
       enable = true;
       settings = {
         handle_leading_whitespace = true;
       };
+      autoActivate = false;
     };
   };
 }
