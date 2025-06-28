@@ -78,7 +78,7 @@ in
           in
           {
             # alphabetic priority
-            ll7 = [
+            ll7-0 = [
               ll7
             ];
             ll7-1-home = [
@@ -89,7 +89,7 @@ in
               ll7
               (generic // { position = "0,-2000"; })
             ];
-            t480 = [
+            t480-0 = [
               t480
             ];
             t480-1-home = [
