@@ -11,9 +11,11 @@
       chars = file:read('*a')
       file:close()
     end
-    require('mdmath').setup({
-      filetypes = {},
-      preamble = chars,
-    })
+    if os.getenv('TERM') == 'xterm-ghostty' then
+      require('mdmath').setup({
+        filetypes = {},
+        preamble = chars,
+      })
+    end
   '';
 }
