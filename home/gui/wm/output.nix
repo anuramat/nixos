@@ -103,6 +103,7 @@ in
             swaymsg = "${config.wayland.windowManager.sway.package}/bin/swaymsg";
             jq = getExe pkgs.jq;
             grep = getExe pkgs.gnugrep;
+            wc = "${pkgs.coreutils}/bin/wc";
           in
           pkgs.writeShellScript "sway_move_workspaces" # bash
             ''
@@ -113,7 +114,7 @@ in
                 echo "internal output ${out.int} not found"
                 exit 1
               }
-              n_external=$(wc -l <<< "$external")
+              n_external=$(${wc} -l <<< "$external")
               (( n_external == 1 )) || {
               	echo "$n_external outputs, expected 2:"
                 echo "$outputs"
