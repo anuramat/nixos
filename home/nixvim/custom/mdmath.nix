@@ -13,7 +13,7 @@
     end
     if os.getenv('TERM') == 'xterm-ghostty' then
       require('mdmath').setup({
-        filetypes = {},
+        -- filetypes = {},
         preamble = chars,
       })
     end
