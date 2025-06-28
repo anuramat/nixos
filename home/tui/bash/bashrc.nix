@@ -120,7 +120,7 @@ let
       	# usage: $0 $target
       	local -r md=$(realpath "$1")
       	local -r name=$(basename -s .md "$1")
-        local -r pdf="''${TMPDIR:-/tmp}/$(mktemp "''${name}_XXXXXXXX.pdf")"
+        local -r pdf="$(mktemp --tmpdir "''${name}_XXXXXXXX.pdf")"
       	# initialize it with a basic pdf so that zathura doesn't shit itself
       	echo 'JVBERi0xLgoxIDAgb2JqPDwvUGFnZXMgMiAwIFI+PmVuZG9iagoyIDAgb2JqPDwvS2lkc1szIDAgUl0vQ291bnQgMT4+ZW5kb2JqCjMgMCBvYmo8PC9QYXJlbnQgMiAwIFI+PmVuZG9iagp0cmFpbGVyIDw8L1Jvb3QgMSAwIFI+Pg==' \
       		| base64 -d > "$pdf"
