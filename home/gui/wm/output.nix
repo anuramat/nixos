@@ -134,7 +134,7 @@ in
         profile = {
           name = n;
           outputs = v;
-          exec = [ (toString moveWSs) ]; # for some fucking reason this does not work
+          exec = [ (toString moveWSs) ];
         };
       }) profiles;
   };
