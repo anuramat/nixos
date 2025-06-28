@@ -5,6 +5,7 @@
   ...
 }:
 let
+  inherit (lib) getExe;
   WSs =
     let
       mkWS =
@@ -100,13 +101,15 @@ in
         moveWSs =
           let
             swaymsg = "${config.wayland.windowManager.sway.package}/bin/swaymsg";
+            jq = getExe pkgs.jq;
+            grep = getExe pkgs.gnugrep;
           in
           pkgs.writeShellScript "sway_move_workspaces" # bash
             ''
-              outputs=$(${swaymsg} -t get_outputs | jq 'map(.name).[]' -r)
-              external=$(grep -vF "${out.int}" <<< "$outputs")
+              outputs=$(${swaymsg} -t get_outputs | ${jq} 'map(.name).[]' -r)
+              external=$(${grep} -vF "${out.int}" <<< "$outputs")
 
-              grep -qF "${out.int}" <<< "$outputs" || {
+              ${grep} -qF "${out.int}" <<< "$outputs" || {
                 echo "internal output ${out.int} not found"
                 exit 1
               }
