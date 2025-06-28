@@ -122,7 +122,7 @@ in
               }
 
               outWSs=(${builtins.concatStringsSep " " WSs.ext})
-              focused_ws=$(${swaymsg} -t get_workspaces | jq '.[] | select(.focused == true).name' -r)
+              focused_ws=$(${swaymsg} -t get_workspaces | ${jq} '.[] | select(.focused == true).name' -r)
 
               for i in "''${outWSs[@]}"; do
               	${swaymsg} workspace "$i", move workspace to output "$external"
