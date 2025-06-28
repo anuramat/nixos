@@ -1,9 +1,9 @@
 { hax, ... }:
 {
   plugins = {
-    mini-align.enabled = true;
-    mini-bracketed.enabled = true;
-    mini-ai.enabled = true;
+    # mini-bracketed.enabled = true;
+    # mini-align.enabled = true;
+    # mini-ai.enabled = true;
 
     image = {
       enable = true;
