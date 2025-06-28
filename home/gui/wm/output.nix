@@ -77,23 +77,28 @@ in
             };
           in
           {
+            # alphabetic priority
             ll7 = [
               ll7
             ];
-            ll7-home = [
+            ll7-1-home = [
               (ll7 // { scale = 2.0; })
               (home // { position = "1600,0"; })
             ];
-            ll7-generic = [
+            ll7-2-generic = [
               ll7
               (generic // { position = "0,-2000"; })
             ];
             t480 = [
               t480
             ];
-            t480-home = [
+            t480-1-home = [
               t480
               (home // { position = "0,-2000"; })
+            ];
+            t480-2-generic = [
+              t480
+              (generic // { position = "0,-2000"; })
             ];
           };
 
