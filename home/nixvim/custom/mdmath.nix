@@ -11,11 +11,9 @@
       chars = file:read('*a')
       file:close()
     end
-    if os.getenv('TERM') == 'xterm-ghostty' then
-      require('mdmath').setup({
-        -- filetypes = {},
-        preamble = chars,
-      })
-    end
+    require('mdmath').setup({
+      filetypes = os.getenv('TERM') == 'xterm-ghostty' and { 'markdown' } or {},
+      preamble = chars,
+    })
   '';
 }
