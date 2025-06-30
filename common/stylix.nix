@@ -5,7 +5,7 @@
     cursor = {
       name = "Hackneyed";
       package = pkgs.hackneyed;
-      size = 20;
+      size = 32;
     };
     enable = true;
     autoEnable = true;
