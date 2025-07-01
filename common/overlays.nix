@@ -43,11 +43,11 @@ let
 
           src = pfinal.fetchPypi {
             inherit pname version;
-            hash = "sha256-035spvzjm2vam4s3dfimxc4wkjmlbkhakrpr3mxv5ff8ib3yqy3d=";
+            hash = "sha256-slCRzhcFo3wMyH3bHHij5+tD1Qrc21rUdjQR90Oub34=";
           };
 
           nativeBuildInputs = [ pfinal.flit-core ];
-          propagatedBuildInputs = [ pfinal.mdformat ];
+          propagatedBuildInputs = [ pfinal.mdformat pfinal.mdit-py-plugins ];
 
           pythonImportsCheck = [ "mdformat_deflist" ];
 
