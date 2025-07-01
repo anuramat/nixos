@@ -95,64 +95,86 @@ let
       }
     '';
 
-  mdoc = # bash
-    ''
-      pandoc-md() {
-        # md -> pdf
-        # usage: $0 $input $output
+  pandoc =
+    let
+      extensions = "-f markdown+wikilinks_title_after_pipe+short_subsuperscripts+mark";
+      preamble = ''-H "$XDG_CONFIG_HOME/latex/preamble.tex"'';
+      # TODO replace notify-send
+      popup_duration = 1000; # ms
+      notify =
+        text: duration: id:
+        "notify-send ${if id == "" then "" else "-r ${id}"} ${
+          if duration == "" then "" else "-t ${duration}"
+        } -p $'\n\n${text}\n\n'";
+      name = "pandoc-md";
+      render =
+        pkgs.writeShellScript name
+          # bash
+          ''
+            [[ $# != 2 ]] && {
+              echo "usage: $0 input.md output.pdf"
+              exit 1
+            }
 
-        local __markdown=markdown+wikilinks_title_after_pipe+short_subsuperscripts+mark
-        # mark: ==highlighted text==
-        # short_superscripts: x^2, O~2
-        # alerts: > [!TIP] -- not supported for "markdown" yet, <https://github.com/jgm/pandoc/issues/9716>
-        # even if they were, pdf output is ugly
-        # --citeproc might be useful TODO document
-        # also maybe switch to --pdf-engine xelatex
-        notify-send -t 1000 $'\n\nrendering\n\n'
-        pandoc -H "$XDG_CONFIG_HOME/latex/preamble.tex" "$1" -f "$__markdown" -t pdf -o "$2"
-        notify-send -t 1000 $'\n\nrender done\n\n'
-      }
-    '';
-  hotdoc = # bash
-    ''
-      hotdoc() {
-      	# renders $1.md to pdf, opens in zathura, rerenders on save
-      	# usage: $0 $target
-      	local -r md=$(realpath "$1")
-      	local -r name=$(basename -s .md "$1")
-        local -r pdf="$(mktemp --tmpdir "''${name}_XXXXXXXX.pdf")"
-      	# initialize it with a basic pdf so that zathura doesn't shit itself
-      	echo 'JVBERi0xLgoxIDAgb2JqPDwvUGFnZXMgMiAwIFI+PmVuZG9iagoyIDAgb2JqPDwvS2lkc1szIDAgUl0vQ291bnQgMT4+ZW5kb2JqCjMgMCBvYmo8PC9QYXJlbnQgMiAwIFI+PmVuZG9iagp0cmFpbGVyIDw8L1Jvb3QgMSAwIFI+Pg==' \
-      		| base64 -d > "$pdf"
-      	# trap interrupts to do the cleanup
-      	trap 'echo trapped SIGINT' INT
+            local id=$(${notify "rendering" "" ""})
+            pandoc "$1" ${extensions} -t pdf -o "$2"
+            ${notify "done" "$id" "1000"}
+          '';
+      # mark: ==highlighted text==
+      # short_superscripts: x^2, O~2
+      # alerts: > [!TIP] -- not supported for "markdown" yet, <https://github.com/jgm/pandoc/issues/9716>
+      # even if they were, pdf output is ugly
+      # --citeproc might be useful TODO document
+      # also maybe switch to --pdf-engine xelatex
+    in
+    {
+      hotdoc = # bash
+        ''
+          hotdoc() {
+          	# renders $1.md to pdf, opens in zathura, rerenders on save
+          	# usage: $0 $target
+          	local -r md=$(realpath "$1")
+          	local -r name=$(basename -s .md "$1")
+            local -r pdf="$(mktemp --tmpdir "''${name}_XXXXXXXX.pdf")"
+          	# initialize it with a basic pdf so that zathura doesn't shit itself
+          	echo 'JVBERi0xLgoxIDAgb2JqPDwvUGFnZXMgMiAwIFI+PmVuZG9iagoyIDAgb2JqPDwvS2lkc1szIDAgUl0vQ291bnQgMT4+ZW5kb2JqCjMgMCBvYmo8PC9QYXJlbnQgMiAwIFI+PmVuZG9iagp0cmFpbGVyIDw8L1Jvb3QgMSAwIFI+Pg==' \
+          		| base64 -d > "$pdf"
+          	# trap interrupts to do the cleanup
+          	trap 'echo trapped SIGINT' INT
 
-      	# open zathura
-      	nohup zathura "$pdf" &> /dev/null &
-      	local -r zathura_pid="$!"
+          	# open zathura
+          	nohup zathura "$pdf" &> /dev/null &
+          	local -r zathura_pid="$!"
 
-      	# start watching, recompile on change
-      	export -f pandoc-md
-      	local -r cmd=$(printf 'pandoc-md "%s" "%s"' "$md" "$pdf")
-      	entr -rcsn "$cmd" < <(echo "$md") &
-      	local -r entr_pid="$!"
+          	# start watching, recompile on change
+          	local -r cmd=$(printf '${render} "%s" "%s"' "$md" "$pdf")
+          	entr -rcsn "$cmd" < <(echo "$md") &
+          	local -r entr_pid="$!"
 
-      	# stop watching if zathura is closed
-      	wait "$zathura_pid"
-      	kill "$entr_pid"
+          	# stop watching if zathura is closed
+          	wait "$zathura_pid"
+          	kill "$entr_pid"
 
-      	echo cleaning...
-      	rm "$pdf"
-      }
-    '';
+          	echo cleaning...
+          	rm "$pdf"
+          }
+        '';
+      md =
+        # bash
+        ''
+          pandoc-md() {
+            ${render} "$@"
+          }
+        '';
+    };
 in
 {
   programs.bash.bashrcExtra =
     # xdg shims should be here
     undistract
     + reflake
-    + mdoc
-    + hotdoc
+    + pandoc.hotdoc
+    + pandoc.md
     + template
     +
       # bash

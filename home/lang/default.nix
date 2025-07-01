@@ -44,14 +44,8 @@
       p: with p; [
         mdformat-myst
         mdformat-footnote
-        mdformat_deflist
+        mdformat-deflist
         mdformat-frontmatter
-        # mdformat-simple-breaks # do not turn three dashes into 70
-        # mdformat-black
-        # mdformat-config
-        # mdformat-web
-        # mdformat-shfmt
-        # mdformat-gofmt
       ]
     ))
     nixfmt-rfc-style

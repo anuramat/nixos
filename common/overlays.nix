@@ -36,8 +36,8 @@ let
   pythonPackages = final: prev: {
     python3 = prev.python3.override {
       packageOverrides = pfinal: pprev: {
-        mdformat_deflist = pfinal.buildPythonPackage rec {
-          pname = "mdformat_deflist";
+        mdformat-deflist = pfinal.buildPythonPackage rec {
+          pname = "mdformat-deflist";
           version = "0.1.3";
           format = "pyproject";
 
@@ -47,7 +47,10 @@ let
           };
 
           nativeBuildInputs = [ pfinal.flit-core ];
-          propagatedBuildInputs = [ pfinal.mdformat pfinal.mdit-py-plugins ];
+          propagatedBuildInputs = [
+            pfinal.mdformat
+            pfinal.mdit-py-plugins
+          ];
 
           pythonImportsCheck = [ "mdformat_deflist" ];
 
