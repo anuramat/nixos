@@ -44,7 +44,7 @@
       p: with p; [
         mdformat-myst
         mdformat-footnote
-        # mdformat-deflist # TODO package or whatever
+        mdformat_deflist
         mdformat-frontmatter
         # mdformat-simple-breaks # do not turn three dashes into 70
         # mdformat-black
