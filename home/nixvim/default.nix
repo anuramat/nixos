@@ -22,7 +22,7 @@
     ./git.nix
     ./ide
     ./lang
-    ./llm.nix
+    # ./llm.nix
     ./misc.nix
     ./treesitter.nix
     ./ui.nix
