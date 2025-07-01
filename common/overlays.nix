@@ -37,7 +37,7 @@ let
     python3 = prev.python3.override {
       packageOverrides = pfinal: pprev: {
         mdformat-deflist = pfinal.buildPythonPackage rec {
-          pname = "mdformat-deflist";
+          pname = "mdformat_deflist";
           version = "0.1.3";
           format = "pyproject";
 

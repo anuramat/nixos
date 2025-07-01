@@ -105,7 +105,7 @@ let
         text: duration: id:
         "notify-send ${if id == "" then "" else "-r ${id}"} ${
           if duration == "" then "" else "-t ${duration}"
-        } -p $'\n\n${text}\n\n'";
+        } -p '${text}'";
       name = "pandoc-md";
       render =
         pkgs.writeShellScript name
