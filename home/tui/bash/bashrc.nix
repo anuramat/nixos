@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 let
   undistract = # bash
     ''
@@ -97,10 +97,13 @@ let
 
   pandoc =
     let
-      extensions = "-f markdown+wikilinks_title_after_pipe+short_subsuperscripts+mark";
-      preamble = ''-H "$XDG_CONFIG_HOME/latex/preamble.tex"'';
-      # TODO replace notify-send
-      popup_duration = 1000; # ms
+      # TODO --citeproc?
+      # TODO maybe switch to --pdf-engine xelatex
+      inputFormat = "markdown+wikilinks_title_after_pipe+mark";
+      # mark: ==highlighted text==
+      preamblePath = "${config.xdg.configHome}/latex/preamble.tex";
+      # TODO replace notify-send with a proper ref from store
+      popupDuration = 1000; # ms
       notify =
         text: duration: id:
         "notify-send ${if id == "" then "" else "-r ${id}"} ${
@@ -111,21 +114,17 @@ let
         pkgs.writeShellScript name
           # bash
           ''
-            [[ $# != 2 ]] && {
-              echo "usage: $0 input.md output.pdf"
+            (( $# <= 2 )) && {
+              echo "usage: $0 input.md output.pdf [args...]"
               exit 1
             }
 
             local id=$(${notify "rendering" "" ""})
-            pandoc "$1" ${extensions} -t pdf -o "$2"
-            ${notify "done" "$id" "1000"}
+            local input=$1 && shift
+            local output=$2 && shift
+            pandoc "$input" -o "$output" -f ${inputFormat} -H ${preamblePath} "$@"
+            ${notify "done" "$id" (toString popupDuration)}
           '';
-      # mark: ==highlighted text==
-      # short_superscripts: x^2, O~2
-      # alerts: > [!TIP] -- not supported for "markdown" yet, <https://github.com/jgm/pandoc/issues/9716>
-      # even if they were, pdf output is ugly
-      # --citeproc might be useful TODO document
-      # also maybe switch to --pdf-engine xelatex
     in
     {
       hotdoc = # bash
@@ -135,6 +134,7 @@ let
           	# usage: $0 $target
           	local -r md=$(realpath "$1")
           	local -r name=$(basename -s .md "$1")
+            shift
             local -r pdf="$(mktemp --tmpdir "''${name}_XXXXXXXX.pdf")"
           	# initialize it with a basic pdf so that zathura doesn't shit itself
           	echo 'JVBERi0xLgoxIDAgb2JqPDwvUGFnZXMgMiAwIFI+PmVuZG9iagoyIDAgb2JqPDwvS2lkc1szIDAgUl0vQ291bnQgMT4+ZW5kb2JqCjMgMCBvYmo8PC9QYXJlbnQgMiAwIFI+PmVuZG9iagp0cmFpbGVyIDw8L1Jvb3QgMSAwIFI+Pg==' \
@@ -147,8 +147,8 @@ let
           	local -r zathura_pid="$!"
 
           	# start watching, recompile on change
-          	local -r cmd=$(printf '${render} "%s" "%s"' "$md" "$pdf")
-          	entr -rcsn "$cmd" < <(echo "$md") &
+          	local -r cmd="${render} $(printf "'%s' " "$md" "$pdf" "$@")"
+          	entr -rcsn "${render} '$md' '$pdf' $@" < <(echo "$md") &
           	local -r entr_pid="$!"
 
           	# stop watching if zathura is closed
