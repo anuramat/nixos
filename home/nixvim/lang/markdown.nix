@@ -14,7 +14,7 @@
   plugins = {
     lsp.servers.marksman.enable = true;
     lint.lintersByFt.markdown = [
-      "vale"
+      # "vale"
       # TODO more?
     ];
     conform-nvim.settings = {

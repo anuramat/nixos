@@ -68,6 +68,7 @@
     # docs
     xournalpp # pdf markup, handwritten notes
     kdePackages.okular # aio doc reader with pdf form support
+    pympress # presentation thing with 2 windows
     zathura # keyboard-centric pdf/djvu reader
     gnumeric # spreadsheets
     # khoj # ai stuff
