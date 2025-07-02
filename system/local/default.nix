@@ -101,7 +101,12 @@
         CPU_MAX_PERF_ON_BAT = lib.mkDefault 30;
       };
     };
-    upower.enable = true; # suspend on low battery
+    upower = {
+      enable = true; # sleep on low battery
+      usePercentageForPolicy = true;
+      percentageCritical = 10;
+      criticalPowerAction = "Hibernate";
+    };
   };
 
   # fonts {{{1
