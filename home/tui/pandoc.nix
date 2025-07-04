@@ -48,6 +48,7 @@ let
   render = pkgs.writeShellApplication {
     name = "render";
     runtimeInputs = with pkgs; [
+      texliveFull
       pandoc
       libnotify
     ];
