@@ -16,12 +16,6 @@ let
 
       vim.cmd('MoltenInit ' .. kernel)
     '';
-  mkInit =
-    prepKern: # lua
-    ''
-      ${prepKern}
-      require('otter').activate()
-    '';
   set = key: hax.vim.set ("<localleader>" + key);
 in
 {
@@ -80,12 +74,13 @@ in
   };
 
   keymaps = [
-    (set "d" "MoltenDelete" "delete ipynb cell")
-    (set "i" (file |> mkInit |> luaf) "init molten and start otter")
+    (set "i" (luaf file) "init molten")
 
-    (set "c" (luaf "require('quarto').run_cell()") "run selected cell")
-    (set "a" (luaf "require('quarto').run_above()") "run all cells above")
-    (set "b" (luaf "require('quarto').run_below()") "run all cells below")
-    (set "A" (luaf "require('quarto').run_all()") "run all cells")
+    (set "c" (luaf "require('quarto.runner').run_cell()") "run selected cell")
+    (set "a" (luaf "require('quarto.runner').run_above()") "run all cells above")
+    (set "b" (luaf "require('quarto.runner').run_below()") "run all cells below")
+    (set "A" (luaf "require('quarto.runner').run_all()") "run all cells")
+
+    (set "d" "MoltenDelete" "delete ipynb cell")
   ];
 }

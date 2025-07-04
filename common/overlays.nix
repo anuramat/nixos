@@ -29,6 +29,7 @@ let
       vscode
       windsurf
       zed-editor
+      gemini-cli
       ;
   };
   pythonPackages = final: prev: {
