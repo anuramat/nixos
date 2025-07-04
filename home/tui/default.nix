@@ -8,5 +8,6 @@
     ./readline.nix
     ./rg.nix
     ./yazi.nix
+    ./pandoc.nix
   ];
 }
