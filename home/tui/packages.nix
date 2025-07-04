@@ -32,7 +32,6 @@
 
     # ai / llm
     goose-cli
-    tgpt
     aider-chat-full
     claude-code
     llama-cpp

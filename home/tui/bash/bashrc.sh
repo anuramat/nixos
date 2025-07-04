@@ -78,37 +78,6 @@ y() {
 	rm -f -- "$tmp"
 }
 
-__tgpt_preprompted() {
-	local cols=$(tput cols)
-	cols=$((cols > 80 ? 80 : cols))
-	local lines=$(tput lines)
-	local chars=$((lines * cols))
-	local prompt
-	read -rd '' prompt < <(
-		tr '\n' ' ' << EOF
-You will be provided with a description of the result that the user is trying to
-achieve. First, try to provide a single complete solution in a concise manner
-without comments, follow up questions or disclaimers. If possible, make it fit
-in a terminal window with $(tput lines) lines and $cols columns, and thus
-approximately $chars characters. Only if there's enough space, explain the key
-elements of the solution.
-EOF
-	)
-	tgpt --preprompt "$(echo "$prompt" | tr '\n' ' ')" "$@"
-}
-
-ti() {
-	__tgpt_preprompted -i
-}
-
-t() {
-	if [[ $1 == "-c" || $1 == "-s" ]]; then
-		tgpt "$1" -- "${*:2}"
-		return 0
-	fi
-	__tgpt_preprompted -- "$*"
-}
-
 run() {
 	local -r name=$1
 	shift
@@ -119,18 +88,6 @@ shell() {
 	local -r name=$1
 	shift
 	nix shell "nixpkgs-unstable#$name" -- "$@"
-}
-
-ho() {
-	manix "$*" --source hm_options
-}
-
-no() {
-	manix "$*" --source nixos_options
-}
-
-np() {
-	manix "$*" --source nixpkgs_tree
 }
 
 # vim: fdl=0
