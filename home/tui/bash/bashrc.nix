@@ -119,9 +119,9 @@ let
               exit 1
             }
 
-            local id=$(${notify "rendering" "" ""})
-            local input=$1 && shift
-            local output=$2 && shift
+            id=$(${notify "rendering" "" ""})
+            input=$1 && shift
+            output=$1 && shift
             pandoc "$input" -o "$output" -f ${inputFormat} -H ${preamblePath} "$@"
             ${notify "done" "$id" (toString popupDuration)}
           '';
