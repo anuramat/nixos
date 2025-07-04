@@ -1,5 +1,11 @@
-{ pkgs, config, ... }:
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
 let
+  inherit (lib) getExe;
   undistract = # bash
     ''
 
@@ -106,9 +112,9 @@ let
       popupDuration = 1000; # ms
       notify =
         text: duration: id:
-        "notify-send ${if id == "" then "" else "-r ${id}"} ${
-          if duration == "" then "" else "-t ${duration}"
-        } -p '${text}'";
+        "${pkgs.libnotify}/bin/notify-send ${if id == "" then "" else "-r ${id}"} ${
+          if duration <= 0 then "" else "-t ${toString duration}"
+        } -p ${text}";
       render =
         pkgs.writeShellScript "render"
           # bash
@@ -118,36 +124,40 @@ let
               exit 1
             }
 
-            id=$(${notify "rendering" "" ""})
+            id=$(${notify "rendering" 0 ""})
             input=$1 && shift
             output=$1 && shift
-            pandoc "$input" -o "$output" -f ${inputFormat} -H ${preamblePath} "$@"
-            ${notify "done" "$id" (toString popupDuration)}
+            if log=$(${getExe pkgs.pandoc} "$input" -o "$output" -f ${inputFormat} -H ${preamblePath} "$@" 2>&1); then
+              ${notify "done" popupDuration "$id"}
+            else
+              ${notify ''"$log"'' 0 "$id"}
+            fi
           '';
       pdfPlaceholder = "JVBERi0xLgoxIDAgb2JqPDwvUGFnZXMgMiAwIFI+PmVuZG9iagoyIDAgb2JqPDwvS2lkc1szIDAgUl0vQ291bnQgMT4+ZW5kb2JqCjMgMCBvYmo8PC9QYXJlbnQgMiAwIFI+PmVuZG9iagp0cmFpbGVyIDw8L1Jvb3QgMSAwIFI+Pg==";
+      zathura = getExe pkgs.zathura;
+      entr = getExe pkgs.entr;
       hotdoc =
         pkgs.writeShellScript "hotdoc"
           # bash
           ''
-
             	# renders $1.md to pdf, opens in zathura, rerenders on save
             	# usage: $0 $target
-            	local -r md=$(realpath "$1")
-            	local -r name=$(basename -s .md "$1")
+            	md=$(realpath "$1")
+            	name=$(basename -s .md "$1")
               shift
-              local -r pdf="$(mktemp --tmpdir "$name-XXXXXXXX.pdf")"
+              pdf="$(mktemp --tmpdir "$name-XXXXXXXX.pdf")"
 
             	# initialize it with a basic pdf so that zathura doesn't shit itself
             	echo '${pdfPlaceholder}' | base64 -d > "$pdf"
 
             	# open zathura
-            	nohup zathura "$pdf" &> /dev/null &
-            	local -r zathura_pid="$!"
+            	nohup ${zathura} "$pdf" &> /dev/null &
+            	zathura_pid="$!"
 
             	# start watching, recompile on change
-            	local -r cmd="${render} $(printf "'%s' " "$md" "$pdf" "$@")"
-            	entr -rcsn "$cmd" < <(echo "$md") &
-            	local -r entr_pid="$!"
+            	cmd="${render} $(printf "'%s' " "$md" "$pdf" "$@")"
+            	${entr} -rcsn "$cmd" < <(echo "$md") &
+            	entr_pid="$!"
 
             	# stop watching if zathura is closed
             	wait "$zathura_pid"
