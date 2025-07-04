@@ -74,6 +74,7 @@ in
             };
             generic = {
               criteria = "*";
+              position = "0,-99999";
             };
           in
           {
@@ -87,7 +88,7 @@ in
             ];
             ll7-2-generic = [
               ll7
-              (generic // { position = "0,-2000"; })
+              generic
             ];
             t480-0 = [
               t480
@@ -98,7 +99,7 @@ in
             ];
             t480-2-generic = [
               t480
-              (generic // { position = "0,-2000"; })
+              generic
             ];
           };
 

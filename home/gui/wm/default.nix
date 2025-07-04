@@ -1,11 +1,11 @@
 { pkgs, ... }:
 {
   imports = [
-    ./input.nix
+    ./inputs.nix
     ./autostart.nix
     ./keys
     ./autologin.nix
-    ./output.nix
+    ./outputs.nix
   ];
   wayland.windowManager.sway =
     let
