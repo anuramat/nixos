@@ -109,12 +109,11 @@ let
         "notify-send ${if id == "" then "" else "-r ${id}"} ${
           if duration == "" then "" else "-t ${duration}"
         } -p '${text}'";
-      name = "pandoc-md";
       render =
-        pkgs.writeShellScript name
+        pkgs.writeShellScript "render"
           # bash
           ''
-            (( $# <= 2 )) && {
+            (( $# < 2 )) && {
               echo "usage: $0 input.md output.pdf [args...]"
               exit 1
             }
@@ -125,44 +124,47 @@ let
             pandoc "$input" -o "$output" -f ${inputFormat} -H ${preamblePath} "$@"
             ${notify "done" "$id" (toString popupDuration)}
           '';
+      pdfPlaceholder = "JVBERi0xLgoxIDAgb2JqPDwvUGFnZXMgMiAwIFI+PmVuZG9iagoyIDAgb2JqPDwvS2lkc1szIDAgUl0vQ291bnQgMT4+ZW5kb2JqCjMgMCBvYmo8PC9QYXJlbnQgMiAwIFI+PmVuZG9iagp0cmFpbGVyIDw8L1Jvb3QgMSAwIFI+Pg==";
+      hotdoc =
+        pkgs.writeShellScript "hotdoc"
+          # bash
+          ''
+
+            	# renders $1.md to pdf, opens in zathura, rerenders on save
+            	# usage: $0 $target
+            	local -r md=$(realpath "$1")
+            	local -r name=$(basename -s .md "$1")
+              shift
+              local -r pdf="$(mktemp --tmpdir "$name-XXXXXXXX.pdf")"
+
+            	# initialize it with a basic pdf so that zathura doesn't shit itself
+            	echo '${pdfPlaceholder}' | base64 -d > "$pdf"
+
+            	# open zathura
+            	nohup zathura "$pdf" &> /dev/null &
+            	local -r zathura_pid="$!"
+
+            	# start watching, recompile on change
+            	local -r cmd="${render} $(printf "'%s' " "$md" "$pdf" "$@")"
+            	entr -rcsn "$cmd" < <(echo "$md") &
+            	local -r entr_pid="$!"
+
+            	# stop watching if zathura is closed
+            	wait "$zathura_pid"
+            	kill "$entr_pid"
+          '';
     in
     {
       hotdoc = # bash
         ''
           hotdoc() {
-          	# renders $1.md to pdf, opens in zathura, rerenders on save
-          	# usage: $0 $target
-          	local -r md=$(realpath "$1")
-          	local -r name=$(basename -s .md "$1")
-            shift
-            local -r pdf="$(mktemp --tmpdir "''${name}_XXXXXXXX.pdf")"
-          	# initialize it with a basic pdf so that zathura doesn't shit itself
-          	echo 'JVBERi0xLgoxIDAgb2JqPDwvUGFnZXMgMiAwIFI+PmVuZG9iagoyIDAgb2JqPDwvS2lkc1szIDAgUl0vQ291bnQgMT4+ZW5kb2JqCjMgMCBvYmo8PC9QYXJlbnQgMiAwIFI+PmVuZG9iagp0cmFpbGVyIDw8L1Jvb3QgMSAwIFI+Pg==' \
-          		| base64 -d > "$pdf"
-          	# trap interrupts to do the cleanup
-          	trap 'echo trapped SIGINT' INT
-
-          	# open zathura
-          	nohup zathura "$pdf" &> /dev/null &
-          	local -r zathura_pid="$!"
-
-          	# start watching, recompile on change
-          	local -r cmd="${render} $(printf "'%s' " "$md" "$pdf" "$@")"
-          	entr -rcsn "${render} '$md' '$pdf' $@" < <(echo "$md") &
-          	local -r entr_pid="$!"
-
-          	# stop watching if zathura is closed
-          	wait "$zathura_pid"
-          	kill "$entr_pid"
-
-          	echo cleaning...
-          	rm "$pdf"
+            ${hotdoc} "$@"
           }
         '';
-      md =
+      render =
         # bash
         ''
-          pandoc-md() {
+          render() {
             ${render} "$@"
           }
         '';
@@ -174,7 +176,7 @@ in
     undistract
     + reflake
     + pandoc.hotdoc
-    + pandoc.md
+    + pandoc.render
     + template
     +
       # bash
