@@ -24,10 +24,8 @@ let
       github-mcp-server
       keymapp
       proton-pass
-      aider-chat-full
       ollama
       vscode
-      windsurf
       zed-editor
       gemini-cli
       ;
