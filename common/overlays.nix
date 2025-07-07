@@ -24,7 +24,7 @@ let
       github-mcp-server
       keymapp
       proton-pass
-      ollama
+      # ollama
       vscode
       zed-editor
       gemini-cli
