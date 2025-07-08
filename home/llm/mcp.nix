@@ -25,6 +25,7 @@ let
     # TODO sequential thinking, not on claude
     # TODO search, not on claude
     # TODO nvim mcp: provides lsp most importantly, formatter (can be replaced with a commit hook), maybe more
+    # TODO rag?
     nixos = {
       command = getExe pkgs.mcp-nixos;
     };
