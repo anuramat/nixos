@@ -45,7 +45,6 @@ let
     text = mcpServersJSON;
   };
 in
-
 {
   home.activation =
     let

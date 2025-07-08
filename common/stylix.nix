@@ -53,7 +53,6 @@
 
         name = "saga";
       in
-      # "${inputs.tt-schemes}/base24/${name}.yaml";
-      ./elflord_super.yaml;
+      "${inputs.tt-schemes}/base24/${name}.yaml";
   };
 }
