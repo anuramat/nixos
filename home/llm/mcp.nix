@@ -29,15 +29,15 @@ let
     nixos = {
       command = getExe pkgs.mcp-nixos;
     };
-    github = {
-      command = githubPatched;
-      args = [
-        "stdio"
-      ];
-    };
-    playwright = {
-      command = getExe pkgs.playwright-mcp;
-    };
+    # github = {
+    #   command = githubPatched;
+    #   args = [
+    #     "stdio"
+    #   ];
+    # };
+    # playwright = {
+    #   command = getExe pkgs.playwright-mcp;
+    # };
   };
   mcpServersJSON = toJSON mcpServers;
   mcpServersPath = pkgs.writeTextFile {

@@ -21,6 +21,7 @@ let
   };
   unstablePkgs = final: prev: {
     inherit (import inputs.nixpkgs-unstable { inherit (pkgs) config system; })
+      opencode
       playwright-mcp
       github-mcp-server
       keymapp

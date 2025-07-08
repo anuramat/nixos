@@ -68,8 +68,8 @@ let
           b=$3
 
           local prop_a match
-          local prop_a=$(jq -r "$prop | tojson" "$a")
-          local match=$(jq -r --arg prop_a "$prop_a" "$prop == (\$prop_a | fromjson)" "$b")
+          prop_a=$(jq -r "$prop | tojson" "$a")
+          match=$(jq -r --arg prop_a "$prop_a" "$prop == (\$prop_a | fromjson)" "$b")
           [ "$match" == true ]
         }
         target_file="$1"
