@@ -47,22 +47,6 @@ let
 in
 
 {
-  xdg.configFile."mcphub/servers.json".text = toJSON {
-    nativeMCPServers = {
-      mcphub = {
-        disabled_tools = [ "toggle_mcp_server" ];
-        disabled_resources = [
-          "mcphub://docs"
-          "mcphub://changelog"
-          "mcphub://native_server_guide"
-        ];
-        disabled_prompts = [ "create_native_server" ];
-      };
-      neovim.disabled_prompts = [ "parrot" ];
-    };
-    inherit mcpServers;
-  };
-
   home.activation =
     let
       home = config.home.homeDirectory;

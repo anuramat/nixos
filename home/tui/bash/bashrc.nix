@@ -58,14 +58,16 @@ let
       ''
         __jq_equals() {
           # checks if prop is equal in both jsons
+          local prop a b
           if [ "$#" -ne 3 ]; then
             echo 'error(usage): __jq_equals: not enough args'
             return 1
           fi
-          local prop=$1
-          local a=$2
-          local b=$3
+          prop=$1
+          a=$2
+          b=$3
 
+          local prop_a match
           local prop_a=$(jq -r "$prop | tojson" "$a")
           local match=$(jq -r --arg prop_a "$prop_a" "$prop == (\$prop_a | fromjson)" "$b")
           [ "$match" == true ]
