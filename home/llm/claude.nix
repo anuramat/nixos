@@ -212,4 +212,32 @@ in
         	printf '\n%s' "$signature" >> "$COMMIT_MSG_FILE"
         fi
       '';
+  home.packages = [
+    (pkgs.writeShellApplication {
+      name = "cld";
+      runtimeInputs = with pkgs; [
+        claude-code
+        bubblewrap
+      ];
+      text = ''
+        export CLAUDE=true # this is used in git hooks
+
+        rw_dirs+=(/tmp "$XDG_CONFIG_HOME/claude" "$PWD" "$HOME/.claude.json" "$HOME/.claude")
+
+        export XDG_DATA_HOME=$(mktemp -d)
+        export XDG_STATE_HOME=$(mktemp -d)
+        export XDG_CACHE_HOME=$(mktemp -d)
+        export XDG_RUNTIME_DIR=$(mktemp -d)
+
+        args=()
+        for i in "''${rw_dirs[@]}"; do
+        	args+=(--bind)
+        	args+=("$i")
+          args+=("$i")
+        done
+
+        bwrap --ro-bind / / --dev /dev "''${args[@]}" claude --dangerously-skip-permissions "$@"
+      '';
+    })
+  ];
 }
