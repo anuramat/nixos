@@ -51,8 +51,8 @@
 
         # xcode-dusk -- grey + bright colors, very cool
 
-        name = "saga";
+        name = "base16/saga";
       in
-      "${inputs.tt-schemes}/base24/${name}.yaml";
+      "${inputs.tt-schemes}/${name}.yaml";
   };
 }
