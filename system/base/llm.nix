@@ -9,7 +9,7 @@ in
 {
   services = {
     ollama = {
-      # enable = true;
+      enable = true;
       acceleration = lib.mkIf cuda "cuda";
       loadModels = lib.mkIf cuda [ ]; # pull models on service start
       environmentVariables = {

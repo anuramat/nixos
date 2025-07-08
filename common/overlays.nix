@@ -21,10 +21,10 @@ let
   };
   unstablePkgs = final: prev: {
     inherit (import inputs.nixpkgs-unstable { inherit (pkgs) config system; })
+      # playwright-mcp
       github-mcp-server
       keymapp
       proton-pass
-      # ollama
       vscode
       zed-editor
       gemini-cli

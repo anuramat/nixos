@@ -23,7 +23,7 @@ let
 
   mcpServers = {
     # TODO sequential thinking, not on claude
-    # TODO search, not on claude probably
+    # TODO search, not on claude
     # TODO nvim mcp: provides lsp most importantly, formatter (can be replaced with a commit hook), maybe more
     nixos = {
       command = getExe pkgs.mcp-nixos;
@@ -34,9 +34,9 @@ let
         "stdio"
       ];
     };
-    playwright = {
-      command = getExe pkgs.playwright-mcp;
-    };
+    # playwright = {
+    #   command = getExe pkgs.playwright-mcp;
+    # };
   };
   mcpServersJSON = toJSON mcpServers;
   mcpServersPath = pkgs.writeTextFile {
