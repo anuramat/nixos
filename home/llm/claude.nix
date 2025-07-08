@@ -144,6 +144,46 @@ in
   home.file = {
     ".claude/CLAUDE.md".text = prompt;
     ".claude/settings.json".text = settings;
+    ".claude/commands/memcheck.md".text =
+      let
+        memfile = "CLAUDE.md";
+        shortdiff_cmd = "${commit_cmd} | xargs git diff --numstat";
+        commit_cmd = "git log -1 --format=%H ${memfile}";
+      in
+      ''
+        ---
+        description: memory file update guided by git history
+        ---
+
+        # Project memory update
+
+        I want you to check if the project memory in ${memfile} is significantly
+        outdated, and if so -- update it.
+
+        Last commit where the memory was updated is:
+
+        !`${commit_cmd}`
+
+        and the corresponding diff summary is:
+
+        !`${shortdiff_cmd}`
+
+        In case there are significant changes -- ones that either make information in
+        ${memfile} invalid, or are important enough to warrant new entries in the
+        file -- explore the necessary files, and edit ${memfile}.
+
+        If you make any changes to the memory file, commit the changes with the
+        message:
+
+        ```gitcommit
+        docs(${memfile}): update
+
+        <short_summary>
+        ```
+
+        where `<short_summary>` is a short description of the changes in the
+        project that are now reflected in the memory file.
+      '';
   };
   programs.git.hooks.prepare-commit-msg =
     hax.common.gitHook pkgs
