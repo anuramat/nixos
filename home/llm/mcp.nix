@@ -35,9 +35,9 @@ let
         "stdio"
       ];
     };
-    # playwright = {
-    #   command = getExe pkgs.playwright-mcp;
-    # };
+    playwright = {
+      command = getExe pkgs.playwright-mcp;
+    };
   };
   mcpServersJSON = toJSON mcpServers;
   mcpServersPath = pkgs.writeTextFile {

@@ -34,7 +34,7 @@
     goose-cli
     aider-chat-full
     claude-code
-    opencode
+    opencode # which one?
     llama-cpp
     codex
     amp-cli
