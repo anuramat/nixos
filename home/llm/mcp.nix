@@ -22,15 +22,20 @@ let
   };
 
   mcpServers = {
-    NixOS = {
+    # TODO sequential thinking, not on claude
+    # TODO search, not on claude probably
+    # TODO nvim mcp: provides lsp most importantly, formatter (can be replaced with a commit hook), maybe more
+    nixos = {
       command = getExe pkgs.mcp-nixos;
     };
-    # TODO
-    GitHub = {
+    github = {
       command = githubPatched;
       args = [
         "stdio"
       ];
+    };
+    playwright = {
+      command = getExe pkgs.playwright-mcp;
     };
   };
   mcpServersJSON = toJSON mcpServers;
@@ -41,10 +46,6 @@ let
 in
 
 {
-  home.packages = with pkgs; [
-    mcp-nixos
-  ];
-
   xdg.configFile."mcphub/servers.json".text = toJSON {
     nativeMCPServers = {
       mcphub = {
@@ -67,13 +68,12 @@ in
     in
     {
       claudeMcp =
-        lib.hm.dag.entryBefore [ "writeBoundary" ] # bash
+        lib.hm.dag.entryAfter [ "writeBoundary" ] # bash
           ''
             success=""
             temp=$(mktemp)
-            jq --slurpfile mcp ${mcpServersPath} '.mcpServers = $mcp[0]' "${home}/.claude.json" > "$temp" && success=true
-            [ -n "''${VERBOSE:+set}" ] && args+=(-print)
-            [ -z "''${DRY_RUN:+set}" ] && [ -n "$success" ] && mv "$temp" "${home}/.claude.json"
+            run ${getExe pkgs.jq} --slurpfile mcp ${mcpServersPath} '.mcpServers = $mcp[0]' "${home}/.claude.json" > "$temp" && success=true
+            [ "$success" == true ] && run mv "$temp" "${home}/.claude.json"
           '';
     };
 }
