@@ -116,33 +116,34 @@ let
         `nix run nixpkgs#packagename -- arg1 arg2 ...`. You can use NixOS MCP server
         to find the required package.
     '';
+  settings = lib.generators.toJSON { } {
+    env = { };
+    includeCoAuthoredBy = false;
+    permissions = {
+      allow = [
+        "Bash(git status:*)"
+        "Bash(git diff:*)"
+        "Bash(git log:*)"
+        "Bash(git commit:*)"
+        "Bash(ls:*)"
+        "Bash(find:*)"
+        "Bash(fd:*)"
+        "Bash(grep:*)"
+        "Bash(rg:*)"
+        "Bash(nix flake check:*)"
+        "Bash(devenv test:*)"
+        "WebFetch"
+        "WebSearch"
+        "mcp__nixos"
+      ];
+      deny = [ ];
+    };
+  };
 in
 {
-  xdg.configFile = {
-    "claude/CLAUDE.md".text = prompt;
-    "claude/settings.json".text = lib.generators.toJSON { } {
-      env = { };
-      includeCoAuthoredBy = false;
-      permissions = {
-        allow = [
-          "Bash(git status:*)"
-          "Bash(git diff:*)"
-          "Bash(git log:*)"
-          "Bash(git commit:*)"
-          "Bash(ls:*)"
-          "Bash(find:*)"
-          "Bash(fd:*)"
-          "Bash(grep:*)"
-          "Bash(rg:*)"
-          "Bash(nix flake check:*)"
-          "Bash(devenv test:*)"
-          "WebFetch"
-          "WebSearch"
-          "mcp__NixOS"
-        ];
-        deny = [ ];
-      };
-    };
+  home.file = {
+    ".claude/CLAUDE.md".text = prompt;
+    ".claude/settings.json".text = settings;
   };
   programs.git.hooks.prepare-commit-msg =
     hax.common.gitHook pkgs
@@ -155,7 +156,7 @@ in
         # meanwhile with `commit -m` it already contains the message
         # claude always uses `commit -m`
         signature="Co-Authored-By: Claude <noreply@anthropic.com>"
-        if [ -n "$CLAUDE" ]; then
+        if [ -v CLAUDE ]; then
         	if [ "$COMMIT_SOURCE" = "commit" ]; then
         		echo 'permission error: `claude` is not allowed to use `git commit` with flags `-c`, `-C`, or `--amend`'
         		exit 1
