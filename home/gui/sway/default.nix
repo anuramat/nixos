@@ -1,7 +1,6 @@
 {
   imports = [
     ./inputs.nix
-    ./autostart.nix
     ./keys
     ./autologin.nix
     ./outputs.nix
