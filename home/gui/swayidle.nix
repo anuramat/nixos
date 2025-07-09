@@ -1,37 +1,44 @@
-{ pkgs, config, ... }:
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
 {
   services = {
     swayidle =
       let
-        inherit (pkgs)
-          swaylock
-          sway
-          killall
-          systemd
-          ;
+        bin = {
+          systemctl = "${pkgs.systemd}/bin/systemctl";
+          swaymsg = "${pkgs.sway}/bin/swaymsg";
+          killall = lib.getExe pkgs.killall;
+          swaylock = "${pkgs.swaylock}/bin/swaylock";
+        };
 
-        lockScreen = "${swaylock}/bin/swaylock -f";
-        unlockScreen = "${killall}/bin/killall -s USR1 swaylock";
+        screen = {
+          lock = "${bin.swaylock} -f";
+          unlock = "${bin.killall} -s USR1 swaylock";
+          off = "${bin.swaymsg} 'output * power off'";
+          on = "${bin.swaymsg} 'output * power on'";
+        };
 
-        lockPass =
-          let
-            gpgLockScript = pkgs.writeShellScript "lockGpgId" ''
-              # takes a path to a .gpg-id file, clears the corresponding agent cache
-              xargs -r gpg --list-keys --with-colons --with-keygrip < "$1" \
-              	| awk -F: '/^sub/{x=1} x&&/^grp/{print $10;x=0}' \
-              	| xargs -I{} gpg-connect-agent "clear_passphrase --mode=normal {}" /bye
-            '';
-          in
-          "${gpgLockScript} ${config.programs.password-store.settings.PASSWORD_STORE_DIR}/.gpg-id";
-        unlockPass = ''printf '\n\n' | pass insert dummy; pass show dummy'';
+        pass = {
+          lock =
+            let
+              gpgLockScript = pkgs.writeShellScript "lockGpgId" ''
+                # takes a path to a .gpg-id file, clears the corresponding agent cache
+                xargs -r gpg --list-keys --with-colons --with-keygrip < "$1" \
+                	| awk -F: '/^sub/{x=1} x&&/^grp/{print $10;x=0}' \
+                	| xargs -I{} gpg-connect-agent "clear_passphrase --mode=normal {}" /bye
+              '';
+            in
+            "${gpgLockScript} ${config.programs.password-store.settings.PASSWORD_STORE_DIR}/.gpg-id";
+          unlock = ''printf '\n\n' | pass insert dummy; pass show dummy'';
+        };
 
-        lock = "${lockPass} & ${lockScreen}";
-        unlock = "${unlockScreen}; ${unlockPass}";
-
-        screenOff = "${sway}/bin/swaymsg 'output * power off'";
-        screenOn = "${sway}/bin/swaymsg 'output * power on'";
-
-        sleep = "${systemd}/bin/systemctl suspend";
+        lock = "${pass.lock} & ${screen.lock}";
+        unlock = "${screen.unlock}; ${pass.unlock}";
+        sleep = "${bin.systemctl} suspend";
       in
       {
         enable = true;
@@ -44,8 +51,8 @@
           }
           {
             timeout = 600;
-            command = screenOff;
-            resumeCommand = screenOn;
+            command = screen.off;
+            resumeCommand = screen.on;
           }
           {
             timeout = 999999;

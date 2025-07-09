@@ -2,7 +2,7 @@
   imports = [
     ./packages.nix
     ./menu.nix
-    ./notifications.nix
+    ./mako.nix
     ./portal.nix
     ./clipboard.nix
     ./sway
