@@ -25,14 +25,22 @@
         pass = {
           lock =
             let
-              gpgLockScript = pkgs.writeShellScript "lockGpgId" ''
-                # takes a path to a .gpg-id file, clears the corresponding agent cache
-                xargs -r gpg --list-keys --with-colons --with-keygrip < "$1" \
-                	| awk -F: '/^sub/{x=1} x&&/^grp/{print $10;x=0}' \
-                	| xargs -I{} gpg-connect-agent "clear_passphrase --mode=normal {}" /bye
-              '';
+              gpg-lock = pkgs.writeShellApplication {
+                name = "gpg-lock";
+                runtimeInputs = with pkgs; [
+                  gnupg # gpg and gpg-connect-agent
+                  gawk # awk
+                  findutils # xargs
+                ];
+                text = ''
+                  # takes a path to a .gpg-id file, clears the corresponding agent cache
+                  xargs -r gpg --list-keys --with-colons --with-keygrip < "$1" \
+                  	| awk -F: '/^sub/{x=1} x&&/^grp/{print $10;x=0}' \
+                  	| xargs -I{} gpg-connect-agent "clear_passphrase --mode=normal {}" /bye
+                '';
+              };
             in
-            "${gpgLockScript} ${config.programs.password-store.settings.PASSWORD_STORE_DIR}/.gpg-id";
+            "${lib.getExe gpg-lock} ${config.programs.password-store.settings.PASSWORD_STORE_DIR}/.gpg-id";
           unlock = ''printf '\n\n' | pass insert dummy; pass show dummy'';
         };
 
