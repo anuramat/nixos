@@ -54,17 +54,17 @@ let
   pickers =
     let
       j4 = getExe pkgs.j4-dmenu-desktop;
-      killall = getExe pkgs.killall;
+      pkill = "${pkgs.procps}/bin/pkill";
       todo = "todo";
       fd = getExe pkgs.fd;
       zathura = getExe pkgs.zathura;
       bemenu = getExe pkgs.bemenu;
     in
     {
-      books = ''exec ${killall} ${bemenu} || swaymsg exec "echo \"$(cd ${bookdir} && ${fd} -t f | ${bemenu} -p read -l 20)\" | xargs -rI{} ${zathura} '${bookdir}/{}'"'';
-      drun = ''exec ${killall} ${bemenu} || swaymsg exec "$(${j4} -d '${bemenu} -p drun' -t ${term_cmd} -x --no-generic)"'';
-      todo_add = ''exec ${killall} ${bemenu} || swaymsg exec "$(echo ''' | ${bemenu} -p ${todo} -l 0 | xargs -I{} ${todo} add \"{}\")"'';
-      todo_done = ''exec ${killall} ${bemenu} || swaymsg exec "$(${todo} ls | tac | ${bemenu} -p done | sed 's/^\s*//' | cut -d ' ' -f 1 | xargs ${todo} rm)"'';
+      books = ''exec ${pkill} -f ^${bemenu} || swaymsg exec "echo \"$(cd ${bookdir} && ${fd} -t f | ${bemenu} -p read -l 20)\" | xargs -rI{} ${zathura} '${bookdir}/{}'"'';
+      drun = ''exec ${pkill} -f ^${bemenu} || swaymsg exec "$(${j4} -d '${bemenu} -p drun' -t ${term_cmd} -x --no-generic)"'';
+      todo_add = ''exec ${pkill} -f ^${bemenu} || swaymsg exec "$(echo ''' | ${bemenu} -p ${todo} -l 0 | xargs -I{} ${todo} add \"{}\")"'';
+      todo_done = ''exec ${pkill} -f ^${bemenu} || swaymsg exec "$(${todo} ls | tac | ${bemenu} -p done | sed 's/^\s*//' | cut -d ' ' -f 1 | xargs ${todo} rm)"'';
     };
 
   screen =

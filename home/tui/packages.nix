@@ -160,7 +160,6 @@
     gcc
     git
     gnumake
-    killall
     less
     lsof
     moreutils # random unixy goodies
