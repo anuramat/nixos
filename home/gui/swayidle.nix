@@ -44,7 +44,7 @@
           unlock = ''printf '\n\n' | pass insert dummy; pass show dummy'';
         };
 
-        lock = "${pass.lock} & ${screen.lock}";
+        lock = "${pass.lock}; ${screen.lock}";
         unlock = "${screen.unlock}; ${pass.unlock}";
         sleep = "${bin.systemctl} suspend";
       in
