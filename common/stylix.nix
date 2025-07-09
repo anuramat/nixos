@@ -22,9 +22,9 @@
     };
     base16Scheme =
       let
-        # black-metal -- mostly black and white, shades of very faint pastel red and blue otherwise
-        # saga -- almost b/w, barely visible comments and selection tho
-        # grayscale-dark -- duh
+        # saga -- grayscale with very dim pastels; barely visible comments and selection
+        # black-metal -- grayscale with dim pastel red and blue; better visibility than saga
+        # grayscale-dark -- grayscale
 
         # greenscreen -- green monochrome
         # digital-rain -- tons of green
