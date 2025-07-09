@@ -1,4 +1,9 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 {
   wayland.windowManager.sway = {
     systemd.xdgAutostart = true;
@@ -20,7 +25,7 @@
     wl-clip-persist =
       let
         # TODO target
-        target = "graphical-session.target";
+        inherit (config.wayland.systemd) target;
       in
       {
         Unit = {
