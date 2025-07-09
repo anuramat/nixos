@@ -23,7 +23,7 @@
     base16Scheme =
       let
         # black-metal -- mostly black and white, shades of very faint pastel red and blue otherwise
-        # saga -- almost b/w
+        # saga -- almost b/w, barely visible comments and selection tho
         # grayscale-dark -- duh
 
         # greenscreen -- green monochrome
@@ -40,7 +40,6 @@
 
         # stella -- pastel purple bg, otherwise dracula vibes
         # pasque -- kinda like helix, purple mostly
-        # shades-of-purple -- like colorful helix
 
         # zenbones -- almost like shuffled dracula
         # tokyo-night-dark -- colder dracula
@@ -51,7 +50,7 @@
 
         # xcode-dusk -- grey + bright colors, very cool
 
-        name = "base16/saga";
+        name = "base16/black-metal";
       in
       "${inputs.tt-schemes}/${name}.yaml";
   };
