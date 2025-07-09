@@ -8,19 +8,18 @@
   services = {
     swayidle =
       let
-        bin = with pkgs; {
-          systemctl = "${systemd}/bin/systemctl";
-          swaymsg = "${sway}/bin/swaymsg";
-          pkill = "${procps}/bin/pkill";
-          swaylock = lib.getExe swaylock;
-        };
-
-        screen = {
-          lock = "${bin.swaylock}";
-          unlock = "${bin.pkill} -USR1 -f '^${bin.swaylock}'";
-          off = "${bin.swaymsg} 'output * power off'";
-          on = "${bin.swaymsg} 'output * power on'";
-        };
+        screen =
+          let
+            pkill = "${pkgs.procps}/bin/pkill";
+            swaylock = lib.getExe pkgs.swaylock;
+            swaymsg = "${pkgs.sway}/bin/swaymsg";
+          in
+          {
+            lock = "${swaylock}";
+            unlock = "${pkill} -USR1 -f '^${swaylock}'";
+            off = "${swaymsg} 'output * power off'";
+            on = "${swaymsg} 'output * power on'";
+          };
 
         pass = {
           lock =
@@ -47,7 +46,7 @@
 
         lock = "${pass.lock} && ${screen.lock}";
         unlock = "${screen.unlock}";
-        sleep = "${bin.systemctl} suspend";
+        sleep = "${pkgs.systemd}/bin/systemctl suspend";
       in
       {
         enable = true;
