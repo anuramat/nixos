@@ -1,11 +1,11 @@
 {
-  wayland.windowManager.sway.config.startup = [
-    {
-      # <https://github.com/nix-community/home-manager/issues/3599>
-      command = "systemctl start --user waybar.service";
-      always = true;
-    }
-  ];
+  # wayland.windowManager.sway.config.startup = [
+  #   {
+  #     # <https://github.com/nix-community/home-manager/issues/3599>
+  #     command = "systemctl start --user waybar.service";
+  #     always = true;
+  #   }
+  # ];
   programs.waybar = {
     enable = true;
     systemd.enable = true;
