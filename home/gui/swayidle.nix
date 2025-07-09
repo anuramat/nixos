@@ -10,13 +10,11 @@
       let
         screen =
           let
-            pkill = "${pkgs.procps}/bin/pkill";
             swaylock = lib.getExe pkgs.swaylock;
             swaymsg = "${pkgs.sway}/bin/swaymsg";
           in
           {
             lock = "${swaylock}";
-            unlock = "${pkill} -USR1 -f '^${swaylock}'";
             off = "${swaymsg} 'output * power off'";
             on = "${swaymsg} 'output * power on'";
           };
@@ -45,7 +43,6 @@
         };
 
         lock = "${pass.lock} && ${screen.lock}";
-        unlock = "${screen.unlock}";
         sleep = "${pkgs.systemd}/bin/systemctl suspend";
       in
       {
@@ -71,10 +68,6 @@
           {
             event = "before-sleep";
             command = lock;
-          }
-          {
-            event = "unlock";
-            command = unlock;
           }
           {
             event = "lock";
