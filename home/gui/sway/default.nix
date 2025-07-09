@@ -14,6 +14,7 @@
       enable = true;
       checkConfig = true;
       wrapperFeatures.gtk = true;
+      systemd.xdgAutostart = true;
       config = {
         bars = [ ];
         focus = {

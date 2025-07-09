@@ -41,6 +41,13 @@ in
         bindswitch --locked lid:off output ${out.int} enable
       '';
     config = {
+      startup = [
+        {
+          # <https://github.com/nix-community/home-manager/issues/2797>
+          command = "${pkgs.kanshi}/bin/kanshictl reload";
+          always = true;
+        }
+      ];
       workspaceOutputAssign =
         let
           assign =
