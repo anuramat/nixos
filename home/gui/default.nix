@@ -4,7 +4,7 @@
     ./menu.nix
     ./notifications.nix
     ./portal.nix
-    ./wm
+    ./sway
     ./swayidle.nix
     ./swaylock.nix
     ./waybar.nix
