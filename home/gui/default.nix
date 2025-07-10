@@ -2,7 +2,7 @@
   imports = [
     ./packages.nix
     ./menu.nix
-    ./portal.nix
+    ./portals.nix
     ./sway
     ./swayidle.nix
     ./waybar.nix

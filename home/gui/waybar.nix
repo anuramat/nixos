@@ -1,3 +1,8 @@
+{ pkgs, lib, ... }:
+let
+  inherit (lib) getExe;
+  toList = sep: str: lib.splitString sep str |> lib.filter (v: v != "");
+in
 {
   programs.waybar = {
     enable = true;
@@ -20,6 +25,25 @@
             format = "{:%Y-%m-%d %H:%M:%S}";
             interval = 1;
           };
+        };
+        modules = {
+          modules-left = [
+            "pulseaudio"
+            "backlight"
+            "idle_inhibitor"
+            "sway/language"
+            "mpris"
+          ];
+          modules-center = [
+            "sway/workspaces"
+            "sway/scratchpad"
+          ];
+          modules-right = [
+            "tray"
+            "disk"
+            "battery"
+            "clock"
+          ];
         };
         controls = {
           mpris = {
@@ -69,85 +93,31 @@
             format-muted = "{volume}% 󰖁  {format_source}";
             format-source = "{volume}% 󰍬";
             format-source-muted = "{volume}% 󰍭";
-            on-click = "pavucontrol";
+            on-click = "${getExe pkgs.pavucontrol}";
             on-click-middle = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
             on-click-right = "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
           };
           backlight = {
             format = "{percent}% {icon}";
-            format-icons = [
-              ""
-              ""
-              ""
-              ""
-              ""
-              ""
-              ""
-              ""
-              ""
-            ];
+            format-icons = toList " " "        ";
           };
         };
         metrics = {
           battery = {
             format = "{capacity}% {icon}";
-            format-alt = "{time} {icon}";
             format-charging = "{capacity}% 󰂄";
-            format-icons = [
-              "󰂎"
-              "󰁺"
-              "󰁻"
-              "󰁼"
-              "󰁽"
-              "󰁾"
-              "󰁿"
-              "󰂀"
-              "󰂁"
-              "󰂂"
-              "󰁹"
-            ];
             format-plugged = "{capacity}% 󰚥";
+            format-icons = toList "" "󰂎󰁺󰁻󰁼󰁽󰁾󰁿󰂀󰂁󰂂󰁹";
             interval = 1;
             states = {
               critical = 15;
               warning = 30;
             };
           };
-          cpu.format = "{usage}% ";
-          memory.format = "{}% ";
           disk = {
             format = "{percentage_used}% ";
             path = "/";
           };
-          temperature = {
-            critical-threshold = 80;
-            format = "{temperatureC}°C {icon}";
-            format-icons = [
-              "󱃃"
-              "󰔏"
-              "󱃂"
-            ];
-          };
-        };
-        modules = {
-          modules-left = [
-            "pulseaudio"
-            "backlight"
-            "idle_inhibitor"
-            "mpris"
-          ];
-          modules-center = [
-            "sway/workspaces"
-            "sway/scratchpad"
-          ];
-          modules-right = [
-            "sway/window"
-            "tray"
-            "battery"
-            "disk"
-            "sway/language"
-            "clock"
-          ];
         };
         sway = {
           "sway/scratchpad" = {
@@ -158,9 +128,6 @@
             ];
             show-empty = false;
           };
-          "sway/window" = {
-            icon = true;
-          };
           "sway/workspaces" = {
             disable-scroll = true;
             format = "{name}";
@@ -168,7 +135,7 @@
         };
       in
       [
-        (main // modules // sway // controls // metrics)
+        (main // modules // controls // metrics // sway)
       ];
   };
 }
