@@ -32,7 +32,6 @@
 
     # ai / llm
     goose-cli
-    aider-chat-full
     claude-code
     opencode # which one?
     llama-cpp
