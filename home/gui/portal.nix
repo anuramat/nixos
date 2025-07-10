@@ -1,27 +1,22 @@
 { pkgs, lib, ... }:
 let
   chooser = pkgs.xdg-desktop-portal-termfilechooser;
-
-  # TODO contribute
-  dependencies = with pkgs; [
-    yazi
-    gnused
-    bash
-  ];
-  wrapper = pkgs.writeTextFile {
-    name = "nix_wrapper.sh";
-    text = ''
-      #!/bin/sh
-      export PATH=${lib.makeBinPath dependencies}
-      ${chooser}/share/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh "$@"
-    '';
-    executable = true;
-  };
-
 in
 {
   # point it to the file manager
-  home.file.".config/xdg-desktop-portal-termfilechooser/config".text = # ini
+  home.file.".config/xdg-desktop-portal-termfilechooser/config".text =
+    let
+      wrapper = pkgs.writeShellApplication {
+        name = "yazi-wrapper";
+        runtimeInputs = with pkgs; [
+          yazi
+          gnused
+          bash
+        ];
+        text = builtins.readFile "${chooser}/share/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh";
+      };
+    in
+    # ini
     ''
       [filechooser]
       cmd=${wrapper}
@@ -34,10 +29,10 @@ in
     portal = {
       enable = true;
       extraPortals = [
-        # this fucking shit is supposed to create a systemd service
         chooser
         pkgs.xdg-desktop-portal-wlr
-        pkgs.xdg-desktop-portal-gtk # the rest: <https://wiki.archlinux.org/title/XDG_Desktop_Portal>
+        pkgs.xdg-desktop-portal-gtk
+        # TODO read and verify that all needs are covered with no overlap <https://wiki.archlinux.org/title/XDG_Desktop_Portal>
       ];
       config =
         let
