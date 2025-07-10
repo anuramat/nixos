@@ -3,7 +3,6 @@ let
   chooser = pkgs.xdg-desktop-portal-termfilechooser;
 in
 {
-  # point it to the file manager
   home.file.".config/xdg-desktop-portal-termfilechooser/config".text =
     let
       wrapper = pkgs.writeShellApplication {
@@ -24,7 +23,6 @@ in
       env=TERMCMD=${pkgs.foot}/bin/foot
     '';
 
-  # set as default
   xdg = {
     portal = {
       enable = true;

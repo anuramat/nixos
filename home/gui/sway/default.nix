@@ -5,6 +5,7 @@
     ./autologin.nix
     ./outputs.nix
     ./waybar.nix
+    ./swayidle.nix
   ];
   wayland.windowManager.sway =
     let

@@ -1,7 +1,9 @@
 {
   imports = [
-    ./swaylock.nix
-    ./mako.nix
     ./clipboard.nix
+    ./mako.nix
+    ./menu.nix
+    ./portals.nix
+    ./swaylock.nix
   ];
 }
