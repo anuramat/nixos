@@ -40,7 +40,7 @@
               in
               "${lib.getExe gpg-lock} ${config.programs.password-store.settings.PASSWORD_STORE_DIR}/.gpg-id";
           in
-          "${pass} && ${screen}";
+          "${pass} ; ${screen}";
       in
       {
         enable = true;
