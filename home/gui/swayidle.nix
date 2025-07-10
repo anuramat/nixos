@@ -18,7 +18,7 @@
           };
         lock =
           let
-            screen = "${swaylock} -f";
+            screen = "${lib.getExe pkgs.swaylock} -f";
             pass =
               let
                 gpg-lock = pkgs.writeShellApplication {
