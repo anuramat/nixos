@@ -1,5 +1,13 @@
-{ osConfig, ... }:
 {
+  imports = [
+    ./misc.nix
+    ./sway
+    ./clipboard.nix
+    ./mako.nix
+    ./menu.nix
+    ./portals.nix
+    ./swaylock.nix
+  ];
   services = {
     blueman-applet.enable = osConfig.services.blueman.enable;
     avizo = {

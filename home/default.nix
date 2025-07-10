@@ -10,13 +10,11 @@
     nixvim.homeModules.nixvim
     agenix.homeManagerModules.default
     spicetify-nix.homeManagerModules.spicetify
-    ./spotify.nix
     ./lang
     ./misc.nix
     ./email.nix
     ./mime
     ./llm
-    ./term.nix
     ./editor.nix
     ./keyring.nix
     ./theme.nix
