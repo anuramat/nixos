@@ -34,6 +34,7 @@ let
   };
 in
 {
+  services.mako.settings.output = out.int;
   wayland.windowManager.sway = {
     extraConfig = # sway
       ''
