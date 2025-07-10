@@ -18,7 +18,7 @@ in
     # ini
     ''
       [filechooser]
-      cmd=${lib.findExe wrapper}
+      cmd=${lib.getExe wrapper}
       default_dir=$HOME/Downloads
       env=TERMCMD=${pkgs.foot}/bin/foot
     '';
