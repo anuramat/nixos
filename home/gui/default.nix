@@ -5,7 +5,6 @@
     ./portals.nix
     ./sway
     ./swayidle.nix
-    ./waybar.nix
     ./misc.nix
     ./wayland
   ];

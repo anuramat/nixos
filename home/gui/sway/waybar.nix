@@ -1,7 +1,7 @@
 { pkgs, lib, ... }:
 let
   inherit (lib) getExe;
-  toList = sep: str: lib.splitString sep str |> lib.filter (v: v != "");
+  toList = str: lib.splitString " " str;
 in
 {
   programs.waybar = {
@@ -99,7 +99,7 @@ in
           };
           backlight = {
             format = "{percent}% {icon}";
-            format-icons = toList " " "        ";
+            format-icons = toList "        ";
           };
         };
         metrics = {
@@ -107,7 +107,7 @@ in
             format = "{capacity}% {icon}";
             format-charging = "{capacity}% 󰂄";
             format-plugged = "{capacity}% 󰚥";
-            format-icons = toList "" "󰂎󰁺󰁻󰁼󰁽󰁾󰁿󰂀󰂁󰂂󰁹";
+            format-icons = toList "󰂎 󰁺 󰁻 󰁼 󰁽 󰁾 󰁿 󰂀 󰂁 󰂂 󰁹";
             interval = 1;
             states = {
               critical = 15;
