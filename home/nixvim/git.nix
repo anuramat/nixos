@@ -1,9 +1,13 @@
 { lib, ... }:
 {
   plugins = {
-    gitlinker = { };
+    gitlinker = {
+      enable = true;
+    };
 
-    fugitive = { };
+    fugitive = {
+      enable = true;
+    };
 
     gitsigns = {
       enable = true;

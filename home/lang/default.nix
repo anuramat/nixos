@@ -46,6 +46,7 @@
         mdformat-footnote
         mdformat-deflist
         mdformat-frontmatter
+        mdformat-wikilink
       ]
     ))
     nixfmt-rfc-style

@@ -1,3 +1,4 @@
+{ osConfig, ... }:
 {
   imports = [
     ./misc.nix
