@@ -25,6 +25,8 @@
     markdown-link-check # find dead md links
     mermaid-cli
     mermaid-filter
+    openai-whisper
+    # whisper-cpp
 
     # audio
     sox # cli audio processing
