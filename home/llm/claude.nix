@@ -116,6 +116,10 @@ in
 
         rw_dirs+=(/tmp "$XDG_CONFIG_HOME/claude" "$PWD" "$HOME/.claude.json" "$HOME/.claude")
 
+        if gitroot=$(git rev-parse --show-toplevel 2>/dev/null); then
+          rw_dirs+=("$gitroot")
+        fi
+
         XDG_DATA_HOME=$(mktemp -d)
         XDG_STATE_HOME=$(mktemp -d)
         XDG_CACHE_HOME=$(mktemp -d)
@@ -132,6 +136,9 @@ in
         	args+=("$i")
           args+=("$i")
         done
+
+        echo "RW mounted directories:"
+        printf '%s\n' "''${rw_dirs[@]}"
 
         bwrap --ro-bind / / --dev /dev "''${args[@]}" claude --dangerously-skip-permissions "$@"
       '';
