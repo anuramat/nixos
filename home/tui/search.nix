@@ -5,9 +5,8 @@
   ...
 }:
 let
-  eza = "${config.programs.eza.package}/bin/eza";
-  timg = "${pkgs.timg}/bin/timg";
-  bat = "${pkgs.bat}/bin/bat";
+  inherit (lib) getExe;
+  eza = config.programs.eza.package;
 
   preview =
     pkgs.writeShellScript "preview"
@@ -15,12 +14,12 @@ let
       ''
         # directory
         if [ -d "$1" ]; then
-          ${eza} ${lib.strings.concatStringsSep " " config.programs.eza.extraOptions} --grid "$1"
+          ${getExe eza} ${lib.strings.concatStringsSep " " config.programs.eza.extraOptions} --grid "$1"
           exit
         # file
         elif [ -f "$1" ]; then
-        	${timg} -p s "-g''${FZF_PREVIEW_COLUMNS}x$FZF_PREVIEW_LINES" "$1" && exit
-          ${bat} --style=numbers --color=always "$1" && exit
+        	${getExe pkgs.timg} -p s "-g''${FZF_PREVIEW_COLUMNS}x$FZF_PREVIEW_LINES" "$1" && exit
+          ${getExe pkgs.bat} --style=numbers --color=always "$1" && exit
         fi
       '';
 in
