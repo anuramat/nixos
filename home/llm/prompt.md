@@ -105,8 +105,8 @@ verbose code, then refactor it to meet the code style guidelines.
 
 ## Markdown
 
-- for mathematical symbols, you MUST use Markdown inline math
-  `$...$` and math blocks `$$...$$`
+- for mathematical symbols, you MUST use Markdown inline math `$...$` and math
+  blocks `$$...$$`
 - math block delimiters MUST be on separate lines like in this example:
   ```markdown
   Paragraph before. Inline math is used like this: $\alpha$.
