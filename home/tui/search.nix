@@ -7,7 +7,7 @@
 let
   inherit (lib) getExe;
   eza = getExe config.programs.eza.package;
-  fd = getExe config.programs.fd.package;
+  fd = "${getExe config.programs.fd.package} -HL"; # still respects the ignore files
   bat = getExe config.programs.bat.package;
 
   preview =
@@ -103,12 +103,10 @@ in
 
     fd = {
       enable = true;
-      hidden = true;
-      extraOptions = [ "--follow" ];
       inherit ignores;
     };
   };
-  # TODO shouldn't be here
+
   home.shellAliases = {
     wget = "wget '--hsts-file=${config.xdg.dataHome}/wget-hsts'";
   };
