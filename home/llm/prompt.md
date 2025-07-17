@@ -4,6 +4,11 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" are to be interpreted as
 described in RFC 2119.
 
+## General
+
+- You MUST NOT use anything other than ASCII characters in all replies and
+  generated files
+
 ## Projects and directories
 
 ### NixOS
@@ -97,6 +102,26 @@ verbose code, then refactor it to meet the code style guidelines.
     (`git add .`) in the repository checked in.
   - You MUST NOT blindly trust project memory, as it gets outdated quick -- the
     source of truth is the code.
+
+## Markdown
+
+- for mathematical symbols, you MUST use Markdown inline math
+  `$...$` and math blocks `$$...$$`
+- math block delimiters MUST be on separate lines like in this example:
+  ```markdown
+  Paragraph before. Inline math is used like this: $\alpha$.
+
+  $$
+  \text{example}
+  $$
+
+  Paragraph after. Notce the blank lines between paragraphs, and math block
+  delimiters `$$` being on separate lines.
+  ```
+- You SHOULD prefer:
+  - math blocks to inline math, whenever the equation is big
+  - multi-line math blocks with `gathered` or `aligned` environments to multiple
+    math blocks in a row
 
 ## Misc
 
