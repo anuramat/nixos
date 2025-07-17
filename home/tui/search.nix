@@ -6,7 +6,9 @@
 }:
 let
   inherit (lib) getExe;
-  eza = config.programs.eza.package;
+  eza = getExe config.programs.eza.package;
+  fd = getExe config.programs.fd.package;
+  bat = getExe config.programs.bat.package;
 
   preview =
     pkgs.writeShellScript "preview"
@@ -14,12 +16,12 @@ let
       ''
         # directory
         if [ -d "$1" ]; then
-          ${getExe eza} ${lib.strings.concatStringsSep " " config.programs.eza.extraOptions} --grid "$1"
+          ${eza} ${lib.strings.concatStringsSep " " config.programs.eza.extraOptions} --grid "$1"
           exit
         # file
         elif [ -f "$1" ]; then
         	${getExe pkgs.timg} -p s "-g''${FZF_PREVIEW_COLUMNS}x$FZF_PREVIEW_LINES" "$1" && exit
-          ${getExe pkgs.bat} --style=numbers --color=always "$1" && exit
+          ${bat} --style=numbers --color=always "$1" && exit
         fi
       '';
   ignores = [ "**/.git/" ]; # hidden
@@ -57,44 +59,40 @@ in
       enable = true;
     };
 
-    fzf =
-      let
-        fd = "fd"; # TODO delete if everything works right
-      in
-      {
-        enable = true;
-        defaultCommand = fd;
+    fzf = {
+      enable = true;
+      defaultCommand = fd;
 
-        changeDirWidgetCommand = "${fd} -t d";
-        # changeDirWidgetOptions = "$default_preview";
-        # fileWidgetCommand = "$FZF_DEFAULT_COMMAND";
-        # fileWidgetOptions = "$default_preview";
+      changeDirWidgetCommand = "${fd} -t d";
+      # changeDirWidgetOptions = "$default_preview";
+      # fileWidgetCommand = "$FZF_DEFAULT_COMMAND";
+      # fileWidgetOptions = "$default_preview";
 
-        defaultOptions = [
-          "--layout=reverse"
-          "--keep-right"
-          "--info=inline"
-          "--tabstop=2"
-          "--multi"
-          "--height=50%"
+      defaultOptions = [
+        "--layout=reverse"
+        "--keep-right"
+        "--info=inline"
+        "--tabstop=2"
+        "--multi"
+        "--height=50%"
 
-          "--tmux=center,90%,80%"
+        "--tmux=center,90%,80%"
 
-          "--bind='ctrl-/:change-preview-window(down|hidden|)'"
-          "--bind='ctrl-j:accept'"
-          "--bind='tab:toggle+down'"
-          "--bind='btab:toggle+up'"
+        "--bind='ctrl-/:change-preview-window(down|hidden|)'"
+        "--bind='ctrl-j:accept'"
+        "--bind='tab:toggle+down'"
+        "--bind='btab:toggle+up'"
 
-          "--bind='ctrl-y:preview-up'"
-          "--bind='ctrl-e:preview-down'"
-          "--bind='ctrl-u:preview-half-page-up'"
-          "--bind='ctrl-d:preview-half-page-down'"
-          "--bind='ctrl-b:preview-page-up'"
-          "--bind='ctrl-f:preview-page-down'"
+        "--bind='ctrl-y:preview-up'"
+        "--bind='ctrl-e:preview-down'"
+        "--bind='ctrl-u:preview-half-page-up'"
+        "--bind='ctrl-d:preview-half-page-down'"
+        "--bind='ctrl-b:preview-page-up'"
+        "--bind='ctrl-f:preview-page-down'"
 
-          "--preview='${preview} {}'"
-        ];
-      };
+        "--preview='${preview} {}'"
+      ];
+    };
 
     zoxide = {
       enable = true;
@@ -105,11 +103,13 @@ in
 
     fd = {
       enable = true;
+      hidden = true;
+      extraOptions = [ "--follow" ];
       inherit ignores;
     };
   };
+  # TODO shouldn't be here
   home.shellAliases = {
-    fd = "fd -HL"; # working tree minus junk TODO sure?
-    wget = ''wget --hsts-file="$XDG_DATA_HOME/wget-hsts"'';
+    wget = "wget '--hsts-file=${config.xdg.dataHome}/wget-hsts'";
   };
 }
