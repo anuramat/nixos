@@ -8,6 +8,8 @@ described in RFC 2119.
 
 - You MUST NOT use anything other than ASCII characters in all replies and
   generated files
+- You SHOULD use parallel sub-agents whenever possible -- this saves time,
+  tokens, and keeps the context clean.
 
 ## Projects and directories
 
@@ -33,7 +35,8 @@ of the `$PWD` are mounted in read-only mode, so some commands might fail.
 
 ## Protocol
 
-You MUST integrate this two-stage protocol into your workflow:
+You MUST integrate this two-stage protocol into your workflow, unless explicitly
+told not to:
 
 ### Stage 1: Test command identification
 
