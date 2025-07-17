@@ -5,34 +5,49 @@
   ...
 }:
 let
-  settings = lib.generators.toJSON { } {
-    env = { };
-    includeCoAuthoredBy = false;
-    permissions = {
-      allow = [
-        "Bash(git status:*)"
-        "Bash(git diff:*)"
-        "Bash(git log:*)"
-        "Bash(git commit:*)"
-        "Bash(ls:*)"
-        "Bash(find:*)"
-        "Bash(fd:*)"
-        "Bash(grep:*)"
-        "Bash(rg:*)"
-        "Bash(nix flake check:*)"
-        "Bash(devenv test:*)"
-        "WebFetch"
-        "WebSearch"
-        "mcp__nixos"
-      ];
-      deny = [ ];
-    };
+  hooks = {
+    EventName = [
+      {
+        matcher = "ToolPattern";
+        hooks = [
+          {
+            type = "command";
+            command = "your-command-here";
+          }
+        ];
+      }
+    ];
+  };
+  permissions = {
+    allow = [
+      "Bash(git status:*)"
+      "Bash(git diff:*)"
+      "Bash(git log:*)"
+      "Bash(git commit:*)"
+      "Bash(ls:*)"
+      "Bash(find:*)"
+      "Bash(fd:*)"
+      "Bash(grep:*)"
+      "Bash(rg:*)"
+      "Bash(nix flake check:*)"
+      "Bash(devenv test:*)"
+      "WebFetch"
+      "WebSearch"
+      "mcp__nixos"
+    ];
+    deny = [ ];
+  };
+  env = {
+    CLAUDE = "true";
   };
 in
 {
   home.file = {
     ".claude/CLAUDE.md".source = ./prompt.md;
-    ".claude/settings.json".text = settings;
+    ".claude/settings.json".text = lib.generators.toJSON { } {
+      includeCoAuthoredBy = false;
+      inherit hooks env permissions;
+    };
     ".claude/commands/memcheck.md".text =
       let
         memfile = "CLAUDE.md";
@@ -110,10 +125,6 @@ in
       ];
 
       text = ''
-        # this is used in git hooks
-        CLAUDE=true
-        export CLAUDE
-
         rw_dirs+=(/tmp "$XDG_CONFIG_HOME/claude" "$PWD" "$HOME/.claude.json" "$HOME/.claude")
 
         if gitroot=$(git rev-parse --show-toplevel 2>/dev/null); then
