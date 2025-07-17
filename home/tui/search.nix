@@ -39,6 +39,25 @@ in
     _ZO_EXCLUDE_DIRS = "${config.xdg.cacheHome}/*:${config.xdg.stateHome}:/nix/store/*";
   };
   programs = {
+    ripgrep = {
+      enable = true;
+      arguments = [
+        "--smart-case"
+
+        # almost all
+        "--hidden"
+        "--follow"
+
+        # except for
+        "--glob=!{.git,.svn}"
+        "--glob=!*.lock"
+      ];
+    };
+
+    ripgrep-all = {
+      enable = true;
+    };
+
     fzf = {
       enable = true;
       defaultCommand = fd;
