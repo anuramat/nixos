@@ -35,8 +35,7 @@ of the `$PWD` are mounted in read-only mode, so some commands might fail.
 
 ## Protocol
 
-You MUST integrate this two-stage protocol into your workflow, unless explicitly
-told not to:
+You MUST adhere to the following two-stage development protocol:
 
 ### Stage 1: Test command identification
 
@@ -98,13 +97,11 @@ verbose code, then refactor it to meet the code style guidelines.
 - You are responsible for keeping project memory consistent with the state of
   the project
   - If you make significant changes or otherwise notice inconsistencies in the
-    project memory, you MUST *immediately* edit it such that it reflects the
-    current state of the project.
-  - You MUST NOT remove correct statements from the project memory.
-  - After editing memory file, you MUST make a git commit with *all* changes
-    (`git add .`) in the repository checked in.
-  - You MUST NOT blindly trust project memory, as it gets outdated quick -- the
-    source of truth is the code.
+    project memory, you MUST *immediately* edit it such that memory reflects the
+    current state of the project, and commit all changes (`git add -A`, then
+    `git commit ...`).
+- You MUST NOT blindly trust project memory, as it gets outdated quick -- the
+  source of truth is the code.
 
 ## Markdown
 
