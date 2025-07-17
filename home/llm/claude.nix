@@ -49,6 +49,30 @@ in
       includeCoAuthoredBy = false;
       inherit hooks env permissions;
     };
+    # TODO make a helper that creates commands
+    ".claude/commands/texify.md".text =
+      let
+        cmd = "LC_ALL=C rg '[^[:print:]]' --line-number";
+      in
+      ''
+        ---
+        description: replacement of non-ascii characters with latex in markdown files
+        ---
+
+        I want you to replace all non-ASCII characters in markdown files with
+        corresponding inline math `$...$` or math blocks `$$...$$`. If you find
+        something like umlauts in german names, you should replace them with
+        corresponding ASCII equivalents, eg `Jäger` becomes `Jaeger`.
+
+        Here is the list of non-ASCII characters found in the files:
+
+        !`${cmd}`
+
+        Do the necessary replacements, and then verify that everything was
+        replaced, using this command:
+
+        `${cmd}`
+      '';
     ".claude/commands/memcheck.md".text =
       let
         memfile = "CLAUDE.md";
@@ -59,8 +83,6 @@ in
         ---
         description: memory file update guided by git history
         ---
-
-        # Project memory update
 
         I want you to check if the project memory in ${memfile} is significantly
         outdated, and if so -- update it.
