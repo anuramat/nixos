@@ -7,15 +7,15 @@
 let
   claudeEnvVar = "CLAUDE";
   hooks = {
-    EventName = [
+    Notification = [
       {
-        matcher = "ToolPattern";
         hooks = [
           {
+            command = "jq .message -r | xargs -0I{} notify-send 'Claude Code' {}";
             type = "command";
-            command = "your-command-here";
           }
         ];
+        matcher = "";
       }
     ];
   };
