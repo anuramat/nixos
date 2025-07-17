@@ -125,10 +125,11 @@ in
         bubblewrap
       ];
 
+      # TODO add single file mode
       text = ''
         rw_dirs+=(/tmp "$XDG_CONFIG_HOME/claude" "$PWD" "$HOME/.claude.json" "$HOME/.claude")
 
-        if gitroot=$(git rev-parse --show-toplevel 2>/dev/null); then
+        if gitroot=$(git rev-parse --show-toplevel 2>/dev/null) && [ -d "$gitroot" ]; then
           rw_dirs+=("$gitroot")
         fi
 
