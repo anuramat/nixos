@@ -5,6 +5,7 @@ let
     prefix: suffix: f: input:
     with lib;
     mapAttrs' (n: v: nameValuePair (prefix + n + suffix) (f v)) input;
+  toJSON = lib.generators.toJSON { };
 in
 {
   inherit lua;
@@ -33,6 +34,8 @@ in
         throw "type ${type} is invalid for vim keymaps"
     );
   # signature: files.* { python = "text"; }
+  # rewrite this to a diff signature:
+  # files = files "python" { ftp = ...; injections = ...; ...};
   files = {
     ftp = mkFile "after/ftplugin/" ".lua" (v: {
       localOpts = v;
@@ -42,6 +45,9 @@ in
     });
     textobjects = mkFile "after/queries/" "/textobjects.scm" (v: {
       text = v;
+    });
+    snippets = mkFile "snippets/" ".json" (v: {
+      text = toJSON v;
     });
   };
 }
