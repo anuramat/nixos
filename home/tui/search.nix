@@ -22,6 +22,8 @@ let
           ${getExe pkgs.bat} --style=numbers --color=always "$1" && exit
         fi
       '';
+  ignores = [ "**/.git/" ]; # hidden
+  rgIgnores = [ "*.lock" ]; # non human readable, but visible
 in
 {
 
@@ -39,17 +41,16 @@ in
   programs = {
     ripgrep = {
       enable = true;
-      arguments = [
-        "--smart-case"
-
-        # almost all
-        "--hidden"
-        "--follow"
-
-        # except for
-        "--glob=!{.git,.svn}"
-        "--glob=!*.lock"
-      ];
+      arguments =
+        let
+          mkGlob = globExp: "--glob=!${globExp}";
+        in
+        [
+          "--smart-case"
+          "--hidden"
+          "--follow"
+        ]
+        ++ (map mkGlob (ignores ++ rgIgnores));
     };
 
     ripgrep-all = {
@@ -104,10 +105,7 @@ in
 
     fd = {
       enable = true;
-      ignores = [
-        ".git/"
-        "*.pb.go"
-      ];
+      inherit ignores;
     };
   };
   home.shellAliases = {
