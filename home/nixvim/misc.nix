@@ -1,29 +1,30 @@
 {
-  lib,
   hax,
-  inputs,
   pkgs,
   ...
 }:
 let
-  inherit (hax.vim) set;
+  inherit (hax.vim) set lua;
 in
 {
   keymaps = [
     (set "<leader>u" "UndotreeToggle" "Undotree")
+    (set "<leader>r" (lua "function() require('flash').jump() end") "Jump")
+    (
+      (set "r" (lua "function() require('flash').treesitter() end") "Treesitter node") // { mode = "o"; }
+    )
   ];
 
   plugins = {
     web-devicons.enable = true;
-
     sniprun.enable = true;
-
     nvim-lightbulb.enable = true;
-
     grug-far.enable = true;
-
+    undotree.enable = true;
+    schemastore.enable = true;
     dressing.enable = true;
 
+    # TODO
     # namu = {
     #   keys = [
     #     [
@@ -49,10 +50,6 @@ in
     #   };
     # };
 
-    undotree.enable = true;
-
-    schemastore.enable = true;
-
     flash = {
       enable = true;
       settings = {
@@ -74,32 +71,7 @@ in
           };
         };
       };
-      lazyLoad = {
-        enable = true;
-        settings = {
-          keys = [
-            {
-              __unkeyed_1 = "<leader>r";
-              __unkeyed_2 = "function() require('flash').jump() end";
-              desc = "Jump";
-              mode = "n";
-            }
-            {
-              __unkeyed_1 = "r";
-              __unkeyed_2 = "function() require('flash').treesitter() end";
-              desc = "TS node";
-              mode = "o";
-            }
-          ];
-        };
-      };
     };
-    # keymaps = [
-    #   (set "<leader>r" (lua "function() require('flash').jump() end") "Jump")
-    #   (
-    #     (set "r" (lua "function() require('flash').treesitter() end") "Treesitter node") // { mode = "o"; }
-    #   )
-    # ];
 
     todo-comments = {
       enable = true;
