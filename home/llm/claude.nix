@@ -5,6 +5,7 @@
   ...
 }:
 let
+  claudeEnvVar = "CLAUDE";
   hooks = {
     EventName = [
       {
@@ -38,7 +39,7 @@ let
     deny = [ ];
   };
   env = {
-    CLAUDE = "true";
+    ${claudeEnvVar} = 1;
   };
 in
 {
@@ -100,7 +101,7 @@ in
         # meanwhile with `commit -m` it already contains the message
         # claude always uses `commit -m`
         signature="Co-Authored-By: Claude <noreply@anthropic.com>"
-        if [ -v CLAUDE ]; then
+        if [ -v ${claudeEnvVar} ]; then
         	if [ "$COMMIT_SOURCE" = "commit" ]; then
         		echo 'permission error: `claude` is not allowed to use `git commit` with flags `-c`, `-C`, or `--amend`'
         		exit 1
