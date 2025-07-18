@@ -1,32 +1,12 @@
+{ lib, vars }:
 let
-  x =
-    let
-      y = "";
-    in
-    ''
-      # Instructions
+  partsStr = lib.attrsets.mapAttrsToList (n: v: ''
+    ## ${n}
 
-      The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-      "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" are to be interpreted as
-      described in RFC 2119.
-
-      ## General
-
-      - You MUST NOT use anything other than ASCII characters in all replies and
-        generated files
-      - You SHOULD use parallel sub-agents whenever possible -- this saves time,
-        tokens, and keeps the context clean.
-      - You MUST NOT blindly trust project memory, as it gets outdated quick -- the
-        source of truth is the code.
-      - If you need tools that are not available on the system, you SHOULD use
-        `nix run nixpkgs#packagename -- arg1 arg2 ...`. You can use NixOS MCP server
-        to locate the required package.
-      - You are running in a `bubblewrap` sandbox. Most of the paths outside of the
-        current working directory are mounted in read-only mode. You can find the
-        read-write mounted directories in the ` ` environment variable.
-
-      ## Protocol
-
+    {v}
+  '') parts;
+  parts = {
+    protocol = ''
       You MUST adhere to the following two-stage development protocol:
 
       ### Stage 1: Test command identification
@@ -51,11 +31,27 @@ let
       3. If the task is not completed, or the "test command" fails, go to step 1.
 
       Only consider the task complete, when the "test command" succeeds.
+    '';
 
-      ## Code style
+    general = ''
+      - You MUST NOT use anything other than ASCII characters in all replies and
+        generated files
+      - You SHOULD use parallel sub-agents whenever possible -- this saves time,
+        tokens, and keeps the context clean.
+      - You MUST NOT blindly trust project memory, as it gets outdated quick -- the
+        source of truth is the code.
+      - If you need tools that are not available on the system, you SHOULD use
+        `nix run nixpkgs#packagename -- arg1 arg2 ...`. You can use NixOS MCP server
+        to locate the required package.
+      - You are running in a `bubblewrap` sandbox. Most of the paths outside of the
+        current working directory are mounted in read-only mode. You can find the
+        read-write mounted directories in the `${vars.rwDirs}` environment variable.
+    '';
 
-      Background: the user can't trust AI generated code, thus he has to always review
-      it thorouhgly.
+    codestyle = ''
+      Background: the user can't trust AI generated code/comments, thus he has to
+      always review it thorouhgly. The main limiting factor is the amount of
+      new/changed lines. Thus:
 
       You MUST write concise, minimalist, self-documenting code that prioritizes
       brevity and elegance over verbosity and caution, "move fast and break things"
@@ -77,18 +73,20 @@ let
 
       With complex multi-step problems you SHOULD prefer a two stage approach: write
       verbose code, then refactor it to meet the code style guidelines.
+    '';
 
-      ## Git
-
+    git = ''
       - You MUST make commits after each successful step, so that the user can
         backtrack the trajectory of the changes step by step.
       - Keep commit messages as concise as possible.
+    '';
 
-      ## Markdown
+    # TODO proper name for "math block" and inline math
 
-      - for mathematical symbols, you MUST use Markdown inline math `$...$` and math
+    markdown = ''
+      - For mathematical symbols, you MUST use Markdown inline math `$...$` and math
         blocks `$$...$$`
-      - math block delimiters MUST be on separate lines like in this example:
+      - Math block delimiters MUST be on separate lines like in this example:
         ```markdown
         Paragraph before. Inline math is used like this: $\alpha$.
 
@@ -104,5 +102,14 @@ let
         - multi-line math blocks with `gathered` or `aligned` environments to multiple
           math blocks in a row
     '';
+  };
+
+  prompt = ''
+    # Instructions
+
+    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+    "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" are to be interpreted as
+    described in RFC 2119.
+  '';
 in
-{ }
+lib.concatStringsSep "\n\n" partsStr ([ prompt ] ++ partsStr)

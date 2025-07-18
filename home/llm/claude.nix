@@ -5,7 +5,6 @@
   ...
 }:
 let
-  claudeEnvVar = "CLAUDE";
   hooks = {
     Notification = [
       {
@@ -38,13 +37,17 @@ let
     ];
     deny = [ ];
   };
+  varNames = {
+    rwDirs = "RW_DIRS";
+    isClaude = "CLAUDE";
+  };
   env = {
-    ${claudeEnvVar} = 1;
+    ${varNames.isClaude} = 1;
   };
 in
 {
   home.file = {
-    ".claude/CLAUDE.md".source = ./prompt.md;
+    ".claude/CLAUDE.md".text = import ./prompt.nix { inherit lib varNames; };
     ".claude/settings.json".text = lib.generators.toJSON { } {
       includeCoAuthoredBy = false;
       inherit hooks env permissions;
@@ -123,7 +126,7 @@ in
         # meanwhile with `commit -m` it already contains the message
         # claude always uses `commit -m`
         signature="Co-Authored-By: Claude <noreply@anthropic.com>"
-        if [ -v ${claudeEnvVar} ]; then
+        if [ -v ${varNames.isClaude} ]; then
         	if [ "$COMMIT_SOURCE" = "commit" ]; then
         		echo 'permission error: `claude` is not allowed to use `git commit` with flags `-c`, `-C`, or `--amend`'
         		exit 1
@@ -149,10 +152,10 @@ in
 
       # TODO add single file mode
       text = ''
-        BWRAP_RW_DIRS+=(/tmp "$XDG_CONFIG_HOME/claude" "$PWD" "$HOME/.claude.json" "$HOME/.claude")
+        ${varNames.rwDirs}+=(/tmp "$XDG_CONFIG_HOME/claude" "$PWD" "$HOME/.claude.json" "$HOME/.claude")
 
         if gitroot=$(git rev-parse --show-toplevel 2>/dev/null) && [ -d "$gitroot" ]; then
-          BWRAP_RW_DIRS+=("$gitroot")
+          ${varNames.rwDirs}+=("$gitroot")
         fi
 
         XDG_DATA_HOME=$(mktemp -d)
@@ -166,15 +169,15 @@ in
         export XDG_RUNTIME_DIR
 
         args=()
-        for i in "''${BWRAP_RW_DIRS[@]}"; do
+        for i in "''${${varNames.rwDirs}[@]}"; do
         	args+=(--bind)
         	args+=("$i")
           args+=("$i")
         done
 
         echo "RW mounted directories:"
-        printf '%s\n' "''${BWRAP_RW_DIRS[@]}"
-        export BWRAP_RW_DIRS
+        printf '%s\n' "''${${varNames.rwDirs}[@]}"
+        export ${varNames.rwDirs}
 
         bwrap --ro-bind / / --dev /dev "''${args[@]}" claude --dangerously-skip-permissions "$@"
       '';
