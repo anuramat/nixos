@@ -4,6 +4,12 @@
   inputs,
   ...
 }:
+let
+  startCondition = # lua
+    ''
+      os.getenv('TERM') == 'xterm-ghostty'
+    '';
+in
 {
   extraPlugins = [
     inputs.mdmath.packages.${pkgs.system}.default
@@ -17,17 +23,33 @@
       file:close()
     end
     require('mdmath').setup({
-      filetypes = os.getenv('TERM') == 'xterm-ghostty' and { 'markdown' } or {},
+      filetypes = ${startCondition} and { 'markdown' } or {},
       preamble = chars,
       anticonceal = false,
     })
   '';
   keymaps =
     let
-      inherit (hax.vim) set;
+      inherit (hax.vim) set luaf;
+      toggle =
+        luaf
+          # lua
+          ''
+            -- TODO use filetypes condition from setup
+            if vim.g.mdmath_enabled == nil then
+              vim.g.mdmath_enabled = ${startCondition}
+            end
+
+            if vim.g.mdmath_enabled then
+              vim.cmd('MdMath disable')
+              vim.g.mdmath_enabled = false
+            else
+              vim.cmd('MdMath enable')
+              vim.g.mdmath_enabled = true
+            end
+          '';
     in
     [
-      (set "<kp0>" "MdMath disable" "disable mdmath")
-      (set "<kp1>" "MdMath enable" "enable mdmath")
+      (set "<kp0>" toggle "disable mdmath")
     ];
 }
