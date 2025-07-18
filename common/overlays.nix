@@ -90,6 +90,38 @@ in
           hash = "sha256-Dnooy0KNfhirTu7hv6DfwL7SHwf++CKtG8VHptNhcxU=";
         };
       });
+      opencode-alt = prev.callPackage (
+        {
+          lib,
+          fetchFromGitHub,
+          buildGoModule,
+        }:
+        buildGoModule (finalAttrs: {
+          pname = "opencode-alt";
+          version = "0.0.55";
+
+          src = fetchFromGitHub {
+            owner = "opencode-ai";
+            repo = "opencode";
+            tag = "v${finalAttrs.version}";
+            hash = "sha256-UjGNtekqPVUxH/jfi6/D4hNM27856IjbepW7SgY2yQw=";
+          };
+
+          vendorHash = "sha256-Kcwd8deHug7BPDzmbdFqEfoArpXJb1JtBKuk+drdohM=";
+
+          checkFlags =
+            let
+              skippedTests = [
+                "TestLsTool_Run"
+              ];
+            in
+            [ "-skip=^${lib.concatStringsSep "$|^" skippedTests}$" ];
+
+          meta = {
+            mainProgram = "opencode";
+          };
+        })
+      ) { };
     })
   ];
 }

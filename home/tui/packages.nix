@@ -35,7 +35,8 @@
     # ai / llm
     goose-cli
     claude-code
-    opencode # which one?
+    opencode # ts rewrite
+    opencode-alt # sellout in golang
     llama-cpp
     codex
     amp-cli
