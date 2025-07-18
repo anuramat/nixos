@@ -1,10 +1,5 @@
 { lib, varNames }:
 let
-  partsStr = lib.attrsets.mapAttrsToList (n: v: ''
-    ## ${n}
-
-    ${v}
-  '') parts;
   parts = {
     protocol = ''
       You MUST adhere to the following two-stage development protocol:
@@ -34,6 +29,9 @@ let
     '';
 
     general = ''
+      - The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+        "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" are to be
+        interpreted as described in RFC 2119.
       - You MUST NOT use anything other than ASCII characters in all replies and
         generated files
       - You SHOULD use parallel sub-agents whenever possible -- this saves time,
@@ -103,13 +101,5 @@ let
           math blocks in a row
     '';
   };
-
-  prompt = ''
-    # Instructions
-
-    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-    "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" are to be interpreted as
-    described in RFC 2119.
-  '';
 in
-lib.concatStringsSep "\n" ([ prompt ] ++ partsStr)
+parts |> lib.attrsets.mapAttrsToList (n: v: "## ${n}\n" + v) |> lib.concatStringsSep "\n"
