@@ -100,7 +100,8 @@ let
       - You SHOULD prefer:
         - math blocks to inline math, whenever the equation is big
         - multi-line math blocks with `gathered` or `aligned` environments to multiple
-          math blocks in a row
+          math blocks in a row; You MUST NOT use `gather` or `align` -- they won't work,
+          because markdown math blocks are wrapped in math-mode already.
     '';
   };
 in
