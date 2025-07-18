@@ -1,6 +1,6 @@
 { lib, varNames }:
 let
-  parts = {
+  parts = lib.attrsets.mapAttrsToList (n: v: "## ${n}\n\n" + v) {
     protocol = ''
       You MUST adhere to the following two-stage development protocol:
 
@@ -102,4 +102,4 @@ let
     '';
   };
 in
-parts |> lib.attrsets.mapAttrsToList (n: v: "## ${n}\n" + v) |> lib.concatStringsSep "\n"
+lib.concatStringsSep "\n" ([ "# Global instructions\n" ] ++ parts)
