@@ -10,28 +10,14 @@ described in RFC 2119.
   generated files
 - You SHOULD use parallel sub-agents whenever possible -- this saves time,
   tokens, and keeps the context clean.
-
-## Projects and directories
-
-### NixOS
-
-- User is running NixOS, and the corresponding repository is located in
-  `/etc/nixos`
-- It contains configuration of all parts of the system, thus whenever user
-  mentions software installation or configuration, this flake is implied.
-
-### Other repositories
-
-- Other repositories are located in `$(ghq root)`.
-- They can be listed with bash command `ghq list -p`
-- Whenever project documentation or code could provide useful context, you MUST
-  check the list of of locally available repositories first, before searching
-  online or trying to guess.
-
-## Permissions
-
-You typically are running in a `bubblewrap` sandbox. Most of the paths outside
-of the `$PWD` are mounted in read-only mode, so some commands might fail.
+- You MUST NOT blindly trust project memory, as it gets outdated quick -- the
+  source of truth is the code.
+- If you need tools that are not available on the system, you SHOULD use
+  `nix run nixpkgs#packagename -- arg1 arg2 ...`. You can use NixOS MCP server
+  to locate the required package.
+- You are running in a `bubblewrap` sandbox. Most of the paths outside of the
+  current working directory are mounted in read-only mode. You can find the
+  read-write mounted directories in the ` ` environment variable.
 
 ## Protocol
 
@@ -51,10 +37,10 @@ development).
 
 ### Stage 2: Dev-test loop
 
-You MUST repeat the "dev" and "test" steps until you succeed:
+You MUST repeat the "development" and "test" steps until you succeed:
 
-1. Dev: implement the solution, a part of the solution, or fix a problem. You
-   MUST NOT disable problematic features.
+1. Development: implement the solution, a part of the solution, or fix a
+   problem. You MUST NOT disable problematic features.
 2. Test: run the "testing command".
 3. If the task is not completed, or the "test command" fails, go to step 1.
 
@@ -92,17 +78,6 @@ verbose code, then refactor it to meet the code style guidelines.
   backtrack the trajectory of the changes step by step.
 - Keep commit messages as concise as possible.
 
-## Memory
-
-- You are responsible for keeping project memory consistent with the state of
-  the project
-  - If you make significant changes or otherwise notice inconsistencies in the
-    project memory, you MUST *immediately* edit it such that memory reflects the
-    current state of the project, and commit all changes (`git add -A`, then
-    `git commit ...`).
-- You MUST NOT blindly trust project memory, as it gets outdated quick -- the
-  source of truth is the code.
-
 ## Markdown
 
 - for mathematical symbols, you MUST use Markdown inline math `$...$` and math
@@ -122,9 +97,3 @@ verbose code, then refactor it to meet the code style guidelines.
   - math blocks to inline math, whenever the equation is big
   - multi-line math blocks with `gathered` or `aligned` environments to multiple
     math blocks in a row
-
-## Misc
-
-- If you need tools that are not available on the system initially, you can use
-  `nix run nixpkgs#packagename -- arg1 arg2 ...`. You can use NixOS MCP server
-  to find the required package.
