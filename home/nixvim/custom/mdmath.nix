@@ -1,4 +1,9 @@
-{ pkgs, inputs, ... }:
+{
+  pkgs,
+  hax,
+  inputs,
+  ...
+}:
 {
   extraPlugins = [
     inputs.mdmath.packages.${pkgs.system}.default
@@ -14,6 +19,15 @@
     require('mdmath').setup({
       filetypes = os.getenv('TERM') == 'xterm-ghostty' and { 'markdown' } or {},
       preamble = chars,
+      anticonceal = false,
     })
   '';
+  keymaps =
+    let
+      inherit (hax.vim) set;
+    in
+    [
+      (set "<kp0>" "MdMath disable" "disable mdmath")
+      (set "<kp1>" "MdMath enable" "enable mdmath")
+    ];
 }
