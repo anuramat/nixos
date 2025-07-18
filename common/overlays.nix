@@ -2,7 +2,7 @@
   inputs,
   pkgs,
   ...
-}@args:
+}:
 let
   flakes =
     final: prev:
@@ -13,12 +13,6 @@ let
         nil
         ;
     });
-
-  oldPkgs = final: prev: {
-    inherit (import inputs.nixpkgs-old { inherit (pkgs) config system; })
-      nvi
-      ;
-  };
   unstablePkgs = final: prev: {
     inherit (import inputs.nixpkgs-unstable { inherit (pkgs) config system; })
       opencode
@@ -68,6 +62,8 @@ let
       inputs.neovim-nightly-overlay
     ]
     |> map (v: v.overlays.default);
+
+  opencodeName = "opencode-alt";
 in
 {
   nixpkgs.overlays = overlays ++ [
@@ -90,14 +86,14 @@ in
           hash = "sha256-Dnooy0KNfhirTu7hv6DfwL7SHwf++CKtG8VHptNhcxU=";
         };
       });
-      opencode-alt = prev.callPackage (
+      ${opencodeName} = prev.callPackage (
         {
           lib,
           fetchFromGitHub,
           buildGoModule,
         }:
         buildGoModule (finalAttrs: {
-          pname = "opencode-alt";
+          pname = opencodeName;
           version = "0.0.55";
 
           src = fetchFromGitHub {
@@ -109,6 +105,11 @@ in
 
           vendorHash = "sha256-Kcwd8deHug7BPDzmbdFqEfoArpXJb1JtBKuk+drdohM=";
 
+          # TODO is this really the only way
+          postInstall = ''
+            mv $out/bin/opencode $out/bin/${opencodeName}
+          '';
+
           checkFlags =
             let
               skippedTests = [
@@ -118,7 +119,7 @@ in
             [ "-skip=^${lib.concatStringsSep "$|^" skippedTests}$" ];
 
           meta = {
-            mainProgram = "opencode";
+            mainProgram = opencodeName;
           };
         })
       ) { };
