@@ -3,7 +3,7 @@ let
   partsStr = lib.attrsets.mapAttrsToList (n: v: ''
     ## ${n}
 
-    {v}
+    ${v}
   '') parts;
   parts = {
     protocol = ''
@@ -112,4 +112,4 @@ let
     described in RFC 2119.
   '';
 in
-lib.concatStringsSep "\n\n" partsStr ([ prompt ] ++ partsStr)
+lib.concatStringsSep "\n" ([ prompt ] ++ partsStr)
