@@ -1,4 +1,4 @@
-{ lib, vars }:
+{ lib, varNames }:
 let
   partsStr = lib.attrsets.mapAttrsToList (n: v: ''
     ## ${n}
@@ -45,7 +45,7 @@ let
         to locate the required package.
       - You are running in a `bubblewrap` sandbox. Most of the paths outside of the
         current working directory are mounted in read-only mode. You can find the
-        read-write mounted directories in the `${vars.rwDirs}` environment variable.
+        read-write mounted directories in the `${varNames.rwDirs}` environment variable.
     '';
 
     codestyle = ''
