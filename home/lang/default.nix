@@ -47,6 +47,7 @@
         mdformat-deflist
         mdformat-frontmatter
         mdformat-wikilink
+        mdformat-gfm
       ]
     ))
     nixfmt-rfc-style
