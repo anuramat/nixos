@@ -74,8 +74,9 @@ let
     '';
 
     git = ''
-      - You MUST make commits after each successful step, so that the user can
-        backtrack the trajectory of the changes step by step.
+      - Sub-agents should NEVER perform any operations other than reading/writing files.
+      - You MUST make commits after each successful step of the main agent, so
+        that the user can backtrack the trajectory of the changes step by step.
       - Keep commit messages as concise as possible.
     '';
 
