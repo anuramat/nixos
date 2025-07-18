@@ -149,10 +149,10 @@ in
 
       # TODO add single file mode
       text = ''
-        rw_dirs+=(/tmp "$XDG_CONFIG_HOME/claude" "$PWD" "$HOME/.claude.json" "$HOME/.claude")
+        BWRAP_RW_DIRS+=(/tmp "$XDG_CONFIG_HOME/claude" "$PWD" "$HOME/.claude.json" "$HOME/.claude")
 
         if gitroot=$(git rev-parse --show-toplevel 2>/dev/null) && [ -d "$gitroot" ]; then
-          rw_dirs+=("$gitroot")
+          BWRAP_RW_DIRS+=("$gitroot")
         fi
 
         XDG_DATA_HOME=$(mktemp -d)
@@ -166,14 +166,15 @@ in
         export XDG_RUNTIME_DIR
 
         args=()
-        for i in "''${rw_dirs[@]}"; do
+        for i in "''${BWRAP_RW_DIRS[@]}"; do
         	args+=(--bind)
         	args+=("$i")
           args+=("$i")
         done
 
         echo "RW mounted directories:"
-        printf '%s\n' "''${rw_dirs[@]}"
+        printf '%s\n' "''${BWRAP_RW_DIRS[@]}"
+        export BWRAP_RW_DIRS
 
         bwrap --ro-bind / / --dev /dev "''${args[@]}" claude --dangerously-skip-permissions "$@"
       '';
