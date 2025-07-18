@@ -75,6 +75,8 @@ let
           notify-send -r "$id" -t ${popupDuration} "render ok"
         else
           notify-send -r "$id" -u critical "render error" "$log"
+          echo "$log" >&2
+          exit 1
         fi
       '';
   };
