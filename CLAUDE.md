@@ -205,12 +205,3 @@ The repository includes full Claude Code integration with:
   workflow and commit practices
 - **Memory Management**: Automated documentation updates using git history
   analysis
-
-### Code Quality Workflow
-
-Always run `make lint` before committing to ensure:
-
-- Nix files pass linting checks (formatting not automated due to pipe operators)
-- Lua files are linted with luacheck
-- Shell scripts are linted with shellcheck
-- YAML files are validated with yamllint and checkmake
