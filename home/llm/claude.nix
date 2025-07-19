@@ -53,6 +53,25 @@ in
       inherit hooks env permissions;
     };
     # TODO make a helper that creates commands
+    ".claude/commands/memchk.md".text = ''
+      ---
+      description: memory file update guided by direct verification
+      ---
+
+      I want you to update CLAUDE.md, since the project changed a lot.
+
+      Go through CLAUDE.md and partition the statements/instructions into parts,
+      that correspond to independent parts of the project.
+
+      For each set of statements/instructions and corresponding part of the
+      project, run a parallel agent and verify every statement/instruction, by
+      looking up the relevant files and their contents:
+
+      - Statements should correctly reflect the state of the project.
+      - Instructions should be valid: for example, if instruction tells you to
+        use a makefile target that was renamed/deleted/moved to a shell script --
+        update it accordingly.
+    '';
     ".claude/commands/texify.md".text =
       let
         cmd = "LC_ALL=C rg '[^[:print:]]' --line-number";
@@ -76,7 +95,7 @@ in
 
         `${cmd}`
       '';
-    ".claude/commands/memcheck.md".text =
+    ".claude/commands/memupd.md".text =
       let
         memfile = "CLAUDE.md";
         shortdiff_cmd = "${commit_cmd} | xargs git diff --numstat";
