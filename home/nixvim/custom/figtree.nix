@@ -18,7 +18,6 @@
     )
   ];
   extraConfigLua = ''
-    require('figtree').setup({
-    })
+    require('figtree').setup({})
   '';
 }

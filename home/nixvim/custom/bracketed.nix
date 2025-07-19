@@ -18,6 +18,6 @@
     )
   ];
   extraConfigLua = ''
-    require('mini.bracketed').setup({})
+    require('mini.bracketed').setup()
   '';
 }
