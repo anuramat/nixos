@@ -50,6 +50,7 @@ in
           '';
     in
     [
-      (set "<kp0>" toggle "disable mdmath")
+      (set "<kp0>" toggle "toggle mdmath")
+      (set "<leader><leader>" toggle "toggle mdmath")
     ];
 }
