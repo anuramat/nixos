@@ -25,7 +25,7 @@ let
           "$0"
           "\\$\\$"
         ];
-        prefix = "$";
+        prefix = "math";
       };
       aligned = {
         body = [
