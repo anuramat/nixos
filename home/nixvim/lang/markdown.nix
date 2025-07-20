@@ -17,14 +17,20 @@ let
     };
   };
   snippets = hax.vim.files.snippets {
+    # TODO add snippet wrapping at some point (so I can gather equations)
     markdown = {
-      aligned = {
+      math = {
         body = [
           "\\$\\$"
-          "\\begin{aligned}"
           "$0"
-          "\\end{aligned}"
           "\\$\\$"
+        ];
+        prefix = "$";
+      };
+      aligned = {
+        body = [
+          "\\begin{aligned}"
+          "\\end{aligned}"
         ];
         prefix = "aligned";
       };
@@ -34,11 +40,8 @@ let
       };
       gathered = {
         body = [
-          "\\$\\$"
           "\\begin{gathered}"
-          "$0"
           "\\end{gathered}"
-          "\\$\\$"
         ];
         prefix = "gathered";
       };
