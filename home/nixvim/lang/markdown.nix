@@ -19,6 +19,13 @@ let
   snippets = hax.vim.files.snippets {
     # TODO add snippet wrapping at some point (so I can gather equations)
     markdown = {
+      vector = {
+        body = [
+          "\\begin{pmatrix}"
+          "\\end{pmatrix}"
+        ];
+        prefix = "vector";
+      };
       math = {
         body = [
           "\\$\\$"
