@@ -44,7 +44,7 @@
   };
   userCommands = {
     Trim = {
-      command = "%s/\ \+$//g";
+      command = "%s/ \\+$//g";
     };
   };
   keymaps =
