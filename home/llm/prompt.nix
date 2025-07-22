@@ -84,24 +84,30 @@ let
     # TODO proper name for "math block" and inline math
 
     markdown = ''
-      - For mathematical symbols, you MUST use Markdown inline math `$...$` and math
-        blocks `$$...$$`
-      - Math block delimiters MUST be on separate lines like in this example:
-        ```markdown
-        Paragraph before. Inline math is used like this: $\alpha$.
+      Context: I'm using `pandoc` to render my files to PDF, thus I'm heavily
+      relying on LaTeX support. 
 
-        $$
-        \text{example}
-        $$
+      For mathematical symbols, you MUST use Markdown inline math `$...$` and
+      math blocks `$$...$$`. Prefer math blocks, as inline math is harder to
+      read.
 
-        Paragraph after. Notce the blank lines between paragraphs, and math block
-        delimiters `$$` being on separate lines.
-        ```
-      - You SHOULD prefer:
-        - math blocks to inline math, whenever the equation is big
-        - multi-line math blocks with `gathered` or `aligned` environments to multiple
-          math blocks in a row; You MUST NOT use `gather` or `align` -- they won't work,
-          because markdown math blocks are wrapped in math-mode already.
+      You MUST NOT use `gather` or `align` -- they won't work, because markdown
+      math blocks are wrapped in math-mode already; use `gathered` or `aligned`
+      instead.
+
+      Example:
+
+      ```markdown
+      Inline math is used like this: $\alpha$. Use it sparingly; for anything
+      more than a few symbols, use a separate block:
+
+      $$
+      E = mc^2
+      $$
+
+      Notce the blank lines between paragraphs, and math block delimiters `$$`
+      being on separate lines.
+      ```
     '';
   };
 in
