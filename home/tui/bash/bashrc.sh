@@ -36,6 +36,9 @@ random() {
 	shuf -er -n "$1" {a..z} {0..9} | tr -d '\n'
 }
 z() {
+	if [[ $1 =~ \.md$ ]]; then
+		hotdoc "$@"
+	fi
 	zathura "$@" &> /dev/null &
 	disown
 }
