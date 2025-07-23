@@ -38,6 +38,7 @@ random() {
 z() {
 	if [[ $1 =~ \.md$ ]]; then
 		hotdoc "$@"
+		exit
 	fi
 	zathura "$@" &> /dev/null &
 	disown
