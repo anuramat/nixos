@@ -35,9 +35,7 @@ in
     # Keybindings
     keybindings = {
       # Terminal and basic commands
-      "${modifier}+semicolon" = term.default;
-      "${modifier}+${mod2}+semicolon" = term.float;
-      "${modifier}+apostrophe" = float_notes;
+      "${modifier}+semicolon" = term;
       "${modifier}+slash" = "reload";
       "${modifier}+q" = "kill";
       "${modifier}+${mod2}+q" = ctl.lock;

@@ -46,10 +46,7 @@ let
   };
 
   term_cmd = getExe pkgs.foot;
-  term = rec {
-    default = "exec ${term_cmd}";
-    float = "${default} -a foot-float -W 88x28";
-  };
+  term = "exec ${term_cmd}";
 
   pickers =
     let
@@ -98,8 +95,6 @@ let
       dismiss = "exec ${makoctl} dismiss";
       dismiss_all = "exec ${makoctl} dismiss --all";
     };
-
-  float_notes = "${term.float} --working-directory=\"$HOME/notes\" -e bash $EDITOR ~/notes/scratchpad.md";
 
   cycle =
     let
