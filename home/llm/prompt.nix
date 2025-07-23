@@ -100,14 +100,15 @@ let
 
       ```markdown
       Inline math is used like this: $\alpha$. Use it sparingly; for anything
-      more than a few symbols, use a separate block:
+      more than a few symbols, you MUST use a separate block:
 
       $$
       E = mc^2
       $$
 
       Notce the blank lines between paragraphs, and math block delimiters `$$`
-      being on separate lines.
+      being on separate lines. The block delimiters must NOT have any leading
+      whitespace.
       ```
     '';
   };
