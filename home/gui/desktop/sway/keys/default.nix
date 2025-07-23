@@ -17,7 +17,6 @@ let
 
   inherit (import ./rhs.nix args)
     cycle
-    float_notes
     term
     screen
     pickers

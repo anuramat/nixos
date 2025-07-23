@@ -113,7 +113,6 @@ let
 in
 {
   inherit
-    float_notes
     term
     screen
     pickers
