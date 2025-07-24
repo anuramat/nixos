@@ -11,7 +11,7 @@
         # meanwhile with `commit -m` it already contains the message
         # e.g. claude always uses `commit -m`
         signature="Co-Authored-By: ${hax.agents.varNames.agentName}"
-        if [ -v ${hax.agents.varNames.isAgent} ]; then
+        if [ -v ${hax.agents.varNames.agentName} ]; then
         	if [ "$COMMIT_SOURCE" = "commit" ]; then
         		echo 'permission error: agents are not allowed to use `git commit` with flags `-c`, `-C`, or `--amend`'
         		exit 1

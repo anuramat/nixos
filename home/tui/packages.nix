@@ -3,6 +3,7 @@
   # TODO euporie (tui jupyter notebooks)
   home.packages = with pkgs; [
     # tops
+    bottom
     ctop # containers
     gotop
     nvitop # nvidia gpu

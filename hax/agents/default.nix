@@ -41,6 +41,7 @@ in
         export XDG_STATE_HOME
         export XDG_CACHE_HOME
         export XDG_RUNTIME_DIR
+        export ${varNames.agentName}
 
         args=()
         for i in "''${${varNames.rwDirs}[@]}"; do
