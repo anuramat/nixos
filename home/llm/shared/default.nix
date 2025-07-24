@@ -1,9 +1,9 @@
 {
   imports = [
+    ./mcp.nix
     ./prompts.nix
     ./sandbox.nix
-    ./system.nix
+    ./templates.nix
     ./vars.nix
-    ./mcp.nix
   ];
 }
