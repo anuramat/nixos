@@ -1,4 +1,4 @@
-{ hax, ... }:
+{ pkgs, hax, ... }:
 {
   programs.git.hooks.prepare-commit-msg =
     hax.common.gitHook pkgs
