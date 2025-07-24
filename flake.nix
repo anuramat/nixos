@@ -125,7 +125,7 @@
     };
     mcp-nixos.url = "github:utensils/mcp-nixos";
     nil.url = "github:oxalica/nil/main";
-    codex.url = "github:anuramat/codex";
+    codex.url = "github:openai/codex";
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
     tt-schemes = {
       url = "github:tinted-theming/schemes";

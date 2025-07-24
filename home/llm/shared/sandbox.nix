@@ -1,9 +1,10 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 let
   baseRwDirs = [
     "/tmp"
     "$PWD"
   ];
+  inherit (config.lib.varNames) agentName;
 in
 {
   lib.agents.mkSandbox =
@@ -19,34 +20,34 @@ in
 
       # TODO add single file mode
       text = ''
-        ${varNames.rwDirs}+=(${rwDirs})
+        ${rwDirs}+=(${rwDirs})
 
         if gitroot=$(git rev-parse --show-toplevel 2>/dev/null) && [ -d "$gitroot" ]; then
-          ${varNames.rwDirs}+=("$gitroot")
+          ${rwDirs}+=("$gitroot")
         fi
 
         XDG_DATA_HOME=$(mktemp -d)
         XDG_STATE_HOME=$(mktemp -d)
         XDG_CACHE_HOME=$(mktemp -d)
         XDG_RUNTIME_DIR=$(mktemp -d)
-        ${varNames.agentName}='${args.agentName}'
+        ${agentName}='${args.agentName}'
 
         export XDG_DATA_HOME
         export XDG_STATE_HOME
         export XDG_CACHE_HOME
         export XDG_RUNTIME_DIR
-        export ${varNames.agentName}
+        export ${agentName}
 
         args=()
-        for i in "''${${varNames.rwDirs}[@]}"; do
+        for i in "''${${rwDirs}[@]}"; do
         	args+=(--bind)
         	args+=("$i")
           args+=("$i")
         done
 
         echo "RW mounted directories:"
-        printf '%s\n' "''${${varNames.rwDirs}[@]}"
-        export ${varNames.rwDirs}
+        printf '%s\n' "''${${rwDirs}[@]}"
+        export ${rwDirs}
 
         bwrap --ro-bind / / --dev /dev "''${args[@]}" ${args.cmd} "$@"
       '';

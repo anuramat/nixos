@@ -1,10 +1,12 @@
 {
   lib,
   hax,
+  config,
   pkgs,
   ...
 }:
 let
+  inherit (config.lib) agents;
   name = "Claude";
   hooks = {
     Notification = [
@@ -23,9 +25,8 @@ let
     allow = [ ];
     deny = [ ];
   };
-  inherit (hax.agents) varNames;
   env = {
-    ${varNames.agentName} = name;
+    ${agents.varNames.agentName} = name;
   };
 
   commands =
@@ -37,13 +38,13 @@ let
       value = {
         text = prompt;
       };
-    }) hax.agents.prompts;
+    }) (agents.prompts);
 in
 {
   lib.test = "x";
   home.file = (
     {
-      ".claude/CLAUDE.md".text = hax.agents.system { inherit lib varNames; };
+      ".claude/CLAUDE.md".text = agents.systemPrompt;
       ".claude/settings.json".text = lib.generators.toJSON { } {
         includeCoAuthoredBy = false;
         inherit hooks env permissions;
