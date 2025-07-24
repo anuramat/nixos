@@ -5,6 +5,7 @@
   ...
 }:
 let
+  name = "Claude";
   hooks = {
     Notification = [
       {
@@ -24,7 +25,7 @@ let
   };
   inherit (hax.agents) varNames;
   env = {
-    ${varNames.agentName} = "Claude";
+    ${varNames.agentName} = name;
   };
 
   commands =
@@ -53,6 +54,7 @@ in
     (hax.agents.mkSandbox {
       inherit pkgs;
       pname = "cld";
+      agentName = name;
       cmd = "${lib.getExe pkgs.claude-code} --dangerously-skip-permissions";
       extraRwDirs = [
         "$XDG_CONFIG_HOME/claude"
