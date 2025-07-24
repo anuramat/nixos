@@ -81,7 +81,12 @@ in
           rev = "mystmd@${version}";
           hash = "sha256-UfKI/OBabdQlHyAhWcn37d12oviuOan4UxdTgS94lRQ=";
         };
-        npmDepsHash = lib.fakeHash;
+        npmDepsHash = "";
+        npmDeps = final.fetchNpmDeps {
+          inherit src;
+          name = "${oldAttrs.pname}-${version}-npm-deps";
+          hash = npmDepsHash;
+        };
       });
       amp-cli = prev.amp-cli.overrideAttrs (oldAttrs: rec {
         version = "0.0.1749960449-gc74a77";
