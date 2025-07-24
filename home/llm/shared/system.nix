@@ -1,4 +1,4 @@
-{ lib, varNames }:
+{ config, lib, ... }:
 let
   parts = lib.attrsets.mapAttrsToList (n: v: "## ${n}\n\n" + v) {
     protocol = ''
@@ -113,4 +113,6 @@ let
     '';
   };
 in
-lib.concatStringsSep "\n" ([ "# Global instructions\n" ] ++ parts)
+{
+  lib.agents.systemPrompt = lib.concatStringsSep "\n" ([ "# Global instructions\n" ] ++ parts);
+}

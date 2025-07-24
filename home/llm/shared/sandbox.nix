@@ -1,21 +1,15 @@
-{ ... }:
+{ pkgs, ... }:
 let
-  varNames = {
-    rwDirs = "RW_DIRS";
-    agentName = "AGENT";
-  };
   baseRwDirs = [
     "/tmp"
     "$PWD"
   ];
 in
 {
-  inherit varNames;
-  mkSandbox =
+  lib.agents.mkSandbox =
     args:
     let
       rwDirs = map (x: ''"${x}"'') (baseRwDirs ++ args.extraRwDirs) |> builtins.concatStringsSep " ";
-      inherit (args) pkgs;
     in
     (pkgs.writeShellApplication {
       name = args.pname;
@@ -57,6 +51,4 @@ in
         bwrap --ro-bind / / --dev /dev "''${args[@]}" ${args.cmd} "$@"
       '';
     });
-  prompts = import ./prompts.nix;
-  system = import ./system.nix;
 }

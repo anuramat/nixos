@@ -40,6 +40,7 @@ let
     }) hax.agents.prompts;
 in
 {
+  lib.test = "x";
   home.file = (
     {
       ".claude/CLAUDE.md".text = hax.agents.system { inherit lib varNames; };
