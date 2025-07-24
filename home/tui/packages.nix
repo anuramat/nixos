@@ -21,6 +21,7 @@
     readability-cli # extracts main content from pages
     easyocr # neural ocr
     pandoc # document converter
+    mystmd
     djvulibre # djvu tools
     markdown-link-check # find dead md links
     mermaid-cli
