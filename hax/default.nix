@@ -1,4 +1,5 @@
 args: {
+  agents = import ./agents args;
   common = import ./common.nix args;
   web = import ./web.nix args;
   mime = import ./mime.nix args;
