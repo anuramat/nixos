@@ -1,4 +1,12 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  hax,
+  lib,
+  ...
+}:
+let
+  name = "Goose";
+in
 {
   home.packages = [
     (hax.agents.mkSandbox {
