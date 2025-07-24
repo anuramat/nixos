@@ -9,7 +9,7 @@ let
 in
 {
   home.packages = [
-    (hax.agents.mkSandbox {
+    (lib.agents.mkSandbox {
       inherit pkgs;
       pname = "gse";
       agentName = name;
