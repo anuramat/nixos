@@ -1,6 +1,6 @@
 { config, lib, ... }:
 let
-  inherit (config.lib.varNames) rwDirs;
+  inherit (config.lib.agents.varNames) rwDirs;
   parts = lib.attrsets.mapAttrsToList (n: v: "## ${n}\n\n" + v) {
     protocol = ''
       You MUST adhere to the following two-stage development protocol:

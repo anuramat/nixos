@@ -4,7 +4,7 @@ let
     "/tmp"
     "$PWD"
   ];
-  inherit (config.lib.varNames) agentName;
+  inherit (config.lib.agents.varNames) agentName;
 in
 {
   lib.agents.mkSandbox =
