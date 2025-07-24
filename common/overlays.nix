@@ -81,7 +81,7 @@ in
           rev = "mystmd@${version}";
           hash = "sha256-UfKI/OBabdQlHyAhWcn37d12oviuOan4UxdTgS94lRQ=";
         };
-        npmDepsHash = "";
+        npmDepsHash = "sha256-ols1YxX/I58hfdi+zXgLGetRaQvHLRHEtcTpT7rdGEs=";
         npmDeps = final.fetchNpmDeps {
           inherit src;
           name = "${oldAttrs.pname}-${version}-npm-deps";
