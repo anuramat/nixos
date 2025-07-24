@@ -31,25 +31,27 @@ let
     let
       root = "./claude/commands";
     in
-    lib.mapAttrs' (n: v: {
-      name = "${root}/${name}.md";
+    lib.mapAttrs' (cmdName: prompt: {
+      name = "${root}/${cmdName}.md";
       value = {
-        text = v;
+        text = prompt;
       };
     }) hax.agents.prompts;
 in
 {
-  home.file = {
-    ".claude/CLAUDE.md".text = hax.agents.system { inherit lib varNames; };
-    ".claude/settings.json".text =
-      lib.generators.toJSON { } {
+  home.file = (
+    {
+      ".claude/CLAUDE.md".text = hax.agents.system { inherit lib varNames; };
+      ".claude/settings.json".text = lib.generators.toJSON { } {
         includeCoAuthoredBy = false;
         inherit hooks env permissions;
-      }
-      // commands;
-  };
+      };
+    }
+    // commands
+  );
   home.packages = [
     (hax.agents.mkSandbox {
+      inherit pkgs;
       pname = "cld";
       cmd = "${lib.getExe pkgs.claude-code} --dangerously-skip-permissions";
       extraRwDirs = [

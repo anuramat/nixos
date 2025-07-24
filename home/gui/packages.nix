@@ -28,6 +28,7 @@
     grim # barebones screenshot tool
 
     # unfiled
+    gron # make json greppable
     qalculate-gtk # qalc calculator gui
     cheese # webcam
     proton-pass # password manager

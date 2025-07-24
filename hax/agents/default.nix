@@ -1,4 +1,4 @@
-{ pkgs, ... }@args:
+{ ... }:
 let
   varNames = {
     rwDirs = "RW_DIRS";
@@ -14,7 +14,8 @@ in
   mkSandbox =
     args:
     let
-      rwDirs = map (x: ''"${x}"'') (baseRwDirs + args.extraRwDirs) |> builtins.concatStringsSep " ";
+      rwDirs = map (x: ''"${x}"'') (baseRwDirs ++ args.extraRwDirs) |> builtins.concatStringsSep " ";
+      inherit (args) pkgs;
     in
     (pkgs.writeShellApplication {
       name = args.pname;
