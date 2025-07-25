@@ -30,7 +30,7 @@ let
 
   commands =
     let
-      root = "./claude/commands";
+      root = ".claude/commands";
     in
     lib.mapAttrs' (cmdName: prompt: {
       name = "${root}/${cmdName}.md";
