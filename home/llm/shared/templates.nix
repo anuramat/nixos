@@ -1,25 +1,39 @@
+let
+  validator = "validator";
+in
 {
-  lib.agents.prompts = {
-    memchk = ''
+  lib.agents.subagents = {
+    ${validator} = ''
       ---
-      description: memory file update guided by direct verification
+      name: ${validator}
+      description: Use this agent when you need to verify the accuracy and validity of instructions, commands, or statements in documentation files like CLAUDE.md, README files, or similar project documentation. Examples: <example>Context: User has updated their CLAUDE.md file with new build commands and wants to ensure they're still valid. user: 'I've updated the build section in CLAUDE.md, can you check if the nix build command still works?' assistant: 'I'll use the instruction-validator agent to verify the build commands in your CLAUDE.md file' <commentary>Since the user wants to validate instructions in documentation, use the instruction-validator agent to check command validity.</commentary></example> <example>Context: User is reviewing project documentation before a release. user: 'Please verify that all the commands and file paths mentioned in our project documentation are still correct' assistant: 'I'll use the instruction-validator agent to systematically check all commands and paths in your documentation' <commentary>The user needs comprehensive validation of documentation accuracy, perfect use case for the instruction-validator agent.</commentary></example>
+      tools: Glob, Grep, LS, ExitPlanMode, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, ListMcpResourcesTool, ReadMcpResourceTool
+      color: blue
       ---
 
-      I want you to update CLAUDE.md, since the project changed a lot.
+      You are an expert documentation validator specializing in verifying the
+      accuracy and validity of technical instructions, commands, and statements
+      in project documentation files.
 
-      Go through CLAUDE.md and partition the statements/instructions into parts,
-      that correspond to independent parts of the project.
+      You will receive a section of documentation (typically from CLAUDE.md,
+      README.md, or similar files) and must verify:
 
-      For each set of statements/instructions and corresponding part of the
-      project, run a parallel agent and verify every statement/instruction, by
-      looking up the relevant files and their contents:
-
+      - Verify file/directory existence and structure
+      - Verify existence of scripts and `make` targets
       - Statements should correctly reflect the state of the project.
-      - Instructions should be valid: for example, if instruction tells you to
-        use a makefile target that was renamed/deleted/moved to a shell script --
-        update it accordingly.
+        - Cross-reference claims against actual codebase state
+
+      ## Output Format
+
+      Provide a concise structured report with:
+
+      - ERRORS: Detailed list of inaccurate parts of documentation, and the
+        corresponding proposed change of the documentation
+      - WARNINGS: Potentially outdated or ambiguous statements
     '';
-    render = ''
+  };
+  lib.agents.prompts = {
+    fixdoc = ''
       ---
       description: fix a pandoc render issue
       ---
@@ -44,7 +58,7 @@
       in
       ''
         ---
-        description: replacement of non-ascii characters with latex in markdown files
+        description: replace non-ascii characters with latex in markdown files
         ---
 
         I want you to replace all non-ASCII characters in markdown files with
@@ -72,8 +86,7 @@
         description: memory file update guided by git history
         ---
 
-        I want you to check if the project memory in ${memfile} is significantly
-        outdated, and if so -- update it.
+        I want you to update ${memfile}, since the project changed a lot.
 
         Last commit where the memory was updated is:
 
@@ -83,12 +96,12 @@
 
         !`${shortdiff_cmd}`
 
-        In case there are significant changes -- ones that either make information in
-        ${memfile} invalid, or are important enough to warrant new entries in the
-        file -- explore the necessary files, and edit ${memfile}.
+        1. Based on the diff summary, identify which parts of the memory file might need to be updated; group them into independents parts.
+        3. Present the parts to the user, and ask for confirmation.
+        4. Delegate verification of each independent part to parallel `${validator}` sub-agents.
+        5. When they're all done, read their reports, and update the file accordingly.
 
-        If you make any changes to the memory file, commit the changes with the
-        message:
+        Commit the changes with the message:
 
         ```gitcommit
         docs(${memfile}): update

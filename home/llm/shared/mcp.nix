@@ -29,12 +29,12 @@ let
     nixos = {
       command = getExe pkgs.mcp-nixos;
     };
-    # github = {
-    #   command = githubPatched;
-    #   args = [
-    #     "stdio"
-    #   ];
-    # };
+    github = {
+      command = githubPatched;
+      args = [
+        "stdio"
+      ];
+    };
     # playwright = {
     #   command = getExe pkgs.playwright-mcp;
     # };

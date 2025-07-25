@@ -28,16 +28,20 @@ let
     ${agents.varNames.agentName} = name;
   };
 
-  commands =
+  mkTemplates =
+    dirName: templates:
     let
-      root = ".claude/commands";
+      root = ".claude/${dirName}";
     in
     lib.mapAttrs' (cmdName: prompt: {
       name = "${root}/${cmdName}.md";
       value = {
         text = prompt;
       };
-    }) (agents.prompts);
+    }) templates;
+
+  commands = mkTemplates "commands" agents.prompts;
+  subagents = mkTemplates "agents" agents.subagents;
 in
 {
   lib.test = "x";
@@ -50,6 +54,7 @@ in
       };
     }
     // commands
+    // subagents
   );
   home.packages = [
     (config.lib.agents.mkSandbox {
