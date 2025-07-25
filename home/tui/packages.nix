@@ -37,7 +37,7 @@
     # ai / llm
     goose-cli
     claude-code
-    ccusage
+    # ccusage
     opencode # ts rewrite
     opencode-alt # sellout in golang
     llama-cpp
