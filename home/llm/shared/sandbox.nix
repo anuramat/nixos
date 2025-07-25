@@ -10,7 +10,14 @@ in
   lib.agents.mkSandbox =
     args:
     let
-      rwDirs = map (x: ''"${x}"'') (baseRwDirs ++ args.extraRwDirs) |> builtins.concatStringsSep " ";
+      xdgSubdirs = map (v: "${v}/${args.xdgSubdir}") [
+        config.xdg.dataHome
+        config.xdg.configHome
+        config.xdg.cacheHome
+        config.xdg.stateHome
+      ];
+      rwDirs =
+        map (x: ''"${x}"'') (baseRwDirs ++ xdgSubdirs ++ args.extraRwDirs) |> builtins.concatStringsSep " ";
     in
     (pkgs.writeShellApplication {
       name = args.pname;

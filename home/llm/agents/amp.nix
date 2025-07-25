@@ -5,18 +5,18 @@
   ...
 }:
 let
-  name = "goose";
+  name = "amp";
 in
 {
   home.packages = [
     (config.lib.agents.mkSandbox {
       inherit pkgs;
-      pname = "goose-sandboxed";
+      pname = "amp-sandboxed";
       agentName = name;
-      cmd = "${lib.getExe pkgs.goose}";
+      cmd = "${lib.getExe pkgs.amp}";
+      xdgSubdir = "amp";
       extraRwDirs = [
-        "$XDG_CONFIG_HOME/goose"
-        "$XDG_STATE_HOME/goose"
+        "$HOME/.amp"
       ];
     })
   ];

@@ -6,7 +6,7 @@
 }:
 let
   inherit (config.lib) agents;
-  name = "Claude";
+  name = "claude";
   hooks = {
     Notification = [
       {
@@ -62,8 +62,8 @@ in
       pname = "cld";
       agentName = name;
       cmd = "${lib.getExe pkgs.claude-code} --dangerously-skip-permissions";
+      xdgSubdir = "claude";
       extraRwDirs = [
-        "$XDG_CONFIG_HOME/claude"
         "$HOME/.claude.json"
         "$HOME/.claude"
       ];
