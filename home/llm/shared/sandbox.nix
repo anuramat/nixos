@@ -46,8 +46,8 @@ in
         done
 
         echo "RW mounted directories:"
-        printf '%s\n' "''${${rwDirs}[@]}"
-        export ${rwDirs}
+        printf '%s\n' "''${${varNames.rwDirs}[@]}"
+        export ${varNames.rwDirs}
 
         bwrap --ro-bind / / --dev /dev "''${args[@]}" ${args.cmd} "$@"
       '';
