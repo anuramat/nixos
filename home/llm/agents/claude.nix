@@ -1,6 +1,5 @@
 {
   lib,
-  hax,
   config,
   pkgs,
   ...
@@ -53,7 +52,7 @@ in
     // commands
   );
   home.packages = [
-    (hax.agents.mkSandbox {
+    (config.lib.agents.mkSandbox {
       inherit pkgs;
       pname = "cld";
       agentName = name;

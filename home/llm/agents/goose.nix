@@ -1,7 +1,7 @@
 {
   pkgs,
-  hax,
   lib,
+  config,
   ...
 }:
 let
@@ -9,7 +9,7 @@ let
 in
 {
   home.packages = [
-    (lib.agents.mkSandbox {
+    (config.lib.agents.mkSandbox {
       inherit pkgs;
       pname = "gse";
       agentName = name;

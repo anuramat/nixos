@@ -1,4 +1,3 @@
-{ pkgs, hax, ... }:
 {
   imports = [
     ./agents
