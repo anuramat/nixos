@@ -14,6 +14,7 @@ in
       pname = "goose-sandboxed";
       agentName = name;
       cmd = "${lib.getExe pkgs.goose}";
+      xdgSubdir = "goose";
       extraRwDirs = [
         "$XDG_CONFIG_HOME/goose"
         "$XDG_STATE_HOME/goose"
