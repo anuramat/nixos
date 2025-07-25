@@ -39,7 +39,7 @@ in
         export ${varNames.agentName}
 
         args=()
-        for i in "''${${rwDirs}[@]}"; do
+        for i in "''${${varNames.rwDirs}[@]}"; do
         	args+=(--bind)
         	args+=("$i")
           args+=("$i")

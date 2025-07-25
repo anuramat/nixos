@@ -72,7 +72,7 @@ in
     pythonPackages
     flakes
     (final: prev: {
-      codex = inputs.codex.packages.x86_64-linux.codex-cli;
+      # codex = inputs.codex.packages.x86_64-linux.codex-cli;
       # mystmd = prev.mystmd.overrideAttrs (oldAttrs: rec {
       #   version = "1.6.0";
       #   src = pkgs.fetchFromGitHub {
