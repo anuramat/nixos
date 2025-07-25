@@ -37,12 +37,13 @@
     # ai / llm
     goose-cli
     claude-code
+    ccusage
     opencode # ts rewrite
     opencode-alt # sellout in golang
     llama-cpp
     codex
     amp-cli
-    gemini-cli
+    # gemini-cli
 
     # containers
     dive # look into docker image layers

@@ -101,20 +101,23 @@ in
           hash = "sha256-ygeitenu4z9ACbezO53I2Xnk6NtE1fWVzCi3mZS7wF8=";
         };
       });
-      ccusage = prev.ccusage.overrideAttrs (oldAttrs: rec {
+      ccusage = prev.buildNpmPackage rec {
+        pname = "ccusage";
         version = "15.5.2";
         src = prev.fetchzip {
           url = "https://registry.npmjs.org/ccusage/-/ccusage-${version}.tgz";
-          hash = "sha256-085jxrp56v855b9v7sk79nk2bmj4cnhvhj6lwbbvzw34451aj99q=";
+          hash = "sha256-OCWpQiFk8L/X4tRIuKFlRNYlpk1n6rPTKgVtU27usiA=";
         };
-      });
-      gemini-cli = prev.gemini-cli.overrideAttrs (oldAttrs: rec {
-        version = "0.1.13";
-        src = prev.fetchzip {
-          url = "https://registry.npmjs.org/@google/gemini-cli/-/gemini-cli-${version}.tgz";
-          hash = "sha256-1k64wikisnan4jgiy60471sndbam7dwqya7fxc3j0mgi5gjim07b=";
-        };
-      });
+        # npmDepsHash = "";
+        # dontNpmBuild = true;
+      };
+      # gemini-cli = prev.gemini-cli.overrideAttrs (oldAttrs: rec {
+      #   version = "0.1.13";
+      #   src = prev.fetchzip {
+      #     url = "https://registry.npmjs.org/@google/gemini-cli/-/gemini-cli-${version}.tgz";
+      #     hash = "sha256-64Aa5SvxVSAH6+4oj3k7Va1mdTgEGB+fJFZZHWfkxMw=";
+      #   };
+      # });
       ${opencodeName} = prev.callPackage (
         {
           lib,
