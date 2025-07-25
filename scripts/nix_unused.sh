@@ -12,7 +12,6 @@ while IFS= read -r path; do
 	echo "$path" | rg --no-config -vq 'hosts/[^/]+$' || continue
 	filename=$(basename "$path")
 	use_counter=0
-	# TODO escape dot in .nix
 	exp="(\./.*$filename)"
 	rg_args=(--no-config -g '*.nix' -r '${1}' --only-matching --with-filename)
 	while IFS=: read -r matchfile matchstring; do
@@ -37,6 +36,6 @@ while IFS= read -r path; do
 		fi
 	fi
 done < <(
-	fd -ae nix | grep '/default.nix$' | xargs -I{} dirname {}
+	fd -ae nix | grep '/default\.nix$' | xargs -I{} dirname {}
 	fd -ae nix | rg --no-config -v '(/flake\.nix$|/default\.nix)'
 )

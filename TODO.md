@@ -54,12 +54,6 @@ codebase, organized by complexity and priority.
   - Fix regex pattern to properly escape dots
   - Simple shell script bug fix
 
-- **home/cli/packages.nix:86** -
-  `util-linux # TODO check; I think it's already installed`
-
-  - Verify if package is redundant and remove if necessary
-  - Simple dependency audit
-
 ## Disabled Features (XXX Items)
 
 ### Broken GUI Applications
