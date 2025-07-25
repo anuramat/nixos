@@ -23,7 +23,6 @@ let
       proton-pass
       vscode
       zed-editor
-      gemini-cli
       ;
   };
   pythonPackages = final: prev: {
