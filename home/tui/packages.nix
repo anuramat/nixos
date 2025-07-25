@@ -128,7 +128,6 @@
     ghq # git repository manager
     expect # automating tuis
     devenv # nix for retards
-    watchman # another file watcher TODO try and compare to entr
 
     # img
     imagemagickBig # CLI image manipulation
@@ -169,13 +168,12 @@
     less
     lsof
     moreutils # random unixy goodies
-    nix-bash-completions # TODO this should be installed already
+    nix-bash-completions
     p7zip
     tmux # just in case
     tree
     unrar-wrapper
     unzip
-    util-linux # TODO check; I think it's already installed
     wget
     zip
 

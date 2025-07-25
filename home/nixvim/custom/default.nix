@@ -5,5 +5,6 @@
     ./namu.nix
     ./wastebin.nix
     ./mdmath.nix
+    ./bracketed.nix
   ];
 }

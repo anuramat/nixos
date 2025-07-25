@@ -38,18 +38,6 @@ codebase, organized by complexity and priority.
   - Test file transfer tool configuration and document setup requirements
   - May need firewall or network configuration
 
-- **home/cli/packages.nix:172** - `watchman # TODO try and compare to entr`
-
-  - Performance comparison between file watching tools
-  - Decide which to keep based on resource usage and features
-
-### Code Quality Improvements
-
-- **home/cli/bash/bashrc.nix:96** - `# --citeproc might be useful TODO document`
-
-  - Document pandoc citation processing options
-  - Add examples and usage patterns
-
 ## Low Complexity (Quick Fixes)
 
 ### File Organization

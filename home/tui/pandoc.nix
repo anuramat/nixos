@@ -57,8 +57,6 @@ let
         preamblePath = "${config.xdg.configHome}/latex/preamble.tex";
         popupDuration = "1000"; # ms
         inputFormat = "markdown+wikilinks_title_after_pipe+mark";
-        # TODO --citeproc?
-        # TODO maybe switch to --pdf-engine xelatex
         # mark: ==highlighted text==
       in
       # bash
