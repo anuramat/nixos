@@ -23,14 +23,14 @@ in
         ${varNames.rwDirs}+=(${rwDirs})
 
         if gitroot=$(git rev-parse --show-toplevel 2>/dev/null) && [ -d "$gitroot" ]; then
-          ${rwDirs}+=("$gitroot")
+          ${varNames.rwDirs}+=("$gitroot")
         fi
 
         XDG_DATA_HOME=$(mktemp -d)
         XDG_STATE_HOME=$(mktemp -d)
         XDG_CACHE_HOME=$(mktemp -d)
         XDG_RUNTIME_DIR=$(mktemp -d)
-        ${varNames.agentName}='${args.agentName}'
+        ${varNames.agentName}='(${args.agentName})'
 
         export XDG_DATA_HOME
         export XDG_STATE_HOME
