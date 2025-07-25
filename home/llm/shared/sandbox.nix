@@ -4,7 +4,7 @@ let
     "/tmp"
     "$PWD"
   ];
-  inherit (config.lib.agents.varNames) agentName;
+  inherit (config.lib.agents) varNames;
 in
 {
   lib.agents.mkSandbox =
@@ -20,7 +20,7 @@ in
 
       # TODO add single file mode
       text = ''
-        ${rwDirs}+=(${rwDirs})
+        ${varNames.rwDirs}+=(${rwDirs})
 
         if gitroot=$(git rev-parse --show-toplevel 2>/dev/null) && [ -d "$gitroot" ]; then
           ${rwDirs}+=("$gitroot")
@@ -30,13 +30,13 @@ in
         XDG_STATE_HOME=$(mktemp -d)
         XDG_CACHE_HOME=$(mktemp -d)
         XDG_RUNTIME_DIR=$(mktemp -d)
-        ${agentName}='${args.agentName}'
+        ${varNames.agentName}='${args.agentName}'
 
         export XDG_DATA_HOME
         export XDG_STATE_HOME
         export XDG_CACHE_HOME
         export XDG_RUNTIME_DIR
-        export ${agentName}
+        export ${varNames.agentName}
 
         args=()
         for i in "''${${rwDirs}[@]}"; do
