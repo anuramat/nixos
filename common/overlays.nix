@@ -109,13 +109,13 @@ in
       #     hash = "sha256-OCWpQiFk8L/X4tRIuKFlRNYlpk1n6rPTKgVtU27usiA=";
       #   };
       # };
-      # gemini-cli = prev.gemini-cli.overrideAttrs (oldAttrs: rec {
-      #   version = "0.1.13";
-      #   src = prev.fetchzip {
-      #     url = "https://registry.npmjs.org/@google/gemini-cli/-/gemini-cli-${version}.tgz";
-      #     hash = "sha256-64Aa5SvxVSAH6+4oj3k7Va1mdTgEGB+fJFZZHWfkxMw=";
-      #   };
-      # });
+      gemini-cli = prev.gemini-cli.overrideAttrs (oldAttrs: rec {
+        version = "0.1.13";
+        src = prev.fetchzip {
+          url = "https://registry.npmjs.org/@google/gemini-cli/-/gemini-cli-${version}.tgz";
+          hash = "sha256-64Aa5SvxVSAH6+4oj3k7Va1mdTgEGB+fJFZZHWfkxMw=";
+        };
+      });
       ${opencodeName} = prev.callPackage (
         {
           lib,
