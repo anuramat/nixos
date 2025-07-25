@@ -107,6 +107,7 @@
     fortune # random quotes
 
     # miscellaneous
+    parted
     exercism # cli for exercism.org
     geteduroam-cli
     libqalculate # `qalc` - advanced calculator
