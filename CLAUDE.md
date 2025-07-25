@@ -77,6 +77,29 @@ This codebase follows minimalist Nix patterns:
 - Pipe operators (`|>`) used where supported
 - Vim folding markers for organization
 
+## Package Management
+
+This flake uses overlays in `common/overlays.nix` to manage package versions.
+
+Some useful commands for npm packages:
+
+```bash
+# latest versions of the package:
+curl -s https://registry.npmjs.org/@google/gemini-cli | jq '."dist-tags"'
+# detailed info for a specific version:
+curl -s https://registry.npmjs.org/@google/gemini-cli/$VERSION
+# get source hash:
+nix-prefetch-url --unpack https://registry.npmjs.org/package/-/package-version.tgz
+# convert base32 to SRI format:
+nix-hash --to-sri --type sha256 <base32-hash>
+```
+
+### Package Search
+
+- Check if package exists in nixpkgs first before creating from scratch
+- Use NixOS MCP server to search packages: search for existing packages before
+  overriding
+
 ### Important Notes
 
 - The hostname must match the target machine for proper configuration selection
@@ -84,3 +107,5 @@ This codebase follows minimalist Nix patterns:
   `/root/.ssh/config`
 - Binary cache keys are automatically collected during rebuild process
 - Some GUI packages are disabled due to build issues (see TODO.md)
+- For npm packages without dependencies, use fake hash for npmDepsHash and let
+  Nix correct it during build
