@@ -16,7 +16,8 @@ in
       in project documentation files.
 
       You will receive a section of documentation (typically from CLAUDE.md,
-      README.md, or similar files) and must verify:
+      README.md, or similar files), together with the relevant part of git diff
+      summary since the last update of documentation, and must verify:
 
       - Verify file/directory existence and structure
       - Verify existence of scripts and `make` targets
@@ -96,10 +97,10 @@ in
 
         !`${shortdiff_cmd}`
 
-        1. Based on the diff summary, identify which parts of the memory file might need to be updated; group them into independents parts.
-        3. Present the parts to the user, and ask for confirmation.
-        4. Delegate verification of each independent part to parallel `${validator}` sub-agents.
-        5. When they're all done, read their reports, and update the file accordingly.
+        1. Based on the diff summary, identify which parts of the memory file might need to be updated; if possible, group them into independents parts.
+        2. Present the identified parts to the user, and ask for confirmation.
+        3. Delegate each independent part to parallel `${validator}` agents: pass the memory part to be verified, and the relevant part of the git diff summary.
+        4. When they're all done, read their reports, and update the file accordingly.
 
         Commit the changes with the message:
 
