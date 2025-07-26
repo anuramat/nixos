@@ -111,11 +111,38 @@ in
       #   };
       # };
       gemini-cli = prev.gemini-cli.overrideAttrs (oldAttrs: rec {
-        version = "0.1.13";
-        src = prev.fetchzip {
-          url = "https://registry.npmjs.org/@google/gemini-cli/-/gemini-cli-${version}.tgz";
-          hash = "sha256-64Aa5SvxVSAH6+4oj3k7Va1mdTgEGB+fJFZZHWfkxMw=";
+        version = "0.1.14";
+        src = prev.fetchFromGitHub {
+          owner = "google-gemini";
+          repo = "gemini-cli";
+          tag = "v${version}";
+          hash = "sha256-u73aqh7WnfetHj/64/HyzSR6aJXRKt0OXg3bddhhQq8=";
         };
+        npmDeps = prev.fetchNpmDeps {
+          inherit src;
+          hash = "sha256-9T31QlffPP6+ryRVN/7t0iMo+2AgwPb6l6CkYh6839U=";
+        };
+
+        # TODO the rest was vibecoded:
+        preConfigure = ''
+          mkdir -p packages/generated
+          echo "export const GIT_COMMIT_INFO = { commitHash: '${src.rev}' };" > packages/generated/git-commit.ts
+        '';
+        installPhase = ''
+          runHook preInstall
+          mkdir -p $out/{bin,share/gemini-cli/packages}
+          cp -r node_modules $out/share/gemini-cli/
+          rm -f $out/share/gemini-cli/node_modules/@google/gemini-cli
+          rm -f $out/share/gemini-cli/node_modules/@google/gemini-cli-core
+          cp -r packages/cli $out/share/gemini-cli/node_modules/@google/gemini-cli
+          cp -r packages/core $out/share/gemini-cli/node_modules/@google/gemini-cli-core
+          cp -r packages/vscode-ide-companion $out/share/gemini-cli/packages/vscode-ide-companion
+          ln -s $out/share/gemini-cli/node_modules/@google/gemini-cli/dist/index.js $out/bin/gemini
+          runHook postInstall
+        '';
+        postInstall = ''
+          chmod +x "$out/bin/gemini"
+        '';
       });
       ${opencodeName} = prev.callPackage (
         {
@@ -130,7 +157,7 @@ in
           src = fetchFromGitHub {
             owner = "opencode-ai";
             repo = "opencode";
-            tag = "v${finalAttrs.version}";
+            rev = "v${finalAttrs.version}";
             hash = "sha256-UjGNtekqPVUxH/jfi6/D4hNM27856IjbepW7SgY2yQw=";
           };
 

@@ -131,19 +131,19 @@ in
     # xdg shims should be here
     undistract
     +
-      # bash
-      ''
-        source ${./xdg_shims.sh} # go through, verify, then move to env vars
-        [[ $- == *i* ]] || return
-        # WARN here order matters for sure
-        source ${./git.sh}
-        source ${./prompt.sh}
+    # bash
+    ''
+      source ${./xdg_shims.sh} # go through, verify, then move to env vars
+      [[ $- == *i* ]] || return
+      # WARN here order matters for sure
+      source ${./git.sh}
+      source ${./prompt.sh}
 
-        source ${./bashrc.sh}
+      source ${./bashrc.sh}
 
-        # does this even work
-        PROMPT_COMMAND="''${PROMPT_COMMAND:+$PROMPT_COMMAND;}history -a"
-        source ${./osc.sh}
-        source ${pkgs.bash-preexec}/share/bash/bash-preexec.sh
-      '';
+      # does this even work
+      PROMPT_COMMAND="''${PROMPT_COMMAND:+$PROMPT_COMMAND;}history -a"
+      source ${./osc.sh}
+      source ${pkgs.bash-preexec}/share/bash/bash-preexec.sh
+    '';
 }

@@ -18,8 +18,9 @@ code in this repository.
 ### Testing Commands
 
 - `make nvim-expect` - Test neovim build with expect script
-- `nix build` - Build current flake configuration
 - `treefmt` - Format files using configuration in treefmt.toml
+- `nix build .#nixosConfigurations.$HOSTNAME.pkgs.$PACKAGE` -- verify that a
+  package builds
 
 ## Architecture Overview
 
