@@ -15,8 +15,6 @@ in
       agentName = name;
       cmd = "${lib.getExe pkgs.opencode}";
       xdgSubdir = "opencode";
-      extraRwDirs = [
-      ];
     })
   ];
 }

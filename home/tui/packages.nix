@@ -43,7 +43,7 @@
     llama-cpp
     codex
     amp-cli
-    # gemini-cli
+    gemini-cli
 
     # containers
     dive # look into docker image layers

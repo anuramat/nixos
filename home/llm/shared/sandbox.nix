@@ -42,7 +42,7 @@ in
                 ''
                   agentDir="${"$" + x}/${args.xdgSubdir}"
                   ${shadow}
-                  [ -a "$agentDir" ] && ln -s -t "$agentDir" "${"$" + x}/${args.xdgSubdir}"
+                  [ -a "$agentDir" ] && ln -s -T "$agentDir" "${"$" + x}/${args.xdgSubdir}"
                 ''
               else
                 shadow
