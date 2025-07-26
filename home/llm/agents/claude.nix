@@ -61,7 +61,6 @@ in
       pname = "cld";
       agentName = name;
       cmd = "${lib.getExe pkgs.claude-code} --dangerously-skip-permissions";
-      xdgSubdir = "claude";
       extraRwDirs = [
         "$HOME/.claude.json"
         "$HOME/.claude"

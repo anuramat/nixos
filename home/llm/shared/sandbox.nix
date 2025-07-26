@@ -33,11 +33,20 @@ in
           TEMP_XDG_ROOT=$(mktemp -d)
           echo "tmp dir: $TEMP_XDG_ROOT"
           ${
-            map (x: ''
-              agentDir="\$${x}/${args.xdgSubdir}"
-              ${x}="$TEMP_XDG_ROOT/${x}"; export ${x}; mkdir "\$${x}"
-              [ -a "$agentDir" ] && ln -s -t "$agentDir" "\$${x}/${args.xdgSubdir}"
-            '') vars
+            map (
+              x:
+              let
+                shadow = ''${x}="$TEMP_XDG_ROOT/${x}"; export ${x}; mkdir "\$${x}"'';
+              in
+              if args ? xdgSubdir then
+                ''
+                  agentDir="\$${x}/${args.xdgSubdir}"
+                  ${shadow}
+                  [ -a "$agentDir" ] && ln -s -t "$agentDir" "\$${x}/${args.xdgSubdir}"
+                ''
+              else
+                shadow
+            ) vars
             |> builtins.concatStringsSep "\n"
           }
         '';
