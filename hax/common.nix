@@ -49,6 +49,7 @@ rec {
     pkgs: target: argsList: # bash
     ''
       temp=$(mktemp)
+      [ -s "${target}" ] || echo '{}' > "${target}"
       cp '${target}' "$temp"
       ${
         argsList
