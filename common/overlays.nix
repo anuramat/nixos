@@ -112,10 +112,14 @@ in
       # };
       gemini-cli = prev.gemini-cli.overrideAttrs (oldAttrs: rec {
         version = "0.1.14";
-        src = prev.fetchzip {
-          url = "https://registry.npmjs.org/@google/gemini-cli/-/gemini-cli-${version}.tgz";
-          hash = "sha256-YhSQjSjWWlHhi7dBHfKNb7Z7156M6v20EMEhC5hK2DI=";
-        };
+        src =
+          prev.fetchzip {
+            url = "https://registry.npmjs.org/@google/gemini-cli/-/gemini-cli-${version}.tgz";
+            hash = "sha256-YhSQjSjWWlHhi7dBHfKNb7Z7156M6v20EMEhC5hK2DI=";
+          }
+          // {
+            rev = "v${version}";
+          };
       });
       ${opencodeName} = prev.callPackage (
         {
@@ -130,7 +134,7 @@ in
           src = fetchFromGitHub {
             owner = "opencode-ai";
             repo = "opencode";
-            tag = "v${finalAttrs.version}";
+            rev = "v${finalAttrs.version}";
             hash = "sha256-UjGNtekqPVUxH/jfi6/D4hNM27856IjbepW7SgY2yQw=";
           };
 
