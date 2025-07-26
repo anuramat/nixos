@@ -9,7 +9,7 @@
           run = "noop";
         }
       ];
-      manager.sort_by = "natural";
+      mgr.sort_by = "natural";
     };
     keymap = {
       mgr.prepend_keymap = [
