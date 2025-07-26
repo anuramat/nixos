@@ -44,7 +44,6 @@ let
   subagents = mkTemplates "agents" agents.subagents;
 in
 {
-  lib.test = "x";
   home.file = (
     {
       ".claude/CLAUDE.md".text = agents.systemPrompt;

@@ -18,6 +18,22 @@ in
       ];
       rwDirs =
         map (x: ''"${x}"'') (baseRwDirs ++ xdgSubdirs ++ args.extraRwDirs) |> builtins.concatStringsSep " ";
+      shadowXdg =
+        let
+          vars = [
+            "XDG_DATA_HOME"
+            "XDG_STATE_HOME"
+            "XDG_CACHE_HOME"
+            "XDG_RUNTIME_DIR"
+          ];
+        in
+        ''
+          TEMP_XDG_ROOT=$(mktemp -d)
+
+          ${map (x: x) vars |> builtins.concatStringsSep "\n"}
+          # TODO rewrite and export, maybe link agent files
+          # ln -s orig/${args.xdgSubdir} tmp/${args.xdgSubdir}
+        '';
     in
     (pkgs.writeShellApplication {
       name = args.pname;
@@ -25,36 +41,26 @@ in
         bubblewrap
       ];
 
-      # TODO add single file mode
       text = ''
-        ${varNames.rwDirs}+=(${rwDirs})
+        # set agent
+        ${varNames.agentName}='${args.agentName}'
+        export ${varNames.agentName}
 
+        # collect RW dirs
+        ${varNames.rwDirs}+=(${rwDirs})
         if gitroot=$(git rev-parse --show-toplevel 2>/dev/null) && [ -d "$gitroot" ]; then
           ${varNames.rwDirs}+=("$gitroot")
         fi
+        export ${varNames.rwDirs}
+        echo "RW mounted directories:" && printf '\t%s\n' "''${${varNames.rwDirs}[@]}"
 
-        XDG_DATA_HOME=$(mktemp -d)
-        XDG_STATE_HOME=$(mktemp -d)
-        XDG_CACHE_HOME=$(mktemp -d)
-        XDG_RUNTIME_DIR=$(mktemp -d)
-        ${varNames.agentName}='(${args.agentName})'
-
-        export XDG_DATA_HOME
-        export XDG_STATE_HOME
-        export XDG_CACHE_HOME
-        export XDG_RUNTIME_DIR
-        export ${varNames.agentName}
-
+        # build args
         args=()
         for i in "''${${varNames.rwDirs}[@]}"; do
         	args+=(--bind)
         	args+=("$i")
           args+=("$i")
         done
-
-        echo "RW mounted directories:"
-        printf '%s\n' "''${${varNames.rwDirs}[@]}"
-        export ${varNames.rwDirs}
 
         bwrap --ro-bind / / --dev /dev "''${args[@]}" ${args.cmd} "$@"
       '';
