@@ -120,6 +120,7 @@ in
           // {
             rev = "v${version}";
           };
+        npmDepsHash = "";
       });
       ${opencodeName} = prev.callPackage (
         {
