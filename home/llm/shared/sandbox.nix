@@ -10,30 +10,40 @@ in
   lib.agents.mkSandbox =
     args:
     let
-      xdgSubdirs = map (v: "${v}/${args.xdgSubdir}") [
-        config.xdg.dataHome
-        config.xdg.configHome
-        config.xdg.cacheHome
-        config.xdg.stateHome
-      ];
-      rwDirs =
-        map (x: ''"${x}"'') (baseRwDirs ++ xdgSubdirs ++ args.extraRwDirs) |> builtins.concatStringsSep " ";
+      agentDirs =
+        if !args ? xdgSubdir then
+          [ ]
+        else
+          (map (v: "${v}/${args.xdgSubdir}") [
+            config.xdg.cacheHome
+            config.xdg.configHome
+            config.xdg.dataHome
+            config.xdg.stateHome
+          ]);
       shadowXdg =
         let
           vars = [
-            "XDG_DATA_HOME"
-            "XDG_STATE_HOME"
             "XDG_CACHE_HOME"
+            "XDG_DATA_HOME"
             "XDG_RUNTIME_DIR"
+            "XDG_STATE_HOME"
           ];
         in
         ''
           TEMP_XDG_ROOT=$(mktemp -d)
-
-          ${map (x: x) vars |> builtins.concatStringsSep "\n"}
-          # TODO rewrite and export, maybe link agent files
-          # ln -s orig/${args.xdgSubdir} tmp/${args.xdgSubdir}
+          echo "tmp dir: $TEMP_XDG_ROOT"
+          ${
+            map (x: ''
+              agentDir="$${x}/${args.xdgSubdir}"
+              ${x}="$TEMP_XDG_ROOT/${x}"; export ${x}; mkdir "$${x}"
+              [ -a "$agentDir" ] && ln -s -t "$agentSubdir" "$${x}/${args.xdgSubdir}"
+            '') vars
+            |> builtins.concatStringsSep "\n"
+          }
         '';
+      rwDirs =
+        map (x: ''"${x}"'') (baseRwDirs ++ agentDirs ++ (args.extraRwDirs or [ ]))
+        |> builtins.concatStringsSep " ";
     in
     (pkgs.writeShellApplication {
       name = args.pname;
@@ -42,6 +52,9 @@ in
       ];
 
       text = ''
+        # shadow some of the xdg directories with a tmp one
+        ${shadowXdg}
+
         # set agent
         ${varNames.agentName}='${args.agentName}'
         export ${varNames.agentName}
