@@ -8,7 +8,6 @@
 {
   imports = with inputs; [
     nixvim.homeModules.nixvim
-    agenix.homeManagerModules.default
     spicetify-nix.homeManagerModules.spicetify
     ./lang
     ./misc.nix
@@ -21,13 +20,6 @@
     ./gui
     ./tui
   ];
-
-  age = {
-    secretsDir = "${config.xdg.dataHome}/agenix";
-    secrets = {
-      ghmcp.file = ../secrets/ghmcp.age;
-    };
-  };
 
   xdg.enable = true; # set xdg basedir vars in .profile
 

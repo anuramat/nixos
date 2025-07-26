@@ -13,7 +13,16 @@ in
       port = 15151;
       environmentFile = config.age.secrets.litellm.path;
       openFirewall = false;
-      settings = { };
+      settings = {
+        model_list = [
+          {
+            model_name = "github_copilot/gpt-4";
+            litellm_params = {
+              model = "github_copilot/gpt-4";
+            };
+          }
+        ];
+      };
     };
     ollama = {
       enable = true;

@@ -30,31 +30,32 @@
         in
         lib.nixosSystem {
           specialArgs = args2;
-          modules =
-            [
-              (
-                { config, ... }:
-                {
-                  networking.hostName = name;
-                  home-manager = {
-                    extraSpecialArgs = args2;
-                    users.${user.username} = ./home;
-                  };
+          modules = [
+            (
+              { config, ... }:
+              {
+                networking.hostName = name;
+                home-manager = {
+                  extraSpecialArgs = args2;
+                  users.${user.username} = ./home;
+                };
 
-                }
-              )
-              ./system
+              }
+            )
+            ./system
 
-              ./common/overlays.nix
+            ./common/overlays.nix
 
-              inputs.stylix.nixosModules.stylix
-              ./common/stylix.nix
+            inputs.agenix.nixosModules.default
+            ./common/age.nix
+            inputs.stylix.nixosModules.stylix
+            ./common/stylix.nix
 
-              ./hosts/external_keys.nix
-            ]
-            ++ [
-              ./hosts/${name}
-            ];
+            ./hosts/external_keys.nix
+          ]
+          ++ [
+            ./hosts/${name}
+          ];
         };
     in
     {
@@ -72,8 +73,10 @@
           ./home
 
           ./common/overlays.nix
-          inputs.stylix.nixosModules.stylix
+          inputs.stylix.nixosModules.stylix # TODO should be a different module -- hm specific
+          inputs.agenix.homeManagerModules.default
           ./common/stylix.nix
+          ./common/age.nix
         ];
       };
     }
