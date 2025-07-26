@@ -4,7 +4,7 @@ with lib;
 with builtins;
 rec {
   readLines = v: v |> readFile |> splitString "\n" |> filter (x: x != "");
-  getSchema = attrsets.mapAttrsRecursive (path: v: typeOf (v));
+  getSchema = attrsets.mapAttrsRecursive (path: v: typeOf v);
   join = s: with lib; s |> splitString "\n" |> concatStringsSep " ";
   getMatches =
     patterns: x:
@@ -44,4 +44,28 @@ rec {
         ''
         + main
       );
+
+  jsonUpdate =
+    pkgs: target: argsList: # bash
+    ''
+      temp=$(mktemp)
+      cp '${target}' "$temp"
+      ${
+        argsList
+        |> map (
+          args:
+          let
+            source =
+              # TODO assert that only one is present
+              args.file or (pkgs.writeTextFile {
+                name = "jq_piece";
+                inherit (args) text;
+              });
+          in
+          ''run ${getExe pkgs.jq} --slurpfile arg ${source} '${args.prop} = $arg[0]' "$temp" | sponge "$temp" || exit''
+        )
+        |> lib.concatStringsSep "\n"
+      }
+      mv "$temp" "${target}"
+    '';
 }

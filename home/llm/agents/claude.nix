@@ -1,5 +1,6 @@
 {
   lib,
+  hax,
   config,
   pkgs,
   ...
@@ -72,29 +73,17 @@ in
     activation =
       let
         home = config.home.homeDirectory;
-        jsonUpdate =
-          argsList: # bash
-          ''
-            temp=$(mktemp)
-            ${
-              argsList
-              |> map (
-                args:
-                ''run ${getExe pkgs.jq} --slurpfile arg ${args.sourceFile} '${args.prop} = $arg[0]' "${args.targetFile}" > "$temp" || exit''
-              )
-              |> lib.concatStringsSep "\n"
-            }
-            run [ -s "$temp" ] && mv "$temp" "${home}/.claude.json"
-          '';
       in
       {
-        claudeMcp = lib.hm.dag.entryAfter [ "writeBoundary" ] (jsonUpdate [
-          {
-            prop = ".mcpServers";
-            targetFile = "${home}/.claude.json";
-            sourceFile = config.lib.agents.mcp.json.filepath;
-          }
-        ]);
+        claudeMcp = lib.hm.dag.entryAfter [ "writeBoundary" ] (
+          hax.common.jsonUpdate pkgs [
+            {
+              prop = ".mcpServers";
+              target = "${home}/.claude.json";
+              file = config.lib.agents.mcp.json.filepath;
+            }
+          ]
+        );
       };
   };
 }

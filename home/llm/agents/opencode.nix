@@ -1,5 +1,6 @@
 {
   pkgs,
+  hax,
   lib,
   config,
   ...
@@ -23,5 +24,16 @@ in
       inherit xdgSubdir;
     })
   ];
-  xdg.configFile."${xdgSubdir}/opencode.json".text = lib.generators.toJSON { } settings;
+
+  activation = {
+    opencodeConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] (
+      hax.common.jsonUpdate pkgs [
+        {
+          prop = ".";
+          target = "${config.xdg.configHome}/${xdgSubdir}/opencode.json";
+          text = lib.generators.toJSON { } settings;
+        }
+      ]
+    );
+  };
 }
