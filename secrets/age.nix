@@ -1,6 +1,15 @@
 { lib, ... }:
 let
-  x = with builtins; readDir ./. |> attrNames |> filter (a: lib.hasSuffix ".age");
+  sex =
+    with builtins;
+    readDir ./.
+    |> attrNames
+    |> filter (lib.hasSuffix ".age")
+    |> map (x: {
+      name = lib.removeSuffix ".age" x;
+      value = ./${x};
+    })
+    |> builtins.listToAttrs;
 in
 {
   age = {
