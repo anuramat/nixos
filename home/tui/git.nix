@@ -101,7 +101,7 @@
               # NOTE that COMMIT_MSG_FILE only has comments when it's invoked interactively
               # meanwhile with `commit -m` it already contains the message
               # e.g. claude always uses `commit -m`
-              signature="Co-Authored-By: \$${config.lib.agents.varNames.agentName}"
+              signature="Co-Authored-By: ${"$" + config.lib.agents.varNames.agentName}"
               if [ -v ${config.lib.agents.varNames.agentName} ]; then
               	if [ "$COMMIT_SOURCE" = "commit" ]; then
               		echo 'permission error: agents are not allowed to use `git commit` with flags `-c`, `-C`, or `--amend`'

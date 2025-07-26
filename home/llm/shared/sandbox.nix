@@ -36,13 +36,13 @@ in
             map (
               x:
               let
-                shadow = ''${x}="$TEMP_XDG_ROOT/${x}"; export ${x}; mkdir "\$${x}"'';
+                shadow = ''${x}="$TEMP_XDG_ROOT/${x}"; export ${x}; mkdir "${"$" + x}"'';
               in
               if args ? xdgSubdir then
                 ''
-                  agentDir="\$${x}/${args.xdgSubdir}"
+                  agentDir="${"$" + x}/${args.xdgSubdir}"
                   ${shadow}
-                  [ -a "$agentDir" ] && ln -s -t "$agentDir" "\$${x}/${args.xdgSubdir}"
+                  [ -a "$agentDir" ] && ln -s -t "$agentDir" "${"$" + x}/${args.xdgSubdir}"
                 ''
               else
                 shadow
