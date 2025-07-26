@@ -20,6 +20,8 @@ code in this repository.
 - `make nvim-expect` - Test neovim build with expect script
 - `nix build` - Build current flake configuration
 - `treefmt` - Format files using configuration in treefmt.toml
+- `nix eval .#nixosConfigurations.anuramat-ll7.pkgs.PACKAGE.version --raw` -
+  Verify package version in configuration
 
 ## Architecture Overview
 
