@@ -43,11 +43,11 @@
     (mdformat.withPlugins (
       p: with p; [
         mdformat-myst
-        mdformat-footnote
         mdformat-deflist
-        mdformat-frontmatter
-        mdformat-wikilink
-        mdformat-gfm
+        # mdformat-footnote
+        # mdformat-frontmatter
+        # mdformat-wikilink
+        # mdformat-gfm
       ]
     ))
     nixfmt-rfc-style
