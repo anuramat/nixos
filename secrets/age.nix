@@ -20,7 +20,7 @@ in
       };
       litellm = {
         file = ./litellm.age;
-        permissions = "400";
+        mode = "400";
       };
     };
   };
