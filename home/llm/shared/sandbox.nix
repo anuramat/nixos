@@ -34,9 +34,9 @@ in
           echo "tmp dir: $TEMP_XDG_ROOT"
           ${
             map (x: ''
-              agentDir="$${x}/${args.xdgSubdir}"
-              ${x}="$TEMP_XDG_ROOT/${x}"; export ${x}; mkdir "$${x}"
-              [ -a "$agentDir" ] && ln -s -t "$agentSubdir" "$${x}/${args.xdgSubdir}"
+              agentDir="\$${x}/${args.xdgSubdir}"
+              ${x}="$TEMP_XDG_ROOT/${x}"; export ${x}; mkdir "\$${x}"
+              [ -a "$agentDir" ] && ln -s -t "$agentDir" "\$${x}/${args.xdgSubdir}"
             '') vars
             |> builtins.concatStringsSep "\n"
           }
