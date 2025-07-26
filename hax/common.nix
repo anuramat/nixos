@@ -62,7 +62,7 @@ rec {
                 inherit (args) text;
               });
           in
-          ''run ${getExe pkgs.jq} --slurpfile arg ${source} '${args.prop} = $arg[0]' "$temp" | sponge "$temp" || exit''
+          ''run ${getExe pkgs.jq} --slurpfile arg ${source} '${args.prop} = $arg[0]' "$temp" | ${getExe pkgs.sponge} "$temp" || exit''
         )
         |> lib.concatStringsSep "\n"
       }
