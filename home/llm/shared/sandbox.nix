@@ -5,6 +5,35 @@ let
     "$PWD"
   ];
   inherit (config.lib.agents) varNames;
+  shadowXdg =
+    passthrough:
+    let
+      vars = [
+        "XDG_CACHE_HOME"
+        "XDG_DATA_HOME"
+        "XDG_RUNTIME_DIR"
+        "XDG_STATE_HOME"
+      ];
+      shadowOne =
+        x:
+        let
+          shadow = ''${x}="$TEMP_ROOT/${x}"; export ${x}; mkdir "${"$" + x}"'';
+        in
+        if passthrough != null then
+          ''
+            agentDir="${"$" + x}/${passthrough}"
+            ${shadow}
+            [ -a "$agentDir" ] && ln -s -T "$agentDir" "${"$" + x}/${passthrough}"
+          ''
+        else
+          shadow;
+    in
+    ''
+      TEMP_ROOT=$(mktemp -d)
+      echo "tmp dir: $TEMP_ROOT"
+
+      ${map shadowOne vars |> builtins.concatStringsSep "\n"}
+    '';
 in
 {
   lib.agents.mkSandbox =
@@ -20,36 +49,6 @@ in
             config.xdg.dataHome
             config.xdg.stateHome
           ]);
-      shadowXdg =
-        let
-          vars = [
-            "XDG_CACHE_HOME"
-            "XDG_DATA_HOME"
-            "XDG_RUNTIME_DIR"
-            "XDG_STATE_HOME"
-          ];
-        in
-        ''
-          TEMP_XDG_ROOT=$(mktemp -d)
-          echo "tmp dir: $TEMP_XDG_ROOT"
-          ${
-            map (
-              x:
-              let
-                shadow = ''${x}="$TEMP_XDG_ROOT/${x}"; export ${x}; mkdir "${"$" + x}"'';
-              in
-              if args ? xdgSubdir then
-                ''
-                  agentDir="${"$" + x}/${args.xdgSubdir}"
-                  ${shadow}
-                  [ -a "$agentDir" ] && ln -s -T "$agentDir" "${"$" + x}/${args.xdgSubdir}"
-                ''
-              else
-                shadow
-            ) vars
-            |> builtins.concatStringsSep "\n"
-          }
-        '';
       rwDirs =
         map (x: ''"${x}"'') (baseRwDirs ++ agentDirs ++ (args.extraRwDirs or [ ]))
         |> builtins.concatStringsSep " ";
@@ -62,7 +61,7 @@ in
 
       text = ''
         # shadow some of the xdg directories with a tmp one
-        ${shadowXdg}
+        ${shadowXdg (args.xdgSubdir or null)}
 
         # set agent
         ${varNames.agentName}='${args.agentName}'
