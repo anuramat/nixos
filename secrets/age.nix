@@ -1,12 +1,12 @@
 { lib, ... }:
 let
-  x = with builtins; readDir ./. |> attrNames |> filter (a: a == "suff");
+  x = with builtins; readDir ./. |> attrNames |> filter (a: lib.hasSuffix ".age");
 in
 {
   age = {
     secrets = {
-      ghmcp.file = secrets/ghmcp.age;
-      litellm.file = .../secrets/litellm.age;
+      ghmcp.file = ./ghmcp.age;
+      litellm.file = ./litellm.age;
     };
   };
 }

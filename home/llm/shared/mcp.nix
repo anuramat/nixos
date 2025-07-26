@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  osConfig,
   pkgs,
   ...
 }:
@@ -17,7 +18,7 @@ let
       '';
   githubPatched = patchedBinary {
     name = "GITHUB_PERSONAL_ACCESS_TOKEN";
-    token = config.age.secrets.ghmcp.path;
+    token = osConfig.age.secrets.ghmcp.path;
     package = pkgs.github-mcp-server;
   };
 

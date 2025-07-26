@@ -47,7 +47,7 @@
             ./common/overlays.nix
 
             inputs.agenix.nixosModules.default
-            ./common/age.nix
+            ./secrets/age.nix
             inputs.stylix.nixosModules.stylix
             ./common/stylix.nix
 
@@ -76,7 +76,7 @@
           inputs.stylix.nixosModules.stylix # TODO should be a different module -- hm specific
           inputs.agenix.homeManagerModules.default
           ./common/stylix.nix
-          ./common/age.nix
+          ./secrets/age.nix
         ];
       };
     }
