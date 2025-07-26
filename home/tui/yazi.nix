@@ -12,7 +12,7 @@
       manager.sort_by = "natural";
     };
     keymap = {
-      manager.prepend_keymap = [
+      mgr.prepend_keymap = [
         {
           on = "y";
           run = [
