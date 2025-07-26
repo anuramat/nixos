@@ -6,6 +6,7 @@
 }:
 let
   inherit (config.lib) agents;
+  inherit (lib) getExe;
   name = "claude";
   hooks = {
     Notification = [
@@ -44,27 +45,43 @@ let
   subagents = mkTemplates "agents" agents.subagents;
 in
 {
-  home.file = (
-    {
-      ".claude/CLAUDE.md".text = agents.systemPrompt;
-      ".claude/settings.json".text = lib.generators.toJSON { } {
-        includeCoAuthoredBy = false;
-        inherit hooks env permissions;
+  home = {
+    file = (
+      {
+        ".claude/CLAUDE.md".text = agents.systemPrompt;
+        ".claude/settings.json".text = lib.generators.toJSON { } {
+          includeCoAuthoredBy = false;
+          inherit hooks env permissions;
+        };
+      }
+      // commands
+      // subagents
+    );
+    packages = [
+      (config.lib.agents.mkSandbox {
+        inherit pkgs;
+        pname = "cld";
+        agentName = name;
+        cmd = "${getExe pkgs.claude-code} --dangerously-skip-permissions";
+        extraRwDirs = [
+          "$HOME/.claude.json"
+          "$HOME/.claude"
+        ];
+      })
+    ];
+    activation =
+      let
+        home = config.home.homeDirectory;
+      in
+      {
+        claudeMcp =
+          lib.hm.dag.entryAfter [ "writeBoundary" ] # bash
+            ''
+              success=""
+              temp=$(mktemp)
+              run ${getExe pkgs.jq} --slurpfile mcp ${config.lib.agents.mcp.json.filepath} '.mcpServers = $mcp[0]' "${home}/.claude.json" > "$temp" && success=true
+              [ "$success" == true ] && run mv "$temp" "${home}/.claude.json"
+            '';
       };
-    }
-    // commands
-    // subagents
-  );
-  home.packages = [
-    (config.lib.agents.mkSandbox {
-      inherit pkgs;
-      pname = "cld";
-      agentName = name;
-      cmd = "${lib.getExe pkgs.claude-code} --dangerously-skip-permissions";
-      extraRwDirs = [
-        "$HOME/.claude.json"
-        "$HOME/.claude"
-      ];
-    })
-  ];
+  };
 }

@@ -51,7 +51,6 @@
       ]
     ))
     nixfmt-rfc-style
-    nodePackages.prettier # just in case
     cbfmt # mdformat ought to be enough?
     shfmt # posix/bash/mksh
     stylua # lua

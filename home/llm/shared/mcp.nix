@@ -39,25 +39,15 @@ let
     #   command = getExe pkgs.playwright-mcp;
     # };
   };
-  mcpServersJSON = toJSON mcpServers;
-  mcpServersPath = pkgs.writeTextFile {
-    name = "mcp_servers.json";
-    text = mcpServersJSON;
-  };
 in
 {
-  home.activation =
-    let
-      home = config.home.homeDirectory;
-    in
-    {
-      claudeMcp =
-        lib.hm.dag.entryAfter [ "writeBoundary" ] # bash
-          ''
-            success=""
-            temp=$(mktemp)
-            run ${getExe pkgs.jq} --slurpfile mcp ${mcpServersPath} '.mcpServers = $mcp[0]' "${home}/.claude.json" > "$temp" && success=true
-            [ "$success" == true ] && run mv "$temp" "${home}/.claude.json"
-          '';
+  lib.agents.mcp = {
+    json = rec {
+      text = toJSON mcpServers;
+      filepath = pkgs.writeTextFile {
+        name = "mcp_servers.json";
+        inherit text;
+      };
     };
+  };
 }
