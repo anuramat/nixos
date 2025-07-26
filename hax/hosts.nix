@@ -25,7 +25,8 @@ in
     |> map readFile
     |> map (lib.splitString "\n")
     |> concatLists
-    |> filter (x: x != "");
+    |> filter (x: x != "")
+    |> map (x: x |> lib.splitString " " |> lib.drop 1 |> lib.concatStringsSep " ");
   getAllKeys =
     path:
     getHostnames path |> map (v: path + "/${v}/keys") |> map getClientKeyFiles |> builtins.concatLists;
