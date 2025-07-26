@@ -8,7 +8,7 @@
 let
   inherit (config.lib) agents;
   inherit (lib) getExe;
-  name = "claude";
+  name = "Claude";
   hooks = {
     Notification = [
       {
