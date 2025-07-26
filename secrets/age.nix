@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, user, ... }:
 let
   sex =
     with builtins;
@@ -14,8 +14,14 @@ in
 {
   age = {
     secrets = {
-      ghmcp.file = ./ghmcp.age;
-      litellm.file = ./litellm.age;
+      ghmcp = {
+        file = ./ghmcp.age;
+        owner = user.username;
+      };
+      litellm = {
+        file = ./litellm.age;
+        permissions = "400";
+      };
     };
   };
 }
