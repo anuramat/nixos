@@ -17,6 +17,15 @@ let
 in
 {
   inherit getHostnames;
+  getAllHostkeys =
+    path:
+    with builtins;
+    getHostnames path
+    |> map (v: path + "/${v}/keys/host_keys")
+    |> map readFile
+    |> map (lib.splitString "\n")
+    |> concatLists
+    |> filter (x: x != "");
   getAllKeys =
     path:
     getHostnames path |> map (v: path + "/${v}/keys") |> map getClientKeyFiles |> builtins.concatLists;
