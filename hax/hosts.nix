@@ -18,6 +18,7 @@ in
 {
   inherit getHostnames;
   getAllHostkeys =
+    # returns a list of hostkeys, without the hostname part
     path:
     with builtins;
     getHostnames path
