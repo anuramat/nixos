@@ -27,10 +27,9 @@ in
 
   activation = {
     opencodeConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] (
-      hax.common.jsonUpdate pkgs [
+      hax.common.jsonUpdate pkgs "${config.xdg.configHome}/${xdgSubdir}/opencode.json" [
         {
           prop = ".";
-          target = "${config.xdg.configHome}/${xdgSubdir}/opencode.json";
           text = lib.generators.toJSON { } settings;
         }
       ]

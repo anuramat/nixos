@@ -76,10 +76,9 @@ in
       in
       {
         claudeMcp = lib.hm.dag.entryAfter [ "writeBoundary" ] (
-          hax.common.jsonUpdate pkgs [
+          hax.common.jsonUpdate pkgs "${home}/.claude.json" [
             {
               prop = ".mcpServers";
-              target = "${home}/.claude.json";
               file = config.lib.agents.mcp.json.filepath;
             }
           ]
