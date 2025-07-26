@@ -7,4 +7,5 @@ let
 in
 {
   "ghmcp.age".publicKeys = keys;
+  "litellm.age".publicKeys = keys;
 }

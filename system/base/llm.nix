@@ -8,6 +8,13 @@ let
 in
 {
   services = {
+    litellm = {
+      enable = true;
+      port = 15151;
+      environmentFile = config.age.secrets.litellm.path;
+      openFirewall = false;
+      settings = { };
+    };
     ollama = {
       enable = true;
       acceleration = lib.mkIf cuda "cuda";
