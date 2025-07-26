@@ -111,10 +111,10 @@ in
       #   };
       # };
       gemini-cli = prev.gemini-cli.overrideAttrs (oldAttrs: rec {
-        version = "0.1.13";
+        version = "0.1.14";
         src = prev.fetchzip {
           url = "https://registry.npmjs.org/@google/gemini-cli/-/gemini-cli-${version}.tgz";
-          hash = "sha256-64Aa5SvxVSAH6+4oj3k7Va1mdTgEGB+fJFZZHWfkxMw=";
+          hash = "sha256-YhSQjSjWWlHhi7dBHfKNb7Z7156M6v20EMEhC5hK2DI=";
         };
       });
       ${opencodeName} = prev.callPackage (
