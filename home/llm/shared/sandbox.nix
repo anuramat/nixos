@@ -15,24 +15,36 @@ let
   shadowXdg =
     agentDir:
     let
-      vars = [
+      variables = [
         "XDG_CACHE_HOME"
         "XDG_DATA_HOME"
         "XDG_RUNTIME_DIR"
         "XDG_STATE_HOME"
       ];
-      shadowOne = x: ''
-        agentDir="${"$" + x}/${agentDir}"
-        mkdir -p "$agentDir"
-        ${x}="$TEMP_ROOT/${x}"; export ${x}; mkdir "${"$" + x}"
-        [ -a "$agentDir" ] && ln -s -T "$agentDir" "${"$" + x}/${agentDir}"
-      '';
+      shadowVariable =
+        var:
+        let
+          unwrapped = ''
+            ${var}="$TEMP_ROOT/${var}"
+            export ${var}
+            mkdir "${"$" + var}"
+          '';
+        in
+        if agentDir == null then
+          unwrapped
+        else
+          ''
+            agentDir="${"$" + var}/${agentDir}"
+            mkdir -p "$agentDir"
+            ${unwrapped}
+            [ -a "$agentDir" ] && ln -s -T "$agentDir" "${"$" + var}/${agentDir}"
+          '';
     in
     ''
       TEMP_ROOT=$(mktemp -d)
       echo "tmp dir: $TEMP_ROOT"
     ''
-    + (map shadowOne vars |> builtins.concatStringsSep "\n");
+    + (variables |> map shadowVariable |> builtins.concatStringsSep "\n");
 in
 {
   lib.agents.mkSandbox =
@@ -46,12 +58,16 @@ in
       agentName = args.agentName or binName;
       cmd = "${lib.findExe args.package} args";
 
-      agentDirs = map (v: "${v}/${agentDir}") [
-        config.xdg.cacheHome
-        config.xdg.configHome
-        config.xdg.dataHome
-        config.xdg.stateHome
-      ];
+      agentDirs =
+        if agentDir != null then
+          (map (v: "${v}/${agentDir}") [
+            config.xdg.cacheHome
+            config.xdg.configHome
+            config.xdg.dataHome
+            config.xdg.stateHome
+          ])
+        else
+          [ ];
       rwDirs =
         map (x: ''"${x}"'') (baseRwDirs ++ agentDirs ++ extraRwDirs) |> builtins.concatStringsSep " ";
     in
