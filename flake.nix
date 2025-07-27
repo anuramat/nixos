@@ -127,8 +127,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     mdformat-myst = {
-      url = "github:anuramat/mdformat-myst/indented-math";
-      flake = false;
+      url = "github:anuramat/mdformat-myst/dev";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     mcp-nixos.url = "github:utensils/mcp-nixos";
     nil.url = "github:oxalica/nil/main";
