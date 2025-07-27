@@ -1,12 +1,12 @@
 let
-  validator = "validator";
+  validatorSubagentName = "validator";
 in
 {
   lib.agents.subagents = {
-    ${validator} = ''
+    ${validatorSubagentName} = ''
       ---
-      name: ${validator}
-      description: Use this agent when you need to verify the accuracy and validity of instructions, commands, or statements in documentation files like CLAUDE.md, README files, or similar project documentation. Examples: <example>Context: User has updated their CLAUDE.md file with new build commands and wants to ensure they're still valid. user: 'I've updated the build section in CLAUDE.md, can you check if the nix build command still works?' assistant: 'I'll use the instruction-validator agent to verify the build commands in your CLAUDE.md file' <commentary>Since the user wants to validate instructions in documentation, use the instruction-validator agent to check command validity.</commentary></example> <example>Context: User is reviewing project documentation before a release. user: 'Please verify that all the commands and file paths mentioned in our project documentation are still correct' assistant: 'I'll use the instruction-validator agent to systematically check all commands and paths in your documentation' <commentary>The user needs comprehensive validation of documentation accuracy, perfect use case for the instruction-validator agent.</commentary></example>
+      name: ${validatorSubagentName}
+      description: Verifies the consistency of documentation files like CLAUDE.md; only use when directly instructed
       tools: Glob, Grep, LS, ExitPlanMode, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, ListMcpResourcesTool, ReadMcpResourceTool
       color: blue
       ---
@@ -99,7 +99,7 @@ in
 
         1. Based on the diff summary, identify which parts of the memory file might need to be updated; if possible, group them into independents parts.
         2. Present the identified parts to the user, and ask for confirmation.
-        3. Delegate each independent part to parallel `${validator}` agents: pass the memory part to be verified, and the relevant part of the git diff summary.
+        3. Delegate each independent part to parallel `${validatorSubagentName}` sub-agents: pass the memory part to be verified, and the relevant part of the git diff summary.
         4. When they're all done, read their reports, and update the file accordingly.
 
         Commit the changes with the message:
