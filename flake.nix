@@ -126,6 +126,10 @@
       url = "github:anuramat/mdmath.nvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    mdformat-myst = {
+      url = "github:anuramat/mdformat-myst/indented-math";
+      flake = false;
+    };
     mcp-nixos.url = "github:utensils/mcp-nixos";
     nil.url = "github:oxalica/nil/main";
     codex.url = "github:openai/codex";

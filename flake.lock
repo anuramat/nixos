@@ -640,6 +640,23 @@
         "type": "github"
       }
     },
+    "mdformat-myst": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1753615420,
+        "narHash": "sha256-3oECkdYUD+eHltqFYdVTp8R4bG4feIziPkbUAzijs/0=",
+        "owner": "anuramat",
+        "repo": "mdformat-myst",
+        "rev": "0aac309410a4a06da9d2789d8c515f31ae77c987",
+        "type": "github"
+      },
+      "original": {
+        "owner": "anuramat",
+        "ref": "indented-math",
+        "repo": "mdformat-myst",
+        "type": "github"
+      }
+    },
     "mdmath": {
       "inputs": {
         "flake-utils": "flake-utils_5",
@@ -1029,6 +1046,7 @@
         "flake-utils": "flake-utils_3",
         "home-manager": "home-manager_2",
         "mcp-nixos": "mcp-nixos",
+        "mdformat-myst": "mdformat-myst",
         "mdmath": "mdmath",
         "neovim-nightly-overlay": "neovim-nightly-overlay",
         "nil": "nil",

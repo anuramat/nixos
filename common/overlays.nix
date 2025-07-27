@@ -54,6 +54,32 @@ let
             maintainers = [ ];
           };
         };
+        mdformat-myst = pfinal.buildPythonPackage rec {
+          pname = "mdformat-myst";
+          version = "indented-math";
+          pyproject = true;
+
+          src = inputs.mdformat-myst;
+
+          build-system = [ pfinal.flit-core ];
+          dependencies = [
+            pfinal.mdformat
+            pfinal.mdformat-footnote
+            pfinal.mdformat-frontmatter
+            pfinal.mdformat-tables
+            pfinal.mdit-py-plugins
+            pfinal.ruamel-yaml
+          ];
+
+          pythonImportsCheck = [ "mdformat_myst" ];
+
+          meta = with prev.lib; {
+            description = "Mdformat plugin for MyST compatibility";
+            homepage = "https://github.com/anuramat/mdformat-myst";
+            license = licenses.mit;
+            maintainers = [ ];
+          };
+        };
       };
     };
   };
