@@ -48,15 +48,15 @@ let
 in
 {
   lib.agents.mkSandbox =
-    args:
+    agent:
     let
-      binName = args.package.mainProgram;
-      args = args.args or "";
-      wrapperName = args.wrapperName or "${binName}-sandboxed";
-      extraRwDirs = args.extraRwDirs or [ ];
-      agentDir = args.agentDir or binName;
-      agentName = args.agentName or binName;
-      cmd = "${lib.findExe args.package} args";
+      binName = agent.package.meta.mainProgram;
+      args = agent.args or "";
+      wrapperName = agent.wrapperName or "${binName}-sandboxed";
+      extraRwDirs = agent.extraRwDirs or [ ];
+      agentDir = agent.agentDir or binName; # the one in xdg directories
+      agentName = agent.agentName or binName;
+      cmd = "${lib.getExe agent.package} ${args}";
 
       agentDirs =
         if agentDir != null then
@@ -81,7 +81,7 @@ in
         # shadow some of the xdg directories with a tmp one
         ${shadowXdg agentDir}
 
-        # set agent
+        # set agent variable
         ${varNames.agentName}='${agentName}'
         export ${varNames.agentName}
 

@@ -64,6 +64,7 @@ in
         agentName = name;
         package = pkgs.claude-code;
         args = "--dangerously-skip-permission";
+        agentDir = null;
         extraRwDirs = [
           "$HOME/.claude.json"
           "$HOME/.claude"
