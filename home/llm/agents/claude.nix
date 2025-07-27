@@ -63,7 +63,7 @@ in
         wrapperName = "cld";
         agentName = name;
         package = pkgs.claude-code;
-        args = "--dangerously-skip-permission";
+        args = "--dangerously-skip-permissions";
         agentDir = null;
         extraRwDirs = [
           "$HOME/.claude.json"
