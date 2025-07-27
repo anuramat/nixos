@@ -130,6 +130,22 @@ in
           chmod +x "$out/bin/gemini"
         '';
       });
+      mystmd = prev.stdenv.mkDerivation rec {
+        pname = "mystmd";
+        version = "1.6.0";
+        src = prev.fetchzip {
+          url = "https://registry.npmjs.org/mystmd/-/mystmd-${version}.tgz";
+          hash = "sha256-OatP9lv2/K4W3puaGAcECOfzNMR6a2zIntsxRnnAn4Q=";
+        };
+        nativeBuildInputs = [ prev.nodejs ];
+        installPhase = ''
+          runHook preInstall
+          mkdir -p $out/bin
+          cp dist/myst.cjs $out/bin/myst
+          chmod +x $out/bin/myst
+          runHook postInstall
+        '';
+      };
       ${opencodeName} = prev.callPackage (
         {
           lib,
