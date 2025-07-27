@@ -17,6 +17,7 @@ in
   home = {
     packages = [
       (config.lib.agents.mkSandbox {
+        wrapperName = "ocd";
         package = pkgs.opencode;
         inherit agentDir;
       })
