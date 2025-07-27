@@ -37,3 +37,6 @@ format:
 nvim-expect:
     nix build ".#neovim"
     ./scripts/expect_run.sh ./result/bin/nvim
+
+build pkg:
+  nix build ".#nixosConfigurations.$(hostname).pkgs.{{pkg}}"
