@@ -1,12 +1,19 @@
-{ pkgs, config, ... }:
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
 let
   baseRwDirs = [
     "/tmp"
     "$PWD"
   ];
   inherit (config.lib.agents) varNames;
+
+  # Shadows XDG dirs with tmp, and links agent directories there
   shadowXdg =
-    passthrough:
+    agentDir:
     let
       vars = [
         "XDG_CACHE_HOME"
@@ -14,57 +21,52 @@ let
         "XDG_RUNTIME_DIR"
         "XDG_STATE_HOME"
       ];
-      shadowOne =
-        x:
-        let
-          shadow = ''${x}="$TEMP_ROOT/${x}"; export ${x}; mkdir "${"$" + x}"'';
-        in
-        if passthrough != null then
-          ''
-            agentDir="${"$" + x}/${passthrough}"
-            ${shadow}
-            [ -a "$agentDir" ] && ln -s -T "$agentDir" "${"$" + x}/${passthrough}"
-          ''
-        else
-          shadow;
+      shadowOne = x: ''
+        agentDir="${"$" + x}/${agentDir}"
+        mkdir -p "$agentDir"
+        ${x}="$TEMP_ROOT/${x}"; export ${x}; mkdir "${"$" + x}"
+        [ -a "$agentDir" ] && ln -s -T "$agentDir" "${"$" + x}/${agentDir}"
+      '';
     in
     ''
       TEMP_ROOT=$(mktemp -d)
       echo "tmp dir: $TEMP_ROOT"
-
-      ${map shadowOne vars |> builtins.concatStringsSep "\n"}
-    '';
+    ''
+    + (map shadowOne vars |> builtins.concatStringsSep "\n");
 in
 {
   lib.agents.mkSandbox =
     args:
     let
-      agentDirs =
-        if !args ? xdgSubdir then
-          [ ]
-        else
-          (map (v: "${v}/${args.xdgSubdir}") [
-            config.xdg.cacheHome
-            config.xdg.configHome
-            config.xdg.dataHome
-            config.xdg.stateHome
-          ]);
+      binName = args.package.mainProgram;
+      args = args.args or "";
+      wrapperName = args.wrapperName or "${binName}-sandboxed";
+      extraRwDirs = args.extraRwDirs or [ ];
+      agentDir = args.agentDir or binName;
+      agentName = args.agentName or binName;
+      cmd = "${lib.findExe args.package} args";
+
+      agentDirs = map (v: "${v}/${agentDir}") [
+        config.xdg.cacheHome
+        config.xdg.configHome
+        config.xdg.dataHome
+        config.xdg.stateHome
+      ];
       rwDirs =
-        map (x: ''"${x}"'') (baseRwDirs ++ agentDirs ++ (args.extraRwDirs or [ ]))
-        |> builtins.concatStringsSep " ";
+        map (x: ''"${x}"'') (baseRwDirs ++ agentDirs ++ extraRwDirs) |> builtins.concatStringsSep " ";
     in
     (pkgs.writeShellApplication {
-      name = args.pname;
+      name = wrapperName;
       runtimeInputs = with pkgs; [
         bubblewrap
       ];
 
       text = ''
         # shadow some of the xdg directories with a tmp one
-        ${shadowXdg (args.xdgSubdir or null)}
+        ${shadowXdg agentDir}
 
         # set agent
-        ${varNames.agentName}='${args.agentName}'
+        ${varNames.agentName}='${agentName}'
         export ${varNames.agentName}
 
         # collect RW dirs
@@ -83,7 +85,7 @@ in
           args+=("$i")
         done
 
-        bwrap --ro-bind / / --dev /dev "''${args[@]}" ${args.cmd} "$@"
+        bwrap --ro-bind / / --dev /dev "''${args[@]}" ${cmd} "$@"
       '';
     });
 }

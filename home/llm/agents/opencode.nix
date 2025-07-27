@@ -6,29 +6,24 @@
   ...
 }:
 let
-  name = "opencode";
   settings = {
     instructions = [
       "CLAUDE.md"
     ];
   };
-  xdgSubdir = "opencode";
+  agentDir = "opencode";
 in
 {
   home = {
     packages = [
       (config.lib.agents.mkSandbox {
-        inherit pkgs;
-        pname = "opencode-sandboxed";
-        agentName = name;
-        cmd = "${lib.getExe pkgs.opencode}";
-        inherit xdgSubdir;
+        package = pkgs.opencode;
+        inherit agentDir;
       })
     ];
-
     activation = {
       opencodeConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] (
-        hax.common.jsonUpdate pkgs "${config.xdg.configHome}/${xdgSubdir}/opencode.json" [
+        hax.common.jsonUpdate pkgs "${config.xdg.configHome}/${agentDir}/opencode.json" [
           {
             prop = ".";
             text = lib.generators.toJSON { } settings;

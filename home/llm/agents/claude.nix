@@ -60,10 +60,10 @@ in
     );
     packages = [
       (config.lib.agents.mkSandbox {
-        inherit pkgs;
-        pname = "cld";
+        wrapperName = "cld";
         agentName = name;
-        cmd = "${getExe pkgs.claude-code} --dangerously-skip-permissions";
+        package = pkgs.claude-code;
+        args = "--dangerously-skip-permission";
         extraRwDirs = [
           "$HOME/.claude.json"
           "$HOME/.claude"
