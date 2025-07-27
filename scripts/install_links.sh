@@ -20,4 +20,3 @@ lndir() (
 
 source "$HOME/.profile"
 lndir "$LINKDIR/config" "$XDG_CONFIG_HOME"
-lndir "$LINKDIR/bin" "$XDG_BIN_HOME"
