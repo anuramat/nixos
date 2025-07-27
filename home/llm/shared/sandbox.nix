@@ -42,6 +42,7 @@ let
     in
     ''
       TEMP_ROOT=$(mktemp -d)
+
       echo "tmp dir: $TEMP_ROOT"
     ''
     + (variables |> map shadowVariable |> builtins.concatStringsSep "\n");
