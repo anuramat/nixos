@@ -5,43 +5,15 @@
 let
   inherit (pkgs) writeShellApplication writeScriptBin;
   inherit (builtins) readFile;
+
+  collect = writeShellApplication {
+    name = "collect";
+    text = readFile ./collect.sh;
+  };
+
   rs = writeShellApplication {
     name = "rs";
-    text =
-      # bash
-      ''
-        usage="usage: $0 <host> { up | down } <options> <path>"
-        rs() {
-          local host direction path
-        	host=$1 && shift
-        	direction=$1 && shift
-          path=$(realpath -- "''${*: -1:1}")
-        	[ -d "$path" ] || {
-        		echo 'error: path is not a directory or it does not exist'
-            echo "$usage"
-        		return 1
-        	}
-        	local args=("''${@:1:$#-1}")
-        	case "$direction" in
-        		down)
-        			from="$host:$path"
-        			to="$path"
-        			;;
-        		up)
-        			from="$path"
-        			to="$host:$path"
-        			;;
-        		*)
-              echo "$usage"
-        			return 1
-        			;;
-        	esac
-
-        	rsync "''${args[@]}" "$from/" "$to/"
-        }
-
-        rs "$@"
-      '';
+    text = readFile ./rs.sh;
     runtimeInputs = with pkgs; [
       rsync
     ];
@@ -52,5 +24,6 @@ in
   home.packages = [
     rs
     todo
+    collect
   ];
 }
