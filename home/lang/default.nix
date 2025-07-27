@@ -42,8 +42,8 @@
     html-tidy
     (mdformat.withPlugins (p: [
       pkgs.mdformat-myst
-      mdformat-deflist
-      mdformat-wikilink
+      p.mdformat-deflist
+      p.mdformat-wikilink
     ]))
     nixfmt-rfc-style
     cbfmt # mdformat ought to be enough?
