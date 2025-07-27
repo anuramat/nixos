@@ -1,9 +1,8 @@
 keys_dir := `pwd` / "hosts" / `hostname` / "keys"
 
-# Rebuild with all optional targets
-all: format nixos links lint
+all: format lint nixos links
 
-# Rebuild NixOS
+# Rebuild
 nixos:
     # ask for permission first
     sudo true
@@ -22,7 +21,7 @@ nixos:
 links:
     ./scripts/install_links.sh ./links
 
-# nix, sh, lua, yaml
+# Lint nix, sh, lua, yaml
 lint:
     # Skipping nix linters due to lack of pipe operator support:
     # statix check -i hardware-configuration.nix || true
