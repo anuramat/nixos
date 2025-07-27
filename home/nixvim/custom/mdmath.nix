@@ -22,6 +22,7 @@ in
       chars = file:read('*a')
       file:close()
     end
+    -- TODO here we should append the output of `collect .preamble.tex` to variable chars
     require('mdmath').setup({
       filetypes = ${startCondition} and { 'markdown' } or {},
       preamble = chars,
