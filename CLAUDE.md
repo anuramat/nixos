@@ -3,24 +3,9 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with
 code in this repository.
 
-## Build and Development Commands
+## Test commands
 
-### Core Development Workflow
-
-- `make all` - Complete rebuild: format, nixos rebuild, links, lint
-- `make nixos` - Rebuild NixOS configuration with `sudo nixos-rebuild switch`
-- `make format` - Format all code using treefmt (nix, lua, shell, yaml, python,
-  markdown)
-- `make lint` - Check nix files, lua files, shell scripts, yaml files
-- `make links` - Install symlinks from `./links` directory
-- `nix build ".#neovim"` - Build standalone neovim configuration
-
-### Testing Commands
-
-- `make nvim-expect` - Test neovim build with expect script
-- `treefmt` - Format files using configuration in treefmt.toml
-- `nix build .#nixosConfigurations.$HOSTNAME.pkgs.$PACKAGE` -- verify that a
-  package builds
+- when trying to fix a package that doesn't build, use `just build $PACKAGE_NAME` to verify
 
 ## Architecture Overview
 
