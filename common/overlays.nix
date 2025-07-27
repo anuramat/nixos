@@ -74,21 +74,21 @@ in
     flakes
     (final: prev: {
       codex = inputs.codex.packages.x86_64-linux.codex-rs;
-      mystmd = prev.mystmd.overrideAttrs (oldAttrs: rec {
-        version = "1.6.0";
-        src = pkgs.fetchFromGitHub {
-          owner = "jupyter-book";
-          repo = "mystmd";
-          rev = "mystmd@${version}";
-          hash = "sha256-UfKI/OBabdQlHyAhWcn37d12oviuOan4UxdTgS94lRQ=";
-        };
-        npmDepsHash = "sha256-ols1YxX/I58hfdi+zXgLGetRaQvHLRHEtcTpT7rdGEs=";
-        npmDeps = final.fetchNpmDeps {
-          inherit src;
-          name = "${oldAttrs.pname}-${version}-npm-deps";
-          hash = npmDepsHash;
-        };
-      });
+      # mystmd = prev.mystmd.overrideAttrs (oldAttrs: rec {
+      #   version = "1.6.0";
+      #   src = pkgs.fetchFromGitHub {
+      #     owner = "jupyter-book";
+      #     repo = "mystmd";
+      #     rev = "mystmd@${version}";
+      #     hash = "sha256-UfKI/OBabdQlHyAhWcn37d12oviuOan4UxdTgS94lRQ=";
+      #   };
+      #   npmDepsHash = "sha256-ols1YxX/I58hfdi+zXgLGetRaQvHLRHEtcTpT7rdGEs=";
+      #   npmDeps = final.fetchNpmDeps {
+      #     inherit src;
+      #     name = "${oldAttrs.pname}-${version}-npm-deps";
+      #     hash = npmDepsHash;
+      #   };
+      # });
       amp-cli = prev.amp-cli.overrideAttrs (oldAttrs: rec {
         version = "0.0.1749960449-gc74a77";
         src = prev.fetchzip {

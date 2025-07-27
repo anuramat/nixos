@@ -57,7 +57,7 @@ in
       extraRwDirs = agent.extraRwDirs or [ ];
       agentDir = agent.agentDir or binName; # the one in xdg directories
       agentName = agent.agentName or binName;
-      cmd = "${lib.getExe agent.package} ${args}";
+      cmd = "${lib.getExe' agent.package binName} ${args}";
 
       agentDirs =
         if agentDir != null then
