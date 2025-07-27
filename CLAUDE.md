@@ -5,7 +5,8 @@ code in this repository.
 
 ## Test commands
 
-- when trying to fix a package that doesn't build, use `just build $PACKAGE_NAME` to verify
+- when trying to fix a package that doesn't build, use
+  `just build $PACKAGE_NAME` to verify
 
 ## Architecture Overview
 
