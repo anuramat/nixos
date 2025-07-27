@@ -12,10 +12,7 @@ let
       rsync
     ];
   };
-  todo = writeScriptBin {
-    name = "todo";
-    text = readFile ./todo.py;
-  };
+  todo = writeScriptBin "todo" (readFile ./todo.py);
 in
 {
   home.packages = [
