@@ -27,9 +27,9 @@ lint:
     # Skipping nix linters due to lack of pipe operator support:
     # statix check -i hardware-configuration.nix || true
     # deadnix || true
-    luacheck . --codes --globals=vim -q | head -n -1
-    fd -e sh --print0 | xargs -0I{} echo {}
-    yamllint . || true
+    luacheck . --codes --globals=vim -q
+    fd -e sh --print0 | xargs -0 shellcheck --enable=all --color=always
+    yamllint .
 
 format:
     treefmt
