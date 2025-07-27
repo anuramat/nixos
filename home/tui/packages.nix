@@ -107,6 +107,7 @@
     fortune # random quotes
 
     # miscellaneous unfiled TODO
+    just
     wishlist # ssh menu
     vhs # terminal gif generator
     gum # shell library
