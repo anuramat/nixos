@@ -106,7 +106,10 @@
     cowsay
     fortune # random quotes
 
-    # miscellaneous
+    # miscellaneous unfiled TODO
+    wishlist # ssh menu
+    vhs # terminal gif generator
+    gum # shell library
     parted
     exercism # cli for exercism.org
     geteduroam-cli
