@@ -3,3 +3,4 @@
 *.sqlite
 /config/jupyter/lab/workspaces
 /config/ghc/ghci_history
+# TODO review
