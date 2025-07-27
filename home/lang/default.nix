@@ -40,16 +40,11 @@
     gofumpt # stricter go
     haskellPackages.ormolu
     html-tidy
-    (mdformat.withPlugins (
-      p: with p; [
-        mdformat-myst
-        mdformat-deflist
-        # mdformat-footnote
-        # mdformat-frontmatter
-        # mdformat-wikilink
-        # mdformat-gfm
-      ]
-    ))
+    (mdformat.withPlugins (p: [
+      pkgs.mdformat-myst
+      mdformat-deflist
+      mdformat-wikilink
+    ]))
     nixfmt-rfc-style
     cbfmt # mdformat ought to be enough?
     shfmt # posix/bash/mksh
