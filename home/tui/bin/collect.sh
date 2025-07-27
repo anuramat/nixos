@@ -10,7 +10,6 @@ dir="$PWD"
 files=()
 while true; do
 	[[ -f "$dir/$filename" ]] && files=("$dir/$filename" "${files[@]}")
-	echo "$dir"
 	[[ $dir == "/" ]] && break
 	dir="$(dirname "$dir")"
 done

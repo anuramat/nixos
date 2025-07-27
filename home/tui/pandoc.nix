@@ -51,6 +51,7 @@ let
       texliveFull
       pandoc
       libnotify
+      # somehow add "collect"
     ];
     text =
       let
@@ -69,7 +70,10 @@ let
         output=$1 && shift
 
         id=$(notify-send -p "rendering")
-        if log=$(pandoc "$input" -o "$output" -f ${inputFormat} -H ${preamblePath} "$@" 2>&1); then
+        fullPreamble=$(mktemp)
+        cat ${preamblePath} > "$fullPreamble"
+        collect .preamble.tex >> "$fullPreamble"
+        if log=$(pandoc "$input" -o "$output" -f ${inputFormat} -H "$fullPreamble" "$@" 2>&1); then
           notify-send -r "$id" -t ${popupDuration} "render ok"
         else
           notify-send -r "$id" -u critical "render error" "$log"
