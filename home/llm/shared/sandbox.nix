@@ -51,7 +51,7 @@ in
   lib.agents.mkSandbox =
     agent:
     let
-      binName = agent.package.meta.mainProgram;
+      binName = agent.package.meta.mainProgram or agent.binName;
       args = agent.args or "";
       wrapperName = agent.wrapperName or "${binName}-sandboxed";
       extraRwDirs = agent.extraRwDirs or [ ];

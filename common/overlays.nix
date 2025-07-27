@@ -73,22 +73,22 @@ in
     pythonPackages
     flakes
     (final: prev: {
-      # codex = inputs.codex.packages.x86_64-linux.codex-cli;
-      # mystmd = prev.mystmd.overrideAttrs (oldAttrs: rec {
-      #   version = "1.6.0";
-      #   src = pkgs.fetchFromGitHub {
-      #     owner = "jupyter-book";
-      #     repo = "mystmd";
-      #     rev = "mystmd@${version}";
-      #     hash = "sha256-UfKI/OBabdQlHyAhWcn37d12oviuOan4UxdTgS94lRQ=";
-      #   };
-      #   npmDepsHash = "sha256-ols1YxX/I58hfdi+zXgLGetRaQvHLRHEtcTpT7rdGEs=";
-      #   npmDeps = final.fetchNpmDeps {
-      #     inherit src;
-      #     name = "${oldAttrs.pname}-${version}-npm-deps";
-      #     hash = npmDepsHash;
-      #   };
-      # });
+      codex = inputs.codex.packages.x86_64-linux.codex-rs;
+      mystmd = prev.mystmd.overrideAttrs (oldAttrs: rec {
+        version = "1.6.0";
+        src = pkgs.fetchFromGitHub {
+          owner = "jupyter-book";
+          repo = "mystmd";
+          rev = "mystmd@${version}";
+          hash = "sha256-UfKI/OBabdQlHyAhWcn37d12oviuOan4UxdTgS94lRQ=";
+        };
+        npmDepsHash = "sha256-ols1YxX/I58hfdi+zXgLGetRaQvHLRHEtcTpT7rdGEs=";
+        npmDeps = final.fetchNpmDeps {
+          inherit src;
+          name = "${oldAttrs.pname}-${version}-npm-deps";
+          hash = npmDepsHash;
+        };
+      });
       amp-cli = prev.amp-cli.overrideAttrs (oldAttrs: rec {
         version = "0.0.1749960449-gc74a77";
         src = prev.fetchzip {
@@ -103,14 +103,14 @@ in
           hash = "sha256-ygeitenu4z9ACbezO53I2Xnk6NtE1fWVzCi3mZS7wF8=";
         };
       });
-      # ccusage = prev.buildNpmPackage rec {
-      #   pname = "ccusage";
-      #   version = "15.5.2";
-      #   src = prev.fetchzip {
-      #     url = "https://registry.npmjs.org/ccusage/-/ccusage-${version}.tgz";
-      #     hash = "sha256-OCWpQiFk8L/X4tRIuKFlRNYlpk1n6rPTKgVtU27usiA=";
-      #   };
-      # };
+      ccusage = prev.buildNpmPackage rec {
+        pname = "ccusage";
+        version = "15.5.2";
+        src = prev.fetchzip {
+          url = "https://registry.npmjs.org/ccusage/-/ccusage-${version}.tgz";
+          hash = "sha256-OCWpQiFk8L/X4tRIuKFlRNYlpk1n6rPTKgVtU27usiA=";
+        };
+      };
       gemini-cli = prev.gemini-cli.overrideAttrs (oldAttrs: rec {
         version = "0.1.14";
         src = prev.fetchFromGitHub {
