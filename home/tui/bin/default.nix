@@ -10,11 +10,12 @@ let
     text =
       # bash
       ''
-        usage = "usage: $0 <host> { up | down } <options> <path>"
+        usage="usage: $0 <host> { up | down } <options> <path>"
         rs() {
-        	local host=$1 && shift
-        	local direction=$1 && shift
-        	local path=$(realpath -- "''${*: -1:1}")
+          local host direction path
+        	host=$1 && shift
+        	direction=$1 && shift
+          path=$(realpath -- "''${*: -1:1}")
         	[ -d "$path" ] || {
         		echo 'error: path is not a directory or it does not exist'
             echo "$usage"
