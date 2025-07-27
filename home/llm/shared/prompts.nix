@@ -37,8 +37,8 @@ let
         generated files
       - You SHOULD use parallel sub-agents whenever possible -- this saves time,
         tokens, and keeps the context clean.
-      - You MUST NOT blindly trust project memory, as it gets outdated quick -- the
-        source of truth is the code.
+      - You MUST NOT blindly trust project memory files, as they get outdated
+        quick -- the source of truth is the code.
       - If you need tools that are not available on the system, you SHOULD use
         `nix run nixpkgs#packagename -- arg1 arg2 ...`. You can use NixOS MCP server
         to locate the required package.
