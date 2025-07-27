@@ -21,8 +21,3 @@ command = "yamlfmt"
 command = "black"
 includes = [ "*.py" ]
 options = [ "-q" ]
-
-[formatter.markdown]
-command = "mdformat"
-options = [ "--number", "--wrap", "80" ]
-includes = [ "*.md" ]
