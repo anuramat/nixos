@@ -12,6 +12,8 @@ in
     file = {
       ".gemini/GEMINI.md".text = agents.systemPrompt;
       ".gemini/settings.json".text = lib.generators.toJSON { } {
+        theme = "Default";
+        selectedAuthType = "oauth-personal";
         contextFileName = [
           "GEMINI.md"
           "CLAUDE.md"
