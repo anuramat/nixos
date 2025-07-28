@@ -7,6 +7,7 @@ filename="$1"
 }
 
 dir="$PWD"
+[[ -n $2 ]] && dir=$(dirname "$(realpath -s "$2")")
 files=()
 while true; do
 	[[ -f "$dir/$filename" ]] && files=("$dir/$filename" "${files[@]}")
