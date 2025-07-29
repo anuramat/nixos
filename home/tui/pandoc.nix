@@ -72,7 +72,7 @@ let
         id=$(notify-send -p "rendering")
         fullPreamble=$(mktemp)
         cat ${preamblePath} > "$fullPreamble"
-        collect .preamble.tex >> "$fullPreamble"
+        collect .preamble.tex "$input" >> "$fullPreamble"
         if log=$(pandoc "$input" -o "$output" -f ${inputFormat} -H "$fullPreamble" "$@" 2>&1); then
           notify-send -r "$id" -t ${popupDuration} "render ok"
         else

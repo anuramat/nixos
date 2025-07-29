@@ -14,14 +14,14 @@ let
 
   packages =
     with lib;
-    readDir ./.
+    builtins.readDir ./.
     |> attrNames
     |> map (
       filename:
       let
         text = readFile ./${filename};
         name = removeSuffix ("." + ext) filename;
-        ext = name |> splitString "." |> last;
+        ext = filename |> splitString "." |> last;
       in
       if ext == "sh" then
         pkgs.writeShellApplication {
