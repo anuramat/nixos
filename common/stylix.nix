@@ -22,12 +22,8 @@
     };
     base16Scheme =
       let
-        # saga -- grayscale with very dim pastels; barely visible comments and selection
-        # black-metal -- grayscale with dim pastel red and blue; better visibility than saga
+        # black-metal -- almost grayscale; TODO swap green and red
         # grayscale-dark -- grayscale
-
-        # greenscreen -- green monochrome
-        # digital-rain -- tons of green
 
         # paraiso -- pastel burgundy bg, almost monochrome
         # pandora -- pink/burgundy/red mostly
@@ -50,7 +46,7 @@
 
         # xcode-dusk -- grey + bright colors, very cool
 
-        name = "base16/black-metal";
+        name = "base16/paraiso";
       in
       "${inputs.tt-schemes}/${name}.yaml";
   };
