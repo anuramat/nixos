@@ -7,9 +7,7 @@
 }:
 let
   settings = {
-    instructions = [
-      "CLAUDE.md"
-    ];
+    instructions = config.lib.agents.contextFileName;
   };
   agentDir = "opencode";
 in

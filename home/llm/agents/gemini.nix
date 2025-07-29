@@ -14,11 +14,7 @@ in
       ".gemini/settings.json".text = lib.generators.toJSON { } {
         theme = "Default";
         selectedAuthType = "oauth-personal";
-        contextFileName = [
-          "GEMINI.md"
-          "CLAUDE.md"
-          "AGENTS.md"
-        ];
+        inherit (config.lib.agents) contextFileName;
       };
     };
 

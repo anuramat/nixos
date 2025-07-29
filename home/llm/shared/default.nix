@@ -1,9 +1,21 @@
 {
   imports = [
     ./mcp.nix
-    ./prompts.nix
+    ./commands.nix
+    ./instructions.nix
     ./sandbox.nix
-    ./templates.nix
-    ./vars.nix
   ];
+
+  lib.agents = {
+    contextFileName = [
+      "GEMINI.md"
+      "CLAUDE.md"
+      "AGENTS.md"
+    ];
+
+    varNames = {
+      rwDirs = "RW_DIRS";
+      agentName = "AGENT";
+    };
+  };
 }

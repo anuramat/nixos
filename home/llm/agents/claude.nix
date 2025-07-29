@@ -7,7 +7,6 @@
 }:
 let
   inherit (config.lib) agents;
-  inherit (lib) getExe;
   name = "Claude";
   hooks = {
     Notification = [
@@ -26,24 +25,9 @@ let
     allow = [ ];
     deny = [ ];
   };
-  env = {
-    ${agents.varNames.agentName} = name;
-  };
 
-  mkTemplates =
-    dirName: templates:
-    let
-      root = ".claude/${dirName}";
-    in
-    lib.mapAttrs' (cmdName: prompt: {
-      name = "${root}/${cmdName}.md";
-      value = {
-        text = prompt;
-      };
-    }) templates;
-
-  commands = mkTemplates "commands" agents.prompts;
-  subagents = mkTemplates "agents" agents.subagents;
+  commands = agents.mkPrompts ".claude/commands" agents.commands;
+  subagents = agents.mkPrompts ".claude/agents" agents.roles;
 in
 {
   home = {
@@ -52,7 +36,7 @@ in
         ".claude/CLAUDE.md".text = agents.systemPrompt;
         ".claude/settings.json".text = lib.generators.toJSON { } {
           includeCoAuthoredBy = false;
-          inherit hooks env permissions;
+          inherit hooks permissions;
         };
       }
       // commands
