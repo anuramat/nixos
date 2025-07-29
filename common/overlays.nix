@@ -132,7 +132,6 @@ in
         '';
       });
       mystmd = prev.stdenv.mkDerivation rec {
-        # TODO vibecode:
         pname = "mystmd";
         version = "1.6.0";
         src = prev.fetchzip {
