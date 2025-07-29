@@ -45,8 +45,6 @@
     };
   };
   home.packages = with pkgs; [
-    vscode
     vis
-    zed-editor
   ];
 }

@@ -24,8 +24,6 @@ let
       github-mcp-server
       keymapp
       proton-pass
-      vscode
-      zed-editor
       ;
   };
   pythonPackages = final: prev: {
