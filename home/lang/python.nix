@@ -60,7 +60,7 @@ in
           disclaimed = true;
         };
         "apputils-extension/notification.jupyterlab-settings" = {
-          fetchNews = false;
+          fetchNews = "false"; # sic (!)
           checkForUpdates = false;
         };
         "apputils-extension/themes.jupyterlab-settings" = {
