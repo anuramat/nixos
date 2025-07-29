@@ -24,8 +24,8 @@
       let
         # black-metal -- almost grayscale; TODO swap green and red
         # grayscale-dark -- grayscale
+        # paraiso -- purple/burgundy, colorful text
 
-        # paraiso -- pastel burgundy bg, almost monochrome
         # pandora -- pink/burgundy/red mostly
         # caroline -- warm tones, red/brown
         # heetch -- red with purple bg
@@ -46,7 +46,7 @@
 
         # xcode-dusk -- grey + bright colors, very cool
 
-        name = "base16/paraiso";
+        name = "base16/pandora";
       in
       "${inputs.tt-schemes}/${name}.yaml";
   };
