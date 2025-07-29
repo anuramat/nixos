@@ -58,16 +58,20 @@ in
     activation =
       let
         home = config.home.homeDirectory;
+        mkConfig =
+          target:
+          lib.hm.dag.entryAfter [ "writeBoundary" ] (
+            hax.common.jsonUpdate pkgs target [
+              {
+                prop = ".mcpServers";
+                file = config.lib.agents.mcp.json.filepath;
+              }
+            ]
+          );
       in
       {
-        claudeMcp = lib.hm.dag.entryAfter [ "writeBoundary" ] (
-          hax.common.jsonUpdate pkgs "${home}/.claude.json" [
-            {
-              prop = ".mcpServers";
-              file = config.lib.agents.mcp.json.filepath;
-            }
-          ]
-        );
+        claudeMcp = mkConfig "${home}/.claude.json";
+        claudeDesktopMcp = mkConfig "${config.xdg.configHome}/Claude/claude_desktop_config.json";
       };
   };
 }
