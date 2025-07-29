@@ -1,15 +1,16 @@
 {
   imports = [
-    ./sh.nix
     ./go.nix
     ./haskell.nix
     ./lua.nix
     ./markdown.nix
-    ./nix.nix
-    ./python.nix
-    ./tex.nix
-    ./web.nix
     ./markup
     ./misc.nix
+    ./nix.nix
+    ./python.nix
+    ./rust.nix
+    ./sh.nix
+    ./tex.nix
+    ./web.nix
   ];
 }
