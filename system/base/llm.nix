@@ -9,7 +9,7 @@ in
 {
   services = {
     litellm = {
-      enable = true;
+      enable = false;
       port = 15151;
       environmentFile = config.age.secrets.litellm.path;
       openFirewall = false;
@@ -25,7 +25,7 @@ in
       };
     };
     ollama = {
-      enable = true;
+      enable = false;
       acceleration = lib.mkIf cuda "cuda";
       loadModels = lib.mkIf cuda [ ]; # pull models on service start
       environmentVariables = {
