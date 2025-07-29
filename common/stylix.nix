@@ -25,8 +25,7 @@
         # black-metal -- almost grayscale; TODO swap green and red
         # grayscale-dark -- grayscale
         # paraiso -- purple/burgundy, colorful text
-
-        # pandora -- pink/burgundy/red mostly
+        # pandora -- pink/burgundy/red mostly, cyberpunk vibes
         # caroline -- warm tones, red/brown
         # heetch -- red with purple bg
         # tarot -- red, burgundy, purple, kinda like darker heetch
