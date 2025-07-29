@@ -44,6 +44,7 @@ in
 {
   lib.agents.mcp = {
     json = rec {
+      raw = mcpServers;
       text = toJSON mcpServers;
       filepath = pkgs.writeTextFile {
         name = "mcp_servers.json";

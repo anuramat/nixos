@@ -20,6 +20,7 @@ in
         inherit agentDir;
       })
     ];
+    # TODO mcp
     activation = {
       opencodeConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] (
         hax.common.jsonUpdate pkgs "${config.xdg.configHome}/${agentDir}/opencode.json" [
