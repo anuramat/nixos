@@ -55,7 +55,6 @@ let
     ];
     text =
       let
-        preamblePath = "${config.xdg.configHome}/latex/preamble.tex";
         popupDuration = "1000"; # ms
         inputFormat = "markdown+wikilinks_title_after_pipe+mark";
         # mark: ==highlighted text==
@@ -70,10 +69,10 @@ let
         output=$1 && shift
 
         id=$(notify-send -p "rendering")
-        fullPreamble=$(mktemp)
-        cat ${preamblePath} > "$fullPreamble"
-        collect .preamble.tex "$input" >> "$fullPreamble"
-        if log=$(pandoc "$input" -o "$output" -f ${inputFormat} -H "$fullPreamble" "$@" 2>&1); then
+        preamble=$(mktemp)
+        collect .packages.tex "$input" >> "$preamble"
+        collect .preamble.tex "$input" >> "$preamble"
+        if log=$(pandoc "$input" -o "$output" -f ${inputFormat} -H "$preamble" "$@" 2>&1); then
           notify-send -r "$id" -t ${popupDuration} "render ok"
         else
           notify-send -r "$id" -u critical "render error" "$log"
