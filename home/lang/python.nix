@@ -35,7 +35,6 @@ in
               open_browser = false;
               password = "";
               token = "";
-              disable_check_xsrf = true; # required by molten
             };
           };
           root = "c";
