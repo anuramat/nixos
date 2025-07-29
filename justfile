@@ -1,6 +1,6 @@
 keys_dir := `pwd` / "hosts" / `hostname` / "keys"
 
-all: format lint nixos links
+all: format lint nixos
 
 # Rebuild
 nixos:
@@ -16,10 +16,6 @@ nixos:
     cp -ft "{{keys_dir}}" "/etc/nix/cache.pem.pub" 2>/dev/null || true
     # rebuild
     sudo nixos-rebuild switch --option extra-experimental-features pipe-operators --show-trace
-
-# Install symlinks
-links:
-    ./scripts/install_links.sh ./links
 
 # Lint nix, sh, lua, yaml
 lint:
