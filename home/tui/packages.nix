@@ -37,6 +37,7 @@
     # ai / llm
     goose-cli
     claude-code
+    claude-desktop
     # ccusage
     opencode # ts rewrite
     opencode-alt # sellout in golang

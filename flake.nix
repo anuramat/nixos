@@ -138,6 +138,10 @@
       url = "github:tinted-theming/schemes";
       flake = false;
     };
+    claude-desktop = {
+      url = "github:k3d3/claude-desktop-linux-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 }
 # vim: fdl=0 fdm=marker

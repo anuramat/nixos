@@ -13,6 +13,7 @@ let
         mcp-nixos
         nil
         mdformat-myst
+        claude-desktop
         ;
     });
   unstablePkgs = final: prev: {
