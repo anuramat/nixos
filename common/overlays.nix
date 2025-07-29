@@ -139,7 +139,6 @@ in
           url = "https://registry.npmjs.org/mystmd/-/mystmd-${version}.tgz";
           hash = "sha256-OatP9lv2/K4W3puaGAcECOfzNMR6a2zIntsxRnnAn4Q=";
         };
-        nativeBuildInputs = [ prev.nodejs ];
         installPhase = ''
           runHook preInstall
           mkdir -p $out/bin
