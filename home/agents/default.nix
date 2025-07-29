@@ -1,8 +1,9 @@
 {
   imports = [
-    ./mcp.nix
     ./commands.nix
+    ./frontends
     ./instructions.nix
+    ./mcp.nix
     ./sandbox.nix
   ];
 

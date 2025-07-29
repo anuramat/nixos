@@ -9,15 +9,15 @@
   imports = with inputs; [
     nixvim.homeModules.nixvim
     spicetify-nix.homeManagerModules.spicetify
-    ./lang
-    ./misc.nix
-    ./email.nix
-    ./mime
-    ./llm
+    ./agents
     ./editor.nix
-    ./keyring.nix
-    ./theme.nix
+    ./email.nix
     ./gui
+    ./keyring.nix
+    ./lang
+    ./mime
+    ./misc.nix
+    ./theme.nix
     ./tui
   ];
 
