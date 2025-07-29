@@ -26,6 +26,7 @@
         # grayscale-dark -- grayscale
         # paraiso -- purple/burgundy, colorful text
         # pandora -- pink/burgundy/red mostly, cyberpunk vibes
+
         # caroline -- warm tones, red/brown
         # heetch -- red with purple bg
         # tarot -- red, burgundy, purple, kinda like darker heetch
@@ -45,8 +46,8 @@
 
         # xcode-dusk -- grey + bright colors, very cool
 
-        name = "base16/pandora";
+        name = "caroline";
       in
-      "${inputs.tt-schemes}/${name}.yaml";
+      "${inputs.tt-schemes}/base16/${name}.yaml";
   };
 }
