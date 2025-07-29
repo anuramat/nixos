@@ -17,9 +17,6 @@
         extensions = with pkgs; [
           gh-f
           gh-copilot
-          # # wait until they appear
-          # copilot-insights
-          # token
         ];
         git_protocol = "ssh";
         prompt = true;
