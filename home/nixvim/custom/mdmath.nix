@@ -15,17 +15,11 @@ in
     inputs.mdmath.packages.${pkgs.system}.default
   ];
   extraConfigLua = ''
-    local filename = vim.fn.expand('$XDG_CONFIG_HOME/latex/mathjax_preamble.tex')
-    local file = io.open(filename, 'r')
-    local chars = '''
-    if file ~= nil then
-      chars = file:read('*a')
-      file:close()
-    end
-    -- TODO here we should append the output of `collect .preamble.tex` to variable chars
     require('mdmath').setup({
       filetypes = ${startCondition} and { 'markdown' } or {},
-      preamble = chars,
+      preamble = function(filename)
+        return vim.fn.system("collect '.preamble.tex' " .. filename)
+      end,
       anticonceal = false,
     })
   '';
