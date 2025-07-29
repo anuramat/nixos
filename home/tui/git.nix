@@ -77,6 +77,8 @@
         "*.fdb_latexmk"
         "*.fls"
         "*.log"
+        # myst
+        "_build"
 
         # direnv
         ".direnv/"
