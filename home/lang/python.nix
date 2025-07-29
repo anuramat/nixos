@@ -49,7 +49,9 @@ in
     // (
       let
         mkSettingsJSON =
-          root: settings: lib.mapAttrs' (file: contents: lib.nameValuePair (root + file) (toJSON contents));
+          root: settings:
+          settings
+          |> lib.mapAttrs' (path: contents: lib.nameValuePair (root + path) { text = (toJSON contents); });
       in
       mkSettingsJSON "jupyter/lab/user-settings/@jupyterlab/" {
         "docmanager-extension/plugin.jupyterlab-settings" = {
@@ -59,9 +61,9 @@ in
           disclaimed = true;
         };
         "apputils-extension/notification.jupyterlab-settings" = {
-          fetchNews = "false"; # sic (!)
+          fetchNews = false;
+          checkForUpdates = false;
         };
-
         "apputils-extension/themes.jupyterlab-settings" = {
           adaptive-theme = true;
         };
