@@ -12,6 +12,7 @@
       "GEMINI.md"
       "CLAUDE.md"
       "AGENTS.md"
+      "AGENT.md"
     ];
 
     varNames = {
