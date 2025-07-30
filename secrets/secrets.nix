@@ -9,4 +9,5 @@ in
 {
   "ghmcp.age".publicKeys = keys;
   "litellm.age".publicKeys = keys;
+  "claude.age".publicKeys = keys;
 }
