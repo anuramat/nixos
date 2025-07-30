@@ -39,9 +39,9 @@
     goose-cli
     claude-code
     claude-desktop
-    # ccusage
-    opencode # ts rewrite
-    opencode-alt # sellout in golang
+    # ccusage # TODO
+    opencode
+    crush
     llama-cpp
     codex
     amp-cli

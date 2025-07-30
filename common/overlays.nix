@@ -64,7 +64,6 @@ let
     ]
     |> map (v: v.overlays.default);
 
-  opencodeName = "opencode-alt";
 in
 {
   nixpkgs.overlays = overlays ++ [
@@ -144,43 +143,33 @@ in
           runHook postInstall
         '';
       };
-      ${opencodeName} = prev.callPackage (
-        {
-          lib,
-          fetchFromGitHub,
-          buildGoModule,
-        }:
-        buildGoModule (finalAttrs: {
-          pname = opencodeName;
-          version = "0.0.55";
+      crush =
+        let
+          name = "crush";
+        in
+        prev.callPackage (
+          {
+            lib,
+            fetchFromGitHub,
+            buildGoModule,
+          }:
+          buildGoModule (finalAttrs: {
+            pname = name;
+            version = "0.1.6";
 
-          src = fetchFromGitHub {
-            owner = "opencode-ai";
-            repo = "opencode";
-            rev = "v${finalAttrs.version}";
-            hash = "sha256-UjGNtekqPVUxH/jfi6/D4hNM27856IjbepW7SgY2yQw=";
-          };
+            src = fetchFromGitHub {
+              owner = "charmbracelet";
+              repo = name;
+              rev = "v${finalAttrs.version}";
+              hash = "sha256-P/rHU1SwcU1BjQOBECY1bFiYKsLyizuH85+3/VRjnC0=";
+            };
 
-          vendorHash = "sha256-Kcwd8deHug7BPDzmbdFqEfoArpXJb1JtBKuk+drdohM=";
-
-          # TODO is this really the only way
-          postInstall = ''
-            mv $out/bin/opencode $out/bin/${opencodeName}
-          '';
-
-          checkFlags =
-            let
-              skippedTests = [
-                "TestLsTool_Run"
-              ];
-            in
-            [ "-skip=^${lib.concatStringsSep "$|^" skippedTests}$" ];
-
-          meta = {
-            mainProgram = opencodeName;
-          };
-        })
-      ) { };
+            vendorHash = "sha256-GWramb6YXzajoVNpUQ9mZLE02zWRnvG4hC3EFOA5apU=";
+            meta = {
+              mainProgram = name;
+            };
+          })
+        ) { };
     })
   ];
 }
