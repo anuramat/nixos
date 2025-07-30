@@ -20,7 +20,7 @@ alias peco="fzf --height=100 --preview=''"
 export AI_PROVIDER='pollinations'
 
 gwipe() {
-	git worktree list --porcelain -z | grep -z worktree | cut -zd ' ' -f 2 | xargs -0I{} git worktree remove '{}'
+	git worktree list --porcelain -z | grep -z worktree | cut -zd ' ' -f 2 | grep -vzxF "$PWD" | xargs -0I{} git worktree remove '{}'
 }
 
 send() {
