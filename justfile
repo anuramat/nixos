@@ -9,7 +9,7 @@ nixos:
     # store keys in repo:
     mkdir -p "{{keys_dir}}"
     # set locale to get deterministic ordering
-    LC_ALL=C ssh-keyscan -q "$(hostname)" | sort > "{{keys_dir}}/host_keys"
+    ssh-keyscan -q "$(hostname)" | LC_ALL=C sort > "{{keys_dir}}/host_keys"
     # find public keys and copy
     grep -rL PRIVATE "$HOME/.ssh" | grep '\.pub$' | xargs cp -ft "{{keys_dir}}"
     # copy binary cache public key
