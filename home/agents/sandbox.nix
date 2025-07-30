@@ -91,7 +91,7 @@ in
           # root of the current worktree, if it's not CWD already
           [[ $(realpath "$gitroot") == $(realpath "$PWD") ]] || ${varNames.rwDirs}+=("$gitroot")
           # .git/ dir
-          ${varNames.rwDirs}+=("$(git rev-parse --git-common-dir)") 
+          ${varNames.rwDirs}+=("$(basename "$(git rev-parse --git-common-dir)")") 
         fi
         export ${varNames.rwDirs}
         echo "RW mounted directories:" && printf '\t%s\n' "''${${varNames.rwDirs}[@]}"

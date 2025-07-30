@@ -41,6 +41,7 @@
     claude-desktop
     # ccusage # TODO
     opencode
+    codebuff
     crush
     llama-cpp
     codex
