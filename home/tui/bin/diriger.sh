@@ -117,17 +117,22 @@ send() {
 		exit 1
 	fi
 	session_name=$(gum choose --header='Session:' <<< "$sessions")
-	[[ -z $prompt ]] && prompt="$(gum write --header='Prompt:')"
+	[[ -z $prompt ]] && prompt="$(gum write --header="Prompt ($session_name):")"
 
 	panes=$(tmux list-p -st "$session_name" -F '#D')
 	printf 'Sending: '
+
+	# shellcheck disable=SC2034
+	# used in `eval` inside `run`
 	for pane in $panes; do
 		run 'tmux send-keys -t "$pane" "$prompt"'
 		sleep 0.1 # HACK gemini ignores enter otherwise
 		run 'tmux send-keys -t "$pane" Enter'
+		# TODO this looks ugly with dry run
 		printf %s "$(gum style --trim --foreground="#00FF00" .)"
 	done
 	echo
+
 	echo "Prompt sent to ${#commands[@]} agents"
 }
 
