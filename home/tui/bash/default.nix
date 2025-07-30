@@ -39,6 +39,9 @@ in
         # XDG TODO move stuff here from the shims file
         HISTFILE = "${config.xdg.stateHome}/bash/history"; # ~/.bash_history
         CUDA_CACHE_PATH = "${config.xdg.cacheHome}/nv"; # ~/.nv/
+
+        TERMCMD = "foot";
+        ESCDELAY = "25";
       };
       sessionPath = [
         XDG_BIN_HOME
@@ -54,6 +57,12 @@ in
           la = "${ezacmd} --long --all";
           tree = "${ezacmd} --tree";
           treedir = "${ezacmd} --tree --only-dirs";
+
+          f = "nvim";
+          ".." = "cd ..";
+          "..." = "cd ../..";
+          "...." = "cd ../../..";
+          peco = "fzf --height=100 --preview=";
 
           diff = "diff --color=auto";
           grep = "grep --color=auto";
