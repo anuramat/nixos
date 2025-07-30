@@ -11,9 +11,10 @@ prompt=""
 root=$PWD
 commands=()
 config_file="${XDG_CONFIG_HOME:-$HOME/.config}/diriger"
+worktree_root="${XDG_DATA_HOME:-$HOME/.local/share}/diriger"
+mkdir -p "$worktree_root"
 
 argparse() {
-	# parse arguments
 	while [[ $# -gt 0 ]]; do
 		case $1 in
 			-n)
@@ -43,7 +44,6 @@ argparse() {
 		esac
 	done
 
-	# fallback to interactive input or config file
 	if [[ ${#commands[@]} -eq 0 ]]; then
 		[[ ! -f $config_file ]] && {
 			echo "Config file $config_file not found"
@@ -53,7 +53,7 @@ argparse() {
 	fi
 }
 
-# execute command, showing it in dry run mode
+# dry run wrapper
 run() {
 	if $dry_run; then
 		printf '$ '
@@ -84,7 +84,7 @@ launch() {
 		echo "Launching $cmd"
 
 		treename="$projname-$feature-$agent-$i"
-		run 'git worktree add "../$treename"'
+		run 'git worktree add -b "$feature-$agent-$i" "$worktree_root/$treename"'
 		# shellcheck disable=SC2034
 		# used in `eval` inside `run`
 		treepath="$(realpath "../$treename")"
