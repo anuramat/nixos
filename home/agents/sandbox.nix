@@ -88,7 +88,10 @@ in
         # collect RW dirs
         ${varNames.rwDirs}+=(${rwDirs})
         if gitroot=$(git rev-parse --show-toplevel 2>/dev/null) && [ -d "$gitroot" ]; then
-          ${varNames.rwDirs}+=("$gitroot")
+          # root of the current worktree, if it's not CWD already
+          [[ $(realptah -m "$gitroot") == $(realpath -m "$PWD") ]] || ${varNames.rwDirs}+=("$gitroot")
+          # .git/ dir
+          ${varNames.rwDirs}+=("$(git rev-parse --git-common-dir)") 
         fi
         export ${varNames.rwDirs}
         echo "RW mounted directories:" && printf '\t%s\n' "''${${varNames.rwDirs}[@]}"
