@@ -18,7 +18,6 @@ let
       variables = [
         "XDG_CACHE_HOME"
         "XDG_DATA_HOME"
-        "XDG_RUNTIME_DIR"
         "XDG_STATE_HOME"
       ];
       shadowVariable =
