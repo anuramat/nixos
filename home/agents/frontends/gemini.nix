@@ -22,6 +22,7 @@ in
       (config.lib.agents.mkSandbox {
         package = pkgs.gemini-cli;
         wrapperName = "gmn";
+        args = "--yolo";
         agentDir = null;
         extraRwDirs = [
           "$HOME/.gemini"
