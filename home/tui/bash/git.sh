@@ -121,7 +121,8 @@ __check() {
 		local -r name="${path:prefix_length}"
 
 		[ -z "$nopull" ] && {
-			local before=$(git rev-parse @)
+			local before
+			before=$(git rev-parse @)
 			git pull --ff-only &> /dev/null
 			[ "$before" != "$(git rev-parse @)" ] && local pulled=1
 		}
@@ -203,7 +204,8 @@ gfork() {
 	local -r repo=$1
 	local auth_output
 	auth_output=$(gh auth status --active) || return 1
-	local user=$(grep -oP 'account \K\S+' <<< "$auth_output")
+	local user
+	user=$(grep -oP 'account \K\S+' <<< "$auth_output")
 	__cd_gh_owner "$user" || return 1
 	gh repo fork "$repo" --default-branch-only --clone
 	cd "$(basename "${repo%/}")" || return 1 # return to stfu the linter
@@ -246,7 +248,8 @@ __gitgud_git_prompt() {
 		local -r raw=$(git status --porcelain=v2 --show-stash --branch)
 
 		# branch/commit
-		local branch=$(echo "$raw" | grep -oP '(?<=^# branch.head ).*')
+		local branch
+		branch=$(echo "$raw" | grep -oP '(?<=^# branch.head ).*')
 		local commit
 		if [ "$branch" = '(detached)' ]; then
 			branch=''

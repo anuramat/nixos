@@ -14,6 +14,7 @@ let
     2250 # use braces even if not necessary
     1003 # trying to escape a single quote?
     2312 # return value is masked by $()
+    2154 # referenced but not assigned, e.g. $XDG_CONFIG_HOME
   ];
 in
 {
