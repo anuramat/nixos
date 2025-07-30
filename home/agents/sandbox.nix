@@ -89,7 +89,7 @@ in
         ${varNames.rwDirs}+=(${rwDirs})
         if gitroot=$(git rev-parse --show-toplevel 2>/dev/null) && [ -d "$gitroot" ]; then
           # root of the current worktree, if it's not CWD already
-          [[ $(realptah -m "$gitroot") == $(realpath -m "$PWD") ]] || ${varNames.rwDirs}+=("$gitroot")
+          [[ $(realpath "$gitroot") == $(realpath "$PWD") ]] || ${varNames.rwDirs}+=("$gitroot")
           # .git/ dir
           ${varNames.rwDirs}+=("$(git rev-parse --git-common-dir)") 
         fi
