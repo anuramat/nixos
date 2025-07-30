@@ -1,16 +1,12 @@
 {
   pkgs,
   lib,
+  config,
   ...
 }:
 let
   inherit (pkgs) writeShellApplication writeScriptBin;
   inherit (builtins) readFile;
-
-  collect = writeShellApplication {
-    name = "collect";
-    text = readFile ./collect.sh;
-  };
 
   packages =
     with lib;
@@ -26,19 +22,11 @@ let
       if ext == "sh" then
         pkgs.writeShellApplication {
           inherit name text;
+          excludeShellChecks = map (v: "SC" + toString v) config.lib.excludeShellChecks.numbers;
         }
       else
         writeScriptBin name text
     );
-
-  rs = writeShellApplication {
-    name = "rs";
-    text = readFile ./rs.sh;
-    runtimeInputs = with pkgs; [
-      rsync
-    ];
-  };
-  todo = writeScriptBin "todo" (readFile ./todo.py);
 in
 {
   home.packages = packages;

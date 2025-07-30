@@ -4,6 +4,22 @@
   lib,
   ...
 }:
+let
+
+  excludeShellChecks = [
+    1003 # incorrect attempt at escaping a single quote?
+    1090 # source: can't follow non constant
+    1091 # source: file doesn't exist
+    2015 # A && B || C is not an if-then-else
+    2016 # incorrect attempt at expansion?
+    2059 # don't use variables in printf format string
+    2139 # unintended? expansion in an alias (alias a="$test" instead of '$test')
+    2154 # variable referenced but not assigned
+    2250 # quote even if not necessary
+    2292 # prefer [[]] over
+    2312 # this masks return value
+  ];
+in
 {
   imports = [
     ./bashrc.nix
@@ -65,23 +81,11 @@
     };
   };
 
+  lib.excludeShellChecks.numbers = excludeShellChecks;
   # Shellcheck configuration
   xdg.configFile."shellcheckrc".text = ''
     enable=all
     external-sources=true
   ''
-  + lib.strings.concatMapStrings (v: "disable=SC${toString v}\n") [
-    1003 # incorrect attempt at escaping a single quote?
-    1090 # source: can't follow non constant
-    1091 # source: file doesn't exist
-    2015 # A && B || C is not an if-then-else
-    2016 # incorrect attempt at expansion?
-    2059 # don't use variables in printf format string
-    2139 # unintended? expansion in an alias (alias a="$test" instead of '$test')
-    2154 # variable referenced but not assigned
-    2155 # "local" masks return values
-    2250 # quote even if not necessary
-    2292 # prefer [[]] over
-    2312 # this masks return value
-  ];
+  + lib.strings.concatMapStrings (v: "disable=SC${toString v}\n") excludeShellChecks;
 }
