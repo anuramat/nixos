@@ -38,4 +38,5 @@ in
       );
     };
   };
+  xdg.configFile."AGENT.md".text = config.lib.agents.systemPrompt;
 }

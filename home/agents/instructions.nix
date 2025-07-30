@@ -113,7 +113,10 @@ let
       ```
     '';
   };
+  systemPrompt = lib.concatStringsSep "\n" ([ "# Global instructions\n" ] ++ parts);
 in
 {
-  lib.agents.systemPrompt = lib.concatStringsSep "\n" ([ "# Global instructions\n" ] ++ parts);
+  lib.agents = {
+    inherit systemPrompt;
+  };
 }
