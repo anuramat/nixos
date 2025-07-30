@@ -147,6 +147,9 @@ case "${1:-}" in
 		argparse "$@"
 		send "$@"
 		;;
+	config)
+		$EDITOR "$config_file"
+		;;
 	*)
 		exit 1
 		# TODO usage
