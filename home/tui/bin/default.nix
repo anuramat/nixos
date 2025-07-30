@@ -6,11 +6,11 @@
 }:
 let
   inherit (pkgs) writeShellApplication writeScriptBin;
-  inherit (builtins) readFile;
+  inherit (builtins) readFile readDir;
 
   packages =
     with lib;
-    builtins.readDir ./.
+    readDir ./.
     |> attrNames
     |> map (
       filename:
@@ -20,7 +20,7 @@ let
         ext = filename |> splitString "." |> last;
       in
       if ext == "sh" then
-        pkgs.writeShellApplication {
+        writeShellApplication {
           inherit name text;
           excludeShellChecks = map (v: "SC" + toString v) config.lib.excludeShellChecks.numbers;
         }

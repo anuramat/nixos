@@ -78,7 +78,7 @@ in
     };
   };
 
-  lib.excludeShellChecks.numbers = excludeShellChecks;
+  lib.excludeShellChecks.numbers = excludeShellChecks; # TODO rename
   # Shellcheck configuration
   xdg.configFile."shellcheckrc".text = ''
     enable=all

@@ -67,7 +67,7 @@ run() {
 
 launch() {
 	[[ -z $feature ]] && feature="$(gum input --header='Feature:')"
-	[[ -z $prompt ]] && prompt="$(gum write --header='Prompt:')"
+	[[ -z $prompt ]] && prompt="$(gum write --header="Prompt ($feature):")"
 
 	# launch the tmux session
 	projname=$(basename "$root")
