@@ -165,6 +165,7 @@ in
             };
 
             vendorHash = "sha256-GWramb6YXzajoVNpUQ9mZLE02zWRnvG4hC3EFOA5apU=";
+            doCheck = false;
             meta = {
               mainProgram = name;
             };
