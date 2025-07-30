@@ -25,7 +25,7 @@ in
       };
     };
     ollama = {
-      enable = false;
+      enable = true;
       acceleration = lib.mkIf cuda "cuda";
       loadModels = lib.mkIf cuda [ ]; # pull models on service start
       environmentVariables = {
