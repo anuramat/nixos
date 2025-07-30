@@ -22,6 +22,10 @@ in
         file = ./litellm.age;
         mode = "400";
       };
+      claude = {
+        file = ./claude.age;
+        owner = user.username;
+      };
     };
   };
 }

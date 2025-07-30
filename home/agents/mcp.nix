@@ -1,30 +1,21 @@
 {
-  config,
   lib,
   osConfig,
+  hax,
   pkgs,
   ...
 }:
 let
   toJSON = lib.generators.toJSON { };
-  inherit (lib) getExe getName;
+  inherit (lib) getExe;
 
-  patchedBinary =
-    args:
-    pkgs.writeShellScript "${getName args.package}-agenix-patched" # bash
-      ''
-        export ${args.name}=$(cat "${args.token}")
-        ${getExe args.package} "$@"
-      '';
-  githubPatched = patchedBinary {
+  githubPatched = hax.common.patchedBinary pkgs {
     name = "GITHUB_PERSONAL_ACCESS_TOKEN";
     token = osConfig.age.secrets.ghmcp.path;
     package = pkgs.github-mcp-server;
   };
 
   mcpServers = {
-    # TODO sequential thinking, not on claude
-    # TODO search, not on claude
     # TODO nvim mcp: provides lsp most importantly, formatter (can be replaced with a commit hook), maybe more
     # TODO rag?
     nixos = {

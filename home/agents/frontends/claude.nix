@@ -1,6 +1,7 @@
 {
   lib,
   hax,
+  osConfig,
   config,
   pkgs,
   ...
@@ -48,6 +49,13 @@ in
         agentName = name;
         package = pkgs.claude-code;
         args = "--dangerously-skip-permissions";
+        env =
+          let
+            token = osConfig.age.secrets.claude.path;
+          in
+          {
+            CLAUDE_CODE_OAUTH_TOKEN = "$(cat '${token}')";
+          };
         agentDir = null;
         extraRwDirs = [
           "$HOME/.claude.json"

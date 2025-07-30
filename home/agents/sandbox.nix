@@ -12,7 +12,7 @@ let
   inherit (config.lib.agents) varNames;
 
   # Shadows XDG dirs with tmp, and links agent directories there
-  shadowXdg =
+  shadowXdgScript =
     agentDir:
     let
       variables = [
@@ -20,31 +20,41 @@ let
         "XDG_DATA_HOME"
         "XDG_STATE_HOME"
       ];
-      shadowVariable =
+      shadowWithPassthrough =
         var:
         let
-          unwrapped = ''
+          shadow = ''
             ${var}="$TEMP_ROOT/${var}"
             export ${var}
             mkdir "${"$" + var}"
           '';
-        in
-        if agentDir == null then
-          unwrapped
-        else
-          ''
+          passthrough = x: ''
             agentDir="${"$" + var}/${agentDir}"
             mkdir -p "$agentDir"
-            ${unwrapped}
+            ${shadow}
             [ -a "$agentDir" ] && ln -s -T "$agentDir" "${"$" + var}/${agentDir}"
           '';
+        in
+        if agentDir == null then shadow else passthrough shadow;
     in
     ''
       TEMP_ROOT=$(mktemp -d)
 
       echo "tmp dir: $TEMP_ROOT"
+      echo "shadowed paths: ${variables |> builtins.concatStringsSep ", "}"
     ''
-    + (variables |> map shadowVariable |> builtins.concatStringsSep "\n");
+    + (variables |> map shadowWithPassthrough |> builtins.concatStringsSep "\n");
+
+  exportScript =
+    env:
+    env
+    |> lib.mapAttrsToList (
+      n: v: ''
+        ${n}=${v}
+        export ${n}
+      ''
+    )
+    |> builtins.concatStringsSep "\n";
 in
 {
   lib.agents.mkSandbox =
@@ -70,6 +80,9 @@ in
           [ ];
       rwDirs =
         map (x: ''"${x}"'') (baseRwDirs ++ agentDirs ++ extraRwDirs) |> builtins.concatStringsSep " ";
+      env = (agent.env or { }) // {
+        ${varNames.agentName} = "'${agentName}'";
+      };
     in
     (pkgs.writeShellApplication {
       name = wrapperName;
@@ -79,11 +92,10 @@ in
 
       text = ''
         # shadow some of the xdg directories with a tmp one
-        ${shadowXdg agentDir}
+        ${shadowXdgScript agentDir}
 
-        # set agent variable
-        ${varNames.agentName}='${agentName}'
-        export ${varNames.agentName}
+        # set env variables
+        ${exportScript env}
 
         # collect RW dirs
         ${varNames.rwDirs}+=(${rwDirs})

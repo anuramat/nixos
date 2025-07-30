@@ -69,4 +69,12 @@ rec {
       }
       mv "$temp" "${target}"
     '';
+
+  patchedBinary =
+    pkgs: args:
+    pkgs.writeShellScript "${getName args.package}-agenix-patched" # bash
+      ''
+        export ${args.name}=$(cat "${args.token}")
+        ${getExe args.package} "$@"
+      '';
 }
