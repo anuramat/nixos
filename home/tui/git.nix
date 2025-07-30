@@ -33,6 +33,7 @@
       userEmail = user.email;
       userName = user.fullname;
       aliases = {
+        wt = "worktree";
         st = "status";
         sh = "show --ext-diff";
         ch = "checkout";
