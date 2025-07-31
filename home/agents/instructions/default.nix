@@ -7,7 +7,7 @@ let
   prependTitle = body: lib.concatStringsSep "\n" ([ "${topHead} Global instructions\n" ] ++ body);
   mkInstructions =
     parts: parts |> lib.mapAttrsToList (n: v: "${sectionHead} ${n}\n\n" + v) |> prependTitle;
-  inherit (lib.agents) mainContextFile;
+  inherit (config.lib.agents) mainContextFile;
 
   text = mkInstructions config.lib.agents.instructions.parts;
 in
