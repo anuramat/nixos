@@ -15,7 +15,7 @@ in
     roles = {
       ${validatorSubagentName} =
         let
-          context = config.lib.agents.contextFileName |> lib.concatStringsSep ", ";
+          context = config.lib.agents.contextFiles |> lib.concatStringsSep ", ";
         in
         ''
           ---

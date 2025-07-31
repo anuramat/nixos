@@ -7,7 +7,7 @@
 }:
 let
   settings = {
-    instructions = config.lib.agents.contextFileName;
+    instructions = config.lib.agents.contextFiles;
   };
 in
 {
