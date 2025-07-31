@@ -31,7 +31,7 @@ let
       nix = servers.nil-ls;
       python = servers.pyright;
     };
-  mcp = config.lib.agents.mcp.file;
+  mcp = config.lib.agents.mcp.json.file;
   general = {
     context_paths = config.lib.agents.contextFileName;
     tui.compact_mode = true;

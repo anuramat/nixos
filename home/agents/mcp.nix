@@ -9,7 +9,7 @@ let
   toJSON = lib.generators.toJSON { };
   inherit (lib) getExe;
 
-  githubPatched = config.lib.home.patchedBinary pkgs {
+  githubPatched = config.lib.home.patchedBinary {
     name = "GITHUB_PERSONAL_ACCESS_TOKEN";
     token = osConfig.age.secrets.ghmcp.path;
     package = pkgs.github-mcp-server;
@@ -34,8 +34,8 @@ let
 in
 {
   lib.agents.mcp = {
+    raw = mcpServers;
     json = rec {
-      raw = mcpServers;
       text = toJSON mcpServers;
       file = pkgs.writeTextFile {
         name = "mcp_servers.json";

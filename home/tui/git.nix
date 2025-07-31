@@ -1,6 +1,5 @@
 {
   config,
-  hax,
   user,
   pkgs,
   ...
@@ -99,7 +98,7 @@ let
     in
     {
       prepare-commit-msg =
-        hax.common.gitHook pkgs
+        gitHook
           # bash
           ''
             COMMIT_MSG_FILE=$1
@@ -126,7 +125,7 @@ let
             fi
           '';
       pre-commit =
-        hax.common.gitHook pkgs
+        gitHook
           # bash
           ''
             hook_name=$(basename "$0")
