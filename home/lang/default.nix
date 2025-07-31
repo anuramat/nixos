@@ -48,6 +48,7 @@
     nixfmt-rfc-style
     cbfmt # mdformat ought to be enough?
     shfmt # posix/bash/mksh
+    shellharden # nazi quotes
     stylua # lua
     treefmt # aggregator
     yamlfmt
