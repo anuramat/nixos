@@ -23,16 +23,28 @@ in
 {
   files = ftp;
   extraFiles = snippets;
-  plugins.lsp.servers.bashls = {
-    enable = true;
-    settings = {
-      bashIde = {
+  plugins = {
+    conform-nvim.settings = {
+      formatters = {
         shfmt = {
-          binaryNextLine = true;
-          caseIndent = true;
-          simplifyCode = true;
-          spaceRedirects = true;
+          "inherit" = true;
+          prepend_args = [
+            "--binary-next-line"
+            "--case-indent"
+            "--simplify"
+          ];
         };
+      };
+      formatters_by_ft.sh = [
+        "shfmt"
+      ];
+    };
+    lsp.servers.bashls = {
+      enable = true;
+      settings.bashIde.shfmt = {
+        binaryNextLine = true;
+        caseIndent = true;
+        simplifyCode = true;
       };
     };
   };
