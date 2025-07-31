@@ -22,14 +22,9 @@ in
     # TODO subasians
     # TODO commands
     activation = {
-      opencodeConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] (
-        hax.common.jsonUpdate pkgs "${config.xdg.configHome}/opencode/opencode.json" [
-          {
-            prop = ".";
-            text = lib.generators.toJSON { } settings;
-          }
-        ]
-      );
+      opencodeConfig = config.lib.home.jsonUpdate {
+        "." = settings;
+      } "${config.xdg.configHome}/opencode/opencode.json";
     };
   };
 }

@@ -28,14 +28,9 @@ in
       })
     ];
     activation = {
-      ampConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] (
-        hax.common.jsonUpdate pkgs "${config.xdg.configHome}/${agentDir}/settings.json" [
-          {
-            prop = ".";
-            text = lib.generators.toJSON { } settings;
-          }
-        ]
-      );
+      ampConfig = config.lib.home.jsonUpdate {
+        "." = settings;
+      } "${config.xdg.configHome}/${agentDir}/settings.json";
     };
   };
   xdg.configFile."AGENT.md".text = config.lib.agents.systemPrompt;

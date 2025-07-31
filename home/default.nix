@@ -15,6 +15,7 @@
     ./gui
     ./keyring.nix
     ./lang
+    ./lib.nix
     ./mime
     ./misc.nix
     ./theme.nix

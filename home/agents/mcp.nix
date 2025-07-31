@@ -1,7 +1,7 @@
 {
   lib,
   osConfig,
-  hax,
+  config,
   pkgs,
   ...
 }:
@@ -9,7 +9,7 @@ let
   toJSON = lib.generators.toJSON { };
   inherit (lib) getExe;
 
-  githubPatched = hax.common.patchedBinary pkgs {
+  githubPatched = config.lib.home.patchedBinary pkgs {
     name = "GITHUB_PERSONAL_ACCESS_TOKEN";
     token = osConfig.age.secrets.ghmcp.path;
     package = pkgs.github-mcp-server;

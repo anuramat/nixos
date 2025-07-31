@@ -1,6 +1,5 @@
 {
   lib,
-  hax,
   osConfig,
   config,
   pkgs,
@@ -8,7 +7,6 @@
 }:
 let
   inherit (config.lib) agents;
-  name = "Claude";
   hooks = {
     Notification = [
       {
@@ -29,6 +27,26 @@ let
 
   commands = agents.mkPrompts ".claude/commands" agents.commands;
   subagents = agents.mkPrompts ".claude/agents" agents.roles;
+
+  cld = config.lib.agents.mkSandbox {
+    wrapperName = "cld";
+    package = pkgs.claude-code;
+    args = "--dangerously-skip-permissions";
+    env = {
+      CLAUDE_CODE_OAUTH_TOKEN = "$(cat '${osConfig.age.secrets.claude.path}')";
+    };
+    agentDir = null;
+    extraRwDirs = [
+      "$HOME/.claude.json"
+      "$HOME/.claude"
+    ];
+  };
+
+  home = config.home.homeDirectory;
+
+  mkMcpConfig = config.lib.home.jsonUpdate {
+    ".mcpServers" = { inherit (config.lib.agents.mcp.json) file; };
+  };
 in
 {
   home = {
@@ -44,38 +62,11 @@ in
       // subagents
     );
     packages = [
-      (config.lib.agents.mkSandbox {
-        wrapperName = "cld";
-        agentName = name;
-        package = pkgs.claude-code;
-        args = "--dangerously-skip-permissions";
-        env = {
-          CLAUDE_CODE_OAUTH_TOKEN = "$(cat '${osConfig.age.secrets.claude.path}')";
-        };
-        agentDir = null;
-        extraRwDirs = [
-          "$HOME/.claude.json"
-          "$HOME/.claude"
-        ];
-      })
+      cld
     ];
-    activation =
-      let
-        home = config.home.homeDirectory;
-        mkConfig =
-          target:
-          lib.hm.dag.entryAfter [ "writeBoundary" ] (
-            hax.common.jsonUpdate pkgs target [
-              {
-                prop = ".mcpServers";
-                inherit (config.lib.agents.mcp.json) file;
-              }
-            ]
-          );
-      in
-      {
-        claudeMcp = mkConfig "${home}/.claude.json";
-        claudeDesktopMcp = mkConfig "${config.xdg.configHome}/Claude/claude_desktop_config.json";
-      };
+    activation = {
+      claudeMcp = mkMcpConfig "${home}/.claude.json";
+      claudeDesktopMcp = mkMcpConfig "${config.xdg.configHome}/Claude/claude_desktop_config.json";
+    };
   };
 }
