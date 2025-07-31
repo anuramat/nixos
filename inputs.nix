@@ -17,16 +17,20 @@ in
 
   agenix = mkInput "github:yaxitech/ragenix";
   claude-desktop = mkInput "github:k3d3/claude-desktop-linux-flake";
-  codex = mkInput "github:openai/codex";
   home-manager = mkInput "github:nix-community/home-manager/release-25.05";
   nixvim = mkInput "github:nix-community/nixvim";
   stylix = mkInput "github:danth/stylix/release-25.05";
-  tt-schemes = mkInput "github:tinted-theming/schemes";
+  tt-schemes = {
+    url = "github:tinted-theming/schemes";
+    flake = false;
+  };
 
   flake-utils.url = "github:numtide/flake-utils"; # no dependencies anyway
   neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay"; # binary cache sake
 
-  spicetify-nix.url = "github:Gerg-L/spicetify-nix"; # no data
-  mcp-nixos.url = "github:utensils/mcp-nixos"; # no data
-  nil.url = "github:oxalica/nil/main"; # no data
+  # WARN if these break, revert to no `follows`
+  codex.url = "github:openai/codex";
+  mcp-nixos.url = "github:utensils/mcp-nixos";
+  nil.url = "github:oxalica/nil/main";
+  spicetify-nix.url = "github:Gerg-L/spicetify-nix";
 }
