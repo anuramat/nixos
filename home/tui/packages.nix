@@ -46,7 +46,7 @@
     opencode
 
     # misc ai
-    # ccusage # TODO
+    ccusage
     claude-desktop
     llama-cpp
 
