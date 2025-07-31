@@ -9,7 +9,7 @@ let
     parts: parts |> lib.mapAttrsToList (n: v: "${sectionHead} ${n}\n\n" + v) |> prependTitle;
   inherit (config.lib.agents) mainContextFile;
 
-  text = mkInstructions config.lib.agents.parts;
+  text = mkInstructions config.lib.agents.instructions.parts;
 in
 {
   imports = [

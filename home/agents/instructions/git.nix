@@ -3,7 +3,7 @@ let
   inherit (config.lib.agents.varNames) rwDirs;
 in
 {
-  lib.agents.parts.git = ''
+  lib.agents.instructions.parts.git = ''
     - Sub-agents MUST NOT perform any operations other than reading/writing
       files, unless directly instructed to.
     - You MUST make commits after each successful step of the main agent (if

@@ -3,7 +3,7 @@ let
   head = config.lib.agents.instructions.head;
 in
 {
-  lib.agents.parts.workflow = ''
+  lib.agents.instructions.parts.workflow = ''
     You MUST adhere to the following two-stage development protocol:
 
     ${head} Stage 1: Test command identification

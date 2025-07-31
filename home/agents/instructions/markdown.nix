@@ -1,6 +1,6 @@
 {
   # TODO proper name for "math block" and inline math
-  lib.agents.parts.markdown = ''
+  lib.agents.instructions.parts.markdown = ''
     Context: I'm using `pandoc` to render my files to PDF, thus I'm heavily
     relying on LaTeX support. 
 
