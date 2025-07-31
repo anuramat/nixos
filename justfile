@@ -41,6 +41,8 @@ run pkg:
   nix run ".#nixosConfigurations.$(hostname).pkgs.{{pkg}}"
 
 # Update flake inputs
-inputs:
-  printf '{ outputs = args: import ./outputs.nix args; inputs = %s; }' "$(nix eval -f inputs.nix)" > flake.nix
+inputs: 
+  # Check if it evaluates
+  nix eval --read-only --expr "$(nix eval -f inputs.nix)" >/dev/null
+  printf '{ outputs = args: import ./outputs.nix args; inputs = %s; }' "$(nix eval --read-only -f inputs.nix)" > flake.nix
   treefmt flake.nix
