@@ -9,6 +9,7 @@
 
   lib.agents = {
     contextFileName = [
+      "CRUSH.md"
       "GEMINI.md"
       "CLAUDE.md"
       "AGENTS.md"
