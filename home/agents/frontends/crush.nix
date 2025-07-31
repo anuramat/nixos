@@ -36,7 +36,7 @@ let
     context_paths = config.lib.agents.contextFiles ++ [
       config.lib.agents.instructions.path
     ];
-    tui.compact_mode = true;
+    # tui.compact_mode = true;
   };
 in
 {
