@@ -5,7 +5,6 @@ let
   };
 in
 {
-  nixos-hardware.url = "github:NixOS/nixos-hardware/master";
   nixpkgs-old.url = "github:nixos/nixpkgs/nixos-24.11";
   nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
   nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
@@ -20,15 +19,18 @@ in
   home-manager = mkInput "github:nix-community/home-manager/release-25.05";
   nixvim = mkInput "github:nix-community/nixvim";
   stylix = mkInput "github:danth/stylix/release-25.05";
+
+  # definitely no `follows`:
+  flake-utils.url = "github:numtide/flake-utils"; # no dependencies anyway
+  neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay"; # binary cache sake
+  nixos-hardware.url = "github:NixOS/nixos-hardware/master"; # too dangerous
+  # not even a flake
   tt-schemes = {
     url = "github:tinted-theming/schemes";
     flake = false;
   };
 
-  flake-utils.url = "github:numtide/flake-utils"; # no dependencies anyway
-  neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay"; # binary cache sake
-
-  # WARN if these break, revert to no `follows`
+  # these could work, but it's still a risk
   codex.url = "github:openai/codex";
   mcp-nixos.url = "github:utensils/mcp-nixos";
   nil.url = "github:oxalica/nil/main";
