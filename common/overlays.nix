@@ -87,6 +87,7 @@ in
         };
       });
       ccusage =
+        # pure vibes
         let
           version = "15.5.2";
         in
