@@ -86,14 +86,27 @@ in
           hash = "sha256-ygeitenu4z9ACbezO53I2Xnk6NtE1fWVzCi3mZS7wF8=";
         };
       });
-      ccusage = prev.buildNpmPackage rec {
-        pname = "ccusage";
-        version = "15.5.2";
-        src = prev.fetchzip {
-          url = "https://registry.npmjs.org/ccusage/-/ccusage-${version}.tgz";
-          hash = "sha256-OCWpQiFk8L/X4tRIuKFlRNYlpk1n6rPTKgVtU27usiA=";
-        };
-      };
+      ccusage =
+        let
+          version = "15.5.2";
+        in
+        prev.runCommand "ccusage-${version}"
+          {
+            buildInputs = [ prev.nodejs ];
+            src = prev.fetchzip {
+              url = "https://registry.npmjs.org/ccusage/-/ccusage-${version}.tgz";
+              hash = "sha256-OCWpQiFk8L/X4tRIuKFlRNYlpk1n6rPTKgVtU27usiA=";
+            };
+          }
+          ''
+            mkdir -p $out/bin $out/lib/ccusage
+            cp -r $src/* $out/lib/ccusage/
+            cat > $out/bin/ccusage << EOF
+            #!/bin/sh
+            exec ${prev.nodejs}/bin/node $out/lib/ccusage/dist/index.js "\$@"
+            EOF
+            chmod +x $out/bin/ccusage
+          '';
       gemini-cli = prev.gemini-cli.overrideAttrs (oldAttrs: rec {
         version = "0.1.14";
         src = prev.fetchFromGitHub {
