@@ -95,6 +95,7 @@
     fortune # random quotes
 
     # miscellaneous unfiled TODO
+    python3
     just
     wishlist # ssh menu
     vhs # terminal gif generator
