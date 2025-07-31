@@ -3,6 +3,7 @@
 set -e
 
 SESSION_PREFIX='diriger'
+INIT_SLEEP='5'
 
 # defaults
 dry_run=false
@@ -90,20 +91,50 @@ launch() {
 		treepath="$(realpath "../$treename")"
 
 		# append the prompt
+		prompt_appended=true
 		if [[ -n $prompt ]]; then
 			case "$agent" in
 				gmn) cmd+=" -i '$prompt'" ;;
 				ocd) cmd+=" -p '$prompt'" ;;
 				cld) cmd+=" ' $prompt'" ;;
+				crs) ready_msg="Ready?" ;;
 				*)
-					echo "Invalid agent"
+					prompt_appended=false
+					echo "Invalid agent: '$agent'"
 					exit 1
 					;;
 			esac
 		fi
 
 		# start the agent
-		run 'tmux neww -t "$session_name" -n "$agent-$i" -c "$treepath" "$cmd"'
+		pane="$agent-$i"
+		# TODO we might need escaping in $cmd
+		run 'tmux neww -t "$session_name" -n "$pane" -c "$treepath" "$cmd"'
+		if [[ $prompt_appended != true ]]; then
+
+			if [[ -n $ready_msg ]]; then
+				# TODO factor out the numbers everywhere
+				for i in {1..25}; do
+					capture=$(tmux capture-pane -t "$pane" -p)
+					if grep -qF "$ready_msg" <<< "$capture"; then
+						ready=true
+						break
+					fi
+					sleep 0.2
+				done
+				if [[ $ready != true ]]; then
+					echo "Agent '$agent' failed to initialize"
+					continue
+				fi
+			elif true; then
+				echo "Unknown agent '$agent', using hardcoded sleep interval: $INIT_SLEEP"
+				sleep "$INIT_SLEEP"
+			fi
+
+			run 'tmux send-keys -t "$session_name:$pane" "$prompt"'
+			sleep 0.1
+			run 'tmux send-keys -t "$session_name:$pane" Enter'
+		fi
 	done
 	echo "${#commands[@]} agents started"
 	run 'tmux killp -t "$session_name:0"'
