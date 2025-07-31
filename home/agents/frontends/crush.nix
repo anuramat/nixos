@@ -33,7 +33,9 @@ let
     };
   mcp = config.lib.agents.mcp.json.file;
   general = {
-    context_paths = config.lib.agents.contextFileName;
+    context_paths = config.lib.agents.contextFileName ++ [
+      config.lib.agents.instructions.path
+    ];
     tui.compact_mode = true;
   };
 in

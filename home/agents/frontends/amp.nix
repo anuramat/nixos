@@ -33,5 +33,5 @@ in
       } "${config.xdg.configHome}/${agentDir}/settings.json";
     };
   };
-  xdg.configFile."AGENT.md".text = config.lib.agents.systemPrompt;
+  # NOTE: global .config/AGENT.md is hardcoded in `amp`
 }

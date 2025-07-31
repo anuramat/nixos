@@ -10,7 +10,7 @@ in
 {
   home = {
     file = {
-      ".gemini/GEMINI.md".text = agents.systemPrompt;
+      ".gemini/GEMINI.md".text = agents.instructions.text;
       ".gemini/settings.json".text = lib.generators.toJSON { } {
         theme = "Default";
         selectedAuthType = "oauth-personal";

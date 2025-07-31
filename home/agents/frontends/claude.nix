@@ -52,7 +52,7 @@ in
   home = {
     file = (
       {
-        ".claude/CLAUDE.md".text = agents.systemPrompt;
+        ".claude/CLAUDE.md".text = agents.instructions.text;
         ".claude/settings.json".text = lib.generators.toJSON { } {
           includeCoAuthoredBy = false;
           inherit hooks permissions;
