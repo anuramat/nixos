@@ -30,6 +30,10 @@ in
         file = ./gemini.age;
         owner = user.username;
       };
+      openrouter = {
+        file = ./openrouter.age;
+        owner = user.username;
+      };
     };
   };
 }

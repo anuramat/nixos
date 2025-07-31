@@ -11,4 +11,5 @@ in
   "litellm.age".publicKeys = keys;
   "claude.age".publicKeys = keys;
   "gemini.age".publicKeys = keys;
+  "openrouter.age".publicKeys = keys;
 }
