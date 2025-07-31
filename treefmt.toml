@@ -13,6 +13,11 @@ includes = [ "*.sh" ]
 command = "shfmt"
 options = [ "--write", "--simplify", "--case-indent", "--binary-next-line" ]
 
+[formatter.shellharden]
+includes = [ "*.sh" ]
+command = "shellharden"
+options = [ "--replace" ]
+
 [formatter.yaml]
 includes = [ "*.yaml" ]
 command = "yamlfmt"
