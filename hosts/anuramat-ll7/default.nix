@@ -23,7 +23,14 @@
 
   imports = [
     inputs.nixos-hardware.nixosModules.common-cpu-intel
-    inputs.nixos-hardware.nixosModules.common-gpu-intel
+
+    inputs.nixos-hardware.nixosModules.common-gpu-intel # they don't have this in the repo
+    inputs.nixos-hardware.nixosModules.common-gpu-nvidia # compare to other modules
+
+    inputs.nixos-hardware.nixosModules.common-hidpi
+    inputs.nixos-hardware.nixosModules.common-pc-laptop
+    inputs.nixos-hardware.nixosModules.common-pc-laptop-ssd
+
     ./hardware-configuration.nix
   ];
 
@@ -59,7 +66,7 @@
   hardware = {
     nvidia = {
       open = true; # recommended on turing+
-      # dynamicBoost.enable = true; # TODO think about it
+      dynamicBoost.enable = true;
       powerManagement = {
         enable = true; # saves entire vram to /tmp/ instead of the bare minimum
         finegrained = true; # turns off gpu when not in use
