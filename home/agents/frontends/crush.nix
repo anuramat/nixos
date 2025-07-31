@@ -40,7 +40,6 @@ let
   };
 in
 {
-
   home = {
     packages = [
       (config.lib.agents.mkSandbox {
@@ -59,5 +58,4 @@ in
       } "${config.xdg.configHome}/crush/crush.json";
     };
   };
-
 }
