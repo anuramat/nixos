@@ -3,7 +3,7 @@ let
   inherit (config.lib.agents.varNames) rwDirs;
 in
 {
-  lib.agents.instructions.parts.general = ''
+  lib.agents.parts.general = ''
     - The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
       "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" are to be
       interpreted as described in RFC 2119.

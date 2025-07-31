@@ -1,5 +1,5 @@
 {
-  lib.agents.instructions.parts.codestyle = ''
+  lib.agents.parts.codestyle = ''
     Background: the user can't trust AI generated code/comments, thus he has to
     always review it thorouhgly. The main limiting factor is the sheer amount of
     new/changed lines. Thus:
