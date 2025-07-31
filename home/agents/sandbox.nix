@@ -2,6 +2,7 @@
   pkgs,
   config,
   lib,
+  osConfig,
   ...
 }:
 let
@@ -82,6 +83,7 @@ in
         map (x: ''"${x}"'') (baseRwDirs ++ agentDirs ++ extraRwDirs) |> builtins.concatStringsSep " ";
       env = (agent.env or { }) // {
         ${varNames.agentName} = "'${agentName}'";
+        GEMINI_API_KEY = "$(cat '${osConfig.age.secrets.gemini.path}')";
       };
     in
     (pkgs.writeShellApplication {

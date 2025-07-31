@@ -26,6 +26,10 @@ in
         file = ./claude.age;
         owner = user.username;
       };
+      gemini = {
+        file = ./gemini.age;
+        owner = user.username;
+      };
     };
   };
 }

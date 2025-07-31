@@ -37,7 +37,7 @@ in
     json = rec {
       raw = mcpServers;
       text = toJSON mcpServers;
-      filepath = pkgs.writeTextFile {
+      file = pkgs.writeTextFile {
         name = "mcp_servers.json";
         inherit text;
       };

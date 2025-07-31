@@ -39,6 +39,7 @@ in
       (config.lib.agents.mkSandbox {
         wrapperName = "crs";
         package = pkgs.crush;
+        args = "--yolo";
       })
     ];
     # TODO mcp
@@ -50,6 +51,10 @@ in
           {
             prop = ".lsp";
             text = toJSON settings.lsp;
+          }
+          {
+            prop = ".mcp";
+            inherit (config.lib.agents.mcp.json) file;
           }
         ]
       );

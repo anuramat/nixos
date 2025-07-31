@@ -49,13 +49,9 @@ in
         agentName = name;
         package = pkgs.claude-code;
         args = "--dangerously-skip-permissions";
-        env =
-          let
-            token = osConfig.age.secrets.claude.path;
-          in
-          {
-            CLAUDE_CODE_OAUTH_TOKEN = "$(cat '${token}')";
-          };
+        env = {
+          CLAUDE_CODE_OAUTH_TOKEN = "$(cat '${osConfig.age.secrets.claude.path}')";
+        };
         agentDir = null;
         extraRwDirs = [
           "$HOME/.claude.json"
@@ -72,7 +68,7 @@ in
             hax.common.jsonUpdate pkgs target [
               {
                 prop = ".mcpServers";
-                file = config.lib.agents.mcp.json.filepath;
+                inherit (config.lib.agents.mcp.json) file;
               }
             ]
           );
