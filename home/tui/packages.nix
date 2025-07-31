@@ -28,27 +28,10 @@
     markdown-link-check # find dead md links
     mermaid-cli
     mermaid-filter
-    openai-whisper
-    # whisper-cpp
 
     # audio
     sox # cli audio processing
     lame # mp3
-
-    # agents
-    amp-cli
-    claude-code
-    codebuff
-    codex
-    crush
-    gemini-cli
-    goose-cli
-    opencode
-
-    # misc ai
-    ccusage
-    claude-desktop
-    llama-cpp
 
     # containers
     dive # look into docker image layers
@@ -201,12 +184,5 @@
     smem # ram usage
     usbutils
     v4l-utils # camera stuff
-
-    # python libraries for random scripts TODO move
-    (python3.withPackages (
-      p: with p; [
-        mcp
-      ]
-    ))
   ];
 }

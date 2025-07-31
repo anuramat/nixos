@@ -22,6 +22,7 @@ in
     packages = [
       (config.lib.agents.mkSandbox {
         package = pkgs.amp-cli;
+        wrapperName = "amp";
         extraRwDirs = [
           "$HOME/.amp"
         ];
@@ -34,4 +35,5 @@ in
     };
   };
   # NOTE: global .config/AGENT.md is hardcoded in `amp`
+  # I think that's all settings they have for now
 }
