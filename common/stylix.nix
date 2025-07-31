@@ -27,7 +27,7 @@
         # paraiso -- purple/burgundy, colorful text -- 3/5?
         # pandora -- pink/burgundy/red mostly, cyberpunk vibes -- 4/5
         # caroline -- warm tones, red/brown/bronze -- 4/5
-        # tarot -- red, burgundy, purple -- 4/5+
+        # tarot -- red, burgundy, purple -- 5/5
 
         # eris -- navy + pastel red
         # pinky -- very colorful, but looks mostly red/blue
