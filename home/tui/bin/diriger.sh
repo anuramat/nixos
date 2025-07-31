@@ -85,10 +85,10 @@ launch() {
 		echo "Launching $cmd"
 
 		treename="$projname-$feature-$agent-$i"
-		run 'git worktree add -b "$feature-$agent-$i" "$worktree_root/$treename"'
+		treepath="$(realpath "$worktree_root/$treename")"
+		run 'git worktree add -b "$feature-$agent-$i" "$treepath"'
 		# shellcheck disable=SC2034
 		# used in `eval` inside `run`
-		treepath="$(realpath "../$treename")"
 
 		# append the prompt
 		prompt_appended=true
