@@ -100,37 +100,42 @@ let
         ```
       '';
 
-      workflow = ''
-        You MUST adhere to the following development protocol:
+      workflow = # markdown
+        ''
+          You MUST adhere to the following development protocol:
 
-        ${head} Preparation: Acceptance criteria identification
+          ${head} Preparation: Acceptance criteria identification
 
-        Before starting ANY task you MUST explicitly identify acceptance
-        criteria, unless it's directly specified. Typical cases, in pairs of situation -- :
+          Before starting ANY task you MUST explicitly identify acceptance
+          criteria, unless it's directly specified. Typical cases, in pairs of situation -- :
 
+          | Task context       | Acceptance criterion       |
+          | ------------------ | -------------------------- |
+          | Project with tests | All relevant tests pass    |
+          | Flake              | `nix build` succeeds       |
+          | Flake with checks  | `nix flake check` succeeds |
+          | Flake with an app  | `nix run` succeeds         |
+          | Non-development    | None                       |
 
-        - if there are any tests, criteria at least include all tests passing
-        - when making a nix flake, you MUST run `nix build`; `nix run` -- if applicable
-        - minor proof-of-concept script -- you MUST demonstrate that it works
+          ${head} Test:
 
-        Exceptions:
+          You SHOULD write tests, if possible -- before implementing the feature
+          (test-driven development).
 
-        - non-coding tasks, e.g. working with markdown files
+          ${head} Development loop
 
-        When working on a big feature, you MUST write tests first (test-driven
-        development).
+          You MUST iterate using the following "development" and "verification" steps
+          until you succeed:
 
-        ${head} Stage 2: Dev-test loop
+          1. Development: implement the solution, a part of the solution, or fix a
+             problem; then proceed to verification.
+          2. Verification: verify that the solution meets the acceptance criteria.
+             - If the criteria are met, the task is complete.
+             - Otherwise, go back to step 1 -- iterate again on the solution.
 
-        You MUST repeat the "development" and "test" steps until you succeed:
-
-        1. Development: implement the solution, a part of the solution, or fix a
-           problem. You MUST NOT disable problematic features.
-        2. Test: run the "testing command".
-        3. If the task is not completed, or the "test command" fails, go to step 1.
-
-        Only consider the task complete, when the "test command" succeeds.
-      '';
+          The task can be considered complete ONLY if the acceptance criteria
+          are met.
+        '';
     };
 in
 {
