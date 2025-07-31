@@ -45,9 +45,7 @@ let
         if [ ! -e '${private}' ] && [ ! -e '${public}' ]; then
           sudo nix-store --generate-binary-cache-key "$(hostname)" '${private}' '${public}'
         fi
-
         sudo chown '${builderName}:${builderGroup}' '${private}' '${public}'
-
         [ ! -e "$HOME/.ssh" ] && yes "" | ssh-keygen -N ""
       '';
     };
