@@ -171,6 +171,23 @@
         "type": "github"
       }
     },
+    "crush": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1753972773,
+        "narHash": "sha256-QekvToawxQEn+DCGUauvIL6ScIhePZxLU/krpJChWLA=",
+        "owner": "charmbracelet",
+        "repo": "crush",
+        "rev": "ace7ea670c006308215752c063984128c5103d46",
+        "type": "github"
+      },
+      "original": {
+        "owner": "charmbracelet",
+        "ref": "nightly",
+        "repo": "crush",
+        "type": "github"
+      }
+    },
     "ctrlsn": {
       "inputs": {
         "nixpkgs": [
@@ -1061,6 +1078,7 @@
         "agenix": "agenix",
         "claude-desktop": "claude-desktop",
         "codex": "codex",
+        "crush": "crush",
         "ctrlsn": "ctrlsn",
         "flake-utils": "flake-utils_4",
         "home-manager": "home-manager_2",

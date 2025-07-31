@@ -20,6 +20,10 @@
     codex = {
       url = "github:openai/codex";
     };
+    crush = {
+      flake = false;
+      url = "github:charmbracelet/crush/nightly";
+    };
     ctrlsn = {
       inputs = {
         nixpkgs = {

@@ -40,4 +40,8 @@ in
   # TODO check if any of these are in the community cache
   # TODO is it possible to only look up nixpkgs stuff in cache
   # TODO use max-jobs to fetch caches
+  crush = {
+    url = "github:charmbracelet/crush/nightly";
+    flake = false;
+  };
 }
