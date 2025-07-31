@@ -192,8 +192,14 @@ in
           }:
           buildGoModule (finalAttrs: rec {
             pname = name;
+            version = "0.1.8";
 
-            src = toString inputs.crush;
+            src = fetchFromGitHub {
+              owner = "charmbracelet";
+              repo = name;
+              rev = "v${version}";
+              hash = "sha256-qx3McjTvNH/8Rmgnk4c2+dnSb7I/XJNLrab0miFdq3w=";
+            };
 
             vendorHash = "sha256-AlZg0YOqLsCmBeszfRCYit18tWYsuS0/ktxbaur4VsQ=";
             doCheck = false;
