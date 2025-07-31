@@ -39,3 +39,8 @@ build pkg:
 
 run pkg:
   nix run ".#nixosConfigurations.$(hostname).pkgs.{{pkg}}"
+
+# Update flake inputs
+inputs:
+  printf '{ outputs = args: import ./outputs.nix args; inputs = %s; }' "$(nix eval -f inputs.nix)" > flake.nix
+  treefmt -f nix
