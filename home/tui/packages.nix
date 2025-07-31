@@ -35,18 +35,20 @@
     sox # cli audio processing
     lame # mp3
 
-    # ai / llm
-    goose-cli
-    claude-code
-    claude-desktop
-    # ccusage # TODO
-    opencode
-    codebuff
-    crush
-    llama-cpp
-    codex
+    # agents
     amp-cli
+    claude-code
+    codebuff
+    codex
+    crush
     gemini-cli
+    goose-cli
+    opencode
+
+    # misc ai
+    # ccusage # TODO
+    claude-desktop
+    llama-cpp
 
     # containers
     dive # look into docker image layers
