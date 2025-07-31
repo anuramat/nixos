@@ -3,6 +3,10 @@ let
     url = x;
     inputs.nixpkgs.follows = "nixpkgs";
   };
+  mkNonFlake = x: {
+    url = x;
+    flake = false;
+  };
 in
 {
   nixpkgs-old.url = "github:nixos/nixpkgs/nixos-24.11";
@@ -40,8 +44,6 @@ in
   # TODO check if any of these are in the community cache
   # TODO is it possible to only look up nixpkgs stuff in cache
   # TODO use max-jobs to fetch caches
-  crush = {
-    url = "github:charmbracelet/crush/nightly";
-    flake = false;
-  };
+  crush = mkNonFlake "github:charmbracelet/crush/nightly";
+  gemini = mkNonFlake "github:google-gemini/gemini-cli/v0.1.15";
 }
