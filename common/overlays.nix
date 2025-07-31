@@ -182,11 +182,11 @@ in
       };
       crush = prev.buildGoModule rec {
         pname = "crush";
+        meta.mainProgram = pname;
         version = "nightly";
         src = inputs.crush;
-        vendorHash = "sha256-P+2m3RogxqSo53vGXxLO4sLF5EVsG66WJw3Bb9+rvT8=";
         doCheck = false;
-        meta.mainProgram = "crush";
+        vendorHash = "sha256-P+2m3RogxqSo53vGXxLO4sLF5EVsG66WJw3Bb9+rvT8=";
       };
     })
   ];
