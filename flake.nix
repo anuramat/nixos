@@ -2,6 +2,11 @@
   outputs = args: import ./outputs.nix args;
   inputs = {
     agenix = {
+      inputs = {
+        nixpkgs = {
+          follows = "nixpkgs";
+        };
+      };
       url = "github:yaxitech/ragenix";
     };
     claude-desktop = {
@@ -16,6 +21,11 @@
       url = "github:openai/codex";
     };
     ctrlsn = {
+      inputs = {
+        nixpkgs = {
+          follows = "nixpkgs";
+        };
+      };
       url = "git+ssh://git@github.com/anuramat/ctrl.sn?ref=main";
     };
     flake-utils = {
@@ -86,6 +96,11 @@
       url = "github:danth/stylix/release-25.05";
     };
     subcat = {
+      inputs = {
+        nixpkgs = {
+          follows = "nixpkgs";
+        };
+      };
       url = "github:anuramat/subcat";
     };
     tt-schemes = {
