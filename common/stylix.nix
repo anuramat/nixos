@@ -27,8 +27,8 @@
         # paraiso -- purple/burgundy, colorful text -- 3/5?
         # pandora -- pink/burgundy/red mostly, cyberpunk vibes -- 4/5
         # caroline -- warm tones, red/brown/bronze -- 4/5
+        # heetch -- uhhh... purple bg, lightblue and red fg; not too readable -- 2/5
 
-        # heetch -- red with purple bg
         # tarot -- red, burgundy, purple, kinda like darker heetch
 
         # eris -- navy + pastel red
@@ -46,7 +46,7 @@
 
         # xcode-dusk -- grey + bright colors, very cool
 
-        name = "heetch";
+        name = "tarot";
       in
       "${inputs.tt-schemes}/base16/${name}.yaml";
   };
