@@ -31,7 +31,7 @@ let
       python = servers.pyright;
     };
     options = {
-      context_paths = lib.agents.contextFileName;
+      context_paths = config.lib.agents.contextFileName;
       tui.compact_mode = true;
     };
   };
