@@ -10,7 +10,7 @@ while IFS= read -r link; do
 	filename="$(basename "$link")"
 	[ "$filename" = example.csv ] && continue
 	[ -f "$dir/$filename" ] || {
-		curl "$link" | csvcut -c Template | tail -n +2 > "$dir/$filename"
+		curl "$link" | csvcut -c Template | tail -n +2 >"$dir/$filename"
 	}
 done < <(htmlq -f "$dir/media-types.xhtml" -b https://www.iana.org/assignments/media-types -a href 'li > a' | sed s@#@/@ | sed 's/$/.csv/')
 

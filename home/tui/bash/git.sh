@@ -25,8 +25,8 @@ g() {
 	local path
 	local args=()
 	[ -n "$1" ] && args=(-f "$1")
-	path=$(fzf "${args[@]}" <<< "$repo_relative_paths") || return
-	cd "$root/$(head -n 1 <<< "$path")" || return
+	path=$(fzf "${args[@]}" <<<"$repo_relative_paths") || return
+	cd "$root/$(head -n 1 <<<"$path")" || return
 }
 
 __gitgud_picker() {
@@ -51,7 +51,7 @@ grm() {
 	# $1? - prefill query
 	local selected
 	selected=$(ghq list | __gitgud_picker "delete?" "$1") || return
-	xargs -I{} bash -c 'yes | ghq rm {} 2>/dev/null' <<< "$selected"
+	xargs -I{} bash -c 'yes | ghq rm {} 2>/dev/null' <<<"$selected"
 }
 
 # XXX checked ok
@@ -123,7 +123,7 @@ __check() {
 		[ -z "$nopull" ] && {
 			local before
 			before=$(git rev-parse @)
-			git pull --ff-only &> /dev/null
+			git pull --ff-only &>/dev/null
 			[ "$before" != "$(git rev-parse @)" ] && local pulled=1
 		}
 
@@ -205,7 +205,7 @@ gfork() {
 	local auth_output
 	auth_output=$(gh auth status --active) || return 1
 	local user
-	user=$(grep -oP 'account \K\S+' <<< "$auth_output")
+	user=$(grep -oP 'account \K\S+' <<<"$auth_output")
 	__cd_gh_owner "$user" || return 1
 	gh repo fork "$repo" --default-branch-only --clone
 	cd "$(basename "${repo%/}")" || return 1 # return to stfu the linter
@@ -236,7 +236,7 @@ __gitgud_git_prompt() {
 	local -r only_state=$1 # don't show branch/commit
 
 	local bare
-	bare=$(git rev-parse --is-bare-repository 2> /dev/null) || return # we're not in a repo
+	bare=$(git rev-parse --is-bare-repository 2>/dev/null) || return # we're not in a repo
 	if [ "$bare" = 'true' ]; then
 		printf 'bare'
 		return
@@ -279,9 +279,9 @@ __gitgud_git_prompt() {
 
 		local desync
 		# behind
-		[ -n "$(git cherry @ "@{push}" 2> /dev/null)" ] && desync+='<'
+		[ -n "$(git cherry @ "@{push}" 2>/dev/null)" ] && desync+='<'
 		# ahead
-		[ -n "$(git cherry "@{u}" @ 2> /dev/null)" ] && desync+='>'
+		[ -n "$(git cherry "@{u}" @ 2>/dev/null)" ] && desync+='>'
 		# TODO add unpushed commits from other branches with a special flag?
 
 		local -r stash=$(echo "$raw" | grep -oP '(?<=^# stash )\d+')

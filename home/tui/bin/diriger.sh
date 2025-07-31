@@ -50,7 +50,7 @@ argparse() {
 			echo "Config file $config_file not found"
 			exit 1
 		}
-		mapfile -t commands < "$config_file"
+		mapfile -t commands <"$config_file"
 	fi
 }
 
@@ -80,7 +80,7 @@ launch() {
 	i=0
 	for cmd in "${commands[@]}"; do
 		((++i))
-		agent=$(cut -d ' ' -f 1 <<< "$cmd")
+		agent=$(cut -d ' ' -f 1 <<<"$cmd")
 
 		echo "Launching $cmd"
 
@@ -118,7 +118,7 @@ launch() {
 				# TODO crs still doesn't work
 				for i in {1..25}; do
 					capture=$(tmux capture-pane -t "$pane" -p)
-					if grep -qF "$ready_msg" <<< "$capture"; then
+					if grep -qF "$ready_msg" <<<"$capture"; then
 						ready=true
 						break
 					fi
@@ -146,10 +146,10 @@ launch() {
 send() {
 	# TODO show session details when asking for prompt; maybe in the chooser as well
 	sessions=$(tmux ls -F '#S' | grep -F "$SESSION_PREFIX")
-	if (($(wc -l <<< "$sessions") == 0)); then
+	if (($(wc -l <<<"$sessions") == 0)); then
 		exit 1
 	fi
-	session_name=$(gum choose --header='Session:' <<< "$sessions")
+	session_name=$(gum choose --header='Session:' <<<"$sessions")
 	[[ -z $prompt ]] && prompt="$(gum write --header="Prompt ($session_name):")"
 
 	panes=$(tmux list-p -st "$session_name" -F '#D')

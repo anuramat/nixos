@@ -24,7 +24,7 @@ z() {
 		hotdoc "$@"
 		exit
 	fi
-	zathura "$@" &> /dev/null &
+	zathura "$@" &>/dev/null &
 	disown
 }
 
