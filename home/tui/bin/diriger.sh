@@ -92,6 +92,7 @@ launch() {
 
 		# append the prompt
 		prompt_appended=true
+		ready_msg=
 		if [[ -n $prompt ]]; then
 			case "$agent" in
 				gmn) cmd+=" -i '$prompt'" ;;
@@ -114,6 +115,7 @@ launch() {
 
 			if [[ -n $ready_msg ]]; then
 				# TODO factor out the numbers everywhere
+				# TODO crs still doesn't work
 				for i in {1..25}; do
 					capture=$(tmux capture-pane -t "$pane" -p)
 					if grep -qF "$ready_msg" <<< "$capture"; then
@@ -126,7 +128,7 @@ launch() {
 					echo "Agent '$agent' failed to initialize"
 					continue
 				fi
-			elif true; then
+			else
 				echo "Unknown agent '$agent', using hardcoded sleep interval: $INIT_SLEEP"
 				sleep "$INIT_SLEEP"
 			fi
