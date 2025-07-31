@@ -3,7 +3,7 @@ keys_dir := `pwd` / "hosts" / `hostname` / "keys"
 all: format lint nixos
 
 # Rebuild
-nixos: inputs
+nixos: flake
     # ask for permission first
     sudo true
     # store keys in repo:
@@ -40,9 +40,14 @@ build pkg:
 run pkg:
   nix run ".#nixosConfigurations.$(hostname).pkgs.{{pkg}}"
 
-# Update flake inputs
-inputs: 
+# Regenerate flake
+flake:
   # Check if it evaluates
   nix eval --read-only --expr "$(nix eval -f inputs.nix)" >/dev/null
   printf '{ outputs = args: import ./outputs.nix args; inputs = %s; }' "$(nix eval --read-only -f inputs.nix)" > flake.nix
   treefmt flake.nix
+
+# Install pre-commit hooks
+hooks:
+  # TODO format
+  # TODO just inputs
