@@ -180,34 +180,14 @@ in
           runHook postInstall
         '';
       };
-      crush =
-        let
-          name = "crush";
-        in
-        prev.callPackage (
-          {
-            lib,
-            fetchFromGitHub,
-            buildGoModule,
-          }:
-          buildGoModule (finalAttrs: rec {
-            pname = name;
-            version = "0.1.8";
-
-            src = fetchFromGitHub {
-              owner = "charmbracelet";
-              repo = name;
-              rev = "v${version}";
-              hash = "sha256-qx3McjTvNH/8Rmgnk4c2+dnSb7I/XJNLrab0miFdq3w=";
-            };
-
-            vendorHash = "sha256-AlZg0YOqLsCmBeszfRCYit18tWYsuS0/ktxbaur4VsQ=";
-            doCheck = false;
-            meta = {
-              mainProgram = name;
-            };
-          })
-        ) { };
+      crush = prev.buildGoModule rec {
+        pname = "crush";
+        version = "nightly";
+        src = inputs.crush;
+        vendorHash = "sha256-P+2m3RogxqSo53vGXxLO4sLF5EVsG66WJw3Bb9+rvT8=";
+        doCheck = false;
+        meta.mainProgram = "crush";
+      };
     })
   ];
 }
