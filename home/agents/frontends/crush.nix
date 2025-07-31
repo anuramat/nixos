@@ -21,6 +21,7 @@ let
       n: v: {
         command = getExe v.package;
         args = if v.cmd == null then [ ] else tail v.cmd;
+        settings = v.settings;
       }
     );
   settings = {
