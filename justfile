@@ -3,7 +3,7 @@ keys_dir := `pwd` / "hosts" / `hostname` / "keys"
 all: format lint nixos
 
 # Rebuild
-nixos:
+nixos: inputs
     # ask for permission first
     sudo true
     # store keys in repo:
@@ -43,4 +43,4 @@ run pkg:
 # Update flake inputs
 inputs:
   printf '{ outputs = args: import ./outputs.nix args; inputs = %s; }' "$(nix eval -f inputs.nix)" > flake.nix
-  treefmt -f nix
+  treefmt flake.nix
