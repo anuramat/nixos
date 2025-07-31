@@ -542,6 +542,23 @@
         "type": "github"
       }
     },
+    "gemini": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1753850943,
+        "narHash": "sha256-J9pDSMsSh7FVPD61FFV2Aes3G/Vj1j5ULn9dOr+sglQ=",
+        "owner": "google-gemini",
+        "repo": "gemini-cli",
+        "rev": "ed1483b06f630775bf75baedda8d475dac46dc0d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "google-gemini",
+        "ref": "v0.1.15",
+        "repo": "gemini-cli",
+        "type": "github"
+      }
+    },
     "git-hooks": {
       "inputs": {
         "flake-compat": "flake-compat_2",
@@ -1081,6 +1098,7 @@
         "crush": "crush",
         "ctrlsn": "ctrlsn",
         "flake-utils": "flake-utils_4",
+        "gemini": "gemini",
         "home-manager": "home-manager_2",
         "mcp-nixos": "mcp-nixos",
         "mdformat-myst": "mdformat-myst",

@@ -133,7 +133,7 @@ in
 
       gemini-cli = prev.gemini-cli.overrideAttrs (oldAttrs: rec {
         version = "0.1.14";
-        src = inputs.gemini-cli;
+        src = inputs.gemini;
         npmDeps = prev.fetchNpmDeps {
           inherit src;
           hash = "sha256-9T31QlffPP6+ryRVN/7t0iMo+2AgwPb6l6CkYh6839U=";
