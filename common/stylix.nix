@@ -22,12 +22,12 @@
     };
     base16Scheme =
       let
-        # black-metal -- almost grayscale; TODO swap green and red
-        # grayscale-dark -- grayscale
-        # paraiso -- purple/burgundy, colorful text
-        # pandora -- pink/burgundy/red mostly, cyberpunk vibes
+        # black-metal -- almost grayscale -- 5/5; TODO swap green and red
+        # grayscale-dark -- grayscale -- 5/5
+        # paraiso -- purple/burgundy, colorful text -- 3/5?
+        # pandora -- pink/burgundy/red mostly, cyberpunk vibes -- 4/5
+        # caroline -- warm tones, red/brown/bronze -- 4/5
 
-        # caroline -- warm tones, red/brown
         # heetch -- red with purple bg
         # tarot -- red, burgundy, purple, kinda like darker heetch
 
@@ -46,7 +46,7 @@
 
         # xcode-dusk -- grey + bright colors, very cool
 
-        name = "caroline";
+        name = "heetch";
       in
       "${inputs.tt-schemes}/base16/${name}.yaml";
   };
