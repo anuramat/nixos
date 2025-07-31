@@ -12,4 +12,5 @@ in
   "claude.age".publicKeys = keys;
   "gemini.age".publicKeys = keys;
   "openrouter.age".publicKeys = keys;
+  "anthropic.age".publicKeys = keys;
 }
