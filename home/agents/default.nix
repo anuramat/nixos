@@ -3,7 +3,7 @@
   imports = [
     ./commands.nix
     ./frontends
-    ./instructions
+    ./instructions.nix
     ./mcp.nix
     ./sandbox.nix
   ];
