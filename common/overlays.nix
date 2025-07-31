@@ -108,6 +108,29 @@ in
             EOF
             chmod +x $out/bin/ccusage
           '';
+      # cccusage = prev.buildNpmPackage rec {
+      #    pname = "ccusage";
+      #    version = "15.5.2";
+      #    src = prev.fetchzip {
+      #      url = "https://registry.npmjs.org/ccusage/-/ccusage-${version}.tgz";
+      #      hash = "sha256-OCWpQiFk8L/X4tRIuKFlRNYlpk1n6rPTKgVtU27usiA=";
+      #    };
+      #    postPatch = ''
+      #      echo '{"name":"ccusage","lockfileVersion":2,"requires":true,"packages":{}}' > package-lock.json
+      #    '';
+      #    forceEmptyCache = true;
+      #    npmDepsHash = "sha256-ikHe0I6Vo7wu7Mwb9JZDxtlBMwTjs+SLP/Y5o/wI/pE=";
+      #    dontNpmBuild = true;
+      #    installPhase = ''
+      #      runHook preInstall
+      #      mkdir -p $out/bin
+      #      cp dist/* $out/bin/
+      #      ln -sf $out/bin/index.js $out/bin/ccusage
+      #      chmod +x $out/bin/ccusage
+      #      runHook postInstall
+      #    '';
+      #  };
+
       gemini-cli = prev.gemini-cli.overrideAttrs (oldAttrs: rec {
         version = "0.1.14";
         src = prev.fetchFromGitHub {
