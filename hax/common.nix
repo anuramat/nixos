@@ -45,6 +45,7 @@ rec {
         + main
       );
 
+  # TODO look at usage and improve ux
   jsonUpdate =
     pkgs: target: argsList: # bash
     ''

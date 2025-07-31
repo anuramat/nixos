@@ -9,7 +9,6 @@ let
   settings = {
     instructions = config.lib.agents.contextFileName;
   };
-  agentDir = "opencode";
 in
 {
   home = {
@@ -17,13 +16,14 @@ in
       (config.lib.agents.mkSandbox {
         wrapperName = "ocd";
         package = pkgs.opencode;
-        inherit agentDir;
       })
     ];
     # TODO mcp
+    # TODO subasians
+    # TODO commands
     activation = {
       opencodeConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] (
-        hax.common.jsonUpdate pkgs "${config.xdg.configHome}/${agentDir}/opencode.json" [
+        hax.common.jsonUpdate pkgs "${config.xdg.configHome}/opencode/opencode.json" [
           {
             prop = ".";
             text = lib.generators.toJSON { } settings;

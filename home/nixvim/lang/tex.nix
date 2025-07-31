@@ -2,7 +2,7 @@
   plugins.vimtex = {
     enable = true;
   };
-  lsp.servers.texlab = {
+  plugins.lsp.servers.texlab = {
     enable = true;
     settings = {
       texlab = {
