@@ -6,6 +6,7 @@
   ...
 }:
 let
+  inherit (lib) mapAttrs;
   inherit (config.lib) agents;
   hooks = {
     Notification = [
@@ -25,8 +26,26 @@ let
     deny = [ ];
   };
 
-  commands = agents.mkPrompts ".claude/commands" agents.commands;
-  subagents = agents.mkPrompts ".claude/agents" agents.roles;
+  commands =
+    let
+      adaptedCommands = agents.commands |> mapAttrs (n: v: v.withFM { inherit (v) description; });
+    in
+    agents.mkPrompts ".claude/commands" adaptedCommands;
+
+  roles =
+    let
+      readOnlyTools = "Glob, Grep, LS, ExitPlanMode, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, ListMcpResourcesTool, ReadMcpResourceTool";
+      adaptedRoles =
+        agents.roles
+        |> mapAttrs (
+          n: v:
+          v.withFM {
+            inherit (v) name description;
+            tools = if v.readonly then readOnlyTools else null;
+          }
+        );
+    in
+    agents.mkPrompts ".claude/agents" adaptedRoles;
 
   cld = config.lib.agents.mkSandbox {
     wrapperName = "cld";
@@ -59,7 +78,7 @@ in
         };
       }
       // commands
-      // subagents
+      // roles
     );
     packages = [
       cld

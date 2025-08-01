@@ -81,10 +81,10 @@ in
         };
       });
       claude-code = prev.claude-code.overrideAttrs (oldAttrs: rec {
-        version = "1.0.60";
+        version = "1.0.65";
         src = prev.fetchzip {
           url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-          hash = "sha256-ygeitenu4z9ACbezO53I2Xnk6NtE1fWVzCi3mZS7wF8=";
+          hash = "";
         };
       });
       ccusage =
@@ -118,9 +118,10 @@ in
         };
         installPhase = ''
           runHook preInstall
-          mkdir -p $out/bin
-          cp dist/myst.cjs $out/bin/myst
-          chmod +x $out/bin/myst
+          # mkdir -p $out/bin
+          # cp dist/myst.cjs $out/bin/myst
+          install -D dist/myst.cjs $out/bin/myst
+          # chmod +x $out/bin/myst
           runHook postInstall
         '';
       };

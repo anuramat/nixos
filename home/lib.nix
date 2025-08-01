@@ -53,7 +53,7 @@ in
         script = # bash
           ''
             temp=$(mktemp)
-            [ -s "${target}" ] || echo '{}' > "${target}"
+            [ -s "${target}" ] || echo '{}' >"${target}"
             cp '${target}' "$temp"
             ${
               source

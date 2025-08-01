@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
   programs.obs-studio = {
     enable = true;
@@ -26,6 +26,6 @@
       ];
     in
     {
-      "obs-studio/plugin_config/tuna/outputs.json" = tunaCfg;
+      "obs-studio/plugin_config/tuna/outputs.json".text = lib.generators.toJSON { } tunaCfg;
     };
 }
