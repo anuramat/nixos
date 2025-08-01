@@ -40,4 +40,5 @@ in
     };
   };
   xdg.configFile = { } // roles;
+  # TODO stylix and https://opencode.ai/docs/themes/
 }
