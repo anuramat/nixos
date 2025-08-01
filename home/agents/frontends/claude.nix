@@ -33,7 +33,7 @@ let
     package = pkgs.claude-code;
     args = "--dangerously-skip-permissions";
     env = {
-      CLAUDE_CODE_OAUTH_TOKEN = "$(cat '${osConfig.age.secrets.claude.path}')";
+      CLAUDE_CODE_OAUTH_TOKEN = "$(cat '${osConfig.age.secrets.claudecode.path}')";
     };
     agentDir = null;
     extraRwDirs = [
