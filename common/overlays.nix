@@ -109,11 +109,11 @@ in
             chmod +x $out/bin/ccusage
           '';
       gemini-cli = prev.gemini-cli.overrideAttrs (oldAttrs: rec {
-        version = "0.1.14";
+        version = "0.1.15";
         src = inputs.gemini;
         npmDeps = prev.fetchNpmDeps {
           inherit src;
-          hash = "sha256-9T31QlffPP6+ryRVN/7t0iMo+2AgwPb6l6CkYh6839U=";
+          hash = "sha256-6lyBrkvQsUKFTnIK5aLBszLXzsVyFq2nUwfwiCbBPAY=";
         };
 
         # TODO the rest was vibecoded:
