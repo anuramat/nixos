@@ -11,9 +11,9 @@ in
     ./commands.nix
     ./frontends
     ./instructions.nix
-    ./mcp.nix
     ./roles.nix
     ./sandbox.nix
+    ./tools.nix
   ];
 
   # terminology:
