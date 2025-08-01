@@ -37,6 +37,7 @@
         # };
       };
     };
+    blink-cmp-copilot.enable = true;
     copilot-lua = {
       enable = true;
       settings = {

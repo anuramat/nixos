@@ -72,7 +72,6 @@ in
     pythonPackages
     flakes
     (final: prev: {
-      codex = inputs.codex.packages.x86_64-linux.codex-rs;
       amp-cli = prev.amp-cli.overrideAttrs (oldAttrs: rec {
         version = "0.0.1749960449-gc74a77";
         src = prev.fetchzip {
@@ -118,10 +117,7 @@ in
         };
         installPhase = ''
           runHook preInstall
-          # mkdir -p $out/bin
-          # cp dist/myst.cjs $out/bin/myst
           install -D dist/myst.cjs $out/bin/myst
-          # chmod +x $out/bin/myst
           runHook postInstall
         '';
       };
@@ -133,15 +129,10 @@ in
         doCheck = false;
         vendorHash = "sha256-P+2m3RogxqSo53vGXxLO4sLF5EVsG66WJw3Bb9+rvT8=";
       };
+      codex = inputs.codex.packages.x86_64-linux.codex-rs;
       vimPlugins = prev.vimPlugins // {
         avante-nvim = prev.vimPlugins.avante-nvim.overrideAttrs (old: {
-          src = prev.fetchFromGitHub {
-            owner = "yetone";
-            repo = "avante.nvim";
-            rev = "v0.0.25";
-            hash = "sha256-lmyooXvQ+Cqv/6iMVlwToJZMFePSWoVzuGVV7jsSOZc=";
-          };
-          version = "v0.0.25";
+          src = inputs.avante;
         });
       };
     })

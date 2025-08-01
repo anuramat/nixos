@@ -48,6 +48,23 @@
         "type": "github"
       }
     },
+    "avante": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1753672485,
+        "narHash": "sha256-0PSZkDHoVSnDhbcxJ1koL31mTmHd5oOnLhLRKtTvzZQ=",
+        "owner": "yetone",
+        "repo": "avante.nvim",
+        "rev": "7e50de89049ea3540f0d39acec7b68a74a5d1edb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "yetone",
+        "ref": "v0.0.27",
+        "repo": "avante.nvim",
+        "type": "github"
+      }
+    },
     "base16": {
       "inputs": {
         "fromYaml": "fromYaml"
@@ -1093,6 +1110,7 @@
     "root": {
       "inputs": {
         "agenix": "agenix",
+        "avante": "avante",
         "claude-desktop": "claude-desktop",
         "codex": "codex",
         "crush": "crush",

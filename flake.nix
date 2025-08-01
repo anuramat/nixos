@@ -9,6 +9,10 @@
       };
       url = "github:yaxitech/ragenix";
     };
+    avante = {
+      flake = false;
+      url = "github:yetone/avante.nvim/v0.0.27";
+    };
     claude-desktop = {
       inputs = {
         nixpkgs = {

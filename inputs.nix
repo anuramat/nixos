@@ -46,4 +46,5 @@ in
   # TODO use max-jobs to fetch caches
   crush = mkNonFlake "github:charmbracelet/crush/nightly"; # or nightly
   gemini = mkNonFlake "github:google-gemini/gemini-cli/v0.1.15-nightly.250801.6f7beb41";
+  avante = mkNonFlake "github:yetone/avante.nvim/v0.0.27";
 }
