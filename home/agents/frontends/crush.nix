@@ -7,22 +7,6 @@
 let
   inherit (lib) mapAttrs filterAttrs getExe;
   inherit (builtins) tail;
-  lsp =
-    with config.programs.nixvim.plugins.lsp.servers;
-    {
-      go = gopls;
-      nix = nil_ls;
-      python = pyright;
-    }
-    |> filterAttrs (n: v: v.enable)
-    |> mapAttrs (
-      n: v: {
-        command = getExe v.package;
-        args = if v.cmd == null then [ ] else tail v.cmd;
-        options = v.settings;
-      }
-    );
-  mcp = config.lib.agents.mcp.json.file;
   general = {
     context_paths = config.lib.agents.contextFiles ++ [
       config.lib.agents.instructions.path
@@ -38,12 +22,10 @@ in
         args = "--yolo";
       })
     ];
-    # TODO subasians
-    # TODO commands
     activation = {
       crushConfig = config.lib.home.jsonUpdate {
-        ".mcp" = mcp;
-        ".lsp" = lsp;
+        ".mcp" = config.lib.agents.mcp.file;
+        ".lsp" = config.lib.agents.lsp.file;
         ".options" = general;
       } "${config.xdg.configHome}/crush/crush.json";
     };

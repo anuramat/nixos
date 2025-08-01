@@ -67,5 +67,16 @@ in
           '';
       in
       lib.hm.dag.entryAfter [ "writeBoundary" ] script;
+    mkJson =
+      name: raw:
+      let
+        text = lib.generators.toJSON { } raw;
+      in
+      {
+        inherit raw text;
+        file = pkgs.writeTextFile {
+          inherit name text;
+        };
+      };
   };
 }

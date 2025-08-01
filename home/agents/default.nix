@@ -8,7 +8,6 @@ let
 in
 {
   imports = [
-    ./avante.nix
     ./commands.nix
     ./frontends
     ./instructions.nix
@@ -54,6 +53,7 @@ in
       ]
       |> concatStringsSep "\n";
 
+    # TODO rename
     mkPrompts =
       dir: prompts:
       lib.mapAttrs' (promptName: prompt: {

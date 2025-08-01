@@ -17,7 +17,6 @@ in
         contextFileName = config.lib.agents.contextFiles;
       };
     };
-    # TODO commands, subasians, mcp
     packages = [
       (config.lib.agents.mkSandbox {
         package = pkgs.gemini-cli;

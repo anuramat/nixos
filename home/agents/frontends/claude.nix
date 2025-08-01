@@ -64,7 +64,7 @@ let
   home = config.home.homeDirectory;
 
   mkMcpConfig = config.lib.home.jsonUpdate {
-    ".mcpServers" = config.lib.agents.mcp.json.file;
+    ".mcpServers" = config.lib.agents.mcp.file;
   };
 in
 {

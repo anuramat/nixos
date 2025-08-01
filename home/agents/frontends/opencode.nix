@@ -9,8 +9,21 @@ let
   settings = {
     instructions = config.lib.agents.contextFiles;
   };
-  inherit (config.lib.agents) roles mkPrompts;
-  subagents = mkPrompts "opencode/agent" roles;
+  inherit (config.lib.agents) mkPrompts;
+  inherit (lib) mapAttrs;
+
+  readOnlyTools = "{ write: false, edit: false, bash: false }";
+  roles =
+    config.lib.agents.roles
+    |> mapAttrs (
+      n: v:
+      v.withFM {
+        inherit (v) description;
+        model = "github-copilot/gpt-4.1";
+        tools = if v.readonly then readOnlyTools else null;
+      }
+    )
+    |> mkPrompts "opencode/agents";
 in
 {
   home = {
@@ -20,18 +33,11 @@ in
         package = pkgs.opencode;
       })
     ];
-    # TODO mcp
-    # TODO subasians
-    # TODO commands
-    # Lsp
     activation = {
       opencodeConfig = config.lib.home.jsonUpdate {
         "." = settings;
       } "${config.xdg.configHome}/opencode/opencode.json";
     };
   };
-
-  # parametrize agent header, then uncomment TODO
-  # https://opencode.ai/docs/agents/
-  # xdg.configFile = { } // subagents;
+  xdg.configFile = { } // roles;
 }
