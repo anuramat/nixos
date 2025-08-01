@@ -22,8 +22,8 @@ in
         file = ./litellm.age;
         mode = "400";
       };
-      claude = {
-        file = ./claude.age;
+      claudecode = {
+        file = ./claudecode.age;
         owner = user.username;
       };
       gemini = {
@@ -32,6 +32,10 @@ in
       };
       openrouter = {
         file = ./openrouter.age;
+        owner = user.username;
+      };
+      anthropic = {
+        file = ./anthropic.age;
         owner = user.username;
       };
     };

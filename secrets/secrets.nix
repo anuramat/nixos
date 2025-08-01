@@ -9,7 +9,7 @@ in
 {
   "ghmcp.age".publicKeys = keys;
   "litellm.age".publicKeys = keys;
-  "claude.age".publicKeys = keys;
+  "claudecode.age".publicKeys = keys;
   "gemini.age".publicKeys = keys;
   "openrouter.age".publicKeys = keys;
   "anthropic.age".publicKeys = keys;
