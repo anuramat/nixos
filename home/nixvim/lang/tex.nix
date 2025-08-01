@@ -3,9 +3,6 @@
     vimtex = {
       enable = true;
     };
-    cmp-latex-symbols = {
-      enable = true;
-    };
     lsp.servers.texlab = {
       enable = true;
       settings = {
