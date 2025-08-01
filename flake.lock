@@ -183,7 +183,7 @@
       },
       "original": {
         "owner": "charmbracelet",
-        "ref": "v0.1.11",
+        "ref": "nightly",
         "repo": "crush",
         "type": "github"
       }
