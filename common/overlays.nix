@@ -24,6 +24,7 @@ let
       github-mcp-server
       keymapp
       proton-pass
+      gemini-cli
       ;
   };
   pythonPackages = final: prev: {
@@ -108,35 +109,6 @@ in
             EOF
             chmod +x $out/bin/ccusage
           '';
-      gemini-cli = prev.gemini-cli.overrideAttrs (oldAttrs: rec {
-        version = "0.1.15";
-        src = inputs.gemini;
-        npmDeps = prev.fetchNpmDeps {
-          inherit src;
-          hash = lib.fakeHash;
-        };
-
-        # TODO the rest was vibecoded:
-        preConfigure = ''
-          mkdir -p packages/generated
-          echo "export const GIT_COMMIT_INFO = { commitHash: '${src.rev}' };" > packages/generated/git-commit.ts
-        '';
-        installPhase = ''
-          runHook preInstall
-          mkdir -p $out/{bin,share/gemini-cli/packages}
-          cp -r node_modules $out/share/gemini-cli/
-          rm -f $out/share/gemini-cli/node_modules/@google/gemini-cli
-          rm -f $out/share/gemini-cli/node_modules/@google/gemini-cli-core
-          cp -r packages/cli $out/share/gemini-cli/node_modules/@google/gemini-cli
-          cp -r packages/core $out/share/gemini-cli/node_modules/@google/gemini-cli-core
-          cp -r packages/vscode-ide-companion $out/share/gemini-cli/packages/vscode-ide-companion
-          ln -s $out/share/gemini-cli/node_modules/@google/gemini-cli/dist/index.js $out/bin/gemini
-          runHook postInstall
-        '';
-        postInstall = ''
-          chmod +x "$out/bin/gemini"
-        '';
-      });
       mystmd = prev.stdenv.mkDerivation rec {
         pname = "mystmd";
         version = "1.6.0";
