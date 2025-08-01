@@ -84,7 +84,7 @@ in
         version = "1.0.65";
         src = prev.fetchzip {
           url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-          hash = "";
+          hash = "sha256-Ch55xuJZJ0LXDTIlC7Ya381jqeGJzYC5IDEY0hS76/M=";
         };
       });
       ccusage =
@@ -133,6 +133,15 @@ in
         doCheck = false;
         vendorHash = "sha256-P+2m3RogxqSo53vGXxLO4sLF5EVsG66WJw3Bb9+rvT8=";
       };
+      # vimPlugins.avante-nvim.overrideAttrs (old: {
+      #   src = pkgs.fetchFromGitHub {
+      #     owner = "yetone";
+      #     repo = "avante.nvim";
+      #     rev = "v0.0.25";
+      #     hash = "sha256-lmyooXvQ+Cqv/6iMVlwToJZMFePSWoVzuGVV7jsSOZc=";
+      #   };
+      #   version = "v0.0.25";
+      # });
     })
   ];
 }

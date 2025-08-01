@@ -1,5 +1,6 @@
 {
   lib,
+  hax,
   inputs,
   pkgs,
   ...
@@ -8,40 +9,32 @@
   plugins = {
     avante = {
       enable = true;
-      package = pkgs.vimPlugins.avante-nvim.overrideAttrs (old: {
-        src = pkgs.fetchFromGitHub {
-          owner = "yetone";
-          repo = "avante.nvim";
-          rev = "v0.0.25";
-          hash = "sha256-lmyooXvQ+Cqv/6iMVlwToJZMFePSWoVzuGVV7jsSOZc=";
-        };
-        version = "v0.0.25";
-      });
       settings = {
         provider = "copilot";
-        behaviour = {
-          auto_suggestions = false;
-        };
+        # behaviour = {
+        #   auto_suggestions = true;
+        # };
         providers = {
           copilot = {
-            model = "claude-sonnet-4";
+            # model = "claude-sonnet-4";
+            model = "gpt-4.1";
           };
         };
-        windows = {
-          ask = {
-            floating = true;
-            start_insert = false;
-          };
-          edit = {
-            start_insert = false;
-          };
-          input = {
-            height = 12;
-            prefix = "";
-          };
-          width = 40;
-          wrap = true;
-        };
+        # windows = {
+        #   ask = {
+        #     floating = true;
+        #     start_insert = false;
+        #   };
+        #   edit = {
+        #     start_insert = false;
+        #   };
+        #   input = {
+        #     height = 12;
+        #     prefix = "";
+        #   };
+        #   width = 40;
+        #   wrap = true;
+        # };
       };
     };
     copilot-lua = {
@@ -57,6 +50,15 @@
         suggestion = {
           enabled = false;
         };
+        filetypes = {
+          markdown = false;
+        };
+        should_attach = hax.vim.lua ''
+          function(_, bufname)
+            if string.match(bufname, 'notes') then return false end
+            return true
+          end
+        '';
       };
     };
   };

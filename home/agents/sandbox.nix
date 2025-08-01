@@ -83,8 +83,9 @@ in
         map (x: ''"${x}"'') (baseRwDirs ++ agentDirs ++ extraRwDirs) |> builtins.concatStringsSep " ";
       env = (agent.env or { }) // {
         ${varNames.agentName} = "'${agentName}'";
-        GEMINI_API_KEY = "$(cat '${osConfig.age.secrets.gemini.path}')";
-        ANTHROPIC_API_KEY = "$(cat '${osConfig.age.secrets.anthropic.path}')";
+        # TODO move to specific agents
+        # GEMINI_API_KEY = "$(cat '${osConfig.age.secrets.gemini.path}')";
+        # ANTHROPIC_API_KEY = "$(cat '${osConfig.age.secrets.anthropic.path}')";
       };
     in
     (pkgs.writeShellApplication {
