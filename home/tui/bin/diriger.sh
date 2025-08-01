@@ -91,7 +91,7 @@ launch() {
 		run 'git worktree add -b "$feature-$agent-$i" "$treepath"'
 
 		# append the prompt
-		prompt_appended=true
+		unknown_agent=false
 		ready_msg=
 		if [[ -n $prompt ]]; then
 			case "$agent" in
@@ -99,11 +99,7 @@ launch() {
 				ocd) cmd+=" -p '$prompt'" ;;
 				cld) cmd+=" ' $prompt'" ;;
 				crs) ready_msg="Ready?" ;;
-				*)
-					prompt_appended=false
-					echo "Invalid agent: '$agent'"
-					exit 1
-					;;
+				*) unknown_agent=true ;;
 			esac
 		fi
 
@@ -111,11 +107,9 @@ launch() {
 		pane="$agent-$i"
 		# TODO we might need escaping in $cmd
 		run 'tmux neww -t "$session_name" -n "$pane" -c "$treepath" "$cmd"'
-		if [[ $prompt_appended != true ]]; then
-
-			if [[ -n $ready_msg ]]; then
+		if [[ $ready_msg != "" ]] || [[ $unknown_agent == true ]]; then
+			if [[ $ready_msg != "" ]]; then
 				# TODO factor out the numbers everywhere
-				# TODO crs still doesn't work
 				for i in {1..25}; do
 					capture=$(tmux capture-pane -t "$pane" -p)
 					if grep -qF "$ready_msg" <<<"$capture"; then

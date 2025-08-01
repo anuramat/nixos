@@ -44,6 +44,6 @@ in
   # TODO check if any of these are in the community cache
   # TODO is it possible to only look up nixpkgs stuff in cache
   # TODO use max-jobs to fetch caches
-  crush = mkNonFlake "github:charmbracelet/crush/v0.1.11"; # or nightly
+  crush = mkNonFlake "github:charmbracelet/crush/nightly"; # or nightly
   gemini = mkNonFlake "github:google-gemini/gemini-cli/v0.1.15-nightly.250801.6f7beb41";
 }
