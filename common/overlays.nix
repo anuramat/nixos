@@ -133,15 +133,17 @@ in
         doCheck = false;
         vendorHash = "sha256-P+2m3RogxqSo53vGXxLO4sLF5EVsG66WJw3Bb9+rvT8=";
       };
-      # vimPlugins.avante-nvim.overrideAttrs (old: {
-      #   src = pkgs.fetchFromGitHub {
-      #     owner = "yetone";
-      #     repo = "avante.nvim";
-      #     rev = "v0.0.25";
-      #     hash = "sha256-lmyooXvQ+Cqv/6iMVlwToJZMFePSWoVzuGVV7jsSOZc=";
-      #   };
-      #   version = "v0.0.25";
-      # });
+      vimPlugins = prev.vimPlugins // {
+        avante-nvim = prev.vimPlugins.avante-nvim.overrideAttrs (old: {
+          src = prev.fetchFromGitHub {
+            owner = "yetone";
+            repo = "avante.nvim";
+            rev = "v0.0.25";
+            hash = "sha256-lmyooXvQ+Cqv/6iMVlwToJZMFePSWoVzuGVV7jsSOZc=";
+          };
+          version = "v0.0.25";
+        });
+      };
     })
   ];
 }
