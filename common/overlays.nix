@@ -113,7 +113,7 @@ in
         src = inputs.gemini;
         npmDeps = prev.fetchNpmDeps {
           inherit src;
-          hash = "sha256-6lyBrkvQsUKFTnIK5aLBszLXzsVyFq2nUwfwiCbBPAY=";
+          hash = lib.fakeHash;
         };
 
         # TODO the rest was vibecoded:

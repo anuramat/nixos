@@ -11,7 +11,7 @@ let
     with config.programs.nixvim.plugins.lsp.servers;
     {
       go = gopls;
-      nix = nil-ls;
+      nix = nil_ls;
       python = pyright;
     }
     |> filterAttrs (n: v: v.enable)
