@@ -30,6 +30,7 @@
     enable = true;
   };
 
+  programs.gphoto2.enable = true; # dslr interface
   services.protonmail-bridge = {
     enable = true;
   };

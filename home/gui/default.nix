@@ -5,6 +5,7 @@
     ./desktop
     ./viewers.nix
     ./terminals.nix
+    ./obs.nix
   ];
 
   programs = {
