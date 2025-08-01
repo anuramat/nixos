@@ -110,23 +110,6 @@
     };
   };
 
-  # fonts {{{1
-  # TODO how does this not conflict with stylix
-  fonts = {
-    packages = with pkgs; [
-      nerd-fonts.hack
-      nerd-fonts.iosevka
-      nerd-fonts.iosevka-term
-      nerd-fonts.fira-mono
-      nerd-fonts.fira-code
-    ];
-    fontconfig = {
-      defaultFonts = {
-        monospace = [ "Hack Nerd Font" ];
-      };
-    };
-  };
-
   boot.loader = {
     # on desktops we expect efi
     systemd-boot = {

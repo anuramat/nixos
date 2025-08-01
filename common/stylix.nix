@@ -12,6 +12,7 @@
     fonts = {
       monospace = {
         name = "Hack Nerd Font";
+        package = pkgs.nerd-fonts.hack;
       };
       sizes = {
         applications = 13;
