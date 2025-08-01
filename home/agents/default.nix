@@ -8,6 +8,7 @@ let
 in
 {
   imports = [
+    ./avante.nix
     ./commands.nix
     ./frontends
     ./instructions.nix

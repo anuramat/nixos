@@ -9,16 +9,8 @@
   # TODO https://github.com/Kaiser-Yang/blink-cmp-avante
   plugins = {
     avante = {
+      # NOTE prompt setup is in `agents`
       enable = true;
-      settings = {
-        provider = "copilot";
-        providers = {
-          copilot = {
-            # model = "claude-sonnet-4";
-            model = "gpt-4.1";
-          };
-        };
-      };
     };
     blink-cmp-copilot.enable = true;
     copilot-lua = {
@@ -46,5 +38,4 @@
       };
     };
   };
-  # TODO mcphub
 }
