@@ -84,6 +84,7 @@ in
       env = (agent.env or { }) // {
         ${varNames.agentName} = "'${agentName}'";
         GEMINI_API_KEY = "$(cat '${osConfig.age.secrets.gemini.path}')";
+        ANTHROPIC_API_KEY = "$(cat '${osConfig.age.secrets.anthropic.path}')";
       };
     in
     (pkgs.writeShellApplication {

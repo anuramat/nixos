@@ -22,7 +22,7 @@
     };
     crush = {
       flake = false;
-      url = "github:charmbracelet/crush/nightly";
+      url = "github:charmbracelet/crush/v0.1.11";
     };
     ctrlsn = {
       inputs = {
