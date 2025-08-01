@@ -6,6 +6,7 @@
   ...
 }:
 {
+  # TODO https://github.com/Kaiser-Yang/blink-cmp-avante
   plugins = {
     avante = {
       enable = true;
