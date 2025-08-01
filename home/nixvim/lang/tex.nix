@@ -1,26 +1,31 @@
 {
-  plugins.vimtex = {
-    enable = true;
-  };
-  plugins.lsp.servers.texlab = {
-    enable = true;
-    settings = {
-      texlab = {
-        build = {
-          forwardSearchAfter = true;
-          onSave = true;
-        };
-        chktex = {
-          onEdit = true;
-          onOpenAndSave = true;
-        };
-        forwardSearch = {
-          args = [
-            "--synctex-forward"
-            "%l:1:%f"
-            "%p"
-          ];
-          executable = "zathura";
+  plugins = {
+    vimtex = {
+      enable = true;
+    };
+    cmp-latex-symbols = {
+      enable = true;
+    };
+    lsp.servers.texlab = {
+      enable = true;
+      settings = {
+        texlab = {
+          build = {
+            forwardSearchAfter = true;
+            onSave = true;
+          };
+          chktex = {
+            onEdit = true;
+            onOpenAndSave = true;
+          };
+          forwardSearch = {
+            args = [
+              "--synctex-forward"
+              "%l:1:%f"
+              "%p"
+            ];
+            executable = "zathura";
+          };
         };
       };
     };
