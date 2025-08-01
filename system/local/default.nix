@@ -8,7 +8,6 @@
 }:
 {
   imports = [
-    ./misc.nix
     ./peripherals.nix
     ./remaps.nix
   ];
@@ -31,6 +30,7 @@
   };
 
   programs.gphoto2.enable = true; # dslr interface
+  programs.obs-studio.enableVirtualCamera = true; # set up the v4l2loopback kernel module, used in home-manager
   services.protonmail-bridge = {
     enable = true;
   };
