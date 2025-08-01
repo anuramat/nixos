@@ -6,7 +6,12 @@
   ...
 }:
 let
-  inherit (lib) getExe mapAttrs;
+  inherit (lib)
+    getExe
+    mapAttrs
+    filterAttrs
+    tail
+    ;
 
   mcp = {
     # TODO nvim mcp: provides lsp most importantly, formatter (can be replaced with a commit hook), maybe more
@@ -34,12 +39,14 @@ let
   };
 
   lsp =
-    with config.programs.nixvim.plugins.lsp.servers;
-    {
-      go = gopls;
-      nix = nil_ls;
-      python = pyright;
-    }
+    let
+      servers = with config.programs.nixvim.plugins.lsp.servers; {
+        go = gopls;
+        nix = nil_ls;
+        python = pyright;
+      };
+    in
+    servers
     |> filterAttrs (n: v: v.enable)
     |> mapAttrs (
       n: v: {
