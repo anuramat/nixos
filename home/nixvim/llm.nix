@@ -11,30 +11,12 @@
       enable = true;
       settings = {
         provider = "copilot";
-        # behaviour = {
-        #   auto_suggestions = true;
-        # };
         providers = {
           copilot = {
             # model = "claude-sonnet-4";
             model = "gpt-4.1";
           };
         };
-        # windows = {
-        #   ask = {
-        #     floating = true;
-        #     start_insert = false;
-        #   };
-        #   edit = {
-        #     start_insert = false;
-        #   };
-        #   input = {
-        #     height = 12;
-        #     prefix = "";
-        #   };
-        #   width = 40;
-        #   wrap = true;
-        # };
       };
     };
     blink-cmp-copilot.enable = true;
