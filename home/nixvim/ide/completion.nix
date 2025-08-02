@@ -6,7 +6,7 @@
     blink-cmp = {
       enable = true;
       settings.sources = {
-        copilot = {
+        providers.copilot = {
           async = true;
           module = "blink-cmp-copilot";
           name = "copilot";
