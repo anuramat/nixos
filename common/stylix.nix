@@ -7,7 +7,7 @@
       package = pkgs.hackneyed;
       size = 32;
     };
-    autoEnable = true;
+    enable = true;
     fonts = {
       monospace = {
         name = "Hack Nerd Font";

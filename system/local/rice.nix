@@ -1,6 +1,6 @@
 { lib, ... }:
 {
-  stylix.enable = true;
+  stylix.autoEnable = true;
   # loading screen rice
   boot.plymouth.enable = true;
   # tty rice; impossible to start a wm in it
