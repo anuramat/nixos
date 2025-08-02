@@ -78,7 +78,15 @@ in
           hash = "sha256-Bl6FAwhUF5pdS6a8YNlRU8DyD8FPCPpBWBX6/gc/TTI=";
         };
       });
-      # gemini-cli = # TODO
+      gemini-cli = prev.gemini-cli.overrideAttrs (old: rec {
+        src = inputs.gemini;
+        version = inputs.gemini.shortRev or "dev";
+        npmDepsHash = "sha256-lErkcHTRIbxc9VMiliU/J4EnYctF87C75sYtgjuRVdI=";
+        npmDeps = final.fetchNpmDeps {
+          inherit src;
+          hash = npmDepsHash;
+        };
+      });
       claude-code = prev.claude-code.overrideAttrs (oldAttrs: rec {
         version = "1.0.65";
         src = prev.fetchzip {
