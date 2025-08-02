@@ -32,6 +32,27 @@
     noAutostart = true;
   };
 
+  services = {
+    ollama =
+      let
+        cuda = config.hardware.nvidia.enabled;
+      in
+      {
+        enable = true;
+        acceleration = lib.mkIf cuda "cuda";
+        loadModels = lib.mkIf cuda [ ]; # pull models on service start
+        environmentVariables = {
+          OLLAMA_FLASH_ATTENTION = "1";
+        };
+        port = 11434; # explicit default
+        host = "0.0.0.0";
+        openFirewall = false; # disable to limit the interfaces
+      };
+  };
+
+  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
+    config.services.ollama.port
+  ];
   boot.initrd.systemd.enable = true; # TODO idk why I have this
 
   # TODO check through virtualisation; also maybe we can move some of it
