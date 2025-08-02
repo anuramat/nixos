@@ -4,6 +4,7 @@
   ...
 }:
 {
+  #pinentryonsshs
   services.pass-secret-service.enable = true; # secret service api -- exposes password-store over dbus
   programs = {
     gpg = {

@@ -1,26 +1,35 @@
 {
   config,
+  cluster,
   hax,
   lib,
   inputs,
   ...
 }:
 {
-  imports = with inputs; [
-    nixvim.homeModules.nixvim
-    spicetify-nix.homeManagerModules.spicetify
-    ./agents
-    ./editor.nix
-    ./email.nix
-    ./gui
-    ./keyring.nix
-    ./lang
-    ./lib.nix
-    ./mime
-    ./misc.nix
-    ./theme.nix
-    ./tui
-  ];
+  imports =
+    with inputs;
+    [
+      nixvim.homeModules.nixvim
+      ./agents
+      ./editor.nix
+      ./email.nix
+      ./keyring.nix
+      ./lang
+      ./lib.nix
+      ./mime
+      ./misc.nix
+      ./tui
+    ]
+    ++ (
+      if !cluster.this.server then
+        [
+          ./gui
+          spicetify-nix.homeManagerModules.spicetify
+        ]
+      else
+        [ ]
+    );
 
   xdg.enable = true; # set xdg basedir vars in .profile
 

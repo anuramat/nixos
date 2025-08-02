@@ -6,6 +6,7 @@
     ./viewers.nix
     ./terminals.nix
     ./obs.nix
+    ./theme.nix
   ];
 
   programs = {
