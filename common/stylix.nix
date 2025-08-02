@@ -7,7 +7,6 @@
       package = pkgs.hackneyed;
       size = 32;
     };
-    enable = true;
     autoEnable = true;
     fonts = {
       monospace = {

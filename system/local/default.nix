@@ -10,8 +10,11 @@
   imports = [
     ./peripherals.nix
     ./remaps.nix
+    ./rice.nix
   ];
-  security.rtkit.enable = true; # realtime kit, hands out realtime priority to user processes
+
+  hardware.graphics.enable = true;
+
   services = {
     pipewire = {
       enable = true;

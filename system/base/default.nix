@@ -12,10 +12,10 @@
     ./nix.nix
     ./user.nix
     ./home.nix
-    ./rice.nix
     ./net.nix
   ];
 
+  security.rtkit.enable = true; # realtime kit, hands out realtime priority to user processes
   # TODO move?
   time.timeZone = user.tz;
   i18n.defaultLocale = user.locale;

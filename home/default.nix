@@ -11,21 +11,20 @@
     with inputs;
     [
       nixvim.homeModules.nixvim
-      ./agents
       ./editor.nix
-      ./email.nix
       ./keyring.nix
-      ./lang
       ./lib.nix
-      ./mime
-      ./misc.nix
       ./tui
     ]
     ++ (
       if !cluster.this.server then
         [
+          ./mime
           ./gui
+          ./email.nix
+          ./agents
           spicetify-nix.homeManagerModules.spicetify
+          ./lang
         ]
       else
         [ ]
