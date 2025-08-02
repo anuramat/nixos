@@ -95,9 +95,8 @@ let
             ''
             + body
           );
-    in
-    {
       prepare-commit-msg =
+        config:
         gitHook
           # bash
           ''
@@ -124,6 +123,8 @@ let
             	printf '\n%s' "$signature" >> "$COMMIT_MSG_FILE"
             fi
           '';
+    in
+    {
       pre-commit =
         gitHook
           # bash
@@ -131,14 +132,15 @@ let
             hook_name=$(basename "$0")
             local=./.git/hooks/$hook_name
             [ -x "$local" ] && [ -f "$local" ] && {
-            	exec "$local"
+              exec "$local"
             }
 
             if [ -f ./treefmt.toml ]; then
-            	treefmt --fail-on-change
+              treefmt --fail-on-change
             fi
           '';
-    };
+    }
+    // (if config.lib ? agents then prepare-commit-msg config else { });
 in
 {
   programs = {
