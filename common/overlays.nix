@@ -81,7 +81,7 @@ in
       gemini-cli = prev.gemini-cli.overrideAttrs (old: rec {
         src = inputs.gemini;
         version = inputs.gemini.shortRev or "dev";
-        npmDepsHash = "";
+        npmDepsHash = "sha256-fa3BGfA/caqrPQ/6zyhHZYgA/mJkVkM3cMNQN2KTkZQ=";
         npmDeps = final.fetchNpmDeps {
           inherit src;
           hash = npmDepsHash;
