@@ -58,6 +58,9 @@
     graphics = {
       extraPackages = with pkgs; [
         vaapiVdpau # no fucking idea what this does TODO
+        # TODO maybe these?
+        # nvidia-vaapi-driver
+        # libvdpau-va-gl
       ];
       enable32Bit = true; # compat
     };
