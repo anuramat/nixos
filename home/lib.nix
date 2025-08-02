@@ -78,5 +78,18 @@ in
           inherit name text;
         };
       };
+    gitHook =
+      body:
+      pkgs.writeShellScript "hook" # bash
+        (
+          ''
+            hook_name=$(basename "$0")
+            local=./.git/hooks/$hook_name
+            [ -x "$local" ] && [ -f "$local" ] && {
+            	exec "$local"
+            }
+          ''
+          + body
+        );
   };
 }

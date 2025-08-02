@@ -72,10 +72,6 @@ in
     file = (
       {
         ".claude/CLAUDE.md".text = agents.instructions.text;
-        ".claude/settings.json".text = lib.generators.toJSON { } {
-          includeCoAuthoredBy = false;
-          inherit hooks permissions;
-        };
       }
       // commands
       // roles
@@ -84,6 +80,10 @@ in
       cld
     ];
     activation = {
+      claudeSettings = config.lib.home.jsonUpdate {
+        includeCoAuthoredBy = false;
+        inherit hooks permissions;
+      } "${home}/.claude/settings.json";
       claudeMcp = mkMcpConfig "${home}/.claude.json";
       claudeDesktopMcp = mkMcpConfig "${config.xdg.configHome}/Claude/claude_desktop_config.json";
     };

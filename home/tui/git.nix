@@ -80,67 +80,22 @@ let
     "*.ipynb diff=jupyternotebook merge=jupyternotebook"
     "flake.lock diff=nodiff"
   ];
-  hooks =
-    let
-      gitHook =
-        body:
-        pkgs.writeShellScript "hook" # bash
-          (
-            ''
-              hook_name=$(basename "$0")
-              local=./.git/hooks/$hook_name
-              [ -x "$local" ] && [ -f "$local" ] && {
-              	exec "$local"
-              }
-            ''
-            + body
-          );
-      prepare-commit-msg =
-        config:
-        gitHook
-          # bash
-          ''
-            COMMIT_MSG_FILE=$1
-            COMMIT_SOURCE=$2
+  hooks = {
+    pre-commit =
+      config.lib.home.gitHook
+        # bash
+        ''
+          hook_name=$(basename "$0")
+          local=./.git/hooks/$hook_name
+          [ -x "$local" ] && [ -f "$local" ] && {
+            exec "$local"
+          }
 
-            # NOTE that COMMIT_MSG_FILE only has comments when it's invoked interactively
-            # meanwhile with `commit -m` it already contains the message
-            # e.g. claude always uses `commit -m`
-            signature="Co-Authored-By: ${"$" + config.lib.agents.varNames.agentName}"
-            if [ -v ${config.lib.agents.varNames.agentName} ]; then
-            	if [ "$COMMIT_SOURCE" = "commit" ]; then
-            		echo 'permission error: agents are not allowed to use `git commit` with flags `-c`, `-C`, or `--amend`'
-            		exit 1
-            	fi
-            	if ! [ -s "$COMMIT_MSG_FILE" ]; then
-            		echo 'error: empty commit message'
-            		exit 1
-            	fi
-            	if grep -q "$signature" "$COMMIT_MSG_FILE"; then
-            		echo 'assertion error: commit already contains a "Co-Authored-By" trailer'
-            		exit 1
-            	fi
-            	printf '\n%s' "$signature" >> "$COMMIT_MSG_FILE"
-            fi
-          '';
-    in
-    {
-      pre-commit =
-        gitHook
-          # bash
-          ''
-            hook_name=$(basename "$0")
-            local=./.git/hooks/$hook_name
-            [ -x "$local" ] && [ -f "$local" ] && {
-              exec "$local"
-            }
-
-            if [ -f ./treefmt.toml ]; then
-              treefmt --fail-on-change
-            fi
-          '';
-    }
-    // (if config.lib ? agents then prepare-commit-msg config else { });
+          if [ -f ./treefmt.toml ]; then
+            treefmt --fail-on-change
+          fi
+        '';
+  };
 in
 {
   programs = {

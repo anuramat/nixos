@@ -562,16 +562,16 @@
     "gemini": {
       "flake": false,
       "locked": {
-        "lastModified": 1754007028,
-        "narHash": "sha256-YHj1/qKc5tbpX0lvd86cU9M5mdWCmQQ+PmrIPgdFsYo=",
+        "lastModified": 1754107049,
+        "narHash": "sha256-fFYlXmOqQm3s4Bt3Rgkvlyph+85AJCb5ttDYFC3jfVo=",
         "owner": "google-gemini",
         "repo": "gemini-cli",
-        "rev": "cff16c9b422d93f564940d37cbb4d45724c39c78",
+        "rev": "d123b488b399203acda71a4f6aab16e07be63ffa",
         "type": "github"
       },
       "original": {
         "owner": "google-gemini",
-        "ref": "v0.1.15-nightly.250801.6f7beb41",
+        "ref": "v0.1.16",
         "repo": "gemini-cli",
         "type": "github"
       }

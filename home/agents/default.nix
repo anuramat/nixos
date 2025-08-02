@@ -10,6 +10,7 @@ in
   imports = [
     ./commands.nix
     ./frontends
+    ./git.nix
     ./instructions.nix
     ./roles.nix
     ./sandbox.nix
