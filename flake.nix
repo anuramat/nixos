@@ -41,7 +41,7 @@
     };
     gemini = {
       flake = false;
-      url = "github:google-gemini/gemini-cli";
+      url = "github:google-gemini/gemini-cli/v0.1.16";
     };
     home-manager = {
       inputs = {
