@@ -66,6 +66,7 @@
     # krita # raster graphics, digital art # XXX not in cache, takes ages to build
     saber
     joplin-desktop
+    standardnotes
     logseq
     obsidian
     inkscape-with-extensions # vector graphics
