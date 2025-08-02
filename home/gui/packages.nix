@@ -60,20 +60,19 @@
     zathura # keyboard-centric pdf/djvu reader
     gnumeric # spreadsheets
     # khoj # ai stuff
+    logseq
+    obsidian
     libreoffice # just in case
-
-    # img
-    # krita # raster graphics, digital art # XXX not in cache, takes ages to build
     saber
     joplin-desktop
     standardnotes
-    logseq
-    obsidian
+
+    # img
+    # krita # raster graphics, digital art # XXX not in cache, takes ages to build
     inkscape-with-extensions # vector graphics
-    mypaint # not-ms-paint
-    gimp-with-plugins # raster graphics
-    darktable # lightroom
-    rawtherapee # lightroom
+    gimp-with-plugins
+    darktable
+    rawtherapee
 
     # video
     vlc
