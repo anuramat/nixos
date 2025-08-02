@@ -24,7 +24,6 @@ let
       github-mcp-server
       keymapp
       proton-pass
-      gemini-cli
       ;
   };
   pythonPackages = final: prev: {
@@ -79,6 +78,7 @@ in
           hash = "sha256-Bl6FAwhUF5pdS6a8YNlRU8DyD8FPCPpBWBX6/gc/TTI=";
         };
       });
+      # gemini-cli = # TODO
       claude-code = prev.claude-code.overrideAttrs (oldAttrs: rec {
         version = "1.0.65";
         src = prev.fetchzip {
