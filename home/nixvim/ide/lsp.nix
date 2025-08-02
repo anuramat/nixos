@@ -24,7 +24,7 @@
       settings = {
         handle_leading_whitespace = true;
       };
-      autoActivate = false;
+      autoActivate = false; # TODO
     };
   };
 }

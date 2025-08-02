@@ -20,14 +20,17 @@ in
 {
   # TODO mcphub
   programs.nixvim.plugins = {
-    avante.settings = {
-      inherit shortcuts;
-      system_prompt = agents.instructions.text;
-      provider = "copilot";
-      providers = {
-        copilot = {
-          # model = "claude-sonnet-4";
-          model = "gpt-4.1";
+    avante = {
+      enable = true;
+      settings = {
+        inherit shortcuts;
+        system_prompt = agents.instructions.text;
+        provider = "copilot";
+        providers = {
+          copilot = {
+            # model = "claude-sonnet-4";
+            model = "gpt-4.1";
+          };
         };
       };
     };

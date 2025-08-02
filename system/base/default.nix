@@ -9,7 +9,6 @@
 {
   imports = [
     ./builder.nix
-    ./llm.nix
     ./nix.nix
     ./user.nix
     ./home.nix

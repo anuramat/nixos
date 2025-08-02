@@ -22,7 +22,6 @@
     ./git.nix
     ./ide
     ./lang
-    ./llm.nix
     ./misc.nix
     ./treesitter.nix
     ./ui.nix
