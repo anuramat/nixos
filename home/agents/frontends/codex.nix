@@ -13,6 +13,7 @@ let
       # https://github.com/openai/codex/blob/main/codex-rs/config.md
       cfg = {
         mcp_servers = config.lib.agents.mcp.raw;
+        model_provider = "GHCP";
         model_providers.GHCP = {
           name = "GHCP";
           base_url = "http://localhost:${config.lib.agents.api.port}";
@@ -46,6 +47,7 @@ in
         binName = "codex";
         package = pkgs.codex;
         args = "--full-auto";
+        agentDir = null;
         wrapperName = "cdx";
         # https://github.com/openai/codex/blob/main/codex-rs/config.md
         extraRwDirs = [
