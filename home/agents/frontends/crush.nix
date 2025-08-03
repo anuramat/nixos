@@ -30,7 +30,10 @@ let
     text =
       # bash
       ''
-        [ -s "${tokenFile}" ] || echo "No GitHub Copilot token found." && exit 1
+        if ! [ -s "${tokenFile}" ]; then
+          echo "No GitHub Copilot token found."
+          exit 1
+        fi
         token=$(jq -r '.[].oauth_token' '${tokenFile}') || exit 1
         curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $token" https://api.githubcopilot.com/models | jq '[.data[] |
         	{
