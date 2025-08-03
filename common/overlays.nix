@@ -74,8 +74,8 @@ let
     in
     {
       gemini-cli = mkNpxLink "gemini" "@google/gemini-cli";
-      copilot-api = mkNpx "copilot-api" "copilot-api";
-      ccusage = mkNpx "ccusage" "ccusage";
+      copilot-api = mkNpx "copilot-api";
+      ccusage = mkNpx "ccusage";
     };
 
   overlays =
