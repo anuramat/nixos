@@ -13,7 +13,7 @@ let
       {
         hooks = [
           {
-            command = "jq .message -r | xargs -0I{} notify-send 'Claude Code' {}";
+            command = ''notify-send "Claude Code" "$(jq .message -r)"'';
             type = "command";
           }
         ];

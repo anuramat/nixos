@@ -54,7 +54,6 @@ in
         args = "--yolo";
       })
       pkgs.crush
-      pkgs.writeShellApplication
       models
     ];
     activation = {

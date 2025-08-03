@@ -49,7 +49,16 @@ let
             |> lib.concatMapStringsSep "\n" (
               lib.concatMapAttrsStringSep "\n" (
                 key: value:
-                ''run ${getExe pkgs.jq} --slurpfile arg ${fileWithJson value} '.${key} ${operator} $arg[0]' "$temp" | ${pkgs.moreutils}/bin/sponge "$temp" || exit''
+                let
+                  file = fileWithJson value;
+                in
+                ''
+                  if [ -s ${file} ]; then
+                    run ${getExe pkgs.jq} --slurpfile arg ${fileWithJson value} '.${key} ${operator} $arg[0]' "$temp" | ${pkgs.moreutils}/bin/sponge "$temp" || exit
+                  else
+                    echo "Warning: ${file} is empty, skipping" >&2
+                  fi
+                ''
               )
             )
           }

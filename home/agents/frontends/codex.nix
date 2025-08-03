@@ -10,6 +10,7 @@ let
   codexCfgPath = codexHome + "/config.toml";
   codexTomlCfg =
     let
+      # https://github.com/openai/codex/blob/main/codex-rs/config.md
       cfg = {
         mcp_servers = config.lib.agents.mcp.raw;
         model_providers.GHCP = {
@@ -18,6 +19,21 @@ let
           env_key = "dummy";
           # wire_api = "chat" or "responses";
         };
+        notify =
+          let
+            notifier = pkgs.writeShellApplication {
+              name = "codex-notifier";
+              runtimeInputs = with pkgs; [
+                jq
+                findutils
+                libnotify
+              ];
+              text = ''
+                notify-send "Codex" "$(jq .last-assistant-message -r)"
+              '';
+            };
+          in
+          [ notifier ];
       };
     in
     (pkgs.formats.toml { }).generate "codex-config.toml" cfg;
