@@ -13,30 +13,34 @@ let
     tail
     ;
 
-  mcp = {
+  mcp =
     # TODO nvim mcp: provides lsp most importantly, formatter (can be replaced with a commit hook), maybe more
     # TODO rag?
-    nixos = {
-      command = getExe pkgs.mcp-nixos;
-    };
-    github =
-      let
-        githubPatched = config.lib.home.patchedBinary {
-          name = "GITHUB_PERSONAL_ACCESS_TOKEN";
-          token = osConfig.age.secrets.ghmcp.path;
-          package = pkgs.github-mcp-server;
-        };
-      in
-      {
-        command = githubPatched;
-        args = [
-          "stdio"
-        ];
+    let
+      nixos = {
+        command = getExe pkgs.mcp-nixos;
       };
-    # playwright = {
-    #   command = getExe pkgs.playwright-mcp;
-    # };
-  };
+      github =
+        let
+          githubPatched = config.lib.home.patchedBinary {
+            name = "GITHUB_PERSONAL_ACCESS_TOKEN";
+            token = osConfig.age.secrets.ghmcp.path;
+            package = pkgs.github-mcp-server;
+          };
+        in
+        {
+          command = githubPatched;
+          args = [
+            "stdio"
+          ];
+        };
+      playwright = {
+        command = getExe pkgs.playwright-mcp;
+      };
+    in
+    {
+      inherit nixos;
+    };
 
   lsp =
     let
