@@ -134,7 +134,20 @@ in
         vendorHash = "sha256-aI3MSaQYUOLJxBxwCoVg13HpxK46q6ZITrw1osx5tiE=";
       };
 
-      codex = inputs.codex.packages.x86_64-linux.codex-rs;
+      codex = pkgs.stdenv.mkDerivation {
+        pname = "codex";
+        version = "0.11.0";
+        src = pkgs.fetchurl {
+          url = "https://github.com/openai/codex/releases/download/rust-v0.11.0/codex";
+          hash = "sha256-ARV2anuZPwxIh/5UaRgW8i7A+evA9oqq10lf4Rvu4LU=";
+        };
+        dontUnpack = true;
+        nativeBuildInputs = [ pkgs.makeWrapper ];
+        installPhase = ''
+          install -Dm755 $src $out/bin/codex-real
+          makeWrapper ${pkgs.dotslash}/bin/dotslash $out/bin/codex --add-flags codex-real
+        '';
+      };
 
       vimPlugins = prev.vimPlugins // {
         avante-nvim = prev.vimPlugins.avante-nvim.overrideAttrs (old: {
