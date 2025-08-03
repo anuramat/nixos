@@ -17,33 +17,24 @@ let
   toJSON = lib.generators.toJSON { };
 
   fileWithJson =
+    # @args: value: value to convert or json file derivation
     value:
     if (isDerivation value) && (value ? text) then
       value
     else
-      (
-        let
-          text =
-            if isString value then
-              value
-            else if isAttrs value then
-              toJSON value
-            else
-              throw "type error: '${toString value}' of type ${builtins.typeOf value}";
-        in
-        writeTextFile {
-          name = "tmptxt";
-          inherit text;
-        }
-      );
+      (writeTextFile {
+        name = "tmptxt.json"; # TODO rename
+        text = toJSON value;
+      });
 
+  # TODO: refactor to call jq once: write all sources to a single json file, then loop in jq or at least unroll a nix loop into a jq command (still just one jq command)
   mkJqActivationScript =
     # @returns: activation script, that updates a JSON file
     # @args:
     #   - target -- path of the file to update (relative to $HOME)
     #   - source -- attribute set of key-value pairs to write, where
     #     key is the JSON path (starting with "."), and
-    #     value is the value to write; type: attrset/json string/json file derivation
+    #     value is any/derivation
     operator: source: target:
     let
       script = # bash
@@ -55,7 +46,7 @@ let
             source
             |> mapAttrsToList (
               key: value:
-              ''run ${getExe pkgs.jq} --slurpfile arg ${fileWithJson value} '${key} ${operator} $arg[0]' "$temp" | ${pkgs.moreutils}/bin/sponge "$temp" || exit''
+              ''run ${getExe pkgs.jq} --slurpfile arg ${fileWithJson value} '.${key} ${operator} $arg[0]' "$temp" | ${pkgs.moreutils}/bin/sponge "$temp" || exit''
             )
             |> concatStringsSep "\n"
           }

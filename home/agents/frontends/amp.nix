@@ -30,7 +30,7 @@ in
     ];
     activation = {
       ampConfig = config.lib.home.json.set {
-        "." = settings;
+        "" = settings;
       } "${config.xdg.configHome}/${agentDir}/settings.json";
     };
   };

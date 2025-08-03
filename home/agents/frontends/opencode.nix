@@ -1,17 +1,18 @@
 {
   pkgs,
-  hax,
   lib,
   config,
   ...
 }:
 let
-  instructions = config.lib.agents.contextFiles;
+
   inherit (config.lib.agents) mkPrompts;
   inherit (lib) mapAttrs;
 
-  readOnlyTools = "{ write: false, edit: false, bash: false }";
-  roles =
+  roleFiles =
+    let
+      readOnlyTools = "{ write: false, edit: false, bash: false }";
+    in
     config.lib.agents.roles
     |> mapAttrs (
       n: v:
@@ -22,8 +23,14 @@ let
       }
     )
     |> mkPrompts "opencode/agents";
+
+  opencodeConfig = {
+    instructions = config.lib.agents.contextFiles;
+  };
+
 in
 {
+
   home = {
     packages = [
       (config.lib.agents.mkSandbox {
@@ -32,11 +39,11 @@ in
       })
     ];
     activation = {
-      opencodeConfig = config.lib.home.json.set {
-        ".instructions" = instructions;
-      } "${config.xdg.configHome}/opencode/opencode.json";
+      opencodeConfig = config.lib.home.json.set opencodeConfig "${config.xdg.configHome}/opencode/opencode.json";
     };
   };
-  xdg.configFile = { } // roles;
+
+  xdg.configFile = { } // roleFiles;
   # TODO stylix and https://opencode.ai/docs/themes/
+
 }

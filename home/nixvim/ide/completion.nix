@@ -8,7 +8,7 @@
       settings.sources = {
         providers.copilot = {
           async = true;
-          module = "blink-cmp-copilot";
+          module = "blink-copilot";
           name = "copilot";
           score_offset = 100;
         };
@@ -21,7 +21,7 @@
         ];
       };
     };
-    blink-cmp-copilot.enable = true;
+    blink-copilot.enable = true;
     copilot-lua = {
       enable = true;
       settings = {

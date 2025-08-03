@@ -7,10 +7,14 @@
 let
   inherit (lib) mapAttrs filterAttrs getExe;
   inherit (builtins) tail;
-  general = {
-    context_paths = config.lib.agents.contextFiles ++ [
-      config.lib.agents.instructions.path
-    ];
+  crushConfig = {
+    mcp = config.lib.agents.mcp.file;
+    lsp = config.lib.agents.lsp.file;
+    general = {
+      context_paths = config.lib.agents.contextFiles ++ [
+        config.lib.agents.instructions.path
+      ];
+    };
   };
 in
 {
@@ -23,11 +27,7 @@ in
       })
     ];
     activation = {
-      crushConfig = config.lib.home.json.set {
-        ".mcp" = config.lib.agents.mcp.file;
-        ".lsp" = config.lib.agents.lsp.file;
-        ".options" = general;
-      } "${config.xdg.configHome}/crush/crush.json";
+      crushConfig = config.lib.home.json.set crushConfig "${config.xdg.configHome}/crush/crush.json";
     };
   };
 }

@@ -64,7 +64,7 @@ let
   home = config.home.homeDirectory;
 
   mkMcpConfig = config.lib.home.json.set {
-    ".mcpServers" = config.lib.agents.mcp.file;
+    mcpServers = config.lib.agents.mcp.file;
   };
 in
 {
@@ -81,7 +81,7 @@ in
     ];
     activation = {
       claudeSettings = config.lib.home.json.set {
-        ".includeCoAuthoredBy" = false;
+        includeCoAuthoredBy = false;
         inherit hooks permissions;
       } "${home}/.claude/settings.json";
       claudeMcp = mkMcpConfig "${home}/.claude.json";
