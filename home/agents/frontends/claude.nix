@@ -105,6 +105,7 @@ in
     packages = [
       pkgs.claude-code
       cld
+      cldcp
     ];
     activation = {
       claudeSettings = config.lib.home.json.set {
