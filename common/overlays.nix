@@ -79,14 +79,39 @@ in
           hash = "sha256-Bl6FAwhUF5pdS6a8YNlRU8DyD8FPCPpBWBX6/gc/TTI=";
         };
       });
-      gemini-cli = prev.gemini-cli.overrideAttrs (old: rec {
-        src = inputs.gemini;
-        version = inputs.gemini.shortRev or "dev";
-        npmDepsHash = "sha256-fa3BGfA/caqrPQ/6zyhHZYgA/mJkVkM3cMNQN2KTkZQ=";
-        npmDeps = final.fetchNpmDeps {
-          inherit src;
-          hash = npmDepsHash;
+      gemini-cli = prev.gemini-cli.overrideAttrs (oldAttrs: rec {
+        version = "0.1.14";
+        src = prev.fetchFromGitHub {
+          owner = "google-gemini";
+          repo = "gemini-cli";
+          tag = "v${version}";
+          hash = "sha256-u73aqh7WnfetHj/64/HyzSR6aJXRKt0OXg3bddhhQq8=";
         };
+        npmDeps = prev.fetchNpmDeps {
+          inherit src;
+          hash = "sha256-9T31QlffPP6+ryRVN/7t0iMo+2AgwPb6l6CkYh6839U=";
+        };
+
+        # TODO the rest was vibecoded:
+        preConfigure = ''
+          mkdir -p packages/generated
+          echo "export const GIT_COMMIT_INFO = { commitHash: '${src.rev}' };" > packages/generated/git-commit.ts
+        '';
+        installPhase = ''
+          runHook preInstall
+          mkdir -p $out/{bin,share/gemini-cli/packages}
+          cp -r node_modules $out/share/gemini-cli/
+          rm -f $out/share/gemini-cli/node_modules/@google/gemini-cli
+          rm -f $out/share/gemini-cli/node_modules/@google/gemini-cli-core
+          cp -r packages/cli $out/share/gemini-cli/node_modules/@google/gemini-cli
+          cp -r packages/core $out/share/gemini-cli/node_modules/@google/gemini-cli-core
+          cp -r packages/vscode-ide-companion $out/share/gemini-cli/packages/vscode-ide-companion
+          ln -s $out/share/gemini-cli/node_modules/@google/gemini-cli/dist/index.js $out/bin/gemini
+          runHook postInstall
+        '';
+        postInstall = ''
+          chmod +x "$out/bin/gemini"
+        '';
       });
       claude-code = prev.claude-code.overrideAttrs (oldAttrs: rec {
         version = "1.0.65";
