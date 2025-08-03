@@ -8,6 +8,7 @@ let
 in
 {
   imports = [
+    ./api.nix
     ./commands.nix
     ./frontends
     ./git.nix

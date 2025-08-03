@@ -68,6 +68,7 @@ in
       agentDir = agent.agentDir or binName; # the one in xdg directories
       agentName = agent.agentName or binName;
       cmd = "${lib.getExe' agent.package binName} ${args}";
+      preamble = agent.preamble or "";
 
       agentDirs =
         if agentDir != null then
@@ -95,6 +96,9 @@ in
       ];
 
       text = ''
+        # execute the preamble
+        ${preamble}
+
         # shadow some of the xdg directories with a tmp one
         ${shadowXdgScript agentDir}
 

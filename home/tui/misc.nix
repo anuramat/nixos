@@ -29,25 +29,7 @@ in
     };
   };
 
-  systemd.user.services.copilot-api =
-    let
-      target = "network.target";
-    in
-    {
-      Unit = {
-        Description = "copilot-api server";
-        PartOf = [ target ];
-        After = [ target ];
-      };
-      Service = {
-        ExecStart = "copilot-api";
-        Restart = "no";
-      };
-      Install.WantedBy = [ target ];
-    };
-
   programs = {
-
     tealdeer = {
       enable = true;
       settings = {

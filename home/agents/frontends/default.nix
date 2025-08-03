@@ -9,6 +9,7 @@
   # ./gemini.nix # TODO commands, subasians, mcp
   # ./goose.nix # TODO all
   # ./opencode.nix # TODO mcp subasians commands lsp
+
   imports = [
     ./amp.nix
     ./avante.nix
@@ -19,6 +20,7 @@
     ./goose.nix
     ./opencode.nix
   ];
+
   home.packages = with pkgs; [
     ccusage
     claude-desktop

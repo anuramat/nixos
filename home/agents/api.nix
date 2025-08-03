@@ -1,0 +1,22 @@
+{ lib, pkgs, ... }:
+let
+  port = toString 4141;
+in
+{
+  lib.agents.api.port = port;
+  systemd.user.services.copilot-api =
+    let
+      target = "network.target";
+    in
+    {
+      Unit = {
+        Description = "copilot-api server";
+        After = [ target ]; # enforces order
+        PartOf = [ target ]; # propagates stop/restart
+      };
+      Service = {
+        ExecStart = "${lib.getExe pkgs.copilot-api} start -p ${port}";
+        Restart = "no";
+      };
+    };
+}
