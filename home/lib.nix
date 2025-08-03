@@ -29,7 +29,7 @@ let
             else if isAttrs value then
               toJSON value
             else
-              throw "type error";
+              throw "type error: '${toString value}' of type ${builtins.typeOf value}";
         in
         writeTextFile {
           name = "tmptxt";
