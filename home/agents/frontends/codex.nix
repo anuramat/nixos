@@ -19,6 +19,7 @@ let
           env_key = "dummy";
           # wire_api = "chat" or "responses";
         };
+        approval_policy = "never";
         notify =
           let
             notifier = pkgs.writeShellApplication {
