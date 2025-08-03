@@ -83,6 +83,7 @@ let
   cldcp = config.lib.agents.mkSandbox (
     sandboxCfg
     // {
+      wrapperName = "cldcp";
       env = {
         ANTHROPIC_BASE_URL = "http://localhost:4141";
         ANTHROPIC_AUTH_TOKEN = "dummy";
