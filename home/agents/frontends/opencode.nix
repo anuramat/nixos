@@ -6,9 +6,7 @@
   ...
 }:
 let
-  settings = {
-    instructions = config.lib.agents.contextFiles;
-  };
+  instructions = config.lib.agents.contextFiles;
   inherit (config.lib.agents) mkPrompts;
   inherit (lib) mapAttrs;
 
@@ -35,7 +33,7 @@ in
     ];
     activation = {
       opencodeConfig = config.lib.home.jsonUpdate {
-        "." = settings;
+        ".instructions" = instructions;
       } "${config.xdg.configHome}/opencode/opencode.json";
     };
   };
