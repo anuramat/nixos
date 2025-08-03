@@ -95,6 +95,7 @@
     fortune # random quotes
 
     # miscellaneous unfiled TODO
+    dotslash
     python3
     just
     wishlist # ssh menu
