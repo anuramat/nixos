@@ -128,10 +128,10 @@ in
       crush = prev.buildGoModule rec {
         pname = "crush";
         meta.mainProgram = pname;
-        version = inputs.crush.tag;
-        src = inputs.shortRev;
+        version = inputs.crush.shortRev;
+        src = inputs.crush;
         doCheck = false;
-        vendorHash = "sha256-P+2m3RogxqSo53vGXxLO4sLF5EVsG66WJw3Bb9+rvT8=";
+        vendorHash = "sha256-aI3MSaQYUOLJxBxwCoVg13HpxK46q6ZITrw1osx5tiE=";
       };
 
       codex = inputs.codex.packages.x86_64-linux.codex-rs;
