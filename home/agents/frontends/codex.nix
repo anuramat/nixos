@@ -53,10 +53,11 @@ in
 {
   home = {
     packages = [
+      pkgs.codex
       (config.lib.agents.mkSandbox {
         binName = "codex";
         package = pkgs.codex;
-        args = "--full-auto";
+        args = "--full-auto --dangerously-bypass-approvals-and-sandbox";
         agentDir = null;
         copilot = true;
         wrapperName = "cdx";
