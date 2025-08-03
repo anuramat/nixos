@@ -23,7 +23,7 @@ in
       })
     ];
     activation = {
-      crushConfig = config.lib.home.jsonUpdate {
+      crushConfig = config.lib.home.json.set {
         ".mcp" = config.lib.agents.mcp.file;
         ".lsp" = config.lib.agents.lsp.file;
         ".options" = general;

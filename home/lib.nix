@@ -36,38 +36,60 @@ let
           inherit text;
         }
       );
+
+  mkJqActivationScript =
+    # @returns: activation script, that updates a JSON file
+    # @args:
+    #   - target -- path of the file to update (relative to $HOME)
+    #   - source -- attribute set of key-value pairs to write, where
+    #     key is the JSON path (starting with "."), and
+    #     value is the value to write; type: attrset/json string/json file derivation
+    operator: source: target:
+    let
+      script = # bash
+        ''
+          temp=$(mktemp)
+          [ -s "${target}" ] || echo '{}' >"${target}"
+          cp '${target}' "$temp"
+          ${
+            source
+            |> mapAttrsToList (
+              key: value:
+              ''run ${getExe pkgs.jq} --slurpfile arg ${fileWithJson value} '${key} ${operator} $arg[0]' "$temp" | ${pkgs.moreutils}/bin/sponge "$temp" || exit''
+            )
+            |> concatStringsSep "\n"
+          }
+          mv "$temp" "${target}"
+        '';
+    in
+    lib.hm.dag.entryAfter [ "writeBoundary" ] script;
+
 in
 {
+
   lib.home = {
+
     patchedBinary =
+      # returns a patched binary that sets an environment variable
+      # TODO rename to agenixPatchedBinary or something
       args:
       pkgs.writeShellScript "${getName args.package}-agenix-patched" # bash
         ''
           export ${args.name}=$(cat "${args.token}")
           ${getExe args.package} "$@"
         '';
-    jsonUpdate =
-      source: target:
-      let
 
-        script = # bash
-          ''
-            temp=$(mktemp)
-            [ -s "${target}" ] || echo '{}' >"${target}"
-            cp '${target}' "$temp"
-            ${
-              source
-              |> mapAttrsToList (
-                key: value:
-                ''run ${getExe pkgs.jq} --slurpfile arg ${fileWithJson value} '${key} = $arg[0]' "$temp" | ${pkgs.moreutils}/bin/sponge "$temp" || exit''
-              )
-              |> concatStringsSep "\n"
-            }
-            mv "$temp" "${target}"
-          '';
-      in
-      lib.hm.dag.entryAfter [ "writeBoundary" ] script;
+    json = {
+      merge = mkJqActivationScript "*=";
+      set = mkJqActivationScript "=";
+    };
+
     mkJson =
+      # used for configs, that share the same json values (e.g. mcp/lsp)
+      # @returns: a derivation with a file containing the JSON text
+      # @args:
+      #   - name -- name of the file
+      #   - raw -- attribute set
       name: raw:
       let
         text = lib.generators.toJSON { } raw;
@@ -78,6 +100,7 @@ in
           inherit name text;
         };
       };
+
     gitHook =
       body:
       pkgs.writeShellScript "hook" # bash
@@ -91,5 +114,6 @@ in
           ''
           + body
         );
+
   };
 }

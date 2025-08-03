@@ -32,7 +32,7 @@ in
       })
     ];
     activation = {
-      opencodeConfig = config.lib.home.jsonUpdate {
+      opencodeConfig = config.lib.home.json.set {
         ".instructions" = instructions;
       } "${config.xdg.configHome}/opencode/opencode.json";
     };
