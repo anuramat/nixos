@@ -142,7 +142,7 @@ in
   lib.agents.instructions = {
     inherit
       sections
-      head
+      head # TODO rename
       mkInstructions
       text
       ;

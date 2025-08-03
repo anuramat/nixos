@@ -3,7 +3,7 @@ let
   chooser = pkgs.xdg-desktop-portal-termfilechooser;
 in
 {
-  home.file.".config/xdg-desktop-portal-termfilechooser/config".text =
+  xdg.configFile."xdg-desktop-portal-termfilechooser/config".text =
     let
       wrapper = pkgs.writeShellApplication {
         name = "yazi-wrapper";

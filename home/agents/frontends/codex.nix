@@ -6,7 +6,9 @@
 }:
 let
   # TODO use jq for toml?
-  codexHome = config.home.homeDirectory + "/.codex"; # TODO change and propagate env
+  codexHomeRelative = ".codex";
+  codexHomeRoot = config.home.homeDirectory;
+  codexHome = codexHomeRoot + "/" + codexHomeRelative; # TODO change and propagate env
   codexCfgPath = codexHome + "/config.toml";
   codexTomlCfg =
     let
@@ -68,6 +70,10 @@ in
       codexConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         run cat ${codexTomlCfg} > "${codexCfgPath}";
       '';
+    };
+    # TODO use derivation instead of text (here and everywhere else we use global instructions)
+    file.${codexHomeRelative + "/AGENTS.md"} = {
+      inherit (config.lib.agents.instructions) text;
     };
   };
 }
