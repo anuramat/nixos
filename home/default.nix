@@ -11,7 +11,6 @@
     with inputs;
     [
       nixvim.homeModules.nixvim
-      ./editor.nix
       ./keyring.nix
       ./lib.nix
       ./tui
@@ -19,6 +18,7 @@
     ++ (
       if !cluster.this.server then
         [
+          ./editor.nix
           ./mime
           ./gui
           ./email.nix
