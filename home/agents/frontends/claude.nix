@@ -83,7 +83,7 @@ let
   cldcp = config.lib.agents.mkSandbox (
     sandboxCfg
     // {
-      preamble = "systemctl start --user copilot-api.service";
+      copilot = true;
       wrapperName = "cldcp";
       env = {
         ANTHROPIC_BASE_URL = "http://localhost:${config.lib.agents.api.port}";

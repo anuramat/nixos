@@ -56,6 +56,7 @@ in
         package = pkgs.codex;
         args = "--full-auto";
         agentDir = null;
+        copilot = true;
         wrapperName = "cdx";
         # https://github.com/openai/codex/blob/main/codex-rs/config.md
         extraRwDirs = [

@@ -55,6 +55,7 @@ in
         wrapperName = "crs";
         package = pkgs.crush;
         args = "--yolo";
+        copilot = true;
       })
       pkgs.crush
       models
