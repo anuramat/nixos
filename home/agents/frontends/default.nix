@@ -1,24 +1,15 @@
 { pkgs, ... }:
 {
-  # checklist: instructions, context files, roles, mcp, lsp, commands
-  # ./amp.nix # ?
-  # ./avante.nix # TODO: mcp, commands, roles
-  # ./claude.nix # TODO: CLAUDE.md is hardcoded
-  # ./codex.nix # ?
-  # ./crush.nix # roles, commands
-  # ./gemini.nix # TODO commands, subasians, mcp
-  # ./goose.nix # TODO all
-  # ./opencode.nix # TODO mcp subasians commands lsp
-
   imports = [
-    ./amp.nix
-    ./avante.nix
     ./claude.nix
-    ./codex.nix
-    ./crush.nix
+    ./avante.nix
     ./gemini.nix
-    ./goose.nix
+    ./crush.nix
     ./opencode.nix
+
+    ./amp.nix
+    ./codex.nix
+    ./goose.nix
   ];
 
   home.packages = with pkgs; [

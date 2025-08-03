@@ -10,6 +10,7 @@ let
     mapAttrsToList
     concatStringsSep
     isDerivation
+    isPath
     isString
     isAttrs
     ;
@@ -22,7 +23,7 @@ let
     if (isDerivation value) && (value ? text) then
       value
     else
-      (writeTextFile {
+      value.__path or (writeTextFile {
         name = "tmptxt.json"; # TODO rename
         text = toJSON value;
       });
@@ -32,23 +33,25 @@ let
     # @returns: activation script, that updates a JSON file
     # @args:
     #   - target -- path of the file to update (relative to $HOME)
-    #   - source -- attribute set of key-value pairs to write, where
+    #   - source -- (?list of) attribute set of key-value pairs to write, where
     #     key is the JSON path (starting with "."), and
     #     value is any/derivation
-    operator: source: target:
+    operator: sources: target:
     let
+      sourceList = if lib.isList sourceList then sourceList else [ sourceList ];
       script = # bash
         ''
           temp=$(mktemp)
           [ -s "${target}" ] || echo '{}' >"${target}"
           cp '${target}' "$temp"
           ${
-            source
-            |> mapAttrsToList (
-              key: value:
-              ''run ${getExe pkgs.jq} --slurpfile arg ${fileWithJson value} '.${key} ${operator} $arg[0]' "$temp" | ${pkgs.moreutils}/bin/sponge "$temp" || exit''
+            sourceList
+            |> lib.concatMapStringsSep "\n" (
+              lib.concatMapAttrsToList "\n" (
+                key: value:
+                ''run ${getExe pkgs.jq} --slurpfile arg ${fileWithJson value} '.${key} ${operator} $arg[0]' "$temp" | ${pkgs.moreutils}/bin/sponge "$temp" || exit''
+              )
             )
-            |> concatStringsSep "\n"
           }
           mv "$temp" "${target}"
         '';
