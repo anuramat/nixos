@@ -5,6 +5,15 @@
   ...
 }:
 let
+  mkNpx =
+    prev: binName: pkg:
+    let
+      npx = prev.lib.getExe' prev.nodejs "npx";
+    in
+    prev.writeShellScriptBin binName ''
+      exec ${npx} ${pkg} "$@"
+    '';
+
   flakes =
     final: prev:
     (builtins.mapAttrs (n: v: v.packages.${prev.system}.default) {
@@ -20,7 +29,6 @@ let
   unstablePkgs = final: prev: {
     inherit (import inputs.nixpkgs-unstable { inherit (pkgs) config system; })
       opencode
-      gemini-cli
       litellm
       playwright-mcp
       github-mcp-server
@@ -134,6 +142,7 @@ in
         vendorHash = "sha256-P+2m3RogxqSo53vGXxLO4sLF5EVsG66WJw3Bb9+rvT8=";
       };
       codex = inputs.codex.packages.x86_64-linux.codex-rs;
+      gemini-cli = mkNpx prev "gemini" "@google/gemini-cli";
       vimPlugins = prev.vimPlugins // {
         avante-nvim = prev.vimPlugins.avante-nvim.overrideAttrs (old: {
           src = inputs.avante;

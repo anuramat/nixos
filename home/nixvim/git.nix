@@ -39,14 +39,13 @@
 
   keymaps =
     let
-      set =
-        key: action: hax.vim.set "<leader>g${key}" "<cmd>Gitsigns ${action}<cr>" "${action} [Gitsigns]";
+      set = key: action: hax.vim.set "<leader>g${key}" "Gitsigns ${action}" "${action} [Gitsigns]";
     in
     [
       {
         mode = "v";
         key = "<leader>gs";
-        action = "<cmd>stage_hunk";
+        action = "<cmd>stage_hunk<cr>";
         options = {
           desc = "stage selection";
         };
@@ -59,8 +58,8 @@
       (set "p" "preview_hunk")
       (set "d" "diffthis")
 
-      (hax.vim.set "]h" "<cmd>Gitsigns next_hunk<cr>" "next hunk")
-      (hax.vim.set "[h" "<cmd>Gitsigns prev_hunk<cr>" "previous hunk")
+      (hax.vim.set "]h" "Gitsigns next_hunk" "next hunk")
+      (hax.vim.set "[h" "Gitsigns prev_hunk" "previous hunk")
 
       {
         mode = [
@@ -68,7 +67,7 @@
           "x"
         ];
         key = "ih";
-        action.__raw = "function() require('gitsigns').select_hunk() end";
+        action = hax.vim.luaf "require('gitsigns').select_hunk()";
         options.desc = "Inside hunk [gitsigns]";
       }
       {
@@ -77,7 +76,7 @@
           "x"
         ];
         key = "ah";
-        action.__raw = "function() require('gitsigns').select_hunk({ greedy = true }) end";
+        action = hax.vim.luaf "require('gitsigns').select_hunk({ greedy = true })";
         options.desc = "Around hunk [gitsigns]";
       }
     ];
