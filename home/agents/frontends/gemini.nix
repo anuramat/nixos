@@ -18,6 +18,7 @@ in
       };
     };
     packages = [
+      pkgs.gemini-cli
       (config.lib.agents.mkSandbox {
         package = pkgs.gemini-cli;
         wrapperName = "gmn";

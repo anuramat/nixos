@@ -5,14 +5,6 @@
   ...
 }:
 let
-  mkNpx =
-    prev: binName: pkg:
-    let
-      npx = prev.lib.getExe' prev.nodejs "npx";
-    in
-    prev.writeShellScriptBin binName ''
-      exec ${npx} ${pkg} "$@"
-    '';
 
   flakes =
     final: prev:
@@ -80,74 +72,68 @@ in
     unstablePkgs
     pythonPackages
     flakes
-    (final: prev: {
-      amp-cli = prev.amp-cli.overrideAttrs (oldAttrs: rec {
-        version = "0.0.1749960449-gc74a77";
-        src = prev.fetchzip {
-          url = "https://registry.npmjs.org/@sourcegraph/amp/-/amp-${version}.tgz";
-          hash = "sha256-Bl6FAwhUF5pdS6a8YNlRU8DyD8FPCPpBWBX6/gc/TTI=";
-        };
-      });
-      # gemini-cli = prev.gemini-cli.overrideAttrs (oldAttrs: rec {
-      # });
-      claude-code = prev.claude-code.overrideAttrs (oldAttrs: rec {
-        version = "1.0.65";
-        src = prev.fetchzip {
-          url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-          hash = "sha256-Ch55xuJZJ0LXDTIlC7Ya381jqeGJzYC5IDEY0hS76/M=";
-        };
-        # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
-      });
-      ccusage =
-        # TODO pure vibes
-        let
-          version = "15.5.2";
-        in
-        prev.runCommand "ccusage-${version}"
-          {
-            buildInputs = [ prev.nodejs ];
-            src = prev.fetchzip {
-              url = "https://registry.npmjs.org/ccusage/-/ccusage-${version}.tgz";
-              hash = "sha256-OCWpQiFk8L/X4tRIuKFlRNYlpk1n6rPTKgVtU27usiA=";
-            };
-          }
-          ''
-            mkdir -p $out/bin $out/lib/ccusage
-            cp -r $src/* $out/lib/ccusage/
-            cat > $out/bin/ccusage << EOF
-            #!/bin/sh
-            exec ${prev.nodejs}/bin/node $out/lib/ccusage/dist/index.js "\$@"
-            EOF
-            chmod +x $out/bin/ccusage
+    (
+      final: prev:
+      let
+        mkNpx = pkg: mkNpxLink pkg pkg;
+        mkNpxLink =
+          binName: pkg:
+          let
+            npx = prev.lib.getExe' prev.nodejs "npx";
+          in
+          prev.writeShellScriptBin binName ''
+            exec ${npx} ${pkg} "$@"
           '';
-      mystmd = prev.stdenv.mkDerivation rec {
-        pname = "mystmd";
-        version = "1.6.0";
-        src = prev.fetchzip {
-          url = "https://registry.npmjs.org/mystmd/-/mystmd-${version}.tgz";
-          hash = "sha256-OatP9lv2/K4W3puaGAcECOfzNMR6a2zIntsxRnnAn4Q=";
-        };
-        installPhase = ''
-          runHook preInstall
-          install -D dist/myst.cjs $out/bin/myst
-          runHook postInstall
-        '';
-      };
-      crush = prev.buildGoModule rec {
-        pname = "crush";
-        meta.mainProgram = pname;
-        version = "nightly";
-        src = inputs.crush;
-        doCheck = false;
-        vendorHash = "sha256-P+2m3RogxqSo53vGXxLO4sLF5EVsG66WJw3Bb9+rvT8=";
-      };
-      codex = inputs.codex.packages.x86_64-linux.codex-rs;
-      gemini-cli = mkNpx prev "gemini" "@google/gemini-cli";
-      vimPlugins = prev.vimPlugins // {
-        avante-nvim = prev.vimPlugins.avante-nvim.overrideAttrs (old: {
-          src = inputs.avante;
+      in
+      {
+        amp-cli = prev.amp-cli.overrideAttrs (oldAttrs: rec {
+          version = "0.0.1754236863-g8d30ac";
+          src = prev.fetchzip {
+            url = "https://registry.npmjs.org/@sourcegraph/amp/-/amp-${version}.tgz";
+            hash = "sha256-Bl6FAwhUF5pdS6a8YNlRU8DyD8FPCPpBWBX6/gc/TTI=";
+          };
         });
-      };
-    })
+        # https://www.npmjs.com/package/@sourcegraph/amp
+        claude-code = prev.claude-code.overrideAttrs (oldAttrs: rec {
+          version = "1.0.67";
+          src = prev.fetchzip {
+            url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
+            hash = "sha256-Ch55xuJZJ0LXDTIlC7Ya381jqeGJzYC5IDEY0hS76/M=";
+          };
+          # https://www.npmjs.com/package/@anthropic-ai/claude-code
+          # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
+        });
+        mystmd = prev.stdenv.mkDerivation rec {
+          pname = "mystmd";
+          version = "1.6.0";
+          src = prev.fetchzip {
+            url = "https://registry.npmjs.org/mystmd/-/mystmd-${version}.tgz";
+            hash = "sha256-OatP9lv2/K4W3puaGAcECOfzNMR6a2zIntsxRnnAn4Q=";
+          };
+          installPhase = ''
+            runHook preInstall
+            install -D dist/myst.cjs $out/bin/myst
+            runHook postInstall
+          '';
+        };
+        crush = prev.buildGoModule rec {
+          pname = "crush";
+          meta.mainProgram = pname;
+          version = "nightly";
+          src = inputs.crush;
+          doCheck = false;
+          vendorHash = "sha256-P+2m3RogxqSo53vGXxLO4sLF5EVsG66WJw3Bb9+rvT8=";
+        };
+        codex = inputs.codex.packages.x86_64-linux.codex-rs;
+        gemini-cli = mkNpxLink "gemini" "@google/gemini-cli";
+        copilot-api = mkNpx "copilot-api" "copilot-api";
+        ccusage = mkNpx "ccusage" "ccusage";
+        vimPlugins = prev.vimPlugins // {
+          avante-nvim = prev.vimPlugins.avante-nvim.overrideAttrs (old: {
+            src = inputs.avante;
+          });
+        };
+      }
+    )
   ];
 }
