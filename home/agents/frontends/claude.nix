@@ -89,6 +89,7 @@ in
       // roles
     );
     packages = [
+      pkgs.claude-code
       cld
     ];
     activation = {
