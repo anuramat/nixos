@@ -22,7 +22,7 @@ in
   # forks
   mdformat-myst = mkInput "github:anuramat/mdformat-myst/dev";
   mdmath = mkInput "github:anuramat/mdmath.nvim";
-  copilot-api = mkInput "github:anuramat/copilot-api";
+  copilot-api = mkInput "github:anuramat/copilot-api/flake";
 
   # `follows`
   agenix = mkInput "github:yaxitech/ragenix";

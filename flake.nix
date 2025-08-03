@@ -30,7 +30,7 @@
           follows = "nixpkgs";
         };
       };
-      url = "github:anuramat/copilot-api";
+      url = "github:anuramat/copilot-api/flake";
     };
     crush = {
       flake = false;
