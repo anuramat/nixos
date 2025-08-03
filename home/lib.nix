@@ -38,7 +38,7 @@ let
     #     value is any/derivation
     operator: sources: target:
     let
-      sourceList = if lib.isList sourceList then sourceList else [ sourceList ];
+      sourceList = if lib.isList sources then sources else [ sources ];
       script = # bash
         ''
           temp=$(mktemp)
@@ -47,7 +47,7 @@ let
           ${
             sourceList
             |> lib.concatMapStringsSep "\n" (
-              lib.concatMapAttrsToList "\n" (
+              lib.concatMapAttrsStringSep "\n" (
                 key: value:
                 ''run ${getExe pkgs.jq} --slurpfile arg ${fileWithJson value} '.${key} ${operator} $arg[0]' "$temp" | ${pkgs.moreutils}/bin/sponge "$temp" || exit''
               )
