@@ -20,9 +20,10 @@ in
 {
   home = {
     packages = [
+      pkgs.amp-cli
       (config.lib.agents.mkSandbox {
         package = pkgs.amp-cli;
-        wrapperName = "amp";
+        wrapperName = "amp-sb";
         extraRwDirs = [
           "$HOME/.amp"
         ];

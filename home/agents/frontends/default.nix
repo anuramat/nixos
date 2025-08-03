@@ -7,6 +7,7 @@
     ./crush.nix
     ./opencode.nix
 
+    ./codebuff.nix
     ./amp.nix
     ./codex.nix
     ./goose.nix

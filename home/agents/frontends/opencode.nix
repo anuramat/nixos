@@ -33,6 +33,7 @@ in
 
   home = {
     packages = [
+      pkgs.opencode
       (config.lib.agents.mkSandbox {
         wrapperName = "ocd";
         package = pkgs.opencode;
