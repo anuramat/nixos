@@ -24,6 +24,14 @@
     codex = {
       url = "github:openai/codex";
     };
+    copilot-api = {
+      inputs = {
+        nixpkgs = {
+          follows = "nixpkgs";
+        };
+      };
+      url = "github:anuramat/copilot-api";
+    };
     crush = {
       flake = false;
       url = "github:charmbracelet/crush/nightly";
