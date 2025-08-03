@@ -69,7 +69,7 @@ let
           npx = prev.lib.getExe' prev.nodejs "npx";
         in
         prev.writeShellScriptBin binName ''
-          exec ${npx} ${pkg} "$@"
+          exec ${npx} -y ${pkg} "$@"
         '';
     in
     {
