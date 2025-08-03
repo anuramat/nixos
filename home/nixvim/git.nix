@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, hax, ... }:
 {
   plugins = {
     gitlinker = {
@@ -39,24 +39,28 @@
 
   keymaps =
     let
-      map = key: action: desc: {
-        mode = "n";
-        inherit key action;
-        options = { inherit desc; };
-      };
-      mapWrap = key: action: map "<leader>g${key}" "<cmd>Gitsigns ${action}<cr>" "${action} [Gitsigns]";
+      set =
+        key: action: hax.vim.set "<leader>g${key}" "<cmd>Gitsigns ${action}<cr>" "${action} [Gitsigns]";
     in
     [
-      (mapWrap "s" "stage_hunk")
-      (mapWrap "S" "stage_buffer")
-      (mapWrap "r" "reset_hunk")
-      (mapWrap "R" "reset_buffer")
-      (mapWrap "b" "blame_line")
-      (mapWrap "p" "preview_hunk")
-      (mapWrap "d" "diffthis")
+      {
+        mode = "v";
+        key = "<leader>gs";
+        action = "<cmd>stage_hunk";
+        options = {
+          desc = "stage selection";
+        };
+      }
+      (set "s" "stage_hunk")
+      (set "S" "stage_buffer")
+      (set "r" "reset_hunk")
+      (set "R" "reset_buffer")
+      (set "b" "blame_line")
+      (set "p" "preview_hunk")
+      (set "d" "diffthis")
 
-      (map "]h" "<cmd>Gitsigns next_hunk<cr>" "next hunk")
-      (map "[h" "<cmd>Gitsigns prev_hunk<cr>" "previous hunk")
+      (hax.vim.set "]h" "<cmd>Gitsigns next_hunk<cr>" "next hunk")
+      (hax.vim.set "[h" "<cmd>Gitsigns prev_hunk<cr>" "previous hunk")
 
       {
         mode = [
