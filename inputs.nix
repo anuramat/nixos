@@ -43,6 +43,6 @@ in
 
   # non flakes
   avante = mkNonFlake "github:yetone/avante.nvim/v0.0.27";
-  crush = mkNonFlake "github:charmbracelet/crush/nightly"; # TODO set version
+  crush = mkNonFlake "github:charmbracelet/crush/v0.2.1"; # TODO set version
   tt-schemes = mkNonFlake "github:tinted-theming/schemes";
 }
