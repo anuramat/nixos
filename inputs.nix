@@ -15,10 +15,14 @@ in
   nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
   nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
 
+  # my stuff
   ctrlsn = mkInput "git+ssh://git@github.com/anuramat/ctrl.sn?ref=main";
+  subcat = mkInput "github:anuramat/subcat";
+
+  # forks
   mdformat-myst = mkInput "github:anuramat/mdformat-myst/dev";
   mdmath = mkInput "github:anuramat/mdmath.nvim";
-  subcat = mkInput "github:anuramat/subcat";
+  copilot-api = mkInput "github:anuramat/copilot-api";
 
   # `follows`
   agenix = mkInput "github:yaxitech/ragenix";
