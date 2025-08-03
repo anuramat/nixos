@@ -59,7 +59,7 @@ let
     in
     agents.mkPrompts ".claude/agents" adaptedRoles;
 
-  cld = config.lib.agents.mkSandbox {
+  sandboxCfg = {
     wrapperName = "cld";
     package = pkgs.claude-code;
     args = "--dangerously-skip-permissions";
@@ -72,12 +72,26 @@ let
       "$HOME/.claude"
     ];
   };
+  cld = config.lib.agents.mkSandbox sandboxCfg;
 
   home = config.home.homeDirectory;
 
   mkMcpConfig = config.lib.home.json.set {
     mcpServers = config.lib.agents.mcp.file;
   };
+
+  cldcp = config.lib.agents.mkSandbox (
+    sandboxCfg
+    // {
+      env = {
+        ANTHROPIC_BASE_URL = "http://localhost:4141";
+        ANTHROPIC_AUTH_TOKEN = "dummy";
+        ANTHROPIC_MODEL = "gpt-4.1";
+        ANTHROPIC_SMALL_FAST_MODEL = "gpt-4.1";
+      };
+    }
+  );
+
 in
 {
   home = {
