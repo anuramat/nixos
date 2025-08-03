@@ -25,6 +25,7 @@ in
         package = pkgs.crush;
         args = "--yolo";
       })
+      pkgs.crush
     ];
     activation = {
       crushConfig = config.lib.home.json.set crushConfig "${config.xdg.configHome}/crush/crush.json";
