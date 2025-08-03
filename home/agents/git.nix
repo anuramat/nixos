@@ -1,5 +1,6 @@
 { config, ... }:
 {
+  # TODO add model
   programs.git.hooks.prepare-commit-msg =
     config.lib.home.gitHook
       # bash

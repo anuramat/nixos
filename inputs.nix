@@ -36,7 +36,7 @@ in
   neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay"; # has a cache
   nixos-hardware.url = "github:NixOS/nixos-hardware/master"; # too dangerous
   # these could work, but it's still a risk; TODO try
-  codex.url = "github:openai/codex";
+  codex.url = "github:anuramat/codex/latest";
   mcp-nixos.url = "github:utensils/mcp-nixos";
   nil.url = "github:oxalica/nil/main";
   spicetify-nix.url = "github:Gerg-L/spicetify-nix";

@@ -160,15 +160,15 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1754251548,
-        "narHash": "sha256-Y2I8YhL0BWRAZB9B1ll0Ox7HCxnLsJgTMx8xGRxlTrg=",
-        "owner": "openai",
+        "lastModified": 1754262321,
+        "narHash": "sha256-EDIrQpVZ+ybVVQGKV5a65kSFANLSYvZ3nlxtXhnyJqI=",
+        "owner": "anuramat",
         "repo": "codex",
-        "rev": "e3565a3f438c30c9d36412d2817346c7accd487c",
+        "rev": "2881cdafa6eb9206a811464666b486c979128439",
         "type": "github"
       },
       "original": {
-        "owner": "openai",
+        "owner": "anuramat",
         "repo": "codex",
         "type": "github"
       }
@@ -190,6 +190,7 @@
       },
       "original": {
         "owner": "anuramat",
+        "ref": "flake",
         "repo": "copilot-api",
         "type": "github"
       }
