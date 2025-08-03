@@ -57,7 +57,7 @@ in
       (config.lib.agents.mkSandbox {
         binName = "codex";
         package = pkgs.codex;
-        args = "--full-auto --dangerously-bypass-approvals-and-sandbox";
+        args = " --dangerously-bypass-approvals-and-sandbox"; # "--full-auto"
         agentDir = null;
         copilot = true;
         wrapperName = "cdx";
@@ -73,7 +73,7 @@ in
       '';
     };
     # TODO use derivation instead of text (here and everywhere else we use global instructions)
-    file.${codexHomeRelative + "/AGENTS.md"} = {
+    file.${codexHomeRelative + "/instructions.md"} = {
       inherit (config.lib.agents.instructions) text;
     };
   };
