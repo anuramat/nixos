@@ -23,5 +23,6 @@
     ccusage
     claude-desktop
     openai-whisper
+    copilot-api
   ];
 }

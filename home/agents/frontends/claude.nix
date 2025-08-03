@@ -20,6 +20,17 @@ let
         matcher = "";
       }
     ];
+    PostToolUse = [
+      {
+        hooks = [
+          {
+            command = "treefmt &>/dev/null || true";
+            type = "command";
+          }
+        ];
+        matcher = "Edit|MultiEdit|Write";
+      }
+    ];
   };
   permissions = {
     allow = [ ];
@@ -34,6 +45,7 @@ let
 
   roles =
     let
+      # remove some of the tools
       readOnlyTools = "Glob, Grep, LS, ExitPlanMode, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, ListMcpResourcesTool, ReadMcpResourceTool";
       adaptedRoles =
         agents.roles

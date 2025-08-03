@@ -97,7 +97,7 @@ in
         version = "0.0.1754236863-g8d30ac";
         src = prev.fetchzip {
           url = "https://registry.npmjs.org/@sourcegraph/amp/-/amp-${version}.tgz";
-          hash = "sha256-Bl6FAwhUF5pdS6a8YNlRU8DyD8FPCPpBWBX6/gc/TTI=";
+          hash = "sha256-SfYprr93YsQtoyiFl2rLuaqwGyWLmqlAuhfzHztaLC4=";
         };
       });
       # https://www.npmjs.com/package/@sourcegraph/amp
