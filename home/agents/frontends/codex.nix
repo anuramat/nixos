@@ -13,14 +13,22 @@ let
       # https://github.com/openai/codex/blob/main/codex-rs/config.md
       cfg = {
         mcp_servers = config.lib.agents.mcp.raw;
-        model_provider = "GHCP";
         model_providers.GHCP = {
           name = "GHCP";
           base_url = "http://localhost:${config.lib.agents.api.port}";
-          env_key = "dummy";
-          # wire_api = "chat" or "responses";
         };
         approval_policy = "never";
+        profile = "gpt";
+        profiles = {
+          gpt = {
+            model = "gpt-4.1";
+            model_provider = "GHCP";
+          };
+          sonnet = {
+            model = "claude-sonnet-4";
+            model_provider = "GHCP";
+          };
+        };
         notify =
           let
             notifier = pkgs.writeShellApplication {
