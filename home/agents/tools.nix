@@ -14,8 +14,6 @@ let
     ;
 
   mcp =
-    # TODO nvim mcp: provides lsp most importantly, formatter (can be replaced with a commit hook), maybe more
-    # TODO rag?
     let
       nixos = {
         command = getExe pkgs.mcp-nixos;
