@@ -20,6 +20,7 @@ let
   unstablePkgs = final: prev: {
     inherit (import inputs.nixpkgs-unstable { inherit (pkgs) config system; })
       opencode
+      gemini-cli
       litellm
       playwright-mcp
       github-mcp-server
@@ -79,15 +80,15 @@ in
           hash = "sha256-Bl6FAwhUF5pdS6a8YNlRU8DyD8FPCPpBWBX6/gc/TTI=";
         };
       });
-      gemini-cli = prev.gemini-cli.overrideAttrs (oldAttrs: rec {
-        version = "0.1.14";
-      });
+      # gemini-cli = prev.gemini-cli.overrideAttrs (oldAttrs: rec {
+      # });
       claude-code = prev.claude-code.overrideAttrs (oldAttrs: rec {
         version = "1.0.65";
         src = prev.fetchzip {
           url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
           hash = "sha256-Ch55xuJZJ0LXDTIlC7Ya381jqeGJzYC5IDEY0hS76/M=";
         };
+        # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
       });
       ccusage =
         # TODO pure vibes
