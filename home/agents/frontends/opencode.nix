@@ -8,7 +8,6 @@ let
 
   inherit (config.lib.agents) mkPrompts;
   inherit (lib) mapAttrs;
-  toJSON = lib.generators.toJSON { };
 
   roleFiles =
     let
@@ -40,11 +39,9 @@ in
         package = pkgs.opencode;
       })
     ];
-  };
-  xdg.configFile = {
-    "opencode/opencode.json" = {
-      text = toJSON opencodeConfig;
+    activation = {
+      opencodeConfig = config.lib.home.json.set opencodeConfig "${config.xdg.configHome}/opencode/opencode.json";
     };
-  }
-  // roleFiles;
+  };
+  xdg.configFile = { } // roleFiles;
 }
