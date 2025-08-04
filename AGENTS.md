@@ -31,8 +31,12 @@ This is a multi-host NixOS configuration using flakes with:
   configurations
 - **Local vs Remote**: System configs automatically switch between local/remote
   modules based on `cluster.this.server`
-- **Custom abstractions**: Helper functions in `/hax/` for hosts, web, mime, vim
-  configurations
+ - **Custom abstractions**: Helper functions in `/hax/` for hosts, web, mime, vim
+   configurations
+ - **Agent framework**: `/home/agents` provides a Model Context Protocol server
+   with shared prompts, roles, commands, tools, sandbox, and git helpers.
+   Frontends: amp, avante, claude, codebuff, codex, crush, forge, gemini, goose,
+   opencode
 
 ### Directory Structure
 
@@ -42,7 +46,9 @@ This is a multi-host NixOS configuration using flakes with:
 - `home/gui/` - Desktop environment (sway, waybar, terminals)
 - `home/tui/` - Terminal applications (bash, git, yazi, search tools)
 - `home/nixvim/` - Comprehensive neovim configuration with language support
-- `home/llm/` - AI agent configurations (claude, goose, opencode)
+- `home/agents/` - AI agent framework (MCP server, prompts, roles, commands,
+  tools, sandbox, git); frontends: amp, avante, claude, codebuff, codex, crush,
+  forge, gemini, goose, opencode
 
 ### Development Patterns
 
