@@ -37,9 +37,7 @@ let
       # bash
       ''
         if [[ -s ${targetFile} ]]; then
-          echo START DIFF "${targetFile}"
-          diff "${sourceFile}" "${targetFile}" || true
-          echo END DIFF
+          diff "${sourceFile}" "${targetFile}" || echo "*** ${targetFile} diff above ***"
         fi | tee -a "${difffile}" >&2
       '';
 
