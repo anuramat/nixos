@@ -8,6 +8,7 @@ let
 
   inherit (config.lib.agents) mkPrompts;
   inherit (lib) mapAttrs;
+  toJSON = lib.generators.toJSON { };
 
   roleFiles =
     let
@@ -39,12 +40,11 @@ in
         package = pkgs.opencode;
       })
     ];
-    activation = {
-      opencodeConfig = config.lib.home.json.set opencodeConfig "${config.xdg.configHome}/opencode/opencode.json";
-    };
   };
-
-  xdg.configFile = { } // roleFiles;
-  # TODO stylix and https://opencode.ai/docs/themes/
-
+  xdg.configFile = {
+    "opencode/opencode.json" = {
+      text = toJSON opencodeConfig;
+    };
+  }
+  // roleFiles;
 }
