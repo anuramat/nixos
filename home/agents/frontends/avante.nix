@@ -24,7 +24,6 @@ let
     );
 
   port = toString 37373;
-
 in
 {
 
@@ -35,7 +34,8 @@ in
     extraConfigLua = ''
       require("mcphub").setup({
         config = "${config.xdg.configHome}/mcphub/servers.json",
-        port = ${port}, -- The port `mcp-hub` server listens to
+        port = ${port},
+        auto_approve = false,
       })
     '';
     plugins = {
@@ -43,8 +43,12 @@ in
         enable = true;
         settings = {
           inherit shortcuts;
+          behaviour = {
+            auto_approve_tool_permissions = true;
+            enable_token_counting = true;
+          };
           # system_prompt = agents.instructions.text;
-          # TODO merge these
+          # TODO reuse system prompt file derivation
           system_prompt =
             let
               path = config.xdg.configFile.${config.lib.agents.mainContextFile}.target;

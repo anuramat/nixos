@@ -43,8 +43,8 @@ let
         ''
           temp=$(mktemp)
           mkdir -p "$(dirname "${target}")"
-          [ -s "${target}" ] || echo '{}' >"${target}"
-          cp '${target}' "$temp"
+[ -s "${target}" ] || echo '{}' >"${target}"
+cp '${target}' "$temp"
           ${
             sourceList
             |> lib.concatMapStringsSep "\n" (
