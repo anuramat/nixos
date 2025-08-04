@@ -39,6 +39,7 @@ in
         config = "${config.xdg.configHome}/mcphub/servers.json",
         port = ${port},
         auto_approve = false,
+        use_bundled_binary = true,
       })
     '';
     plugins = {
