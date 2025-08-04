@@ -144,7 +144,7 @@ in
         version = "0.104.3";
         src = pkgs.fetchurl {
           url = "https://github.com/antinomyhq/forge/releases/download/v${version}/forge-x86_64-unknown-linux-musl";
-          hash = "";
+          hash = "sha256-3T+CmQtHZYzdK/r3u69KH43HGZhRHPOjPR0J4KkLuEs=";
         };
         dontUnpack = true;
         installPhase = ''

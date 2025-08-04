@@ -2,6 +2,8 @@
 # TODO patch
 {
   config,
+  pkgs,
+  inputs,
   lib,
   hax,
   ...
@@ -21,41 +23,55 @@ let
       }
     );
 
+  port = toString 37373;
+
 in
 {
-  programs.nixvim.plugins = {
-    avante = {
-      enable = true;
-      settings = {
-        inherit shortcuts;
-        # system_prompt = agents.instructions.text;
-        # TODO merge these
-        system_prompt =
-          let
-            path = config.xdg.configFile.${config.lib.agents.mainContextFile}.target;
-          in
-          hax.vim.luaf ''
-            local hub = require("mcphub").get_hub_instance()
-            local prompt = hub and hub:get_active_servers_prompt() or ""
-            -- read system prompt from file
-            local file = io.open("${path}", "r")
-            if file then
-              local instructions = file:read("*a")
-              file:close()
-              prompt = prompt .. "\n" .. instructions
-            end
-            return prompt
+
+  programs.nixvim = {
+    extraPlugins = [
+      inputs.mcphub.packages.${pkgs.system}.default
+    ];
+    extraConfigLua = ''
+      require("mcphub").setup({
+        config = "${config.xdg.configHome}/mcphub/servers.json",
+        port = ${port}, -- The port `mcp-hub` server listens to
+      })
+    '';
+    plugins = {
+      avante = {
+        enable = true;
+        settings = {
+          inherit shortcuts;
+          # system_prompt = agents.instructions.text;
+          # TODO merge these
+          system_prompt =
+            let
+              path = config.xdg.configFile.${config.lib.agents.mainContextFile}.target;
+            in
+            hax.vim.luaf ''
+              local hub = require("mcphub").get_hub_instance()
+              local prompt = hub and hub:get_active_servers_prompt() or ""
+              -- read system prompt from file
+              local file = io.open("${path}", "r")
+              if file then
+                local instructions = file:read("*a")
+                file:close()
+                prompt = prompt .. "\n" .. instructions
+              end
+              return prompt
+            '';
+          custom_tools = hax.vim.luaf ''
+            return {
+              require("mcphub.extensions.avante").mcp_tool(),
+            }
           '';
-        custom_tools = hax.vim.luaf ''
-          return {
-            require("mcphub.extensions.avante").mcp_tool(),
-          }
-        '';
-        provider = "copilot";
-        providers = {
-          copilot = {
-            # model = "claude-sonnet-4";
-            model = "gpt-4.1";
+          provider = "copilot";
+          providers = {
+            copilot = {
+              # model = "claude-sonnet-4";
+              model = "gpt-4.1";
+            };
           };
         };
       };

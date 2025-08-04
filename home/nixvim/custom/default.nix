@@ -1,7 +1,6 @@
 { pkgs, inputs, ... }:
 {
   imports = [
-    ./mcphub.nix
     ./figtree.nix
     ./namu.nix
     ./wastebin.nix
