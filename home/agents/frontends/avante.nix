@@ -1,6 +1,6 @@
 # WARN context files are hardcoded in lua/avante/utils/prompts.lua: AGENTS, CLAUDE, OPENCODE, ...
 # TODO patch
-# TODO commands
+# TODO commands (shortcuts); either plug all that shit into mcp-hub, or upgrade blink-cmp-avante
 # TODO roles
 # TODO recursive agents
 {
