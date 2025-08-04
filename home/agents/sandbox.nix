@@ -9,6 +9,7 @@ let
   baseRwDirs = [
     "/tmp"
     "$PWD"
+    "${config.home.homeDirectory}/.npm"
   ];
   inherit (config.lib.agents) varNames;
 
