@@ -17,7 +17,18 @@ let
     locale = "en_US.UTF-8";
   };
   args = {
-    inherit inputs user hax;
+    inherit user hax;
+    inputs =
+      let
+        rawInput = import ./inputs.nix;
+      in
+      lib.mapAttrs (
+        n: v:
+        v
+        // {
+          ref = builtins.baseNameOf rawInput.${n}.url;
+        }
+      ) inputs;
   };
   mkSystem =
     name:

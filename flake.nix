@@ -29,11 +29,6 @@
       url = "github:anuramat/codex/latest";
     };
     copilot-api = {
-      inputs = {
-        nixpkgs = {
-          follows = "nixpkgs";
-        };
-      };
       url = "github:anuramat/copilot-api/flake";
     };
     crush = {
@@ -60,6 +55,11 @@
       url = "github:nix-community/home-manager/release-25.05";
     };
     mcp-nixos = {
+      inputs = {
+        nixpkgs = {
+          follows = "nixpkgs";
+        };
+      };
       url = "github:utensils/mcp-nixos";
     };
     mcphub = {
@@ -71,25 +71,20 @@
       url = "github:ravitemer/mcphub.nvim";
     };
     mdformat-myst = {
-      inputs = {
-        nixpkgs = {
-          follows = "nixpkgs";
-        };
-      };
       url = "github:anuramat/mdformat-myst/dev";
     };
     mdmath = {
-      inputs = {
-        nixpkgs = {
-          follows = "nixpkgs";
-        };
-      };
       url = "github:anuramat/mdmath.nvim";
     };
     neovim-nightly-overlay = {
       url = "github:nix-community/neovim-nightly-overlay";
     };
     nil = {
+      inputs = {
+        nixpkgs = {
+          follows = "nixpkgs";
+        };
+      };
       url = "github:oxalica/nil/main";
     };
     nixos-hardware = {
@@ -109,7 +104,16 @@
       };
       url = "github:nix-community/nixvim";
     };
+    opencode = {
+      flake = false;
+      url = "github:sst/opencode/v0.3.128";
+    };
     spicetify-nix = {
+      inputs = {
+        nixpkgs = {
+          follows = "nixpkgs";
+        };
+      };
       url = "github:Gerg-L/spicetify-nix";
     };
     stylix = {

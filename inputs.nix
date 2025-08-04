@@ -19,9 +19,10 @@ in
   subcat = mkInput "github:anuramat/subcat";
 
   # forks
-  mdformat-myst = mkInput "github:anuramat/mdformat-myst/dev";
-  mdmath = mkInput "github:anuramat/mdmath.nvim";
-  copilot-api = mkInput "github:anuramat/copilot-api/flake";
+  mdformat-myst.url = "github:anuramat/mdformat-myst/dev";
+  mdmath.url = "github:anuramat/mdmath.nvim";
+  copilot-api.url = "github:anuramat/copilot-api/flake";
+  codex.url = "github:anuramat/codex/latest";
 
   # `follows`
   mcphub = mkInput "github:ravitemer/mcphub.nvim";
@@ -36,14 +37,14 @@ in
   neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay"; # has a cache
   nixos-hardware.url = "github:NixOS/nixos-hardware/master"; # too dangerous
   # these could work, but it's still a risk; TODO try
-  codex.url = "github:anuramat/codex/latest";
-  mcp-nixos.url = "github:utensils/mcp-nixos";
-  nil.url = "github:oxalica/nil/main";
-  spicetify-nix.url = "github:Gerg-L/spicetify-nix";
+  mcp-nixos = mkInput "github:utensils/mcp-nixos";
+  nil = mkInput "github:oxalica/nil/main";
+  spicetify-nix = mkInput "github:Gerg-L/spicetify-nix";
 
   # non flakes
   avante = mkNonFlake "github:yetone/avante.nvim/v0.0.27";
   blink-cmp-avante = mkNonFlake "github:Kaiser-Yang/blink-cmp-avante/v0.1.0";
-  crush = mkNonFlake "github:charmbracelet/crush/v0.2.1"; # TODO set version
+  crush = mkNonFlake "github:charmbracelet/crush/v0.2.1";
   tt-schemes = mkNonFlake "github:tinted-theming/schemes";
+  opencode = mkNonFlake "github:sst/opencode/v0.3.128";
 }

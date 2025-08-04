@@ -9,7 +9,13 @@
     lsp.servers = {
       statix = { }; # enable when they have pipes: <https://github.com/oppiliappan/statix/issues/88>
 
-      nil_ls.enable = true;
+      nil_ls = {
+        enable = true;
+        onAttach.function = # lua
+          ''
+            client.server_capabilities.renameProvider = false
+          '';
+      };
 
       nixd = {
         enable = true;
