@@ -51,7 +51,7 @@ in
           inherit shortcuts;
           behaviour = {
             auto_approve_tool_permissions = true;
-            enable_token_counting = true;
+            enable_token_counting = false;
           };
           # system_prompt = agents.instructions.text;
           # TODO reuse system prompt file derivation

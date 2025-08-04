@@ -10,7 +10,6 @@ let
     GOOSE_MODE = "auto";
     GOOSE_MAX_TURNS = 9999999;
   };
-  # GOOSE_MODE: auto
   # GOOSE_MODEL: gpt-4.1
   # GOOSE_PROVIDER: github_copilot
   # extensions:
