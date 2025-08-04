@@ -52,7 +52,7 @@ let
     "tags"
     "venv/"
     "/.claude/settings.local.json"
-    "/.crush"
+    ".crush/"
     ".pytest_cache"
 
     # pytorch lightning
