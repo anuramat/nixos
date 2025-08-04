@@ -18,12 +18,12 @@ in
             hideBanner = true;
           };
         }
-      ] (config.home.homeDirectory + ".gemini/settings.json");
+      ] (config.home.homeDirectory + "/.gemini/settings.json");
       geminiConfig = config.lib.home.json.set [
         {
           contextFileName = config.lib.agents.contextFiles;
         }
-      ] (config.home.homeDirectory + ".gemini/settings.json");
+      ] (config.home.homeDirectory + "/.gemini/settings.json");
     };
     file = {
       ".gemini/GEMINI.md".text = agents.instructions.text;
