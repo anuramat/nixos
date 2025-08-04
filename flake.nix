@@ -47,6 +47,14 @@
     flake-utils = {
       url = "github:numtide/flake-utils";
     };
+    forge = {
+      inputs = {
+        nixpkgs = {
+          follows = "nixpkgs";
+        };
+      };
+      url = "github:anuramat/forge";
+    };
     home-manager = {
       inputs = {
         nixpkgs = {

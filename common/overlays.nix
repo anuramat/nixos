@@ -144,8 +144,7 @@ in
         dontUnpack = true;
         nativeBuildInputs = [ pkgs.makeWrapper ];
         installPhase = ''
-          install -Dm755 $src $out/bin/codex-real
-          makeWrapper ${pkgs.dotslash}/bin/dotslash $out/bin/codex --add-flags codex-real
+          makeWrapper ${pkgs.dotslash}/bin/dotslash $out/bin/codex --add-flags $src
         '';
       };
 
