@@ -1,5 +1,8 @@
 # WARN context files are hardcoded in lua/avante/utils/prompts.lua: AGENTS, CLAUDE, OPENCODE, ...
 # TODO patch
+# TODO commands
+# TODO roles
+# TODO recursive agents
 {
   config,
   pkgs,
