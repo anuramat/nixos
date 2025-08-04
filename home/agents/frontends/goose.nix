@@ -41,9 +41,8 @@ let
 in
 {
   home = {
-    activation = config.lib.home.mkGenericActivationScript {
-      sourceFile = gooseConfig;
-      targetFile = "${config.home.homeDirectory}/.config/goose/config.yaml";
+    activation = {
+      gooseConfig = config.lib.home.mkGenericActivationScript gooseConfig "${config.home.homeDirectory}/.config/goose/config.yaml";
     };
     packages = [
       pkgs.goose-cli

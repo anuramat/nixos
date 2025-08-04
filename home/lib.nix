@@ -36,7 +36,7 @@ let
       ''
         if [[ -s ${targetFile} ]]; then
           echo START DIFF "${targetFile}" >&2
-          diff "${sourceFile}" "${targetFile}" >&2
+          diff "${sourceFile}" "${targetFile}" >&2 || true
           echo END DIFF >&2
         fi
       '';
@@ -45,18 +45,17 @@ let
     sourceFile: targetFile:
     let
       script =
-        trim
-          # bash
-          ''
-            source=${sourceFile}
-            target=${targetFile}
-            mkdir -p "$(dirname "$target")"
+        # bash
+        ''
+          source=${sourceFile}
+          target=${targetFile}
+          mkdir -p "$(dirname "$target")"
 
-            ${diff "$source" "$target"}
-            run cat "$source" >"$target"
-          '';
+          ${diff "$source" "$target"}
+          run cat "$source" >"$target"
+        '';
     in
-    "";
+    lib.hm.dag.entryAfter [ "writeBoundary" ] script;
 
   # TODO: refactor to call jq once: write all sources to a single json file, then loop in jq or at least unroll a nix loop into a jq command (still just one jq command)
   mkJqActivationScript =
@@ -100,8 +99,8 @@ let
 
 in
 {
-
   lib.home = {
+    inherit mkGenericActivationScript;
 
     patchedBinary =
       # returns a patched binary that sets an environment variable
