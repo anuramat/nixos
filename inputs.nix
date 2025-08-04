@@ -17,6 +17,7 @@ in
   # my stuff
   ctrlsn = mkInput "git+ssh://git@github.com/anuramat/ctrl.sn?ref=main";
   subcat = mkInput "github:anuramat/subcat";
+  diriger = mkInput "github:anuramat/diriger";
 
   # forks
   mdformat-myst.url = "github:anuramat/mdformat-myst/dev";

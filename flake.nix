@@ -43,6 +43,14 @@
       };
       url = "git+ssh://git@github.com/anuramat/ctrl.sn?ref=main";
     };
+    diriger = {
+      inputs = {
+        nixpkgs = {
+          follows = "nixpkgs";
+        };
+      };
+      url = "github:anuramat/diriger";
+    };
     flake-utils = {
       url = "github:numtide/flake-utils";
     };
