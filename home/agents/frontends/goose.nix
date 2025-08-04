@@ -6,7 +6,7 @@
 }:
 let
   # TODO mcp; check out extensions and recipes in https://block.github.io/goose/docs/
-  config = {
+  gooseConfig = {
     GOOSE_MODE = "auto";
     GOOSE_MAX_TURNS = 9999999;
   };

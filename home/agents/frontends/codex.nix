@@ -30,6 +30,9 @@ let
             model = "claude-sonnet-4";
             model_provider = "GHCP";
           };
+          oai = {
+            model_provider = "openai";
+          };
         };
         notify =
           let
