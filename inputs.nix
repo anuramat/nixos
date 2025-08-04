@@ -22,7 +22,6 @@ in
   mdformat-myst = mkInput "github:anuramat/mdformat-myst/dev";
   mdmath = mkInput "github:anuramat/mdmath.nvim";
   copilot-api = mkInput "github:anuramat/copilot-api/flake";
-  forge = mkInput "github:anuramat/forge";
 
   # `follows`
   mcphub = mkInput "github:ravitemer/mcphub.nvim";

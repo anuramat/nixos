@@ -14,8 +14,6 @@ let
         nil
         mdformat-myst
         claude-desktop
-        copilot-api
-        forge
         ;
     });
   unstablePkgs = final: prev: {
@@ -147,6 +145,20 @@ in
         nativeBuildInputs = [ pkgs.makeWrapper ];
         installPhase = ''
           makeWrapper ${pkgs.dotslash}/bin/dotslash $out/bin/codex --add-flags $src
+        '';
+      };
+
+      # https://github.com/antinomyhq/forge/releases/download/v0.104.3/forge-x86_64-unknown-linux-musl
+      forge = pkgs.stdenv.mkDerivation rec {
+        pname = "forge";
+        version = "0.104.3";
+        src = pkgs.fetchurl {
+          url = "https://github.com/antinomyhq/forge/releases/download/v${version}/forge-x86_64-unknown-linux-musl";
+          hash = "";
+        };
+        dontUnpack = true;
+        installPhase = ''
+          install -Dm755 $src $out/bin/forge
         '';
       };
 
