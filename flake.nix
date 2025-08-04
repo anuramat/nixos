@@ -24,14 +24,6 @@
     codex = {
       url = "github:anuramat/codex/latest";
     };
-    copilot-api = {
-      inputs = {
-        nixpkgs = {
-          follows = "nixpkgs";
-        };
-      };
-      url = "github:anuramat/copilot-api/flake";
-    };
     crush = {
       flake = false;
       url = "github:charmbracelet/crush/v0.2.1";

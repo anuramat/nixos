@@ -33,26 +33,16 @@ let
           pname = "mdformat_deflist";
           version = "0.1.3";
           format = "pyproject";
-
           src = pfinal.fetchPypi {
             inherit pname version;
             hash = "sha256-slCRzhcFo3wMyH3bHHij5+tD1Qrc21rUdjQR90Oub34=";
           };
-
           nativeBuildInputs = [ pfinal.flit-core ];
           propagatedBuildInputs = [
             pfinal.mdformat
             pfinal.mdit-py-plugins
           ];
-
           pythonImportsCheck = [ "mdformat_deflist" ];
-
-          meta = with prev.lib; {
-            description = "An mdformat plugin for markdown-it-deflist";
-            homepage = "https://github.com/executablebooks/mdformat-deflist";
-            license = licenses.mit;
-            maintainers = [ ];
-          };
         };
       };
     };
