@@ -1,9 +1,11 @@
 {
   pkgs,
+  config,
   lib,
   ...
 }:
 let
+  difffile = config.xdg.stateHome + "hm-activation-diffs.txt";
   inherit (lib)
     getName
     getExe
@@ -35,10 +37,10 @@ let
       # bash
       ''
         if [[ -s ${targetFile} ]]; then
-          echo START DIFF "${targetFile}" >&2
-          diff "${sourceFile}" "${targetFile}" >&2 || true
-          echo END DIFF >&2
-        fi
+          echo START DIFF "${targetFile}"
+          diff "${sourceFile}" "${targetFile}"
+          echo END DIFF
+        fi | tee -a "${difffile}" >&2
       '';
 
   mkGenericActivationScript =
