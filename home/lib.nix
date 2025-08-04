@@ -42,6 +42,7 @@ let
       script = # bash
         ''
           temp=$(mktemp)
+          mkdir -p "$(dirname "${target}")"
           [ -s "${target}" ] || echo '{}' >"${target}"
           cp '${target}' "$temp"
           ${
