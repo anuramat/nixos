@@ -11,8 +11,9 @@ in
     {
       Unit = {
         Description = "copilot-api server";
-        After = [ target ]; # enforces order
-        PartOf = [ target ]; # propagates stop/restart
+        After = [ target ]; # enforces order, does not imply dependency
+        PartOf = [ target ]; # propagates stop and restart
+        Requries = [ target ]; # dependency
       };
       Service = {
         ExecStart = "${lib.getExe' pkgs.copilot-api "copilot-api"} start -p ${port}";
