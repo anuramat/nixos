@@ -47,6 +47,8 @@ let
         nix = nil_ls;
         python = pyright;
         rust = rust_analyzer;
+        lua = lua_ls;
+        sh = bashls;
       };
     in
     servers
