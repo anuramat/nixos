@@ -38,6 +38,7 @@ let
       };
     in
     {
+      inherit github;
     };
 
   lsp =

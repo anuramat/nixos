@@ -14,7 +14,7 @@ let
     let
       # https://github.com/openai/codex/blob/main/codex-rs/config.md
       cfg = {
-        mcp_servers = config.lib.agents.mcp.raw;
+        # mcp_servers = config.lib.agents.mcp.raw;
         model_providers.GHCP = {
           name = "GHCP";
           base_url = "http://localhost:${config.lib.agents.api.port}";

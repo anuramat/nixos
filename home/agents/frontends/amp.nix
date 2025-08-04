@@ -11,7 +11,7 @@ let
   agentDir = "amp";
   settings = {
     amp = {
-      mcpServers = config.lib.agents.mcp.raw;
+      # mcpServers = config.lib.agents.mcp.raw;
       git.commit = {
         # ampThread.enabled = false;
         coauthor.enabled = false;

@@ -116,7 +116,7 @@ in
         includeCoAuthoredBy = false;
         inherit hooks permissions;
       } "${home}/.claude/settings.json";
-      claudeMcp = mkMcpConfig "${home}/.claude.json";
+      # claudeMcp = mkMcpConfig "${home}/.claude.json";
       claudeDesktopMcp = mkMcpConfig "${config.xdg.configHome}/Claude/claude_desktop_config.json";
     };
   };

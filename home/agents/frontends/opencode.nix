@@ -30,7 +30,7 @@ let
 
 in
 {
-
+  # TODO mcp commands hooks modes
   home = {
     packages = [
       pkgs.opencode
