@@ -46,6 +46,7 @@ let
         go = gopls;
         nix = nil_ls;
         python = pyright;
+        rust = rust_analyzer;
       };
     in
     servers

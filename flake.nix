@@ -66,6 +66,14 @@
     mcp-nixos = {
       url = "github:utensils/mcp-nixos";
     };
+    mcphub = {
+      inputs = {
+        nixpkgs = {
+          follows = "nixpkgs";
+        };
+      };
+      url = "github:ravitemer/mcphub.nvim";
+    };
     mdformat-myst = {
       inputs = {
         nixpkgs = {

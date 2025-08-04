@@ -8,7 +8,6 @@
       settings.sources = {
         providers.copilot = {
           async = true;
-          module = "blink-copilot";
           name = "copilot";
           score_offset = 100;
         };
@@ -17,11 +16,9 @@
           "path"
           "snippets"
           "buffer"
-          "copilot"
         ];
       };
     };
-    blink-copilot.enable = true;
     copilot-lua = {
       enable = true;
       settings = {
@@ -33,7 +30,7 @@
           enabled = false;
         };
         suggestion = {
-          enabled = false;
+          enabled = true;
         };
         filetypes = {
           markdown = false;

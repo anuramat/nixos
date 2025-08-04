@@ -25,6 +25,7 @@ in
   forge = mkInput "github:anuramat/forge";
 
   # `follows`
+  mcphub = mkInput "github:ravitemer/mcphub.nvim";
   agenix = mkInput "github:yaxitech/ragenix";
   claude-desktop = mkInput "github:k3d3/claude-desktop-linux-flake";
   home-manager = mkInput "github:nix-community/home-manager/release-25.05";
