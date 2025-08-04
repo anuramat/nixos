@@ -38,7 +38,6 @@ let
       };
     in
     {
-      inherit nixos;
     };
 
   lsp =
