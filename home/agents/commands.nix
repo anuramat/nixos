@@ -4,7 +4,7 @@ let
 in
 {
   lib.agents.commands = {
-    fixdoc =
+    pandoc_fix =
       let
         text = ''
           I want you to figure out why this markdown file doesn't get rendered
@@ -27,7 +27,7 @@ in
         inherit text;
         withFM = prependFrontmatter text;
       };
-    asciify =
+    pandoc_clean =
       let
         text =
           let
