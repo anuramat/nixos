@@ -1,3 +1,4 @@
+# configured: 2025-08-04
 {
   lib,
   pkgs,
@@ -9,13 +10,23 @@ let
 in
 {
   home = {
+    activation = {
+      geminiConfig2 = config.lib.home.json.merge [
+        {
+          "" = {
+            hideTips = true;
+            hideBanner = true;
+          };
+        }
+      ] (config.home.homeDirectory + ".gemini/settings.json");
+      geminiConfig = config.lib.home.json.set [
+        {
+          contextFileName = config.lib.agents.contextFiles;
+        }
+      ] (config.home.homeDirectory + ".gemini/settings.json");
+    };
     file = {
       ".gemini/GEMINI.md".text = agents.instructions.text;
-      ".gemini/settings.json".text = lib.generators.toJSON { } {
-        theme = "Default";
-        selectedAuthType = "oauth-personal";
-        contextFileName = config.lib.agents.contextFiles;
-      };
     };
     packages = [
       pkgs.gemini-cli

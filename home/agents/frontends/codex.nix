@@ -1,3 +1,4 @@
+# configured: 2025-08-04
 {
   lib,
   pkgs,
@@ -5,7 +6,6 @@
   ...
 }:
 let
-  # TODO use jq for toml?
   codexHomeRelative = ".codex";
   codexHomeRoot = config.home.homeDirectory;
   codexHome = codexHomeRoot + "/" + codexHomeRelative; # TODO change and propagate env

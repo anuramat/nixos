@@ -1,6 +1,6 @@
-{ config, lib, ... }:
 # WARN context files are hardcoded in lua/avante/utils/prompts.lua: AGENTS, CLAUDE, OPENCODE, ...
 # TODO patch
+{ config, lib, ... }:
 let
   inherit (config.lib) agents;
   inherit (lib) mapAttrs;

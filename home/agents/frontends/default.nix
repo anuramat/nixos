@@ -2,16 +2,18 @@
 {
   imports = [
     ./claude.nix
-    ./avante.nix
+    ./avante.nix # TODO
     ./gemini.nix
     ./crush.nix
-    ./opencode.nix
+    ./opencode.nix # TODO
 
-    ./forge.nix
-    ./codebuff.nix
-    ./amp.nix
     ./codex.nix
-    ./goose.nix
+    ./amp.nix
+
+    ./forge.nix # TODO
+    ./goose.nix # TODO
+
+    ./codebuff.nix # TODO doesn't work: 2025-08-04
   ];
 
   home.packages = with pkgs; [

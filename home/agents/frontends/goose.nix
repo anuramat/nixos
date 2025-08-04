@@ -4,11 +4,10 @@
   ...
 }:
 {
-  # TODO ALL
   home.packages = [
-    pkgs.goose
+    pkgs.goose-cli
     (config.lib.agents.mkSandbox {
-      package = pkgs.goose;
+      package = pkgs.goose-cli;
       wrapperName = "gse";
     })
   ];

@@ -1,3 +1,5 @@
+# configured: 2025-08-04
+# NOTE: context filename is hardcoded to AGENT.md; global -- in $HOME/.config/AGENT.md
 {
   pkgs,
   lib,
@@ -11,9 +13,10 @@ let
     amp = {
       mcpServers = config.lib.agents.mcp.raw;
       git.commit = {
-        ampThread.enabled = false;
+        # ampThread.enabled = false;
         coauthor.enabled = false;
       };
+      updates.autoUpdate.enabled = false;
     };
   };
 in
@@ -35,6 +38,4 @@ in
       } "${config.xdg.configHome}/${agentDir}/settings.json";
     };
   };
-  # NOTE: global .config/AGENT.md is hardcoded in `amp`
-  # I think that's all settings they have for now
 }
