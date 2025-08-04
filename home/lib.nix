@@ -38,7 +38,7 @@ let
       ''
         if [[ -s ${targetFile} ]]; then
           echo START DIFF "${targetFile}"
-          diff "${sourceFile}" "${targetFile}"
+          diff "${sourceFile}" "${targetFile}" || true
           echo END DIFF
         fi | tee -a "${difffile}" >&2
       '';
@@ -83,6 +83,7 @@ let
             ''run ${getExe pkgs.jq} --slurpfile arg ${sourceFile} '.${key} ${operator} $arg[0]' "${targetCopy}" | ${pkgs.moreutils}/bin/sponge "${targetCopy}" || exit''
           )
         );
+
       script = # bash
         ''
           target=${target}
