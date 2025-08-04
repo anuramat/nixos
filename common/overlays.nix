@@ -14,6 +14,7 @@ let
         nil
         mdformat-myst
         claude-desktop
+        copilot-api
         ;
     });
   unstablePkgs = final: prev: {
@@ -63,7 +64,6 @@ let
     in
     {
       gemini-cli = mkNpxLink "gemini" "@google/gemini-cli";
-      copilot-api = mkNpx "copilot-api";
       ccusage = mkNpx "ccusage";
     };
 
