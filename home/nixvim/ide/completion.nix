@@ -1,17 +1,27 @@
-{ hax, ... }:
+{ hax, pkgs, ... }:
 {
   # TODO https://github.com/netmute/ctags-lsp.nvim
+  extraPlugins = [
+    pkgs.vimPlugins.blink-cmp-avante
+  ];
   plugins = {
     friendly-snippets.enable = true;
     blink-cmp = {
       enable = true;
       settings.sources = {
-        providers.copilot = {
-          async = true;
-          name = "copilot";
-          score_offset = 100;
+        providers = {
+          avante = {
+            module = "blink-cmp-avante";
+            name = "avante";
+          };
+          # copilot = {
+          #   async = true;
+          #   name = "copilot";
+          #   score_offset = 100;
+          # };
         };
         default = [
+          "avante"
           "lsp"
           "path"
           "snippets"
