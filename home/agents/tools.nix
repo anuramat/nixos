@@ -1,3 +1,4 @@
+# TODO nvim mcp
 {
   lib,
   osConfig,
