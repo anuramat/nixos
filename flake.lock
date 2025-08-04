@@ -132,6 +132,23 @@
         "type": "github"
       }
     },
+    "blink-cmp-avante": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1739933573,
+        "narHash": "sha256-r+GdP7CzndXk2x6h066Ww4LuMBgKDW2GMv/d39r1M48=",
+        "owner": "Kaiser-Yang",
+        "repo": "blink-cmp-avante",
+        "rev": "e5a1be4c818520385f95fe2663c04e48f5f0c36a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Kaiser-Yang",
+        "ref": "v0.1.0",
+        "repo": "blink-cmp-avante",
+        "type": "github"
+      }
+    },
     "claude-desktop": {
       "inputs": {
         "flake-utils": "flake-utils_2",
@@ -1121,6 +1138,7 @@
       "inputs": {
         "agenix": "agenix",
         "avante": "avante",
+        "blink-cmp-avante": "blink-cmp-avante",
         "claude-desktop": "claude-desktop",
         "codex": "codex",
         "crush": "crush",

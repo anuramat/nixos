@@ -13,6 +13,10 @@
       flake = false;
       url = "github:yetone/avante.nvim/v0.0.27";
     };
+    blink-cmp-avante = {
+      flake = false;
+      url = "github:Kaiser-Yang/blink-cmp-avante/v0.1.0";
+    };
     claude-desktop = {
       inputs = {
         nixpkgs = {

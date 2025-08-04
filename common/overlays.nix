@@ -156,6 +156,9 @@ in
         avante-nvim = prev.vimPlugins.avante-nvim.overrideAttrs (old: {
           src = inputs.avante;
         });
+        blink-cmp-avante = prev.vimPlugins.blink-cmp-avante.overrideAttrs (old: {
+          src = inputs.blink-cmp-avante;
+        });
       };
 
     })

@@ -1,6 +1,6 @@
 # WARN context files are hardcoded in lua/avante/utils/prompts.lua: AGENTS, CLAUDE, OPENCODE, ...
 # TODO patch
-# TODO commands (shortcuts); either plug all that shit into mcp-hub, or upgrade blink-cmp-avante
+# TODO commands (shortcuts); maybe plug into mcp-hub https://ravitemer.github.io/mcphub.nvim/mcp/native/prompts.html
 # TODO roles
 # TODO recursive agents
 {
