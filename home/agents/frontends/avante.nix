@@ -40,6 +40,8 @@ in
         port = ${port},
         auto_approve = false,
         use_bundled_binary = true,
+        cmd = "npx",
+        cmdArgs = {"-y", "mcp-hub"},
       })
     '';
     plugins = {
