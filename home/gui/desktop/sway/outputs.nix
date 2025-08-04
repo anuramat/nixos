@@ -5,23 +5,15 @@
   ...
 }:
 let
-  inherit (lib) getExe;
+  inherit (lib) getExe range;
   WSs =
     let
-      mkWS =
-        # both arguments inclusive.
-        # breaks for end > 10.
-        start: end:
-        let
-          mkOne = n: "${toString n}:${lib.mod n 10 |> toString}";
-        in
-        builtins.genList (n: n + start |> mkOne) (end + 1 - start);
+      mkOne = n: "${toString n}:${lib.mod n 10 |> toString}";
     in
     {
-      int = mkWS 1 5;
-      ext = mkWS 6 10;
+      int = range 1 5 |> map mkOne;
+      ext = range 6 10 |> map mkOne;
     };
-
   out = {
     int = "eDP-1";
     ext = [

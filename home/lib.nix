@@ -13,6 +13,7 @@ let
     isPath
     isString
     isAttrs
+    trim
     ;
   inherit (pkgs) writeTextFile;
   toJSON = lib.generators.toJSON { };
@@ -28,6 +29,35 @@ let
         text = toJSON value;
       });
 
+  diff =
+    sourceFile: targetFile:
+    trim
+      # bash
+      ''
+        if [[ -s ${targetFile} ]]; then
+          echo START DIFF "${targetFile}" >&2
+          diff "${sourceFile}" "${targetFile}" >&2
+          echo END DIFF >&2
+        fi
+      '';
+
+  mkGenericActivationScript =
+    sourceFile: targetFile:
+    let
+      script =
+        trim
+          # bash
+          ''
+            source=${sourceFile}
+            target=${targetFile}
+            mkdir -p "$(dirname "$target")"
+
+            ${diff "$source" "$target"}
+            run cat "$source" >"$target"
+          '';
+    in
+    "";
+
   # TODO: refactor to call jq once: write all sources to a single json file, then loop in jq or at least unroll a nix loop into a jq command (still just one jq command)
   mkJqActivationScript =
     # @returns: activation script, that updates a JSON file
@@ -39,31 +69,31 @@ let
     operator: sources: target:
     let
       sourceList = if lib.isList sources then sources else [ sources ];
+
+      jqCalls =
+        targetCopy:
+        sourceList
+        |> lib.concatMapStringsSep "\n" (
+          lib.concatMapAttrsStringSep "\n" (
+            key: value:
+            let
+              sourceFile = fileWithJson value;
+            in
+            ''run ${getExe pkgs.jq} --slurpfile arg ${sourceFile} '.${key} ${operator} $arg[0]' "${targetCopy}" | ${pkgs.moreutils}/bin/sponge "${targetCopy}" || exit''
+          )
+        );
       script = # bash
         ''
-                    temp=$(mktemp)
-                    mkdir -p "$(dirname "${target}")"
-          [ -s "${target}" ] || echo '{}' >"${target}"
-          cp '${target}' "$temp"
-                    ${
-                      sourceList
-                      |> lib.concatMapStringsSep "\n" (
-                        lib.concatMapAttrsStringSep "\n" (
-                          key: value:
-                          let
-                            file = fileWithJson value;
-                          in
-                          ''
-                            if [ -s ${file} ]; then
-                              run ${getExe pkgs.jq} --slurpfile arg ${fileWithJson value} '.${key} ${operator} $arg[0]' "$temp" | ${pkgs.moreutils}/bin/sponge "$temp" || exit
-                            else
-                              echo "Warning: ${file} is empty, skipping" >&2
-                            fi
-                          ''
-                        )
-                      )
-                    }
-                    mv "$temp" "${target}"
+          target=${target}
+          source=$(mktemp)
+          mkdir -p "$(dirname "$target")"
+          [ -s "$target" ] || echo '{}' >"$target"
+
+          cp "$target" "$source"
+          ${jqCalls "$source"}
+
+          ${diff "$source" "$target"}
+          mv "$source" "$target"
         '';
     in
     lib.hm.dag.entryAfter [ "writeBoundary" ] script;
