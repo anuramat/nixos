@@ -15,7 +15,7 @@ in
         PartOf = [ target ]; # propagates stop/restart
       };
       Service = {
-        ExecStart = "${lib.getExe pkgs.copilot-api} start -p ${port}";
+        ExecStart = "${lib.getExe' pkgs.copilot-api "copilot-api"} start -p ${port}";
         Restart = "no";
       };
     };
