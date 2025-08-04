@@ -8,27 +8,43 @@
     friendly-snippets.enable = true;
     blink-cmp = {
       enable = true;
-      settings.sources = {
-        providers = {
-          avante = {
-            module = "blink-cmp-avante";
-            name = "avante";
+      settings = {
+        # completion = {
+        #   ghost_text.enabled = true;
+        #   menu.auto_show = false;
+        #   ghost_text.show_with_menu = false;
+        # };
+        sources = {
+          providers = {
+            avante = {
+              module = "blink-cmp-avante";
+              name = "avante";
+            };
+            # copilot = {
+            #   async = true;
+            #   name = "copilot";
+            #   score_offset = 100;
+            # };
           };
-          # copilot = {
-          #   async = true;
-          #   name = "copilot";
-          #   score_offset = 100;
-          # };
+          per_filetype = {
+            AvanteInput = {
+              # TODO not sure if this will work
+
+              __unkeyed-1 = "avante"; # merge with defaults
+              inherit_defaults = true;
+            };
+          };
+          default = [
+            "lsp"
+            "path"
+            "snippets"
+            "buffer"
+            # "copilot"
+          ];
         };
-        default = [
-          "avante"
-          "lsp"
-          "path"
-          "snippets"
-          "buffer"
-        ];
       };
     };
+    # blink-copilot.enable = true;
     copilot-lua = {
       enable = true;
       settings = {
@@ -41,6 +57,13 @@
         };
         suggestion = {
           enabled = true;
+          auto_trigger = true;
+          keymap = {
+            accept = "<M-y>";
+            next = "<M-n>";
+            prev = "<M-p>";
+            dismiss = "<M-e>";
+          };
         };
         filetypes = {
           markdown = false;
