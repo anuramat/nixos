@@ -41,29 +41,29 @@ let
       sourceList = if lib.isList sources then sources else [ sources ];
       script = # bash
         ''
-          temp=$(mktemp)
-          mkdir -p "$(dirname "${target}")"
-[ -s "${target}" ] || echo '{}' >"${target}"
-cp '${target}' "$temp"
-          ${
-            sourceList
-            |> lib.concatMapStringsSep "\n" (
-              lib.concatMapAttrsStringSep "\n" (
-                key: value:
-                let
-                  file = fileWithJson value;
-                in
-                ''
-                  if [ -s ${file} ]; then
-                    run ${getExe pkgs.jq} --slurpfile arg ${fileWithJson value} '.${key} ${operator} $arg[0]' "$temp" | ${pkgs.moreutils}/bin/sponge "$temp" || exit
-                  else
-                    echo "Warning: ${file} is empty, skipping" >&2
-                  fi
-                ''
-              )
-            )
-          }
-          mv "$temp" "${target}"
+                    temp=$(mktemp)
+                    mkdir -p "$(dirname "${target}")"
+          [ -s "${target}" ] || echo '{}' >"${target}"
+          cp '${target}' "$temp"
+                    ${
+                      sourceList
+                      |> lib.concatMapStringsSep "\n" (
+                        lib.concatMapAttrsStringSep "\n" (
+                          key: value:
+                          let
+                            file = fileWithJson value;
+                          in
+                          ''
+                            if [ -s ${file} ]; then
+                              run ${getExe pkgs.jq} --slurpfile arg ${fileWithJson value} '.${key} ${operator} $arg[0]' "$temp" | ${pkgs.moreutils}/bin/sponge "$temp" || exit
+                            else
+                              echo "Warning: ${file} is empty, skipping" >&2
+                            fi
+                          ''
+                        )
+                      )
+                    }
+                    mv "$temp" "${target}"
         '';
     in
     lib.hm.dag.entryAfter [ "writeBoundary" ] script;
