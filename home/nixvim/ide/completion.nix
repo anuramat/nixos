@@ -27,12 +27,9 @@
             # };
           };
           per_filetype = {
-            AvanteInput = {
-              # TODO not sure if this will work
-
-              __unkeyed-1 = "avante"; # merge with defaults
-              inherit_defaults = true;
-            };
+            AvanteInput = hax.vim.lua ''
+              { "avante", inherit_defaults = true }
+            '';
           };
           default = [
             "lsp"
