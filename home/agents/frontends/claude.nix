@@ -47,7 +47,7 @@ let
 
   roles =
     let
-      tools = {
+      toolsetParts = {
         r = "Glob, Grep, LS, Read, TodoWrite";
         i = "WebFetch, WebSearch";
         w = "Edit, MultiEdit, Write, NotebookEdit";
@@ -62,7 +62,7 @@ let
             model = "inherit";
             tools =
               if (v ? tools) then
-                stringToCharacters v.tools |> map (x: tools.${x}) |> concatStringsSep ", "
+                stringToCharacters v.toolsets |> map (x: toolsetParts.${x}) |> concatStringsSep ", "
               else
                 null;
           }
