@@ -29,7 +29,7 @@
       url = "github:anuramat/codex/latest";
     };
     copilot-api = {
-      url = "github:anuramat/copilot-api/flake";
+      url = "github:anuramat/copilot-api/override-model";
     };
     crush = {
       flake = false;

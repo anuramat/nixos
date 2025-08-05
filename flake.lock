@@ -197,16 +197,16 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1754230540,
-        "narHash": "sha256-3LDwrzRhyGNvpgPYfDcbwwX5z6wvozbS7hhxUR95m5A=",
+        "lastModified": 1754360737,
+        "narHash": "sha256-EQ3qbYtPvayjt+zMbJuGEg863pHG1Itgx6gohA2rvJs=",
         "owner": "anuramat",
         "repo": "copilot-api",
-        "rev": "c61de1a5a34ac5137a69e7aeffab75a9d72339c6",
+        "rev": "53650c7d6540e9ae89031b4cfb82ce04ae9d84e8",
         "type": "github"
       },
       "original": {
         "owner": "anuramat",
-        "ref": "flake",
+        "ref": "override-model",
         "repo": "copilot-api",
         "type": "github"
       }

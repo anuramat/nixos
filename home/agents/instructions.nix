@@ -136,9 +136,10 @@ let
         are met.
       '';
 
-      usage =
-        "You are provided special agent-focused CLI tools, that you can use with your bash tool:"
-        + (lib.concatStringsSep "\n" config.lib.agents.usage);
+      usage = ''
+        You are provided special agent-focused CLI tools, that you can use with your bash tool:
+      ''
+      + (lib.concatStringsSep "\n" config.lib.agents.usage);
     };
 in
 {
