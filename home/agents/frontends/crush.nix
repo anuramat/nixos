@@ -10,7 +10,7 @@ let
   inherit (lib) mapAttrs filterAttrs getExe;
   inherit (builtins) tail;
   crushConfig = {
-    # mcp = config.lib.agents.mcp.file;
+    mcp = config.lib.agents.mcp.file;
     lsp = config.lib.agents.lsp.file;
     general = {
       context_paths = config.lib.agents.contextFiles ++ [

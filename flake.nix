@@ -115,7 +115,7 @@
     };
     opencode = {
       flake = false;
-      url = "github:sst/opencode/v0.3.128";
+      url = "github:sst/opencode/v0.3.126";
     };
     spicetify-nix = {
       inputs = {

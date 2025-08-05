@@ -46,5 +46,5 @@ in
   blink-cmp-avante = mkNonFlake "github:Kaiser-Yang/blink-cmp-avante/v0.1.0";
   crush = mkNonFlake "github:charmbracelet/crush/v0.2.1";
   tt-schemes = mkNonFlake "github:tinted-theming/schemes";
-  opencode = mkNonFlake "github:sst/opencode/v0.3.128";
+  opencode = mkNonFlake "github:sst/opencode/v0.3.126";
 }

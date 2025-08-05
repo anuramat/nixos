@@ -130,14 +130,13 @@ in
         # `opencode` is a flake input
         src = inputs.opencode;
         node_modules = old.node_modules.overrideAttrs (nmOld: {
-          outputHash = "";
+          outputHash = "sha256-oZa8O0iK5uSJjl6fOdnjqjIuG//ihrj4six3FUdfob8=";
         });
         tui = old.tui.overrideAttrs (tuiOld: {
           # these two lines below are important
           src = src;
           modRoot = "packages/tui";
-          vendorHash = "";
-          # vendorHash = "sha256-nBwYVaBau1iTnPY3d5F/5/ENyjMCikpQYNI5whEJwBk="; # old
+          vendorHash = "sha256-nBwYVaBau1iTnPY3d5F/5/ENyjMCikpQYNI5whEJwBk="; # old
         });
       });
 
