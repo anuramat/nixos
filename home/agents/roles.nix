@@ -46,7 +46,7 @@ in
         inherit name description;
         withFM = prependFrontmatter text;
         color = "cyan";
-        toolsets = "rw";
+        toolset = "rw";
       };
 
     general-purpose =
@@ -116,7 +116,7 @@ in
         inherit name description;
         withFM = prependFrontmatter text;
         color = "yellow";
-        toolsets = "r";
+        toolset = "r";
       };
   };
 }
