@@ -8,7 +8,7 @@
   ...
 }:
 let
-  inherit (lib) mapAttrs;
+  inherit (lib) mapAttrs stringToCharacters concatStringsSep;
   inherit (config.lib) agents;
   hooks = {
     Notification = [
@@ -47,8 +47,12 @@ let
 
   roles =
     let
-      # remove some of the tools
-      readOnlyTools = "Glob, Grep, LS, ExitPlanMode, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, ListMcpResourcesTool, ReadMcpResourceTool";
+      tools = {
+        r = "Glob, Grep, LS, Read, TodoWrite";
+        i = "WebFetch, WebSearch";
+        w = "Edit, MultiEdit, Write, NotebookEdit";
+        x = "Bash";
+      };
       adaptedRoles =
         agents.roles
         |> mapAttrs (
@@ -56,7 +60,11 @@ let
           v.withFM {
             inherit (v) name description;
             model = "inherit";
-            tools = if v.readonly then readOnlyTools else null;
+            tools =
+              if (v ? tools) then
+                stringToCharacters v.tools |> map (x: tools.${x}) |> concatStringsSep ", "
+              else
+                null;
           }
         );
     in
