@@ -15,7 +15,7 @@ in
     software-architect =
       let
         name = "software-architect";
-        description = ''
+        description = flatten ''
           You MUST use this agent PROACTIVELY if the task specified by the user
           is complex and spans the entire project, e.g. implementation of a
           complex software system, large-scale refactoring, or complete rewrite
