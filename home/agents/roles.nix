@@ -119,7 +119,8 @@ in
         context = config.lib.agents.contextFiles |> lib.concatStringsSep ", ";
         name = "validator";
         description = flatten ''
-          Verifies the documentation files; only use when directly instructed
+          Verifies the documentation files, checking its validity and
+          consistency with the actual state of the codebase
         '';
         text = ''
           You are an expert documentation validator specializing in verifying the
