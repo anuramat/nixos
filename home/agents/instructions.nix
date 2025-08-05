@@ -138,8 +138,7 @@ let
 
       usage =
         "You are provided special agent-focused CLI tools, that you can use with your bash tool:"
-        + lib.concatStringsSep "\n"
-        + lib.agents.usage;
+        + (lib.concatStringsSep "\n" lib.agents.usage);
     };
 in
 {
