@@ -88,7 +88,6 @@ in
           name
           description
           color
-          toolset
           ;
         withFM = prependFrontmatter text;
       };
