@@ -11,7 +11,7 @@ let
   inherit (builtins) tail;
   crushConfig = {
     mcp = config.lib.agents.mcp.file;
-    lsp = config.lib.agents.lsp.file;
+    # lsp = config.lib.agents.lsp.file;
     general = {
       context_paths = config.lib.agents.contextFiles ++ [
         config.lib.agents.instructions.path
