@@ -113,10 +113,6 @@
       };
       url = "github:nix-community/nixvim";
     };
-    opencode = {
-      flake = false;
-      url = "github:sst/opencode/v0.3.126";
-    };
     spicetify-nix = {
       inputs = {
         nixpkgs = {
