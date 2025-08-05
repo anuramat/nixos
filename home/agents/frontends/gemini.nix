@@ -1,4 +1,5 @@
 # configured: 2025-08-04
+# TODO mcp
 {
   lib,
   pkgs,
