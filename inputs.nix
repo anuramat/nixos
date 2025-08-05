@@ -20,7 +20,7 @@ in
   diriger = mkNonFlake "github:anuramat/diriger";
 
   # forks
-  mdformat-myst.url = "github:anuramat/mdformat-myst/dev";
+  mdformat-myst = mkInput "github:anuramat/mdformat-myst/dev"; # I think I broke the formatter...
   mdmath.url = "github:anuramat/mdmath.nvim";
   copilot-api.url = "github:anuramat/copilot-api/flake";
   codex.url = "github:anuramat/codex/latest";
@@ -32,15 +32,14 @@ in
   home-manager = mkInput "github:nix-community/home-manager/release-25.05";
   nixvim = mkInput "github:nix-community/nixvim";
   stylix = mkInput "github:danth/stylix/release-25.05";
+  mcp-nixos = mkInput "github:utensils/mcp-nixos";
+  nil = mkInput "github:oxalica/nil/main";
+  spicetify-nix = mkInput "github:Gerg-L/spicetify-nix";
 
   # no `follows`
   flake-utils.url = "github:numtide/flake-utils"; # no dependencies anyway
   neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay"; # has a cache
   nixos-hardware.url = "github:NixOS/nixos-hardware/master"; # too dangerous
-  # these could work, but it's still a risk; TODO try
-  mcp-nixos = mkInput "github:utensils/mcp-nixos";
-  nil = mkInput "github:oxalica/nil/main";
-  spicetify-nix = mkInput "github:Gerg-L/spicetify-nix";
 
   # non flakes
   avante = mkNonFlake "github:yetone/avante.nvim/v0.0.27";

@@ -100,42 +100,46 @@ let
         ```
       '';
 
-      workflow = # markdown
-        ''
-          You MUST adhere to the following development protocol:
+      workflow = ''
+        You MUST adhere to the following development protocol:
 
-          ${head} Preparation: Acceptance criteria identification
+        ${head} Preparation: Acceptance criteria identification
 
-          Before starting ANY task you MUST explicitly identify acceptance
-          criteria, unless it's directly specified. Typical cases, in pairs of situation -- :
+        Before starting ANY task you MUST explicitly identify acceptance
+        criteria, unless it's directly specified. Typical cases, in pairs of situation -- :
 
-          | Task context       | Acceptance criterion       |
-          | ------------------ | -------------------------- |
-          | Project with tests | All relevant tests pass    |
-          | Flake              | `nix build` succeeds       |
-          | Flake with checks  | `nix flake check` succeeds |
-          | Flake with an app  | `nix run` succeeds         |
-          | Non-development    | None                       |
+        | Task context       | Acceptance criterion       |
+        | ------------------ | -------------------------- |
+        | Project with tests | All relevant tests pass    |
+        | Flake              | `nix build` succeeds       |
+        | Flake with checks  | `nix flake check` succeeds |
+        | Flake with an app  | `nix run` succeeds         |
+        | Non-development    | None                       |
 
-          ${head} Test:
+        ${head} Test:
 
-          You SHOULD write tests, if possible -- before implementing the feature
-          (test-driven development).
+        You SHOULD write tests, if possible -- before implementing the feature
+        (test-driven development).
 
-          ${head} Development loop
+        ${head} Development loop
 
-          You MUST iterate using the following "development" and "verification" steps
-          until you succeed:
+        You MUST iterate using the following "development" and "verification" steps
+        until you succeed:
 
-          1. Development: implement the solution, a part of the solution, or fix a
-             problem; then proceed to verification.
-          2. Verification: verify that the solution meets the acceptance criteria.
-             - If the criteria are met, the task is complete.
-             - Otherwise, go back to step 1 -- iterate again on the solution.
+        1. Development: implement the solution, a part of the solution, or fix a
+           problem; then proceed to verification.
+        2. Verification: verify that the solution meets the acceptance criteria.
+           - If the criteria are met, the task is complete.
+           - Otherwise, go back to step 1 -- iterate again on the solution.
 
-          The task can be considered complete ONLY if the acceptance criteria
-          are met.
-        '';
+        The task can be considered complete ONLY if the acceptance criteria
+        are met.
+      '';
+
+      usage =
+        "You are provided special agent-focused CLI tools, that you can use with your bash tool:"
+        + lib.concatStringsSep "\n"
+        + lib.agents.usage;
     };
 in
 {

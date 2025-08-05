@@ -9,6 +9,7 @@
 let
   inherit (lib)
     getExe
+    getExe'
     mapAttrs
     filterAttrs
     tail
@@ -36,9 +37,12 @@ let
       playwright = {
         command = getExe pkgs.playwright-mcp;
       };
+      think = {
+        command = getExe' pkgs.think "think";
+      };
     in
     {
-      inherit github;
+      inherit github think;
     };
 
   lsp =
@@ -62,8 +66,32 @@ let
       }
     );
 
+  cli = {
+    search = {
+      pkg = pkgs.writeShellApplication {
+        name = "search";
+        runtimeInputs = with pkgs; [
+          ddgr
+        ];
+        text = ''
+          ddgr --np --unsafe --json "$@"
+        '';
+      };
+      usage = ''
+        `search` -- web search bash command; usage:
+
+        ```bash
+        search "$REQUEST"
+        search -w example.com "$REQUEST"
+        ```
+      '';
+    };
+  };
+
 in
 {
   lib.agents.mcp = config.lib.home.mkJson "mcp.json" mcp;
   lib.agents.lsp = config.lib.home.mkJson "mcp.json" lsp;
+  home.packages = lib.mapAttrsToList (n: v: v.pkg) cli;
+  lib.agents.usage = lib.mapAttrsToList (n: v: v.usage) cli;
 }

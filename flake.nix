@@ -75,6 +75,11 @@
       url = "github:ravitemer/mcphub.nvim";
     };
     mdformat-myst = {
+      inputs = {
+        nixpkgs = {
+          follows = "nixpkgs";
+        };
+      };
       url = "github:anuramat/mdformat-myst/dev";
     };
     mdmath = {
