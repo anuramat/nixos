@@ -305,6 +305,22 @@
         "type": "github"
       }
     },
+    "diriger": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1754349549,
+        "narHash": "sha256-fndA/TtqC+w0p3fnl0YV5ePVgiEW8ZgUXxAJQ3tc4p0=",
+        "owner": "anuramat",
+        "repo": "diriger",
+        "rev": "91e9f5792e693e1b5ab757e69d4ba4ee9b156249",
+        "type": "github"
+      },
+      "original": {
+        "owner": "anuramat",
+        "repo": "diriger",
+        "type": "github"
+      }
+    },
     "firefox-gnome-theme": {
       "flake": false,
       "locked": {
@@ -1199,6 +1215,7 @@
         "copilot-api": "copilot-api",
         "crush": "crush",
         "ctrlsn": "ctrlsn",
+        "diriger": "diriger",
         "flake-utils": "flake-utils_5",
         "home-manager": "home-manager_2",
         "mcp-nixos": "mcp-nixos",

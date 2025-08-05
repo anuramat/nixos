@@ -92,10 +92,10 @@ in
       # https://www.npmjs.com/package/@sourcegraph/amp
 
       claude-code = prev.claude-code.overrideAttrs (oldAttrs: rec {
-        version = "1.0.67";
+        version = "1.0.68";
         src = prev.fetchzip {
           url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-          hash = "sha256-Ch55xuJZJ0LXDTIlC7Ya381jqeGJzYC5IDEY0hS76/M=";
+          hash = "sha256-FH+u/t6bbmdc80cBsRgXc9fs//uNHKG00x3o5rj6mvo=";
         };
         # https://www.npmjs.com/package/@anthropic-ai/claude-code
         # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
