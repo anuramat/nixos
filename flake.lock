@@ -854,7 +854,9 @@
     "mdformat-myst": {
       "inputs": {
         "flake-utils": "flake-utils_7",
-        "nixpkgs": "nixpkgs_4"
+        "nixpkgs": [
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1753625594,
@@ -874,7 +876,7 @@
     "mdmath": {
       "inputs": {
         "flake-utils": "flake-utils_8",
-        "nixpkgs": "nixpkgs_5"
+        "nixpkgs": "nixpkgs_4"
       },
       "locked": {
         "lastModified": 1753782519,
@@ -897,7 +899,7 @@
         "git-hooks": "git-hooks",
         "hercules-ci-effects": "hercules-ci-effects",
         "neovim-src": "neovim-src",
-        "nixpkgs": "nixpkgs_6",
+        "nixpkgs": "nixpkgs_5",
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
@@ -1049,22 +1051,6 @@
     },
     "nixpkgs_5": {
       "locked": {
-        "lastModified": 1754214453,
-        "narHash": "sha256-Q/I2xJn/j1wpkGhWkQnm20nShYnG7TI99foDBpXm1SY=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "5b09dc45f24cf32316283e62aec81ffee3c3e376",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "nixos-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs_6": {
-      "locked": {
         "lastModified": 1753844155,
         "narHash": "sha256-w81jpZeM3AtYlTKIhT05p3IqvJRIHZPyp0Acgb6hXWc=",
         "owner": "NixOS",
@@ -1079,7 +1065,7 @@
         "type": "github"
       }
     },
-    "nixpkgs_7": {
+    "nixpkgs_6": {
       "locked": {
         "lastModified": 1753345091,
         "narHash": "sha256-CdX2Rtvp5I8HGu9swBmYuq+ILwRxpXdJwlpg8jvN4tU=",
@@ -1170,16 +1156,16 @@
     "opencode": {
       "flake": false,
       "locked": {
-        "lastModified": 1754249974,
-        "narHash": "sha256-O5Qwr6tpDeou4cN8Rh4yTAbVLywqDomQq7B6Xr6YUsA=",
+        "lastModified": 1754324124,
+        "narHash": "sha256-iS/RJ3PADze0C5wP31YE5nfxm7HJ9A3fVlvU1z8mNGI=",
         "owner": "sst",
         "repo": "opencode",
-        "rev": "170b94a99ed745a07d77be5f59010c85057dd483",
+        "rev": "0a42068fbbc40f3b5f2ad0eb01f0382d5bafa29c",
         "type": "github"
       },
       "original": {
         "owner": "sst",
-        "ref": "v0.3.126",
+        "ref": "v0.3.128",
         "repo": "opencode",
         "type": "github"
       }
@@ -1225,7 +1211,7 @@
         "neovim-nightly-overlay": "neovim-nightly-overlay",
         "nil": "nil",
         "nixos-hardware": "nixos-hardware",
-        "nixpkgs": "nixpkgs_7",
+        "nixpkgs": "nixpkgs_6",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nixvim": "nixvim",
         "opencode": "opencode",
