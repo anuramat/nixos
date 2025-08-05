@@ -116,7 +116,7 @@ in
         inherit name description;
         withFM = prependFrontmatter text;
         color = "yellow";
-        tools = "ro";
+        tools = "r";
       };
   };
 }
