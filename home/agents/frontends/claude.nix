@@ -55,6 +55,7 @@ let
           n: v:
           v.withFM {
             inherit (v) name description;
+            model = "inherit";
             tools = if v.readonly then readOnlyTools else null;
           }
         );
