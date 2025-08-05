@@ -1153,23 +1153,6 @@
         "type": "github"
       }
     },
-    "opencode": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1754249974,
-        "narHash": "sha256-O5Qwr6tpDeou4cN8Rh4yTAbVLywqDomQq7B6Xr6YUsA=",
-        "owner": "sst",
-        "repo": "opencode",
-        "rev": "170b94a99ed745a07d77be5f59010c85057dd483",
-        "type": "github"
-      },
-      "original": {
-        "owner": "sst",
-        "ref": "v0.3.126",
-        "repo": "opencode",
-        "type": "github"
-      }
-    },
     "pyproject-nix": {
       "inputs": {
         "nixpkgs": [
@@ -1214,7 +1197,6 @@
         "nixpkgs": "nixpkgs_6",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nixvim": "nixvim",
-        "opencode": "opencode",
         "spicetify-nix": "spicetify-nix",
         "stylix": "stylix",
         "subcat": "subcat",

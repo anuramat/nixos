@@ -79,7 +79,7 @@ let
   home = config.home.homeDirectory;
 
   mkMcpConfig = config.lib.home.json.set {
-    mcpServers = { inherit (config.lib.agents.mcp) github; };
+    mcpServers = { inherit (config.lib.agents.mcp.raw) github; };
   };
 
   cldcp = config.lib.agents.mkSandbox (
