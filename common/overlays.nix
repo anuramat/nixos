@@ -65,6 +65,7 @@ let
     {
       gemini-cli = mkNpxLink "gemini" "@google/gemini-cli";
       ccusage = mkNpx "ccusage";
+      think = mkNpxLink "think" "@modelcontextprotocol/server-sequential-thinking";
     };
 
   overlays =
