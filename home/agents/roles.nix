@@ -2,7 +2,8 @@
 # TODO tmux test bench
 # TODO refactoring
 let
-  inherit (config.lib.agents) prependFrontmatter trim replaceStrings;
+  inherit (config.lib.agents) prependFrontmatter;
+  inherit (lib) trim replaceStrings;
   flatten = x: x |> replaceStrings [ "\n" ] [ " " ] |> trim;
 in
 {
