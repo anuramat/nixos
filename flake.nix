@@ -25,9 +25,6 @@
       };
       url = "github:k3d3/claude-desktop-linux-flake";
     };
-    codex = {
-      url = "github:anuramat/codex/latest";
-    };
     copilot-api = {
       url = "github:anuramat/copilot-api/override-model";
     };

@@ -142,7 +142,7 @@ in
         pname = "codex";
         version = "0.11.0";
         src = pkgs.fetchurl {
-          url = "https://github.com/openai/codex/releases/download/rust-v0.11.0/codex";
+          url = "https://github.com/openai/codex/releases/download/rust-v0.13.0/codex";
           hash = "sha256-ARV2anuZPwxIh/5UaRgW8i7A+evA9oqq10lf4Rvu4LU=";
         };
         dontUnpack = true;
