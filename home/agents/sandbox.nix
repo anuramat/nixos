@@ -71,7 +71,6 @@ in
       agentDir = agent.agentDir or binName; # the one in xdg directories
       agentName = agent.agentName or binName;
       cmd = "${lib.getExe' agent.package binName} ${args}";
-      copilot = agent.copilot or false;
 
       when = cond: str: if cond then str else ""; # TODO sorry
 
@@ -89,9 +88,6 @@ in
         map (x: ''"${x}"'') (baseRwDirs ++ agentDirs ++ extraRwDirs) |> builtins.concatStringsSep " ";
       env = (agent.env or { }) // {
         ${varNames.agentName} = "'${agentName}'";
-        # TODO move to specific agents
-        # GEMINI_API_KEY = "$(cat '${osConfig.age.secrets.gemini.path}')";
-        # ANTHROPIC_API_KEY = "$(cat '${osConfig.age.secrets.anthropic.path}')";
       };
     in
     (pkgs.writeShellApplication {

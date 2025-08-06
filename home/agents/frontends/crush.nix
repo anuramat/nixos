@@ -1,6 +1,7 @@
 # TODO refactor
 {
   config,
+  osConfig,
   pkgs,
   ...
 }:
@@ -18,7 +19,9 @@ let
     wrapperName = "crs";
     package = pkgs.crush;
     args = "--yolo";
-    copilot = true;
+    env = {
+      OPENAI_API_KEY = "$(cat '${osConfig.age.secrets.oai.path}')";
+    };
   };
 
 in

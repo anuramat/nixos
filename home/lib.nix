@@ -98,6 +98,9 @@ let
     in
     lib.hm.dag.entryAfter [ "writeBoundary" ] script;
 
+  agenixExport =
+    vars:
+    vars |> lib.mapAttrsToList (n: v: ''export ${n}=$(cat "${v.path}")'') |> concatStringsSep "\n";
 in
 {
   lib.home = {
@@ -117,7 +120,7 @@ in
       pkg: vars:
       pkgs.writeShellScriptBin "${pkg.meta.mainProgram}" # bash
         ''
-          ${vars |> lib.mapAttrsToList (n: v: ''export ${n}=$(cat "${v.path}")'') |> concatStringsSep "\n"}
+          ${agenixExport vars}
           ${getExe pkg} "$@"
         '';
 
