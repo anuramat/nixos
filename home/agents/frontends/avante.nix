@@ -87,5 +87,5 @@ in
 
   home.activation.mcphub = config.lib.home.json.set {
     mcpServers = config.lib.agents.mcp.raw;
-  } "${config.xdg.configHome}/mcphub/settings.json";
+  } "${config.xdg.configHome}/mcphub/servers.json";
 }
