@@ -10,6 +10,7 @@ let
   baseRwDirs = [
     "/tmp"
     "$PWD"
+    "$XDG_RUNTIME_DIR"
     "${config.home.homeDirectory}/.npm"
     gopath
   ];

@@ -88,7 +88,7 @@ let
       models = { };
     };
     ollama = {
-      base-url = "http://localhost:${osConfig.services.ollama.port}";
+      base-url = "http://localhost:${toString osConfig.services.ollama.port}";
       models = {
         "gpt-oss:20b" = {
           aliases = [ "oss" ];
@@ -128,7 +128,7 @@ let
 
 in
 {
-  xdg.configFile."mods/mods.yml" = modsCfg;
+  xdg.configFile."mods/mods.yml".source = modsCfg;
   home = {
     packages = [
       modsWithTokens
