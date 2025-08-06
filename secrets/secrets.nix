@@ -6,10 +6,15 @@ let
   keyPaths = getAllKeys ../hosts;
   keys = hostkeys ++ map (v: builtins.readFile v) keyPaths;
 in
-with builtins;
-readDir ./.
-|> attrNames
-|> filter (lib.hasSuffix ".age")
+[
+  "anthropic.age"
+  "claudecode.age"
+  "gemini.age"
+  "ghmcp.age"
+  "litellm.age"
+  "openrouter.age"
+  "oai.age"
+]
 |> map (x: {
   name = x;
   value = {
