@@ -61,10 +61,10 @@ let
             inherit (v) name description;
             model = "inherit";
             tools =
-              if (v ? toolset) then
-                stringToCharacters v.toolset |> map (x: toolsetParts.${x}) |> concatStringsSep ", "
+              if v.toolset == null then
+                null
               else
-                null;
+                stringToCharacters v.toolset |> map (x: toolsetParts.${x}) |> concatStringsSep ", ";
           }
         );
     in
