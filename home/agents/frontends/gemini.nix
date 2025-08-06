@@ -1,5 +1,4 @@
 # configured: 2025-08-04
-# TODO mcp
 {
   lib,
   pkgs,
@@ -8,27 +7,32 @@
 }:
 let
   inherit (config.lib) agents;
+
+  geminiGeneralCfg = config.lib.home.json.set {
+    contextFileName = config.lib.agents.contextFiles;
+  } (config.home.homeDirectory + "/.gemini/settings.json");
+
+  geminiContextCfg = config.lib.home.json.merge {
+    "" = {
+      hideTips = true;
+      hideBanner = true;
+    };
+  } (config.home.homeDirectory + "/.gemini/settings.json");
+
+  geminiInstructions = {
+    ".gemini/GEMINI.md".text = agents.instructions.text;
+  };
 in
 {
   home = {
     activation = {
-      geminiConfig2 = config.lib.home.json.merge [
-        {
-          "" = {
-            hideTips = true;
-            hideBanner = true;
-          };
-        }
-      ] (config.home.homeDirectory + "/.gemini/settings.json");
-      geminiConfig = config.lib.home.json.set [
-        {
-          contextFileName = config.lib.agents.contextFiles;
-        }
-      ] (config.home.homeDirectory + "/.gemini/settings.json");
+      inherit
+        geminiGeneralCfg
+        geminiContextCfg
+        ;
     };
-    file = {
-      ".gemini/GEMINI.md".text = agents.instructions.text;
-    };
+    file = geminiInstructions;
+
     packages = [
       pkgs.gemini-cli
       (config.lib.agents.mkSandbox {

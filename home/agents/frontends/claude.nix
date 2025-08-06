@@ -87,10 +87,6 @@ let
 
   home = config.home.homeDirectory;
 
-  mkMcpConfig = config.lib.home.json.set {
-    mcpServers = { inherit (config.lib.agents.mcp.raw) github; };
-  };
-
   cldcp = config.lib.agents.mkSandbox (
     sandboxCfg
     // {
@@ -117,6 +113,8 @@ in
     );
     packages = [
       pkgs.claude-code
+      pkgs.claude-desktop
+      pkgs.ccusage
       cld
       cldcp
     ];
@@ -125,8 +123,12 @@ in
         includeCoAuthoredBy = false;
         inherit hooks permissions;
       } "${home}/.claude/settings.json";
-      # claudeMcp = mkMcpConfig "${home}/.claude.json";
-      claudeDesktopMcp = mkMcpConfig "${config.xdg.configHome}/Claude/claude_desktop_config.json";
+      claudeMcp = config.lib.home.json.set {
+        mcpServers = { inherit (config.lib.agents.mcp.raw) nixos; };
+      } "${home}/.claude.json";
+      claudeDesktopMcp = config.lib.home.json.set {
+        mcpServers = { inherit (config.lib.agents.mcp.raw) github; };
+      } "${config.xdg.configHome}/Claude/claude_desktop_config.json";
     };
   };
 }

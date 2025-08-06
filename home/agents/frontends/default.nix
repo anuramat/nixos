@@ -7,15 +7,7 @@
     ./crush.nix
     ./codex.nix
     ./amp.nix
-    ./forge.nix # TODO
+    ./forge.nix
     ./goose.nix # TODO
-  ];
-
-  home.packages = with pkgs; [
-    ccusage
-    claude-desktop
-    openai-whisper
-    copilot-api
-    mods
   ];
 }

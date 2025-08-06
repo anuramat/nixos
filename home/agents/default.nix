@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
 let
   inherit (lib)
     concatStringsSep
@@ -13,6 +18,7 @@ in
     ./frontends
     ./git.nix
     ./instructions.nix
+    ./mods.nix
     ./roles.nix
     ./sandbox.nix
     ./tools.nix
@@ -65,4 +71,9 @@ in
         };
       }) prompts;
   };
+
+  home.packages = with pkgs; [
+    openai-whisper
+    copilot-api
+  ];
 }

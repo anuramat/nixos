@@ -9,14 +9,12 @@
 let
   inherit (lib) mapAttrs filterAttrs getExe;
   inherit (builtins) tail;
-  crushConfig = {
-    mcp = { inherit (config.lib.agents.mcp.raw) think; };
-    # lsp = config.lib.agents.lsp.file;
-    options = {
-      context_paths = config.lib.agents.contextFiles ++ [
-        config.lib.agents.instructions.path
-      ];
-    };
+  mcp = { inherit (config.lib.agents.mcp.raw) think; };
+  # lsp = config.lib.agents.lsp.file;
+  options = {
+    context_paths = config.lib.agents.contextFiles ++ [
+      config.lib.agents.instructions.path
+    ];
   };
   apiName = "GHCP";
   providerFile = config.xdg.dataHome + "/crush/ghcp_provider.json";
@@ -48,36 +46,44 @@ let
       '';
   };
 
+  copilotCli = [
+    {
+      "providers.${apiName}" = {
+        type = "openai";
+        base_url = "http://localhost:${config.lib.agents.api.port}";
+        api_key = "dummy";
+      };
+    }
+    {
+      "providers.${apiName}.models" = {
+        __path = providerFile;
+      };
+    }
+  ];
+
+  boxed = config.lib.agents.mkSandbox {
+    wrapperName = "crs";
+    package = pkgs.crush;
+    args = "--yolo";
+    copilot = true;
+  };
+
 in
 
 {
   home = {
     packages = [
-      (config.lib.agents.mkSandbox {
-        wrapperName = "crs";
-        package = pkgs.crush;
-        args = "--yolo";
-        copilot = true;
-      })
       pkgs.crush
-      models
+      boxed
     ];
     activation = {
-      crushConfig = config.lib.home.json.set crushConfig configPath;
-      crushProviders = config.lib.home.json.set [
-        {
-          "providers.${apiName}" = {
-            type = "openai";
-            base_url = "http://localhost:${config.lib.agents.api.port}";
-            api_key = "dummy";
-          };
-        }
-        {
-          "providers.${apiName}.models" = {
-            __path = providerFile;
-          };
-        }
-      ] "${config.xdg.dataHome}/crush/crush.json";
+      crushConfig = config.lib.home.json.set {
+        inherit
+          mcp
+          options
+          ;
+      } configPath;
+      crushProviders = config.lib.home.json.set copilotCli "${config.xdg.dataHome}/crush/crush.json";
     };
   };
 }
