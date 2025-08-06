@@ -81,6 +81,10 @@ in
           '';
 
       in
-      { };
+      {
+        description = "summarize ./*.txt lecture transcripts to ./summaries/*.md";
+        inherit text;
+        withFM = prependFrontmatter text;
+      };
   };
 }
