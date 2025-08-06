@@ -42,6 +42,8 @@
         loadModels = lib.mkIf cuda [ ]; # pull models on service start
         environmentVariables = {
           OLLAMA_FLASH_ATTENTION = "1";
+          OLLAMA_KEEP_ALIVE = "999999m";
+          OLLAMA_CONTEXT_LENGTH = "200000";
         };
         port = 11434; # explicit default
         host = "0.0.0.0";
