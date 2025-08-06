@@ -11,7 +11,6 @@ in
   "claudecode.age"
   "gemini.age"
   "ghmcp.age"
-  "litellm.age"
   "openrouter.age"
   "oai.age"
 ]

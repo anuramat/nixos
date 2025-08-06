@@ -113,6 +113,14 @@ in
           ${getExe args.package} "$@"
         '';
 
+    agenixPatch =
+      pkg: vars:
+      pkgs.writeShellScript "${getName pkg}-agenix-patched" # bash
+        ''
+          ${vars |> lib.mapAttrsToList (n: v: ''export ${n}=$(cat "${v.path}")'') |> concatStringsSep "\n"}
+          ${getExe pkg} "$@"
+        '';
+
     json = {
       merge = mkJqActivationScript "*=";
       set = mkJqActivationScript "=";
