@@ -23,6 +23,7 @@ in
   mdformat-myst = mkInput "github:anuramat/mdformat-myst/dev"; # I think I broke the formatter...
   mdmath.url = "github:anuramat/mdmath.nvim";
   copilot-api.url = "github:anuramat/copilot-api/override-model";
+  copilot-api-go.url = "github:anuramat/copilot-api/golang";
 
   # `follows`
   mcphub = mkInput "github:ravitemer/mcphub.nvim";

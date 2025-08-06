@@ -1,6 +1,7 @@
 { lib, pkgs, ... }:
 let
   port = toString 4141;
+  pkg = pkgs.copilot-api-go;
 in
 {
   lib.agents.api.port = port;
@@ -16,7 +17,7 @@ in
         Requries = [ target ]; # dependency
       };
       Service = {
-        ExecStart = "${lib.getExe' pkgs.copilot-api "copilot-api"} start -p ${port}";
+        ExecStart = "${lib.getExe' pkg "copilot-api"} start -p ${port}";
         Restart = "no";
       };
     };

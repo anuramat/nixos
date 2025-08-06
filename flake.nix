@@ -28,6 +28,9 @@
     copilot-api = {
       url = "github:anuramat/copilot-api/override-model";
     };
+    copilot-api-go = {
+      url = "github:anuramat/copilot-api/golang";
+    };
     crush = {
       flake = false;
       url = "github:charmbracelet/crush/v0.2.1";

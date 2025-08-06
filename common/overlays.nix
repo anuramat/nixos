@@ -15,6 +15,7 @@ let
         mdformat-myst
         claude-desktop
         copilot-api
+        copilot-api-go
         ;
     });
   unstablePkgs = final: prev: {
