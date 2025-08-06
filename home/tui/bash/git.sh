@@ -20,11 +20,11 @@ ghooks() {
 g() {
 	# cd to ghq repo
 	# $1? - query (zoxide style)
-	local -r root=$(ghq root)
-	local -r repo_relative_paths=$(find "$root" -mindepth 3 -maxdepth 3 | sed "s#$root/\?##")
+	local -r root="$(ghq root)"
+	local -r repo_relative_paths="$(find "$root" -mindepth 3 -maxdepth 3 | sed "s#$root/\?##")"
 	local path
 	local args=()
-	[ -n "$1" ] && args=(-f "$1")
+	[ "$1" != "" ] && args=(-f "$1")
 	path=$(fzf "${args[@]}" <<<"$repo_relative_paths") || return
 	cd "$root/$(head -n 1 <<<"$path")" || return
 }
@@ -40,7 +40,7 @@ __gitgud_picker() {
 	echo "$repos"
 	echo $'\t'"${repos//$'\n'/$'\n\t'}" >&2
 
-	[ -z "$1" ] && return
+	[ "$1" = "" ] && return
 
 	read -rs -n 1 -p $"$1 (y/*):"$'\n' choice <&2
 	[ "$choice" = 'y' ]
@@ -67,14 +67,14 @@ gclone() {
 	local repos=$1
 
 	# no repo name? open picker
-	[ -z "$repos" ] && {
+	[ "$repos" = "" ] && {
 		repos=$(gh repo list | cut -f 1 | __gitgud_picker "") || {
 			echo "Selection cancelled"
 			return
 		}
 	}
 
-	for repo in $repos; do
+	for repo in "${repos[@]}"; do
 		local owner
 		owner=$(gh repo view "$repo" --json owner --jq '.owner.login') || return 1
 		__cd_gh_owner "$owner" || return 1
@@ -109,7 +109,7 @@ __check() {
 	local -r nopull="$1"
 
 	# repos are taken from ghq and hardcoded array
-	local -r root=$(ghq root)
+	local -r root="$(ghq root)"
 
 	# shellcheck disable=SC2317
 	get_dirty() {
@@ -120,7 +120,7 @@ __check() {
 
 		local -r name="${path:prefix_length}"
 
-		[ -z "$nopull" ] && {
+		[ "$nopull" = "" ] && {
 			local before
 			before=$(git rev-parse @)
 			git pull --ff-only &>/dev/null
@@ -130,7 +130,7 @@ __check() {
 		local status
 		status=$(__gitgud_git_prompt 1) && status=
 		status="${pulled:+ [ff]}${status:+$(tput setaf 1)$status$(tput sgr0)}"
-		[ -z "$status" ] && return
+		[ "$status" = "" ] && return
 		echo "$name$status"
 	}
 
@@ -140,7 +140,7 @@ __check() {
 		printf '%s\0' "${__free_repos[@]}" | xargs -0 -P 0 -I {} bash -c "get_dirty '$nopull' 0 {}" | LC_ALL=C sort
 		ghq list -p | xargs -P 0 -I {} bash -c "get_dirty '$nopull' $((${#root} + 1)) {}" | LC_ALL=C sort
 	)
-	[ -z "$dirty" ] && {
+	[ "$dirty" = "" ] && {
 		echo "all clean!" >&2
 		return
 	}
@@ -161,7 +161,7 @@ up() (
 			break
 		}
 	done
-	[ -z "$ok" ] && {
+	[ "$ok" = "" ] && {
 		echo "illegal directory"
 		return 1
 	}
@@ -177,7 +177,7 @@ up() (
 	fi
 
 	printf %s 'pulling: '
-	local -r pull_before=$(git rev-parse "@{u}")
+	local -r pull_before="$(git rev-parse "@{u}")"
 	git pull --ff --no-edit -q || return
 	if [ "$pull_before" == "$(git rev-parse "@{u}")" ]; then
 		echo "local is already up to date"
@@ -186,7 +186,7 @@ up() (
 	fi
 
 	printf %s 'pushing: '
-	local -r push_before=$(git rev-parse "@{push}")
+	local -r push_before="$(git rev-parse "@{push}")"
 	git push -q || return
 	if [ "$push_before" == "$(git rev-parse "@{push}")" ]; then
 		echo "remote is already up to date"
@@ -201,7 +201,7 @@ up() (
 
 # XXX checked ok
 gfork() {
-	local -r repo=$1
+	local -r repo="$1"
 	local auth_output
 	auth_output=$(gh auth status --active) || return 1
 	local user
@@ -218,7 +218,7 @@ gcreate() {
 	# $2? - public|private
 	name=$1
 	visibility=private
-	[ -n "$2" ] && visibility=$2
+	[ "$2" != "" ] && visibility=$2
 	case "$2" in
 		private | public) ;;
 		*) return 1 ;;
@@ -233,7 +233,7 @@ gcreate() {
 }
 
 __gitgud_git_prompt() {
-	local -r only_state=$1 # don't show branch/commit
+	local -r only_state="$1" # don't show branch/commit
 
 	local bare
 	bare=$(git rev-parse --is-bare-repository 2>/dev/null) || return # we're not in a repo
@@ -242,10 +242,10 @@ __gitgud_git_prompt() {
 		return
 	fi
 
-	local -r git_root=$(git rev-parse --show-toplevel)
+	local -r git_root="$(git rev-parse --show-toplevel)"
 	(
 		cd "$git_root" || exit
-		local -r raw=$(git status --porcelain=v2 --show-stash --branch)
+		local -r raw="$(git status --porcelain=v2 --show-stash --branch)"
 
 		# branch/commit
 		local branch
@@ -271,7 +271,7 @@ __gitgud_git_prompt() {
 			status+=$(chars 3 1)
 
 			# dirty work tree
-			[ -n "$(chars 4 1)" ] && status+='+'
+			[ "$(chars 4 1)" != "" ] && status+='+'
 
 			# untracked files
 			echo "$raw" | grep -q '^?' && status+="?"
@@ -279,16 +279,16 @@ __gitgud_git_prompt() {
 
 		local desync
 		# behind
-		[ -n "$(git cherry @ "@{push}" 2>/dev/null)" ] && desync+='<'
+		[ "$(git cherry @ "@{push}" 2>/dev/null)" != "" ] && desync+='<'
 		# ahead
-		[ -n "$(git cherry "@{u}" @ 2>/dev/null)" ] && desync+='>'
+		[ "$(git cherry "@{u}" @ 2>/dev/null)" != "" ] && desync+='>'
 		# TODO add unpushed commits from other branches with a special flag?
 
-		local -r stash=$(echo "$raw" | grep -oP '(?<=^# stash )\d+')
+		local -r stash="$(echo "$raw" | grep -oP '(?<=^# stash )\d+')"
 
-		local -r state=$(printf %s "${status:+ $status}${desync:+ $desync}${stash:+ \$$stash}")
+		local -r state="$(printf %s "${status:+ $status}${desync:+ $desync}${stash:+ \$$stash}")"
 
-		if [ -z "$only_state" ]; then
+		if [ "$only_state" = "" ]; then
 			# for PS1: prepend branch/hash
 			printf %s "${branch:-$commit}$state"
 		else
@@ -296,6 +296,6 @@ __gitgud_git_prompt() {
 		fi
 
 		# error on dirty
-		[ -z "$state" ]
+		[ "$state" = "" ]
 	)
 }

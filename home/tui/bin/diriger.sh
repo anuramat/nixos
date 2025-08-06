@@ -56,7 +56,7 @@ argparse() {
 
 # dry run wrapper
 run() {
-	if $dry_run; then
+	if "$dry_run"; then
 		printf '$ '
 		# XXX eats the quotes, might be confusing...
 		eval "printf '%s ' $*"
@@ -151,7 +151,7 @@ send() {
 
 	# shellcheck disable=SC2034
 	# used in `eval` inside `run`
-	for pane in $panes; do
+	for pane in "${panes[@]}"; do
 		run 'tmux send-keys -t "$pane" "$prompt"'
 		sleep 0.1 # HACK gemini ignores enter otherwise
 		run 'tmux send-keys -t "$pane" Enter'
@@ -175,7 +175,7 @@ case "${1:-}" in
 		send "$@"
 		;;
 	config)
-		$EDITOR "$config_file"
+		"$EDITOR" "$config_file"
 		;;
 	*)
 		exit 1

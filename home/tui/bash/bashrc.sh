@@ -13,9 +13,9 @@ gwipe() {
 }
 
 upload() {
-	# uploads a file, sends link to stdout AND pastebin
+	# uploads a file, sends link to stdout AND clipboard
 	local filename="$1"
-	[ -z "$1" ] && filename="-"
+	[ "$1" = "" ] && filename="-"
 	curl -F "file=@$filename" https://0x0.st | tee >(wl-copy)
 }
 
@@ -56,20 +56,20 @@ y() {
 	local tmp cwd
 	tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
 	yazi "$@" --cwd-file="$tmp"
-	if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+	if cwd="$(command cat -- "$tmp")" && [ "$cwd" != "" ] && [ "$cwd" != "$PWD" ]; then
 		builtin cd -- "$cwd" || return
 	fi
 	rm -f -- "$tmp"
 }
 
 run() {
-	local -r name=$1
+	local -r name="$1"
 	shift
 	nix run "nixpkgs-unstable#$name" -- "$@"
 }
 
 shell() {
-	local -r name=$1
+	local -r name="$1"
 	shift
 	nix shell "nixpkgs-unstable#$name" -- "$@"
 }

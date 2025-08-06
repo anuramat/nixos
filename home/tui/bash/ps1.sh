@@ -3,12 +3,12 @@
 # deps: __gitgud_git_prompt defined in gitgud.sh
 
 __git_user_ps1() {
-	local -r prompt=$(__gitgud_git_prompt)
+	local -r prompt="$(__gitgud_git_prompt)"
 	printf '%s' "${prompt:+ $(tput setaf 5)$prompt$(tput sgr0)}"
 }
 
 __code_user_ps1() {
-	local -r err=$__last_return_code
+	local -r err="$__last_return_code"
 	[ "$err" -ne 0 ] && printf ' %s\n' "$(tput bold setaf 1)ERR:$err"
 	tput sgr0 # TODO for some reason if we put this into a printf arg, it eats the newline???
 }
@@ -22,13 +22,13 @@ __time_user_ps1() {
 }
 
 __ssh_user_ps1() {
-	if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+	if [ "$SSH_CLIENT" != "" ] || [ "$SSH_TTY" != "" ]; then
 		printf ' %s\n' "$(whoami)@$(hostname)"
 	fi
 }
 
 __path_user_ps1() {
-	cwd=$(pwd)
+	cwd=$PWD
 	len=${#HOME}
 	[[ $cwd == "$HOME"* ]] \
 		&& cwd="~${cwd:len}"
