@@ -1,5 +1,4 @@
 # configured: 2025-08-04
-# NOTE: context filename is hardcoded to AGENT.md; global -- in $HOME/.config/AGENT.md
 {
   pkgs,
   lib,
@@ -8,10 +7,10 @@
   ...
 }:
 let
+  # context filename is hardcoded to AGENT.md; global -- in $HOME/.config/AGENT.md
   agentDir = "amp";
-  settings = {
+  generalCfg = {
     amp = {
-      # mcpServers = config.lib.agents.mcp.raw;
       git.commit = {
         # ampThread.enabled = false;
         coauthor.enabled = false;
@@ -19,22 +18,25 @@ let
       updates.autoUpdate.enabled = false;
     };
   };
+
+  boxed = config.lib.agents.mkSandbox {
+    package = pkgs.amp-cli;
+    wrapperName = "amp-sb";
+    extraRwDirs = [
+      "$HOME/.amp"
+    ];
+  };
+
 in
 {
   home = {
     packages = [
       pkgs.amp-cli
-      (config.lib.agents.mkSandbox {
-        package = pkgs.amp-cli;
-        wrapperName = "amp-sb";
-        extraRwDirs = [
-          "$HOME/.amp"
-        ];
-      })
+      boxed
     ];
     activation = {
       ampConfig = config.lib.home.json.set {
-        "" = settings;
+        "" = generalCfg;
       } "${config.xdg.configHome}/${agentDir}/settings.json";
     };
   };

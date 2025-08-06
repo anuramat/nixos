@@ -87,17 +87,5 @@ in
 
   home.activation.mcphub = config.lib.home.json.set {
     mcpServers = config.lib.agents.mcp.raw;
-    # "nativeMCPServers.neovim.disabled_prompts" = [ "parrot" ];
   } "${config.xdg.configHome}/mcphub/settings.json";
-  #   nativeMCPServers = {
-  #     mcphub = {
-  #       disabled_tools = [ "toggle_mcp_server" ];
-  #       disabled_resources = [
-  #         "mcphub://docs"
-  #         "mcphub://changelog"
-  #         "mcphub://native_server_guide"
-  #       ];
-  #       disabled_prompts = [ "create_native_server" ];
-  #     };
-  #     neovim.disabled_prompts = [ "parrot" ];
 }

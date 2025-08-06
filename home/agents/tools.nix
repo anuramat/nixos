@@ -41,7 +41,12 @@ let
       };
     in
     {
-      inherit github think;
+      inherit
+        github
+        think
+        playwright
+        nixos
+        ;
     };
 
   lsp =
