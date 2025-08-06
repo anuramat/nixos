@@ -10,18 +10,6 @@ let
     mapAttrsToList
     filterAttrs
     ;
-in
-{
-  imports = [
-    ./commands.nix
-    ./frontends
-    ./git.nix
-    ./instructions.nix
-    ./mods.nix
-    ./roles.nix
-    ./sandbox.nix
-    ./tools.nix
-  ];
 
   models =
     let
@@ -44,6 +32,19 @@ in
           curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $token" https://api.githubcopilot.com/models | jq '.data'
         '';
     };
+in
+{
+
+  imports = [
+    ./commands.nix
+    ./frontends
+    ./git.nix
+    ./instructions.nix
+    ./mods.nix
+    ./roles.nix
+    ./sandbox.nix
+    ./tools.nix
+  ];
 
   lib.agents = {
     mainContextFile = "AGENT.md";
@@ -91,5 +92,6 @@ in
 
   home.packages = with pkgs; [
     openai-whisper
+    models
   ];
 }

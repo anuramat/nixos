@@ -54,6 +54,5 @@ in
         inherit text;
         withFM = prependFrontmatter text;
       };
-
   };
 }
