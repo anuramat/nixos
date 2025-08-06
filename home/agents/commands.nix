@@ -54,5 +54,33 @@ in
         inherit text;
         withFM = prependFrontmatter text;
       };
+
+    summarize_lectures =
+      let
+        text =
+          let
+            cmd = ''mkdir -p summaries; fd -e txt --max-depth=1 -x sh -c 'touch summaries/{.}.md ; echo "{} ---> ./summaries/{.}.md"''\''';
+          in
+          ''
+            Summarize a set of lecture transcripts. Here are the transcripts in
+            .txt files, and corresponding .md target paths initialized with
+            empty files:
+
+            !`${cmd}`
+
+            Run `${roles.lecture-summarizer.name}` agents in parallel, one per
+            file: provide each with path to a single transcript file, target
+            path for the resulting summary, and additional information from the
+            user (if any).
+
+            Additional information:
+
+            <context>
+            $ARGUMENTS
+            </context>
+          '';
+
+      in
+      { };
   };
 }
