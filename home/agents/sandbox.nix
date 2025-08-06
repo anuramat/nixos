@@ -101,9 +101,6 @@ in
       ];
 
       text = ''
-        # start copilot-api if required
-        ${when copilot "systemctl start --user copilot-api.service"}
-
         # shadow some of the xdg directories with a tmp one
         ${shadowXdgScript agentDir}
 

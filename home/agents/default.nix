@@ -13,7 +13,6 @@ let
 in
 {
   imports = [
-    ./api.nix
     ./commands.nix
     ./frontends
     ./git.nix
@@ -74,6 +73,5 @@ in
 
   home.packages = with pkgs; [
     openai-whisper
-    copilot-api
   ];
 }
