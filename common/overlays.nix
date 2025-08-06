@@ -135,20 +135,14 @@ in
         vendorHash = "sha256-aI3MSaQYUOLJxBxwCoVg13HpxK46q6ZITrw1osx5tiE=";
       };
 
-      opencode = prev.opencode.overrideAttrs (old: rec {
-        version = inputs.opencode.ref;
-        # `opencode` is a flake input
-        src = inputs.opencode;
-        node_modules = old.node_modules.overrideAttrs (nmOld: {
-          outputHash = "sha256-oZa8O0iK5uSJjl6fOdnjqjIuG//ihrj4six3FUdfob8=";
-        });
-        tui = old.tui.overrideAttrs (tuiOld: {
-          # these two lines below are important
-          src = src;
-          modRoot = "packages/tui";
-          vendorHash = "sha256-nBwYVaBau1iTnPY3d5F/5/ENyjMCikpQYNI5whEJwBk="; # old
-        });
-      });
+      mods = prev.buildGoModule rec {
+        pname = "mods";
+        meta.mainProgram = pname;
+        version = inputs.mods.shortRev;
+        src = inputs.mods;
+        doCheck = false;
+        vendorHash = "";
+      };
 
       codex = pkgs.stdenv.mkDerivation {
         pname = "codex";

@@ -853,6 +853,23 @@
         "type": "github"
       }
     },
+    "mods": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1752160591,
+        "narHash": "sha256-CT90uMQc0quQK/vCeLiHH8taEkCSDIcO7Q3aA+oaNmY=",
+        "owner": "charmbracelet",
+        "repo": "mods",
+        "rev": "9b36cf882989cf6807ec82f8afbc56d418ba9264",
+        "type": "github"
+      },
+      "original": {
+        "owner": "charmbracelet",
+        "ref": "v1.8.1",
+        "repo": "mods",
+        "type": "github"
+      }
+    },
     "neovim-nightly-overlay": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -1135,6 +1152,7 @@
         "mcphub": "mcphub",
         "mdformat-myst": "mdformat-myst",
         "mdmath": "mdmath",
+        "mods": "mods",
         "neovim-nightly-overlay": "neovim-nightly-overlay",
         "nil": "nil",
         "nixos-hardware": "nixos-hardware",

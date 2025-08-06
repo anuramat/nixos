@@ -82,6 +82,10 @@
     mdmath = {
       url = "github:anuramat/mdmath.nvim";
     };
+    mods = {
+      flake = false;
+      url = "github:charmbracelet/mods/v1.8.1";
+    };
     neovim-nightly-overlay = {
       url = "github:nix-community/neovim-nightly-overlay";
     };
