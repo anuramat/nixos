@@ -6,6 +6,7 @@
 }:
 let
   # TODO mcp; check out extensions and recipes in https://block.github.io/goose/docs/
+  # TODO turn extensions on/off based on project
   gooseConfig = (pkgs.formats.yaml { }).generate "goose-config.yaml" {
     GOOSE_MODE = "auto";
     GOOSE_MAX_TURNS = 9999999;
