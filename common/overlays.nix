@@ -158,20 +158,6 @@ in
         '';
       };
 
-      # https://github.com/antinomyhq/forge/releases/download/v0.104.3/forge-x86_64-unknown-linux-musl
-      forge = pkgs.stdenv.mkDerivation rec {
-        pname = "forge";
-        version = "0.104.3";
-        src = pkgs.fetchurl {
-          url = "https://github.com/antinomyhq/forge/releases/download/v${version}/forge-x86_64-unknown-linux-musl";
-          hash = "sha256-3T+CmQtHZYzdK/r3u69KH43HGZhRHPOjPR0J4KkLuEs=";
-        };
-        dontUnpack = true;
-        installPhase = ''
-          install -Dm755 $src $out/bin/forge
-        '';
-      };
-
       vimPlugins = prev.vimPlugins // {
         avante-nvim = prev.vimPlugins.avante-nvim.overrideAttrs (old: {
           src = inputs.avante;
