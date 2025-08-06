@@ -18,6 +18,7 @@ in
   ctrlsn = mkInput "git+ssh://git@github.com/anuramat/ctrl.sn?ref=main";
   subcat = mkInput "github:anuramat/subcat";
   diriger = mkNonFlake "github:anuramat/diriger";
+  gothink = mkInput "github:anuramat/gothink";
 
   # forks
   mdformat-myst = mkInput "github:anuramat/mdformat-myst/dev"; # I think I broke the formatter...

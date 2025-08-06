@@ -87,20 +87,6 @@ let
 
   home = config.home.homeDirectory;
 
-  cldcp = config.lib.agents.mkSandbox (
-    sandboxCfg
-    // {
-      copilot = true;
-      wrapperName = "cldcp";
-      env = {
-        ANTHROPIC_BASE_URL = "http://localhost:${config.lib.agents.api.port}";
-        ANTHROPIC_AUTH_TOKEN = "dummy";
-        ANTHROPIC_MODEL = "gpt-4.1";
-        ANTHROPIC_SMALL_FAST_MODEL = "gpt-4.1";
-      };
-    }
-  );
-
 in
 {
   home = {
@@ -116,7 +102,6 @@ in
       pkgs.claude-desktop
       pkgs.ccusage
       cld
-      cldcp
     ];
     activation = {
       claudeSettings = config.lib.home.json.set {

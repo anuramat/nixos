@@ -37,7 +37,7 @@ let
         command = getExe pkgs.playwright-mcp;
       };
       think = {
-        command = getExe' pkgs.think "think";
+        command = getExe pkgs.gothink;
       };
     in
     {

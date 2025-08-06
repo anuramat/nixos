@@ -44,6 +44,14 @@
     flake-utils = {
       url = "github:numtide/flake-utils";
     };
+    gothink = {
+      inputs = {
+        nixpkgs = {
+          follows = "nixpkgs";
+        };
+      };
+      url = "github:anuramat/gothink";
+    };
     home-manager = {
       inputs = {
         nixpkgs = {

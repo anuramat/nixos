@@ -10,6 +10,7 @@ let
     (builtins.mapAttrs (n: v: v.packages.${prev.system}.default) {
       inherit (inputs)
         subcat
+        gothink
         mcp-nixos
         nil
         mdformat-myst
