@@ -99,6 +99,7 @@ in
           hash = "sha256-FghgCtVQIxc9qB5vZZlblugk6HLnxoT8xanZK+N8qEc=";
           fetchSubmodules = true;
         };
+        vendorHash = "sha256-SlaDsu001TUW+t9WRp7LqxUSQSGDF1Lqu9M1bgILoX4=";
       });
 
       claude-code = prev.claude-code.overrideAttrs (oldAttrs: rec {
