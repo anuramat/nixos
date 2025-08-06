@@ -99,7 +99,7 @@ let
       base-url = "https://api.openai.com/v1";
       api-key-env = "gh";
       models = {
-        codex-mini = null;
+        codex-mini = { };
       };
     };
   };
@@ -128,7 +128,7 @@ let
 
 in
 {
-  xgd.configFile."mods/mods.yml" = modsCfg;
+  xdg.configFile."mods/mods.yml" = modsCfg;
   home = {
     packages = [
       modsWithTokens
