@@ -115,7 +115,7 @@ in
 
     agenixPatchPkg =
       pkg: vars:
-      pkgs.writeShellScriptBin "${pkg.mainProgram}" # bash
+      pkgs.writeShellScriptBin "${pkg.meta.mainProgram}" # bash
         ''
           ${vars |> lib.mapAttrsToList (n: v: ''export ${n}=$(cat "${v.path}")'') |> concatStringsSep "\n"}
           ${getExe pkg} "$@"

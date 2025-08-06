@@ -6,7 +6,7 @@
 }:
 
 let
-  mods = config.lib.home.agenixPatch pkgs.mods (
+  mods = config.lib.home.agenixPatchPkg pkgs.mods (
     with osConfig.age.secrets;
     {
       inherit
