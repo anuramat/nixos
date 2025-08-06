@@ -16,5 +16,6 @@
     claude-desktop
     openai-whisper
     copilot-api
+    mods
   ];
 }

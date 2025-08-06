@@ -141,7 +141,7 @@ in
         version = inputs.mods.shortRev;
         src = inputs.mods;
         doCheck = false;
-        vendorHash = "";
+        vendorHash = "sha256-Io6aNX7z6UvEAIt4qrxF0DA7/yqc8XIMG/bRVlE3nQU=";
       };
 
       codex = pkgs.stdenv.mkDerivation {
