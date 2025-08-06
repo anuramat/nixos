@@ -14,10 +14,11 @@ let
 in
 {
   lib.agents.roles = {
-    test =
+    qa =
       let
         color = "pink";
-        name = "test-coverage-analyzer";
+        name = "qa-engineer";
+        toolset = "rwx";
         description = ''
           You MUST use this agent PROACTIVELY when you need to analyze existing
           test coverage and write comprehensive tests to improve code quality
@@ -104,6 +105,13 @@ in
         '';
       in
       {
+        inherit
+          name
+          description
+          color
+          toolset
+          ;
+        withFM = prependFrontmatter text;
       };
     lecture-summarizer =
       let
@@ -180,7 +188,7 @@ in
         withFM = prependFrontmatter text;
       };
 
-    software-architect =
+    architect =
       let
         name = "software-architect";
         toolset = null;
