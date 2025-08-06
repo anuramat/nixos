@@ -90,6 +90,17 @@ in
       });
       # https://www.npmjs.com/package/@sourcegraph/amp
 
+      ollama = prev.ollama.overrideAttrs (oldAttrs: rec {
+        version = "0.11.2";
+        src = prev.fetchFromGitHub {
+          owner = "ollama";
+          repo = "ollama";
+          tag = "v${version}";
+          hash = "sha256-fVbHz/Sa3aSIYBic3lNQl5iUYo+9LHIk52vO9mx6XRE=";
+          fetchSubmodules = true;
+        };
+      });
+
       claude-code = prev.claude-code.overrideAttrs (oldAttrs: rec {
         version = "1.0.68";
         src = prev.fetchzip {
