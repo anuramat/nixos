@@ -103,7 +103,7 @@ in
   lib.home = {
     inherit mkGenericActivationScript;
 
-    patchedBinary =
+    agenixPatch =
       # returns a patched binary that sets an environment variable
       # TODO rename to agenixPatchedBinary or something
       args:
@@ -113,9 +113,9 @@ in
           ${getExe args.package} "$@"
         '';
 
-    agenixPatch =
+    agenixPatchPkg =
       pkg: vars:
-      pkgs.writeShellScript "${getName pkg}-agenix-patched" # bash
+      pkgs.writeShellScriptBin "${pkg.mainProgram}" # bash
         ''
           ${vars |> lib.mapAttrsToList (n: v: ''export ${n}=$(cat "${v.path}")'') |> concatStringsSep "\n"}
           ${getExe pkg} "$@"

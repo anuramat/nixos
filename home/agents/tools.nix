@@ -21,7 +21,7 @@ let
       };
       github =
         let
-          githubPatched = config.lib.home.patchedBinary {
+          githubPatched = config.lib.home.agenixPatch {
             name = "GITHUB_PERSONAL_ACCESS_TOKEN";
             token = osConfig.age.secrets.ghmcp.path;
             package = pkgs.github-mcp-server;
