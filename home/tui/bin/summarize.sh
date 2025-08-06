@@ -4,4 +4,4 @@ echo "summarizing files:"
 fd -e txt --max-depth=1 -x echo $'\t''{}'
 
 mkdir -p summaries
-fd -e txt --max-depth=1 -x sh -c 'cat "{}" | mods -R summarizer > "./summaries/{.}.md"'
+fd -e txt --max-depth=1 -x sh -c 'cat "{}" | mods -R summarizer "here is the lecture transcript:" > "./summaries/{.}.md"'

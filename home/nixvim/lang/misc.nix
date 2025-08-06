@@ -1,5 +1,6 @@
 {
   hax,
+  lib,
   config,
   pkgs,
   ...
@@ -34,15 +35,67 @@
   };
 
   snippets = hax.vim.files.snippets {
-    sh = {
-      loop = {
-        body = [
-          "while IFS= read -r -d '' $1; do"
-          "$0"
-          "done"
-        ];
-        prefix = "loop";
-      };
-    };
+    toml =
+      let
+        fmt = x: x |> lib.trim |> lib.splitString "\n";
+      in
+      lib.mapAttrs'
+        (
+          n: v:
+          lib.nameValuePair ("treefmt_" + n) {
+            body = fmt v;
+            prefix = n;
+          }
+        )
+        {
+          go = ''
+            [formatter.gofmt]
+            command = "gofmt"
+            options = [ "-w" ]
+            includes = [ "*.go" ]
+
+            [formatter.gofumpt]
+            command = "gofumpt"
+            options = [ "-w" ]
+            includes = [ "*.go" ]
+
+            [formatter.goimports]
+            command = "goimports"
+            options = [ "-w" ]
+            includes = [ "*.go" ]
+          '';
+          nix = ''
+            # [formatter.nix]
+            # command = "nixfmt"
+            # includes = [ "*.nix" ]
+          '';
+          lua = ''
+            [formatter.lua]
+            command = "stylua"
+            includes = [ "*.lua" ]
+          '';
+          sh = ''
+            [formatter.shfmt]
+            includes = [ "*.sh" ]
+            command = "shfmt"
+            options = [ "--write", "--simplify", "--case-indent", "--binary-next-line" ]
+
+            [formatter.shellharden]
+            includes = [ "*.sh" ]
+            command = "shellharden"
+            options = [ "--replace" ]
+          '';
+          yaml = ''
+            [formatter.yaml]
+            includes = [ "*.yaml" ]
+            command = "yamlfmt"
+          '';
+          python = ''
+            [formatter.python]
+            command = "black"
+            includes = [ "*.py" ]
+            options = [ "-q" ]
+          '';
+        };
   };
 }
