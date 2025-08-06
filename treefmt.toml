@@ -13,7 +13,6 @@ includes = [ "*.sh" ]
 command = "shfmt"
 options = [ "--write", "--simplify", "--case-indent", "--binary-next-line" ]
 
-# TODO enable, format, and verify everything is ok
 [formatter.shellharden]
 includes = [ "*.sh" ]
 command = "shellharden"

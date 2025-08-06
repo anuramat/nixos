@@ -32,4 +32,17 @@
       "todo.txt" = "todotxt";
     };
   };
+
+  snippets = hax.vim.files.snippets {
+    sh = {
+      loop = {
+        body = [
+          "while IFS= read -r -d '' $1; do"
+          "$0"
+          "done"
+        ];
+        prefix = "loop";
+      };
+    };
+  };
 }
