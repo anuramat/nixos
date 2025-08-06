@@ -6,10 +6,12 @@
   ...
 }:
 let
+  gopath = "${config.home.homeDirectory}/go";
   baseRwDirs = [
     "/tmp"
     "$PWD"
     "${config.home.homeDirectory}/.npm"
+    gopath
   ];
   inherit (config.lib.agents) varNames;
 
