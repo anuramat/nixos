@@ -22,17 +22,17 @@ let
         matcher = "";
       }
     ];
-    PostToolUse = [
-      {
-        hooks = [
-          {
-            command = "treefmt &>/dev/null || true";
-            type = "command";
-          }
-        ];
-        matcher = "Edit|MultiEdit|Write";
-      }
-    ];
+    # PostToolUse = [
+    #   {
+    #     hooks = [
+    #       {
+    #         command = "treefmt &>/dev/null || true";
+    #         type = "command";
+    #       }
+    #     ];
+    #     matcher = "Edit|MultiEdit|Write";
+    #   }
+    # ];
   };
   permissions = {
     allow = [ ];
