@@ -144,12 +144,12 @@ in
         vendorHash = "sha256-Io6aNX7z6UvEAIt4qrxF0DA7/yqc8XIMG/bRVlE3nQU=";
       };
 
-      codex = pkgs.stdenv.mkDerivation {
+      codex = pkgs.stdenv.mkDerivation rec {
         pname = "codex";
-        version = "0.11.0";
+        version = "0.13.0";
         src = pkgs.fetchurl {
-          url = "https://github.com/openai/codex/releases/download/rust-v0.13.0/codex";
-          hash = "sha256-ARV2anuZPwxIh/5UaRgW8i7A+evA9oqq10lf4Rvu4LU=";
+          url = "https://github.com/openai/codex/releases/download/rust-v${version}/codex";
+          hash = "";
         };
         dontUnpack = true;
         nativeBuildInputs = [ pkgs.makeWrapper ];
