@@ -880,11 +880,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1754531903,
-        "narHash": "sha256-shywmK/83ZI+gjTOOEbiYWb3eL7C9nj7yhdoss7cWtY=",
+        "lastModified": 1754573505,
+        "narHash": "sha256-IEY0TZGoMQ3TNi7uqdJd8lddsKhbU0xmRDksAR3jHOE=",
         "owner": "anuramat",
         "repo": "modagent",
-        "rev": "465125e2bb7af8c08fdc87e2c049779bea5e26fa",
+        "rev": "528bb089be8c861cbe234f9546d9aa1297ffc154",
         "type": "github"
       },
       "original": {
