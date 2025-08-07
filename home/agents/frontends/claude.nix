@@ -81,20 +81,20 @@ let
   };
 
   home = config.home.homeDirectory;
-
+  cfgDir = config.xdg.configHome + "/claude";
 in
 {
+  xdg.configFile = (
+    {
+      "claude/CLAUDE.md".text = agents.instructions.text;
+    }
+    // commands
+    // roles
+  );
   home = {
     sessionVariables = {
-      CLAUDE_CONFIG_DIR = config.xdg.configHome + "/claude";
+      CLAUDE_CONFIG_DIR = cfgDir;
     };
-    file = (
-      {
-        ".claude/CLAUDE.md".text = agents.instructions.text;
-      }
-      // commands
-      // roles
-    );
     packages = [
       claudeWrapped
       claudeBoxed
@@ -105,12 +105,12 @@ in
       claudeSettings = config.lib.home.json.set {
         includeCoAuthoredBy = false;
         inherit hooks permissions;
-      } "${home}/.claude/settings.json";
+      } "${cfgDir}/settings.json";
       claudeMcp = config.lib.home.json.set {
         mcpServers = {
           inherit (config.lib.agents.mcp.raw) modagent;
         };
-      } "${home}/.claude.json";
+      } "${cfgDir}/.claude.json";
       claudeDesktopMcp = config.lib.home.json.set {
         mcpServers = { inherit (config.lib.agents.mcp.raw) github; };
       } "${config.xdg.configHome}/Claude/claude_desktop_config.json";
