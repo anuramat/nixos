@@ -29,7 +29,9 @@ let
   inherit (config.lib.home) when;
 
   think = true;
-  # taken from general-purpose (claude code)
+
+  wrapCmds = x: [ (concatStrings x) ];
+
   modagent = {
     main = ''
       You are an agent for Claude Code, Anthropic's official CLI for Claude.
@@ -38,18 +40,16 @@ let
       When you complete the task simply respond with a detailed writeup.
     '';
 
-    general_guidelines = [
-      ''
-        General guidelines:
+    general_guidelines = ''
+      General guidelines:
 
-        - In your final response always share relevant file names and code snippets.
-          Any file paths you return in your response MUST be absolute. Do NOT use relative paths.
-        - For clear communication with the user the assistant MUST avoid using emojis.
-      ''
-    ];
+      - In your final response always share relevant file names and code snippets.
+        Any file paths you return in your response MUST be absolute. Do NOT use relative paths.
+      - For clear communication with the user the assistant MUST avoid using emojis.
+    '';
   };
 
-  intern = concatStrings [
+  junior-r = wrapCmds [
     modagent.main
     ''
       Your strengths:
@@ -68,7 +68,7 @@ let
     ''
   ];
 
-  junior = concatStrings [
+  junior-rwx = wrapCmds [
     modagent.main
     ''
       Your strengths:
@@ -194,7 +194,7 @@ let
           you do not provide any explanation whatsoever, ONLY the command
         ''
       ];
-      inherit summarizer intern junior;
+      inherit summarizer junior-r junior-rwx;
     };
     temp = -1.0; # 0.0 to 2.0, -1.0 to disable
     topk = -1; # -1 to disable
