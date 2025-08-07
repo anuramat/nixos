@@ -114,8 +114,12 @@ let
     ];
   };
 
+  default = {
+    blocked_tools = [ "*" ];
+  };
+
   summarizer = {
-    blocked_tools = "*";
+    blocked_tools = [ "*" ];
     prompt = [
       ''
         You are an expert academic note-taker and educational content specialist
