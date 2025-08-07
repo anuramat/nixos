@@ -15,23 +15,16 @@ let
       # https://github.com/openai/codex/blob/main/codex-rs/config.md
       cfg = {
         # mcp_servers = config.lib.agents.mcp.raw;
-        model_providers.GHCP = {
-          name = "GHCP";
-          base_url = "http://localhost:${config.lib.agents.api.port}";
-        };
         approval_policy = "never";
-        profile = "gpt";
+        profile = "gpt5";
         profiles = {
-          gpt = {
-            model = "gpt-4.1";
-            model_provider = "GHCP";
-          };
-          sonnet = {
-            model = "claude-sonnet-4";
-            model_provider = "GHCP";
-          };
-          oai = {
+          gpt5 = {
+            model = "gpt-5";
             model_provider = "openai";
+          };
+          gpt5m = {
+            model = "gpt-5";
+            model_provider = "GHCP";
           };
         };
         notify =

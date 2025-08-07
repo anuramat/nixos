@@ -149,7 +149,7 @@ in
         version = "0.13.0";
         src = pkgs.fetchurl {
           url = "https://github.com/openai/codex/releases/download/rust-v${version}/codex";
-          hash = "";
+          hash = "sha256-lXzZNYKicax8xFc0pHR0SNj2mXw03BmDvkPobjnxw0o=";
         };
         dontUnpack = true;
         nativeBuildInputs = [ pkgs.makeWrapper ];
