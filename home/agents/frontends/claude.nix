@@ -70,20 +70,15 @@ let
     in
     agents.mkPrompts ".claude/agents" adaptedRoles;
 
-  sandboxCfg = {
-    wrapperName = "cld";
-    package = pkgs.claude-code;
-    args = "--dangerously-skip-permissions";
-    env = {
-      CLAUDE_CODE_OAUTH_TOKEN = "$(cat '${osConfig.age.secrets.claudecode.path}')";
-    };
-    agentDir = null;
-    extraRwDirs = [
-      "$HOME/.claude.json"
-      "$HOME/.claude"
-    ];
+  claudeWrapped = config.lib.home.agenixWrap pkgs.claude-code {
+    CLAUDE_CODE_OAUTH_TOKEN = osConfig.age.secrets.claudecode;
   };
-  cld = config.lib.agents.mkSandbox sandboxCfg;
+
+  claudeBoxed = config.lib.agents.mkSandbox {
+    wrapperName = "cld";
+    package = claudeWrapped;
+    args = "--dangerously-skip-permissions";
+  };
 
   home = config.home.homeDirectory;
 
@@ -101,10 +96,10 @@ in
       // roles
     );
     packages = [
-      pkgs.claude-code
+      claudeWrapped
+      claudeBoxed
       pkgs.claude-desktop
       pkgs.ccusage
-      cld
     ];
     activation = {
       claudeSettings = config.lib.home.json.set {

@@ -118,7 +118,7 @@ in
         # build args
         args=()
         for i in "''${${varNames.rwDirs}[@]}"; do
-        	args+=(--bind)
+        	args+=(--bind-try)
         	args+=("$i")
           args+=("$i")
         done
