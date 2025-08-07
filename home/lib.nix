@@ -117,7 +117,7 @@ in
           ${getExe args.package} "$@"
         '';
 
-    agenixPatchPkg =
+    agenixWrapPkg =
       pkg: vars:
       pkgs.writeShellScriptBin "${pkg.meta.mainProgram}" # bash
         ''

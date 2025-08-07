@@ -8,7 +8,7 @@
 
 let
 
-  modsWithTokens = config.lib.home.agenixPatchPkg pkgs.mods (
+  modsWithTokens = config.lib.home.agenixWrapPkg pkgs.mods (
     with osConfig.age.secrets;
     {
       inherit
