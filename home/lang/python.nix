@@ -79,8 +79,11 @@ in
     PYTHON_HISTORY = "${config.xdg.stateHome}/python/history";
   };
 
-  programs.matplotlib = {
-    enable = true;
-    config = { };
+  programs = {
+    matplotlib = {
+      enable = true;
+      config = { };
+    };
+    uv.enable = true;
   };
 }

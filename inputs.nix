@@ -20,6 +20,7 @@ in
   diriger = mkNonFlake "github:anuramat/diriger";
   gothink = mkInput "github:anuramat/gothink";
   modagent = mkInput "github:anuramat/modagent";
+  todo = mkNonFlake "github:anuramat/todo";
 
   # forks
   mods = mkNonFlake "github:anuramat/mods/disable_tools";

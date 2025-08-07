@@ -1187,6 +1187,7 @@
         "spicetify-nix": "spicetify-nix",
         "stylix": "stylix",
         "subcat": "subcat",
+        "todo": "todo",
         "tt-schemes": "tt-schemes"
       }
     },
@@ -1560,6 +1561,22 @@
       "original": {
         "owner": "tinted-theming",
         "repo": "base16-zed",
+        "type": "github"
+      }
+    },
+    "todo": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1754448850,
+        "narHash": "sha256-Qg1KgcpC49G3Jt/rC3zLSiv+gmm5qDYCh+ZaXM6H808=",
+        "owner": "anuramat",
+        "repo": "todo",
+        "rev": "a48a74b0aeaf0027dc86bad45ce75ee16185b24c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "anuramat",
+        "repo": "todo",
         "type": "github"
       }
     },

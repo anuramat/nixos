@@ -22,17 +22,17 @@ let
         matcher = "";
       }
     ];
-    # PostToolUse = [
-    #   {
-    #     hooks = [
-    #       {
-    #         command = "treefmt &>/dev/null || true";
-    #         type = "command";
-    #       }
-    #     ];
-    #     matcher = "Edit|MultiEdit|Write";
-    #   }
-    # ];
+    PreCompact = [
+      {
+        hooks = [
+          {
+            command = "treefmt &>/dev/null || true";
+            type = "command";
+          }
+        ];
+        matcher = "manual|auto";
+      }
+    ];
   };
   permissions = {
     allow = [ ];
@@ -90,6 +90,9 @@ let
 in
 {
   home = {
+    sessionVariables = {
+      CLAUDE_CONFIG_DIR = config.xdg.configHome + "/claude";
+    };
     file = (
       {
         ".claude/CLAUDE.md".text = agents.instructions.text;

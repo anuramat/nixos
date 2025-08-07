@@ -151,6 +151,10 @@
       };
       url = "github:anuramat/subcat";
     };
+    todo = {
+      flake = false;
+      url = "github:anuramat/todo";
+    };
     tt-schemes = {
       flake = false;
       url = "github:tinted-theming/schemes";
