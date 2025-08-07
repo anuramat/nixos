@@ -70,7 +70,7 @@ let
     in
     agents.mkPrompts ".claude/agents" adaptedRoles;
 
-  claudeWrapped = config.lib.home.agenixWrap pkgs.claude-code {
+  claudeWrapped = config.lib.home.agenixWrapPkg pkgs.claude-code {
     CLAUDE_CODE_OAUTH_TOKEN = osConfig.age.secrets.claudecode;
   };
 
