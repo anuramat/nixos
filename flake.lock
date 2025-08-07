@@ -896,16 +896,16 @@
     "mods": {
       "flake": false,
       "locked": {
-        "lastModified": 1752160591,
-        "narHash": "sha256-CT90uMQc0quQK/vCeLiHH8taEkCSDIcO7Q3aA+oaNmY=",
-        "owner": "charmbracelet",
+        "lastModified": 1754571299,
+        "narHash": "sha256-WOaoriiJRm0IF5zjwiZ7XpSjg3HfS0A2GM12UVqlCBE=",
+        "owner": "anuramat",
         "repo": "mods",
-        "rev": "9b36cf882989cf6807ec82f8afbc56d418ba9264",
+        "rev": "8f2ac8d1831c10e125ad49cbf4a72dd9c5c419e2",
         "type": "github"
       },
       "original": {
-        "owner": "charmbracelet",
-        "ref": "v1.8.1",
+        "owner": "anuramat",
+        "ref": "disable_tools",
         "repo": "mods",
         "type": "github"
       }

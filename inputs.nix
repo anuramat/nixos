@@ -45,6 +45,6 @@ in
   avante = mkNonFlake "github:yetone/avante.nvim/v0.0.27";
   blink-cmp-avante = mkNonFlake "github:Kaiser-Yang/blink-cmp-avante/v0.1.0";
   crush = mkNonFlake "github:charmbracelet/crush/v0.2.1";
-  mods = mkNonFlake "github:charmbracelet/mods/v1.8.1";
+  mods = mkNonFlake "github:anuramat/mods/disable_tools";
   tt-schemes = mkNonFlake "github:tinted-theming/schemes";
 }
