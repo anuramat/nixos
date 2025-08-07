@@ -22,6 +22,7 @@ in
   modagent = mkInput "github:anuramat/modagent";
 
   # forks
+  mods = mkNonFlake "github:anuramat/mods/disable_tools";
   mdformat-myst = mkInput "github:anuramat/mdformat-myst/dev"; # I think I broke the formatter...
   mdmath.url = "github:anuramat/mdmath.nvim";
 
@@ -45,6 +46,5 @@ in
   avante = mkNonFlake "github:yetone/avante.nvim/v0.0.27";
   blink-cmp-avante = mkNonFlake "github:Kaiser-Yang/blink-cmp-avante/v0.1.0";
   crush = mkNonFlake "github:charmbracelet/crush/v0.2.1";
-  mods = mkNonFlake "github:anuramat/mods/disable_tools";
   tt-schemes = mkNonFlake "github:tinted-theming/schemes";
 }
