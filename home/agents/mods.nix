@@ -124,6 +124,7 @@ let
     temp = 0.0; # 0.0 to 2.0, -1.0 to disable
     topk = 1; # -1 to disable
     topp = 0.05; # from 0.0 to 1.0, -1.0 to disable
+    max-input-chars = 1000000;
   };
 
 in
