@@ -681,11 +681,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1754511303,
-        "narHash": "sha256-W0oc2jgB4cPjFBj5QptFWnWbTExmlmI61ZgQA5330LE=",
+        "lastModified": 1754528562,
+        "narHash": "sha256-v2kXBL9jecDQROFh1OeRCKqQt0VR48HwlRKuxvVR4Zo=",
         "owner": "anuramat",
         "repo": "gothink",
-        "rev": "b3a1f4662eddfe1d177fd1abe6ee7ffc502588a8",
+        "rev": "6f40709ace0768734998eebb7b07e2924b34af54",
         "type": "github"
       },
       "original": {
@@ -880,11 +880,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1754526695,
-        "narHash": "sha256-M/XTUjs0VtmnKwJ9BpFeRwya3zKzAkySOo2uiCHZVF8=",
+        "lastModified": 1754528498,
+        "narHash": "sha256-Nj6nDGQFiIMEfv5b8NUUoFYouyH0c/G+ZdtTSwgGaUs=",
         "owner": "anuramat",
         "repo": "modagent",
-        "rev": "046539166e12fef4f659c60513badc45104afb2f",
+        "rev": "a74af54aa7b8c5693789891f8d5524476eb40551",
         "type": "github"
       },
       "original": {

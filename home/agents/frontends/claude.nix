@@ -48,7 +48,7 @@ let
   roles =
     let
       toolsetParts = {
-        r = "Glob, Grep, LS, Read, TodoWrite";
+        r = "Glob, Grep, LS, Read, TodoWrite, mcp__modagent__junior";
         i = "WebFetch, WebSearch";
         w = "Edit, MultiEdit, Write, NotebookEdit";
         x = "Bash";
