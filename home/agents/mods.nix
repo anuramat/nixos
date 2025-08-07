@@ -20,6 +20,7 @@ let
     }
   );
   inherit (lib)
+    mapAttrs
     isString
     isList
     isAttrs
@@ -49,49 +50,76 @@ let
     '';
   };
 
-  junior-r = wrapCmds [
-    modagent.main
-    ''
-      Your strengths:
+  tools =
+    let
+      prep = x: map (y: "claude_" + y);
+    in
+    mapAttrs (n: v: prep v) {
+      r = [
+        "Glob"
+        "Grep"
+        "LS"
+        "Read"
+        "TodoWrite"
+      ];
+      w = [
+        "Edit"
+        "MultiEdit"
+        "Write"
+        "NotebookEdit"
+      ];
+      x = [ "Bash" ];
+    };
 
-      - Performing multi-step research tasks
-      - Investigating complex questions
-      - Analyzing multiple files
+  junior-r = {
+    allowed_tools = with tools; r;
+    prompt = wrapCmds [
+      modagent.main
+      ''
+        Your strengths:
 
-    ''
-    modagent.general_guidelines
-    ''
-      Analysis guidelines:
+        - Performing multi-step research tasks
+        - Investigating complex questions
+        - Analyzing multiple files
 
-      - Start broad and narrow down. ${when think "Use sequential thinking."}
-      - Be thorough: always consider different options.
-    ''
-  ];
+      ''
+      modagent.general_guidelines
+      ''
+        Analysis guidelines:
 
-  junior-rwx = wrapCmds [
-    modagent.main
-    ''
-      Your strengths:
+        - Start broad and narrow down. ${when think "Use sequential thinking."}
+        - Be thorough: always consider different options.
+      ''
+    ];
+  };
 
-      - Searching for code, configurations, and patterns across large codebases
-      - Analyzing multiple files to understand system architecture
-      - Investigating complex questions that require exploring many files
-      - Performing multi-step research tasks
-    ''
-    modagent.general_guidelines
-    ''
-      File access guidelines:
+  junior-rwx = {
+    allowed_tools = with tools; r + w + x;
+    prompt = wrapCmds [
+      modagent.main
+      ''
+        Your strengths:
 
-      - For file searches: Use Grep or Glob when you need to search broadly. Use Read when you know the specific file path.
-      - For analysis: Start broad and narrow down. ${when think "Use sequential thinking."}
-        Use multiple search strategies if the first doesn't yield results.
-      - Be thorough: Check multiple locations, consider different naming conventions, look for related files.
-      - NEVER create files unless they're absolutely necessary for achieving your goal.
-        ALWAYS prefer editing an existing file to creating a new one.
-      - NEVER proactively create documentation files (*.md) or README files.
-        Only create documentation files if explicitly requested.
-    ''
-  ];
+        - Searching for code, configurations, and patterns across large codebases
+        - Analyzing multiple files to understand system architecture
+        - Investigating complex questions that require exploring many files
+        - Performing multi-step research tasks
+      ''
+      modagent.general_guidelines
+      ''
+        File access guidelines:
+
+        - For file searches: Use Grep or Glob when you need to search broadly. Use Read when you know the specific file path.
+        - For analysis: Start broad and narrow down. ${when think "Use sequential thinking."}
+          Use multiple search strategies if the first doesn't yield results.
+        - Be thorough: Check multiple locations, consider different naming conventions, look for related files.
+        - NEVER create files unless they're absolutely necessary for achieving your goal.
+          ALWAYS prefer editing an existing file to creating a new one.
+        - NEVER proactively create documentation files (*.md) or README files.
+          Only create documentation files if explicitly requested.
+      ''
+    ];
+  };
 
   summarizer = [
     ''
@@ -184,7 +212,7 @@ let
     default-model = "gpt-4.1";
     fanciness = 0;
     roles = {
-      default = [ ];
+      # default = [ ];
       # TODO add a command that uses structured outputs, asks to fill field "command", and prints that
       shell = [
         ''
@@ -201,7 +229,7 @@ let
     topp = -1.0; # from 0.0 to 1.0, -1.0 to disable
     max-input-chars = 1000000;
     mcp-servers = when think {
-      inherit (config.lib.agents.mcp.raw) think;
+      inherit (config.lib.agents.mcp.raw) think claude;
     };
   };
 
