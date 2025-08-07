@@ -15,6 +15,7 @@ let
         nil
         mdformat-myst
         claude-desktop
+        modagent
         ;
     });
   unstablePkgs = final: prev: {

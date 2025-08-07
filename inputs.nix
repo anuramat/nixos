@@ -19,6 +19,7 @@ in
   subcat = mkInput "github:anuramat/subcat";
   diriger = mkNonFlake "github:anuramat/diriger";
   gothink = mkInput "github:anuramat/gothink";
+  modagent = mkInput "github:anuramat/modagent";
 
   # forks
   mdformat-myst = mkInput "github:anuramat/mdformat-myst/dev"; # I think I broke the formatter...

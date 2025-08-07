@@ -39,10 +39,14 @@ let
       think = {
         command = getExe pkgs.gothink;
       };
+      modagent = {
+        command = getExe pkgs.modagent;
+      };
     in
     {
       inherit
         github
+        modagent
         think
         playwright
         nixos

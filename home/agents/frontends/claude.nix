@@ -109,7 +109,9 @@ in
         inherit hooks permissions;
       } "${home}/.claude/settings.json";
       claudeMcp = config.lib.home.json.set {
-        mcpServers = { inherit (config.lib.agents.mcp.raw) nixos; };
+        mcpServers = {
+          inherit (config.lib.agents.mcp.raw) modagent;
+        };
       } "${home}/.claude.json";
       claudeDesktopMcp = config.lib.home.json.set {
         mcpServers = { inherit (config.lib.agents.mcp.raw) github; };
