@@ -12,7 +12,6 @@ let
     "$PWD"
     "$XDG_RUNTIME_DIR"
     "${config.home.homeDirectory}/.npm"
-    "${config.xdg.dataHome}/mods"
     gopath
   ];
   inherit (config.lib.agents) varNames;
