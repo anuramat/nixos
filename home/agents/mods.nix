@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   osConfig,
   ...
@@ -18,6 +19,79 @@ let
         ;
     }
   );
+  inherit (lib)
+    isString
+    isList
+    isAttrs
+    concatStrings
+    ;
+
+  inherit (config.lib.home) when;
+
+  think = true;
+  # taken from general-purpose (claude code)
+  modagent = {
+    main = ''
+      You are an agent for Claude Code, Anthropic's official CLI for Claude.
+      Given the user's message, you should use the tools available to
+      complete the task. Do what has been asked; nothing more, nothing less.
+      When you complete the task simply respond with a detailed writeup.
+    '';
+
+    general_guidelines = [
+      ''
+        General guidelines:
+
+        - In your final response always share relevant file names and code snippets.
+          Any file paths you return in your response MUST be absolute. Do NOT use relative paths.
+        - For clear communication with the user the assistant MUST avoid using emojis.
+      ''
+    ];
+  };
+
+  intern = concatStrings [
+    modagent.main
+    ''
+      Your strengths:
+
+      - Performing multi-step research tasks
+      - Investigating complex questions
+      - Analyzing multiple files
+
+    ''
+    modagent.general_guidelines
+    ''
+      Analysis guidelines:
+
+      - Start broad and narrow down. ${when think "Use sequential thinking."}
+      - Be thorough: always consider different options.
+    ''
+  ];
+
+  junior = concatStrings [
+    modagent.main
+    ''
+      Your strengths:
+
+      - Searching for code, configurations, and patterns across large codebases
+      - Analyzing multiple files to understand system architecture
+      - Investigating complex questions that require exploring many files
+      - Performing multi-step research tasks
+    ''
+    modagent.general_guidelines
+    ''
+      File access guidelines:
+
+      - For file searches: Use Grep or Glob when you need to search broadly. Use Read when you know the specific file path.
+      - For analysis: Start broad and narrow down. ${when think "Use sequential thinking."}
+        Use multiple search strategies if the first doesn't yield results.
+      - Be thorough: Check multiple locations, consider different naming conventions, look for related files.
+      - NEVER create files unless they're absolutely necessary for achieving your goal.
+        ALWAYS prefer editing an existing file to creating a new one.
+      - NEVER proactively create documentation files (*.md) or README files.
+        Only create documentation files if explicitly requested.
+    ''
+  ];
 
   summarizer = [
     ''
@@ -111,6 +185,7 @@ let
     fanciness = 0;
     roles = {
       default = [ ];
+      # TODO add a command that uses structured outputs, asks to fill field "command", and prints that
       shell = [
         ''
           you are a shell expert
@@ -119,13 +194,13 @@ let
           you do not provide any explanation whatsoever, ONLY the command
         ''
       ];
-      inherit summarizer;
+      inherit summarizer intern junior;
     };
-    temp = 0.0; # 0.0 to 2.0, -1.0 to disable
-    topk = 1; # -1 to disable
-    topp = 0.05; # from 0.0 to 1.0, -1.0 to disable
+    temp = -1.0; # 0.0 to 2.0, -1.0 to disable
+    topk = -1; # -1 to disable
+    topp = -1.0; # from 0.0 to 1.0, -1.0 to disable
     max-input-chars = 1000000;
-    mcp-servers = {
+    mcp-servers = when think {
       inherit (config.lib.agents.mcp.raw) think;
     };
   };

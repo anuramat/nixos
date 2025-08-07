@@ -14,44 +14,41 @@ let
     tail
     ;
 
-  mcp =
-    let
-      nixos = {
-        command = getExe pkgs.mcp-nixos;
-      };
-      github =
-        let
-          githubPatched = config.lib.home.agenixPatch {
-            name = "GITHUB_PERSONAL_ACCESS_TOKEN";
-            token = osConfig.age.secrets.ghmcp.path;
-            package = pkgs.github-mcp-server;
-          };
-        in
-        {
-          command = githubPatched;
-          args = [
-            "stdio"
-          ];
-        };
-      playwright = {
-        command = getExe pkgs.playwright-mcp;
-      };
-      think = {
-        command = getExe pkgs.gothink;
-      };
-      modagent = {
-        command = getExe pkgs.modagent;
-      };
-    in
-    {
-      inherit
-        github
-        modagent
-        think
-        playwright
-        nixos
-        ;
+  mcp = {
+    nixos = {
+      command = getExe pkgs.mcp-nixos;
     };
+    github =
+      let
+        githubPatched = config.lib.home.agenixPatch {
+          name = "GITHUB_PERSONAL_ACCESS_TOKEN";
+          token = osConfig.age.secrets.ghmcp.path;
+          package = pkgs.github-mcp-server;
+        };
+      in
+      {
+        command = githubPatched;
+        args = [
+          "stdio"
+        ];
+      };
+    playwright = {
+      command = getExe pkgs.playwright-mcp;
+    };
+    think = {
+      command = getExe pkgs.gothink;
+    };
+    modagent = {
+      command = getExe pkgs.modagent;
+    };
+    claude = {
+      command = getExe pkgs.claude-code;
+      args = [
+        "mcp"
+        "serve"
+      ];
+    };
+  };
 
   lsp =
     let

@@ -11,10 +11,6 @@
 
       nil_ls = {
         enable = true;
-        onAttach.function = # lua
-          ''
-            client.server_capabilities.renameProvider = false
-          '';
       };
 
       nixd = {
@@ -26,6 +22,10 @@
         settings = {
           options.nixvim.expr = "(builtins.getFlake (builtins.toString ./.)).packages.${pkgs.system}.neovim.options";
         };
+        onAttach.function = # lua
+          ''
+            client.server_capabilities.renameProvider = false
+          '';
       };
     };
   };

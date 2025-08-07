@@ -52,7 +52,6 @@ let
           Any file paths you return in your response MUST be absolute. Do NOT use relative paths.
         - For clear communication, avoid using emojis.
 
-
         Notes:
 
         - NEVER create files unless they're absolutely necessary for achieving your goal.
