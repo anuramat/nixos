@@ -14,7 +14,7 @@ let
       lib.mapAttrs'
         (
           n: v:
-          lib.nameValuePair ("treefmt_" + n) {
+          lib.nameValuePair n {
             body = fmt v;
             prefix = n;
           }
