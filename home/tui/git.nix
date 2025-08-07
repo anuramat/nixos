@@ -54,6 +54,7 @@ let
     "/.claude/settings.local.json"
     ".crush/"
     ".pytest_cache"
+    ".goose/"
 
     # pytorch lightning
     "*.ckpt"

@@ -125,6 +125,9 @@ let
     topk = 1; # -1 to disable
     topp = 0.05; # from 0.0 to 1.0, -1.0 to disable
     max-input-chars = 1000000;
+    mcp-servers = {
+      inherit (config.lib.agents.mcp.raw) think;
+    };
   };
 
 in

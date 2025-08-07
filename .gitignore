@@ -1,6 +1,0 @@
-/config/btop/btop.log
-/config/qalculate/qalc.history
-*.sqlite
-/config/jupyter/lab/workspaces
-/config/ghc/ghci_history
-# TODO review
