@@ -11,7 +11,7 @@ let
     filterAttrs
     ;
 
-  models =
+  ghcp-models =
     let
       tokenFile = config.xdg.configHome + "/github-copilot/apps.json";
     in
@@ -32,6 +32,24 @@ let
           curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $token" https://api.githubcopilot.com/models | jq '.data'
         '';
     };
+
+  summarize = pkgs.writeShellApplication {
+    name = "summarize";
+    runtimeInputs = with pkgs; [
+      fd
+      gum
+      mods
+    ];
+    text = ''
+      echo "summarizing files:"
+      fd -e txt --max-depth=1 -x printf '\t%s\n' '{}'
+
+      gum confirm || exit 1
+
+      mkdir -p summaries
+      fd -e txt --max-depth=1 -x sh -c 'cat "{}" | mods -R summarizer "here is the lecture transcript:" > "./summaries/{.}.md"'
+    '';
+  };
 in
 {
 
@@ -92,6 +110,7 @@ in
 
   home.packages = with pkgs; [
     openai-whisper
-    models
+    ghcp-models
+    summarize
   ];
 }
