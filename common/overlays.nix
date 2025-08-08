@@ -146,10 +146,10 @@ in
 
       codex = pkgs.stdenv.mkDerivation rec {
         pname = "codex";
-        version = "0.13.0";
+        version = "0.19.0";
         src = pkgs.fetchurl {
           url = "https://github.com/openai/codex/releases/download/rust-v${version}/codex";
-          hash = "sha256-lXzZNYKicax8xFc0pHR0SNj2mXw03BmDvkPobjnxw0o=";
+          hash = "";
         };
         dontUnpack = true;
         nativeBuildInputs = [ pkgs.makeWrapper ];
