@@ -1,13 +1,24 @@
 {
   inputs,
+  lib,
   pkgs,
   ...
 }:
 let
+  inherit (lib) splitString;
+  inherit (builtins)
+    head
+    filter
+    mapAttrs
+    readFile
+    match
+    length
+    replaceStrings
+    ;
 
   flakes =
     final: prev:
-    (builtins.mapAttrs (n: v: v.packages.${prev.system}.default) {
+    (mapAttrs (n: v: v.packages.${prev.system}.default) {
       inherit (inputs)
         subcat
         gothink
@@ -166,6 +177,62 @@ in
           src = inputs.blink-cmp-avante;
         });
       };
+
+      # Fetch Cursor install script, extract DOWNLOAD_URL, fetch the tarball,
+      # take index.js, and wrap it to run with nodejs 22.
+      cursor-index =
+        let
+          installer = prev.fetchurl {
+            url = "https://cursor.com/install";
+            hash = "sha256-iagH6czXKURghLH/i0lhEAIYnoy9iQJVOdEmBZBSFnE=";
+          };
+          installerText = readFile installer;
+          matches =
+            splitString "\n" installerText
+            |> map (x: x |> match ''DOWNLOAD_URL="(.*)"'')
+            |> filter (x: x != null);
+          len = length matches;
+          linkTemplate =
+            if len != 1 then
+              throw "cursor-index: ${len} matches for DOWNLOAD_URL in install script:\n\n${installerText}"
+            else
+              matches |> head |> head;
+          link = replaceStrings [ "\${OS}" "\${ARCH}" ] [ "linux" "x64" ] linkTemplate;
+          tarball = prev.fetchurl {
+            url = link;
+          };
+          version = "nightly";
+        in
+        prev.stdenv.mkDerivation rec {
+          pname = "cursor";
+          version = "unstable";
+          src = tarball;
+          phases = [
+            "unpackPhase"
+            "installPhase"
+          ];
+          installPhase = ''
+            runHook preInstall
+            mkdir -p $out/share/cursor $out/bin
+            found="$(find . -type f -name index.js | head -n1 || true)"
+            if [ -z "$found" ]; then
+              echo "index.js not found in tarball" >&2
+              exit 1
+            fi
+            install -Dm644 "$found" "$out/share/cursor/index.js"
+            cat >$out/bin/cursor <<'EOF'
+            #!${prev.runtimeShell}
+            exec ${prev.nodejs_22}/bin/node "$(dirname "$0")/../share/cursor/index.js" "$@"
+            EOF
+            chmod +x $out/bin/cursor
+            runHook postInstall
+          '';
+          meta = with prev.lib; {
+            description = "Run Cursor-distributed index.js via Node.js 22";
+            platforms = platforms.linux;
+            mainProgram = "cursor";
+          };
+        };
 
     })
   ];

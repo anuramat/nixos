@@ -7,5 +7,6 @@
     ./gemini.nix
     ./crush.nix
     ./goose.nix # TODO
+    ./cursor.nix
   ];
 }
