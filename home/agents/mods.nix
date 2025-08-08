@@ -204,8 +204,17 @@ let
     ollama = {
       base-url = "http://localhost:${toString osConfig.services.ollama.port}";
       models = {
+        "deepseek-r1:8b" = {
+          aliases = [ "deepseek" ];
+        };
+        "devstral:24b" = {
+          aliases = [ "devstral" ];
+        };
+        "qwen3:8b" = {
+          aliases = [ "qwen" ];
+        };
         "gpt-oss:20b" = {
-          aliases = [ "oss" ];
+          aliases = [ "gpt" ];
         };
       };
     };
