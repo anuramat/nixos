@@ -180,7 +180,7 @@ in
 
       # Fetch Cursor install script, extract DOWNLOAD_URL, fetch the tarball,
       # take index.js, and wrap it to run with nodejs 22.
-      cursor-index =
+      cursor =
         let
           installer = prev.fetchurl {
             url = "https://cursor.com/install";
@@ -200,37 +200,33 @@ in
           link = replaceStrings [ "\${OS}" "\${ARCH}" ] [ "linux" "x64" ] linkTemplate;
           tarball = prev.fetchurl {
             url = link;
+            hash = "sha256-ikoxUvpLMngDOlHawq7i69mOcPGkV8q1capDU83QMWs=";
           };
           version = "nightly";
         in
         prev.stdenv.mkDerivation rec {
-          pname = "cursor";
-          version = "unstable";
+          pname = "cursor-agent";
+          inherit version;
+
           src = tarball;
-          phases = [
-            "unpackPhase"
-            "installPhase"
-          ];
+
+          nativeBuildInputs = [ prev.autoPatchelfHook ];
+
           installPhase = ''
             runHook preInstall
-            mkdir -p $out/share/cursor $out/bin
-            found="$(find . -type f -name index.js | head -n1 || true)"
-            if [ -z "$found" ]; then
-              echo "index.js not found in tarball" >&2
-              exit 1
-            fi
-            install -Dm644 "$found" "$out/share/cursor/index.js"
-            cat >$out/bin/cursor <<'EOF'
-            #!${prev.runtimeShell}
-            exec ${prev.nodejs_22}/bin/node "$(dirname "$0")/../share/cursor/index.js" "$@"
-            EOF
-            chmod +x $out/bin/cursor
+            mkdir -p $out/bin $out/share/cursor-agent
+            cp -r * $out/share/cursor-agent/
+            ln -s $out/share/cursor-agent/cursor-agent $out/bin/cursor-agent
             runHook postInstall
           '';
-          meta = with prev.lib; {
-            description = "Run Cursor-distributed index.js via Node.js 22";
-            platforms = platforms.linux;
-            mainProgram = "cursor";
+
+          passthru.updateScript = ./update.sh;
+
+          meta = {
+            description = "Cursor CLI";
+            homepage = "https://cursor.com/cli";
+            license = lib.licenses.unfree;
+            mainProgram = "cursor-agent";
           };
         };
 
