@@ -13,6 +13,10 @@
     ./rice.nix
   ];
 
+  programs.appimage = {
+    enable = true;
+    binfmt = true;
+  };
   hardware.graphics.enable = true;
 
   services = {
