@@ -71,7 +71,8 @@ let
     agents.mkPrompts "claude/agents" adaptedRoles;
 
   claudeWrapped = config.lib.home.agenixWrapPkg pkgs.claude-code {
-    CLAUDE_CODE_OAUTH_TOKEN = osConfig.age.secrets.claudecode;
+    # uncomment when this is fixed: https://github.com/anthropics/claude-code/issues/4085
+    # CLAUDE_CODE_OAUTH_TOKEN = osConfig.age.secrets.claudecode;
   };
 
   claudeBoxed = config.lib.agents.mkSandbox {
