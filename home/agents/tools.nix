@@ -41,7 +41,7 @@ let
     modagent = {
       command = getExe pkgs.modagent;
     };
-    claude = {
+    tools = {
       command = getExe pkgs.claude-code;
       args = [
         "mcp"
