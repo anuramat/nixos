@@ -5,7 +5,7 @@
 {
   home = {
     packages = [
-      pkgs.cursor
+      pkgs.cursor-agent
     ];
   };
 }

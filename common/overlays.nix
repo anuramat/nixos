@@ -92,15 +92,6 @@ in
     flakes
     (final: prev: {
 
-      amp-cli = prev.amp-cli.overrideAttrs (oldAttrs: rec {
-        version = "0.0.1754236863-g8d30ac";
-        src = prev.fetchzip {
-          url = "https://registry.npmjs.org/@sourcegraph/amp/-/amp-${version}.tgz";
-          hash = "sha256-SfYprr93YsQtoyiFl2rLuaqwGyWLmqlAuhfzHztaLC4=";
-        };
-      });
-      # https://www.npmjs.com/package/@sourcegraph/amp
-
       ollama = prev.ollama.overrideAttrs (oldAttrs: rec {
         version = "0.11.3";
         src = prev.fetchFromGitHub {
@@ -178,9 +169,7 @@ in
         });
       };
 
-      # Fetch Cursor install script, extract DOWNLOAD_URL, fetch the tarball,
-      # take index.js, and wrap it to run with nodejs 22.
-      cursor =
+      cursor-agent =
         let
           installer = prev.fetchurl {
             url = "https://cursor.com/install";
@@ -210,7 +199,10 @@ in
 
           src = tarball;
 
-          nativeBuildInputs = [ prev.autoPatchelfHook ];
+          nativeBuildInputs = [
+            prev.autoPatchelfHook
+            prev.stdenv.cc.cc.lib # is this ok? TODO
+          ];
 
           installPhase = ''
             runHook preInstall
