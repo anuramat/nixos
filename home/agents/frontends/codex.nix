@@ -22,10 +22,6 @@ let
             model = "gpt-5";
             model_provider = "openai";
           };
-          gpt5m = {
-            model = "gpt-5";
-            model_provider = "GHCP";
-          };
         };
         notify =
           let

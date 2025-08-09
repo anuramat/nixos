@@ -118,6 +118,7 @@ in
         # build args
         args=()
         for i in "''${${varNames.rwDirs}[@]}"; do
+          mkdir -p "$i"
         	args+=(--bind-try)
         	args+=("$i")
           args+=("$i")

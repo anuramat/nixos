@@ -880,11 +880,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1754574097,
-        "narHash": "sha256-Du0cy1bICnQr6NJztCWjAvlRXgZ3aMF6cqPdJY2/OUw=",
+        "lastModified": 1754701771,
+        "narHash": "sha256-qbd8jdkEx7u6gAjfPu+QKFSuvikK8O3J9rVQ3FlMdt8=",
         "owner": "anuramat",
         "repo": "modagent",
-        "rev": "71b8352fb828973a90d962b39607e9a6d4acba33",
+        "rev": "527746e803ae96d1de78c009ae5d1076e2f5ec94",
         "type": "github"
       },
       "original": {
@@ -896,16 +896,15 @@
     "mods": {
       "flake": false,
       "locked": {
-        "lastModified": 1754591501,
-        "narHash": "sha256-CZQxT/AWZJkqCKaCziwiCD6xGd88yewZaVQXlxEuisc=",
+        "lastModified": 1754704146,
+        "narHash": "sha256-dr0wi2IyiIBaFC+GF927SdVMcBLCXtm2Ixe2er1qHBI=",
         "owner": "anuramat",
         "repo": "mods",
-        "rev": "fb2933d9b9947eb9414c8520d2470f9c2a0b204c",
+        "rev": "3acbd0663253b53e4b481d4f04b4a9b2926ab4d3",
         "type": "github"
       },
       "original": {
         "owner": "anuramat",
-        "ref": "disable_tools",
         "repo": "mods",
         "type": "github"
       }
