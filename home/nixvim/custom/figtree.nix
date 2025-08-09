@@ -1,9 +1,9 @@
 { pkgs, inputs, ... }:
 {
-  # extraPlugins = [
-  #   inputs.mdmath.packages.${pkgs.system}.default
-  # ];
-  # extraConfigLua = ''
-  #   require("figtree").setup({})
-  # '';
+  extraPlugins = [
+    inputs.figtree.packages.${pkgs.system}.default
+  ];
+  extraConfigLua = ''
+    require("figtree").setup({})
+  '';
 }
