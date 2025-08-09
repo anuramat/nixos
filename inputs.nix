@@ -49,4 +49,6 @@ in
   blink-cmp-avante = mkNonFlake "github:Kaiser-Yang/blink-cmp-avante/v0.1.0";
   crush = mkNonFlake "github:charmbracelet/crush/v0.2.1";
   tt-schemes = mkNonFlake "github:tinted-theming/schemes";
+
+  musnix.url = "github:musnix/musnix";
 }

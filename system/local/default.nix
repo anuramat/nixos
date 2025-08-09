@@ -29,8 +29,16 @@
       wireplumber = {
         enable = true;
       };
+      # TODO mess with musnix and jack later, try out monitoring
+      # jack = {
+      #   enable = true;
+      # };
     };
   };
+
+  # musnix = {
+  #   enable = true;
+  # };
 
   programs.captive-browser = {
     enable = true;

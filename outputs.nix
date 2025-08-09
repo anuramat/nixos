@@ -61,6 +61,9 @@ let
         ./common/stylix.nix
 
         ./hosts/external_keys.nix
+
+        inputs.musnix.nixosModules.musnix
+
       ]
       ++ [
         ./hosts/${name}
