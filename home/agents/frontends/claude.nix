@@ -43,7 +43,7 @@ let
     let
       adaptedCommands = agents.commands |> mapAttrs (n: v: v.withFM { inherit (v) description; });
     in
-    agents.mkPrompts ".claude/commands" adaptedCommands;
+    agents.mkPrompts "claude/commands" adaptedCommands;
 
   roles =
     let
@@ -68,7 +68,7 @@ let
           }
         );
     in
-    agents.mkPrompts ".claude/agents" adaptedRoles;
+    agents.mkPrompts "claude/agents" adaptedRoles;
 
   claudeWrapped = config.lib.home.agenixWrapPkg pkgs.claude-code {
     CLAUDE_CODE_OAUTH_TOKEN = osConfig.age.secrets.claudecode;
