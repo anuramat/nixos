@@ -40,6 +40,7 @@
         enable = true;
         acceleration = lib.mkIf cuda "cuda";
         loadModels = lib.mkIf cuda [ ]; # pull models on service start
+        models = "/mnt/storage/models";
         environmentVariables = {
           OLLAMA_FLASH_ATTENTION = "1";
           OLLAMA_KEEP_ALIVE = "999999m";
@@ -47,7 +48,7 @@
         };
         port = 11434; # explicit default
         host = "0.0.0.0";
-        openFirewall = false; # disable to limit the interfaces
+        openFirewall = false;
       };
   };
 
