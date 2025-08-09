@@ -80,7 +80,6 @@ let
     args = "--dangerously-skip-permissions";
   };
 
-  home = config.home.homeDirectory;
   cfgDir = config.xdg.configHome + "/claude";
 in
 {
