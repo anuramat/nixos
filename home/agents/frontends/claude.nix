@@ -48,10 +48,12 @@ let
   roles =
     let
       toolsetParts = {
-        r = "Glob, Grep, LS, Read, TodoWrite, mcp__modagent__junior";
         i = "WebFetch, WebSearch";
+        # TODO split junior into two, r and rwx
+
+        r = "Glob, Grep, LS, Read, TodoWrite";
         w = "Edit, MultiEdit, Write, NotebookEdit";
-        x = "Bash";
+        x = "Bash, KillBash, BashOutput, mcp__modagent__junior";
       };
       adaptedRoles =
         agents.roles

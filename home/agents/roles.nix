@@ -26,7 +26,7 @@ in
       let
         color = "pink";
         name = "qa-engineer";
-        toolset = "rwx";
+        toolset = null;
         description = ''
           You MUST use this agent PROACTIVELY when you need to analyze existing
           test coverage and write comprehensive tests to improve code quality
@@ -244,7 +244,7 @@ in
       let
         name = implementer;
         color = "cyan";
-        toolset = "rw";
+        toolset = null;
         description = flatten ''
           Use this agent PROACTIVELY when you need to implement a specific module
           or component according to a detailed specification, when the high-level
