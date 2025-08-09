@@ -96,7 +96,6 @@
       url = "github:anuramat/modagent";
     };
     mods = {
-      flake = false;
       url = "github:anuramat/mods";
     };
     neovim-nightly-overlay = {

@@ -23,7 +23,7 @@ in
   todo = mkNonFlake "github:anuramat/todo";
 
   # forks
-  mods = mkNonFlake "github:anuramat/mods";
+  mods.url = "github:anuramat/mods";
   mdformat-myst = mkInput "github:anuramat/mdformat-myst/dev"; # I think I broke the formatter...
   mdmath.url = "github:anuramat/mdmath.nvim";
 

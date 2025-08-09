@@ -27,6 +27,7 @@ let
         mdformat-myst
         claude-desktop
         modagent
+        mods
         ;
     });
   unstablePkgs = final: prev: {
@@ -135,15 +136,6 @@ in
         src = inputs.crush;
         doCheck = false;
         vendorHash = "sha256-aI3MSaQYUOLJxBxwCoVg13HpxK46q6ZITrw1osx5tiE=";
-      };
-
-      mods = prev.buildGoModule rec {
-        pname = "mods";
-        meta.mainProgram = pname;
-        version = inputs.mods.shortRev;
-        src = inputs.mods;
-        doCheck = false;
-        vendorHash = "sha256-Io6aNX7z6UvEAIt4qrxF0DA7/yqc8XIMG/bRVlE3nQU=";
       };
 
       codex = pkgs.stdenv.mkDerivation rec {
