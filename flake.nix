@@ -97,7 +97,7 @@
     };
     mods = {
       flake = false;
-      url = "github:anuramat/mods/disable_tools";
+      url = "github:anuramat/mods";
     };
     neovim-nightly-overlay = {
       url = "github:nix-community/neovim-nightly-overlay";
