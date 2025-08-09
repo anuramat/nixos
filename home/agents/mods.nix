@@ -189,7 +189,9 @@ let
       models = {
         "gpt-5" = {
           fallback = "gpt-4.1";
-          aliases = "5";
+          aliases = [
+            "5"
+          ];
         };
         "gpt-4.1" = {
           aliases = [
