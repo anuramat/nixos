@@ -41,6 +41,14 @@
       flake = false;
       url = "github:anuramat/diriger";
     };
+    figtree = {
+      inputs = {
+        nixpkgs = {
+          follows = "nixpkgs";
+        };
+      };
+      url = "github:anuramat/figtree.nvim";
+    };
     flake-utils = {
       url = "github:numtide/flake-utils";
     };

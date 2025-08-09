@@ -21,6 +21,7 @@ in
   gothink = mkInput "github:anuramat/gothink";
   modagent = mkInput "github:anuramat/modagent";
   todo = mkNonFlake "github:anuramat/todo";
+  figtree = mkInput "github:anuramat/figtree.nvim";
 
   # forks
   mods.url = "github:anuramat/mods";
