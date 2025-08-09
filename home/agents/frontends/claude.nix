@@ -59,7 +59,7 @@ let
           n: v:
           v.withFM {
             inherit (v) name description;
-            model = "inherit";
+            # model = "inherit"; # TODO set per-role model smart/dumb/inherit
             tools =
               if v.toolset == null then
                 null
