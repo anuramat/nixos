@@ -187,18 +187,16 @@ let
     copilot = {
       base-url = "https://api.githubcopilot.com";
       models = {
+        "gpt-5" = {
+          fallback = "gpt-4.1";
+          aliases = "5";
+        };
         "gpt-4.1" = {
           aliases = [
-            "41"
-            "4.1"
+            "4"
           ];
         };
       };
-    };
-    github-models = {
-      base-url = "https://models.github.ai/inference";
-      api-key-env = "gh";
-      models = { };
     };
     ollama = {
       base-url = "http://localhost:${toString osConfig.services.ollama.port}";
@@ -215,13 +213,6 @@ let
         "gpt-oss:20b" = {
           aliases = [ "gpt" ];
         };
-      };
-    };
-    openai = {
-      base-url = "https://api.openai.com/v1";
-      api-key-env = "gh";
-      models = {
-        codex-mini = { };
       };
     };
   };
