@@ -110,7 +110,7 @@ in
       } "${cfgDir}/settings.json";
       claudeMcp = config.lib.home.json.set {
         mcpServers = {
-          inherit (config.lib.agents.mcp.raw) modagent;
+          # inherit (config.lib.agents.mcp.raw) modagent;
         };
       } "${cfgDir}/.claude.json";
       claudeDesktopMcp = config.lib.home.json.set {
