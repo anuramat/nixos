@@ -28,6 +28,7 @@ in
     in
     {
       activation = {
+        # TODO not sure if this works; feels like it doesn't on anuramat-root
         mkDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           mkdir -p "${bashStateDir}"
         '';
