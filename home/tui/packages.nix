@@ -95,6 +95,7 @@
     fortune # random quotes
 
     # miscellaneous unfiled TODO
+    dix
     mitmproxy
     dotslash
     python3
