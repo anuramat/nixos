@@ -33,7 +33,7 @@ let
                 libnotify
               ];
               text = ''
-                notify-send "Codex" "$(jq .last-assistant-message -r)"
+                notify-send -a codex "Codex" "$(jq .last-assistant-message -r)"
               '';
             };
           in

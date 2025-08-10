@@ -15,7 +15,7 @@ let
       {
         hooks = [
           {
-            command = ''notify-send "Claude Code" "$(jq .message -r)"'';
+            command = ''notify-send -a claude "Claude Code" "$(jq .message -r)"'';
             type = "command";
           }
         ];
