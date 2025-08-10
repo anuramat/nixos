@@ -35,7 +35,6 @@
     proton-pass # password manager
     transmission_4-gtk # torrent client
     wev # wayland event viewer, useful for debugging
-    chatterino2 # gui twitch chat client
     steam
     waypipe # gui forwarding
     wl-clip-persist # otherwise clipboard contents disappear on exit
