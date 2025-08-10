@@ -8,6 +8,13 @@
       anchor = "top-center";
       text-alignment = "center";
       group-by = "app-name";
+
+      "actionable=true" = {
+        anchor = "top-right";
+      };
+      "app-name=twitch" = {
+        output = "*";
+      };
     };
   };
 }
