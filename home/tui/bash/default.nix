@@ -24,8 +24,14 @@ in
   home =
     let
       XDG_BIN_HOME = "${config.home.homeDirectory}/.local/bin";
+      bashStateDir = config.xdg.stateHome + "/bash";
     in
     {
+      activation = {
+        mkDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          mkdir -p "${bashStateDir}"
+        '';
+      };
       sessionVariables = {
         inherit XDG_BIN_HOME;
 
@@ -37,7 +43,7 @@ in
         VIRTUAL_ENV_DISABLE_PROMPT = "1"; # hide python venv prompt
 
         # XDG TODO move stuff here from the shims file
-        HISTFILE = "${config.xdg.stateHome}/bash/history"; # ~/.bash_history
+        HISTFILE = bbashStateDir + "/history"; # ~/.bash_history
         CUDA_CACHE_PATH = "${config.xdg.cacheHome}/nv"; # ~/.nv/
 
         TERMCMD = "foot";
