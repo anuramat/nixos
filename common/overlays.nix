@@ -78,10 +78,13 @@ let
       ccusage = mkNpx "ccusage";
     };
 
-  overlays = [
-    inputs.neovim-nightly-overlay.overlays.default
-    inputs.nur.overlay
-  ];
+  overlays =
+    with inputs;
+    [
+      neovim-nightly-overlay
+      nur
+    ]
+    |> map (v: v.overlays.default);
 
 in
 {
