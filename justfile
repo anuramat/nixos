@@ -52,4 +52,3 @@ check-nixos host="anuramat-ll7":
 
 check-hm:
   nix build .#homeConfigurations.anuramat.activationPackage
-
