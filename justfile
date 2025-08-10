@@ -50,4 +50,6 @@ hooks:
 check-nixos host="anuramat-ll7":
   nix build ".#nixosConfigurations.{{host}}.config.system.build.toplevel"
 
-# check-hm:
+check-hm:
+  nix build .#homeConfigurations.anuramat.activationPackage
+
