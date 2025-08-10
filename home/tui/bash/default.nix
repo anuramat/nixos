@@ -43,7 +43,7 @@ in
         VIRTUAL_ENV_DISABLE_PROMPT = "1"; # hide python venv prompt
 
         # XDG TODO move stuff here from the shims file
-        HISTFILE = bbashStateDir + "/history"; # ~/.bash_history
+        HISTFILE = bashStateDir + "/history"; # ~/.bash_history
         CUDA_CACHE_PATH = "${config.xdg.cacheHome}/nv"; # ~/.nv/
 
         TERMCMD = "foot";
