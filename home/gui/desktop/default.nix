@@ -1,7 +1,6 @@
-{ osConfig, ... }:
+args:
 {
   imports = [
-    ./misc.nix
     ./sway
     ./clipboard.nix
     ./mako.nix
@@ -9,22 +8,29 @@
     ./portals.nix
     ./swaylock.nix
   ];
-  services = {
-    blueman-applet.enable = osConfig.services.blueman.enable;
-    avizo = {
-      enable = true;
-      settings = {
-        default = {
-          time = 0.5;
+}
+// (
+  if args ? osConfig then
+    {
+      services = {
+        blueman-applet.enable = args.osConfig.services.blueman.enable;
+        avizo = {
+          enable = true;
+          settings = {
+            default = {
+              time = 0.5;
+            };
+          };
+        };
+        udiskie = {
+          enable = args.osConfig.services.udisks2.enable;
+          notify = true;
+          tray = "auto";
+          automount = true;
         };
       };
-    };
-    udiskie = {
-      enable = osConfig.services.udisks2.enable;
-      notify = true;
-      tray = "auto";
-      automount = true;
-    };
-  };
-  services.network-manager-applet.enable = osConfig.networking.networkmanager.enable;
-}
+      services.network-manager-applet.enable = args.osConfig.networking.networkmanager.enable;
+    }
+  else
+    { }
+)

@@ -3,10 +3,9 @@
   hax,
   inputs,
   config,
-  osConfig,
   cluster,
   ...
-}:
+}@args:
 {
   stylix.targets = {
     neovim.plugin = "base16-nvim";
@@ -20,21 +19,25 @@
       nixpkgs.overlays =
         let
           hm-overlays = config.nixpkgs.overlays;
-          os-overlays = osConfig.nixpkgs.overlays;
         in
-        if hm-overlays != null then hm-overlays else os-overlays;
+        if hm-overlays != null then hm-overlays else args.osConfig.nixpkgs.overlays;
       defaultEditor = true;
       _module.args = {
         inherit inputs hax;
       };
       plugins.lsp.servers.nixd.settings.options =
-        let
-          nixosExpr = ''(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.${osConfig.networking.hostName}.options'';
-        in
-        {
-          nixos.expr = nixosExpr;
-          home-manager.expr = "${nixosExpr}.home-manager.users.type.getSubOptions []";
-        };
+        if args ? osConfig then
+          let
+            nixosExpr = ''(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.${args.osConfig.networking.hostName}.options'';
+          in
+          {
+            nixos.expr = nixosExpr;
+            home-manager.expr = "${nixosExpr}.home-manager.users.type.getSubOptions []";
+          }
+        else
+          {
+            # TODO standalone hm expression
+          };
     };
     helix = {
       enable = true;

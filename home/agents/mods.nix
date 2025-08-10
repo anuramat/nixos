@@ -2,9 +2,8 @@
   config,
   lib,
   pkgs,
-  osConfig,
   ...
-}:
+}@args:
 
 let
 
@@ -265,23 +264,30 @@ let
         };
       };
     };
-    ollama = {
-      base-url = "http://localhost:${toString osConfig.services.ollama.port}";
-      models = {
-        "deepseek-r1:8b" = {
-          aliases = [ "deepseek" ];
-        };
-        "devstral:24b" = {
-          aliases = [ "devstral" ];
-        };
-        "qwen3:8b" = {
-          aliases = [ "qwen" ];
-        };
-        "gpt-oss:20b" = {
-          aliases = [ "gpt" ];
-        };
-      };
-    };
+    ollama =
+      if args ? osConfig then
+        let
+          port = toString args.osConfig.services.ollama.port;
+        in
+        {
+          base-url = "http://localhost:${port}";
+          models = {
+            "deepseek-r1:8b" = {
+              aliases = [ "deepseek" ];
+            };
+            "devstral:24b" = {
+              aliases = [ "devstral" ];
+            };
+            "qwen3:8b" = {
+              aliases = [ "qwen" ];
+            };
+            "gpt-oss:20b" = {
+              aliases = [ "gpt" ];
+            };
+          };
+        }
+      else
+        { };
   };
 
   modsCfg = (pkgs.formats.yaml { }).generate "mods_config.yaml" {

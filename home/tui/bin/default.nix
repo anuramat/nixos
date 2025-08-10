@@ -1,10 +1,9 @@
 {
   pkgs,
   lib,
-  osConfig,
   config,
   ...
-}:
+}@args:
 let
   inherit (pkgs) writeShellApplication writeScriptBin;
   inherit (builtins) readFile readDir;
@@ -33,7 +32,7 @@ let
   nix-cache-keygen =
     let
       # TODO read builders, move and read public
-      private = osConfig.nix.settings.secret-key-files;
+      private = args.osConfig.nix.settings.secret-key-files;
       public = "/etc/nix/cache.pem.pub";
       builderName = "builder";
       builderGroup = "builder";
@@ -53,5 +52,5 @@ let
   # TODO root ssh config from nix.nix?
 in
 {
-  home.packages = packages ++ [ nix-cache-keygen ];
+  home.packages = packages ++ (if args ? osConfig then [ nix-cache-keygen ] else [ ]);
 }
