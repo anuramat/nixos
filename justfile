@@ -46,3 +46,8 @@ flake:
 hooks:
   # TODO format
   # TODO just inputs
+
+check-nixos host="anuramat-ll7":
+  nix build ".#nixosConfigurations.{{host}}.config.system.build.toplevel"
+
+# check-hm:
