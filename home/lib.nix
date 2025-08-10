@@ -3,7 +3,7 @@
   config,
   lib,
   ...
-}:
+}@args:
 let
   diffFile = config.xdg.stateHome + "hm-activation-diffs.txt";
   inherit (lib)
@@ -119,11 +119,15 @@ in
 
     agenixWrapPkg =
       pkg: vars:
-      pkgs.writeShellScriptBin "${pkg.meta.mainProgram}" # bash
-        ''
-          ${agenixExport vars}
-          ${getExe pkg} "$@"
-        '';
+      # TODO home-manager agenix
+      if args ? osConfig then
+        pkgs.writeShellScriptBin "${pkg.meta.mainProgram}" # bash
+          ''
+            ${agenixExport (vars args.osConfig.age.secrets)}
+            ${getExe pkg} "$@"
+          ''
+      else
+        pkg;
 
     json = {
       merge = mkJqActivationScript "*=";

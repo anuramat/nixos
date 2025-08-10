@@ -2,11 +2,10 @@
 # TODO refactor
 {
   lib,
-  osConfig,
   config,
   pkgs,
   ...
-}:
+}@args:
 let
   inherit (lib) mapAttrs stringToCharacters concatStringsSep;
   inherit (config.lib) agents;
@@ -72,10 +71,14 @@ let
     in
     agents.mkPrompts "claude/agents" adaptedRoles;
 
-  claudeWrapped = config.lib.home.agenixWrapPkg pkgs.claude-code {
-    # uncomment when this is fixed: https://github.com/anthropics/claude-code/issues/4085
-    # CLAUDE_CODE_OAUTH_TOKEN = osConfig.age.secrets.claudecode;
-  };
+  claudeWrapped =
+    # turn on when this is fixed: https://github.com/anthropics/claude-code/issues/4085
+    if false then
+      config.lib.home.agenixWrapPkg pkgs.claude-code (t: {
+        CLAUDE_CODE_OAUTH_TOKEN = t.claude-code;
+      })
+    else
+      pkgs.claude-code;
 
   claudeBoxed = config.lib.agents.mkSandbox {
     wrapperName = "cld";

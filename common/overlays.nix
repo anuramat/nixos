@@ -78,11 +78,10 @@ let
       ccusage = mkNpx "ccusage";
     };
 
-  overlays =
-    [
-      inputs.neovim-nightly-overlay
-    ]
-    |> map (v: v.overlays.default);
+  overlays = [
+    inputs.neovim-nightly-overlay.overlays.default
+    inputs.nur.overlay
+  ];
 
 in
 {
@@ -165,7 +164,7 @@ in
         let
           installer = prev.fetchurl {
             url = "https://cursor.com/install";
-            hash = "sha256-iagH6czXKURghLH/i0lhEAIYnoy9iQJVOdEmBZBSFnE=";
+            hash = "sha256-MZT1x7Ckq9LeaSzEcf2TeWmISp6Uje8sqhZ11TskYbc=";
           };
           installerText = readFile installer;
           matches =

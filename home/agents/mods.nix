@@ -9,15 +9,14 @@
 let
 
   modsWithTokens = config.lib.home.agenixWrapPkg pkgs.mods (
-    with osConfig.age.secrets;
-    {
-      inherit
+    (t: {
+      inherit (t)
         gemini
         openrouter
         anthropic
         oai
         ;
-    }
+    })
   );
   inherit (lib)
     mapAttrs

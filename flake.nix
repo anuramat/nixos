@@ -137,6 +137,14 @@
       };
       url = "github:nix-community/nixvim";
     };
+    nur = {
+      inputs = {
+        nixpkgs = {
+          follows = "nixpkgs";
+        };
+      };
+      url = "github:nix-community/NUR";
+    };
     spicetify-nix = {
       inputs = {
         nixpkgs = {

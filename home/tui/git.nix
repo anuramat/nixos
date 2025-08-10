@@ -88,7 +88,7 @@ let
         ''
           hook_name=$(basename "$0")
           local=./.git/hooks/$hook_name
-          [ -x "$local" ] && [ -f "$local" ] && {
+          [ -x "$local" ] && {
             exec "$local"
           }
 

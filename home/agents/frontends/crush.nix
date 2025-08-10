@@ -1,10 +1,9 @@
 # TODO refactor
 {
   config,
-  osConfig,
   pkgs,
   ...
-}:
+}@args:
 let
   mcp = { inherit (config.lib.agents.mcp.raw) think; };
   # lsp = config.lib.agents.lsp.file;
@@ -15,13 +14,14 @@ let
   };
   configPath = config.xdg.configHome + "/crush/crush.json";
 
+  withTokens = config.lib.home.agenixWrapPkg pkgs.crush (t: {
+    OPENAI_API_KEY = t.oai;
+  });
+
   boxed = config.lib.agents.mkSandbox {
     wrapperName = "crs";
-    package = pkgs.crush;
+    package = withTokens;
     args = "--yolo";
-    env = {
-      OPENAI_API_KEY = "$(cat '${osConfig.age.secrets.oai.path}')";
-    };
   };
 
 in
