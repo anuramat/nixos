@@ -7,6 +7,7 @@
       layer = "overlay";
       anchor = "top-center";
       text-alignment = "center";
+      group-by = "app-name";
     };
   };
 }

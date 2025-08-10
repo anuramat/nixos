@@ -46,7 +46,7 @@ let
     '';
   };
 
-  tools = mapAttrs (n: v: map (x: "claude_" + x) v) {
+  tools = mapAttrs (n: v: map (x: "tools_" + x) v) {
     r = [
       "Glob"
       "Grep"
@@ -297,7 +297,7 @@ let
     topp = -1.0; # from 0.0 to 1.0, -1.0 to disable
     max-input-chars = 1000000;
     mcp-servers = when think {
-      inherit (config.lib.agents.mcp.raw) think claude;
+      inherit (config.lib.agents.mcp.raw) think tools;
     };
   };
 
