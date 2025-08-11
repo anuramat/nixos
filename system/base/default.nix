@@ -1,8 +1,6 @@
 # vim: fdl=0 fdm=marker
 {
-  lib,
   user,
-  cluster,
   config,
   ...
 }:
@@ -14,6 +12,8 @@
     ./home.nix
     ./net.nix
   ];
+
+  # TODO move stuff that is not required on a server
 
   security.rtkit.enable = true; # realtime kit, hands out realtime priority to user processes
   # TODO move?
@@ -29,27 +29,6 @@
   security.pam.services.swaylock.gnupg = {
     enable = true;
     noAutostart = true;
-  };
-
-  services = {
-    ollama =
-      let
-        cuda = config.hardware.nvidia.enabled;
-      in
-      {
-        enable = true;
-        acceleration = lib.mkIf cuda "cuda";
-        loadModels = lib.mkIf cuda [ ]; # pull models on service start
-        models = "/mnt/storage/models"; # TODO abstract away; make a new variable that contains a path to a storage device; fill on different machines
-        environmentVariables = {
-          OLLAMA_FLASH_ATTENTION = "1";
-          OLLAMA_KEEP_ALIVE = "999999m";
-          # OLLAMA_CONTEXT_LENGTH = "200000";
-        };
-        port = 11434; # explicit default
-        host = "0.0.0.0";
-        openFirewall = false;
-      };
   };
 
   networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
