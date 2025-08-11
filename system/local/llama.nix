@@ -16,7 +16,7 @@
     in
     {
       llama-cpp = {
-        enable = enable;
+        enable = true;
         port = 11434;
         openFirewall = false;
         extraFlags = [
