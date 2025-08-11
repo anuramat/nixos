@@ -1,6 +1,16 @@
-{ lib, user, ... }:
+{
+  lib,
+  user,
+  config,
+  ...
+}:
+let
+  isNixOS = config ? boot.kernelPackages;
+  isHomeManager = config ? home.username;
+in
 {
   age.secrets =
+    assert isNixOS || isHomeManager;
     with builtins;
     readDir ./.
     |> attrNames
@@ -9,8 +19,15 @@
       name = lib.removeSuffix ".age" x;
       value = {
         file = ./${x};
-        owner = user.username;
-      };
+      }
+      // (
+        if isNixOS then
+          {
+            owner = user.username;
+          }
+        else
+          { }
+      );
     })
     |> builtins.listToAttrs;
 }
