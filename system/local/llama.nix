@@ -8,6 +8,7 @@
 
   environment.systemPackages = [
     pkgs.llama-cpp
+    pkgs.python313Packages.huggingface-hub
   ];
   services =
     let
