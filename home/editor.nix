@@ -3,7 +3,6 @@
   hax,
   inputs,
   config,
-  cluster,
   ...
 }@args:
 {

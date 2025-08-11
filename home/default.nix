@@ -1,11 +1,10 @@
 {
   config,
-  cluster,
   hax,
   lib,
   inputs,
   ...
-}:
+}@args:
 {
   imports =
     with inputs;
@@ -16,7 +15,7 @@
       ./tui
     ]
     ++ (
-      if !cluster.this.server then
+      if !(args ? cluster) || !args.cluster.this.server then
         [
           ./editor.nix
           ./mime

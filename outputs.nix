@@ -40,6 +40,10 @@ let
     lib.nixosSystem {
       specialArgs = args2;
       modules = [
+        inputs.agenix.nixosModules.default
+        inputs.stylix.nixosModules.stylix
+        inputs.musnix.nixosModules.musnix
+
         (
           { config, ... }:
           {
@@ -51,19 +55,11 @@ let
 
           }
         )
-        ./system
-
         ./common/overlays.nix
-
-        inputs.agenix.nixosModules.default
-        ./secrets/age.nix
-        inputs.stylix.nixosModules.stylix
         ./common/stylix.nix
-
         ./hosts/external_keys.nix
-
-        inputs.musnix.nixosModules.musnix
-
+        ./secrets/age.nix
+        ./system
       ]
       ++ [
         ./hosts/${name}
@@ -79,15 +75,20 @@ in
     })
     |> builtins.listToAttrs;
   homeConfigurations.${user.username} = home-manager.lib.homeManagerConfiguration {
-    # TODO check if this even builds
-    specialArgs = args;
+    pkgs = import nixpkgs {
+      # TODO remove hardcode
+      # TODO hardcode system for hosts
+      system = "x86_64-linux";
+      config.allowUnfree = true;
+    };
+    extraSpecialArgs = args;
     modules = [
-      ./home
+      inputs.stylix.homeModules.stylix # TODO should be a different module -- hm specific
+      inputs.agenix.homeManagerModules.default
 
       ./common/overlays.nix
-      inputs.stylix.nixosModules.stylix # TODO should be a different module -- hm specific
-      inputs.agenix.homeManagerModules.default
       ./common/stylix.nix
+      ./home
       ./secrets/age.nix
     ];
   };

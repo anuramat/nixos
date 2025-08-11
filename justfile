@@ -51,4 +51,4 @@ check-nixos host="anuramat-ll7":
   nix build ".#nixosConfigurations.{{host}}.config.system.build.toplevel"
 
 check-hm:
-  nix build .#homeConfigurations.anuramat.activationPackage
+  nix build .#homeConfigurations.anuramat.activationPackage --show-trace
