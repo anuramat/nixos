@@ -91,7 +91,7 @@ in
           homeDirectory = "/home/${user.username}";
         };
       }
-      inputs.stylix.homeModules.stylix # TODO should be a different module -- hm specific
+      inputs.stylix.homeModules.stylix
       inputs.agenix.homeManagerModules.default
 
       ./common/overlays.nix
