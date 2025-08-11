@@ -8,6 +8,7 @@
 }:
 {
   imports = [
+    ./llama.nix
     ./peripherals.nix
     ./remaps.nix
     ./rice.nix
