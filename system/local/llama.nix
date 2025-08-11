@@ -1,13 +1,21 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
 
+  environment.systemPackages = [
+    pkgs.llama-cpp
+  ];
   services =
     let
       cuda = config.hardware.nvidia.enabled;
     in
     {
       llama-cpp = {
-        enable = false;
+        enable = true;
         port = 11343;
         openFirewall = false;
       };
