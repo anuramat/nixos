@@ -83,6 +83,14 @@ in
     };
     extraSpecialArgs = args;
     modules = [
+      {
+        # this should be per host as well
+        home = {
+          stateVersion = "24.05";
+          username = user.username;
+          homeDirectory = "/home/${user.username}";
+        };
+      }
       inputs.stylix.homeModules.stylix # TODO should be a different module -- hm specific
       inputs.agenix.homeManagerModules.default
 
