@@ -15,7 +15,7 @@
     in
     {
       llama-cpp = {
-        enable = true;
+        # enable = true;
         port = 11343;
         openFirewall = false;
       };
