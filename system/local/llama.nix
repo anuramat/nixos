@@ -7,8 +7,9 @@
     in
     {
       llama-cpp = {
-        enable = true;
+        enable = false;
         port = 11343;
+        openFirewall = false;
       };
       ollama = {
         enable = true;
