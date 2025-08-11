@@ -99,33 +99,30 @@ let
     in
     lib.hm.dag.entryAfter [ "writeBoundary" ] script;
 
-  agenixExport =
-    vars:
-    vars |> lib.mapAttrsToList (n: v: ''export ${n}=$(cat "${v.path}")'') |> concatStringsSep "\n";
 in
+
 {
   lib.home = {
     inherit mkGenericActivationScript;
 
-    agenixPatch =
-      # returns a patched binary that sets an environment variable
-      # TODO rename to agenixPatchedBinary or something
-      args:
-      pkgs.writeShellScript "${getName args.package}-agenix-patched" # bash
-        ''
-          export ${args.name}=$(cat "${args.token}")
-          ${getExe args.package} "$@"
-        '';
-
     agenixWrapPkg =
       pkg: vars:
-      # TODO home-manager agenix
+      let
+        agenixExport =
+          vars:
+          vars |> lib.mapAttrsToList (n: v: ''export ${n}=$(cat "${v.path}")'') |> concatStringsSep "\n";
+        aged =
+          age:
+          pkgs.writeShellScriptBin "${pkg.meta.mainProgram}" # bash
+            ''
+              ${agenixExport (vars age.secrets)}
+              ${getExe pkg} "$@"
+            '';
+      in
       if args ? osConfig then
-        pkgs.writeShellScriptBin "${pkg.meta.mainProgram}" # bash
-          ''
-            ${agenixExport (vars args.osConfig.age.secrets)}
-            ${getExe pkg} "$@"
-          ''
+        aged args.osConfig.age
+      else if config ? age then
+        aged config.age
       else
         pkg;
 
