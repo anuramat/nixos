@@ -17,18 +17,19 @@
     {
       llama-cpp = {
         enable = true;
-        port = 11434;
+        port = 11343;
         openFirewall = false;
         extraFlags = [
-          "-c"
-          "0"
-          "-fa"
+          "-c" # context size
+          "0" # inherit
+          "-fa" # flash attention
+          "-cmoe" # all MoE blocks on CPU
+          "--n-gpu-layers" # how many layers on GPU
+          "999"
+          # some hacks that don't even work for now; fix later
           "--jinja"
           "--reasoning-format"
           "none"
-          "-cmoe"
-          "--n-gpu-layers"
-          "999"
         ];
         model = "/mnt/storage/llama-cpp/gpt-oss-120b-mxfp4-00001-of-00003.gguf";
         # model = "/mnt/storage/llama-cpp/gpt-oss-20b-GGUF_gpt-oss-20b-mxfp4.gguf";
