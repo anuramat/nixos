@@ -31,8 +31,8 @@
           "--reasoning-format"
           "none"
         ];
-        model = "/mnt/storage/llama-cpp/gpt-oss-120b-mxfp4-00001-of-00003.gguf";
-        # model = "/mnt/storage/llama-cpp/gpt-oss-20b-GGUF_gpt-oss-20b-mxfp4.gguf";
+        # model = "/mnt/storage/llama-cpp/gpt-oss-120b-mxfp4-00001-of-00003.gguf";
+        model = "/mnt/storage/llama-cpp/gpt-oss-20b-GGUF_gpt-oss-20b-mxfp4.gguf";
       };
       ollama = {
         enable = false;
