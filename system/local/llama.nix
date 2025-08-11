@@ -16,12 +16,25 @@
     in
     {
       llama-cpp = {
-        enable = false;
-        port = 11343;
+        enable = enable;
+        port = 11434;
         openFirewall = false;
+        extraFlags = [
+          "-c"
+          "0"
+          "-fa"
+          "--jinja"
+          "--reasoning-format"
+          "none"
+          "-cmoe"
+          "--n-gpu-layers"
+          "999"
+        ];
+        model = "/mnt/storage/llama-cpp/gpt-oss-120b-mxfp4-00001-of-00003.gguf";
+        # model = "/mnt/storage/llama-cpp/gpt-oss-20b-GGUF_gpt-oss-20b-mxfp4.gguf";
       };
       ollama = {
-        enable = true;
+        enable = false;
         acceleration = lib.mkIf cuda "cuda";
         loadModels = lib.mkIf cuda [ ]; # pull models on service start
         models = "/mnt/storage/ollama"; # TODO abstract away; make a new variable that contains a path to a storage device; fill on different machines
