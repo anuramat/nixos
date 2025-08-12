@@ -54,6 +54,12 @@ let
   };
 
   transcribe = pkgs.writeShellApplication {
+    name = "transcribe";
+    runtimeInputs = with pkgs; [
+      fd
+      gum
+      openai-whisper
+    ];
     text =
       let
         find = ''fd --max-depth 1 -e "$1"'';
@@ -131,5 +137,6 @@ in
     openai-whisper
     ghcp-models
     summarize
+    transcribe
   ];
 }
