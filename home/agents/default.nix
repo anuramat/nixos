@@ -40,16 +40,35 @@ let
       gum
       mods
     ];
-    text = ''
-      echo "summarizing files:"
-      fd -e txt --max-depth=1 -x printf '\t%s\n' '{}'
-
-      gum confirm || exit 1
-
-      mkdir -p summaries
-      fd -e txt --max-depth=1 -x sh -c 'cat "{}" | mods -R summarizer "here is the lecture transcript:" > "./summaries/{.}.md"'
-    '';
+    text =
+      let
+        find = ''fd -e txt --max-depth=1'';
+      in
+      # bash
+      ''
+        ${find}
+        gum confirm || exit 1
+        mkdir -p summaries
+        ${find} -x sh -c 'cat "{}" | mods -R summarizer "here is the lecture transcript:" > "./summaries/{.}.md"'
+      '';
   };
+
+  transcribe = pkgs.writeShellApplication {
+    text =
+      let
+        find = ''fd --max-depth 1 -e "$1"'';
+      in
+      # bash
+      ''
+        [ "$1" != "" ] || {
+          echo "usage: $0 mp4"
+        }
+        ${find}
+        gum confirm || exit 1
+        ${find} -j 1 -x sh -c 'mkdir -p "{.}" && whisper "{}" --language en --device cuda -o "{.}"'
+      '';
+  };
+
 in
 {
 
