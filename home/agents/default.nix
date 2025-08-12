@@ -66,9 +66,6 @@ let
       in
       # bash
       ''
-        [ "$1" != "" ] || {
-          echo "usage: $0 mp4"
-        }
         ${find}
         gum confirm || exit 1
         ${find} -j 1 -x sh -c 'mkdir -p "{.}" && whisper "{}" --language en --device cuda -o "{.}" && mv -t "{.}" "{}"'
