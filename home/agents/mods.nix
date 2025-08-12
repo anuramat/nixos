@@ -293,7 +293,7 @@ let
   modsCfg = (pkgs.formats.yaml { }).generate "mods_config.yaml" {
     inherit apis;
     default-api = "copilot";
-    default-model = "gpt-5";
+    default-model = "gpt-4.1";
     fanciness = 0;
     role = "default";
     inherit roles;
