@@ -96,6 +96,8 @@
 
     # miscellaneous unfiled TODO
     # dix # not in stable yet
+    rename
+    renameutils
     mitmproxy
     dotslash
     python3
