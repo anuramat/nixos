@@ -300,7 +300,7 @@ let
     temp = -1.0; # 0.0 to 2.0, -1.0 to disable
     topk = -1; # -1 to disable
     topp = -1.0; # from 0.0 to 1.0, -1.0 to disable
-    max-input-chars = 1000000;
+    max-input-chars = 100000;
     mcp-servers = when think {
       inherit (config.lib.agents.mcp.raw) think tools;
     };
