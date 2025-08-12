@@ -22,6 +22,7 @@ let
       "DP-3"
       "HDMI-A-2"
       "HDMI-A-3"
+      "HEADLESS-1"
     ];
   };
 in
