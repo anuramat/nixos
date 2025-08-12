@@ -977,11 +977,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1754704146,
-        "narHash": "sha256-dr0wi2IyiIBaFC+GF927SdVMcBLCXtm2Ixe2er1qHBI=",
+        "lastModified": 1754791888,
+        "narHash": "sha256-ZeVRaOoShFAp35eyOmXvet0qn7zAp1AJoesRjfv4sQU=",
         "owner": "anuramat",
         "repo": "mods",
-        "rev": "3acbd0663253b53e4b481d4f04b4a9b2926ab4d3",
+        "rev": "a7b57181127a7cd78b6d40e2cf1bacf894a73ca9",
         "type": "github"
       },
       "original": {
