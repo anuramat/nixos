@@ -48,9 +48,9 @@ hooks:
   # TODO format
   # TODO just inputs
 
-check-nixos host="anuramat-ll7":
+# we can't flake-check specific outputs, so we build instead
+check-nixos host=`hostname`:
   nix build ".#nixosConfigurations.{{host}}.config.system.build.toplevel"
-
 check-hm:
   nix build .#homeConfigurations.anuramat.activationPackage --show-trace
 
