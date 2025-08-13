@@ -56,6 +56,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
             inputs.agenix.nixosModules.default
             inputs.stylix.nixosModules.stylix
             inputs.musnix.nixosModules.musnix
+            inputs.nix-topology.nixosModules.default
 
             (
               { config, ... }:
@@ -128,6 +129,12 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     in
     {
       topology = {
+        modules = [
+          {
+            nodes = {
+            };
+          }
+        ];
       };
       nix-unit = {
         inputs = {

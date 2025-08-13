@@ -6,6 +6,9 @@
   ...
 }:
 {
+  # topology.self = {
+  #   hardware.info = ...;
+  # };
   system.stateVersion = "24.05";
   home-manager.users.${user.username}.home.stateVersion = "24.11";
 
