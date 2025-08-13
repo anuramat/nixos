@@ -41,141 +41,148 @@ let
   '';
 in
 {
-  desktopFileProcessing = {
-    basic = {
-      expr = hax.mimeFromDesktop mockPackage |> builtins.sort builtins.lessThan;
-      expected = [
-        "application/pdf"
-        "image/jpeg"
-        "image/png"
-        "text/html"
-        "text/plain"
-      ];
-    };
+  # Test mimeFromDesktop
+  testMimeFromDesktop = {
+    expr = hax.mimeFromDesktop mockPackage |> builtins.sort builtins.lessThan;
+    expected = [
+      "application/pdf"
+      "image/jpeg"
+      "image/png"
+      "text/html"
+      "text/plain"
+    ];
+  };
 
-    complex = {
-      expr =
-        let
-          complexPackage = pkgs.runCommand "complex-package" { } ''
-            mkdir -p $out/share/applications
-
-            # Desktop file with duplicate mime types
-            cat >$out/share/applications/dup.desktop <<EOF
-            MimeType=text/plain;text/plain;application/pdf;
-            MimeType=text/html;
-            EOF
-          '';
-        in
-        hax.mimeFromDesktop complexPackage |> builtins.sort builtins.lessThan;
-      expected = [
-        "application/pdf"
-        "text/html"
-        "text/plain"
-      ];
+  # Test setMany
+  testSetMany = {
+    expr = hax.setMany "firefox" [
+      "text/html"
+      "application/pdf"
+    ];
+    expected = {
+      "text/html" = "firefox";
+      "application/pdf" = "firefox";
     };
   };
 
-  mimeTypeGeneration = {
-    parts = {
-      expr = hax.generateMimeTypes [
-        {
-          prefix = "image";
-          suffixes = [
-            "png"
-            "jpeg"
-            "gif"
-          ];
-        }
-      ];
-      expected = [
-        "image/png"
-        "image/jpeg"
-        "image/gif"
-      ];
-    };
+  # Test setMany with empty list
+  testSetManyEmpty = {
+    expr = hax.setMany "app" [ ];
+    expected = { };
+  };
 
-    exact = {
-      expr = hax.generateMimeTypes [ "text/plain" ];
-      expected = [ "text/plain" ];
-    };
+  # Test generateMimeTypes with parts pattern
+  testGenerateMimeTypesParts = {
+    expr = hax.generateMimeTypes [
+      {
+        prefix = "image";
+        suffixes = [
+          "png"
+          "jpeg"
+          "gif"
+        ];
+      }
+    ];
+    expected = [
+      "image/png"
+      "image/jpeg"
+      "image/gif"
+    ];
+  };
 
-    exactList = {
-      expr = hax.generateMimeTypes [
-        [
-          "application/json"
-          "application/xml"
-        ]
-      ];
-      expected = [
+  # Test generateMimeTypes with exact pattern
+  testGenerateMimeTypesExact = {
+    expr = hax.generateMimeTypes [ "text/plain" ];
+    expected = [ "text/plain" ];
+  };
+
+  # Test generateMimeTypes with exactList pattern
+  testGenerateMimeTypesExactList = {
+    expr = hax.generateMimeTypes [
+      [
         "application/json"
         "application/xml"
-      ];
-    };
-
-    mixed = {
-      expr =
-        hax.generateMimeTypes [
-          {
-            prefix = "text";
-            suffixes = [
-              "plain"
-              "html"
-            ];
-          }
-          "application/pdf"
-          [
-            "image/png"
-            "image/jpeg"
-          ]
-        ]
-        |> builtins.sort builtins.lessThan;
-      expected = [
-        "application/pdf"
-        "image/jpeg"
-        "image/png"
-        "text/html"
-        "text/plain"
-      ];
-    };
-
-    invalid = {
-      expr = hax.generateMimeTypes [ { invalid = "pattern"; } ];
-      expectedError.type = "ThrownError";
-      expectedError.msg = "illegal pattern";
-    };
+      ]
+    ];
+    expected = [
+      "application/json"
+      "application/xml"
+    ];
   };
 
-  utilityFunctions = {
-    setMany = {
-      expr = hax.setMany "firefox" [
-        "text/html"
+  # Test generateMimeTypes with file pattern - disabled due to pure eval mode limitations
+  # The file pattern expects a raw path, but in tests we get store paths which don't match the pattern
+
+  # Test generateMimeTypes with mixed patterns
+  testGenerateMimeTypesMixed = {
+    expr =
+      hax.generateMimeTypes [
+        {
+          prefix = "text";
+          suffixes = [
+            "plain"
+            "html"
+          ];
+        }
         "application/pdf"
-      ];
-      expected = {
-        "text/html" = "firefox";
-        "application/pdf" = "firefox";
-      };
-    };
-
-    setManyEmpty = {
-      expr = hax.setMany "app" [ ];
-      expected = { };
-    };
-
-    setManyOrder = {
-      expr =
-        hax.setMany "editor" [
-          "text/plain"
-          "text/markdown"
-          "text/html"
+        [
+          "image/png"
+          "image/jpeg"
         ]
-        |> builtins.attrNames
-        |> builtins.sort builtins.lessThan;
-      expected = [
-        "text/html"
-        "text/markdown"
+      ]
+      |> builtins.sort builtins.lessThan;
+    expected = [
+      "application/pdf"
+      "image/jpeg"
+      "image/png"
+      "text/html"
+      "text/plain"
+    ];
+  };
+
+  # Test generateMimeTypes with invalid pattern
+  testGenerateMimeTypesInvalid = {
+    expr = hax.generateMimeTypes [ { invalid = "pattern"; } ];
+    expectedError.type = "ThrownError";
+    expectedError.msg = "illegal pattern";
+  };
+
+  # Test complex mimeFromDesktop scenario
+  testMimeFromDesktopComplex = {
+    expr =
+      let
+        complexPackage = pkgs.runCommand "complex-package" { } ''
+          mkdir -p $out/share/applications
+
+          # Desktop file with duplicate mime types
+          cat >$out/share/applications/dup.desktop <<EOF
+          MimeType=text/plain;text/plain;application/pdf;
+          MimeType=text/html;
+          EOF
+        '';
+      in
+      hax.mimeFromDesktop complexPackage |> builtins.sort builtins.lessThan;
+    expected = [
+      "application/pdf"
+      "text/html"
+      "text/plain"
+    ];
+  };
+
+  # Test setMany preserves order as attrs
+  testSetManyOrder = {
+    expr =
+      hax.setMany "editor" [
         "text/plain"
-      ];
-    };
+        "text/markdown"
+        "text/html"
+      ]
+      |> builtins.attrNames
+      |> builtins.sort builtins.lessThan;
+    expected = [
+      "text/html"
+      "text/markdown"
+      "text/plain"
+    ];
   };
 }

@@ -47,130 +47,134 @@ let
   '';
 in
 {
-  basicOperations = {
-    getHostnames = {
-      expr = hax.getHostnames mockPath;
-      expected = [
-        "host1"
-        "host2"
-        "host3"
-      ];
-    };
+  # Test getHostnames
+  testGetHostnames = {
+    expr = hax.getHostnames mockPath;
+    expected = [
+      "host1"
+      "host2"
+      "host3"
+    ];
+  };
 
-    getAllHostkeys = {
-      expr = hax.getAllHostkeys mockPath;
-      expected = [
-        "AAAAC3NzaC1lZDI1NTE5AAAAIHost1Key host1"
-        "AAAAB3NzaC1yc2EAAAADAQABAAABAQHost2Key host2"
-      ];
-    };
+  # Test getAllHostkeys
+  testGetAllHostkeys = {
+    expr = hax.getAllHostkeys mockPath;
+    expected = [
+      "AAAAC3NzaC1lZDI1NTE5AAAAIHost1Key host1"
+      "AAAAB3NzaC1yc2EAAAADAQABAAABAQHost2Key host2"
+    ];
+  };
 
-    getAllKeys = {
-      expr = hax.getAllKeys mockPath |> builtins.length;
-      expected = 2;
+  # Test getAllKeys
+  testGetAllKeys = {
+    expr = hax.getAllKeys mockPath |> builtins.length;
+    expected = 2;
+  };
+
+  # Test mkCluster basic structure
+  testMkClusterStructure = {
+    expr =
+      let
+        cluster = hax.mkCluster mockPath [ "host1" "host2" "host3" ] "host1";
+      in
+      {
+        hasThis = cluster.this != null;
+        thisName = cluster.this.name;
+        hostnamesCount = builtins.length cluster.hostnames;
+        builderUsername = cluster.builderUsername;
+      };
+    expected = {
+      hasThis = true;
+      thisName = "host1";
+      hostnamesCount = 3;
+      builderUsername = "builder";
     };
   };
 
-  clusterManagement = {
-    structure = {
-      expr =
-        let
-          cluster = hax.mkCluster mockPath [ "host1" "host2" "host3" ] "host1";
-        in
-        {
-          hasThis = cluster.this != null;
-          thisName = cluster.this.name;
-          hostnamesCount = builtins.length cluster.hostnames;
-          builderUsername = cluster.builderUsername;
-        };
-      expected = {
-        hasThis = true;
-        thisName = "host1";
-        hostnamesCount = 3;
-        builderUsername = "builder";
+  # Test mkCluster.this properties
+  testMkClusterThis = {
+    expr =
+      let
+        cluster = hax.mkCluster mockPath [ "host1" "host2" ] "host1";
+      in
+      {
+        name = cluster.this.name;
+        builder = cluster.this.builder;
+        server = cluster.this.server;
+        desktop = cluster.this.desktop;
+        platform = cluster.this.platform;
+        hasCacheKey = cluster.this.cacheKey != "";
       };
-    };
-
-    thisHost = {
-      expr =
-        let
-          cluster = hax.mkCluster mockPath [ "host1" "host2" ] "host1";
-        in
-        {
-          name = cluster.this.name;
-          builder = cluster.this.builder;
-          server = cluster.this.server;
-          desktop = cluster.this.desktop;
-          platform = cluster.this.platform;
-          hasCacheKey = cluster.this.cacheKey != "";
-        };
-      expected = {
-        name = "host1";
-        builder = true;
-        server = false;
-        desktop = true;
-        platform = "x86_64-linux";
-        hasCacheKey = true;
-      };
-    };
-
-    builders = {
-      expr =
-        let
-          cluster = hax.mkCluster mockPath [ "host1" "host2" ] "host2";
-        in
-        {
-          builderCount = builtins.length cluster.builders;
-          builderNames = map (x: x.name) cluster.builders;
-        };
-      expected = {
-        builderCount = 1;
-        builderNames = [ "host1" ];
-      };
-    };
-
-    substituters = {
-      expr =
-        let
-          cluster = hax.mkCluster mockPath [ "host1" "host2" ] "host2";
-        in
-        cluster.substituters;
-      expected = [ "ssh-ng://host1?priority=50" ];
+    expected = {
+      name = "host1";
+      builder = true;
+      server = false;
+      desktop = true;
+      platform = "x86_64-linux";
+      hasCacheKey = true;
     };
   };
 
-  keyHandling = {
-    trustedPublicKeys = {
-      expr =
-        let
-          cluster = hax.mkCluster mockPath [ "host1" "host2" "host3" ] "host1";
-        in
-        {
-          keyCount = builtins.length cluster.trusted-public-keys;
-          hasHost2Key = builtins.any (x: lib.strings.hasInfix "host2" x) cluster.trusted-public-keys;
-        };
-      expected = {
-        keyCount = 2; # host2 and host3's keys (empty counts as a key)
-        hasHost2Key = true;
+  # Test mkCluster builders filtering
+  testMkClusterBuilders = {
+    expr =
+      let
+        cluster = hax.mkCluster mockPath [ "host1" "host2" ] "host2";
+      in
+      {
+        builderCount = builtins.length cluster.builders;
+        builderNames = map (x: x.name) cluster.builders;
       };
+    expected = {
+      builderCount = 1;
+      builderNames = [ "host1" ];
     };
+  };
 
-    clientKeys = {
-      expr =
-        let
-          cluster = hax.mkCluster mockPath [ "host1" "host2" ] "host1";
-        in
-        cluster.clientKeyFiles |> builtins.length;
-      expected = 1; # Only other machines' keys
-    };
+  # Test mkCluster substituters generation
+  testMkClusterSubstituters = {
+    expr =
+      let
+        cluster = hax.mkCluster mockPath [ "host1" "host2" ] "host2";
+      in
+      cluster.substituters;
+    expected = [ "ssh-ng://host1?priority=50" ];
+  };
 
-    hostKeysFiles = {
-      expr =
-        let
-          cluster = hax.mkCluster mockPath [ "host1" "host2" ] "host1";
-        in
-        cluster.hostKeysFiles |> builtins.length;
-      expected = 1; # Only host2's keys file
+  # Test mkCluster trusted-public-keys
+  testMkClusterTrustedKeys = {
+    expr =
+      let
+        cluster = hax.mkCluster mockPath [ "host1" "host2" "host3" ] "host1";
+      in
+      {
+        keyCount = builtins.length cluster.trusted-public-keys;
+        hasHost2Key = builtins.any (x: lib.strings.hasInfix "host2" x) cluster.trusted-public-keys;
+      };
+    expected = {
+      keyCount = 2; # host2 and host3's keys (empty counts as a key)
+      hasHost2Key = true;
     };
+  };
+
+  # Test mkCluster clientKeyFiles aggregation
+  testMkClusterClientKeys = {
+    expr =
+      let
+        cluster = hax.mkCluster mockPath [ "host1" "host2" ] "host1";
+      in
+      cluster.clientKeyFiles |> builtins.length;
+    expected = 1; # Only other machines' keys
+  };
+
+  # Test mkCluster hostKeysFiles
+  testMkClusterHostKeysFiles = {
+    expr =
+      let
+        cluster = hax.mkCluster mockPath [ "host1" "host2" ] "host1";
+      in
+      cluster.hostKeysFiles |> builtins.length;
+    expected = 1; # Only host2's keys file
   };
 }
