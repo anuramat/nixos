@@ -2,6 +2,16 @@ keys_dir := `pwd` / "hosts" / `hostname` / "keys"
 
 all: flake format (test "--quiet") lint nixos
 
+# Regenerate flake
+[group('build')]
+flake:
+    # Check if it evaluates first
+    nix eval --read-only --expr "$(nix eval -f inputs.nix)" >/dev/null
+    # Regenerate flake.nix
+    printf '{ outputs = args: import ./outputs.nix args; inputs = %s; }' "$(nix eval --read-only -f inputs.nix)" > flake.nix
+    # Format
+    treefmt flake.nix
+
 [group('build')]
 nixos:
     # ask for permission first
@@ -42,15 +52,6 @@ build pkg:
 run pkg:
     nix run ".#nixosConfigurations.$(hostname).pkgs.{{ pkg }}"
 
-# Regenerate flake
-flake:
-    # Check if it evaluates first
-    nix eval --read-only --expr "$(nix eval -f inputs.nix)" >/dev/null
-    # Regenerate flake.nix
-    printf '{ outputs = args: import ./outputs.nix args; inputs = %s; }' "$(nix eval --read-only -f inputs.nix)" > flake.nix
-    # Format
-    treefmt flake.nix
-
 # Install pre-commit hooks
 [group('util')]
 hooks:
@@ -70,10 +71,4 @@ check target="":
     {{ if target == "" { "nix flake check" } else { "nix build " + target + " --show-trace --no-link --dry-run" } }}
     # or
     # {{ if target == "" { "nix flake check" } else { "nix eval " + target + ".drvPath --show-trace" } }}
-
-# Run all checks and tests
-[group('check')]
-check-all *flags:
-    nix flake check {{ flags }}
-    # add --no-build to skip checks and only check outputs
-    # also --all-systems
+    # nix flake check flakgs: --no-build (skips checks), --all-systems
