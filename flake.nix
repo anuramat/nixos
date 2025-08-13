@@ -121,6 +121,9 @@
       };
       url = "github:oxalica/nil/main";
     };
+    nix-topology = {
+      url = "github:oddlama/nix-topology";
+    };
     nix-unit = {
       inputs = {
         nixpkgs = {

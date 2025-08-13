@@ -57,4 +57,5 @@ in
   tt-schemes = mkNonFlake "github:tinted-theming/schemes";
 
   musnix.url = "github:musnix/musnix";
+  nix-topology.url = "github:oddlama/nix-topology";
 }

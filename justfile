@@ -1,10 +1,9 @@
 keys_dir := `pwd` / "hosts" / `hostname` / "keys"
-host_arch := `nix eval --raw .#nixosConfigurations.$(hostname).config.nixpkgs.hostPlatform.system 2>/dev/null`
 
-all: format lint nixos
+all: flake format (test "--quiet") lint nixos
 
-# Rebuild
-nixos: flake
+[group('build')]
+nixos:
     # ask for permission first
     sudo true
     # store keys in repo:
@@ -18,7 +17,11 @@ nixos: flake
     # rebuild
     sudo nixos-rebuild switch --option extra-experimental-features pipe-operators --show-trace
 
-# Lint nix, sh, lua, yaml
+[group('code')]
+test flag="" arch=`nix eval --raw .#nixosConfigurations.$(hostname).config.nixpkgs.hostPlatform.system`:
+    nix-unit {{ flag }} --flake .#tests.systems.{{ arch }}
+
+[group('code')]
 lint:
     # Skipping nix linters due to lack of pipe operator support:
     # statix check -i hardware-configuration.nix || true
@@ -27,38 +30,44 @@ lint:
     fd -e sh --print0 | xargs -0 shellcheck --enable=all --color=always
     yamllint .
 
+[group('code')]
 format:
     treefmt
 
+[group('util')]
 build pkg:
     nix build ".#nixosConfigurations.$(hostname).pkgs.{{ pkg }}"
 
+[group('util')]
 run pkg:
     nix run ".#nixosConfigurations.$(hostname).pkgs.{{ pkg }}"
 
 # Regenerate flake
 flake:
-    # Check if it evaluates
+    # Check if it evaluates first
     nix eval --read-only --expr "$(nix eval -f inputs.nix)" >/dev/null
+    # Regenerate flake.nix
     printf '{ outputs = args: import ./outputs.nix args; inputs = %s; }' "$(nix eval --read-only -f inputs.nix)" > flake.nix
+    # Format
     treefmt flake.nix
 
 # Install pre-commit hooks
+[group('util')]
 hooks:
     # TODO format
     # TODO `just flake`
 
-# we can't flake-check specific outputs, so we build instead
+# Check a NixOS configuration
+[group('check')]
 check-nixos host=`hostname`:
     nix build ".#nixosConfigurations.{{ host }}.config.system.build.toplevel"
 
-check-hm:
-    nix build .#homeConfigurations.anuramat.activationPackage --show-trace
+# Check a Home Manager configuration
+[group('check')]
+check-hm user=`whoami`:
+    nix build .#homeConfigurations.{{ user }}.activationPackage --show-trace
 
-# unit tests
-test arch=host_arch:
-    nix-unit --flake .#tests.systems.{{ arch }}
-
-# unit tests and builds
-check arch=host_arch:
-    nix flake check --systems {{ arch }}
+# Run all checks and tests
+[group('check')]
+check *flags:
+    nix flake check {{ flags }}

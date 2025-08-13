@@ -7,6 +7,7 @@
 }@inputs:
 flake-parts.lib.mkFlake { inherit inputs; } {
   imports = [
+    inputs.nix-topology.flakeModule
     inputs.nix-unit.modules.flake.default
   ];
   systems = [
@@ -113,6 +114,8 @@ flake-parts.lib.mkFlake { inherit inputs; } {
           ./secrets/age.nix
         ];
       };
+
+      # tests = import ... # system-agnostic tests
     };
 
   perSystem =
