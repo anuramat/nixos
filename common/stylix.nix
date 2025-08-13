@@ -19,6 +19,10 @@
         popups = 11;
         terminal = 13;
       };
+      emoji = {
+        name = "Noto Emoji";
+        package = pkgs.noto-fonts-monochrome-emoji;
+      };
     };
     base16Scheme =
       let
