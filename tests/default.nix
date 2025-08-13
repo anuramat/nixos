@@ -1,11 +1,14 @@
 { pkgs, lib, ... }:
 let
-  inherit (lib) foldl' attrValues mergeAttrs;
+  inherit (lib) foldl' mergeAttrs;
+  args = { inherit pkgs lib; };
 in
-foldl' mergeAttrs { } [
-  (import ./unit/hax/hosts.nix { inherit pkgs lib; })
-  (import ./unit/hax/mime.nix { inherit pkgs lib; })
-  (import ./unit/hax/web.nix { inherit pkgs lib; })
-  (import ./unit/hax/vim.nix { inherit pkgs lib; })
-  (import ./unit/hax/common.nix { inherit pkgs lib; })
-]
+foldl' mergeAttrs { } (
+  map (x: import x args) [
+    ./unit/hax/hosts.nix
+    ./unit/hax/mime.nix
+    ./unit/hax/web.nix
+    ./unit/hax/vim.nix
+    ./unit/hax/common.nix
+  ]
+)
