@@ -25,7 +25,6 @@ in
   # my stuff
   ctrlsn = mkInput "git+ssh://git@github.com/anuramat/ctrl.sn?ref=main";
   subcat = mkInput "github:anuramat/subcat";
-  diriger = mkNonFlake "github:anuramat/diriger";
   gothink = mkInput "github:anuramat/gothink";
   modagent = mkInput "github:anuramat/modagent";
   todo = mkNonFlake "github:anuramat/todo";

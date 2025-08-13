@@ -37,10 +37,6 @@
       };
       url = "git+ssh://git@github.com/anuramat/ctrl.sn?ref=main";
     };
-    diriger = {
-      flake = false;
-      url = "github:anuramat/diriger";
-    };
     figtree = {
       inputs = {
         nixpkgs = {
