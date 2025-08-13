@@ -42,7 +42,7 @@ in
   spicetify-nix = mkInput "github:Gerg-L/spicetify-nix";
 
   # no `follows`
-  flake-utils.url = "github:numtide/flake-utils"; # no dependencies anyway
+  flake-parts.url = "github:hercules-ci/flake-parts"; # minimal dependencies
   neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay"; # has a cache
   nixos-hardware.url = "github:NixOS/nixos-hardware/master"; # too dangerous
 

@@ -53,6 +53,10 @@ check-nixos host="anuramat-ll7":
 check-hm:
   nix build .#homeConfigurations.anuramat.activationPackage --show-trace
 
-# Run unit tests
+# unit tests
 test arch="x86_64-linux":
-  nix-unit --flake .#tests.{{arch}}
+  nix-unit --flake .#tests.systems.{{arch}}
+
+# unit tests and builds
+check arch="x86_64-linux":
+  nix flake check --systems {{arch}}

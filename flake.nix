@@ -49,8 +49,8 @@
       };
       url = "github:anuramat/figtree.nvim";
     };
-    flake-utils = {
-      url = "github:numtide/flake-utils";
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
     };
     gothink = {
       inputs = {
