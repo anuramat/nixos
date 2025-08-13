@@ -40,6 +40,7 @@ in
         LC_ALL = "en_US.UTF-8";
         PAGER = "less";
         MANPAGER = "less";
+        NIXOS_OZONE_WL = "1"; # wayland chromium/electron
 
         VIRTUAL_ENV_DISABLE_PROMPT = "1"; # hide python venv prompt
 
