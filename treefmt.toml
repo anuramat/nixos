@@ -26,3 +26,8 @@ command = "yamlfmt"
 command = "black"
 includes = [ "*.py" ]
 options = [ "-q" ]
+
+[formatter.just]
+command = "just"
+includes = [ "justfile" ] # HACK -- will break on >=2 file
+options = [ "--unstable", "--fmt", "-f" ]
