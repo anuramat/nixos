@@ -59,20 +59,15 @@ hooks:
 
 # Check a NixOS configuration
 [group('check')]
-check-nixos host=`hostname`: (check ".#nixosConfigurations.{{ host }}.config.system.build.toplevel")
+check-nixos host=`hostname`: (check ".#nixosConfigurations." + host + ".config.system.build.toplevel")
 
 # Check a Home Manager configuration
 [group('check')]
-check-hm user=`whoami`: (check ".#homeConfigurations.{{ user }}.activationPackage")
+check-hm user=`whoami`: (check ".#homeConfigurations." + user + ".activationPackage")
 
 [group('check')]
-check target:
-    {{ 
-        if target == "" 
-        { "nix flake check" } 
-        else 
-        { "nix build '{{ target }}' --show-trace --no-link --dry-run" } 
-    }}
+check target="":
+    {{ if target == "" { "nix flake check" } else { "nix build " + target + " --show-trace --no-link --dry-run" } }}
     # another option: nix eval "{{ target }}.drvPath"
 
 # Run all checks and tests
