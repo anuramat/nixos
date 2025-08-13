@@ -14,7 +14,7 @@ in
   nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
   nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
   nur = mkInput "github:nix-community/NUR";
-  nix-unit = mkInput "github:nix-community/nix-unit";
+  nix-unit = mkInput "github:nix-community/nix-unit/v2.30.0";
 
   # my stuff
   ctrlsn = mkInput "git+ssh://git@github.com/anuramat/ctrl.sn?ref=main";

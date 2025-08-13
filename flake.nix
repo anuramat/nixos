@@ -126,7 +126,7 @@
           follows = "nixpkgs";
         };
       };
-      url = "github:nix-community/nix-unit";
+      url = "github:nix-community/nix-unit/v2.30.0";
     };
     nixos-hardware = {
       url = "github:NixOS/nixos-hardware/master";
