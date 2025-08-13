@@ -46,7 +46,7 @@ flake:
 # Install pre-commit hooks
 hooks:
     # TODO format
-    # TODO just inputs
+    # TODO `just flake`
 
 # we can't flake-check specific outputs, so we build instead
 check-nixos host=`hostname`:
