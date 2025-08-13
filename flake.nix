@@ -120,6 +120,14 @@
       };
       url = "github:oxalica/nil/main";
     };
+    nix-unit = {
+      inputs = {
+        nixpkgs = {
+          follows = "nixpkgs";
+        };
+      };
+      url = "github:nix-community/nix-unit";
+    };
     nixos-hardware = {
       url = "github:NixOS/nixos-hardware/master";
     };
