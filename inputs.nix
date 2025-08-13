@@ -11,10 +11,16 @@ let
   };
 in
 {
-  nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+  # base
   nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
-  nur = mkInput "github:nix-community/NUR";
+  nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+  nixpkgs-lib.url = "github:nix-community/nixpkgs.lib";
+  flake-parts = {
+    url = "github:hercules-ci/flake-parts";
+    inputs.nixpkgs-lib.follows = "nixpkgs-lib";
+  };
   nix-unit = mkInput "github:nix-community/nix-unit/v2.30.0";
+  nur = mkInput "github:nix-community/NUR";
 
   # my stuff
   ctrlsn = mkInput "git+ssh://git@github.com/anuramat/ctrl.sn?ref=main";
@@ -42,7 +48,6 @@ in
   spicetify-nix = mkInput "github:Gerg-L/spicetify-nix";
 
   # no `follows`
-  flake-parts.url = "github:hercules-ci/flake-parts"; # minimal dependencies
   neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay"; # has a cache
   nixos-hardware.url = "github:NixOS/nixos-hardware/master"; # too dangerous
 
