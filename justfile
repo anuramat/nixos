@@ -67,9 +67,9 @@ check-hm user=`whoami`: (check ".#homeConfigurations." + user + ".activationPack
 
 [group('check')]
 check target="":
-    # {{ if target == "" { "nix flake check" } else { "nix build " + target + " --show-trace --no-link --dry-run" } }}
-    {{ if target == "" { "nix flake check" } else { "nix eval " + target + ".drvPath --show-trace" } }}
-    # another option: nix eval "{{ target }}.drvPath"
+    {{ if target == "" { "nix flake check" } else { "nix build " + target + " --show-trace --no-link --dry-run" } }}
+    # or
+    # {{ if target == "" { "nix flake check" } else { "nix eval " + target + ".drvPath --show-trace" } }}
 
 # Run all checks and tests
 [group('check')]
