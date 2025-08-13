@@ -59,4 +59,9 @@ in
   musnix.url = "github:musnix/musnix";
   nix-topology.url = "github:oddlama/nix-topology";
   treefmt-nix.url = "github:numtide/treefmt-nix";
+  ez-configs = {
+    url = "github:ehllie/ez-configs";
+    inputs.nixpkgs.follows = "nixpkgs";
+    inputs.flake-parts.follows = "flake-parts";
+  };
 }

@@ -10,6 +10,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     inputs.treefmt-nix.flakeModule
     inputs.nix-topology.flakeModule
     inputs.nix-unit.modules.flake.default
+    inputs.ez-configs.flakeModule
   ];
   systems = [
     "x86_64-linux"

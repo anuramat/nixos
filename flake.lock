@@ -285,6 +285,29 @@
         "type": "github"
       }
     },
+    "ez-configs": {
+      "inputs": {
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1750178074,
+        "narHash": "sha256-+ACS/Ris0V0a3BB6vEI/vTGk5huztx7a5f7eHJK1FaQ=",
+        "owner": "ehllie",
+        "repo": "ez-configs",
+        "rev": "eb320b3a6032a30e5fa67bebbaf381e6552f9441",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ehllie",
+        "repo": "ez-configs",
+        "type": "github"
+      }
+    },
     "figtree": {
       "inputs": {
         "flake-utils": "flake-utils_3",
@@ -1521,6 +1544,7 @@
         "claude-desktop": "claude-desktop",
         "crush": "crush",
         "ctrlsn": "ctrlsn",
+        "ez-configs": "ez-configs",
         "figtree": "figtree",
         "flake-parts": "flake-parts",
         "gothink": "gothink",

@@ -37,6 +37,17 @@
       };
       url = "git+ssh://git@github.com/anuramat/ctrl.sn?ref=main";
     };
+    ez-configs = {
+      inputs = {
+        flake-parts = {
+          follows = "flake-parts";
+        };
+        nixpkgs = {
+          follows = "nixpkgs";
+        };
+      };
+      url = "github:ehllie/ez-configs";
+    };
     figtree = {
       inputs = {
         nixpkgs = {
