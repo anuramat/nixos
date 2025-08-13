@@ -1,4 +1,5 @@
 keys_dir := `pwd` / "hosts" / `hostname` / "keys"
+host_arch := `nix eval --raw .#nixosConfigurations.$(hostname).config.nixpkgs.hostPlatform.system 2>/dev/null`
 
 all: format lint nixos
 
@@ -54,9 +55,9 @@ check-hm:
   nix build .#homeConfigurations.anuramat.activationPackage --show-trace
 
 # unit tests
-test arch="x86_64-linux":
+test arch=host_arch:
   nix-unit --flake .#tests.systems.{{arch}}
 
 # unit tests and builds
-check arch="x86_64-linux":
+check arch=host_arch:
   nix flake check --systems {{arch}}
