@@ -188,6 +188,9 @@
       flake = false;
       url = "github:anuramat/todo";
     };
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+    };
     tt-schemes = {
       flake = false;
       url = "github:tinted-theming/schemes";

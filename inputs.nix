@@ -58,4 +58,5 @@ in
 
   musnix.url = "github:musnix/musnix";
   nix-topology.url = "github:oddlama/nix-topology";
+  treefmt-nix.url = "github:numtide/treefmt-nix";
 }

@@ -7,6 +7,7 @@
 }@inputs:
 flake-parts.lib.mkFlake { inherit inputs; } {
   imports = [
+    inputs.treefmt-nix.flakeModule
     inputs.nix-topology.flakeModule
     inputs.nix-unit.modules.flake.default
   ];

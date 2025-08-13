@@ -11,6 +11,8 @@ flake:
     printf '{ outputs = args: import ./outputs.nix args; inputs = %s; }' "$(nix eval --read-only -f inputs.nix)" > flake.nix
     # Format
     treefmt flake.nix
+    # Lock
+    nix flake lock
 
 [group('build')]
 nixos:
