@@ -15,6 +15,12 @@ in
     )
   ];
 
+  files = hax.vim.files.ftp {
+    just = {
+      ts = 4;
+    };
+  };
+
   plugins = {
     web-devicons.enable = true;
     sniprun.enable = true;
