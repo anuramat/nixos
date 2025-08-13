@@ -1,104 +1,88 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with
-code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Acceptance criteria
+## Build System
 
-- when the task is to fix a package that doesn't build, use
-  `just run $PACKAGE_NAME` to verify
+This is a NixOS configuration using flakes with flake-parts architecture. Key commands:
+
+- `just nixos` - Rebuild NixOS system configuration
+- `just build <pkg>` - Build a specific package  
+- `just run <pkg>` - Run a specific package
+- `just format` - Format all code using treefmt
+- `just lint` - Lint Nix, shell, Lua, and YAML files
+- `just test` - Run unit tests with nix-unit
+- `just check` - Run full flake check including builds
+- `just check-nixos <host>` - Check specific host configuration
+- `just check-hm` - Check home-manager configuration
+- `nix flake check` - Verify flake evaluates correctly
+- `nix build` - Build default outputs
 
 ## Architecture Overview
 
-### Flake Structure
+### Core Structure
+- **flake.nix** - Auto-generated from inputs.nix and outputs.nix
+- **inputs.nix** - Flake input definitions (run `just flake` to regenerate flake.nix)
+- **outputs.nix** - Main flake outputs using flake-parts
+- **hax/** - Custom utility functions library
+- **hosts/** - Per-host NixOS configurations with hardware configs and keys
+- **home/** - Home-manager configuration modules
+- **system/** - NixOS system modules
+- **common/** - Shared configuration (overlays, stylix theming)
+- **secrets/** - Age-encrypted secrets
 
-This is a multi-host NixOS configuration using flakes with:
+### Home Manager Integration
+This flake provides two entry points for home-manager:
+1. NixOS module integration (recommended)
+2. Standalone home-manager configuration
 
-- **Host-specific configs**: `/hosts/{hostname}/` - hardware and host-specific
-  settings
-- **System configuration**: `/system/` - shared NixOS modules (base, local,
-  remote)
-- **Home-manager config**: `/home/` - user environment and dotfiles
-- **Utility functions**: `/hax/` - custom helper functions and abstractions
-- **Secrets management**: `/secrets/` - agenix encrypted secrets
-- **Common config**: `/common/` - overlays and styling (stylix)
+Both must be kept in sync when adding new specialArgs or modules.
 
 ### Key Components
+- **home/agents/** - AI agent configurations (Claude, Cursor, Avante, etc.)
+- **home/nixvim/** - Comprehensive Neovim configuration with language support
+- **home/gui/** - Desktop environment (Sway, Waybar, theming)
+- **home/tui/** - Terminal utilities and shell configuration
+- **system/base/** - Core NixOS system configuration
 
-- **Multi-host support**: Configurations for anuramat-ll7, anuramat-root,
-  anuramat-t480
-- **Dual entrypoints**: Both NixOS module and standalone home-manager
-  configurations
-- **Local vs Remote**: System configs automatically switch between local/remote
-  modules based on `cluster.this.server`
- - **Custom abstractions**: Helper functions in `/hax/` for hosts, web, mime, vim
-   configurations
- - **Agent framework**: `/home/agents` provides a Model Context Protocol server
-   with shared prompts, roles, commands, tools, sandbox, and git helpers.
-   Frontends: amp, avante, claude, codebuff, codex, crush, forge, gemini, goose,
-   opencode
+## Development Workflow
 
-### Directory Structure
+### Testing
+- Unit tests in `tests/unit/` using nix-unit framework
+- Test specific functions: `nix-unit --flake .#tests.systems.x86_64-linux`
+- Integration tests planned in `tests/integration/`
 
-- `system/base/` - Core system configuration (nix, user, networking, containers)
-- `system/local/` - Desktop/laptop specific config (peripherals, remaps)
-- `system/remote/` - Server specific configuration
-- `home/gui/` - Desktop environment (sway, waybar, terminals)
-- `home/tui/` - Terminal applications (bash, git, yazi, search tools)
-- `home/nixvim/` - Comprehensive neovim configuration with language support
-- `home/agents/` - AI agent framework (MCP server, prompts, roles, commands,
-  tools, sandbox, git); frontends: amp, avante, claude, codebuff, codex, crush,
-  forge, gemini, goose, opencode
+### Code Style
+- Nix code formatted with nixfmt via treefmt
+- Shell scripts: shellcheck + shfmt + shellharden
+- Lua: stylua formatting
+- YAML: yamlfmt formatting
+- Python: black formatting
 
-### Development Patterns
+### Architecture Philosophy
+- Modular design with clear separation of concerns
+- Heavy use of Nix's functional programming features
+- Custom `hax` library for common utilities
+- Theming unified through stylix across all applications
 
-- **Modular imports**: Each directory has `default.nix` that imports submodules
-- **Special args propagation**: Custom args (user, hax, cluster) passed through
-  specialArgs
-- **Host clustering**: Dynamic host metadata and relationships via `hax.hosts`
-- **XDG compliance**: Extensive use of XDG base directory specification
-- **Security**: SSH keys and secrets managed via agenix and automatic key
-  collection
+### Host Management
+Each host has its own directory in `hosts/` with:
+- `default.nix` - Host-specific configuration
+- `hardware-configuration.nix` - Hardware detection
+- `keys/` - SSH keys and certificates
+- Optional `meta.nix` for host metadata
 
-### Code Style Preferences
+### Secrets Management
+Uses agenix for secret encryption. Secrets stored in `secrets/` directory.
 
-This codebase follows minimalist Nix patterns:
+## Common Issues
+- Flake must be regenerated after changing inputs.nix: `just flake`
+- NixOS hardware-configuration.nix may need manual updates
+- Personal data hardcoded in various places (search for "anuramat", "arsen")
+- Some configurations have dual entry points that must stay synchronized
 
-- Extensive use of `let...in`, `inherit`, and `with` statements
-- Compact constructs and functional style
-- Helper functions in `/hax/` for common operations
-- Pipe operators (`|>`) used where supported
-- Vim folding markers for organization
-
-## Package Management
-
-This flake uses overlays in `common/overlays.nix` to manage package versions.
-
-Some useful commands for npm packages:
-
-```bash
-# latest versions of the package:
-curl -s https://registry.npmjs.org/@google/gemini-cli | jq '."dist-tags"'
-# detailed info for a specific version:
-curl -s https://registry.npmjs.org/@google/gemini-cli/$VERSION
-# get source hash:
-nix-prefetch-url --unpack https://registry.npmjs.org/package/-/package-version.tgz
-# convert base32 to SRI format:
-nix-hash --to-sri --type sha256 <base32-hash>
-```
-
-### Package Search
-
-- Check if package exists in nixpkgs first before creating from scratch
-- Use NixOS MCP server to search packages: search for existing packages before
-  overriding
-
-### Important Notes
-
-- The hostname must match the target machine for proper configuration selection
-- SSH configuration for distributed builds requires manual setup in
-  `/root/.ssh/config`
-- Binary cache keys are automatically collected during rebuild process
-- Some GUI packages are disabled due to build issues (see TODO.md)
-- For npm packages without dependencies, use fake hash for npmDepsHash and let
-  Nix correct it during build
+## Key Files to Understand
+- `hax/hosts.nix` - Host management utilities (complex, needs refactoring)
+- `home/agents/instructions.nix` - AI agent instruction generation  
+- `outputs.nix` - Core flake structure and module integration
+- `justfile` - Build automation and common tasks
