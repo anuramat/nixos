@@ -127,6 +127,8 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       };
     in
     {
+      topology = {
+      };
       nix-unit = {
         inputs = {
           inherit (inputs) nixpkgs flake-parts nix-unit;
