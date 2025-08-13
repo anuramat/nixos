@@ -7,7 +7,7 @@ let
     mkdir -p $out/share/applications
 
     # Desktop file with mime types
-    cat > $out/share/applications/app1.desktop << EOF
+    cat >$out/share/applications/app1.desktop <<EOF
     [Desktop Entry]
     Name=App1
     MimeType=text/plain;text/html;application/pdf;
@@ -15,7 +15,7 @@ let
     EOF
 
     # Desktop file with different mime types
-    cat > $out/share/applications/app2.desktop << EOF
+    cat >$out/share/applications/app2.desktop <<EOF
     [Desktop Entry]
     Name=App2
     MimeType=image/png;image/jpeg;
@@ -23,7 +23,7 @@ let
     EOF
 
     # Desktop file without mime types
-    cat > $out/share/applications/app3.desktop << EOF
+    cat >$out/share/applications/app3.desktop <<EOF
     [Desktop Entry]
     Name=App3
     Exec=app3
@@ -155,7 +155,7 @@ in
           mkdir -p $out/share/applications
 
           # Desktop file with duplicate mime types
-          cat > $out/share/applications/dup.desktop << EOF
+          cat >$out/share/applications/dup.desktop <<EOF
           MimeType=text/plain;text/plain;application/pdf;
           MimeType=text/html;
           EOF

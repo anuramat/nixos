@@ -26,24 +26,24 @@ let
     mkdir -p $out/host1/keys $out/host2/keys $out/host3/keys
 
     # Host1 setup
-    echo "{ server = false; }" > $out/host1/meta.nix
-    echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHost1Key host1" > $out/host1/keys/host_keys
-    echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIClient1Key" > $out/host1/keys/client1.pub
-    echo "host1-cache-key" > $out/host1/keys/cache.pem.pub
+    echo "{ server = false; }" >$out/host1/meta.nix
+    echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHost1Key host1" >$out/host1/keys/host_keys
+    echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIClient1Key" >$out/host1/keys/client1.pub
+    echo "host1-cache-key" >$out/host1/keys/cache.pem.pub
 
     # Host2 setup
-    echo "{ server = true; }" > $out/host2/meta.nix
-    echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQHost2Key host2" > $out/host2/keys/host_keys
-    echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIClient2Key" > $out/host2/keys/client2.pub
-    echo "host2-cache-key" > $out/host2/keys/cache.pem.pub
+    echo "{ server = true; }" >$out/host2/meta.nix
+    echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQHost2Key host2" >$out/host2/keys/host_keys
+    echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIClient2Key" >$out/host2/keys/client2.pub
+    echo "host2-cache-key" >$out/host2/keys/cache.pem.pub
 
     # Host3 setup (minimal)
-    echo "{ server = false; }" > $out/host3/meta.nix
+    echo "{ server = false; }" >$out/host3/meta.nix
     touch $out/host3/keys/host_keys
     touch $out/host3/keys/cache.pem.pub
 
     # Create external_keys.nix to test filtering
-    echo "# external keys" > $out/external_keys.nix
+    echo "# external keys" >$out/external_keys.nix
   '';
 in
 {

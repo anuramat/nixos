@@ -5,9 +5,9 @@ in
 {
   # Test lua helper
   testLua = {
-    expr = hax.lua "vim.cmd('echo')";
+    expr = hax.lua ''vim.cmd("echo")'';
     expected = {
-      __raw = "vim.cmd('echo')";
+      __raw = ''vim.cmd("echo")'';
     };
   };
 
@@ -48,13 +48,13 @@ in
   # Test set with raw lua action (set type)
   testSetLuaAction = {
     expr =
-      hax.set "<leader>p" (hax.lua "require('telescope').extensions.projects.projects()")
+      hax.set "<leader>p" (hax.lua ''require("telescope").extensions.projects.projects()'')
         "Projects";
     expected = {
       mode = "n";
       key = "<leader>p";
       action = {
-        __raw = "require('telescope').extensions.projects.projects()";
+        __raw = ''require("telescope").extensions.projects.projects()'';
       };
       options = {
         desc = "Projects";
