@@ -96,6 +96,7 @@
 
     # miscellaneous unfiled TODO
     # dix # not in stable yet
+    nix-unit
     rename
     renameutils
     mitmproxy

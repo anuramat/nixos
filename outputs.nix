@@ -101,15 +101,29 @@ in
     ];
   };
 }
-// (flake-utils.lib.eachDefaultSystem (system: {
-  packages.neovim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
-    inherit system;
-    extraSpecialArgs = { inherit inputs hax; };
-    module = {
-      imports = [
-        ./common/overlays.nix
-        ./home/nixvim
-      ];
+// (flake-utils.lib.eachDefaultSystem (
+  system:
+  let
+    pkgs = import nixpkgs {
+      inherit system;
+      config.allowUnfree = true;
     };
-  };
-}))
+  in
+  {
+    packages.neovim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
+      inherit system;
+      extraSpecialArgs = { inherit inputs hax; };
+      module = {
+        imports = [
+          ./common/overlays.nix
+          ./home/nixvim
+        ];
+      };
+    };
+
+    tests = import ./tests {
+      inherit pkgs;
+      lib = nixpkgs.lib;
+    };
+  }
+))
