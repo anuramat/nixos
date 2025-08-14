@@ -1,3 +1,5 @@
+# TODO rename helpers
+# TODO
 {
   lib,
   inputs,
@@ -50,8 +52,9 @@ rec {
   mkKnownHostsFiles = names: map (v: cfgRoot + "/${v}/keys/host_keys") names;
 
   mkHostKeys =
-    knownHostsFiles:
-    map readFile knownHostsFiles
+    names:
+    mkKnownHostsFiles names
+    |> map readFile
     |> map (v: v |> lib.splitString "\n")
     |> concatLists
     |> filter (v: v != "")

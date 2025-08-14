@@ -12,9 +12,12 @@ let
           };
         })
         mkKeyFiles
+        mkHostKeys
         ;
+      clientKeys = mkKeyFiles names |> map builtins.readFile |> map lib.trim; # TODO move to hax
+      hostKeys = mkHostKeys names;
     in
-    mkKeyFiles names |> map builtins.readFile;
+    clientKeys ++ hostKeys;
 in
 [
   "anthropic.age"
