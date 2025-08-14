@@ -10,12 +10,13 @@
   imports = [
     shared.overlays
     shared.secrets
+
+    ./external_keys.nix
+    ./home.nix
+    ./hosts.nix
+    ./net.nix
     ./nix.nix
     ./user.nix
-    ./home.nix
-    ./net.nix
-    ./external_keys.nix
-    ../../hosts.nix
 
     inputs.agenix.nixosModules.default
     inputs.nix-topology.nixosModules.default

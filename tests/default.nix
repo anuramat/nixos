@@ -5,7 +5,6 @@ let
 in
 foldl' mergeAttrs { } (
   map (x: import x args) [
-    ./unit/hax/hosts.nix
     ./unit/hax/mime.nix
     ./unit/hax/web.nix
     ./unit/hax/vim.nix
