@@ -35,17 +35,17 @@
         model = "/mnt/storage/llama-cpp/gpt-oss-20b-GGUF_gpt-oss-20b-mxfp4.gguf";
       };
       ollama = {
-        enable = false;
+        enable = true;
         acceleration = lib.mkIf cuda "cuda";
         loadModels = lib.mkIf cuda [ ]; # pull models on service start
         models = "/mnt/storage/ollama"; # TODO abstract away; make a new variable that contains a path to a storage device; fill on different machines
         environmentVariables = {
           OLLAMA_FLASH_ATTENTION = "1";
-          OLLAMA_KEEP_ALIVE = "999999m";
+          OLLAMA_KEEP_ALIVE = "5m";
           # OLLAMA_CONTEXT_LENGTH = "200000";
         };
         port = 11434; # explicit default
-        host = "0.0.0.0";
+        host = "127.0.0.1";
         openFirewall = false;
       };
     };
