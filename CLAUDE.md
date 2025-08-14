@@ -17,9 +17,9 @@ Personal NixOS configuration flake managing system and home configurations for m
 - `home-configurations/`: Home-manager configurations
 - `home-modules/`: Modular home-manager config components
 - `nixos-modules/`: Modular NixOS config components
+- `modules/`: Shared modules (age, stylix)
 - `secrets/`: Age-encrypted secrets managed with ragenix
 - `overlays/`: Package overlays
-- `stylix/`: Theming configuration
 - `tests/`: Unit tests
 
 ### Key Modules
@@ -72,6 +72,7 @@ nix-unit --flake .#tests.systems.x86_64-linux  # Run tests
 - Encrypted with age/ragenix
 - Located in `/secrets/` directory
 - Access via `config.age.secrets.<name>.path`
+- Age module moved to `/modules/age.nix`
 
 ### Testing
 - Unit tests in `/tests/` directory
@@ -86,9 +87,11 @@ nix-unit --flake .#tests.systems.x86_64-linux  # Run tests
 ### User Configuration
 - Primary user: "anuramat"
 - Builder user: "builder"
-- User data defined in outputs.nix
+- User data exposed as `self.user` flake output
+- Constants exposed as `self.consts` flake output
+- Overlays exposed as `self.overlays` flake output
+- Shared modules exposed as `self.modules` flake output
 
 ## Known Issues
 - Builder setup requires manual SSH config in /root/.ssh/config
 - Some hardcoded paths (~/notes, ~/books)
-- `..` imports in /secrets directory
