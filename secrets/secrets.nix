@@ -1,10 +1,18 @@
 let
   lib = (import <nixpkgs> { }).lib;
-  inherit (import ../hax/hosts.nix { inherit lib; }) getAllKeys getAllHostkeys;
-  # TODO one of these is not used
-  hostkeys = getAllHostkeys ../hosts;
-  keyPaths = getAllKeys ../hosts;
-  keys = hostkeys ++ map (v: builtins.readFile v) keyPaths;
+  keys =
+    let
+      flake = builtins.getFlake (toString ../.);
+      names = builtins.attrNames flake.outputs.nixosConfigurations;
+      inherit
+        (import ../hax/hosts.nix {
+          inherit lib;
+          inherit (flake.outputs) consts;
+        })
+        mkKeyFiles
+        ;
+    in
+    mkKeyFiles names |> map builtins.readFile;
 in
 [
   "anthropic.age"

@@ -67,6 +67,11 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     };
   flake = {
     # tests = import ... # system-agnostic tests
+    consts = {
+      builderUsername = "builder";
+      cacheFilename = "cache.pem.pub";
+      cfgRoot = ./. + "/nixos-configurations/";
+    };
   };
 
   perSystem =
