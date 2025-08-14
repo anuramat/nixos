@@ -1,7 +1,6 @@
 {
   inputs,
   lib,
-  pkgs,
   ...
 }:
 let
@@ -31,7 +30,7 @@ let
         ;
     });
   unstablePkgs = final: prev: {
-    inherit (import inputs.nixpkgs-unstable { inherit (pkgs) config system; })
+    inherit (import inputs.nixpkgs-unstable { inherit (prev) config system; })
       playwright-mcp
       github-mcp-server
       keymapp
@@ -78,7 +77,7 @@ let
       ccusage = mkNpx "ccusage";
     };
 
-  overlays =
+  inputOverlays =
     with inputs;
     [
       neovim-nightly-overlay
@@ -86,9 +85,7 @@ let
     ]
     |> map (v: v.overlays.default);
 
-in
-{
-  nixpkgs.overlays = overlays ++ [
+  overlays = inputOverlays ++ [
     npxHacks
     unstablePkgs
     pythonPackages
@@ -140,17 +137,17 @@ in
         vendorHash = "sha256-aI3MSaQYUOLJxBxwCoVg13HpxK46q6ZITrw1osx5tiE=";
       };
 
-      codex = pkgs.stdenv.mkDerivation rec {
+      codex = prev.stdenv.mkDerivation rec {
         pname = "codex";
         version = "0.19.0";
-        src = pkgs.fetchurl {
+        src = prev.fetchurl {
           url = "https://github.com/openai/codex/releases/download/rust-v${version}/codex";
           hash = "sha256-w3xGaY5TEoZ4wbHmYw2F8Myel0Sn7CkVsuo4NydK4to=";
         };
         dontUnpack = true;
-        nativeBuildInputs = [ pkgs.makeWrapper ];
+        nativeBuildInputs = [ prev.makeWrapper ];
         installPhase = ''
-          makeWrapper ${pkgs.dotslash}/bin/dotslash $out/bin/codex --add-flags $src
+          makeWrapper ${prev.dotslash}/bin/dotslash $out/bin/codex --add-flags $src
         '';
       };
 
@@ -232,5 +229,17 @@ in
         };
 
     })
+  ];
+in
+{
+  nixpkgs.overlays = [
+    (
+      final: prev:
+      let
+        unwrapped = map (x: x final prev) overlays;
+        merge = lib.fold (a: b: a // b) { };
+      in
+      merge unwrapped
+    )
   ];
 }
