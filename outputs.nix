@@ -17,7 +17,16 @@ flake-parts.lib.mkFlake { inherit inputs; } {
   ezConfigs =
     let
       inherit (nixpkgs) lib;
-      hax = import ./hax { inherit lib inputs; };
+      root = ./.;
+      consts = import ./consts.nix;
+      hax = import ./hax {
+        inherit
+          lib
+          inputs
+          root
+          consts
+          ;
+      };
       user = {
         username = "anuramat";
         fullname = "Arsen Nuramatov";
@@ -36,6 +45,8 @@ flake-parts.lib.mkFlake { inherit inputs; } {
           inputs
           hax
           user
+          root
+          consts
           ;
       };
     in

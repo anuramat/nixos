@@ -31,7 +31,7 @@
               HostName ${hostname}
           '';
       in
-      config.lib.hosts.hostnames
+      (builtins.attrNames config.lib.hosts.hosts)
       |> lib.filter (x: lib.strings.hasPrefix prefix x)
       |> map mkAliasEntry
       |> lib.strings.intersperse "\n"

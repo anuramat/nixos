@@ -7,10 +7,15 @@ let
     readFile
     concatLists
     ;
-  inherit (args.lib) nameValuePair listToAttrs removeSuffix;
+  inherit (args.lib)
+    nameValuePair
+    listToAttrs
+    removeSuffix
+    hasSuffix
+    ;
 in
 readDir ./.
 |> attrNames
-|> filter (x: x != "default.nix") # filenames except default.nix
+|> filter (x: x != "default.nix" && hasSuffix ".nix" x) # nix files except default.nix
 |> map (x: nameValuePair (removeSuffix ".nix" x) (import (./. + "/${x}") args))
 |> listToAttrs

@@ -1,5 +1,6 @@
 {
   user,
+  consts,
   config,
   inputs,
   lib,
@@ -60,7 +61,7 @@ in
       ++ config.lib.hosts.trusted-public-keys;
     };
 
-    buildMachines = map (x: {
+    buildMachines = lib.mapAttrsToList (n: v: {
       # sshKey and sshUser are ignored for some reason BUG
       # <https://github.com/NixOS/nix/issues/3423>
       # for now add those to /root/.ssh/config
@@ -72,10 +73,10 @@ in
       #         ConnectTimeout 3
       # ```
       # TODO speedFactor, maxJobs
-      sshUser = user.builderUsername;
+      sshUser = consts.builderUsername;
       sshKey = keyPath;
-      hostName = x.name;
-      system = x.platform;
+      hostName = n;
+      system = v.system;
       protocol = "ssh-ng";
     }) config.lib.hosts.builders;
   };

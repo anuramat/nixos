@@ -1,10 +1,11 @@
 {
   user,
   config,
+  consts,
   ...
 }:
 let
-  inherit (config.lib.hosts) builderUsername;
+  inherit (consts) builderUsername;
 in
 {
   users.users.${builderUsername} =
