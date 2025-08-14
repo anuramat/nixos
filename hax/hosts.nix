@@ -1,11 +1,11 @@
 {
   lib,
-  consts,
+  inputs,
   ...
 }:
 let
 
-  inherit (consts) builderUsername cacheFilename cfgRoot;
+  inherit (inputs.self.consts) builderUsername cacheFilename cfgRoot;
 
   inherit (builtins)
     attrNames

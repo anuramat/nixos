@@ -7,7 +7,9 @@ let
       inherit
         (import ../hax/hosts.nix {
           inherit lib;
-          inherit (flake.outputs) consts;
+          inputs = flake.inputs // {
+            self = flake.outputs;
+          };
         })
         mkKeyFiles
         ;

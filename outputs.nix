@@ -23,21 +23,9 @@ flake-parts.lib.mkFlake { inherit inputs; } {
           lib
           inputs
           root
-          consts
           ;
       };
-      user = {
-        username = "anuramat";
-        fullname = "Arsen Nuramatov";
-        email = "x@ctrl.sn";
-        tz = "Europe/Berlin";
-        locale = "en_US.UTF-8";
-      };
-      consts = {
-        builderUsername = "builder";
-        cacheFilename = "cache.pem.pub";
-        cfgRoot = ./. + "/nixos-configurations/";
-      };
+      user = inputs.self.user; # TODO remove and use the output
       shared = {
         overlays = ./overlays;
         secrets = ./secrets;
@@ -45,12 +33,11 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       };
       globalArgs = {
         inherit
-          shared
+          shared # TODO move to outputs
           inputs
           hax
           user
           root
-          consts
           ;
       };
     in
@@ -71,6 +58,13 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       builderUsername = "builder";
       cacheFilename = "cache.pem.pub";
       cfgRoot = ./. + "/nixos-configurations/";
+    };
+    user = {
+      username = "anuramat";
+      fullname = "Arsen Nuramatov";
+      email = "x@ctrl.sn";
+      tz = "Europe/Berlin";
+      locale = "en_US.UTF-8";
     };
   };
 

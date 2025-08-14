@@ -1,6 +1,5 @@
 {
   user,
-  consts,
   config,
   inputs,
   lib,
@@ -73,7 +72,7 @@ in
       #         ConnectTimeout 3
       # ```
       # TODO speedFactor, maxJobs
-      sshUser = consts.builderUsername;
+      sshUser = inputs.self.consts.builderUsername;
       sshKey = keyPath;
       hostName = n;
       system = v.system;
