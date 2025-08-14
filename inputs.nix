@@ -14,11 +14,7 @@ in
   # base
   nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
   nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-  nixpkgs-lib.url = "github:nix-community/nixpkgs.lib";
-  flake-parts = {
-    url = "github:hercules-ci/flake-parts";
-    inputs.nixpkgs-lib.follows = "nixpkgs-lib";
-  };
+  flake-parts.url = "github:hercules-ci/flake-parts";
   nix-unit = mkInput "github:nix-community/nix-unit/v2.30.0";
   nur = mkInput "github:nix-community/NUR";
 

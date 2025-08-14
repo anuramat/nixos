@@ -57,11 +57,6 @@
       url = "github:anuramat/figtree.nvim";
     };
     flake-parts = {
-      inputs = {
-        nixpkgs-lib = {
-          follows = "nixpkgs-lib";
-        };
-      };
       url = "github:hercules-ci/flake-parts";
     };
     gothink = {
@@ -148,9 +143,6 @@
     };
     nixpkgs = {
       url = "github:nixos/nixpkgs/nixos-25.05";
-    };
-    nixpkgs-lib = {
-      url = "github:nix-community/nixpkgs.lib";
     };
     nixpkgs-unstable = {
       url = "github:nixos/nixpkgs/nixos-unstable";

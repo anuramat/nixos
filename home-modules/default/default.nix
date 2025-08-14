@@ -33,8 +33,10 @@
     ++ (
       if !args ? osConfig then
         [
+          {
+            nixpkgs.overlays = inputs.self.overlays.default;
+          }
           shared.secrets
-          shared.overlays
           shared.stylix
           inputs.stylix.homeModules.stylix
         ]

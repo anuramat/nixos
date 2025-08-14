@@ -8,7 +8,6 @@
 }:
 {
   imports = [
-    shared.overlays
     shared.secrets
 
     ./external_keys.nix

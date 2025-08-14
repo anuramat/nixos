@@ -23,6 +23,7 @@ in
     config = {
       allowUnfree = true;
     };
+    overlays = [ inputs.self.overlays.default ];
   };
 
   programs.nh = {

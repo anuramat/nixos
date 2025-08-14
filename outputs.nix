@@ -4,6 +4,9 @@
   flake-parts,
   ...
 }@inputs:
+let
+  inherit (nixpkgs) lib;
+in
 flake-parts.lib.mkFlake { inherit inputs; } {
   imports = [
     inputs.treefmt-nix.flakeModule
@@ -16,7 +19,6 @@ flake-parts.lib.mkFlake { inherit inputs; } {
   ];
   ezConfigs =
     let
-      inherit (nixpkgs) lib;
       root = ./.;
       hax = import ./hax {
         inherit
@@ -27,7 +29,6 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       };
       user = inputs.self.user; # TODO remove and use the output
       shared = {
-        overlays = ./overlays;
         secrets = ./secrets;
         stylix = ./stylix;
       };
@@ -59,6 +60,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       cacheFilename = "cache.pem.pub";
       cfgRoot = ./. + "/nixos-configurations/";
     };
+    overlays.default = import ./overlays { inherit inputs lib; };
     user = {
       username = "anuramat";
       fullname = "Arsen Nuramatov";

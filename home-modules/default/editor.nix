@@ -19,6 +19,7 @@
         let
           hm-overlays = config.nixpkgs.overlays;
         in
+        # TODO is this robust enough?
         if hm-overlays != null then hm-overlays else args.osConfig.nixpkgs.overlays;
       defaultEditor = true;
       _module.args = {
