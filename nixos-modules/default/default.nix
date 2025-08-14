@@ -2,15 +2,23 @@
 {
   user,
   config,
+  shared,
+  inputs,
   ...
 }:
 {
   imports = [
-    ./builder.nix
+    shared.overlays
+    shared.secrets
     ./nix.nix
     ./user.nix
     ./home.nix
     ./net.nix
+    ./external_keys.nix
+    ../../hosts.nix
+
+    inputs.agenix.nixosModules.default
+    inputs.nix-topology.nixosModules.default
   ];
 
   # TODO move stuff that is not required on a server

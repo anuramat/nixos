@@ -3,9 +3,11 @@
   user,
   config,
   inputs,
+  ezModules,
   ...
 }:
 {
+
   # topology.self = {
   #   hardware.info = ...;
   # };
@@ -25,6 +27,9 @@
   };
 
   imports = [
+    ezModules.local
+    ezModules.builder
+
     inputs.nixos-hardware.nixosModules.common-cpu-intel
 
     inputs.nixos-hardware.nixosModules.common-gpu-intel # they don't have this in the repo

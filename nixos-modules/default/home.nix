@@ -5,9 +5,6 @@
   ...
 }:
 {
-  imports = [
-    inputs.home-manager.nixosModules.home-manager
-  ];
   home-manager = {
     backupFileExtension = "HMBAK";
     useGlobalPkgs = true;

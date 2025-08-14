@@ -1,6 +1,6 @@
 {
-  cluster,
   user,
+  config,
   ...
 }:
 {
@@ -27,7 +27,7 @@
         "adbusers" # adb (android)
       ];
       openssh.authorizedKeys = {
-        keyFiles = cluster.clientKeyFiles;
+        inherit (config.lib.hosts) keyFiles;
       };
     };
   };

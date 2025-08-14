@@ -1,8 +1,6 @@
 {
-  pkgs,
   user,
   config,
-  cluster,
   inputs,
   lib,
   ...
@@ -17,7 +15,7 @@ let
     "https://nix-community.cachix.org"
     "https://nixpkgs-python.cachix.org"
   ]
-  ++ cluster.substituters;
+  ++ config.lib.hosts.substituters;
   keyPath = "${config.users.users.${user.username}.home}/.ssh/id_ed25519";
 in
 {
@@ -59,7 +57,7 @@ in
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         "nixpkgs-python.cachix.org-1:hxjI7pFxTyuTHn2NkvWCrAUcNZLNS3ZAvfYNuYifcEU="
       ]
-      ++ cluster.trusted-public-keys;
+      ++ config.lib.hosts.trusted-public-keys;
     };
 
     buildMachines = map (x: {
@@ -74,11 +72,11 @@ in
       #         ConnectTimeout 3
       # ```
       # TODO speedFactor, maxJobs
-      sshUser = cluster.builderUsername;
+      sshUser = user.builderUsername;
       sshKey = keyPath;
       hostName = x.name;
       system = x.platform;
       protocol = "ssh-ng";
-    }) cluster.builders;
+    }) config.lib.hosts.builders;
   };
 }

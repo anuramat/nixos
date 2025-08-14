@@ -1,6 +1,7 @@
 {
   inputs,
   config,
+  ezModules,
   user,
   ...
 }:
@@ -15,6 +16,7 @@
   ];
 
   imports = [
+    ezModules.local
     inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t480
     ./hardware-configuration.nix
   ];

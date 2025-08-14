@@ -1,9 +1,8 @@
 # vim: fdl=0 fdm=marker
 {
-  config,
   lib,
-  pkgs,
-  cluster,
+  shared,
+  inputs,
   ...
 }:
 {
@@ -12,6 +11,7 @@
     ./peripherals.nix
     ./remaps.nix
     ./rice.nix
+    inputs.musnix.nixosModules.musnix
   ];
 
   programs.appimage = {

@@ -1,5 +1,6 @@
 {
   config,
+  shared,
   hax,
   lib,
   inputs,
@@ -11,6 +12,7 @@
     [
       nixvim.homeModules.nixvim
       ./keyring.nix
+      inputs.agenix.homeManagerModules.default
       ./lib.nix
       ./tui
     ]
@@ -24,6 +26,17 @@
           ./agents
           spicetify-nix.homeManagerModules.spicetify
           ./lang
+        ]
+      else
+        [ ]
+    )
+    ++ (
+      if !args ? osConfig then
+        [
+          shared.secrets
+          shared.overlays
+          shared.stylix
+          inputs.stylix.homeModules.stylix
         ]
       else
         [ ]

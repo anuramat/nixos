@@ -1,6 +1,5 @@
 {
   nixpkgs,
-  home-manager,
   nixvim,
   flake-parts,
   ...
@@ -14,16 +13,13 @@ flake-parts.lib.mkFlake { inherit inputs; } {
   ];
   systems = [
     "x86_64-linux"
-    "aarch64-linux"
-    "x86_64-darwin"
-    "aarch64-darwin"
   ];
-
-  flake =
+  ezConfigs =
     let
       inherit (nixpkgs) lib;
       hax = import ./hax { inherit lib inputs; };
-      hostnames = hax.hosts.getHostnames ./hosts;
+      hosts = hax.hosts;
+      hostnames = hosts.getHostnames ./nixos-configurations;
       user = {
         username = "anuramat";
         fullname = "Arsen Nuramatov";
@@ -31,95 +27,34 @@ flake-parts.lib.mkFlake { inherit inputs; } {
         tz = "Europe/Berlin";
         locale = "en_US.UTF-8";
       };
-      args = {
-        inherit user hax;
-        inputs =
-          let
-            rawInput = import ./inputs.nix;
-          in
-          lib.mapAttrs (
-            n: v:
-            v
-            // {
-              ref = builtins.baseNameOf rawInput.${n}.url;
-            }
-          ) inputs;
+      shared = {
+        overlays = ./overlays;
+        secrets = ./secrets;
+        stylix = ./stylix;
       };
-      mkSystem =
-        name:
-        let
-          args2 = args // {
-            cluster = hax.hosts.mkCluster ./hosts hostnames name;
-          };
-        in
-        lib.nixosSystem {
-          specialArgs = args2;
-          modules = [
-            inputs.agenix.nixosModules.default
-            inputs.stylix.nixosModules.stylix
-            inputs.musnix.nixosModules.musnix
-            inputs.nix-topology.nixosModules.default
-
-            (
-              { config, ... }:
-              {
-                networking.hostName = name;
-                home-manager = {
-                  extraSpecialArgs = args2;
-                  users.${user.username} = ./home;
-                };
-
-              }
-            )
-            ./common/overlays.nix
-            ./common/stylix.nix
-            ./hosts/external_keys.nix
-            ./secrets/age.nix
-            ./system
-          ]
-          ++ [
-            ./hosts/${name}
-          ];
-        };
+      globalArgs = {
+        inherit
+          shared
+          inputs
+          hax
+          user
+          ;
+      };
     in
     {
-      nixosConfigurations =
-        hostnames
-        |> map (hostname: {
-          name = hostname;
-          value = mkSystem hostname;
-        })
-        |> builtins.listToAttrs;
-
-      homeConfigurations.${user.username} = home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs {
-          # TODO remove hardcode
-          # TODO hardcode system for hosts
-          system = "x86_64-linux";
-          config.allowUnfree = true;
+      root = ./.;
+      inherit globalArgs;
+      nixos = {
+        hosts = {
+          anuramat-ll7.userHomeModules = [ "anuramat" ];
+          anuramat-root.userHomeModules = [ "anuramat" ];
+          anuramat-t480.userHomeModules = [ "anuramat" ];
         };
-        extraSpecialArgs = args;
-        modules = [
-          {
-            # this should be per host as well
-            home = {
-              stateVersion = "24.05";
-              username = user.username;
-              homeDirectory = "/home/${user.username}";
-            };
-          }
-          inputs.stylix.homeModules.stylix
-          inputs.agenix.homeManagerModules.default
-
-          ./common/overlays.nix
-          ./common/stylix.nix
-          ./home
-          ./secrets/age.nix
-        ];
       };
-
-      # tests = import ... # system-agnostic tests
     };
+  flake = {
+    # tests = import ... # system-agnostic tests
+  };
 
   perSystem =
     { system, lib, ... }:

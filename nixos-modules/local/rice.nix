@@ -1,5 +1,14 @@
-{ lib, ... }:
 {
+  lib,
+  inputs,
+  shared,
+  ...
+}:
+{
+  imports = [
+    inputs.stylix.nixosModules.stylix
+    shared.stylix
+  ];
   stylix.autoEnable = true;
   # loading screen rice
   boot.plymouth.enable = true;

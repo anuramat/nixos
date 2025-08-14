@@ -1,7 +1,7 @@
 {
   lib,
-  cluster,
   user,
+  config,
   ...
 }:
 {
@@ -20,7 +20,7 @@
   };
 
   programs.ssh = {
-    knownHostsFiles = cluster.hostKeysFiles;
+    inherit (config.lib.hosts) knownHostsFiles;
     extraConfig =
       let
         prefix = user.username + "-";
@@ -31,7 +31,7 @@
               HostName ${hostname}
           '';
       in
-      cluster.hostnames
+      config.lib.hosts.hostnames
       |> lib.filter (x: lib.strings.hasPrefix prefix x)
       |> map mkAliasEntry
       |> lib.strings.intersperse "\n"

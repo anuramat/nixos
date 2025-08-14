@@ -1,5 +1,10 @@
-{ pkgs, inputs, ... }:
 {
+  pkgs,
+  inputs,
+  lib,
+  ...
+}@args:
+lib.mkIf (!args ? osConfig) {
   stylix = {
     opacity.popups = 0.8;
     cursor = {

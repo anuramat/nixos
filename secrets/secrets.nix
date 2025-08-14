@@ -1,7 +1,7 @@
 let
   lib = (import <nixpkgs> { }).lib;
   inherit (import ../hax/hosts.nix { inherit lib; }) getAllKeys getAllHostkeys;
-  # these need refactoring downstairs
+  # TODO one of these is not used
   hostkeys = getAllHostkeys ../hosts;
   keyPaths = getAllKeys ../hosts;
   keys = hostkeys ++ map (v: builtins.readFile v) keyPaths;

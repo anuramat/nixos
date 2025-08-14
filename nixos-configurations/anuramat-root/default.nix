@@ -1,5 +1,10 @@
 # vim: fdm=marker fdl=0
-{ config, user, ... }:
+{
+  config,
+  user,
+  ezModules,
+  ...
+}:
 {
   imports = [
     ./web

@@ -6,11 +6,9 @@
 }:
 let
   isNixOS = config ? boot.kernelPackages;
-  isHomeManager = config ? home.username;
 in
 {
   age.secrets =
-    assert isNixOS || isHomeManager;
     with builtins;
     readDir ./.
     |> attrNames
