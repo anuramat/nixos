@@ -6,6 +6,14 @@
 }@inputs:
 let
   inherit (nixpkgs) lib;
+  root = ./.;
+  hax = import ./hax {
+    inherit
+      lib
+      inputs
+      root
+      ;
+  };
 in
 flake-parts.lib.mkFlake { inherit inputs; } {
   imports = [
@@ -19,14 +27,6 @@ flake-parts.lib.mkFlake { inherit inputs; } {
   ];
   ezConfigs =
     let
-      root = ./.;
-      hax = import ./hax {
-        inherit
-          lib
-          inputs
-          root
-          ;
-      };
       user = inputs.self.user; # TODO remove and use the output
       globalArgs = {
         inherit
@@ -61,6 +61,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     modules = {
       stylix = import ./modules/stylix.nix;
       age = import ./modules/age.nix;
+      nixvim = import ./modules/nixvim;
     };
     user = {
       username = "anuramat";
@@ -128,16 +129,14 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       packages.neovim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
         inherit system;
         extraSpecialArgs = {
-          inherit inputs;
-          hax = import ./hax {
-            lib = nixpkgs.lib;
-            inherit inputs;
-          };
+          inherit inputs hax;
         };
         module = {
+          nixpkgs.overlays = [
+            inputs.self.overlays.default
+          ];
           imports = [
-            ./common/overlays.nix
-            ./home/nixvim
+            inputs.self.modules.nixvim
           ];
         };
       };

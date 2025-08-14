@@ -13,7 +13,7 @@
     nixvim = {
       enable = true;
       imports = [
-        ./nixvim
+        inputs.self.modules.nixvim
       ];
       nixpkgs.overlays =
         let
