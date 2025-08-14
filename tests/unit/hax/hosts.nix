@@ -8,7 +8,7 @@ let
         cacheFilename = "cache.pem.pub";
         cfgRoot = pkgs.runCommand "mock-cfg-root" { } ''
           mkdir -p $out
-          
+
           # Host1 with builder and keys
           mkdir -p $out/host1/keys
           echo "ssh-rsa AAAAB3NzaC1yc2E host1-cache-key" > $out/host1/keys/cache.pem.pub
@@ -18,7 +18,7 @@ let
           host1.example.com ssh-rsa AAAAB3NzaC1yc2E host1-key
           host1.example.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5 host1-ed-key
           EOF
-          
+
           # Host2 without builder
           mkdir -p $out/host2/keys
           echo "ssh-rsa AAAAB3NzaC1yc2E host2-cache-key" > $out/host2/keys/cache.pem.pub
@@ -26,7 +26,7 @@ let
           cat > $out/host2/keys/host_keys <<EOF
           host2.example.com ssh-rsa AAAAB3NzaC1yc2E host2-key
           EOF
-          
+
           # Host3 with builder
           mkdir -p $out/host3/keys
           echo "ssh-rsa AAAAB3NzaC1yc2E host3-cache-key" > $out/host3/keys/cache.pem.pub
@@ -123,7 +123,12 @@ in
 
   # Test mkKnownHostsFiles
   testMkKnownHostsFiles = {
-    expr = hax.mkKnownHostsFiles [ "host1" "host2" ] |> builtins.length;
+    expr =
+      hax.mkKnownHostsFiles [
+        "host1"
+        "host2"
+      ]
+      |> builtins.length;
     expected = 2; # Two host_keys files
   };
 
@@ -137,13 +142,24 @@ in
   };
 
   testMkHostKeysMultiple = {
-    expr = hax.mkHostKeys [ "host1" "host2" "host3" ] |> builtins.length;
+    expr =
+      hax.mkHostKeys [
+        "host1"
+        "host2"
+        "host3"
+      ]
+      |> builtins.length;
     expected = 4; # 2 from host1 + 1 from host2 + 1 from host3
   };
 
   # Test mkKeyFiles
   testMkKeyFiles = {
-    expr = hax.mkKeyFiles [ "host1" "host2" ] |> builtins.length;
+    expr =
+      hax.mkKeyFiles [
+        "host1"
+        "host2"
+      ]
+      |> builtins.length;
     expected = 3; # client1.pub, client2.pub from host1 and client.pub from host2
   };
 
@@ -154,7 +170,10 @@ in
 
   # Test mkSubstituters
   testMkSubstituters = {
-    expr = hax.mkSubstituters [ "builder1.example.com" "builder2.example.com" ];
+    expr = hax.mkSubstituters [
+      "builder1.example.com"
+      "builder2.example.com"
+    ];
     expected = [
       "ssh-ng://builder1.example.com?priority=50"
       "ssh-ng://builder2.example.com?priority=50"

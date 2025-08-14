@@ -49,7 +49,7 @@ in
 
   # Test that removeBrokenLinks creates a DAG entry after writeBoundary
   testRemoveBrokenLinksOrdering = {
-    expr = 
+    expr =
       let
         result = hax.removeBrokenLinks "/path";
       in
@@ -65,7 +65,7 @@ in
 
   # Test removeBrokenLinks with path containing spaces (should be properly quoted)
   testRemoveBrokenLinksWithSpaces = {
-    expr = 
+    expr =
       let
         result = hax.removeBrokenLinks "/path with spaces";
       in
