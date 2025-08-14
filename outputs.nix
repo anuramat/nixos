@@ -18,8 +18,6 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     let
       inherit (nixpkgs) lib;
       hax = import ./hax { inherit lib inputs; };
-      hosts = hax.hosts;
-      hostnames = hosts.getHostnames ./nixos-configurations;
       user = {
         username = "anuramat";
         fullname = "Arsen Nuramatov";

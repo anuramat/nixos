@@ -1,4 +1,4 @@
-keys_dir := `pwd` / "hosts" / `hostname` / "keys"
+keys_dir := `pwd` / "nixos-configurations" / `hostname` / "keys"
 
 all: flake format (test "--quiet") lint nixos
 

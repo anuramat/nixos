@@ -1,8 +1,16 @@
-args: {
-  common = import ./common.nix args;
-  web = import ./web.nix args;
-  mime = import ./mime.nix args;
-  hosts = import ./hosts.nix args;
-  vim = import ./vim.nix args;
-  home = import ./home.nix args;
-}
+args:
+let
+  inherit (builtins)
+    attrNames
+    readDir
+    filter
+    readFile
+    concatLists
+    ;
+  inherit (args.lib) nameValuePair listToAttrs removeSuffix;
+in
+readDir ./.
+|> attrNames
+|> filter (x: x != "default.nix") # filenames except default.nix
+|> map (x: nameValuePair (removeSuffix ".nix" x) (import (./. + "/${x}") args))
+|> listToAttrs
