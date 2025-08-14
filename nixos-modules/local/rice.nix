@@ -1,13 +1,12 @@
 {
   lib,
   inputs,
-  shared,
   ...
 }:
 {
   imports = [
     inputs.stylix.nixosModules.stylix
-    shared.stylix
+    inputs.self.modules.stylix
   ];
   stylix.autoEnable = true;
   # loading screen rice

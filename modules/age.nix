@@ -2,6 +2,7 @@
   lib,
   user,
   config,
+  root,
   ...
 }:
 let
@@ -10,13 +11,13 @@ in
 {
   age.secrets =
     with builtins;
-    readDir ./.
+    readDir (root + "/secrets")
     |> attrNames
     |> filter (lib.hasSuffix ".age")
     |> map (x: {
       name = lib.removeSuffix ".age" x;
       value = {
-        file = ./${x};
+        file = root + x;
       }
       // (
         if isNixOS then

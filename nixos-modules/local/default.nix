@@ -1,7 +1,6 @@
 # vim: fdl=0 fdm=marker
 {
   lib,
-  shared,
   inputs,
   ...
 }:

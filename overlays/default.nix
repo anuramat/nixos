@@ -231,9 +231,12 @@ let
     })
   ];
 in
-final: prev:
-let
-  unwrapped = map (x: x final prev) overlays;
-  merge = lib.fold (a: b: a // b) { };
-in
-merge unwrapped
+{
+  default =
+    final: prev:
+    let
+      unwrapped = map (x: x final prev) overlays;
+      merge = lib.fold (a: b: a // b) { };
+    in
+    merge unwrapped;
+}

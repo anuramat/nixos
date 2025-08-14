@@ -2,14 +2,11 @@
 {
   user,
   config,
-  shared,
   inputs,
   ...
 }:
 {
   imports = [
-    shared.secrets
-
     ./external_keys.nix
     ./home.nix
     ./hosts.nix
@@ -18,6 +15,7 @@
     ./user.nix
 
     inputs.agenix.nixosModules.default
+    inputs.self.modules.age
     inputs.nix-topology.nixosModules.default
   ];
 

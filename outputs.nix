@@ -28,13 +28,8 @@ flake-parts.lib.mkFlake { inherit inputs; } {
           ;
       };
       user = inputs.self.user; # TODO remove and use the output
-      shared = {
-        secrets = ./secrets;
-        stylix = ./stylix;
-      };
       globalArgs = {
         inherit
-          shared # TODO move to outputs
           inputs
           hax
           user
@@ -55,12 +50,18 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     };
   flake = {
     # tests = import ... # system-agnostic tests
+    # TODO aren't all my tests agnostic? try moving everything here
     consts = {
       builderUsername = "builder";
       cacheFilename = "cache.pem.pub";
       cfgRoot = ./. + "/nixos-configurations/";
     };
-    overlays.default = import ./overlays { inherit inputs lib; };
+    # TODO refactor these: try to mimic ez-configs (auto-import shallowly)
+    overlays = import ./overlays { inherit inputs lib; };
+    modules = {
+      stylix = import ./modules/stylix.nix;
+      age = import ./modules/age.nix;
+    };
     user = {
       username = "anuramat";
       fullname = "Arsen Nuramatov";
@@ -79,6 +80,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       };
     in
     {
+      # move these
       treefmt = {
         settings.formatter = {
           shfmt.options = [

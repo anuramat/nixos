@@ -1,12 +1,12 @@
 {
   config,
-  shared,
   hax,
   lib,
   inputs,
   ...
 }@args:
 {
+  # TODO refactor this mess
   imports =
     with inputs;
     [
@@ -36,9 +36,8 @@
           {
             nixpkgs.overlays = inputs.self.overlays.default;
           }
-          shared.secrets
-          shared.stylix
           inputs.stylix.homeModules.stylix
+          inputs.self.modules.stylix
         ]
       else
         [ ]
