@@ -18,7 +18,6 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     let
       inherit (nixpkgs) lib;
       root = ./.;
-      consts = import ./consts.nix;
       hax = import ./hax {
         inherit
           lib
@@ -33,6 +32,11 @@ flake-parts.lib.mkFlake { inherit inputs; } {
         email = "x@ctrl.sn";
         tz = "Europe/Berlin";
         locale = "en_US.UTF-8";
+      };
+      consts = {
+        builderUsername = "builder";
+        cacheFilename = "cache.pem.pub";
+        cfgRoot = ./. + "/nixos-configurations/";
       };
       shared = {
         overlays = ./overlays;
