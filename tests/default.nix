@@ -10,9 +10,5 @@ foldl' mergeAttrs { } (
     ./unit/hax/web.nix
     ./unit/hax/vim.nix
     ./unit/hax/common.nix
-    ./unit/hax/text.nix
-    ./unit/hax/utils.nix
-    ./unit/hax/config.nix
-    ./unit/hax/shell.nix
   ]
 )
