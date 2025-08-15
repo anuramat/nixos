@@ -11,6 +11,7 @@
           let
             template = lib.generators.toPretty { } {
               outputs = x: x;
+              # TODO use root
               inputs = import ../inputs.nix;
             };
             text =
