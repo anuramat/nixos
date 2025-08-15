@@ -4,22 +4,21 @@
   pkgs,
   ...
 }:
-{
-
-  environment.systemPackages = [
-    pkgs.llama-cpp
-    pkgs.python313Packages.huggingface-hub
-  ];
-  services =
-    let
-      cuda = config.hardware.nvidia.enabled;
-    in
-    {
-      llama-cpp = {
-        enable = true;
-        port = 11343;
-        openFirewall = false;
-        extraFlags = [
+let
+  models = {
+    gemma = {
+      filename = "gemma-3-4b-it-GGUF_gemma-3-4b-it-Q8_0.gguf";
+      flags = [
+        "-c"
+        "0"
+        "-fa"
+        "-ngl"
+        "999"
+      ];
+    };
+    gpt =
+      let
+        flags = [
           "-c" # context size
           "0" # inherit
           "-fa" # flash attention
@@ -31,11 +30,49 @@
           "--reasoning-format"
           "none"
         ];
-        # model = "/mnt/storage/llama-cpp/gpt-oss-120b-mxfp4-00001-of-00003.gguf";
-        model = "/mnt/storage/llama-cpp/gpt-oss-20b-GGUF_gpt-oss-20b-mxfp4.gguf";
+      in
+      {
+        small = {
+          inherit flags;
+          filename = "gpt-oss-20b-GGUF_gpt-oss-20b-mxfp4.gguf";
+
+        };
+        big = {
+          inherit flags;
+          filename = "gpt-oss-120b-mxfp4-00001-of-00003.gguf";
+        };
       };
+  };
+in
+{
+
+  environment.systemPackages = [
+    pkgs.llama-cpp
+    pkgs.python313Packages.huggingface-hub
+  ];
+  services =
+    let
+      cuda = config.hardware.nvidia.enabled;
+    in
+    {
+      llama-cpp =
+        let
+          modelAttrs = models.gemma;
+        in
+        {
+          enable = true;
+          port = 11343;
+          openFirewall = false;
+          extraFlags = modelAttrs.flags;
+          model =
+            let
+              rootdir = "/mnt/storage/llama-cpp";
+            in
+            rootdir + "/" + modelAttrs.filename;
+
+        };
       ollama = {
-        enable = true;
+        enable = false;
         acceleration = lib.mkIf cuda "cuda";
         loadModels = lib.mkIf cuda [ ]; # pull models on service start
         models = "/mnt/storage/ollama"; # TODO abstract away; make a new variable that contains a path to a storage device; fill on different machines
