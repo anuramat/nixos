@@ -80,7 +80,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       lib,
       pkgs,
       ...
-    }:
+    }@args:
     {
       files.files =
         let
@@ -106,40 +106,8 @@ flake-parts.lib.mkFlake { inherit inputs; } {
         meta.description = "generate flake.nix from inputs.nix (result imports outputs.nix)";
       };
       # move these
-      treefmt = {
-        settings.formatter = {
-          shfmt.options = [
-            "--write"
-            "--simplify"
-            "--case-indent"
-            "--binary-next-line"
-          ];
-          shellharden = {
-            includes = [ "*.sh*" ];
-            command = lib.getExe pkgs.shellharden;
-            options = [ "--replace" ];
-          };
-        };
-        programs = {
-          nixfmt.enable = true;
-          stylua.enable = true;
-          shfmt = {
-            enable = true;
-            indent_size = 0;
-          };
-          yamlfmt.enable = true;
-          black.enable = true;
-          just.enable = true;
-        };
-      };
-      topology = {
-        modules = [
-          {
-            nodes = {
-            };
-          }
-        ];
-      };
+      treefmt = import ./parts/treefmt.nix args;
+      topology = import ./parts/topology.nix args;
       nix-unit = {
         inputs = {
           inherit (inputs) nixpkgs flake-parts nix-unit;
