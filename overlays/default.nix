@@ -146,9 +146,11 @@ let
         };
         dontUnpack = true;
         nativeBuildInputs = [ prev.makeWrapper ];
-        installPhase = ''
-          makeWrapper ${prev.dotslash}/bin/dotslash $out/bin/codex --add-flags $src
-        '';
+        installPhase =
+          with prev; # bash
+          ''
+            makeWrapper ${dotslash}/bin/dotslash $out/bin/codex --add-flags $src
+          '';
       };
 
       vimPlugins = prev.vimPlugins // {
@@ -161,12 +163,12 @@ let
       };
 
       llama-cpp = prev.llama-cpp.overrideAttrs (old: rec {
-        version = "6133";
+        version = "6175";
         src = prev.fetchFromGitHub {
           owner = "ggml-org";
           repo = "llama.cpp";
           tag = "b${version}";
-          hash = "sha256-l9MjEPvteoO0vl2J9EKLpy9Z4e/N9xOgk5PkwB5yPH8=";
+          hash = "sha256-aoyJGyxvyoU37AGycd540w4b2DC4wNA7GkzmwaZKYRU=";
           leaveDotGit = true;
           postFetch = ''
             git -C "$out" rev-parse --short HEAD >$out/COMMIT
