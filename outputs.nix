@@ -50,13 +50,14 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       };
     };
   flake = {
-    # tests = import ... # system-agnostic tests
-    # TODO aren't all my tests agnostic? try moving everything here
+    # tests = import ... # system-agnostic tests TODO aren't all my tests agnostic? try moving everything here
     consts = {
+      # move to a file?
       builderUsername = "builder";
       cacheFilename = "cache.pem.pub";
       cfgRoot = ./. + "/nixos-configurations/";
     };
+
     # TODO refactor these: try to mimic ez-configs (auto-import shallowly)
     overlays = import ./overlays { inherit inputs lib; };
     modules = {
@@ -64,7 +65,9 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       age = import ./modules/age.nix;
       nixvim = import ./modules/nixvim;
     };
+
     user = {
+      # TODO move to a file
       username = "anuramat";
       fullname = "Arsen Nuramatov";
       email = "x@ctrl.sn";
@@ -82,42 +85,21 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       ...
     }@args:
     {
-      files.files =
-        let
-          basename = builtins.baseNameOf;
-        in
-        [
-          rec {
-            path_ = "flake.nix";
-            drv =
-              let
-                template = lib.generators.toPretty { } {
-                  outputs = x: x;
-                  inputs = import ./inputs.nix;
-                };
-                text =
-                  builtins.replaceStrings [ "<function>" ] [ "args: import ./outputs.nix args" ] template + "\n";
-              in
-              pkgs.writeText (basename path_) text;
-          }
-        ];
-      apps.generateFlake = {
-        program = config.files.writer.drv;
-        meta.description = "generate flake.nix from inputs.nix (result imports outputs.nix)";
-      };
-      # move these
+      files = import ./parts/files.nix args;
       treefmt = import ./parts/treefmt.nix args;
       topology = import ./parts/topology.nix args;
-      nix-unit = {
-        inputs = {
-          inherit (inputs) nixpkgs flake-parts nix-unit;
-        };
-        tests = import ./tests {
-          inherit pkgs;
-          lib = nixpkgs.lib;
+
+      apps = {
+        writer = {
+          program = config.files.writer.drv;
+          meta.description = "generate flake.nix from inputs.nix (result imports outputs.nix)";
+          # TODO might generate more? move this desc to files.nix
         };
       };
+      # TODO move agnostic tests to tests
+      nix-unit = import ./parts/nix-unit.nix (args // { inherit inputs; });
 
+      # TODO move? somehow sync extraspecialargs with home-manager import
       packages.neovim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
         inherit system;
         extraSpecialArgs = {

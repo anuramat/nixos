@@ -6,7 +6,7 @@ all: flake format (test "--quiet") lint nixos
 [group('build')]
 flake:
     # Regenerate flake.nix
-    nix run .#generateFlake
+    nix run .#writer
     # Format
     nixfmt flake.nix
     # Lock
