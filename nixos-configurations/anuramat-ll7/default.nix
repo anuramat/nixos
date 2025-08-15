@@ -55,18 +55,15 @@
   ];
   security.polkit.extraConfig = # javascript
     ''
-          polkit.addRule(function (action, subject) {
-        if (
-          subject.isInGroup("wheel") &&
-          [
-            "legion_cli",
-            "legion_cli2",
-            "legion_gui",
-            "legion_gui2"
-          ].indexOf(action.id) !== -1
-        ) {
-          return polkit.Result.YES;
-        }
+      polkit.addRule((action, subject) => {
+      	if (
+      		subject.isInGroup("wheel") &&
+      		["legion_cli", "legion_cli2", "legion_gui", "legion_gui2"].indexOf(
+      			action.id,
+      		) !== -1
+      	) {
+      		return polkit.Result.YES;
+      	}
       });
     '';
 
