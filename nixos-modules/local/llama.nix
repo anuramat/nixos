@@ -5,16 +5,23 @@
   ...
 }:
 let
+  rootdir = "/mnt/storage/llama-cpp/";
   models = {
     gemma = {
       filename = "gemma-3-4b-it-GGUF_gemma-3-4b-it-Q8_0.gguf";
-      flags = [
-        "-c"
-        "0"
-        "-fa"
-        "-ngl"
-        "999"
-      ];
+      flags =
+        let
+          mmproj = rootdir + "gemma-3-4b-it-GGUF_mmproj-model-f16.gguf";
+        in
+        [
+          "-c"
+          "0"
+          "-fa"
+          "-ngl"
+          "999"
+          "--mmproj"
+          mmproj
+        ];
     };
     gpt =
       let
@@ -64,11 +71,7 @@ in
           port = 11343;
           openFirewall = false;
           extraFlags = modelAttrs.flags;
-          model =
-            let
-              rootdir = "/mnt/storage/llama-cpp";
-            in
-            rootdir + "/" + modelAttrs.filename;
+          model = rootdir + modelAttrs.filename;
 
         };
       ollama = {
