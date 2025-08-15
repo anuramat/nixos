@@ -32,10 +32,7 @@ let
           "-cmoe" # all MoE blocks on CPU
           "--n-gpu-layers" # how many layers on GPU
           "999"
-          # some hacks that don't even work for now; fix later
           "--jinja"
-          "--reasoning-format"
-          "none"
         ];
       in
       {
@@ -64,7 +61,7 @@ in
     {
       llama-cpp =
         let
-          modelAttrs = models.gemma;
+          modelAttrs = models.gpt.small;
         in
         {
           enable = true;

@@ -264,13 +264,28 @@ let
         };
       };
     };
-    ollama =
-      if args ? osConfig then
-        let
-          port = toString args.osConfig.services.ollama.port;
-        in
-        {
-          base-url = "http://localhost:${port}";
+  }
+  // (
+    if args ? osConfig then
+      {
+        llama-cpp = {
+          base-url =
+            let
+              port = toString args.osConfig.services.llama-cpp.port;
+            in
+            "http://localhost:${port}";
+          api-key = "dummy";
+          models = {
+            "dummy" = {
+            };
+          };
+        };
+        ollama = {
+          base-url =
+            let
+              port = toString args.osConfig.services.ollama.port;
+            in
+            "http://localhost:${port}";
           models = {
             "deepseek-r1:8b" = {
               aliases = [ "deepseek" ];
@@ -285,10 +300,11 @@ let
               aliases = [ "gpt" ];
             };
           };
-        }
-      else
-        { };
-  };
+        };
+      }
+    else
+      { }
+  );
 
   modsCfg = (pkgs.formats.yaml { }).generate "mods_config.yaml" {
     inherit apis;

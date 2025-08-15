@@ -5,7 +5,9 @@
   ...
 }@args:
 let
-  mcp = { inherit (config.lib.agents.mcp.raw) think; };
+  mcp = {
+    # inherit (config.lib.agents.mcp.raw) think;
+  };
   # lsp = config.lib.agents.lsp.file;
   options = {
     context_paths = config.lib.agents.contextFiles ++ [
