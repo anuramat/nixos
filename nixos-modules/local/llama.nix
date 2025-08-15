@@ -7,6 +7,7 @@
 let
   rootdir = "/mnt/storage/llama-cpp/";
   models = {
+
     gemma = {
       filename = "gemma-3-4b-it-GGUF_gemma-3-4b-it-Q8_0.gguf";
       flags =
@@ -23,8 +24,10 @@ let
           mmproj
         ];
     };
+
     gpt =
       let
+        effort = "high";
         flags = [
           "-c" # context size
           "0" # inherit
@@ -33,8 +36,12 @@ let
           "--n-gpu-layers" # how many layers on GPU
           "999"
           "--jinja"
+          "--chat-template-kwargs"
+          ''{"reasoning_effort": "${effort}"}''
         ];
+
       in
+
       {
         small = {
           inherit flags;
@@ -47,7 +54,9 @@ let
         };
       };
   };
+
 in
+
 {
 
   environment.systemPackages = [

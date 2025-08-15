@@ -53,6 +53,22 @@
   environment.systemPackages = with pkgs; [
     lenovo-legion
   ];
+  security.polkit.extraConfig = # javascript
+    ''
+          polkit.addRule(function (action, subject) {
+        if (
+          subject.isInGroup("wheel") &&
+          [
+            "legion_cli",
+            "legion_cli2",
+            "legion_gui",
+            "legion_gui2"
+          ].indexOf(action.id) !== -1
+        ) {
+          return polkit.Result.YES;
+        }
+      });
+    '';
 
   boot = {
     extraModulePackages = [
