@@ -53,6 +53,8 @@
   environment.systemPackages = with pkgs; [
     lenovo-legion
   ];
+
+  # TODO doesn't work for now, maybe reboot will help
   security.polkit.extraConfig = # javascript
     ''
       polkit.addRule((action, subject) => {
