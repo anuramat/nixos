@@ -21,6 +21,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     inputs.nix-topology.flakeModule
     inputs.nix-unit.modules.flake.default
     inputs.ez-configs.flakeModule
+    inputs.files.flakeModules.default
   ];
   systems = [
     "x86_64-linux"
@@ -73,14 +74,37 @@ flake-parts.lib.mkFlake { inherit inputs; } {
   };
 
   perSystem =
-    { system, lib, ... }:
-    let
-      pkgs = import nixpkgs {
-        inherit system;
-        config.allowUnfree = true;
-      };
-    in
     {
+      config,
+      system,
+      lib,
+      pkgs,
+      ...
+    }:
+    {
+      files.files =
+        let
+          basename = builtins.baseNameOf;
+        in
+        [
+          rec {
+            path_ = "flake.nix";
+            drv =
+              let
+                template = lib.generators.toPretty { } {
+                  outputs = x: x;
+                  inputs = import ./inputs.nix;
+                };
+                text =
+                  builtins.replaceStrings [ "<function>" ] [ "args: import ./outputs.nix args" ] template + "\n";
+              in
+              pkgs.writeText (basename path_) text;
+          }
+        ];
+      apps.generateFlake = {
+        program = config.files.writer.drv;
+        meta.description = "generate flake.nix from inputs.nix (result imports outputs.nix)";
+      };
       # move these
       treefmt = {
         settings.formatter = {

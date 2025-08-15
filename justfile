@@ -5,10 +5,8 @@ all: flake format (test "--quiet") lint nixos
 # Regenerate flake
 [group('build')]
 flake:
-    # Check if it evaluates first
-    nix eval --read-only --expr "$(nix eval -f inputs.nix)" >/dev/null
     # Regenerate flake.nix
-    printf '{ outputs = args: import ./outputs.nix args; inputs = %s; }' "$(nix eval --read-only -f inputs.nix)" > flake.nix
+    nix run .#generateFlake
     # Format
     nixfmt flake.nix
     # Lock

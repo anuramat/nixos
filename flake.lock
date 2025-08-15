@@ -329,6 +329,21 @@
         "type": "github"
       }
     },
+    "files": {
+      "locked": {
+        "lastModified": 1750263550,
+        "narHash": "sha256-EW/QJ8i/13GgiynBb6zOMxhLU1uEkRqmzbIDEP23yVA=",
+        "owner": "mightyiam",
+        "repo": "files",
+        "rev": "5f4ef1fd1f9012354a9748be093e277675d10f07",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mightyiam",
+        "repo": "files",
+        "type": "github"
+      }
+    },
     "firefox-gnome-theme": {
       "flake": false,
       "locked": {
@@ -1544,6 +1559,7 @@
         "ctrlsn": "ctrlsn",
         "ez-configs": "ez-configs",
         "figtree": "figtree",
+        "files": "files",
         "flake-parts": "flake-parts",
         "gothink": "gothink",
         "home-manager": "home-manager_2",

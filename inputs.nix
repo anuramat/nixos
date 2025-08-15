@@ -24,6 +24,7 @@ in
   nixvim = mkInput "github:nix-community/nixvim";
   nur = mkInput "github:nix-community/NUR";
   stylix = mkInput "github:danth/stylix/release-25.05";
+  files.url = "github:mightyiam/files";
   treefmt-nix.url = "github:numtide/treefmt-nix";
   ez-configs = {
     url = "github:ehllie/ez-configs";

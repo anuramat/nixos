@@ -1,5 +1,4 @@
 {
-  outputs = args: import ./outputs.nix args;
   inputs = {
     agenix = {
       inputs = {
@@ -55,6 +54,9 @@
         };
       };
       url = "github:anuramat/figtree.nvim";
+    };
+    files = {
+      url = "github:mightyiam/files";
     };
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
@@ -199,4 +201,5 @@
       url = "github:tinted-theming/schemes";
     };
   };
+  outputs = args: import ./outputs.nix args;
 }
