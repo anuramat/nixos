@@ -2,9 +2,9 @@
   pkgs,
   hax,
   inputs,
-  config,
+  osConfig ? null,
   ...
-}@args:
+}:
 {
   stylix.targets = {
     neovim.plugin = "base16-nvim";
@@ -15,29 +15,12 @@
       imports = [
         inputs.self.modules.nixvim
       ];
-      nixpkgs.overlays =
-        let
-          hm-overlays = config.nixpkgs.overlays;
-        in
-        # TODO is this robust enough?
-        if hm-overlays != null then hm-overlays else args.osConfig.nixpkgs.overlays;
       defaultEditor = true;
       _module.args = {
+        # TODO is this the right/official way? underscore looks sketchy
         inherit inputs hax;
-      };
-      plugins.lsp.servers.nixd.settings.options =
-        if args ? osConfig then
-          let
-            nixosExpr = ''(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.${args.osConfig.networking.hostName}.options'';
-          in
-          {
-            nixos.expr = nixosExpr;
-            home-manager.expr = "${nixosExpr}.home-manager.users.type.getSubOptions []";
-          }
-        else
-          {
-            # TODO standalone hm expression
-          };
+      }
+      // (if osConfig != null then { inherit osConfig; } else { });
     };
     helix = {
       enable = true;

@@ -1,4 +1,11 @@
-{ pkgs, hax, ... }:
+{
+  pkgs,
+  hax,
+  osConfig ? null,
+  ...
+}:
+# BUG here, if we use args ? osConfig instead, it's missing osConfig!!!
+# somehow repro and report?
 {
   plugins = {
     conform-nvim.settings.formatters_by_ft.nix = [
@@ -19,9 +26,22 @@
           "nixd"
           "--inlay-hints=false"
         ];
-        settings = {
-          options.nixvim.expr = "(builtins.getFlake (builtins.toString ./.)).packages.${pkgs.system}.neovim.options";
-        };
+        settings.options = {
+          nixvim.expr = "(builtins.getFlake (builtins.toString ./.)).packages.${pkgs.system}.neovim.options";
+        }
+        // (
+          if osConfig != null then
+            let
+              nixosExpr = ''(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.${osConfig.networking.hostName}.options'';
+            in
+            {
+              nixos.expr = nixosExpr;
+              home-manager.expr = "${nixosExpr}.home-manager.users.type.getSubOptions []";
+            }
+          # TODO hm standalone expr
+          else
+            { }
+        );
         onAttach.function = # lua
           ''
             client.server_capabilities.renameProvider = false

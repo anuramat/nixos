@@ -16,6 +16,9 @@
   ...
 }:
 {
+  nixpkgs.overlays = [
+    inputs.self.overlays.default
+  ];
   imports = [
     ./filemgr.nix
     ./fzf.nix

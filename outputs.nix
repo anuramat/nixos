@@ -155,14 +155,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
         extraSpecialArgs = {
           inherit inputs hax;
         };
-        module = {
-          nixpkgs.overlays = [
-            inputs.self.overlays.default
-          ];
-          imports = [
-            inputs.self.modules.nixvim
-          ];
-        };
+        module = inputs.self.modules.nixvim;
       };
     };
 }
