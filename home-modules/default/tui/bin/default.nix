@@ -2,6 +2,7 @@
   pkgs,
   lib,
   config,
+  osConfig ? null,
   ...
 }@args:
 let
@@ -32,7 +33,7 @@ let
   nix-cache-keygen =
     let
       # TODO read builders, move and read public
-      private = args.osConfig.nix.settings.secret-key-files;
+      private = osConfig.nix.settings.secret-key-files;
       public = "/etc/nix/cache.pem.pub";
       builderName = "builder";
       builderGroup = "builder";
@@ -52,5 +53,5 @@ let
   # TODO root ssh config from nix.nix?
 in
 {
-  home.packages = packages ++ (if args ? osConfig then [ nix-cache-keygen ] else [ ]);
+  home.packages = packages ++ (if osConfig != null then [ nix-cache-keygen ] else [ ]);
 }

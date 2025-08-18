@@ -64,7 +64,7 @@ check-nixos host=`hostname`: (check ".#nixosConfigurations." + host + ".config.s
 
 # Check a Home Manager configuration
 [group('check')]
-check-hm user=`whoami`: (check ".#homeConfigurations." + user + ".activationPackage")
+check-hm user: (check ".#homeConfigurations." + user + ".activationPackage")
 
 [group('check')]
 check target="":

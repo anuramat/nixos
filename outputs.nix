@@ -54,6 +54,18 @@ flake-parts.lib.mkFlake { inherit inputs; } {
           };
         };
       };
+      home = {
+        users.anuramat-standalone = {
+          passInOsConfig = false;
+          standalone = {
+            enable = true;
+            pkgs = import inputs.nixpkgs {
+              system = "x86_64-linux";
+              config.allowUnfree = true;
+            };
+          };
+        };
+      };
     };
   flake = {
     user = {
