@@ -4,6 +4,7 @@
   ...
 }:
 {
+  # TODO what is this even?:
   #pinentryonsshs
   services.pass-secret-service.enable = true; # secret service api -- exposes password-store over dbus
   programs = {
