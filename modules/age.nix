@@ -6,7 +6,7 @@
   ...
 }:
 let
-  isNixOS = config ? boot.kernelPackages;
+  isNixOS = config ? system;
   secretsRoot = /${root}/secrets;
 in
 {

@@ -38,9 +38,8 @@
               nixos.expr = nixosExpr;
               home-manager.expr = "${nixosExpr}.home-manager.users.type.getSubOptions []";
             }
-          # TODO hm standalone expr
           else
-            { }
+            throw "TODO this is only configured for nixos.home-manager.nixvim setup"
         );
         onAttach.function = # lua
           ''
