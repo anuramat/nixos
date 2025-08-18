@@ -2,10 +2,11 @@
   pkgs,
   inputs,
   lib,
+  osConfig ? null,
   ...
-}@args:
-# TODO only import on standalone hm and nixos
-lib.mkIf (!args ? osConfig) {
+}:
+# only import on standalone hm and system configs
+lib.mkIf osConfig == null {
   stylix = {
     opacity.popups = 0.8;
     cursor = {
