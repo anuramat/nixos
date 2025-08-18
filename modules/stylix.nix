@@ -4,6 +4,7 @@
   lib,
   ...
 }@args:
+# TODO only import on standalone hm and nixos
 lib.mkIf (!args ? osConfig) {
   stylix = {
     opacity.popups = 0.8;
