@@ -3,6 +3,7 @@
   hax,
   lib,
   inputs,
+  user,
   ...
 }@args:
 {

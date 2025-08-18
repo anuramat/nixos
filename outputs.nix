@@ -89,13 +89,8 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       treefmt = import ./parts/treefmt.nix args;
       topology = import ./parts/topology.nix args;
 
-      apps = {
-        writer = {
-          program = config.files.writer.drv;
-          meta.description = "generate flake.nix from inputs.nix (result imports outputs.nix)";
-          # TODO might generate more? move this desc to files.nix
-        };
-      };
+      apps.writer.program = config.files.writer.drv;
+
       # TODO move agnostic tests to tests
       nix-unit = import ./parts/nix-unit.nix (args // { inherit inputs; });
 
