@@ -108,7 +108,7 @@ let
         version = "1.0.83";
         src = prev.fetchzip {
           url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-          hash = "";
+          hash = "sha256-h6bAP6nMifQ6cfM80A1QxSYM53LYbEX1WsyPiNPby0M=";
         };
         # https://www.npmjs.com/package/@anthropic-ai/claude-code
         # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
