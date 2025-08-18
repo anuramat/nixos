@@ -1,12 +1,9 @@
 {
   pkgs,
   inputs,
-  lib,
-  osConfig ? null,
   ...
 }:
-# only import on standalone hm and system configs
-lib.mkIf osConfig == null {
+{
   stylix = {
     opacity.popups = 0.8;
     cursor = {

@@ -78,6 +78,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     {
       config,
       system,
+      pkgs,
       ...
     }@args:
     {
