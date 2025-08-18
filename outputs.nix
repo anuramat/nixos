@@ -17,11 +17,12 @@ let
 in
 flake-parts.lib.mkFlake { inherit inputs; } {
   imports = [
-    inputs.treefmt-nix.flakeModule
-    inputs.nix-topology.flakeModule
-    inputs.nix-unit.modules.flake.default
     inputs.ez-configs.flakeModule
     inputs.files.flakeModules.default
+    inputs.nix-topology.flakeModule
+    inputs.nix-unit.modules.flake.default
+    inputs.treefmt-nix.flakeModule
+    inputs.git-hooks-nix.flakeModule
   ];
   systems = [
     "x86_64-linux"
@@ -88,6 +89,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       files = import ./parts/files.nix args;
       treefmt = import ./parts/treefmt.nix args;
       topology = import ./parts/topology.nix args;
+      pre-commit = import ./parts/pre-commit.nix args;
 
       apps.writer.program = config.files.writer.drv;
 

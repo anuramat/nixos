@@ -26,6 +26,7 @@ in
   stylix = mkInput "github:danth/stylix/release-25.05";
   files.url = "github:mightyiam/files";
   treefmt-nix.url = "github:numtide/treefmt-nix";
+  git-hooks-nix.url = "github:cachix/git-hooks.nix";
   ez-configs = {
     url = "github:ehllie/ez-configs";
     inputs.nixpkgs.follows = "nixpkgs";

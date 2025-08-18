@@ -61,6 +61,9 @@
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
     };
+    git-hooks-nix = {
+      url = "github:cachix/git-hooks.nix";
+    };
     gothink = {
       inputs = {
         nixpkgs = {
