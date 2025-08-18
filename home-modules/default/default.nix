@@ -13,7 +13,6 @@
     ./lib.nix
     ./tui
     inputs.agenix.homeManagerModules.default
-    ezModules.heavy
   ];
 
   xdg.enable = true; # set xdg basedir vars in .profile

@@ -1,2 +1,6 @@
+{ ezModules, ... }:
 {
+  imports = [
+    ezModules.heavy
+  ];
 }
