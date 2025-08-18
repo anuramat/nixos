@@ -43,9 +43,15 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       };
       nixos = {
         hosts = {
-          anuramat-ll7.userHomeModules = [ "anuramat" ];
-          anuramat-root.userHomeModules = [ "anuramat" ];
-          anuramat-t480.userHomeModules = [ "anuramat" ];
+          anuramat-ll7.userHomeModules = {
+            anuramat = "anuramat-full";
+          };
+          anuramat-root.userHomeModules = {
+            anuramat = "anuramat-minimal";
+          };
+          anuramat-t480.userHomeModules = {
+            anuramat = "anuramat-full";
+          };
         };
       };
     };

@@ -1,0 +1,6 @@
+{ ezModules, ... }:
+{
+  imports = [
+    ezModules.standalone
+  ];
+}
