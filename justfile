@@ -31,6 +31,22 @@ nixos:
 test flag="" arch=`nix eval --raw .#nixosConfigurations.$(hostname).config.nixpkgs.hostPlatform.system`:
     nix-unit {{ flag }} --flake .#tests.systems.{{ arch }}
 
+# Run integration tests for username configuration
+[group('code')]
+test-integration:
+    @echo "Running integration tests..."
+    nix-unit --flake .#tests.systems.`nix eval --raw .#nixosConfigurations.$(hostname).config.nixpkgs.hostPlatform.system`
+
+# Create configuration snapshots before refactoring
+[group('code')]
+test-snapshot:
+    ./tests/integration/snapshot-username.sh
+
+# Test build matrix with different usernames
+[group('code')]
+test-matrix:
+    ./tests/integration/build-matrix.sh
+
 [group('code')]
 lint:
     # Skipping nix linters due to lack of pipe operator support:
