@@ -19,17 +19,18 @@ flake-parts.lib.mkFlake { inherit inputs; } {
   imports = [
     inputs.ez-configs.flakeModule
     inputs.files.flakeModules.default
+    inputs.git-hooks-nix.flakeModule
+    inputs.home-manager.flakeModules.home-manager
     inputs.nix-topology.flakeModule
     inputs.nix-unit.modules.flake.default
     inputs.treefmt-nix.flakeModule
-    inputs.git-hooks-nix.flakeModule
-    inputs.home-manager.flakeModules.home-manager
   ];
   systems = [
     "x86_64-linux"
   ];
   flake =
     let
+      # TODO hide root in inputs? rename hax?
       specialArgs = {
         inherit
           inputs
@@ -89,11 +90,12 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       system,
       pkgs,
       # TODO check if inputs are provided?
+      inputs,
       ...
     }@args:
     {
       files = import ./parts/files.nix args;
-      nix-unit = import ./parts/nix-unit.nix (args // { inherit inputs; });
+      nix-unit = import ./parts/nix-unit.nix args;
       pre-commit = import ./parts/pre-commit.nix args;
       topology = import ./parts/topology.nix args;
       treefmt = import ./parts/treefmt.nix args;

@@ -11,26 +11,26 @@ let
 
           # Host1 with builder and keys
           mkdir -p $out/host1/keys
-          echo "ssh-rsa AAAAB3NzaC1yc2E host1-cache-key" > $out/host1/keys/cache.pem.pub
-          echo "ssh-rsa AAAAB3NzaC1yc2E host1-client-key" > $out/host1/keys/client1.pub
-          echo "ssh-rsa AAAAB3NzaC1yc2E host1-client-key2" > $out/host1/keys/client2.pub
-          cat > $out/host1/keys/host_keys <<EOF
+          echo "ssh-rsa AAAAB3NzaC1yc2E host1-cache-key" >$out/host1/keys/cache.pem.pub
+          echo "ssh-rsa AAAAB3NzaC1yc2E host1-client-key" >$out/host1/keys/client1.pub
+          echo "ssh-rsa AAAAB3NzaC1yc2E host1-client-key2" >$out/host1/keys/client2.pub
+          cat >$out/host1/keys/host_keys <<EOF
           host1.example.com ssh-rsa AAAAB3NzaC1yc2E host1-key
           host1.example.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5 host1-ed-key
           EOF
 
           # Host2 without builder
           mkdir -p $out/host2/keys
-          echo "ssh-rsa AAAAB3NzaC1yc2E host2-cache-key" > $out/host2/keys/cache.pem.pub
-          echo "ssh-rsa AAAAB3NzaC1yc2E host2-client-key" > $out/host2/keys/client.pub
-          cat > $out/host2/keys/host_keys <<EOF
+          echo "ssh-rsa AAAAB3NzaC1yc2E host2-cache-key" >$out/host2/keys/cache.pem.pub
+          echo "ssh-rsa AAAAB3NzaC1yc2E host2-client-key" >$out/host2/keys/client.pub
+          cat >$out/host2/keys/host_keys <<EOF
           host2.example.com ssh-rsa AAAAB3NzaC1yc2E host2-key
           EOF
 
           # Host3 with builder
           mkdir -p $out/host3/keys
-          echo "ssh-rsa AAAAB3NzaC1yc2E host3-cache-key" > $out/host3/keys/cache.pem.pub
-          cat > $out/host3/keys/host_keys <<EOF
+          echo "ssh-rsa AAAAB3NzaC1yc2E host3-cache-key" >$out/host3/keys/cache.pem.pub
+          cat >$out/host3/keys/host_keys <<EOF
           host3.example.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5 host3-key
           EOF
         '';
@@ -40,18 +40,21 @@ let
           config = {
             nixpkgs.hostPlatform.system = "x86_64-linux";
             users.users.builder = { }; # Has builder user
+            networking.hostName = "host1";
           };
         };
         host2 = {
           config = {
             nixpkgs.hostPlatform.system = "aarch64-linux";
             users.users = { }; # No builder user
+            networking.hostName = "host2";
           };
         };
         host3 = {
           config = {
             nixpkgs.hostPlatform.system = "x86_64-linux";
             users.users.builder = { }; # Has builder user
+            networking.hostName = "host3";
           };
         };
       };
@@ -195,6 +198,7 @@ in
               config = {
                 nixpkgs.hostPlatform.system = "x86_64-linux";
                 users.users = { };
+                networking.hostName = "onlyhost";
               };
             };
           };
