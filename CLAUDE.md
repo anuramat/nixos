@@ -9,6 +9,7 @@ Personal NixOS flake configuration managing system and home configurations. Uses
 ## Key Architecture
 
 ### Directory Structure
+
 - `nixos-configurations/` - Per-host NixOS configs (hostname must match directory)
 - `home-configurations/` - Standalone home-manager configs
 - `nixos-modules/` - NixOS system modules
@@ -19,12 +20,15 @@ Personal NixOS flake configuration managing system and home configurations. Uses
 - `parts/` - Flake-parts modules (treefmt, pre-commit, tests)
 
 ### Module Organization
+
 - Default modules: Minimal base configuration
 - Heavy modules: Full desktop environment (GUI, agents, editors)
 - Two entrypoints each for home-manager and nixvim (NixOS module vs standalone)
 
 ### Helper Library (hax)
+
 Located in `hax/`, provides utilities:
+
 - `mkDirSet`, `mkImportSet` - Directory-based module imports
 - `common.nix` - Core utilities
 - `home.nix`, `hosts.nix`, `vim.nix`, `web.nix` - Domain-specific helpers
@@ -33,6 +37,7 @@ Located in `hax/`, provides utilities:
 ## Common Commands
 
 ### Build & Deploy
+
 ```bash
 # Full rebuild (formats, tests, lints, rebuilds NixOS)
 just all
@@ -52,6 +57,7 @@ nix fmt
 ```
 
 ### Testing & Validation
+
 ```bash
 # Run tests
 just test
@@ -70,6 +76,7 @@ nix flake check
 ```
 
 ### Development
+
 ```bash
 # Build specific package
 just build firefox
@@ -83,23 +90,29 @@ just run package-name
 ## Important Patterns
 
 ### Pipe Operators
+
 This codebase uses Nix pipe operators (`|>`) extensively. Always enable:
+
 ```bash
 --option extra-experimental-features pipe-operators
 ```
 
 ### Module Imports
+
 Modules are auto-discovered from directories using `mkImportSet`:
+
 ```nix
 nixosModules = mkImportSet ./nixos-modules;
 ```
 
 ### Per-Host Configuration
+
 1. Create directory in `nixos-configurations/` matching hostname
 2. Add `default.nix` and `hardware-configuration.nix`
 3. Store host keys in `keys/` subdirectory
 
 ### Secrets Management
+
 Uses ragenix for secrets. Encrypted files in `secrets/` with configuration in `secrets/secrets.nix`.
 
 ## Testing Strategy
@@ -107,6 +120,7 @@ Uses ragenix for secrets. Encrypted files in `secrets/` with configuration in `s
 Tests are in `tests/` directory, run via nix-unit. Test files mirror module structure in `tests/hax/`.
 
 ## Key Variables
+
 - Username: `anuramat` (hardcoded in several places)
 - Default system: `x86_64-linux`
 - Builder user: `builder`
@@ -121,3 +135,4 @@ Tests are in `tests/` directory, run via nix-unit. Test files mirror module stru
 5. Tests should pass before committing (`just test`)
 6. Run linters before committing (`just lint`)
 7. Format code with `just format` or `nix fmt`
+
