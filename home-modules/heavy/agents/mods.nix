@@ -280,27 +280,6 @@ let
             };
           };
         };
-        ollama = {
-          base-url =
-            let
-              port = toString args.osConfig.services.ollama.port;
-            in
-            "http://localhost:${port}";
-          models = {
-            "deepseek-r1:8b" = {
-              aliases = [ "deepseek" ];
-            };
-            "devstral:24b" = {
-              aliases = [ "devstral" ];
-            };
-            "qwen3:8b" = {
-              aliases = [ "qwen" ];
-            };
-            "gpt-oss:20b" = {
-              aliases = [ "gpt" ];
-            };
-          };
-        };
       }
     else
       { }
@@ -309,7 +288,7 @@ let
   modsCfg = (pkgs.formats.yaml { }).generate "mods_config.yaml" {
     inherit apis;
     default-api = "copilot";
-    default-model = "gpt-4.1";
+    default-model = "gpt-5";
     fanciness = 0;
     role = "default";
     inherit roles;
