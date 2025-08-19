@@ -26,8 +26,6 @@ let
 
   think = true;
 
-  wrapCmds = x: [ (concatStrings x) ];
-
   modagent = {
     main = ''
       Given the user's message, you should use the tools available to
@@ -64,7 +62,7 @@ let
   roles = {
     junior-r = {
       allowed_tools = with tools; r;
-      prompt = wrapCmds [
+      prompt = [
         modagent.main
         ''
           Your strengths:
@@ -86,7 +84,7 @@ let
 
     junior-bash = {
       blocked_tools = [ "*" ];
-      prompt = wrapCmds [
+      prompt = [
         ''
           You are an expert log analysis specialist with deep experience in debugging
           build failures, test outputs, and system logs. Your expertise spans multiple
@@ -152,7 +150,7 @@ let
 
     junior-rwx = {
       allowed_tools = with tools; r ++ w ++ x;
-      prompt = wrapCmds [
+      prompt = [
         modagent.main
         ''
           Your strengths:

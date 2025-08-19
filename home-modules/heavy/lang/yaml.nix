@@ -6,7 +6,6 @@ in
   xdg.configFile = {
     # YAML formatter configuration
     "yamlfmt/yamlfmt.yaml".text = toYAML {
-      gitignore_excludes = true;
     };
 
     # YAML linter configuration
