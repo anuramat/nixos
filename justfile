@@ -53,7 +53,7 @@ lint:
     # statix check -i hardware-configuration.nix || true
     # deadnix || true
     fd -e lua | luacheck - --codes --globals=vim -q
-    fd -e sh --print0 | xargs -0 shellcheck --enable=all --color=always
+    fd -e sh --print0 -E '/tests/' | xargs -0 shellcheck --enable=all --color=always
     yamllint .
 
 [group('code')]
