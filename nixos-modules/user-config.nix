@@ -1,12 +1,13 @@
 # User configuration module - makes username and personal settings configurable
-{ lib, config, ... }:
+{ lib, config, inputs, ... }:
 with lib;
 let
   cfg = config.userConfig;
+  username = cfg.username;
+  homeConfig = config.home-manager.users.${username};
 in
 {
   options.userConfig = {
-    # TODO defaults should be taken from home-manager git settings; if none -- throw an error
     username = mkOption {
       type = types.str;
       description = "Primary username for the system";
@@ -14,19 +15,21 @@ in
 
     fullName = mkOption {
       type = types.str;
-      description = "User's full name";
+      default = homeConfig.programs.git.userName or (throw "No full name provided. Set either userConfig.fullName or programs.git.userName.");
+      description = "User's full name (defaults to programs.git.userName)";
     };
 
     email = mkOption {
       type = types.str;
-      description = "User's email address";
+      default = homeConfig.programs.git.userEmail or (throw "No email provided. Set either userConfig.email or programs.git.userEmail.");
+      description = "User's email address (defaults to programs.git.userEmail)";
     };
   };
 
   config = {
-    home-manager.users.${cfg.username} = {
+    home-manager.users.${username} = {
       imports = [
-        inputs.self.homeModules.${cfg.username}
+        inputs.self.homeModules.${username}
       ];
     };
   };

@@ -13,5 +13,6 @@ foldl' mergeAttrs { } (
     ./hax/home.nix
     ./integration/username.nix
     ./integration/user-config.nix
+    ./integration/git-defaults-simple.nix
   ]
 )
