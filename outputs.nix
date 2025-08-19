@@ -14,6 +14,7 @@ let
       root
       ;
   };
+  inherit (hax.common) mkImportSet mkDirSet;
 in
 flake-parts.lib.mkFlake { inherit inputs; } {
   imports = [
@@ -41,14 +42,6 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       };
       nixosModules = mkImportSet ./nixos-modules;
       homeModules = mkImportSet ./home-modules;
-      mkDirSet =
-        func: dir:
-        with builtins;
-        readDir dir
-        |> attrNames
-        |> map (n: lib.nameValuePair (lib.removeSuffix ".nix" n) (func "${dir}/${n}")) # assert .nix equiv regular; assert no collisions
-        |> lib.listToAttrs;
-      mkImportSet = mkDirSet (x: import x);
       mkNixosConfigurations = mkDirSet (
         x:
         inputs.nixpkgs.lib.nixosSystem {
@@ -89,17 +82,11 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       config,
       system,
       pkgs,
-      # TODO check if inputs are provided?
       inputs,
       ...
     }@args:
-    {
-      files = import ./parts/files.nix args;
-      nix-unit = import ./parts/nix-unit.nix args;
-      pre-commit = import ./parts/pre-commit.nix args;
-      topology = import ./parts/topology.nix args;
-      treefmt = import ./parts/treefmt.nix args;
-
+    (mkDirSet (x: import x args) ./parts)
+    // {
       apps.writer.program = config.files.writer.drv;
 
       # TODO move? somehow sync extraspecialargs with home-manager import

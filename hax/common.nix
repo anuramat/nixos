@@ -31,4 +31,12 @@ rec {
           "${prefix}.${name} = ${formatValue value}";
     in
     lib.concatStringsSep "\n" (lib.mapAttrsToList (formatAssignment root) cfg);
+  mkDirSet =
+    func: dir:
+    with builtins;
+    readDir dir
+    |> attrNames
+    |> map (n: lib.nameValuePair (lib.removeSuffix ".nix" n) (func "${dir}/${n}")) # assert .nix equiv regular; assert no collisions
+    |> lib.listToAttrs;
+  mkImportSet = mkDirSet (x: import x);
 }
