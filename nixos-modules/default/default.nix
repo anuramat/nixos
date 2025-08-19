@@ -1,7 +1,6 @@
 # vim: fdl=0 fdm=marker
 {
   config,
-  username,
   hax,
   inputs,
   ...
@@ -14,6 +13,7 @@
     ./net.nix
     ./nix.nix
     ./user.nix
+    ../user-config.nix
 
     inputs.agenix.nixosModules.default
     inputs.self.genericModules.age
@@ -21,7 +21,9 @@
     inputs.home-manager.nixosModules.home-manager
   ];
 
-  home-manager = {
+  home-manager = let
+    username = config.userConfig.username;
+  in {
     extraSpecialArgs = {
       inherit hax inputs;
     };

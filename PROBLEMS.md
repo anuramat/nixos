@@ -1,10 +1,11 @@
 # Maintainability Problems
 
-## 1. Hardcoded Personal Data
-- Username "anuramat" hardcoded in `outputs.nix:41` and elsewhere
-- Personal paths (`~/notes`, `~/books`) scattered throughout codebase
-- Timezone hardcoded in `nixos-modules/anuramat.nix`
-- Makes repository impossible to fork/reuse without extensive modifications
+## 1. ~~Hardcoded Personal Data~~ ✅ RESOLVED
+- ~~Username "anuramat" hardcoded in `outputs.nix:41` and elsewhere~~
+- ~~Personal paths (`~/notes`, `~/books`) scattered throughout codebase~~
+- ~~Timezone hardcoded in `nixos-modules/anuramat.nix`~~
+- ~~Makes repository impossible to fork/reuse without extensive modifications~~
+- **RESOLVED**: Username is now fully parameterized via `userConfig` module
 
 ## 2. Dual Entrypoint Architecture
 - Two separate entrypoints for home-manager (NixOS module vs standalone)

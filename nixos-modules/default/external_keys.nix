@@ -1,4 +1,7 @@
-{ username, ... }:
+{ config, ... }:
+let
+  username = config.userConfig.username;
+in
 {
   users.users.${username} = {
     openssh.authorizedKeys.keys = [

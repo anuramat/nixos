@@ -1,12 +1,12 @@
 {
   inputs,
-  username,
+  config,
   ...
 }:
 {
   nix.distributedBuilds = true;
   system.stateVersion = "24.05";
-  home-manager.users.${username}.home.stateVersion = "24.11";
+  home-manager.users.${config.userConfig.username}.home.stateVersion = "24.11";
   services.keyd.keyboards.main.ids = [
     # same keyboard
     "0001:0001:a38e6885"

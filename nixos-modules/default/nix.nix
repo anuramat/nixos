@@ -1,11 +1,11 @@
 {
-  username,
   config,
   inputs,
   lib,
   ...
 }:
 let
+  username = config.userConfig.username;
   # TODO add missing keys to trusted-public-keys
   substituters = [
     "https://cache.iog.io"

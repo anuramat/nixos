@@ -38,7 +38,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
           hax
           root
           ;
-        username = "anuramat"; # shouldn't be used in home-manager TODO
+        # username now comes from userConfig module
       };
       nixosModules = mkImportSet ./nixos-modules;
       homeModules = mkImportSet ./home-modules;

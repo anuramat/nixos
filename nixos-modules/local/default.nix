@@ -2,10 +2,13 @@
 {
   lib,
   inputs,
-  username,
+  config,
   hax,
   ...
 }:
+let
+  username = config.userConfig.username;
+in
 {
   imports = [
     ./llama.nix

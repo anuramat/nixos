@@ -1,10 +1,10 @@
 {
-  username,
   config,
   ...
 }:
 let
-  fullname = config.home-manager.users.${username}.programs.git.userName;
+  username = config.userConfig.username;
+  fullname = config.userConfig.fullName;
 in
 {
   services.openssh.settings.AllowUsers = [ username ];
