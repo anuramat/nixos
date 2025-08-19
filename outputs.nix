@@ -73,8 +73,8 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       };
 
       overlays = import ./overlays { inherit inputs lib; }; # use mkImportSet as well
-      nixvimModules = mkImportSet ./nixvim-modules; # TODO split into default and heavy
-      genericModules = mkImportSet ./shared-modules; # TODO rename
+      nixvimModules = mkImportSet ./nixvim-modules; # TODO split into default and heavy, then add light version to anuramat-root
+      genericModules = mkImportSet ./generic-modules;
     };
 
   perSystem =
