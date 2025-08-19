@@ -35,11 +35,9 @@ flake-parts.lib.mkFlake { inherit inputs; } {
         hax
         root
         ;
+      username = "anuramat"; # shouldn't be used in home-manager, but specifying it in nixos specialargs causes a recursion error BUG
     };
     nixos = {
-      earlyModuleArgs = {
-        username = "anuramat"; # nixos only arg
-      };
       hosts = {
         anuramat-ll7.userHomeModules = {
           anuramat = "anuramat-full";
