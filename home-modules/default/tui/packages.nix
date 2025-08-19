@@ -95,6 +95,7 @@
     fortune # random quotes
 
     # miscellaneous unfiled TODO
+    remarshal
     lm_sensors
     # dix # not in stable yet
     nix-unit
