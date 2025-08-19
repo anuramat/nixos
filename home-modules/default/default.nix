@@ -10,7 +10,6 @@
     ./keyring.nix
     ./lib.nix
     ./tui
-    inputs.agenix.homeManagerModules.default
   ];
 
   xdg.enable = true; # set xdg basedir vars in .profile

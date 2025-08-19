@@ -4,7 +4,8 @@
     inputs.self.overlays.default
   ];
   imports = [
-    inputs.stylix.homeModules.stylix
+    inputs.agenix.homeManagerModules.default
     inputs.self.modules.stylix
+    inputs.stylix.homeModules.stylix
   ];
 }
