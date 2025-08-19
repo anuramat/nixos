@@ -65,8 +65,8 @@ build pkg:
     nix build ".#nixosConfigurations.$(hostname).pkgs.{{ pkg }}"
 
 [group('util')]
-run pkg:
-    nix run ".#nixosConfigurations.$(hostname).pkgs.{{ pkg }}"
+run pkg *args:
+    nix run ".#nixosConfigurations.$(hostname).pkgs.{{ pkg }}" -- {{ args }}
 
 # Install pre-commit hooks
 [group('util')]
