@@ -4,7 +4,10 @@
   users.users.${username} = {
     isNormalUser = true;
     description = "Test user ${username}";
-    extraGroups = [ "wheel" "networkmanager" ];
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+    ];
   };
 
   services.getty.autologinUser = username;

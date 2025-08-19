@@ -16,19 +16,19 @@ echo ""
 
 # Function to capture a configuration value
 capture() {
-    local name=$1
-    local path=$2
-    local output
-    
-    echo -n "Capturing $name... "
-    
-    if output=$(nix eval ".#nixosConfigurations.$HOSTNAME.$path" 2>/dev/null); then
-        echo "$output" > "$SNAPSHOT_DIR/${name}.snapshot"
-        echo "✓"
-        echo "  Value: $(echo "$output" | head -c 50)$([ $(echo "$output" | wc -c) -gt 50 ] && echo "...")"
-    else
-        echo "✗ (not found)"
-    fi
+	local name=$1
+	local path=$2
+	local output
+
+	echo -n "Capturing $name... "
+
+	if output=$(nix eval ".#nixosConfigurations.$HOSTNAME.$path" 2>/dev/null); then
+		echo "$output" >"$SNAPSHOT_DIR/${name}.snapshot"
+		echo "✓"
+		echo "  Value: $(echo "$output" | head -c 50)$([ "$(echo "$output" | wc -c)" -gt 50 ] && echo "...")"
+	else
+		echo "✗ (not found)"
+	fi
 }
 
 # Capture username-related configuration values
@@ -50,7 +50,7 @@ capture "hostname" "config.networking.hostName"
 capture "system-stateVersion" "config.system.stateVersion"
 
 # Generate comparison script
-cat > "$SNAPSHOT_DIR/compare.sh" << 'EOF'
+cat >"$SNAPSHOT_DIR/compare.sh" <<'EOF'
 #!/usr/bin/env bash
 # Compare current configuration with snapshots
 
@@ -104,6 +104,6 @@ echo ""
 # List created snapshots
 echo "Created snapshots:"
 for snapshot in "$SNAPSHOT_DIR"/*.snapshot; do
-    [ -f "$snapshot" ] || continue
-    echo "  - $(basename "$snapshot")"
+	[ -f "$snapshot" ] || continue
+	echo "  - $(basename "$snapshot")"
 done
