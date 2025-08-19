@@ -1,6 +1,5 @@
 {
   config,
-  user,
   pkgs,
   ...
 }:
@@ -106,8 +105,6 @@ in
     };
     git = {
       enable = true;
-      userEmail = user.email;
-      userName = user.fullname;
 
       inherit
         attributes

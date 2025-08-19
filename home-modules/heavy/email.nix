@@ -1,25 +1,30 @@
-{ user, ... }:
+{ config, ... }:
+let
+  inherit (config.programs) git;
+  email = git.userEmail;
+  fullname = git.userName;
+in
 {
   programs.himalaya = {
     # BUG doesn't work yet with protonmail-bridge <https://github.com/pimalaya/himalaya/issues/574>
     enable = true;
     settings = {
-      display-name = user.fullname;
+      display-name = fullname;
       signature = "Regards,\n";
       signature-delim = "-- \n";
       downloads-dir = "~/Downloads";
     };
   };
   accounts.email.accounts.primary = {
-    address = user.email;
+    address = email;
     primary = true;
-    realName = user.fullname;
+    realName = fullname;
     himalaya = {
       enable = true;
       settings =
         let
           backend = {
-            login = user.email;
+            login = email;
             type = "imap";
             host = "127.0.0.1";
             port = 1143;
@@ -31,7 +36,7 @@
           };
         in
         {
-          email = user.email;
+          email = email;
           inherit backend;
           message.send.backend = backend // {
             type = "smtp";

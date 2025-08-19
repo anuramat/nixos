@@ -1,6 +1,6 @@
 {
   lib,
-  user,
+  username ? null,
   config,
   root,
   ...
@@ -23,7 +23,7 @@ in
       // (
         if isNixOS then
           {
-            owner = user.username;
+            owner = username;
           }
         else
           { }

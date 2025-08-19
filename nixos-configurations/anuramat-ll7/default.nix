@@ -1,6 +1,6 @@
 {
   pkgs,
-  user,
+  username,
   config,
   inputs,
   ezModules,
@@ -12,7 +12,7 @@
   #   hardware.info = ...;
   # };
   system.stateVersion = "24.05";
-  home-manager.users.${user.username}.home.stateVersion = "24.11";
+  home-manager.users.${username}.home.stateVersion = "24.11";
 
   programs.captive-browser.interface = "wlp0s20f3";
 
@@ -29,6 +29,7 @@
   imports = [
     ezModules.local
     ezModules.builder
+    ezModules.anuramat
 
     inputs.nixos-hardware.nixosModules.common-cpu-intel
 

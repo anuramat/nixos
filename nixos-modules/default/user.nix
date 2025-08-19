@@ -1,13 +1,16 @@
 {
-  user,
+  username,
   config,
   ...
 }:
+let
+  fullname = config.home-manager.users.${username}.programs.git.userName;
+in
 {
-  services.openssh.settings.AllowUsers = [ user.username ];
+  services.openssh.settings.AllowUsers = [ username ];
   users.users = {
-    ${user.username} = {
-      description = user.fullname;
+    ${username} = {
+      description = fullname;
       isNormalUser = true;
       extraGroups = [
         "nginx"
@@ -31,6 +34,6 @@
       };
     };
   };
-  services.getty.autologinUser = user.username;
-  hardware.openrazer.users = [ user.username ];
+  services.getty.autologinUser = username;
+  hardware.openrazer.users = [ username ];
 }

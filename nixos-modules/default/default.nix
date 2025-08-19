@@ -1,6 +1,5 @@
 # vim: fdl=0 fdm=marker
 {
-  user,
   config,
   inputs,
   ...
@@ -22,9 +21,7 @@
   # TODO move stuff that is not required on a server
 
   security.rtkit.enable = true; # realtime kit, hands out realtime priority to user processes
-  # TODO move?
-  time.timeZone = user.tz;
-  i18n.defaultLocale = user.locale;
+  i18n.defaultLocale = "en_US.UTF-8";
 
   # TODO doesn't work
   # need to expose GNUPGHOME for starters

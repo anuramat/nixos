@@ -2,16 +2,16 @@
 {
   imports = [
     ezModules.standalone
+    ezModules.anuramat
   ];
   home =
     let
       username = "anuramat";
     in
     {
-      # XXX CHANGE ME
-      stateVersion = "24.11";
-
       inherit username;
+      # XXX CHANGE THESE TWO:
+      stateVersion = "24.11";
       homeDirectory = "/home/${username}";
     };
 }

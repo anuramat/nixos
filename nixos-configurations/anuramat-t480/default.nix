@@ -2,13 +2,13 @@
   inputs,
   config,
   ezModules,
-  user,
+  username,
   ...
 }:
 {
   nix.distributedBuilds = true;
   system.stateVersion = "24.05";
-  home-manager.users.${user.username}.home.stateVersion = "24.11";
+  home-manager.users.${username}.home.stateVersion = "24.11";
   services.keyd.keyboards.main.ids = [
     # same keyboard
     "0001:0001:a38e6885"
@@ -17,6 +17,7 @@
 
   imports = [
     ezModules.local
+    ezModules.anuramat
     inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t480
     ./hardware-configuration.nix
   ];

@@ -1,5 +1,4 @@
 {
-  user,
   config,
   inputs,
   ...

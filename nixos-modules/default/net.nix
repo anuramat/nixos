@@ -1,6 +1,6 @@
 {
   lib,
-  user,
+  username,
   config,
   ...
 }:
@@ -23,7 +23,7 @@
     inherit (config.lib.hosts) knownHostsFiles;
     extraConfig =
       let
-        prefix = user.username + "-";
+        prefix = username + "-";
         mkAliasEntry =
           hostname: # ssh_config
           ''

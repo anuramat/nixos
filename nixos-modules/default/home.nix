@@ -1,6 +1,5 @@
 {
   config,
-  user,
   inputs,
   ...
 }:

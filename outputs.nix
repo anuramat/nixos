@@ -27,55 +27,43 @@ flake-parts.lib.mkFlake { inherit inputs; } {
   systems = [
     "x86_64-linux"
   ];
-  ezConfigs =
-    let
-      user = inputs.self.user; # TODO remove and use the output
-    in
-    {
-      root = ./.;
-      globalArgs = {
-        inherit
-          inputs
-          hax
-          user
-          root
-          ;
-      };
-      nixos = {
-        hosts = {
-          anuramat-ll7.userHomeModules = {
-            anuramat = "anuramat-full";
-          };
-          anuramat-root.userHomeModules = {
-            anuramat = "anuramat-minimal";
-          };
-          anuramat-t480.userHomeModules = {
-            anuramat = "anuramat-full";
-          };
+  ezConfigs = {
+    root = ./.;
+    globalArgs = {
+      inherit
+        inputs
+        hax
+        root
+        ;
+      username = "anuramat"; # nixos only arg
+    };
+    nixos = {
+      hosts = {
+        anuramat-ll7.userHomeModules = {
+          anuramat = "anuramat-full";
+        };
+        anuramat-root.userHomeModules = {
+          anuramat = "anuramat-minimal";
+        };
+        anuramat-t480.userHomeModules = {
+          anuramat = "anuramat-full";
         };
       };
-      home = {
-        users.anuramat-standalone = {
-          passInOsConfig = false;
-          standalone = {
-            enable = true;
-            pkgs = import inputs.nixpkgs {
-              system = "x86_64-linux";
-              config.allowUnfree = true;
-            };
+    };
+    home = {
+      users.anuramat-standalone = {
+        passInOsConfig = false;
+        standalone = {
+          enable = true;
+          pkgs = import inputs.nixpkgs {
+            system = "x86_64-linux";
+            config.allowUnfree = true;
           };
         };
       };
     };
+  };
   flake = {
-    user = {
-      username = "anuramat";
-      fullname = "Arsen Nuramatov";
-      email = "x@ctrl.sn";
-      tz = "Europe/Berlin";
-      locale = "en_US.UTF-8";
-    };
-
     consts = {
       builderUsername = "builder";
       cacheFilename = "cache.pem.pub";

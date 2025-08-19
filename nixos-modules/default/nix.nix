@@ -1,5 +1,5 @@
 {
-  user,
+  username,
   config,
   inputs,
   lib,
@@ -16,7 +16,7 @@ let
     "https://nixpkgs-python.cachix.org"
   ]
   ++ config.lib.hosts.substituters;
-  keyPath = "${config.users.users.${user.username}.home}/.ssh/id_ed25519";
+  keyPath = "${config.users.users.${username}.home}/.ssh/id_ed25519";
 in
 {
   nixpkgs = {
