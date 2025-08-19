@@ -58,6 +58,40 @@ let
     in
     lib.hm.dag.entryAfter [ "writeBoundary" ] script;
 
+  mkYqActivationScript =
+    # @returns: activation script, that updates a YAML file (in-place)
+    # note there is no diff logging compared to json version
+    # @args:
+    #   - target -- path of the file to update (relative to $HOME)
+    #   - source -- (?list of) attribute set of key-value pairs to write, where
+    #     key is the YAML path (starting with "."), and
+    #     value is any/derivation
+    operator: sources: target:
+    let
+      sourceList = if lib.isList sources then sources else [ sources ];
+
+      yqCalls =
+        sourceList
+        |> lib.concatMapStringsSep "\n" (
+          lib.concatMapAttrsStringSep "\n" (
+            key: value:
+            let
+              valueFile = fileWithJson value;
+              flags = "-i -py -oy"; # in-place, yaml input, yaml output
+              expr = ''select(fileIndex==0).${key} ${operator} select(fileIndex==1) | select(fileIndex==0) | ... style=""'';
+              yq = getExe pkgs.yq-go;
+            in
+            ''run ${yq} eval-all '${expr}' ${flags} "${target}" "${valueFile}"''
+          )
+        );
+
+      script = # bash
+        ''
+          ${yqCalls "$"}
+        '';
+    in
+    lib.hm.dag.entryAfter [ "writeBoundary" ] script;
+
   # TODO: refactor to call jq once: write all sources to a single json file, then loop in jq or at least unroll a nix loop into a jq command (still just one jq command)
   mkJqActivationScript =
     # @returns: activation script, that updates a JSON file
