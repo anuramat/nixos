@@ -13,6 +13,8 @@
     "0001:0001:70533846"
   ];
 
+  networking.hostName = "anuramat-t480";
+
   imports = [
     inputs.self.nixosModules.default
     inputs.self.nixosModules.local

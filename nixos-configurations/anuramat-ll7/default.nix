@@ -13,6 +13,7 @@
   # };
   system.stateVersion = "24.05";
   home-manager.users.${username}.home.stateVersion = "24.11";
+  networking.hostName = "anuramat-ll7";
 
   programs.captive-browser.interface = "wlp0s20f3";
 

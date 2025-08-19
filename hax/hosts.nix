@@ -23,7 +23,8 @@ rec {
   mkOthers =
     inputs: name:
     let
-      names = attrNames inputs.self.nixosConfigurations;
+      cfgs = inputs.self.nixosConfigurations;
+      names = attrNames cfgs |> map (x: cfgs.${x}.config.networking.hostName);
       filterSelf = filter (v: v != name);
     in
     filterSelf names

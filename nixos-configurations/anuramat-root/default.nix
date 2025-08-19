@@ -1,4 +1,3 @@
-# vim: fdm=marker fdl=0
 {
   inputs,
   config,
@@ -12,7 +11,9 @@
     ./web
     ./hardware-configuration.nix
   ];
-  # basic {{{1
+
+  networking.hostName = "anuramat-root";
+
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "/dev/vda";
   nix.distributedBuilds = true;
