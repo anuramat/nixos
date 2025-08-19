@@ -21,18 +21,20 @@
     inputs.home-manager.nixosModules.home-manager
   ];
 
-  home-manager = let
-    username = config.userConfig.username;
-  in {
-    extraSpecialArgs = {
-      inherit hax inputs;
+  home-manager =
+    let
+      username = config.userConfig.username;
+    in
+    {
+      extraSpecialArgs = {
+        inherit hax inputs;
+      };
+      users.${username} = {
+        imports = with inputs.self.homeModules; [
+          default
+        ];
+      };
     };
-    users.${username} = {
-      imports = with inputs.self.homeModules; [
-        default
-      ];
-    };
-  };
 
   # TODO move stuff that is not required on a server
 

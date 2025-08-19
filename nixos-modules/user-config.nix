@@ -1,5 +1,10 @@
 # User configuration module - makes username and personal settings configurable
-{ lib, config, inputs, ... }:
+{
+  lib,
+  config,
+  inputs,
+  ...
+}:
 with lib;
 let
   cfg = config.userConfig;
@@ -15,13 +20,17 @@ in
 
     fullName = mkOption {
       type = types.str;
-      default = homeConfig.programs.git.userName or (throw "No full name provided. Set either userConfig.fullName or programs.git.userName.");
+      default =
+        homeConfig.programs.git.userName
+          or (throw "No full name provided. Set either userConfig.fullName or programs.git.userName.");
       description = "User's full name (defaults to programs.git.userName)";
     };
 
     email = mkOption {
       type = types.str;
-      default = homeConfig.programs.git.userEmail or (throw "No email provided. Set either userConfig.email or programs.git.userEmail.");
+      default =
+        homeConfig.programs.git.userEmail
+          or (throw "No email provided. Set either userConfig.email or programs.git.userEmail.");
       description = "User's email address (defaults to programs.git.userEmail)";
     };
   };
