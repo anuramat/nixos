@@ -13,7 +13,7 @@ flake:
     nix flake lock
 
 [group('build')]
-nixos:
+nixos command="switch" *flags:
     # ask for permission first
     sudo true
     # store keys in repo:
@@ -25,7 +25,7 @@ nixos:
     # copy binary cache public key
     cp -ft "{{ keys_dir }}" "/etc/nix/cache.pem.pub" 2>/dev/null || true
     # rebuild
-    sudo nixos-rebuild switch --option extra-experimental-features pipe-operators --show-trace
+    sudo nixos-rebuild {{ command }} --option extra-experimental-features pipe-operators {{ flags }}
 
 [group('code')]
 test flag="" arch=`nix eval --raw .#nixosConfigurations.$(hostname).config.nixpkgs.hostPlatform.system`:
@@ -84,7 +84,9 @@ check-hm user: (check ".#homeConfigurations." + user + ".activationPackage")
 
 [group('check')]
 check target="":
-    {{ if target == "" { "nix flake check" } else { "nix build " + target + " --show-trace --no-link --dry-run" } }}
+    # TODO somehow parameterize "--show-trace"
+    # TODO would `if target {} else {}` work?
+    {{ if target == "" { "nix flake check" } else { "nix build " + target + " --no-link --dry-run" } }}
     # or
-    # {{ if target == "" { "nix flake check" } else { "nix eval " + target + ".drvPath --show-trace" } }}
+    # {{ if target == "" { "nix flake check" } else { "nix eval " + target + ".drvPath" } }}
     # nix flake check flakgs: --no-build (skips checks), --all-systems
