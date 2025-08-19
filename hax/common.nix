@@ -36,7 +36,7 @@ rec {
     with builtins;
     readDir dir
     |> attrNames
-    |> map (n: lib.nameValuePair (lib.removeSuffix ".nix" n) (func "${dir}/${n}")) # assert .nix equiv regular; assert no collisions
+    |> map (n: lib.nameValuePair (lib.removeSuffix ".nix" n) (func /${dir}/${n})) # assert .nix equiv regular; assert no collisions
     |> lib.listToAttrs;
   mkImportSet = mkDirSet (x: import x);
 }
