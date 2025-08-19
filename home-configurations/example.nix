@@ -4,6 +4,7 @@
     default
     heavy
     anuramat
+    standalone
   ];
   home =
     let

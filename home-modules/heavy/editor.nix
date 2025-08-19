@@ -20,7 +20,7 @@
         # TODO is this the right/official way? underscore looks sketchy
         inherit inputs hax;
       }
-      // (if osConfig != null then { inherit osConfig; } else { });
+      // (if osConfig != null then { inherit osConfig; } else { osConfig = null; });
     };
     helix = {
       enable = true;
