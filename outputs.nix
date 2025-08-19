@@ -70,12 +70,15 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       cfgRoot = ./. + "/nixos-configurations/";
     };
 
+    # TODO extend ez-configs
     overlays = import ./overlays { inherit inputs lib; };
-
-    modules = {
-      stylix = import ./modules/stylix.nix;
-      age = import ./modules/age.nix;
-      nixvim = import ./modules/nixvim;
+    sharedModules = {
+      stylix = import ./shared-modules/stylix.nix;
+      age = import ./shared-modules/age.nix;
+    };
+    nixvimModules = {
+      # TODO split into default and heavy
+      default = import ./nixvim-modules/default;
     };
 
   };
@@ -102,7 +105,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
         extraSpecialArgs = {
           inherit inputs hax;
         };
-        module = inputs.self.modules.nixvim;
+        module = inputs.self.nixvimModules.default;
       };
     };
 }

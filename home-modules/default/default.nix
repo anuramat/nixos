@@ -2,9 +2,8 @@
   config,
   hax,
   lib,
-  inputs,
   ...
-}@args:
+}:
 {
   imports = [
     ./keyring.nix

@@ -5,7 +5,7 @@
   ];
   imports = [
     inputs.agenix.homeManagerModules.default
-    inputs.self.modules.stylix
+    inputs.self.sharedModules.stylix
     inputs.stylix.homeModules.stylix
   ];
 }

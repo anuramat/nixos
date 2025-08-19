@@ -39,7 +39,7 @@
               home-manager.expr = "${nixosExpr}.home-manager.users.type.getSubOptions []";
             }
           else
-            throw "TODO this is only configured for nixos.home-manager.nixvim setup"
+            throw "TODO this is only configured for nixos.home-manager.nixvim setup for now"
         );
         onAttach.function = # lua
           ''

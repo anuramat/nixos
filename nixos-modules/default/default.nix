@@ -14,7 +14,7 @@
     ./user.nix
 
     inputs.agenix.nixosModules.default
-    inputs.self.modules.age
+    inputs.self.sharedModules.age
     inputs.nix-topology.nixosModules.default
   ];
 

@@ -13,7 +13,7 @@
     nixvim = {
       enable = true;
       imports = [
-        inputs.self.modules.nixvim
+        inputs.self.nixvimModules.default
       ];
       defaultEditor = true;
       _module.args = {
