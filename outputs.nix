@@ -52,7 +52,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     };
     home = {
       users.anuramat-standalone = {
-        passInOsConfig = false;
+        # passInOsConfig = false;
         standalone = {
           enable = true;
           pkgs = import inputs.nixpkgs {
