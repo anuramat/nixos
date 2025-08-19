@@ -2,6 +2,7 @@
 {
   imports = [
     ezModules.standalone
+    ezModules.heavy
     ezModules.anuramat
   ];
   home =

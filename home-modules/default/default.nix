@@ -2,7 +2,6 @@
   config,
   hax,
   lib,
-  ezModules,
   inputs,
   ...
 }@args:
