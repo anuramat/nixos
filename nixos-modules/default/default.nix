@@ -28,7 +28,6 @@
     users.${username} = {
       imports = with inputs.self.homeModules; [
         default
-        anuramat # TODO move this to anuramat module
       ];
     };
   };
