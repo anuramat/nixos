@@ -65,6 +65,7 @@
     saber
     joplin-desktop
     standardnotes
+    zotero
 
     # img
     # krita # raster graphics, digital art # XXX not in cache, takes ages to build
