@@ -3,7 +3,7 @@
   username,
   config,
   inputs,
-  ezModules,
+  hax,
   ...
 }:
 {
@@ -12,16 +12,7 @@
   #   hardware.info = ...;
   # };
   system.stateVersion = "24.05";
-  home-manager = {
-    users.${username} = {
-      home.stateVersion = "24.11";
-      imports = with inputs.self.homeModules; [
-        default
-        heavy
-        anuramat
-      ];
-    };
-  };
+  home-manager.users.${username}.home.stateVersion = "24.11";
 
   programs.captive-browser.interface = "wlp0s20f3";
 
@@ -36,9 +27,10 @@
   };
 
   imports = [
-    ezModules.local
-    ezModules.builder
-    ezModules.anuramat
+    inputs.self.nixosModules.default
+    inputs.self.nixosModules.local
+    inputs.self.nixosModules.builder
+    inputs.self.nixosModules.anuramat
 
     inputs.nixos-hardware.nixosModules.common-cpu-intel
 

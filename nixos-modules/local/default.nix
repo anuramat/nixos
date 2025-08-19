@@ -2,6 +2,8 @@
 {
   lib,
   inputs,
+  username,
+  hax,
   ...
 }:
 {
@@ -12,6 +14,14 @@
     ./rice.nix
     inputs.musnix.nixosModules.musnix
   ];
+
+  home-manager = {
+    users.${username} = {
+      imports = with inputs.self.homeModules; [
+        heavy
+      ];
+    };
+  };
 
   programs.appimage = {
     enable = true;

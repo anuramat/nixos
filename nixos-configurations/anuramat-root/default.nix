@@ -1,13 +1,14 @@
 # vim: fdm=marker fdl=0
 {
+  inputs,
   config,
   username,
-  ezModules,
   ...
 }:
 {
   imports = [
-    ezModules.anuramat
+    inputs.self.nixosModules.default
+    inputs.self.nixosModules.anuramat
     ./web
     ./hardware-configuration.nix
   ];

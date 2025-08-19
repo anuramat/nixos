@@ -1,6 +1,8 @@
 # vim: fdl=0 fdm=marker
 {
   config,
+  username,
+  hax,
   inputs,
   ...
 }:
@@ -14,8 +16,22 @@
     ./user.nix
 
     inputs.agenix.nixosModules.default
+    inputs.self.genericModules.age
     inputs.nix-topology.nixosModules.default
+    inputs.home-manager.nixosModules.home-manager
   ];
+
+  home-manager = {
+    extraSpecialArgs = {
+      inherit hax inputs;
+    };
+    users.${username} = {
+      imports = with inputs.self.homeModules; [
+        default
+        anuramat # TODO move this to anuramat module
+      ];
+    };
+  };
 
   # TODO move stuff that is not required on a server
 

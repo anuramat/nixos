@@ -75,11 +75,8 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       };
 
       overlays = import ./overlays { inherit inputs lib; }; # use mkImportSet as well
-      modules = {
-        home = mkImportSet ./home-modules; # TODO move
-        nixvim = mkImportSet ./nixvim-modules; # TODO split into default and heavy
-        generic = mkImportSet ./shared-modules; # TODO rename
-      };
+      nixvimModules = mkImportSet ./nixvim-modules; # TODO split into default and heavy
+      genericModules = mkImportSet ./shared-modules; # TODO rename
     };
 
   perSystem =

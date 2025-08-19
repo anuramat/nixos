@@ -1,9 +1,9 @@
-{ ezModules, ... }:
+{ inputs, ... }:
 {
-  imports = [
-    ezModules.standalone
-    ezModules.heavy
-    ezModules.anuramat
+  imports = with inputs.self.homeModules; [
+    default
+    heavy
+    anuramat
   ];
   home =
     let
