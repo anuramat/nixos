@@ -24,7 +24,7 @@ let
         });
       in
       {
-        command = githubPatched;
+        command = getExe githubPatched;
         args = [
           "stdio"
         ];
