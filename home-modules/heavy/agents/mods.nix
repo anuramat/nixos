@@ -283,7 +283,7 @@ let
       { }
   );
 
-  modsCfg = (pkgs.formats.yaml { }).generate "mods_config.yaml" {
+  modsCfg = {
     inherit apis;
     default-api = "copilot";
     default-model = "gpt-5";
@@ -301,7 +301,7 @@ let
 
 in
 {
-  xdg.configFile."mods/mods.yml".source = modsCfg;
+  home.activation.mods = config.lib.home.yaml.set modsCfg "${config.xdg.configHome}/mods/mods.yml";
   home = {
     packages = [
       modsWithTokens

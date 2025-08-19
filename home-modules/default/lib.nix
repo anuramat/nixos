@@ -70,7 +70,7 @@ let
     let
       sourceList = if lib.isList sources then sources else [ sources ];
 
-      yqCalls =
+      script =
         sourceList
         |> lib.concatMapStringsSep "\n" (
           lib.concatMapAttrsStringSep "\n" (
@@ -84,11 +84,6 @@ let
             ''run ${yq} eval-all '${expr}' ${flags} "${target}" "${valueFile}"''
           )
         );
-
-      script = # bash
-        ''
-          ${yqCalls "$"}
-        '';
     in
     lib.hm.dag.entryAfter [ "writeBoundary" ] script;
 
@@ -163,6 +158,10 @@ in
     json = {
       merge = mkJqActivationScript "*=";
       set = mkJqActivationScript "=";
+    };
+
+    yaml = {
+      set = mkYqActivationScript "=";
     };
 
     mkJson =
