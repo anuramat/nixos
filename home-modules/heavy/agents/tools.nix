@@ -7,7 +7,6 @@
 let
   inherit (lib)
     getExe
-    getExe'
     mapAttrs
     filterAttrs
     tail
