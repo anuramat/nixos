@@ -1,6 +1,6 @@
 { pkgs, lib }:
 let
-  hax = import ../../../hax/mime.nix { inherit lib; };
+  hax = import ../../hax/mime.nix { inherit lib; };
 
   # Mock package with desktop files
   mockPackage = pkgs.runCommand "mock-package" { } ''

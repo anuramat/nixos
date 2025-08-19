@@ -1,6 +1,6 @@
 { pkgs, lib }:
 let
-  hax = import ../../../hax/common.nix { inherit lib; };
+  hax = import ../../hax/common.nix { inherit lib; };
 
   # Mock file for readLines test
   mockFile = pkgs.writeText "lines.txt" ''

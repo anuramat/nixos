@@ -1,6 +1,6 @@
 { pkgs, lib }:
 let
-  hax = import ../../../hax/vim.nix { inherit lib; };
+  hax = import ../../hax/vim.nix { inherit lib; };
 in
 {
   # Test lua helper

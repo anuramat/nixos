@@ -12,7 +12,7 @@ let
     };
   };
 
-  hax = import ../../../hax/home.nix { } mockHomelib;
+  hax = import ../../hax/home.nix { } mockHomelib;
 in
 {
   # Test removeBrokenLinks

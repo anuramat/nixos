@@ -61,7 +61,7 @@ let
     };
   };
 
-  hax = import ../../../hax/hosts.nix {
+  hax = import ../../hax/hosts.nix {
     inherit lib;
     inputs = mockInputs;
   };

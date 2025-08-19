@@ -1,6 +1,6 @@
 { pkgs, lib }:
 let
-  hax = import ../../../hax/web.nix { };
+  hax = import ../../hax/web.nix { };
 
   # Helper to extract nginx config from module list
   getNginxVirtualHosts =
