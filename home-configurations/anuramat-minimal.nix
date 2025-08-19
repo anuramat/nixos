@@ -1,6 +1,0 @@
-{ ezModules, ... }:
-{
-  imports = [
-    ezModules.anuramat
-  ];
-}

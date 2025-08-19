@@ -12,7 +12,16 @@
   #   hardware.info = ...;
   # };
   system.stateVersion = "24.05";
-  home-manager.users.${username}.home.stateVersion = "24.11";
+  home-manager = {
+    users.${username} = {
+      home.stateVersion = "24.11";
+      imports = with inputs.self.homeModules; [
+        default
+        heavy
+        anuramat
+      ];
+    };
+  };
 
   programs.captive-browser.interface = "wlp0s20f3";
 

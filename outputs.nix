@@ -23,71 +23,71 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     inputs.nix-unit.modules.flake.default
     inputs.treefmt-nix.flakeModule
     inputs.git-hooks-nix.flakeModule
+    inputs.home-manager.flakeModules.home-manager
   ];
   systems = [
     "x86_64-linux"
   ];
-  ezConfigs = {
-    root = ./.;
-    globalArgs = {
-      inherit
-        inputs
-        hax
-        root
-        ;
-      username = "anuramat"; # shouldn't be used in home-manager, but specifying it in nixos specialargs causes a recursion error BUG
-    };
-    nixos = {
-      hosts = {
-        anuramat-ll7.userHomeModules = {
-          anuramat = "anuramat-full";
-        };
-        anuramat-root.userHomeModules = {
-          anuramat = "anuramat-minimal";
-        };
-        anuramat-t480.userHomeModules = {
-          anuramat = "anuramat-full";
-        };
+  flake =
+    let
+      specialArgs = {
+        inherit
+          inputs
+          hax
+          root
+          ;
+        username = "anuramat"; # shouldn't be used in home-manager TODO
+      };
+      nixosModules = mkImportSet ./nixos-modules;
+      homeModules = mkImportSet ./home-modules;
+      mkDirSet =
+        func: dir:
+        with builtins;
+        readDir dir
+        |> attrNames
+        |> map (n: lib.nameValuePair (lib.removeSuffix ".nix" n) (func "${dir}/${n}")) # assert .nix equiv regular; assert no collisions
+        |> lib.listToAttrs;
+      mkImportSet = mkDirSet (x: import x);
+      mkNixosConfigurations = mkDirSet (
+        x:
+        inputs.nixpkgs.lib.nixosSystem {
+          modules = [ x ];
+          inherit specialArgs;
+        }
+      );
+      mkHomeConfigurations = mkDirSet (
+        x:
+        inputs.home-manager.lib.homeManagerConfiguration {
+          modules = [ x ];
+          extraSpecialArgs = specialArgs;
+        }
+      );
+    in
+    {
+      inherit nixosModules homeModules;
+      nixosConfigurations = mkNixosConfigurations ./nixos-configurations;
+      homeConfigurations = mkHomeConfigurations ./home-configurations;
+
+      consts = {
+        builderUsername = "builder";
+        cacheFilename = "cache.pem.pub";
+        cfgRoot = ./. + "/nixos-configurations/";
+      };
+
+      overlays = import ./overlays { inherit inputs lib; }; # use mkImportSet as well
+      modules = {
+        home = mkImportSet ./home-modules; # TODO move
+        nixvim = mkImportSet ./nixvim-modules; # TODO split into default and heavy
+        generic = mkImportSet ./shared-modules; # TODO rename
       };
     };
-    home = {
-      users.anuramat-standalone = {
-        # passInOsConfig = false;
-        standalone = {
-          enable = true;
-          pkgs = import inputs.nixpkgs {
-            system = "x86_64-linux";
-            config.allowUnfree = true;
-          };
-        };
-      };
-    };
-  };
-  flake = {
-    consts = {
-      builderUsername = "builder";
-      cacheFilename = "cache.pem.pub";
-      cfgRoot = ./. + "/nixos-configurations/";
-    };
-
-    # TODO extend ez-configs
-    overlays = import ./overlays { inherit inputs lib; };
-    sharedModules = {
-      stylix = import ./shared-modules/stylix.nix;
-      age = import ./shared-modules/age.nix;
-    };
-    nixvimModules = {
-      # TODO split into default and heavy
-      default = import ./nixvim-modules/default;
-    };
-
-  };
 
   perSystem =
     {
       config,
       system,
       pkgs,
+      # TODO check if inputs are provided?
       ...
     }@args:
     {
