@@ -1,12 +1,12 @@
 {
   lib,
-  username ? null,
   config,
   root,
   ...
 }:
 let
   isNixOS = config ? system;
+  username = if isNixOS then config.userConfig.username else null;
   secretsRoot = /${root}/secrets;
 in
 {
