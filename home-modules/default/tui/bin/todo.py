@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 
-from collections import defaultdict
-from datetime import datetime, UTC
-from itertools import zip_longest
-from math import ceil
 import argparse
 import os
 import re
 import sys
 import tempfile
+from collections import defaultdict
+from datetime import UTC, datetime
+from itertools import zip_longest
+from math import ceil
 
 EDITOR = os.environ.get("EDITOR") or "vi"
 DATE_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}(?= )")
@@ -16,7 +16,9 @@ MIN_CELL_HEIGHT = 10
 MIN_CELL_WIDTH = 30
 TAG_LOOKBEHIND = r"(?<!\S@)(?<=@)"
 TAG_PATTERN = re.compile(TAG_LOOKBEHIND + r"\S+")
-TODO_FILE = os.environ.get("TODO_FILE") or os.path.expanduser("${XDG_DATA_HOME:-$HOME/.local/share}/notes/todo.txt")
+TODO_FILE = os.environ.get("TODO_FILE") or os.path.expanduser(
+    "${XDG_DATA_HOME:-$HOME/.local/share}/todo.txt"
+)
 TERM_HEIGHT_OFFSET = 5  # 2 * (prompt_lines = 2) + 1 * (divider_lines = 1)
 
 

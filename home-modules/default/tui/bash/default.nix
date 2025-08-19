@@ -50,6 +50,8 @@ in
 
         TERMCMD = "foot";
         ESCDELAY = "25";
+
+        TODO_FILE = "/home/anuramat/notes/todo.txt";
       };
       sessionPath = [
         XDG_BIN_HOME

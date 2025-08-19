@@ -17,7 +17,7 @@
   boot.loader.grub.device = "/dev/vda";
   nix.distributedBuilds = true;
   system.stateVersion = "24.11";
-  home-manager.users.${config.userConfig.username}.home.stateVersion = "24.11";
+  home-manager.users.anuramat.home.stateVersion = "24.11";
   swapDevices = [
     {
       device = "/var/lib/swapfile";
