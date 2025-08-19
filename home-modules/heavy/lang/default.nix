@@ -67,6 +67,6 @@
     pup # html
     python3Packages.jupytext
     python3Packages.nbdime # ipynb diff, merge
-    yq # basic yaml, json, xml, csv, toml processor
+    yq-go # basic yaml, json, xml, csv, toml processor
   ];
 }
