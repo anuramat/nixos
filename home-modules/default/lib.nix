@@ -70,7 +70,7 @@ let
     let
       sourceList = if lib.isList sources then sources else [ sources ];
 
-      script =
+      calls =
         sourceList
         |> lib.concatMapStringsSep "\n" (
           lib.concatMapAttrsStringSep "\n" (
@@ -84,6 +84,11 @@ let
             ''run ${yq} eval-all '${expr}' ${flags} "${target}" "${valueFile}"''
           )
         );
+      # TODO escape target here and in the rest of the file in similar places
+      script = ''
+        [ -s "${target}" ] || echo '{}' >"${target}"
+        ${calls}
+      '';
     in
     lib.hm.dag.entryAfter [ "writeBoundary" ] script;
 
@@ -112,19 +117,18 @@ let
           )
         );
 
-      script = # bash
-        ''
-          target=${target}
-          source=$(mktemp)
-          mkdir -p "$(dirname "$target")"
-          [ -s "$target" ] || echo '{}' >"$target"
+      script = ''
+        target=${target}
+        source=$(mktemp)
+        mkdir -p "$(dirname "$target")"
+        [ -s "$target" ] || echo '{}' >"$target"
 
-          cp "$target" "$source"
-          ${jqCalls "$source"}
+        cp "$target" "$source"
+        ${jqCalls "$source"}
 
-          ${diff "$source" "$target"}
-          mv "$source" "$target"
-        '';
+        ${diff "$source" "$target"}
+        mv "$source" "$target"
+      '';
     in
     lib.hm.dag.entryAfter [ "writeBoundary" ] script;
 
