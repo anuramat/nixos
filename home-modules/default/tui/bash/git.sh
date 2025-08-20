@@ -233,69 +233,7 @@ gcreate() {
 }
 
 __gitgud_git_prompt() {
-	local -r only_state="$1" # don't show branch/commit
-
-	local bare
-	bare=$(git rev-parse --is-bare-repository 2>/dev/null) || return # we're not in a repo
-	if [ "$bare" = 'true' ]; then
-		printf 'bare'
-		return
-	fi
-
-	local -r git_root="$(git rev-parse --show-toplevel)"
-	(
-		cd "$git_root" || exit
-		local -r raw="$(git status --porcelain=v2 --show-stash --branch)"
-
-		# branch/commit
-		local branch
-		branch=$(echo "$raw" | grep -oP '(?<=^# branch.head ).*')
-		local commit
-		if [ "$branch" = '(detached)' ]; then
-			branch=''
-			commit=$(printf %.7s "$(echo "$raw" | grep -oP '(?<=^# branch.oid ).*')")
-		fi
-
-		# status
-		local status
-		{
-			# returns a string with unique XY status codes
-			# '3 1' - staging, '4 1' - work tree, '3 2' - both
-			chars() {
-				# TODO awk stuff is gpt, check
-				echo "$raw" | grep '^[12u]' | awk -v pos="$1" -v num="$2" '{printf substr($0, pos, num)}' \
-					| sed 's/[. #]//g' | fold -w1 | LC_ALL=C sort -u | tr -d '\n'
-			}
-
-			# XY codes from staging area (index)
-			status+=$(chars 3 1)
-
-			# dirty work tree
-			[ "$(chars 4 1)" != "" ] && status+='+'
-
-			# untracked files
-			echo "$raw" | grep -q '^?' && status+="?"
-		}
-
-		local desync
-		# behind
-		[ "$(git cherry @ "@{push}" 2>/dev/null)" != "" ] && desync+='<'
-		# ahead
-		[ "$(git cherry "@{u}" @ 2>/dev/null)" != "" ] && desync+='>'
-		# TODO add unpushed commits from other branches with a special flag?
-
-		local -r stash="$(echo "$raw" | grep -oP '(?<=^# stash )\d+')"
-
-		local -r state="$(printf %s "${status:+ $status}${desync:+ $desync}${stash:+ \$$stash}")"
-
-		if [ "$only_state" = "" ]; then
-			# for PS1: prepend branch/hash
-			printf %s "${branch:-$commit}$state"
-		else
-			printf %s "${state:- clean}"
-		fi
-
-		# error on dirty
-		[ "$state" = "" ]
-	)
+	starship module git_branch
+	starship module git_state
+	starship module git_status
 }

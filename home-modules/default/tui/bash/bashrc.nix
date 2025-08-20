@@ -137,7 +137,6 @@ in
       [[ $- == *i* ]] || return
       # WARN here order matters for sure
       source ${./git.sh}
-      # source ${./ps1.sh}
 
       source ${./bashrc.sh}
 
