@@ -15,6 +15,7 @@ let
       flags =
         let
           mmproj = rootdir + "gemma-3-4b-it-GGUF_mmproj-model-f16.gguf";
+          template = rootdir + "gemma3.jinja";
         in
         [
           "-c"
@@ -24,6 +25,9 @@ let
           "999"
           "--mmproj"
           mmproj
+          # "--jinja"
+          # "--chat-template-file"
+          # template
         ];
     };
 
