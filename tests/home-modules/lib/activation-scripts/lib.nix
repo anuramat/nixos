@@ -106,6 +106,51 @@ in
   # Helper to check if execution test passed
   checkExecution = drv: builtins.pathExists drv;
 
+  # NEW: Helper to extract and execute actual DAG activation scripts
+  # This tests the REAL generated scripts instead of hardcoded approximations
+  mkRealActivationTest = name: dagEntry: setupScript: verificationScript:
+    let
+      # Extract the actual bash script from the DAG entry
+      realScript = dagEntry.data;
+      
+      drv = pkgs.runCommand "test-real-${name}" {
+        buildInputs = with pkgs; [
+          jq yq-go moreutils bash coreutils diffutils
+        ];
+      } ''
+        set -euo pipefail
+        
+        # Create test workspace
+        export HOME=$PWD
+        cd $HOME
+        
+        # Mock the run function that home-manager provides
+        run() { "$@"; }
+        export -f run
+        
+        echo "=== Running setup for ${name} ==="
+        
+        # Run setup (e.g., create initial files)
+        ${setupScript}
+        
+        echo "=== Executing REAL activation script for ${name} ==="
+        
+        # Execute the ACTUAL generated activation script
+        ${realScript}
+        
+        echo "=== Real script execution completed, running verification ==="
+        
+        # Run verification to check the results
+        ${verificationScript}
+        
+        # Success marker
+        echo "PASS" > $out
+      '';
+    in
+    drv;
+
+  # Test helper functions are defined directly in this attribute set
+  
   # Re-export everything for easy access
   inherit lib pkgs;
 }
