@@ -128,7 +128,7 @@ __check() {
 		}
 
 		local status
-		status=$(__gitgud_git_prompt 1) && status=
+		status=$(__gitgud_git_prompt) && status=
 		status="${pulled:+ [ff]}${status:+$(tput setaf 1)$status$(tput sgr0)}"
 		[ "$status" = "" ] && return
 		echo "$name$status"
@@ -195,7 +195,7 @@ up() (
 	fi
 
 	local prompt
-	prompt=$(__gitgud_git_prompt 1) || prompt="$(tput setaf 1)$prompt$(tput sgr0)"
+	prompt=$(__gitgud_git_prompt) || prompt="$(tput setaf 1)$prompt$(tput sgr0)"
 	echo "status:$prompt"
 )
 
@@ -233,7 +233,9 @@ gcreate() {
 }
 
 __gitgud_git_prompt() {
-	starship module git_branch
-	starship module git_state
-	starship module git_status
+	status=$(starship module git_status)
+	printf %s "$status"
+
+	# dirty => non-zero return code:
+	printf %s "$status" | ansifilter | grep -qv '\S'
 }
