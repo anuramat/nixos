@@ -21,7 +21,7 @@ let
           starship module git_branch
           starship module git_state
           starship module git_status
-          echo "$MODEL_DISPLAY"
+          echo " $MODEL_DISPLAY"
 
           # {
           #   "hook_event_name": "Status",
