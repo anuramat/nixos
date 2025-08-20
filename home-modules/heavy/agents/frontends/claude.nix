@@ -9,6 +9,43 @@
 let
   inherit (lib) mapAttrs stringToCharacters concatStringsSep;
   inherit (config.lib) agents;
+  statusLine = {
+    type = "command";
+    command =
+      let
+        script = ''
+          input=$(cat)
+          MODEL_DISPLAY=$(echo "$input" | jq -r '.model.display_name')
+
+          starship module directory
+          starship module git_branch
+          starship module git_state
+          starship module git_status
+          echo "$MODEL_DISPLAY"
+
+          # {
+          #   "hook_event_name": "Status",
+          #   "session_id": "abc123...",
+          #   "transcript_path": "/path/to/transcript.json",
+          #   "cwd": "/current/working/directory",
+          #   "model": {
+          #     "id": "claude-opus-4-1",
+          #     "display_name": "Opus"
+          #   },
+          #   "workspace": {
+          #     "current_dir": "/current/working/directory",
+          #     "project_dir": "/original/project/directory"
+          #   },
+          #   "version": "1.0.80",
+          #   "output_style": {
+          #     "name": "default"
+          #   }
+          # }
+        '';
+      in
+      pkgs.writeShellScript "statusline.sh" script;
+    padding = 0;
+  };
   hooks = {
     Notification = [
       {
@@ -109,7 +146,11 @@ in
     activation = {
       claudeSettings = config.lib.home.json.set {
         includeCoAuthoredBy = false;
-        inherit hooks permissions;
+        inherit
+          hooks
+          permissions
+          statusLine
+          ;
       } "${cfgDir}/settings.json";
       claudeMcp = config.lib.home.json.set {
         mcpServers = {
