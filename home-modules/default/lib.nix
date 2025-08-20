@@ -64,8 +64,7 @@ let
     # @args:
     #   - target -- path of the file to update (relative to $HOME)
     #   - source -- (?list of) attribute set of key-value pairs to write, where
-    #     key is the YAML path (starting with "."), and
-    #     value is any/derivation
+    #     key is the YAML path, and value is any/derivation
     operator: sources: target:
     let
       sourceList = if lib.isList sources then sources else [ sources ];
@@ -98,8 +97,7 @@ let
     # @args:
     #   - target -- path of the file to update (relative to $HOME)
     #   - source -- (?list of) attribute set of key-value pairs to write, where
-    #     key is the JSON path (starting with "."), and
-    #     value is any/derivation
+    #     key is the JSON path, and value is any/derivation
     operator: sources: target:
     let
       sourceList = if lib.isList sources then sources else [ sources ];
