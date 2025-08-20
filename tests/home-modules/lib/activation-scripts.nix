@@ -66,32 +66,43 @@ let
   };
 
   # Helper to create execution tests that actually run the scripts
-  mkExecutionTest = name: script: assertions: 
+  mkExecutionTest =
+    name: script: assertions:
     let
-      drv = pkgs.runCommand "test-${name}" {
-        buildInputs = with pkgs; [ jq yq-go moreutils bash coreutils diffutils ];
-      } ''
-        set -euo pipefail
-        
-        # Create test workspace  
-        export HOME=$PWD
-        cd $HOME
-        
-        # Mock the run function that home-manager provides
-        run() { "$@"; }
-        export -f run
-        
-        # The script might reference nix store paths that aren't available
-        # in the test environment. Let's extract the relevant parts and
-        # create a simplified test that achieves the same effect.
-        
-        # Run assertions and capture results
-        ${assertions}
-        
-        # Success marker
-        echo "PASS" > $out
-      '';
-    in drv;
+      drv =
+        pkgs.runCommand "test-${name}"
+          {
+            buildInputs = with pkgs; [
+              jq
+              yq-go
+              moreutils
+              bash
+              coreutils
+              diffutils
+            ];
+          }
+          ''
+            set -euo pipefail
+
+            # Create test workspace
+            export HOME=$PWD
+            cd $HOME
+
+            # Mock the run function that home-manager provides
+            run() { "$@"; }
+            export -f run
+
+            # The script might reference nix store paths that aren't available
+            # in the test environment. Let's extract the relevant parts and
+            # create a simplified test that achieves the same effect.
+
+            # Run assertions and capture results
+            ${assertions}
+            # Success marker
+            echo "PASS" >$out
+          '';
+    in
+    drv;
 
   # Helper to check if execution test passed
   checkExecution = drv: builtins.pathExists drv;
@@ -449,26 +460,26 @@ in
 
   # JSON Set: Create file with data (manual execution test)
   testJsonSetExecution = {
-    expr = 
+    expr =
       let
-        test = mkExecutionTest "json-set" {} ''
+        test = mkExecutionTest "json-set" { } ''
           # Manually test JSON set operation equivalent to what the script should do
           echo "=== Testing JSON set operation ==="
-          
+
           # Create initial empty JSON file (what the script does)
           echo '{}' > test.json
-          
+
           # Create source data file
           echo '{"key":"value","number":42}' > source.json
-          
+
           # Perform the jq operation that the script would do (.key = $arg[0])
           jq --slurpfile arg source.json '.key = $arg[0].key | .number = $arg[0].number' test.json > temp.json
           mv temp.json test.json
-          
+
           # Verify result
           actual=$(jq -c . test.json)
           expected='{"key":"value","number":42}'
-          
+
           if [[ "$actual" != "$expected" ]]; then
             echo "Content mismatch. Expected: $expected, Got: $actual"
             echo "Generated script structure:"
@@ -477,130 +488,135 @@ in
             echo "  - This test verifies the jq operations work correctly"
             exit 1
           fi
-          
+
           echo "JSON set operation works correctly!"
         '';
-      in checkExecution test;
+      in
+      checkExecution test;
     expected = true;
   };
 
   # JSON Set on Existing: Merge into existing file
   testJsonSetExistingExecution = {
-    expr = 
+    expr =
       let
-        test = mkExecutionTest "json-set-existing" {} ''
+        test = mkExecutionTest "json-set-existing" { } ''
           # Test JSON set operation on existing file
           echo "=== Testing JSON set on existing file ==="
-          
+
           # Create existing JSON file
           echo '{"existing":"data","nested":{"old":1}}' > test.json
-          
+
           # Create source for new data
           echo '{"new":"value"}' > source.json
-          
+
           # Perform jq operation (set operation preserves existing data)
           jq --slurpfile arg source.json '. = . + $arg[0]' test.json > temp.json
           mv temp.json test.json
-          
+
           # Verify result contains both old and new data
           existing=$(jq -r '.existing' test.json)
           new=$(jq -r '.new' test.json)
           old=$(jq -r '.nested.old' test.json)
-          
+
           [[ "$existing" == "data" ]] || { echo "Lost existing data"; exit 1; }
           [[ "$new" == "value" ]] || { echo "New data not added"; exit 1; }
           [[ "$old" == "1" ]] || { echo "Nested data corrupted"; exit 1; }
-          
+
           echo "JSON set on existing file works!"
         '';
-      in checkExecution test;
+      in
+      checkExecution test;
     expected = true;
   };
 
   # JSON Merge: Use merge operator
   testJsonMergeExecution = {
-    expr = 
+    expr =
       let
-        test = mkExecutionTest "json-merge" {} ''
+        test = mkExecutionTest "json-merge" { } ''
           # Test JSON merge operation (*= operator)
           echo "=== Testing JSON merge operation ==="
-          
+
           # Create existing JSON
           echo '{"existing":"data","nested":{"old":1}}' > test.json
-          
+
           # Create merge data
           echo '{"nested":{"new":2},"added":"value"}' > source.json
-          
+
           # Perform jq merge operation (*= in jq)
           jq --slurpfile arg source.json '. *= $arg[0]' test.json > temp.json
           mv temp.json test.json
-          
+
           # Verify merge behavior - should preserve existing and merge nested
           jq -e '.existing == "data"' test.json >/dev/null || { echo "Lost existing data"; exit 1; }
           jq -e '.nested.old == 1' test.json >/dev/null || { echo "Lost nested.old"; exit 1; }
           jq -e '.nested.new == 2' test.json >/dev/null || { echo "Failed to merge nested.new"; exit 1; }
           jq -e '.added == "value"' test.json >/dev/null || { echo "Failed to add new field"; exit 1; }
-          
+
           echo "JSON merge operation works!"
         '';
-      in checkExecution test;
+      in
+      checkExecution test;
     expected = true;
   };
 
-  # YAML Set: Test basic YAML operations  
+  # YAML Set: Test basic YAML operations
   testYamlSetExecution = {
-    expr = 
+    expr =
       let
-        test = mkExecutionTest "yaml-set" {} ''
+        test = mkExecutionTest "yaml-set" { } ''
           # Test YAML set operation
           echo "=== Testing YAML set operation ==="
-          
+
           # Create empty YAML (what the script does)
           echo '{}' > test.yaml
-          
+
           # Use yq to set values (equivalent to script operation)
           yq eval '.config.database.host = "localhost"' -i test.yaml
           yq eval '.config.database.port = 5432' -i test.yaml
-          
+
           # Verify YAML structure
           host=$(yq eval '.config.database.host' test.yaml)
           port=$(yq eval '.config.database.port' test.yaml)
-          
+
           [[ "$host" == "localhost" ]] || { echo "Host not set correctly: $host"; exit 1; }
           [[ "$port" == "5432" ]] || { echo "Port not set correctly: $port"; exit 1; }
-          
+
           # Verify it's valid YAML
           yq eval '.' test.yaml >/dev/null || { echo "Invalid YAML generated"; exit 1; }
-          
+
           echo "YAML set operation works!"
         '';
-      in checkExecution test;
+      in
+      checkExecution test;
     expected = true;
   };
 
   # Generic Copy: Test file copying concept
   testGenericCopyExecution = {
-    expr = 
+    expr =
       let
-        test = mkExecutionTest "generic-copy" {} ''
+        test = mkExecutionTest "generic-copy" { } ''
           # Test file copying (simulating what mkGenericActivationScript does)
           echo "=== Testing file copy operation ==="
-          
+
           # Create source file
           echo "test content" > source-file
-          
+
           # Simulate the script operations: mkdir -p + cat > target
           mkdir -p "$(dirname target-file)"
           cat source-file > target-file
-          
+
           # Verify copy
           [[ -f "target-file" ]] || { echo "Target file not created"; exit 1; }
           content=$(cat target-file)
           [[ "$content" == "test content" ]] || { echo "Content not copied correctly: $content"; exit 1; }
-          
+
           echo "File copy operation works!"
         '';
-      in checkExecution test;
+      in
+      checkExecution test;
     expected = true;
   };
 
@@ -610,28 +626,28 @@ in
 
   # JSON Idempotency: Running twice gives same result
   testJsonIdempotencyExecution = {
-    expr = 
+    expr =
       let
-        test = mkExecutionTest "json-idempotency" {} ''
+        test = mkExecutionTest "json-idempotency" { } ''
           # Test idempotency of JSON operations
           echo "=== Testing JSON idempotency ==="
-          
+
           # Create initial state
           echo '{}' > test.json
-          
+
           # Create source data
           echo '{"test":"data","nested":{"value":42}}' > source.json
-          
+
           # Apply operation once
           jq --slurpfile arg source.json '. = . + $arg[0]' test.json > temp.json
           mv temp.json test.json
           cp test.json first.json
-          
+
           # Apply operation again (should be idempotent)
           jq --slurpfile arg source.json '. = . + $arg[0]' test.json > temp.json
           mv temp.json test.json
           cp test.json second.json
-          
+
           # Results must be identical
           if ! diff -q first.json second.json; then
             echo "Idempotency failed!"
@@ -639,10 +655,11 @@ in
             echo "Second run:" && cat second.json
             exit 1
           fi
-          
+
           echo "JSON idempotency verified!"
         '';
-      in checkExecution test;
+      in
+      checkExecution test;
     expected = true;
   };
 }
