@@ -24,10 +24,11 @@ in
 
             !`${shortdiff_cmd}`
 
-            1. Based on the diff summary, identify which parts of the memory file might need to be updated; if possible, group them into independents parts.
-            2. Present the identified parts to the user, and ask for confirmation.
-            3. Delegate each independent part to parallel `${roles.validator.name}` sub-agents: pass the memory part to be verified, and the relevant part of the git diff summary.
-            4. When they're all done, read their reports, and update the file accordingly.
+            1. Based on the diff summary, identify which parts of the memory
+               file might need to be updated; if possible, group them logically.
+            2. Present the identified parts to the user.
+            3. Go through the parts one by one, and update the file. You should
+               read corresponding files if necessary.
 
             Commit the changes with the message:
 
