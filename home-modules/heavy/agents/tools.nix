@@ -67,6 +67,7 @@ let
       }
     );
 
+  # TODO is this even used anywhere?
   cli = {
     search = {
       pkg = pkgs.writeShellApplication {
