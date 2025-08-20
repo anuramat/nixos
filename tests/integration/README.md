@@ -14,26 +14,31 @@ These tests ensure that username configuration changes don't break the NixOS con
 ## Running Tests
 
 ### Unit Tests
+
 Run username configuration unit tests:
+
 ```bash
-just test-integration
-# or
 just test
 ```
 
 ### Build Matrix Test
+
 Test that all host configurations build:
+
 ```bash
 just test-matrix
 ```
 
 ### Snapshot Tests
+
 Create snapshots before refactoring:
+
 ```bash
 just test-snapshot
 ```
 
 After refactoring, compare with snapshots:
+
 ```bash
 ./tests/integration/snapshots/compare.sh
 ```
