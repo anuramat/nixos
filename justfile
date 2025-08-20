@@ -28,7 +28,7 @@ nixos command="switch" *flags:
     sudo nixos-rebuild {{ command }} --option extra-experimental-features pipe-operators {{ flags }}
 
 [group('code')]
-test flag="" arch=`nix eval --raw .#nixosConfigurations.$(hostname).config.nixpkgs.hostPlatform.system`:
+test flag="--quiet" arch=`nix eval --raw .#nixosConfigurations.$(hostname).config.nixpkgs.hostPlatform.system`:
     nix-unit {{ flag }} --flake .#tests.systems.{{ arch }}
 
 # Run integration tests for username configuration
