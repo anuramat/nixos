@@ -149,6 +149,45 @@ in
     in
     drv;
 
+  # NEW: Pure Nix activation test using yq + builtins.fromJSON
+  # Converts both JSON and YAML to JSON for clean Nix assertions
+  mkPureActivationTest = name: dagEntry: targetFile: setupData: expectedData:
+    let
+      # Extract the actual bash script from the DAG entry
+      realScript = dagEntry.data;
+      
+      # Generate the result files by running the real activation script
+      resultFiles = pkgs.runCommand "pure-test-${name}" {
+        buildInputs = with pkgs; [ yq-go moreutils bash coreutils ];
+      } ''
+        set -euo pipefail
+        
+        # Create test workspace
+        export HOME=$PWD
+        cd $HOME
+        
+        # Mock the run function that home-manager provides
+        run() { "$@"; }
+        export -f run
+        
+        # Setup initial file if provided
+        ${lib.optionalString (setupData != null) ''
+          echo '${builtins.toJSON setupData}' > ${targetFile}
+        ''}
+        
+        # Execute the ACTUAL generated activation script
+        ${realScript}
+        
+        # Convert result to JSON using yq (works for both JSON and YAML)
+        yq eval -o=json '.' ${targetFile} > $out
+      '';
+      
+      # Import the generated JSON directly in Nix
+      actualData = builtins.fromJSON (builtins.readFile resultFiles);
+    in
+      # Pure Nix assertion
+      actualData == expectedData;
+
   # Test helper functions are defined directly in this attribute set
   
   # Re-export everything for easy access
