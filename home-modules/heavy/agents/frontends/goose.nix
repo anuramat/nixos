@@ -7,7 +7,7 @@
 let
   # TODO mcp; check out extensions and recipes in https://block.github.io/goose/docs/
   # TODO turn extensions on/off based on project
-  gooseConfig = (pkgs.formats.yaml { }).generate "goose-config.yaml" {
+  gooseConfig = {
     GOOSE_MODE = "auto";
     GOOSE_MAX_TURNS = 9999999;
     GOOSE_MODEL = "gpt-4.1";
@@ -43,8 +43,9 @@ in
 {
   home = {
     activation = {
-      gooseConfig = config.lib.home.mkGenericActivationScript gooseConfig "${config.home.homeDirectory}/.config/goose/config.yaml";
+      goose = config.lib.home.yaml.set gooseConfig "${config.xdg.configHome}/goose/config.yaml";
     };
+
     packages = [
       pkgs.goose-cli
       (config.lib.agents.mkSandbox {
