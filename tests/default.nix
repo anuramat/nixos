@@ -11,6 +11,7 @@ foldl' mergeAttrs { } (
     ./hax/common.nix
     ./hax/hosts.nix
     ./hax/home.nix
+    ./home-modules/lib/activation-scripts.nix
     ./integration/username.nix
   ]
 )
