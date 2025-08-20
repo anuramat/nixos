@@ -49,7 +49,7 @@ let
         ${find}
         gum confirm || exit 1
         mkdir -p summaries
-        ${find} -x sh -c 'cat "{}" | mods -R summarizer "here is the lecture transcript:" > "./summaries/{.}.md"'
+        ${find} -j 1 -x sh -c 'cat "{}" | mods -R summarizer "here is the lecture transcript:" > "./summaries/{.}.md"'
       '';
   };
 
