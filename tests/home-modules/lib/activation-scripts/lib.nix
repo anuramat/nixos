@@ -68,34 +68,38 @@ in
 
   # Helper to create execution tests that actually run the scripts
   # Fixed interface: removed unused 'script' parameter
-  mkExecutionTest = name: testScript:
+  mkExecutionTest =
+    name: testScript:
     let
-      drv = pkgs.runCommand "test-${name}" {
-        buildInputs = with pkgs; [
-          jq
-          yq-go
-          moreutils
-          bash
-          coreutils
-          diffutils
-        ];
-      } ''
-        set -euo pipefail
+      drv =
+        pkgs.runCommand "test-${name}"
+          {
+            buildInputs = with pkgs; [
+              jq
+              yq-go
+              moreutils
+              bash
+              coreutils
+              diffutils
+            ];
+          }
+          ''
+            set -euo pipefail
 
-        # Create test workspace
-        export HOME=$PWD
-        cd $HOME
+            # Create test workspace
+            export HOME=$PWD
+            cd $HOME
 
-        # Mock the run function that home-manager provides
-        run() { "$@"; }
-        export -f run
+            # Mock the run function that home-manager provides
+            run() { "$@"; }
+            export -f run
 
-        # Run the test script
-        ${testScript}
+            # Run the test script
+            ${testScript}
 
-        # Success marker
-        echo "PASS" > $out
-      '';
+            # Success marker
+            echo "PASS" > $out
+          '';
     in
     drv;
 

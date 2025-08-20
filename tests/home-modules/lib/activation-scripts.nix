@@ -1,10 +1,10 @@
 # ==============================================================================
 # ACTIVATION SCRIPT TESTS
 # ==============================================================================
-# 
+#
 # Test suite for home-modules/default/lib.nix activation script functions:
 # - mkJqActivationScript (JSON operations)
-# - mkYqActivationScript (YAML operations) 
+# - mkYqActivationScript (YAML operations)
 # - mkGenericActivationScript (file copying)
 #
 # Test Categories:
@@ -22,24 +22,27 @@
 let
   # Import shared test library and utilities
   testLib = import ./activation-scripts/lib.nix { inherit pkgs lib; };
-  
+
   # Import test modules
   structureTests = import ./activation-scripts/structure-tests.nix { inherit testLib; };
   executionTests = import ./activation-scripts/execution-tests.nix { inherit testLib; };
   propertyTests = import ./activation-scripts/property-tests.nix { inherit testLib; };
 in
 # Combine all test suites into a single attribute set
-structureTests // executionTests // propertyTests // {
-  
+structureTests
+// executionTests
+// propertyTests
+// {
+
   # ==============================================================================
   # TEST SUITE SUMMARY
   # ==============================================================================
   #
-  # This comprehensive test suite enables safe refactoring of activation script 
+  # This comprehensive test suite enables safe refactoring of activation script
   # functions by providing extensive verification of behavior that must be preserved.
   #
   # COVERAGE SUMMARY:
-  # 
+  #
   # 📋 STRUCTURE TESTS (15 tests)
   #   ✓ DAG entry structure validation
   #   ✓ Script content generation patterns
@@ -52,7 +55,7 @@ structureTests // executionTests // propertyTests // {
   #
   # 🔍 EXECUTION TESTS (5 tests)
   #   ✓ Comprehensive JSON set operations
-  #   ✓ Comprehensive JSON merge operations  
+  #   ✓ Comprehensive JSON merge operations
   #   ✓ Comprehensive YAML operations
   #   ✓ Generic file copy operations
   #   ✓ JSON set on existing file behavior
@@ -81,7 +84,7 @@ structureTests // executionTests // propertyTests // {
   # 4. ✅ EDGE CASE COVERAGE: Comprehensive testing of error conditions,
   #    special characters, large structures, and sequential operations
   #
-  # 5. ✅ MATHEMATICAL PROPERTIES: Verification of idempotency and 
+  # 5. ✅ MATHEMATICAL PROPERTIES: Verification of idempotency and
   #    associativity ensures refactored code maintains correctness
   #
   # Total: 29 comprehensive tests enabling confident refactoring

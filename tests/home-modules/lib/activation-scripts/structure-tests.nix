@@ -1,7 +1,12 @@
 # Structure tests: DAG entry structure and script content generation
 { testLib }:
 let
-  inherit (testLib) lib homeLib testJsonData testYamlData;
+  inherit (testLib)
+    lib
+    homeLib
+    testJsonData
+    testYamlData
+    ;
 in
 {
   # =====================================

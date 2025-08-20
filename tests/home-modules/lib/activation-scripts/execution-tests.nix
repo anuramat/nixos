@@ -68,7 +68,7 @@ in
 
           # Final verification: ensure valid JSON
           jq . test.json >/dev/null || { echo "Final result is invalid JSON"; exit 1; }
-          
+
           echo "JSON set operation comprehensive test passed!"
         '';
       in
@@ -328,7 +328,7 @@ in
           yq eval '.yaml_features.sequence = ["a", "b", "c"]' -i test.yaml
           yq eval '.yaml_features.mapping.x = 1' -i test.yaml
           yq eval '.yaml_features.mapping.y = 2' -i test.yaml
-          
+
           # Verify YAML syntax works
           [[ "$(yq eval '.yaml_features.sequence[0]' test.yaml)" == "a" ]] || { echo "YAML sequence failed"; exit 1; }
           [[ "$(yq eval '.yaml_features.mapping.x' test.yaml)" == "1" ]] || { echo "YAML mapping failed"; exit 1; }
