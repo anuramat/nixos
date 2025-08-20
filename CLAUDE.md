@@ -18,6 +18,9 @@ Personal NixOS flake configuration managing system and home configurations. Uses
 - `hax/` - Helper functions library
 - `secrets/` - Age-encrypted secrets
 - `parts/` - Flake-parts modules (treefmt, pre-commit, tests)
+- `docs/` - Documentation (USERNAME_CUSTOMIZATION.md)
+- `tests/integration/` - Integration testing framework
+- `PROBLEMS.md` - Known issues and technical debt tracking
 
 ### Module Organization
 
@@ -63,6 +66,15 @@ nix fmt
 just test
 # or with architecture:
 nix-unit --flake .#tests.systems.x86_64-linux
+
+# Run integration tests for username configuration
+just test-integration
+
+# Create configuration snapshots before refactoring
+just test-snapshot
+
+# Test build matrix with different usernames
+just test-matrix
 
 # Lint code
 just lint
@@ -110,6 +122,25 @@ nixosModules = mkImportSet ./nixos-modules;
 1. Create directory in `nixos-configurations/` matching hostname
 2. Add `default.nix` and `hardware-configuration.nix`
 3. Store host keys in `keys/` subdirectory
+4. Configure user via `userConfig` module (see Username Customization below)
+
+### Username Customization
+
+The system supports configurable usernames via the `userConfig` module:
+
+```nix
+{
+  userConfig = {
+    username = "alice";
+    fullName = "Alice Smith";  # Optional: defaults to git.userName
+    email = "alice@example.com";  # Optional: defaults to git.userEmail
+  };
+}
+```
+
+- Personal home modules auto-load from `home-modules/${username}.nix`
+- Git settings provide fallback defaults for fullName/email
+- See `docs/USERNAME_CUSTOMIZATION.md` for complete guide
 
 ### Secrets Management
 
@@ -117,14 +148,34 @@ Uses ragenix for secrets. Encrypted files in `secrets/` with configuration in `s
 
 ## Testing Strategy
 
+### Unit Tests
 Tests are in `tests/` directory, run via nix-unit. Test files mirror module structure in `tests/hax/`.
+
+### Integration Tests
+Located in `tests/integration/`, focused on username configuration:
+- `username.nix` - Unit tests for username configuration
+- `build-matrix.sh` - Tests building all host configurations
+- `snapshot-username.sh` - Captures configuration state for comparison
+- `snapshots/` - Baseline snapshots for regression testing
+
+### Testing Workflow
+1. Before refactoring: `just test-snapshot`
+2. During development: `just test` after each change
+3. Build validation: `just test-matrix`
+4. Compare results: `./tests/integration/snapshots/compare.sh`
 
 ## Key Variables
 
-- Username: `anuramat` (hardcoded in several places)
+- Username: Configurable via `userConfig.username` (defaults to `anuramat` for backward compatibility)
 - Default system: `x86_64-linux`
 - Builder user: `builder`
 - Cache key: `/etc/nix/cache.pem.pub`
+
+## Documentation
+
+- `docs/USERNAME_CUSTOMIZATION.md` - Complete guide for username configuration
+- `PROBLEMS.md` - Technical debt and known issues tracking
+- `tests/integration/README.md` - Integration testing documentation
 
 ## Development Notes
 
