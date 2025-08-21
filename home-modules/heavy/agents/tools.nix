@@ -44,6 +44,12 @@ let
         "serve"
       ];
     };
+    zotero = {
+      command = getExe pkgs.zotero-mcp;
+      env = {
+        ZOTERO_LOCAL = true;
+      };
+    };
   };
 
   lsp =
