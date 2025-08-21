@@ -95,6 +95,7 @@
     fortune # random quotes
 
     # miscellaneous unfiled TODO
+    firefox-sync-client
     remarshal
     lm_sensors
     # dix # not in stable yet
