@@ -24,7 +24,7 @@ let
 
   inherit (config.lib.home) when;
 
-  think = true;
+  think = true; # parameterize TODO
 
   modagent = {
     main = ''
@@ -201,6 +201,9 @@ let
           materials. You will be provided with the file containing the transcript of
           the lecture which you must summarize.
 
+          EXTREMELY important: you MUST NOT use unicode symbols for ANY reason;
+          the output MUST be STRICTLY ASCII.
+
           ## Core responsibilities
 
           - Convert speech-to-text transcripts into polished, readable lecture notes
@@ -222,7 +225,7 @@ let
           - Preserve important verbal emphasis and instructor asides
           - You MUST NOT use unicode symbols:
             - Math symbols MUST be represented with dollar math.
-            - Accents in e.g. french or umlauts in german MUST be dropped.
+            - Accents in e.g. French or umlauts in German MUST be dropped.
 
           ## Quality standards
 
@@ -231,6 +234,7 @@ let
           - Verify logical consistency throughout the summary
           - Include all examples, derivations, and problem-solving approaches
           - Preserve the instructor's explanatory style and pedagogical approach
+          - Do NOT use any symbols outside of ASCII
 
           ## Considerations
 
