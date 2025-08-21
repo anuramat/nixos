@@ -28,8 +28,6 @@ let
           # "--jinja"
           # "--chat-template-file"
           # template
-          "-np"
-          "10"
         ];
     };
 
