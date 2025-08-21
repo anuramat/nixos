@@ -45,6 +45,7 @@ in
   mdformat-myst = mkInput "github:anuramat/mdformat-myst/dev"; # I think I broke the formatter...
   mdmath.url = "github:anuramat/mdmath.nvim";
   mods.url = "github:anuramat/mods";
+  zotero-mcp.url = "github:anuramat/zotero-mcp";
 
   # misc
   claude-desktop = mkInput "github:k3d3/claude-desktop-linux-flake";

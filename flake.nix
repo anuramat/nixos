@@ -203,6 +203,9 @@
       flake = false;
       url = "github:tinted-theming/schemes";
     };
+    zotero-mcp = {
+      url = "github:anuramat/zotero-mcp";
+    };
   };
   outputs = args: import ./outputs.nix args;
 }

@@ -27,6 +27,7 @@ let
         claude-desktop
         modagent
         mods
+        zotero-mcp
         ;
     });
   unstablePkgs = final: prev: {
