@@ -28,6 +28,8 @@ let
           # "--jinja"
           # "--chat-template-file"
           # template
+          "-np"
+          "10"
         ];
     };
 
@@ -44,6 +46,8 @@ let
           "--jinja"
           "--chat-template-kwargs"
           ''{"reasoning_effort": "${effort}"}''
+          "-np" # number of cache slots
+          "10"
         ];
 
       in
