@@ -1172,11 +1172,11 @@
         "nixpkgs": "nixpkgs_4"
       },
       "locked": {
-        "lastModified": 1755628650,
-        "narHash": "sha256-4nBe6B36DATmK2HKrJSaLQtKmdmvYp+x1gSJuAHNQhk=",
+        "lastModified": 1755819377,
+        "narHash": "sha256-lAGJHkyPAI7LkJWZ8+qFKuQbesTw3CXvIARmsEvq0cQ=",
         "owner": "anuramat",
         "repo": "mods",
-        "rev": "fee67c491812f4367fb2b0dec4a63de61c362b5d",
+        "rev": "c308a534a66628220851bc80eb73f09ea9765033",
         "type": "github"
       },
       "original": {
