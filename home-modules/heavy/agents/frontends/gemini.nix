@@ -12,11 +12,9 @@ let
     contextFileName = config.lib.agents.contextFiles;
   } (config.home.homeDirectory + "/.gemini/settings.json");
 
-  geminiContextCfg = config.lib.home.json.merge {
-    "" = {
-      hideTips = true;
-      hideBanner = true;
-    };
+  geminiContextCfg = config.lib.home.json.set {
+    hideTips = true;
+    hideBanner = true;
   } (config.home.homeDirectory + "/.gemini/settings.json");
 
   geminiInstructions = {

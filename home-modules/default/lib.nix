@@ -158,7 +158,6 @@ in
         pkg;
 
     json = {
-      merge = mkJqActivationScript "*=";
       set = mkJqActivationScript "=";
     };
 

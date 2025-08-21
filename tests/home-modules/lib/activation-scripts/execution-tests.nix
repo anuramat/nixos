@@ -95,67 +95,6 @@ in
     expected = true;
   };
 
-  # JSON Merge: Test REAL mkJqActivationScript with merge operator (Pure Nix)
-  testJsonMergeExecution = {
-    expr =
-      let
-        # Setup data that will be in the file initially
-        setupData = {
-          existing = "original";
-          nested = {
-            preserve = "keep_this";
-            overwrite = "old_value";
-            deep = {
-              level = 1;
-              existing_array = [
-                1
-                2
-              ];
-            };
-          };
-          array_base = [
-            "a"
-            "b"
-          ];
-          null_field = null;
-          bool_field = true;
-        };
-
-        # Data to merge in (using flat JSON paths) - only add new top-level key
-        mergeData = {
-          "new_top" = "value";
-        };
-
-        # Use the REAL merge activation script function
-        dagEntry = homeLib.lib.home.json.merge mergeData "test.json";
-
-        # Expected result: original data + new top-level key
-        expectedData = {
-          existing = "original";
-          nested = {
-            preserve = "keep_this";
-            overwrite = "old_value"; # Unchanged
-            deep = {
-              level = 1; # Unchanged
-              existing_array = [
-                1
-                2
-              ]; # Preserved
-            };
-          };
-          array_base = [
-            "a"
-            "b"
-          ]; # Preserved
-          null_field = null; # Preserved
-          bool_field = true; # Preserved
-          new_top = "value"; # Added by merge
-        };
-      in
-      mkPureActivationTest "json-merge-pure" dagEntry "test.json" setupData expectedData;
-    expected = true;
-  };
-
   # YAML Set: Test REAL mkYqActivationScript comprehensive operations (Pure Nix)
   testYamlSetExecution = {
     expr =

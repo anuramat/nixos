@@ -55,23 +55,6 @@ in
     };
   };
 
-  # Test that JSON merge operation uses correct operator
-  testJqMergeOperator = {
-    expr =
-      let
-        result = homeLib.lib.home.json.merge { "foo" = "bar"; } "test.json";
-      in
-      {
-        containsMergeOp = lib.hasInfix "*=" result.data;
-        # Should not contain set operator
-        notContainSetOp = !(lib.hasInfix " = " result.data);
-      };
-    expected = {
-      containsMergeOp = true;
-      notContainSetOp = true;
-    };
-  };
-
   # Test JSON script with multiple sources (list input)
   testJqMultipleSourcesScript = {
     expr =
