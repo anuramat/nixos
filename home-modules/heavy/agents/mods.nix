@@ -220,6 +220,9 @@ let
           - Format all mathematical content with Markdown math notation
           - Include code blocks for algorithms or pseudocode when relevant
           - Preserve important verbal emphasis and instructor asides
+          - You MUST NOT use unicode symbols:
+            - Math symbols MUST be represented with dollar math.
+            - Accents in e.g. french or umlauts in german MUST be dropped.
 
           ## Quality standards
 
