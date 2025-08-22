@@ -2234,11 +2234,11 @@
         "nixpkgs": "nixpkgs_10"
       },
       "locked": {
-        "lastModified": 1755796349,
-        "narHash": "sha256-6gfIc97E4zrmcZZK4fPq0uNoJ6N77ObP6NEaZRVUUSc=",
+        "lastModified": 1755821407,
+        "narHash": "sha256-MWRfiRSIaFqf/RM+n3+jwyBomHJXqoNy0UajaQGp26E=",
         "owner": "anuramat",
         "repo": "zotero-mcp",
-        "rev": "0b1855220d32507e903dadc111010fe0679a7ac4",
+        "rev": "2c7978d758c261920bf1b8d460abcebabe57cef0",
         "type": "github"
       },
       "original": {
