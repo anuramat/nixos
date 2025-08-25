@@ -3,6 +3,7 @@ _: homelib: {
     path:
     homelib.hm.dag.entryAfter [ "writeBoundary" ] # bash
       ''
+        mkdir -p "${path}"
         args=("${path}" -maxdepth 1 -xtype l)
         [ -z "''${DRY_RUN:+set}" ] && args+=(-delete)
         [ -n "''${VERBOSE:+set}" ] && args+=(-print)
