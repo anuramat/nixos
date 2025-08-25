@@ -1,4 +1,7 @@
 { hax, ... }:
+let
+  inherit (hax.vim) lua;
+in
 {
   keymaps =
     let
@@ -43,19 +46,26 @@
 
   plugins.fzf-lua = {
     enable = true;
-    settings = {
-      grep = {
-        RIPGREP_CONFIG_PATH.__raw = "vim.env.RIPGREP_CONFIG_PATH";
-        fd_opts = "-c never -t f -HL";
-        multiline = 2;
-      };
-      actions.files = {
-        __unkeyed-1 = true; # merge with defaults
-        "ctrl-q" = {
-          fn.__raw = "require('fzf-lua').actions.file_sel_to_qf";
-          prefix = "select-all";
+    settings =
+      let
+        fd_opts = "-c never -t f -t l -HL";
+      in
+      {
+        grep = {
+          RIPGREP_CONFIG_PATH = lua "vim.env.RIPGREP_CONFIG_PATH";
+          inherit fd_opts;
+          multiline = 2;
+        };
+        files = {
+          inherit fd_opts;
+        };
+        actions.files = {
+          __unkeyed-1 = true; # merge with defaults
+          "ctrl-q" = {
+            fn.__raw = "require('fzf-lua').actions.file_sel_to_qf";
+            prefix = "select-all";
+          };
         };
       };
-    };
   };
 }
