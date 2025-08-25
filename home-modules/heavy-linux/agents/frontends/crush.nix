@@ -1,6 +1,7 @@
 # TODO refactor
 {
   config,
+  lib,
   pkgs,
   ...
 }@args:
@@ -21,7 +22,7 @@ let
       xdgWrapped = pkgs.writeShellScriptBin "crush" ''
         pathEncoded=$(pwd | base64)
         dir="${config.xdg.stateHome}/crush/$pathEncoded"
-        crush -D "$dir" "$@"
+        ${lib.getExe pkgs.crush} -D "$dir" "$@"
       '';
     in
     config.lib.home.agenixWrapPkg xdgWrapped (t: {
