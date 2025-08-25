@@ -6,8 +6,6 @@
   # packages
   home.packages = with pkgs; [
     # unfiled
-    gron # make json greppable
-    csvkit
     qalculate-gtk # qalc calculator gui
     transmission_4-gtk # torrent client
     desktop-file-utils # update-desktop-database etc

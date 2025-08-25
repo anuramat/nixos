@@ -90,6 +90,8 @@
     fortune # random quotes
 
     # miscellaneous unfiled TODO
+    gron # make json greppable
+    csvkit
     firefox-sync-client
     remarshal
     # dix # not in stable yet
