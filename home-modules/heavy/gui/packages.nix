@@ -22,7 +22,6 @@
     pdfpc # pdf presentation, broken on wayland
     zathura # keyboard-centric pdf/djvu reader
     gnumeric # spreadsheets
-    # khoj # ai stuff
     logseq
     obsidian
     libreoffice # just in case
