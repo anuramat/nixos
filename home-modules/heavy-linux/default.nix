@@ -32,7 +32,7 @@
       };
   };
 
-  programs.ghostty.window-decoration = "false";
+  programs.ghostty.settings.window-decoration = "false";
   programs.foot = {
     enable = true;
     settings = {
