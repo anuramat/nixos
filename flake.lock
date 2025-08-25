@@ -203,16 +203,16 @@
     "crush": {
       "flake": false,
       "locked": {
-        "lastModified": 1754146984,
-        "narHash": "sha256-SjrkQFSjJrPNynARE92uKA53hkstIUBSvQbqcYSsnaM=",
+        "lastModified": 1755800004,
+        "narHash": "sha256-3wBGN3Uit1Xw8ZQ4WyR4PhA66Cfhl6YljMEbpaaJP60=",
         "owner": "charmbracelet",
         "repo": "crush",
-        "rev": "0b477ea49470db978e9f9eb43a224def73c41101",
+        "rev": "4d20906ed5acd3a25ac6315c8aba2da268ad0c48",
         "type": "github"
       },
       "original": {
         "owner": "charmbracelet",
-        "ref": "v0.2.1",
+        "ref": "v0.7.1",
         "repo": "crush",
         "type": "github"
       }
@@ -1431,11 +1431,11 @@
     },
     "nixpkgs-unstable": {
       "locked": {
-        "lastModified": 1754214453,
-        "narHash": "sha256-Q/I2xJn/j1wpkGhWkQnm20nShYnG7TI99foDBpXm1SY=",
+        "lastModified": 1755615617,
+        "narHash": "sha256-HMwfAJBdrr8wXAkbGhtcby1zGFvs+StOp19xNsbqdOg=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "5b09dc45f24cf32316283e62aec81ffee3c3e376",
+        "rev": "20075955deac2583bb12f07151c2df830ef346b4",
         "type": "github"
       },
       "original": {
