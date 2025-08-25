@@ -6,10 +6,8 @@
     bottom
     ctop # containers
     gotop
-    nvitop # nvidia gpu
     podman-tui # podman container status
     nvtopPackages.full # top for GPUs
-    zenith-nvidia # top WITH nvidia GPUs
 
     # office
     slides # markdown presentation in terminal
@@ -27,7 +25,6 @@
     djvulibre # djvu tools
     markdown-link-check # find dead md links
     mermaid-cli
-    mermaid-filter
 
     # audio
     sox # cli audio processing
@@ -50,7 +47,6 @@
     # security
     age # file encryption
     ragenix # (r)agenix cli
-    bubblewrap # sandboxing
 
     # network/communication
     aircrack-ng
@@ -73,7 +69,6 @@
     rclone # rsync for cloud
     socat # socket cat
     speedtest-cli
-    wirelesstools # iwconfig etc
 
     # visualization/graphics
     graphviz
@@ -97,8 +92,8 @@
     # miscellaneous unfiled TODO
     firefox-sync-client
     remarshal
-    lm_sensors
     # dix # not in stable yet
+    nvd # nix diff
     nix-unit
     rename
     renameutils
@@ -109,23 +104,17 @@
     wishlist # ssh menu
     vhs # terminal gif generator
     gum # shell library
-    parted
     exercism # cli for exercism.org
-    geteduroam-cli
     libqalculate # `qalc` - advanced calculator
     yt-dlp # download youtube videos
 
     # dev
     ansifilter # filter out scary chars
-    wine
-    distrobox
-    wayidle # runs a command on idle (one-off, thus orthogonal to swayidle)
     makefile2graph
     mprocs # job runner
     rsbkb # rust blackbag - encode/decode tools
     scc # sloc cloc and code: dick measuring tool
     git-filter-repo # rewrite/analyze repository history
-    subcat
     entr # file watcher - runs command on change
     ghq # git repository manager
     expect # automating tuis
@@ -152,8 +141,6 @@
     cht-sh
 
     # modern replacements
-    rmtrash # `rmtrash`
-    trashy # `trash`
     du-dust # du++
     duf # df++
     ncdu # du++: interactive
@@ -180,19 +167,10 @@
     zip
 
     # hardware
-    acpi # battery status etc
-    dmidecode # read hw info from bios using smbios/dmi
-    efibootmgr # EFI boot manager editor
-    hwinfo
     libusb1 # user-mode USB access lib
-    libva-utils # vainfo - info on va-api
-    lshw # hw info
     pciutils
     procps # info from /proc
     smartmontools # storage
-    nvme-cli
-    smem # ram usage
     usbutils
-    v4l-utils # camera stuff
   ];
 }

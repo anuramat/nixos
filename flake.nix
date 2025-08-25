@@ -80,6 +80,9 @@
       };
       url = "github:nix-community/home-manager/release-25.05";
     };
+    mac-app-util = {
+      url = "github:hraban/mac-app-util";
+    };
     mcp-nixos = {
       inputs = {
         nixpkgs = {

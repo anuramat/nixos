@@ -5,6 +5,7 @@
     heavy
     anuramat
     standalone
+    darwin
   ];
   home =
     let
@@ -13,7 +14,7 @@
     {
       inherit username;
       # XXX CHANGE THESE TWO:
-      stateVersion = "24.11";
-      homeDirectory = "/home/${username}";
+      # stateVersion = "25.05";
+      # homeDirectory = "/Users/${username}";
     };
 }
