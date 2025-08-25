@@ -1246,11 +1246,11 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1755819377,
-        "narHash": "sha256-lAGJHkyPAI7LkJWZ8+qFKuQbesTw3CXvIARmsEvq0cQ=",
+        "lastModified": 1756126223,
+        "narHash": "sha256-WnbhZqAMUqTHNR7Sxbf5FQoITnSm0WxOpRGuEKIx3sU=",
         "owner": "anuramat",
         "repo": "mods",
-        "rev": "c308a534a66628220851bc80eb73f09ea9765033",
+        "rev": "868a016ffb7abeb9f5bd4c2b51cd1c481c62f18f",
         "type": "github"
       },
       "original": {
