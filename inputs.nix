@@ -12,7 +12,7 @@ let
 in
 {
   agenix = mkInput "github:yaxitech/ragenix";
-      mac-app-util.url = "github:hraban/mac-app-util";
+  mac-app-util.url = "github:hraban/mac-app-util";
 
   flake-parts.url = "github:hercules-ci/flake-parts";
   home-manager = mkInput "github:nix-community/home-manager/release-25.05";
@@ -59,6 +59,6 @@ in
   # non flakes
   avante = mkNonFlake "github:yetone/avante.nvim/v0.0.27";
   blink-cmp-avante = mkNonFlake "github:Kaiser-Yang/blink-cmp-avante/v0.1.0";
-  crush = mkNonFlake "github:charmbracelet/crush/v0.7.1";
+  crush = mkNonFlake "github:charmbracelet/crush/v0.2.1";
   tt-schemes = mkNonFlake "github:tinted-theming/schemes";
 }
