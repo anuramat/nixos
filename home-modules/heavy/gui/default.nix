@@ -11,7 +11,6 @@ in
 {
   imports = [
     ./packages.nix
-    ./desktop
     ./viewers.nix
     ./terminals.nix
     ./obs.nix

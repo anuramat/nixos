@@ -32,6 +32,7 @@
       users.${username} = {
         imports = with inputs.self.homeModules; [
           default
+          linux
         ];
       };
     };

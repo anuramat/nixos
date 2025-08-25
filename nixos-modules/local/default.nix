@@ -22,6 +22,7 @@ in
     users.${username} = {
       imports = with inputs.self.homeModules; [
         heavy
+        heavy-linux
       ];
     };
   };

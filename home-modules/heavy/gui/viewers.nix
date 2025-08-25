@@ -1,19 +1,5 @@
 {
   programs = {
-
-    swayimg = {
-      enable = true;
-      settings =
-        let
-          binds = {
-            "Shift+Delete" = ''exec rmtrash '%' && echo "File removed: %"; skip_file'';
-          };
-        in
-        {
-          "keys.viewer" = binds;
-          "keys.galllery" = binds;
-        };
-    };
     zathura = {
       enable = true;
       options = {

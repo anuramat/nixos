@@ -12,6 +12,8 @@ let
 in
 {
   agenix = mkInput "github:yaxitech/ragenix";
+      mac-app-util.url = "github:hraban/mac-app-util";
+
   flake-parts.url = "github:hercules-ci/flake-parts";
   home-manager = mkInput "github:nix-community/home-manager/release-25.05";
   musnix.url = "github:musnix/musnix";
