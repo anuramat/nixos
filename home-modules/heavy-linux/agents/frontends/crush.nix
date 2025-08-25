@@ -16,13 +16,21 @@ let
   };
   configPath = config.xdg.configHome + "/crush/crush.json";
 
-  withTokens = config.lib.home.agenixWrapPkg pkgs.crush (t: {
-    OPENAI_API_KEY = t.oai;
-  });
+  crush =
+    let
+      xdgWrapped = pkgs.writeShellScriptBin "crush" ''
+        pathEncoded=$(pwd | base64)
+        dir="${config.xdg.stateHome}/crush/$pathEncoded"
+        crush -D "$dir" "$@"
+      '';
+    in
+    config.lib.home.agenixWrapPkg xdgWrapped (t: {
+      OPENAI_API_KEY = t.oai;
+    });
 
-  boxed = config.lib.agents.mkSandbox {
+  crushBoxed = config.lib.agents.mkSandbox {
     wrapperName = "crs";
-    package = withTokens;
+    package = crush;
     args = "--yolo";
   };
 
@@ -31,8 +39,8 @@ in
 {
   home = {
     packages = [
-      pkgs.crush
-      boxed
+      crush
+      crushBoxed
     ];
     activation = {
       crushConfig = config.lib.home.json.set {
