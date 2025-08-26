@@ -24,9 +24,9 @@ let
             model_provider = "llama-cpp";
           };
         };
-        model_providers = {
+        model_providers.llama-cpp = {
           name = "llama-cpp";
-          base-url =
+          base_url =
             let
               port = toString osConfig.services.llama-cpp.port;
             in
@@ -51,11 +51,12 @@ let
       };
     in
     (pkgs.formats.toml { }).generate "codex-config.toml" cfg;
-in
-{
-  home.sessionVariables = {
+  env = {
     CODEX_HOME = codexHome;
   };
+in
+{
+  home.sessionVariables = env;
   home = {
     packages = [
       pkgs.codex
@@ -63,6 +64,7 @@ in
         binName = "codex";
         package = pkgs.codex;
         args = " --dangerously-bypass-approvals-and-sandbox";
+        inherit env;
         agentDir = null;
         wrapperName = "cdx";
         extraRwDirs = [
