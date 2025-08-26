@@ -1,13 +1,11 @@
-# configured: 2025-08-04
-# TODO refactor
 {
   lib,
   config,
   pkgs,
   ...
-}@args:
+}:
 let
-  inherit (lib) mapAttrs stringToCharacters concatStringsSep;
+  inherit (lib) mapAttrs;
   inherit (config.lib) agents;
   statusLine = {
     type = "command";

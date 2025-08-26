@@ -144,10 +144,10 @@ let
 
       codex = prev.stdenv.mkDerivation rec {
         pname = "codex";
-        version = "0.23.0";
+        version = "0.24.0";
         src = prev.fetchurl {
           url = "https://github.com/openai/codex/releases/download/rust-v${version}/codex";
-          hash = "sha256-90gH1VS95W3jTxTm3Ho5zBkWVd/Lu7yvl9u0DV7ixdg=";
+          hash = "sha256-SdMjDggmtUlJl1xz8vcFqK7wyVCI6oibKEBrchyvpBU=";
         };
         dontUnpack = true;
         nativeBuildInputs = [ prev.makeWrapper ];
