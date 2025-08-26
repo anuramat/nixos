@@ -82,7 +82,7 @@ let
       ];
     };
 
-    junior-bash = {
+    logworm = {
       blocked_tools = [ "*" ];
       prompt = [
         ''
@@ -179,16 +179,6 @@ let
     default = {
       blocked_tools = [ "*" ];
     };
-
-    # TODO add a command that uses structured outputs, asks to fill field "command", and prints that
-    shell = [
-      ''
-        you are a shell expert
-        you do not explain anything
-        you simply output one liners to solve the problems you're asked
-        you do not provide any explanation whatsoever, ONLY the command
-      ''
-    ];
 
     summarizer = {
       blocked_tools = [ "*" ];
@@ -293,7 +283,7 @@ let
   modsCfg = {
     inherit apis;
     default-api = "copilot";
-    default-model = "gpt-5";
+    default-model = "gpt-4.1";
     fanciness = 0;
     role = "default";
     inherit roles;
