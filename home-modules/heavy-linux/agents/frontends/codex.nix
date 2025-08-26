@@ -1,27 +1,37 @@
-# configured: 2025-08-04
 {
   lib,
   pkgs,
   config,
+  osConfig,
   ...
 }:
 let
-  codexHomeRelative = ".codex";
-  codexHomeRoot = config.home.homeDirectory;
-  codexHome = codexHomeRoot + "/" + codexHomeRelative; # TODO change and propagate env
+  codexHome = config.xdg.configHome + "/codex";
   codexCfgPath = codexHome + "/config.toml";
   codexTomlCfg =
     let
       # https://github.com/openai/codex/blob/main/codex-rs/config.md
       cfg = {
         # mcp_servers = config.lib.agents.mcp.raw;
-        approval_policy = "never";
         profile = "gpt5";
         profiles = {
           gpt5 = {
             model = "gpt-5";
             model_provider = "openai";
           };
+          oss = {
+            model = "dummy";
+            model_provider = "llama-cpp";
+          };
+        };
+        model_providers = {
+          name = "llama-cpp";
+          base-url =
+            let
+              port = toString osConfig.services.llama-cpp.port;
+            in
+            "http://localhost:${port}";
+          wire_api = "chat";
         };
         notify =
           let
@@ -43,17 +53,18 @@ let
     (pkgs.formats.toml { }).generate "codex-config.toml" cfg;
 in
 {
+  home.sessionVariables = {
+    CODEX_HOME = codexHome;
+  };
   home = {
     packages = [
       pkgs.codex
       (config.lib.agents.mkSandbox {
         binName = "codex";
         package = pkgs.codex;
-        args = " --dangerously-bypass-approvals-and-sandbox"; # "--full-auto"
+        args = " --dangerously-bypass-approvals-and-sandbox";
         agentDir = null;
-        copilot = true;
         wrapperName = "cdx";
-        # https://github.com/openai/codex/blob/main/codex-rs/config.md
         extraRwDirs = [
           codexHome
         ];
@@ -64,9 +75,10 @@ in
         run cat ${codexTomlCfg} > "${codexCfgPath}";
       '';
     };
-    # TODO use derivation instead of text (here and everywhere else we use global instructions)
-    file.${codexHomeRelative + "/instructions.md"} = {
-      inherit (config.lib.agents.instructions) text;
+    xdg.configFile = {
+      "codex/AGENTS.md" = {
+        inherit (config.lib.agents.instructions) text;
+      };
     };
   };
 }
