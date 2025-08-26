@@ -1,6 +1,6 @@
 { config, ... }:
 let
-  inherit (config.lib.agents) prependFrontmatter roles;
+  inherit (config.lib.agents) prependFrontmatter;
 in
 {
   lib.agents.commands = {
