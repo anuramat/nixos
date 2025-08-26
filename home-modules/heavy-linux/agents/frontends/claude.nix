@@ -15,7 +15,6 @@ let
       let
         script = ''
           input=$(cat)
-          echo "$input" | jq . >~/claude_status.json
           model_display=$(echo "$input" | jq -r '.model.display_name')
           output_style=$(echo "$input" | jq -r '.output_style.name')
           # TODO output_style.name
