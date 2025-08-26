@@ -75,10 +75,10 @@ in
         run cat ${codexTomlCfg} > "${codexCfgPath}";
       '';
     };
-    xdg.configFile = {
-      "codex/AGENTS.md" = {
-        inherit (config.lib.agents.instructions) text;
-      };
+  };
+  xdg.configFile = {
+    "codex/AGENTS.md" = {
+      inherit (config.lib.agents.instructions) text;
     };
   };
 }
