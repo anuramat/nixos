@@ -15,15 +15,15 @@ let
       let
         script = ''
           input=$(cat)
-          MODEL_DISPLAY=$(echo "$input" | jq -r '.model.display_name')
-          MODEL_ID=$(echo "$input" | jq -r '.model.id')
+          model_display=$(echo "$input" | jq -r '.model.display_name')
+          output_style=$(echo "$input" | jq -r '.output_style.name')
           # TODO output_style.name
 
           starship module directory
           starship module git_branch
           starship module git_state
           starship module git_status
-          echo " $MODEL_DISPLAY ($MODEL_ID)"
+          echo " $model_display ($output_style)"
         '';
       in
       pkgs.writeShellScript "statusline.sh" script;
