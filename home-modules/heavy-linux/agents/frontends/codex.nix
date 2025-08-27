@@ -83,7 +83,7 @@ in
   };
   xdg.configFile = {
     "codex/AGENTS.md" = {
-      inherit (config.lib.agents.instructions) text;
+      text = config.lib.agents.instructions.codex;
     };
   };
 }

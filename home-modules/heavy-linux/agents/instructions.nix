@@ -56,7 +56,7 @@ let
 
           Before starting ANY task you MUST explicitly identify acceptance criteria,
           and add the corresponding check as a final step to your plan/todo list${
-            when (args.planningTool != null) " using the `${args.planningTool}` tool"
+            if (args.planningTool != null) then " using the `${args.planningTool}` tool" else ""
           }.
 
           After finishing the task, you MUST verify that the solution meets the acceptance criteria.

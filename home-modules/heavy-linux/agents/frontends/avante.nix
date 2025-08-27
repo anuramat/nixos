@@ -52,7 +52,7 @@ in
           };
           system_prompt =
             let
-              path = pkgs.writeText "instructions.md" agents.instructions.text;
+              path = pkgs.writeText "instructions.md" agents.instructions.generic;
             in
             hax.vim.luaf ''
               local hub = require("mcphub").get_hub_instance()

@@ -19,7 +19,7 @@ in
         geminiConfig
         ;
     };
-    file.".gemini/${contextFileName}".text = agents.instructions.text;
+    file.".gemini/${contextFileName}".text = agents.instructions.generic;
 
     packages = [
       pkgs.gemini-cli
