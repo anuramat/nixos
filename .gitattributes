@@ -1,1 +1,1 @@
-flake.nix diff=nodiff
+flake.nix -diff

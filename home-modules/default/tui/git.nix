@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }:
@@ -15,11 +16,6 @@ let
     ];
     git_protocol = "ssh";
     prompt = true;
-  };
-  difftastic = {
-    enable = true;
-    enableAsDifftool = true;
-    display = "inline";
   };
   aliases = {
     wt = "worktree";
@@ -111,8 +107,41 @@ in
         hooks
         ignores
         aliases
-        difftastic
         ;
+
+      difftastic = {
+        enable = true;
+        package =
+          let
+            wrapped = pkgs.writeShellApplication {
+              name = pkgs.difftastic.meta.mainProgram;
+              runtimeInputs = with pkgs; [
+                difftastic
+                gawk
+                git
+              ];
+              text = ''
+                if (($# >= 7)); then
+                  path="''${*: -7:1}"
+                  old="''${*: -6:1}"
+                  new="''${*: -3:1}"
+                  if [[ -r $old ]] && [[ -r $new ]]; then
+                    state=$(git check-attr diff -- "$path" | awk '{print $3}')
+                    if [[ $state == "unset" ]]; then # corresponds to `pattern -diff` in `.gitattributes`
+                      echo "skipping $path"
+                      exit 0
+                    fi
+                  fi
+                fi
+                exec difft "$@"
+              '';
+              excludeShellChecks = map (v: "SC" + toString v) config.lib.excludeShellChecks.numbers;
+            };
+          in
+          wrapped;
+        enableAsDifftool = false;
+        display = "inline";
+      };
 
       # TODO check jupyter notebook and nbdime later; `git diff` works
       extraConfig = {
