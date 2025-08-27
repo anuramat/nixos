@@ -129,6 +129,16 @@ let
         '';
       };
 
+      goose-cli = prev.goose-cli.overrideAttrs (oldAttrs: rec {
+        version = "1.6.0";
+        src = prev.fetchFromGitHub {
+          owner = "block";
+          repo = "goose";
+          tag = "v${version}";
+          hash = "sha256-ZfS0U7PpGWWuqGKd7IjRaavqZSySx93F9S1d7r2wMkE=";
+        };
+      });
+
       codex = prev.stdenv.mkDerivation rec {
         pname = "codex";
         version = "0.24.0";

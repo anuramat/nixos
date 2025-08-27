@@ -88,7 +88,7 @@ in
           model = rootdir + modelAttrs.filename;
         };
       ollama = {
-        enable = false;
+        enable = true;
         acceleration = lib.mkIf cuda "cuda";
         loadModels = lib.mkIf cuda [ ]; # pull models on service start
         models = "/mnt/storage/ollama"; # TODO abstract away; make a new variable that contains a path to a storage device; fill on different machines
