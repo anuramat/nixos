@@ -101,12 +101,12 @@ let
       '';
 
       workflow = ''
-        You MUST adhere to the following development protocol:
+        ${head} Acceptance criteria identification
 
-        ${head} Preparation: Acceptance criteria identification
+        Before starting ANY task you MUST explicitly identify acceptance criteria,
+        and add them to your todo list.
 
-        Before starting ANY task you MUST explicitly identify acceptance
-        criteria, unless it's directly specified. Typical cases, in pairs of situation -- :
+        Typical cases:
 
         | Task context       | Acceptance criterion       |
         | ------------------ | -------------------------- |
@@ -116,30 +116,10 @@ let
         | Flake with an app  | `nix run` succeeds         |
         | Non-development    | None                       |
 
-        ${head} Test:
-
-        You SHOULD write tests, if possible -- before implementing the feature
-        (test-driven development).
-
-        ${head} Development loop
-
-        You MUST iterate using the following "development" and "verification" steps
-        until you succeed:
-
-        1. Development: implement the solution, a part of the solution, or fix a
-           problem; then proceed to verification.
-        2. Verification: verify that the solution meets the acceptance criteria.
-           - If the criteria are met, the task is complete.
-           - Otherwise, go back to step 1 -- iterate again on the solution.
-
-        The task can be considered complete ONLY if the acceptance criteria
-        are met.
+        After finishing the task, you MUST verify that the solution meets the acceptance criteria.
+        If some criteria are NOT met, you MUST continue iterating on the problem, until ALL the acceptance criteria are met.
+        The task CAN NOT be considered complete until ALL the acceptance criteria are met.
       '';
-
-      usage = ''
-        You are provided special agent-focused CLI tools, that you can use with your bash tool:
-      ''
-      + (lib.concatStringsSep "\n" config.lib.agents.usage);
     };
 in
 {
@@ -152,5 +132,4 @@ in
       ;
     path = "${config.home.homeDirectory}/${config.xdg.configFile.${mainContextFile}.target}";
   };
-  xdg.configFile.${mainContextFile} = { inherit text; };
 }

@@ -86,8 +86,6 @@ in
   ];
 
   lib.agents = {
-    mainContextFile = "AGENT.md";
-
     contextFiles = [
       "CRUSH.md"
       "GEMINI.md"
