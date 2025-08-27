@@ -20,7 +20,7 @@ let
       "localhost:${port}";
     extensions = (
       let
-        servers = { inherit (config.lib.agents.mcp) zotero tools; };
+        servers = { inherit (config.lib.agents.mcp.raw) zotero tools; };
       in
       lib.mapAttrs (
         n: v:
@@ -28,8 +28,8 @@ let
           {
             type = "stdio";
             cmd = v.command;
-            inherit (v) args;
-            envs = v.env;
+            args = v.args or [ ];
+            envs = v.env or { };
           }
         else if v.type == "http" then
           { type = "sse"; }
