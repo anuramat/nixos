@@ -52,11 +52,11 @@ in
             # TODO red color
             interval = 1;
             tooltip = false;
-            # on-click =
-            #   let
-            #     pkill = "${pkgs.procps}/bin/pkill";
-            #   in
-            #   "${pkill} -INT -x wf-recorder";
+            on-click =
+              let
+                pkill = "${pkgs.procps}/bin/pkill";
+              in
+              "${pkill} -INT -x wf-recorder";
           };
           mpris = {
             dynamic-len = 1;
