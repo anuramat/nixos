@@ -1,4 +1,4 @@
-# ExitPlanMode should be concise as possible
+# should be concise as possible
 # maybe bring back roles.nix
 {
   lib,
@@ -84,7 +84,7 @@ in
 {
   xdg.configFile = (
     {
-      "claude/CLAUDE.md".text = agents.instructions.text;
+      "claude/CLAUDE.md".text = agents.instructions.claude;
     }
     // commands
   );
