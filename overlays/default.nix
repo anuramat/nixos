@@ -36,6 +36,7 @@ let
       github-mcp-server
       keymapp
       proton-pass
+      goose-cli
       ;
   };
   pythonPackages = final: prev: {
@@ -128,16 +129,6 @@ let
           runHook postInstall
         '';
       };
-
-      goose-cli = prev.goose-cli.overrideAttrs (oldAttrs: rec {
-        version = "1.6.0";
-        src = prev.fetchFromGitHub {
-          owner = "block";
-          repo = "goose";
-          tag = "v${version}";
-          hash = "sha256-ZfS0U7PpGWWuqGKd7IjRaavqZSySx93F9S1d7r2wMkE=";
-        };
-      });
 
       codex = prev.stdenv.mkDerivation rec {
         pname = "codex";
