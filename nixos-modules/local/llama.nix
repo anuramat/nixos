@@ -86,7 +86,6 @@ in
           openFirewall = false;
           extraFlags = modelAttrs.flags;
           model = rootdir + modelAttrs.filename;
-
         };
       ollama = {
         enable = false;
