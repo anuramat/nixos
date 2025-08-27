@@ -48,7 +48,7 @@ let
     zotero = {
       command = getExe pkgs.zotero-mcp;
       env = {
-        ZOTERO_LOCAL = true;
+        ZOTERO_LOCAL = "true";
       };
     };
   };
