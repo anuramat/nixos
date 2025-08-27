@@ -43,8 +43,11 @@ let
           - The key words "MUST", "MUST NOT", "SHOULD", "SHOULD NOT", "MAY" are to be interpreted as described in RFC 2119.
           - If you need tools that are not available on the system, you SHOULD use `nix run nixpkgs#packagename -- arg1 arg2 ...`.
           - To find required packages in `nixpkgs`, you SHOULD use `nh search $PACKAGE_NAME`${for "claude" "; if you need to find multiple packages, you MUST delegate package search to a sub-agent."}.
-          - When presenting a plan to the user using `ExitPlanMode`, you SHOULD keep the plan under 10 lines -- only outline the high-level steps.
-        '';
+        ''
+        + (for "claude" ''
+          - You SHOULD use sub-agents (`Task` tool) whenever possible, preferably -- multiple sub-agents in parallel.
+          - When presenting a plan to the user using `ExitPlanMode` tool, you SHOULD keep the plan under 10 lines -- only outline the high-level steps.
+        '');
 
         git = ''
           - You MUST make commits after each step, so that the user can backtrack the trajectory of the changes step by step.
@@ -73,12 +76,7 @@ let
           | Flake with an app  | `nix run` succeeds         |
           | Non-development    | None                       |
         '';
-      }
-      // (for "claude" {
-        subagents = ''
-          - You SHOULD use parallel sub-agents whenever possible -- this saves time, tokens, and keeps the context clean.
-        '';
-      });
+      };
 
       prependTitle = body: lib.concatStringsSep "\n" ([ "${topHead} Global instructions\n" ] ++ body);
     in
