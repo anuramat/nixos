@@ -1,6 +1,4 @@
-# configured: 2025-08-04
 {
-  lib,
   pkgs,
   config,
   ...
@@ -8,28 +6,20 @@
 let
   inherit (config.lib) agents;
 
-  geminiGeneralCfg = config.lib.home.json.set {
-    contextFileName = config.lib.agents.contextFiles;
+  contextFileName = "AGENTS.md";
+  geminiConfig = config.lib.home.json.set {
+    inherit contextFileName;
   } (config.home.homeDirectory + "/.gemini/settings.json");
 
-  geminiContextCfg = config.lib.home.json.set {
-    hideTips = true;
-    hideBanner = true;
-  } (config.home.homeDirectory + "/.gemini/settings.json");
-
-  geminiInstructions = {
-    ".gemini/GEMINI.md".text = agents.instructions.text;
-  };
 in
 {
   home = {
     activation = {
       inherit
-        geminiGeneralCfg
-        geminiContextCfg
+        geminiConfig
         ;
     };
-    file = geminiInstructions;
+    file.".gemini/${contextFileName}".text = agents.instructions.text;
 
     packages = [
       pkgs.gemini-cli

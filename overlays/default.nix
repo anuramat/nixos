@@ -129,19 +129,6 @@ let
         '';
       };
 
-      crush =
-        let
-          unstable = (import inputs.nixpkgs-unstable { inherit (prev) config system; });
-        in
-        unstable.buildGo125Module rec {
-          pname = "crush";
-          meta.mainProgram = pname;
-          version = inputs.crush.shortRev;
-          src = inputs.crush;
-          doCheck = false;
-          vendorHash = "sha256-qUcgVu6+cSFYDCsIB1pB5Vy3adWua2Rs8P9SNXJEjcA=";
-        };
-
       codex = prev.stdenv.mkDerivation rec {
         pname = "codex";
         version = "0.24.0";

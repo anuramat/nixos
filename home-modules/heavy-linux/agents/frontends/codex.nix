@@ -13,13 +13,13 @@ let
       # https://github.com/openai/codex/blob/main/codex-rs/config.md
       cfg = {
         # mcp_servers = { inherit (config.lib.agents.mcp.raw) zotero; };
-        show_raw_agent_reasoning = true;
-        # hide_agent_reasoning = false
-        # model_reasoning_summary = "detailed"
-        profile = "gpt5";
         profiles = {
-          gpt5 = {
-            model = "gpt-5";
+          high = {
+            model_reasoning_effort = "high";
+            model_provider = "openai";
+          };
+          low = {
+            model_reasoning_effort = "low";
             model_provider = "openai";
           };
           oss = {

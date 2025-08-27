@@ -1,6 +1,5 @@
 { config, lib, ... }:
 let
-  inherit (config.lib.agents) mainContextFile;
   topHead = "#";
   sectionHead = "${topHead}#";
 
@@ -130,6 +129,5 @@ in
       mkInstructions
       text
       ;
-    path = "${config.home.homeDirectory}/${config.xdg.configFile.${mainContextFile}.target}";
   };
 }

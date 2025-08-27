@@ -50,11 +50,9 @@ in
             auto_approve_tool_permissions = true;
             enable_token_counting = false;
           };
-          # system_prompt = agents.instructions.text;
-          # TODO reuse system prompt file derivation
           system_prompt =
             let
-              path = config.xdg.configFile.${config.lib.agents.mainContextFile}.target;
+              path = pkgs.writeText "instructions.md" agents.instructions.text;
             in
             hax.vim.luaf ''
               local hub = require("mcphub").get_hub_instance()

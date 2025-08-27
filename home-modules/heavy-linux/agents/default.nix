@@ -86,14 +86,6 @@ in
   ];
 
   lib.agents = {
-    contextFiles = [
-      "CRUSH.md"
-      "GEMINI.md"
-      "CLAUDE.md"
-      "AGENTS.md"
-      "AGENT.md"
-    ];
-
     varNames = {
       rwDirs = "RW_DIRS";
       agentName = "AGENT";
