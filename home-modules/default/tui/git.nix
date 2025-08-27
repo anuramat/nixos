@@ -74,7 +74,7 @@ let
   ];
   attributes = [
     "*.ipynb diff=jupyternotebook merge=jupyternotebook"
-    "flake.lock diff=nodiff"
+    "flake.lock -diff"
   ];
   hooks = {
     pre-commit =
