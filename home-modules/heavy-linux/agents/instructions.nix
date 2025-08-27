@@ -45,12 +45,13 @@ let
           - To find required packages in `nixpkgs`, you SHOULD use `nh search $PACKAGE_NAME`${for "claude" "; if you need to find multiple packages, you MUST delegate package search to a sub-agent."}.
         ''
         + (for "claude" ''
-          - You SHOULD use sub-agents (`Task` tool) whenever possible, preferably -- multiple sub-agents in parallel.
+          - You SHOULD always consider delegating each sub-task to sub-agents (`Task` tool), unless it's more efficient to work on it yourself.
           - When presenting a plan to the user using `ExitPlanMode` tool, you SHOULD keep the plan under 10 lines -- only outline the high-level steps.
         '');
 
         git = ''
           - You MUST make commits after each step, so that the user can backtrack the trajectory of the changes step by step.
+            Ideally, each commit is the smallest possible self-contained logical unit, such that a different developer could seamlessly take over.
           - Keep commit messages as concise as possible.
         '';
 
@@ -70,7 +71,7 @@ let
 
           | Task context       | Acceptance criterion       |
           | ------------------ | -------------------------- |
-          | Project with tests | All relevant tests pass    |
+          | Project with tests | All tests pass             |
           | Flake              | `nix build` succeeds       |
           | Flake with checks  | `nix flake check` succeeds |
           | Flake with an app  | `nix run` succeeds         |
