@@ -48,7 +48,7 @@ in
         };
         indicators = {
           "custom/rec" = {
-            exec = "${pkgs.procps}/bin/pgrep -x wf-recorder >/dev/null && echo \"⏺\" || echo \"\"";
+            exec = ''${pkgs.procps}/bin/pgrep -x wf-recorder >/dev/null && echo "⏺\" || echo ""'';
             interval = 1;
             tooltip = false;
           };
