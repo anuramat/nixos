@@ -67,6 +67,9 @@ in
       (config.lib.agents.mkSandbox {
         package = pkgs.goose-cli;
         wrapperName = "gse";
+        env = {
+          CONTEXT_FILE_NAMES = "'[\"AGENTS.md\"]'";
+        };
       })
     ];
   };
