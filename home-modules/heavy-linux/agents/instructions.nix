@@ -69,6 +69,8 @@ let
           If some criteria are NOT met, you MUST continue iterating on the problem, until ALL the acceptance criteria are met.
           The task CAN NOT be considered complete until ALL the acceptance criteria are met.
 
+          If the user asks you to fix a failing command, successful execution of this command MUST be added as a criterion.
+
           Typical acceptance criteria:
 
           | Task context       | Acceptance criterion       |
