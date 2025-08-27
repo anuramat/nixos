@@ -71,6 +71,7 @@ let
       slurp = getExe pkgs.slurp;
     in
     {
+      # TODO move giant oneliners to scripts
       shot =
         let
           swappy = getExe pkgs.swappy;
