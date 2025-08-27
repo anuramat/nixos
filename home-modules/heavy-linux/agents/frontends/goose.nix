@@ -1,3 +1,4 @@
+# reads AGENTS.md and goose hints or whatever
 {
   pkgs,
   config,

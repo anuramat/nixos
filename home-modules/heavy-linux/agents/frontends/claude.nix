@@ -1,5 +1,6 @@
 # should be concise as possible
 # maybe bring back roles.nix
+# NOTE: only reads CLAUDE.md
 {
   lib,
   config,
