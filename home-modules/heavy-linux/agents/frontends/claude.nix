@@ -1,3 +1,5 @@
+# ExitPlanMode should be concise as possible
+# maybe bring back roles.nix
 {
   lib,
   config,

@@ -18,8 +18,11 @@ let
         port = toString osConfig.services.llama-cpp.port;
       in
       "localhost:${port}";
-    extensions =
-      (lib.mapAttrs (
+    extensions = (
+      let
+        servers = { inherit (config.lib.agents.mcp) zotero tools; };
+      in
+      lib.mapAttrs (
         n: v:
         if !v ? type then
           {
@@ -32,33 +35,18 @@ let
           { type = "sse"; }
         else
           throw "oops"
-      ) config.lib.agents.mcp)
-      // {
-        computercontroller = {
-          bundled = true;
-          display_name = "Computer Controller";
-          enabled = true;
-          name = "computercontroller";
-          timeout = 300;
-          type = "builtin";
-        };
-        developer = {
-          bundled = true;
-          display_name = "Developer Tools";
-          enabled = true;
-          name = "developer";
-          timeout = 300;
-          type = "builtin";
-        };
-        memory = {
-          bundled = true;
-          display_name = "Memory";
-          enabled = true;
-          name = "memory";
-          timeout = 300;
-          type = "builtin";
-        };
-      };
+      ) servers
+    );
+    # // {
+    #   memory = {
+    #     bundled = true;
+    #     display_name = "Memory";
+    #     enabled = true;
+    #     name = "memory";
+    #     timeout = 300;
+    #     type = "builtin";
+    #   };
+    # };
   };
 in
 {
