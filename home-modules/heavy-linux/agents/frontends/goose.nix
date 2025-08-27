@@ -20,12 +20,19 @@ let
       "localhost:${port}";
     extensions = (
       let
-        servers = { inherit (config.lib.agents.mcp.raw) zotero tools; };
+        servers = {
+          inherit (config.lib.agents.mcp.raw)
+            zotero
+            # tools
+            ;
+        };
       in
       lib.mapAttrs (
         n: v:
         if !v ? type then
           {
+            name = n;
+            enabled = true;
             type = "stdio";
             cmd = v.command;
             args = v.args or [ ];
