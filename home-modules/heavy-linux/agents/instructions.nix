@@ -61,7 +61,7 @@ let
           ${head} Acceptance criteria identification
 
           Before starting a development task you MUST explicitly state acceptance criteria,
-          and add a final "verify criteria" check as a final step to your plan/todo list${
+          and add a criteria verification check (e.g. "Check tests") as a final step to your plan/todo list${
             if (args.planningTool != null) then " using the `${args.planningTool}` tool" else ""
           }.
 
