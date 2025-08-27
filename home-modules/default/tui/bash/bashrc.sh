@@ -65,7 +65,7 @@ y() {
 run() {
 	local -r name="$1"
 	shift
-	nix run "nixpkgs$name" -- "$@"
+	nix run "nixpkgs#$name" -- "$@"
 }
 
 shell() {
