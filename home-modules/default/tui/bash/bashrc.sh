@@ -65,13 +65,13 @@ y() {
 run() {
 	local -r name="$1"
 	shift
-	nix run "nixpkgs-unstable#$name" -- "$@"
+	nix run "nixpkgs$name" -- "$@"
 }
 
 shell() {
 	local -r name="$1"
 	shift
-	nix shell "nixpkgs-unstable#$name" -- "$@"
+	nix shell "nixpkgs#$name" -- "$@"
 }
 
 # vim: fdl=0
