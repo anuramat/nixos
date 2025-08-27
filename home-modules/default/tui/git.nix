@@ -5,6 +5,7 @@
   ...
 }:
 let
+  file_separator_string = "<filesep>";
   ghSettings = {
     aliases = {
       login = "auth login --skip-ssh-key --hostname github.com --git-protocol ssh --web";
@@ -121,6 +122,7 @@ in
                 git
               ];
               text = ''
+                echo '${file_separator_string}'
                 if (($# >= 7)); then
                   path="''${*: -7:1}"
                   old="''${*: -6:1}"
@@ -156,8 +158,7 @@ in
             less-with-search =
               let
                 wrapped = pkgs.writeShellScriptBin "less-difft" ''
-                  PAT='^.* --- \([0-9][0-9]*/[0-9][0-9]* --- \)\?.*$'
-                  exec less -rp "$PAT" "$@"
+                  exec less -rp '${file_separator_string}' "$@"
                 '';
               in
               lib.getExe wrapped;
