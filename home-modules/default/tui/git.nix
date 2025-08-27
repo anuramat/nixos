@@ -154,13 +154,12 @@ in
         core.pager = {
           diff =
             let
-              # TODO make this work again...
-              pattern = ''(?<! --- ([2-9]|\d{2,6})/\d{1,6}) --- \S+(?![/\d]* ---)'';
-              # this is for lesskey:
-              # escaped = lib.replaceStrings [ ''\'' ] [ ''\\'' ] pattern;
-              # LESS = -ir +/${escaped}\ng
+              wrapped = pkgs.writeShellScriptBin "less-difft" ''
+                PAT='^.* --- \([0-9][0-9]*/[0-9][0-9]* --- \)\?.*$'
+                exec less -rp "$PAT" "$@"
+              '';
             in
-            "less '+/${pattern}'$'\ng'";
+            lib.getExe wrapped;
         };
         init.defaultBranch = "main";
         advice = {
