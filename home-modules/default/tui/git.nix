@@ -151,16 +151,22 @@ in
           pruneTags = true;
         };
         pull.ff = "only";
-        core.pager = {
-          diff =
-            let
-              wrapped = pkgs.writeShellScriptBin "less-difft" ''
-                PAT='^.* --- \([0-9][0-9]*/[0-9][0-9]* --- \)\?.*$'
-                exec less -rp "$PAT" "$@"
-              '';
-            in
-            lib.getExe wrapped;
-        };
+        core.pager =
+          let
+            less-with-search =
+              let
+                wrapped = pkgs.writeShellScriptBin "less-difft" ''
+                  PAT='^.* --- \([0-9][0-9]*/[0-9][0-9]* --- \)\?.*$'
+                  exec less -rp "$PAT" "$@"
+                '';
+              in
+              lib.getExe wrapped;
+          in
+          {
+            diff = less-with-search;
+            show = less-with-search;
+            log = less-with-search;
+          };
         init.defaultBranch = "main";
         advice = {
           addEmptyPathspec = false;
