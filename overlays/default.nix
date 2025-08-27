@@ -174,7 +174,7 @@ let
         let
           installer = prev.fetchurl {
             url = "https://cursor.com/install";
-            hash = "sha256-MZT1x7Ckq9LeaSzEcf2TeWmISp6Uje8sqhZ11TskYbc=";
+            hash = "sha256-sXeflhcWaBo0qoE5wPXiA9ZyT78sRW2UkMiGr13J2Fk=";
           };
           installerText = readFile installer;
           matches =
@@ -190,7 +190,7 @@ let
           link = replaceStrings [ "\${OS}" "\${ARCH}" ] [ "linux" "x64" ] linkTemplate;
           tarball = prev.fetchurl {
             url = link;
-            hash = "sha256-ikoxUvpLMngDOlHawq7i69mOcPGkV8q1capDU83QMWs=";
+            hash = "sha256-046NAHLckWOvIG5WJ8p3SNiUTbelEw2eTZ+/1DvTpNY=";
           };
           version = "nightly";
         in

@@ -35,6 +35,7 @@ in
             "mpris"
           ];
           modules-center = [
+            "custom/rec"
             "sway/workspaces"
             "sway/scratchpad"
           ];
@@ -45,7 +46,12 @@ in
             "clock"
           ];
         };
-        controls = {
+        indicators = {
+          "custom/rec" = {
+            exec = "pgrep -x wf-recorder >/dev/null && echo \"⏺\" || echo \"\"";
+            interval = 1;
+            tooltip = false;
+          };
           mpris = {
             dynamic-len = 1;
             dynamic-priority = [
@@ -73,6 +79,8 @@ in
               deactivated = " ";
             };
           };
+        };
+        controls = {
           pulseaudio = {
             format = "{volume}% {icon}  {format_source}";
             format-bluetooth = "{volume}% {icon}   {format_source}";
@@ -135,7 +143,7 @@ in
         };
       in
       [
-        (main // modules // controls // metrics // sway)
+        (main // modules // indicators // sway // controls // metrics)
       ];
   };
 }
