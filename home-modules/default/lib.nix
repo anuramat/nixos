@@ -28,7 +28,7 @@ let
       value
     else
       value.__path or (writeTextFile {
-        name = "tmptxt.json"; # TODO rename
+        name = "value.json";
         text = toJSON value;
       });
 

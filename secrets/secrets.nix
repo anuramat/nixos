@@ -14,7 +14,7 @@ let
         mkKeyFiles
         mkHostKeys
         ;
-      clientKeys = mkKeyFiles names |> map builtins.readFile |> map lib.trim; # TODO move to hax
+      clientKeys = mkKeyFiles names |> map builtins.readFile |> map lib.trim;
       hostKeys = mkHostKeys names;
     in
     clientKeys ++ hostKeys;
