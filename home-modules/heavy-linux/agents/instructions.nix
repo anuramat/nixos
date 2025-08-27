@@ -32,7 +32,8 @@ let
           Background:
           The user has to review the code thoroughly after the task is completed.
           The main limiting factor is the sheer amount of new/changed lines.
-          You should aim for the smallest amount of code possible -- this will make it easier for the user to review the changes.
+          You should aim for the smallest possible amount of code that does the job -- this will make it easier for the user to review the changes.
+          This does not apply to temporary files (e.g. debugging/test scripts) -- we only care about the amount of code commited to the repository.
 
           - You MUST write concise code that prioritizes brevity and elegance over verbosity and caution.
           - You MUST NOT implement features that are neither explicitly requested by the user nor indirectly required.
@@ -41,6 +42,7 @@ let
 
         general = ''
           - The key words "MUST", "MUST NOT", "SHOULD", "SHOULD NOT", "MAY" are to be interpreted as described in RFC 2119.
+          - You MUST NOT do "band-aid" fixes -- ALWAYS fix the root cause of the problem.
           - If you need tools that are not available on the system, you SHOULD use `nix run nixpkgs#packagename -- arg1 arg2 ...`.
           - To find required packages in `nixpkgs`, you SHOULD use `nh search $PACKAGE_NAME`${for "claude" "; if you need to find multiple packages, you MUST delegate package search to a sub-agent."}.
         ''
@@ -50,7 +52,7 @@ let
         '');
 
         git = ''
-          - You MUST make commits after each step, so that the user can backtrack the trajectory of the changes step by step.
+          - You MUST make commits after each atomic unit of work that changes files, so that the user can backtrack the trajectory of the changes step by step.
             Ideally, each commit is the smallest possible self-contained logical unit, such that a different developer could seamlessly take over.
           - Keep commit messages as concise as possible.
         '';
@@ -58,8 +60,8 @@ let
         workflow = ''
           ${head} Acceptance criteria identification
 
-          Before starting ANY task you MUST explicitly identify acceptance criteria,
-          and add the corresponding check as a final step to your plan/todo list${
+          Before starting a development task you MUST explicitly state acceptance criteria,
+          and add a final "verify criteria" check as a final step to your plan/todo list${
             if (args.planningTool != null) then " using the `${args.planningTool}` tool" else ""
           }.
 
@@ -75,8 +77,8 @@ let
           | Flake              | `nix build` succeeds       |
           | Flake with checks  | `nix flake check` succeeds |
           | Flake with an app  | `nix run` succeeds         |
-          | Non-development    | None                       |
         '';
+        # TODO maybe refactor step? doc upd step?
       };
 
       prependTitle = body: lib.concatStringsSep "\n" ([ "${topHead} Global instructions\n" ] ++ body);
