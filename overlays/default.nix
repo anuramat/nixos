@@ -1,6 +1,7 @@
 {
   inputs,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -130,12 +131,26 @@ let
         '';
       };
 
+      # https://github.com/antinomyhq/forge/releases/
+      forge = pkgs.stdenv.mkDerivation rec {
+        pname = "forge";
+        version = "0.111.0";
+        src = pkgs.fetchurl {
+          url = "https://github.com/antinomyhq/forge/releases/download/v${version}/forge-x86_64-unknown-linux-musl";
+          hash = "";
+        };
+        dontUnpack = true;
+        installPhase = ''
+          install -Dm755 $src $out/bin/forge
+        '';
+      };
+
       codex = prev.stdenv.mkDerivation rec {
         pname = "codex";
-        version = "0.24.0";
+        version = "0.25.0";
         src = prev.fetchurl {
           url = "https://github.com/openai/codex/releases/download/rust-v${version}/codex";
-          hash = "sha256-SdMjDggmtUlJl1xz8vcFqK7wyVCI6oibKEBrchyvpBU=";
+          hash = "";
         };
         dontUnpack = true;
         nativeBuildInputs = [ prev.makeWrapper ];

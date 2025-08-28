@@ -178,6 +178,9 @@ let
 
     default = {
       blocked_tools = [ "*" ];
+      prompt = [
+        ''always finish your answers with a short summary with a short, concise version of the answer and/or a relevant bash one-liner/code snippet''
+      ];
     };
 
     summarizer = {
