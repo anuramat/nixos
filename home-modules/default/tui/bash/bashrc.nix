@@ -113,9 +113,8 @@ in
 
       source ${./bashrc.sh}
 
-      # does this even work
+      # TODO does this even work/is this required
       PROMPT_COMMAND="''${PROMPT_COMMAND:+$PROMPT_COMMAND;}history -a"
       source ${./osc.sh}
-      source ${pkgs.bash-preexec}/share/bash/bash-preexec.sh
     '';
 }
