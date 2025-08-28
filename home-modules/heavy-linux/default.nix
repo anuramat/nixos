@@ -82,6 +82,6 @@
     wl-clipboard # wl-copy/wl-paste: copy from stdin/paste to stdout
     wl-mirror # screen mirroring
     wmenu # dmenu 1to1
-    xdragon # terminal drag and drop
+    dragon-drop # terminal drag and drop
   ];
 }
