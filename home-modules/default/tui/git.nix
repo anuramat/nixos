@@ -27,8 +27,8 @@ let
     sw = "switch";
     cm = "commit";
     ps = "push";
-    l = "log --ext-diff";
-    lg = "log --ext-diff --oneline --graph --all --decorate";
+    lg = "log --ext-diff";
+    lgg = "log --ext-diff --oneline --graph --all --decorate";
     df = "diff";
     ds = "diff --staged";
     lh = "!lh() { find .git/hooks -mindepth 1 -maxdepth 1 | grep -v sample; }; lh";
