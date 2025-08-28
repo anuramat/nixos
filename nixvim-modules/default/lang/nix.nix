@@ -21,7 +21,7 @@
       };
 
       nixd = {
-        enable = true;
+        enable = false;
         cmd = [
           "nixd"
           "--inlay-hints=false"
