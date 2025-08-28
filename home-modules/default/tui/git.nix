@@ -88,13 +88,13 @@ let
         ];
         text = ''
           echo '${file_separator_string}'
-          path="''${*: -7:1}"
+          path="$1"
           state=$(git check-attr diff -- "$path" | awk '{print $3}')
           if [[ $state == "unset" ]]; then # corresponds to `pattern -diff` in `.gitattributes`
             echo "skipping $path"
             exit 0
           fi
-          exec difft "$@"
+          exec difft --display inline --background dark "$@"
         '';
         excludeShellChecks = map (v: "SC" + toString v) config.lib.excludeShellChecks.numbers;
       };
