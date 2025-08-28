@@ -53,10 +53,6 @@ in
   programs.gphoto2.enable = true; # dslr interface
   programs.obs-studio.enableVirtualCamera = true; # set up the v4l2loopback kernel module, used in home-manager
 
-  environment.systemPackages = with pkgs; [
-    hydroxide
-  ];
-
   programs.gnome-disks.enable = true; # udisks2 frontend
   services.udisks2 = {
     enable = true;
