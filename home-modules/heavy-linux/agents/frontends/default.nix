@@ -1,11 +1,12 @@
 { pkgs, ... }:
 {
   imports = [
-    ./codex.nix
-    ./claude.nix
     ./avante.nix
+    ./claude.nix
+    ./codex.nix
+    ./cursor.nix
+    ./forge.nix
     ./gemini.nix
     ./goose.nix # TODO
-    ./cursor.nix
   ];
 }

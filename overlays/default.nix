@@ -156,7 +156,7 @@ let
                 if prev.system == linux then
                   {
                     url = mkLink "x86_64-unknown-linux-musl";
-                    hash = "";
+                    hash = "sha256-e0UNM660sf2hJZ/+b2TpV0BilGmiv0CBfF1f4O3f70E=";
                   }
                 else if prev.system == darwin then
                   {
