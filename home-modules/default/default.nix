@@ -17,7 +17,7 @@
 
   home.preferXdgDirectories = true;
 
-  xdg.configFile."nixpkgs/config.nix" = # nix
+  xdg.configFile."nixpkgs/config.nix".text = # nix
     ''
       { allowUnfree = true; }
     '';
