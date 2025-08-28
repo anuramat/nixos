@@ -117,9 +117,6 @@
     mods = {
       url = "github:anuramat/mods";
     };
-    musnix = {
-      url = "github:musnix/musnix";
-    };
     neovim-nightly-overlay = {
       url = "github:nix-community/neovim-nightly-overlay";
     };
