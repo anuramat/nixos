@@ -19,14 +19,18 @@ in
       downloads-dir = "~/Downloads";
     };
   };
+  home.packages = with pkgs; [ hydroxide ];
+  
   systemd.user.services.hydroxide = {
     # NOTE needs manual auth: `hydroxide auth`, then save to `pass hydroxide`
-    description = "Hydroxide ProtonMail Bridge";
-    after = [ "network.target" ];
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
+    Unit = {
+      Description = "Hydroxide ProtonMail Bridge";
+    };
+    Install = {
+      WantedBy = [ "default.target" ];
+    };
+    Service = {
       ExecStart = "${lib.getExe pkgs.hydroxide} serve";
-      User = config.username;
       Restart = "always";
       RestartSec = 10;
     };
