@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-export XDG_DOWNLOAD_DIR="$HOME/dl/"
-export XDG_DOCUMENTS_DIR="$HOME/docs/"
-export XDG_PICTURES_DIR="$HOME/img/"
-export XDG_VIDEOS_DIR="$HOME/vid/"
-
 shopt -s globstar # enables **
 set +H            # turn off ! history bullshit
 
@@ -50,28 +45,3 @@ nai() {
 		return 1
 	}
 }
-
-y() {
-	# wrapper that cds to yazi cwd on exit
-	local tmp cwd
-	tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
-	yazi "$@" --cwd-file="$tmp"
-	if cwd="$(command cat -- "$tmp")" && [ "$cwd" != "" ] && [ "$cwd" != "$PWD" ]; then
-		builtin cd -- "$cwd" || return
-	fi
-	rm -f -- "$tmp"
-}
-
-run() {
-	local -r name="$1"
-	shift
-	nix run "nixpkgs#$name" -- "$@"
-}
-
-shell() {
-	local -r name="$1"
-	shift
-	nix shell "nixpkgs#$name" -- "$@"
-}
-
-# vim: fdl=0

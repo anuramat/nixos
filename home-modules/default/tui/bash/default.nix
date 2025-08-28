@@ -23,7 +23,8 @@ in
   ];
   home =
     let
-      XDG_BIN_HOME = "${config.home.homeDirectory}/.local/bin";
+      home = config.home.homeDirectory;
+      XDG_BIN_HOME = "${home}/.local/bin";
       bashStateDir = config.xdg.stateHome + "/bash";
     in
     {
@@ -35,6 +36,12 @@ in
       };
       sessionVariables = {
         inherit XDG_BIN_HOME;
+
+        # TODO ensure existence?
+        XDG_DOWNLOAD_DIR = "${home}/dl/";
+        XDG_DOCUMENTS_DIR = "${home}/docs/";
+        XDG_PICTURES_DIR = "${home}/img/";
+        XDG_VIDEOS_DIR = "${home}/vid/";
 
         # TODO just in case; verify/move
         LC_ALL = "en_US.UTF-8";

@@ -1,6 +1,7 @@
 {
   programs.yazi = {
     enable = true;
+    shellWrapperName = "y";
     settings = {
       plugin.preloaders = [ ];
       plugin.prepend_previewers = [
