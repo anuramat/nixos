@@ -87,17 +87,12 @@ let
           git
         ];
         text = ''
-          if [ -v AGENT ]; then
-            exec diff "$@"
-          fi
           echo '${file_separator_string}'
-          if (($# >= 7)); then
-            path="''${*: -7:1}"
-            state=$(git check-attr diff -- "$path" | awk '{print $3}')
-            if [[ $state == "unset" ]]; then # corresponds to `pattern -diff` in `.gitattributes`
-              echo "skipping $path"
-              exit 0
-            fi
+          path="''${*: -7:1}"
+          state=$(git check-attr diff -- "$path" | awk '{print $3}')
+          if [[ $state == "unset" ]]; then # corresponds to `pattern -diff` in `.gitattributes`
+            echo "skipping $path"
+            exit 0
           fi
           exec difft "$@"
         '';
