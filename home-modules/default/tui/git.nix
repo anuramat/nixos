@@ -89,7 +89,6 @@ in
 
       inherit
         attributes
-        hooks
         ignores
         aliases
         ;
