@@ -16,4 +16,9 @@
   programs.home-manager.enable = true; # TODO huh? what does this do
 
   home.preferXdgDirectories = true;
+
+  xdg.configFile."nixpkgs/config.nix" = # nix
+    ''
+      { allowUnfree = true; }
+    '';
 }
