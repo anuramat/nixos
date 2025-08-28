@@ -16,7 +16,6 @@ in
 
   flake-parts.url = "github:hercules-ci/flake-parts";
   home-manager = mkInput "github:nix-community/home-manager/release-25.05";
-  musnix.url = "github:musnix/musnix";
   neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay"; # no follows: has a cache
   nix-topology.url = "github:oddlama/nix-topology";
   nix-unit = mkInput "github:nix-community/nix-unit/v2.30.0";

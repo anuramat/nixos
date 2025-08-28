@@ -16,7 +16,6 @@ in
     ./peripherals.nix
     ./remaps.nix
     ./rice.nix
-    inputs.musnix.nixosModules.musnix
   ];
 
   home-manager = {
@@ -44,16 +43,8 @@ in
       wireplumber = {
         enable = true;
       };
-      # TODO mess with musnix and jack later, try out monitoring
-      # jack = {
-      #   enable = true;
-      # };
     };
   };
-
-  # musnix = {
-  #   enable = true;
-  # };
 
   programs.captive-browser = {
     enable = true;
@@ -61,17 +52,6 @@ in
 
   programs.gphoto2.enable = true; # dslr interface
   programs.obs-studio.enableVirtualCamera = true; # set up the v4l2loopback kernel module, used in home-manager
-  systemd.services.hydroxide = {
-    description = "Hydroxide ProtonMail Bridge";
-    after = [ "network.target" ];
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      ExecStart = "${lib.getExe pkgs.hydroxide} serve";
-      User = username;
-      Restart = "always";
-      RestartSec = 10;
-    };
-  };
 
   environment.systemPackages = with pkgs; [
     hydroxide

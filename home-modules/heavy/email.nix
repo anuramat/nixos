@@ -1,4 +1,9 @@
-{ config, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   inherit (config.programs) git;
   email = git.userEmail;
@@ -14,6 +19,18 @@ in
       downloads-dir = "~/Downloads";
     };
   };
+  systemd.user.services.hydroxide = {
+    # NOTE needs manual auth: `hydroxide auth`, then save to `pass hydroxide`
+    description = "Hydroxide ProtonMail Bridge";
+    after = [ "network.target" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      ExecStart = "${lib.getExe pkgs.hydroxide} serve";
+      User = config.username;
+      Restart = "always";
+      RestartSec = 10;
+    };
+  };
   accounts.email.accounts.primary = {
     address = email;
     primary = true;
@@ -27,7 +44,7 @@ in
             type = "imap";
             host = "127.0.0.1";
             port = 1143;
-            encryption.type = "start-tls";
+            encryption.type = "none";
             auth = {
               type = "password";
               cmd = "pass show hydroxide";
