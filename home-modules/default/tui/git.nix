@@ -102,13 +102,13 @@ let
     wrapped;
 in
 {
+  home.sessionVariables = {
+    GIT_EXTERNAL_DIFF = lib.getExe difft;
+  };
   programs = {
     gh = {
       enable = true;
       settings = ghSettings;
-    };
-    home.sessionVariables = {
-      GIT_EXTERNAL_DIFF = lib.getExe difft;
     };
     git = {
       enable = true;
