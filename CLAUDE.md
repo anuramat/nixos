@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-Personal NixOS flake configuration managing system and home configurations. Uses NixOS 25.05, home-manager, nixvim, and custom modules.
+Personal NixOS flake configuration managing system and home configurations. Uses NixOS 25.05, home-manager, nixvim, and custom modules. Supports both Linux (NixOS) and macOS (Darwin) platforms.
 
 ## Key Architecture
 
@@ -13,7 +13,7 @@ Personal NixOS flake configuration managing system and home configurations. Uses
 - `nixos-configurations/` - Per-host NixOS configs (hostname must match directory)
 - `home-configurations/` - Standalone home-manager configs
 - `nixos-modules/` - NixOS system modules
-- `home-modules/` - Home-manager modules (default/heavy/standalone)
+- `home-modules/` - Home-manager modules (default/heavy/heavy-linux/darwin/linux/standalone)
 - `nixvim-modules/` - Neovim configuration modules
 - `hax/` - Helper functions library
 - `secrets/` - Age-encrypted secrets
@@ -26,6 +26,10 @@ Personal NixOS flake configuration managing system and home configurations. Uses
 
 - Default modules: Minimal base configuration
 - Heavy modules: Full desktop environment (GUI, agents, editors)
+- Heavy-linux modules: Linux-specific heavy configuration with desktop/agents/Sway
+- Darwin modules: macOS-specific configuration 
+- Linux modules: Linux-specific base configuration
+- Platform-specific examples in `home-configurations/` (e.g., `darwin-example.nix`)
 - Two entrypoints each for home-manager and nixvim (NixOS module vs standalone)
 
 ### Helper Library (hax)
@@ -146,10 +150,20 @@ The system supports configurable usernames via the `userConfig` module:
 
 Uses ragenix for secrets. Encrypted files in `secrets/` with configuration in `secrets/secrets.nix`.
 
+### AI Agent Integration
+
+The heavy-linux configuration includes comprehensive AI agent support:
+- Multiple agent frontends: Claude, Codex, Cursor, Avante, Forge, Gemini, Goose
+- Agent tools and sandbox environments
+- Custom agent instructions and role configurations
+- Command-line AI assistance via mods
+
 ## Testing Strategy
 
 ### Unit Tests
-Tests are in `tests/` directory, run via nix-unit. Test files mirror module structure in `tests/hax/`.
+Tests are in `tests/` directory, run via nix-unit. Test files mirror module structure:
+- `tests/hax/` - Helper library tests
+- `tests/home-modules/lib/` - Home-manager module library tests (activation-scripts)
 
 ### Integration Tests
 Located in `tests/integration/`, focused on username configuration:
@@ -173,6 +187,7 @@ Located in `tests/integration/`, focused on username configuration:
 
 ## Documentation
 
+- `CLAUDE.md` - This file; project guidance for Claude Code (symlinked as `AGENTS.md`)
 - `docs/USERNAME_CUSTOMIZATION.md` - Complete guide for username configuration
 - `PROBLEMS.md` - Technical debt and known issues tracking
 - `tests/integration/README.md` - Integration testing documentation
