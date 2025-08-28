@@ -77,22 +77,6 @@ let
     "*.ipynb diff=jupyternotebook merge=jupyternotebook"
     "flake.lock -diff"
   ];
-  hooks = {
-    pre-commit =
-      config.lib.home.gitHook
-        # bash
-        ''
-          hook_name=$(basename "$0")
-          local=./.git/hooks/$hook_name
-          [ -x "$local" ] && {
-            exec "$local"
-          }
-
-          if [ -f ./treefmt.toml ]; then
-            treefmt --fail-on-change
-          fi
-        '';
-  };
 in
 {
   programs = {
