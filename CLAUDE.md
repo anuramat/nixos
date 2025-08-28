@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-Personal NixOS flake configuration managing system and home configurations. Uses NixOS 25.05, home-manager, nixvim, and custom modules. Supports both Linux (NixOS) and macOS (Darwin) platforms.
+Personal NixOS flake configuration managing system and home configurations. Uses NixOS 25.05, home-manager, nixvim, and custom modules. Supports both Linux (NixOS) and macOS (Darwin) platforms. Email integration via hydroxide for ProtonMail bridge functionality.
 
 ## Key Architecture
 
@@ -149,6 +149,14 @@ The system supports configurable usernames via the `userConfig` module:
 ### Secrets Management
 
 Uses ragenix for secrets. Encrypted files in `secrets/` with configuration in `secrets/secrets.nix`.
+
+### Email Configuration
+
+The heavy module includes email support via hydroxide (ProtonMail bridge):
+- Himalaya CLI email client with ProtonMail integration
+- Hydroxide service for ProtonMail bridge functionality
+- Requires manual authentication: `hydroxide auth`, then save to `pass hydroxide`
+- IMAP on port 1143, SMTP on port 1025 (localhost)
 
 ### AI Agent Integration
 
