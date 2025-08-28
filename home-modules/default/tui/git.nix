@@ -77,12 +77,43 @@ let
     "*.ipynb diff=jupyternotebook merge=jupyternotebook"
     "flake.lock -diff"
   ];
+  difft =
+    let
+      wrapped = pkgs.writeShellApplication {
+        name = pkgs.difftastic.meta.mainProgram;
+        runtimeInputs = with pkgs; [
+          difftastic
+          gawk
+          git
+        ];
+        text = ''
+          if [ -v AGENT ]; then
+            exec diff "$@"
+          fi
+          echo '${file_separator_string}'
+          if (($# >= 7)); then
+            path="''${*: -7:1}"
+            state=$(git check-attr diff -- "$path" | awk '{print $3}')
+            if [[ $state == "unset" ]]; then # corresponds to `pattern -diff` in `.gitattributes`
+              echo "skipping $path"
+              exit 0
+            fi
+          fi
+          exec difft "$@"
+        '';
+        excludeShellChecks = map (v: "SC" + toString v) config.lib.excludeShellChecks.numbers;
+      };
+    in
+    wrapped;
 in
 {
   programs = {
     gh = {
       enable = true;
       settings = ghSettings;
+    };
+    home.sessionVariables = {
+      GIT_EXTERNAL_DIFF = lib.getExe difft;
     };
     git = {
       enable = true;
@@ -92,41 +123,6 @@ in
         ignores
         aliases
         ;
-
-      difftastic = {
-        enable = true;
-        package =
-          let
-            wrapped = pkgs.writeShellApplication {
-              name = pkgs.difftastic.meta.mainProgram;
-              runtimeInputs = with pkgs; [
-                difftastic
-                gawk
-                git
-              ];
-              text = ''
-                echo '${file_separator_string}'
-                if (($# >= 7)); then
-                  path="''${*: -7:1}"
-                  old="''${*: -6:1}"
-                  new="''${*: -3:1}"
-                  if [[ -r $old ]] && [[ -r $new ]]; then
-                    state=$(git check-attr diff -- "$path" | awk '{print $3}')
-                    if [[ $state == "unset" ]]; then # corresponds to `pattern -diff` in `.gitattributes`
-                      echo "skipping $path"
-                      exit 0
-                    fi
-                  fi
-                fi
-                exec difft "$@"
-              '';
-              excludeShellChecks = map (v: "SC" + toString v) config.lib.excludeShellChecks.numbers;
-            };
-          in
-          wrapped;
-        enableAsDifftool = false;
-        display = "inline";
-      };
 
       # TODO check jupyter notebook and nbdime later; `git diff` works
       extraConfig = {

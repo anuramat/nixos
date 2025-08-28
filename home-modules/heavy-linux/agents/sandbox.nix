@@ -97,6 +97,7 @@ in
       ];
 
       text = ''
+        unset GIT_EXTERNAL_DIFF
         # shadow some of the xdg directories with a tmp one
         ${shadowXdgScript agentDir}
 
