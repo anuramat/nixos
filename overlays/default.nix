@@ -1,7 +1,6 @@
 {
   inputs,
   lib,
-  pkgs,
   ...
 }:
 let
@@ -131,26 +130,55 @@ let
         '';
       };
 
-      # https://github.com/antinomyhq/forge/releases/
-      forge = pkgs.stdenv.mkDerivation rec {
-        pname = "forge";
-        version = "0.111.0";
-        src = pkgs.fetchurl {
-          url = "https://github.com/antinomyhq/forge/releases/download/v${version}/forge-x86_64-unknown-linux-musl";
-          hash = "";
+      forge =
+        let
+          linux = "x86_64-linux";
+          darwin = "aarch64-darwin";
+        in
+        prev.stdenv.mkDerivation rec {
+          pname = "forge";
+          # https://github.com/antinomyhq/forge/releases/
+          version = "0.111.0";
+          meta = {
+            description = "AI enabled pair programmer for Claude, GPT, O Series, Grok, Deepseek, Gemini and 300+ models";
+            platforms = [
+              linux
+              darwin
+            ];
+          };
+          src =
+            let
+              src =
+                let
+                  mkLink =
+                    system: "https://github.com/antinomyhq/forge/releases/download/v${version}/forge-${system}";
+                in
+                if prev.system == linux then
+                  {
+                    url = mkLink "x86_64-unknown-linux-musl";
+                    hash = "";
+                  }
+                else if prev.system == darwin then
+                  {
+                    url = mkLink "forge-aarch64-apple-darwin";
+                    hash = "";
+                  }
+                else
+                  throw "illegal system";
+            in
+            prev.fetchurl src;
+          dontUnpack = true;
+          installPhase = ''
+            install -Dm755 $src $out/bin/forge
+          '';
         };
-        dontUnpack = true;
-        installPhase = ''
-          install -Dm755 $src $out/bin/forge
-        '';
-      };
 
       codex = prev.stdenv.mkDerivation rec {
         pname = "codex";
         version = "0.25.0";
         src = prev.fetchurl {
           url = "https://github.com/openai/codex/releases/download/rust-v${version}/codex";
-          hash = "";
+          hash = "sha256-bnLI8YDKLLAfiQ/Z9NVRb1azbIDU9UFaPbVHoZFwG3U=";
         };
         dontUnpack = true;
         nativeBuildInputs = [ prev.makeWrapper ];
