@@ -1,6 +1,7 @@
 # vim: fdl=0 fdm=marker
 {
   lib,
+  pkgs,
   inputs,
   config,
   hax,
@@ -60,9 +61,21 @@ in
 
   programs.gphoto2.enable = true; # dslr interface
   programs.obs-studio.enableVirtualCamera = true; # set up the v4l2loopback kernel module, used in home-manager
-  services.protonmail-bridge = {
-    enable = true;
+  systemd.services.hydroxide = {
+    description = "Hydroxide ProtonMail Bridge";
+    after = [ "network.target" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      ExecStart = "${lib.getExe pkgs.hydroxide} serve";
+      User = username;
+      Restart = "always";
+      RestartSec = 10;
+    };
   };
+
+  environment.systemPackages = with pkgs; [
+    hydroxide
+  ];
 
   programs.gnome-disks.enable = true; # udisks2 frontend
   services.udisks2 = {

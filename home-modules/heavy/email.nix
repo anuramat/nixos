@@ -6,7 +6,6 @@ let
 in
 {
   programs.himalaya = {
-    # BUG doesn't work yet with protonmail-bridge <https://github.com/pimalaya/himalaya/issues/574>
     enable = true;
     settings = {
       display-name = fullname;
@@ -31,7 +30,7 @@ in
             encryption.type = "start-tls";
             auth = {
               type = "password";
-              cmd = "pass show manualBridge";
+              cmd = "pass show hydroxide";
             };
           };
         in
