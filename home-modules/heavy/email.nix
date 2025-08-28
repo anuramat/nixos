@@ -20,7 +20,7 @@ in
     };
   };
   home.packages = with pkgs; [ hydroxide ];
-  
+
   systemd.user.services.hydroxide = {
     # NOTE needs manual auth: `hydroxide auth`, then save to `pass hydroxide`
     Unit = {
