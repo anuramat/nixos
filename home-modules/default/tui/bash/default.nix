@@ -38,10 +38,10 @@ in
         inherit XDG_BIN_HOME;
 
         # TODO ensure existence?
-        XDG_DOWNLOAD_DIR = "${home}/dl/";
-        XDG_DOCUMENTS_DIR = "${home}/docs/";
-        XDG_PICTURES_DIR = "${home}/img/";
-        XDG_VIDEOS_DIR = "${home}/vid/";
+        XDG_DOWNLOAD_DIR = "${home}/dl"; # XXX nobody gives a shit about this
+        XDG_DOCUMENTS_DIR = "${home}/docs";
+        XDG_PICTURES_DIR = "${home}/img";
+        XDG_VIDEOS_DIR = "${home}/vid";
 
         # TODO just in case; verify/move
         LC_ALL = "en_US.UTF-8";

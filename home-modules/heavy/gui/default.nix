@@ -56,7 +56,7 @@ in
     # TODO parametrize
     "swappy/config".text = toINI {
       Default = {
-        save_dir = "${config.home.homeDirectory}/img/screen";
+        save_dir = "${config.home.sessionVariables.XDG_PICTURES_DIR}/screen";
         save_filename_format = "swappy-%Y-%m-%d_%Hh%Mm%Ss.png";
         show_panel = true;
         line_size = 5;

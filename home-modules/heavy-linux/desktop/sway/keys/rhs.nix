@@ -85,7 +85,7 @@ let
           wf-recorder = getExe pkgs.wf-recorder;
           pkill = "${pkgs.procps}/bin/pkill";
         in
-        "exec ${pkill} -INT -x wf-recorder || swaymsg -t get_tree | ${jq} -r '.. | (.nodes? // empty)[] | select(.pid and .visible) | .rect | \"\\(.x),\\(.y) \\(.width)x\\(.height)\"' | ${slurp} | xargs -I {} ${wf-recorder} -g \"{}\" -f \"$HOME/vid/screen/$(date +%Y-%m-%d_%H-%M-%S).mp4\"";
+        "exec ${pkill} -INT -x wf-recorder || swaymsg -t get_tree | ${jq} -r '.. | (.nodes? // empty)[] | select(.pid and .visible) | .rect | \"\\(.x),\\(.y) \\(.width)x\\(.height)\"' | ${slurp} | xargs -I {} ${wf-recorder} -g \"{}\" -f \"${config.home.sessionVariables.XDG_VIDEOS_DIR}/screen/$(date +%Y-%m-%d_%H-%M-%S).mp4\"";
     };
 
   notifications =
