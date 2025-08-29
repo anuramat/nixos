@@ -94,7 +94,7 @@ let
     flakes
     (final: prev: {
 
-      anytype = prev.ollama.overrideAttrs (oldAttrs: rec {
+      anytype = prev.anytype.overrideAttrs (oldAttrs: rec {
         version = "0.49.2";
         src = prev.fetchFromGitHub {
           owner = "anyproto";

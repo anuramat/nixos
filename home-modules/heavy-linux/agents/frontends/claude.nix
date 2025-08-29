@@ -35,7 +35,21 @@ let
       {
         hooks = [
           {
-            command = ''notify-send -a claude "Claude Code" "$(jq .message -r)"'';
+            command = # bash
+              ''notify-send -a claude "Claude Code" "$(jq .message -r)"'';
+            type = "command";
+          }
+        ];
+        matcher = "";
+      }
+    ];
+    Stop = [
+      {
+        hooks = [
+          {
+            command = # bash
+              # ''[[ -n "$(git status --porcelain)" ]] && echo "" || true'';
+              ''echo "test hook"'';
             type = "command";
           }
         ];
