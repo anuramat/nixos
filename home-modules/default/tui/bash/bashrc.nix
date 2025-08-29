@@ -191,6 +191,7 @@ let
     runtimeInputs = with pkgs; [
       ghq
       fzf
+      bash
     ];
     text = # bash
       ''
