@@ -94,15 +94,33 @@ let
     flakes
     (final: prev: {
 
-      anytype = prev.anytype.overrideAttrs (oldAttrs: rec {
+      anytype = prev.appimageTools.wrapType2 rec {
+        pname = "anytype";
         version = "0.49.2";
-        src = prev.fetchFromGitHub {
-          owner = "anyproto";
-          repo = "anytype-ts";
-          tag = "v${version}";
-          hash = "sha256-8+x2FmyR5x9Zrm3t71RSyxAKcJCvnR98+fqHXjBE7aU=";
+        src = prev.fetchurl {
+          url = "https://github.com/anyproto/anytype-ts/releases/download/v${version}/Anytype-${version}.AppImage";
+          hash = "sha256-NA8PozwenoIClkWry1q1Z/crhieflrlJVtBLLrKwWEk=";
         };
-      });
+        extraInstallCommands =
+          # XXX vibecoded
+          let
+            appimageContents = prev.appimageTools.extractType2 {
+              inherit pname version src;
+            };
+          in
+          # bash
+          ''
+            # Install desktop file
+            install -Dm644 ${appimageContents}/anytype.desktop $out/share/applications/${pname}.desktop
+            # Install icon (use the main icon)
+            install -Dm644 ${appimageContents}/anytype.png $out/share/pixmaps/${pname}.png
+            # Install hicolor icons
+            cp -r ${appimageContents}/usr/share/icons $out/share/
+            # Fix desktop file Exec path
+            substituteInPlace $out/share/applications/${pname}.desktop --replace-fail 'Exec=AppRun' 'Exec=${pname}'
+          '';
+        meta = prev.anytype.meta;
+      };
 
       ollama = prev.ollama.overrideAttrs (oldAttrs: rec {
         version = "0.11.3";
