@@ -48,8 +48,12 @@ let
         hooks = [
           {
             command = # bash
-              # ''[[ -n "$(git status --porcelain)" ]] && echo "" || true'';
-              ''echo "test hook"'';
+              let
+                script = ''
+                  [[ -n "$(git status --porcelain)" ]] && echo "automated reminder: repository is dirty -- if appropriate, consider updating CLAUDE.md, running formatters, and making a git commit"
+                '';
+              in
+              ''if [ $(jq .stop_hook_active -r) = true ]; then exit 0; fi; ${script} >&2; exit 2'';
             type = "command";
           }
         ];
