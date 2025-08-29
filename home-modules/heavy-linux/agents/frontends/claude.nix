@@ -49,7 +49,7 @@ let
           {
             command = # bash
               let
-                script = pkgs.writeShellScriptBin "reminders" ''
+                script = pkgs.writeShellScript "reminders" ''
                   [[ -n "$(git status --porcelain)" ]] && echo "automated reminder: repository is dirty -- if appropriate, consider updating CLAUDE.md, running formatters, and making a git commit"
                 '';
               in
