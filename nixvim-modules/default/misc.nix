@@ -82,6 +82,10 @@ in
     todo-comments = {
       enable = true;
       settings = {
+        keywords.FUCK = {
+          icon = "💢";
+          color = "warning";
+        };
         signs = false;
         highlight = {
           keyword = "bg"; # only highlight the KEYWORD
