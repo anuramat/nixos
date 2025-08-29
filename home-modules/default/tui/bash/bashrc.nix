@@ -113,6 +113,9 @@ in
 
       source ${./bashrc.sh}
 
+      shopt -s globstar # enables **
+      set +H            # turn off ! history bullshit
+
       # TODO does this even work/is this required
       PROMPT_COMMAND="''${PROMPT_COMMAND:+$PROMPT_COMMAND;}history -a"
       source ${./osc.sh}

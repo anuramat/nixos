@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-shopt -s globstar # enables **
-set +H            # turn off ! history bullshit
-
 gwipe() {
 	git worktree list --porcelain -z | grep -z worktree | cut -zd ' ' -f 2 | grep -vzxF "$PWD" | xargs -0I{} git worktree remove '{}'
 }
@@ -12,15 +9,6 @@ upload() {
 	local filename="$1"
 	[ "$1" = "" ] && filename="-"
 	curl -F "file=@$filename" https://0x0.st | tee >(wl-copy)
-}
-
-z() {
-	if [[ $1 =~ \.md$ ]]; then
-		hotdoc "$@"
-		exit
-	fi
-	zathura "$@" &>/dev/null &
-	disown
 }
 
 take() {

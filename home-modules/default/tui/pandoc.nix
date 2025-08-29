@@ -83,9 +83,26 @@ let
         fi
       '';
   };
+
+  z = pkgs.writeShellApplication {
+    name = "z";
+    runtimeInputs = [
+      pkgs.zathura
+      hotdoc
+    ];
+    text = ''
+      	if [[ $1 =~ \.md$ ]]; then
+      	  hotdoc "$@"
+      	  exit
+      	fi
+      	zathura "$@" &>/dev/null &
+      	disown
+    '';
+  };
 in
 {
   home.packages = [
+    z
     render
     hotdoc
   ];
