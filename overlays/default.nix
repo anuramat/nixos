@@ -94,6 +94,16 @@ let
     flakes
     (final: prev: {
 
+      anytype = prev.ollama.overrideAttrs (oldAttrs: rec {
+        version = "0.49.2";
+        src = prev.fetchFromGitHub {
+          owner = "anyproto";
+          repo = "anytype-ts";
+          tag = "v${version}";
+          hash = "sha256-8+x2FmyR5x9Zrm3t71RSyxAKcJCvnR98+fqHXjBE7aU=";
+        };
+      });
+
       ollama = prev.ollama.overrideAttrs (oldAttrs: rec {
         version = "0.11.3";
         src = prev.fetchFromGitHub {

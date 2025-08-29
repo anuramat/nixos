@@ -42,17 +42,6 @@ let
         matcher = "";
       }
     ];
-    PreCompact = [
-      {
-        hooks = [
-          {
-            command = "treefmt &>/dev/null || true";
-            type = "command";
-          }
-        ];
-        matcher = "manual|auto";
-      }
-    ];
   };
   permissions = {
     allow = [ ];

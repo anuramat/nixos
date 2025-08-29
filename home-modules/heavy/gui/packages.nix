@@ -26,7 +26,7 @@
     xournalpp # pdf markup, handwritten notes
     logseq # whiteboard is kinda worth it?
     standardnotes # only notes BUT might get proton integration -- soon (tm)
-    # anytype -- appimage, package is outdated
+    anytype
 
     # img
     # krita # raster graphics, digital art # XXX not in cache, takes ages to build
