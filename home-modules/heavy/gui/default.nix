@@ -53,11 +53,10 @@ in
   };
   stylix.targets.librewolf.profileNames = [ "default" ];
   xdg.configFile = {
-    # TODO parametrize
     "swappy/config".text = toINI {
       Default = {
         save_dir = "${config.home.sessionVariables.XDG_PICTURES_DIR}/screen";
-        save_filename_format = "swappy-%Y-%m-%d_%Hh%Mm%Ss.png";
+        save_filename_format = "swappy_%Y-%m-%d_%H-%M-%S.png";
         show_panel = true;
         line_size = 5;
         text_size = 20;
