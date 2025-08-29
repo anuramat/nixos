@@ -57,6 +57,6 @@ in
 
   # non flakes
   avante = mkNonFlake "github:yetone/avante.nvim/v0.0.27";
-  blink-cmp-avante = mkNonFlake "github:Kaiser-Yang/blink-cmp-avante/v0.1.0";
+  blink-cmp-avante = mkNonFlake "github:Kaiser-Yang/blink-cmp-avante";
   tt-schemes = mkNonFlake "github:tinted-theming/schemes";
 }

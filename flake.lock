@@ -135,16 +135,15 @@
     "blink-cmp-avante": {
       "flake": false,
       "locked": {
-        "lastModified": 1739933573,
-        "narHash": "sha256-r+GdP7CzndXk2x6h066Ww4LuMBgKDW2GMv/d39r1M48=",
+        "lastModified": 1753324560,
+        "narHash": "sha256-tozXOgP0dzIFd3a6mjGehUdytqerkWdfOo89CEVC/Rk=",
         "owner": "Kaiser-Yang",
         "repo": "blink-cmp-avante",
-        "rev": "e5a1be4c818520385f95fe2663c04e48f5f0c36a",
+        "rev": "4f494c6e124acbe31a8f5d58effa0c14aa38a6d5",
         "type": "github"
       },
       "original": {
         "owner": "Kaiser-Yang",
-        "ref": "v0.1.0",
         "repo": "blink-cmp-avante",
         "type": "github"
       }

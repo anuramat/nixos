@@ -14,7 +14,7 @@
     };
     blink-cmp-avante = {
       flake = false;
-      url = "github:Kaiser-Yang/blink-cmp-avante/v0.1.0";
+      url = "github:Kaiser-Yang/blink-cmp-avante";
     };
     claude-desktop = {
       inputs = {

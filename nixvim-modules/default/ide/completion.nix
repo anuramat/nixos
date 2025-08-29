@@ -16,20 +16,11 @@
         # };
         sources = {
           providers = {
-            avante = {
-              module = "blink-cmp-avante";
-              name = "avante";
-            };
             # copilot = {
             #   async = true;
             #   name = "copilot";
             #   score_offset = 100;
             # };
-          };
-          per_filetype = {
-            AvanteInput = hax.vim.lua ''
-              { "avante", inherit_defaults = true }
-            '';
           };
           default = [
             "lsp"

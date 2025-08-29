@@ -28,6 +28,17 @@ in
 {
 
   programs.nixvim = {
+    plugins.blink-cmp.settings.sources = {
+      per_filetype = {
+        AvanteInput = hax.vim.lua ''
+          { "avante", inherit_defaults = true }
+        '';
+      };
+      providers.avante = {
+        module = "blink-cmp-avante";
+        name = "avante";
+      };
+    };
     extraPlugins = [
       inputs.mcphub.packages.${pkgs.system}.default
     ];
