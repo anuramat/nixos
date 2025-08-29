@@ -13,20 +13,20 @@
     gtk3 # gtk-launch - starts an app by name of the desktop file
     dbeaver-bin # databases
 
-    # docs
-    xournalpp # pdf markup, handwritten notes
-    kdePackages.okular # aio doc reader with pdf form support
-    pympress # pdf presentation
-    pdfpc # pdf presentation, broken on wayland
-    zathura # keyboard-centric pdf/djvu reader
+    # documents
     gnumeric # spreadsheets
-    logseq
-    obsidian
+    kdePackages.okular # aio doc reader with pdf form support
     libreoffice # just in case
-    saber
-    joplin-desktop
-    standardnotes
+    pdfpc # pdf presentations, broken on wayland
+    pympress # pdf presentations
+    zathura # keyboard-centric pdf/djvu reader
     zotero
+
+    # notes
+    xournalpp # pdf markup, handwritten notes
+    logseq # whiteboard is kinda worth it?
+    standardnotes # only notes BUT might get proton integration -- soon (tm)
+    # anytype -- appimage, package is outdated
 
     # img
     # krita # raster graphics, digital art # XXX not in cache, takes ages to build
