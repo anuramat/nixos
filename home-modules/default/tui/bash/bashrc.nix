@@ -6,8 +6,11 @@
 }:
 let
   inherit (lib) getExe;
+  excludeShellChecks = map (v: "SC" + toString v) config.lib.excludeShellChecks.numbers;
+  
   template = pkgs.writeShellApplication {
     name = "template";
+    inherit excludeShellChecks;
     text = # bash
       ''
         main() (
@@ -26,6 +29,7 @@ let
 
   reflake = pkgs.writeShellApplication {
     name = "reflake";
+    inherit excludeShellChecks;
     runtimeInputs = with pkgs; [
       jq
       moreutils
@@ -89,11 +93,183 @@ let
       '';
   };
   restack = pkgs.writeShellApplication {
-    # runtimeInputs = with pkgs; [
     name = "restack";
+    inherit excludeShellChecks;
     text = # bash
       ''
         find . -name stack.yaml -exec sed -i "s/^resolver:.*/resolver: $1/" {} \;
+      '';
+  };
+
+  ghooks = pkgs.writeShellApplication {
+    name = "ghooks";
+    inherit excludeShellChecks;
+    runtimeInputs = with pkgs; [
+      ghq
+    ];
+    text = # bash
+      ''
+        # lists hooks in ghq repos
+        find "$(ghq root)" -wholename '*/.git/hooks/*' -not -name '*.sample'
+      '';
+  };
+
+  gcreate = pkgs.writeShellApplication {
+    name = "gcreate";
+    inherit excludeShellChecks;
+    runtimeInputs = with pkgs; [
+      ghq
+      gh
+      git
+    ];
+    text = # bash
+      ''
+        # creates and clones a repo with minimum amount of gh features turned on
+        # $1 - name
+        # $2? - public|private
+        name=$1
+        visibility=private
+        [ "$2" != "" ] && visibility=$2
+        case "$2" in
+          private | public) ;;
+          *) return 1 ;;
+        esac
+
+        path=$(ghq create "$name") || return 1
+        cd "$path" || return 1
+        git commit --allow-empty -m "init"
+        gh repo create "--$visibility" --disable-issues --disable-wiki --push --source "$path"
+        gh repo set-default
+        gh repo edit --enable-projects=false
+      '';
+  };
+
+  gfork = pkgs.writeShellApplication {
+    name = "gfork";
+    inherit excludeShellChecks;
+    runtimeInputs = with pkgs; [
+      gh
+      gnugrep
+      coreutils
+      ghq
+    ];
+    text = # bash
+      ''
+        # $1 - repo to fork
+        repo="$1"
+        auth_output=$(gh auth status --active) || return 1
+        user=$(grep -oP 'account \K\S+' <<<"$auth_output")
+        
+        # cd to GitHub owner directory
+        path="$(ghq root)/github.com/$user"
+        mkdir -p "$path" || return 1
+        cd "$path" || return 1
+        
+        gh repo fork "$repo" --default-branch-only --clone
+        cd "$(basename "''${repo%/}")" || return 1
+      '';
+  };
+
+  zoxide-add-ghq = pkgs.writeShellApplication {
+    name = "zoxide-add-ghq";
+    inherit excludeShellChecks;
+    runtimeInputs = with pkgs; [
+      ghq
+      zoxide
+      findutils
+    ];
+    text = # bash
+      ''
+        # add all ghq repos to zoxide
+        find "$(ghq root)" -maxdepth 3 -mindepth 3 -print0 | xargs -0 zoxide add
+      '';
+  };
+
+  grm = pkgs.writeShellApplication {
+    name = "grm";
+    inherit excludeShellChecks;
+    runtimeInputs = with pkgs; [
+      ghq
+      fzf
+      bash
+    ];
+    text = # bash
+      ''
+        # $1? - prefill query
+        gitgud_picker() {
+          # pick a subset of a list with confirmation
+          # stdin - NL separated list
+          # $1? - prompt question (empty |-> auto-accept)
+          # $2? - prefill query
+          # stdout - NL separated list
+          local repos
+          repos="$(fzf -1 -q "$2")" || return 1
+          echo "$repos"
+          echo $'\t'"''${repos//$'\n'/$'\n\t'}" >&2
+
+          [ "$1" = "" ] && return
+
+          read -rs -n 1 -p $"$1 (y/*):"$'\n' choice <&2
+          [ "$choice" = 'y' ]
+        }
+
+        selected=$(ghq list | gitgud_picker "delete?" "$1") || return
+        xargs -I{} bash -c 'yes | ghq rm {} 2>/dev/null' <<<"$selected"
+      '';
+  };
+
+  gclone = pkgs.writeShellApplication {
+    name = "gclone";
+    inherit excludeShellChecks;
+    runtimeInputs = with pkgs; [
+      gh
+      ghq
+      fzf
+      jq
+      coreutils
+    ];
+    text = # bash
+      ''
+        # $1? - a single repo name
+        repos=$1
+
+        gitgud_picker() {
+          # pick a subset of a list with confirmation
+          # stdin - NL separated list
+          # $1? - prompt question (empty |-> auto-accept)
+          # $2? - prefill query
+          # stdout - NL separated list
+          local repos
+          repos="$(fzf -1 -q "$2")" || return 1
+          echo "$repos"
+          echo $'\t'"''${repos//$'\n'/$'\n\t'}" >&2
+
+          [ "$1" = "" ] && return
+
+          read -rs -n 1 -p $"$1 (y/*):"$'\n' choice <&2
+          [ "$choice" = 'y' ]
+        }
+
+        cd_gh_owner() {
+          local path="$(ghq root)/github.com/$1"
+          mkdir -p "$path" || return 1
+          cd "$path" || return 1
+        }
+
+        # no repo name? open picker
+        [ "$repos" = "" ] && {
+          repos=$(gh repo list | cut -f 1 | gitgud_picker "") || {
+            echo "Selection cancelled"
+            return
+          }
+        }
+
+        for repo in ''${repos[@]}; do
+          owner=$(gh repo view "$repo" --json owner --jq '.owner.login') || return 1
+          cd_gh_owner "$owner" || return 1
+          gh repo clone "$repo"
+        done
+        cd "$(basename "''${repo%/}")" || return 1
       '';
   };
 in
@@ -102,6 +278,12 @@ in
     restack
     reflake
     template
+    ghooks
+    gcreate
+    gfork
+    zoxide-add-ghq
+    grm
+    gclone
   ];
   programs.bash.bashrcExtra =
     # bash
@@ -109,7 +291,7 @@ in
       source ${./xdg_shims.sh} # TODO go through, verify, then move to env vars
       [[ $- == *i* ]] || return
       # WARN here order matters for sure
-      source ${./git.sh}
+      source ${./git-functions.sh}
 
       source ${./bashrc.sh}
 
