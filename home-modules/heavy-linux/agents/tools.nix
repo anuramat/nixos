@@ -29,9 +29,6 @@ let
           "stdio"
         ];
       };
-    playwright = {
-      command = getExe pkgs.playwright-mcp;
-    };
     think = {
       command = getExe pkgs.gothink;
     };

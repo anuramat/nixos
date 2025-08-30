@@ -25,7 +25,6 @@ let
     });
   unstablePkgs = final: prev: {
     inherit (import inputs.nixpkgs-unstable { inherit (prev) config system; })
-      playwright-mcp
       github-mcp-server
       keymapp
       proton-pass
