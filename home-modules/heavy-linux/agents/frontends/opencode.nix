@@ -35,7 +35,9 @@ let
     instructions = [
       "AGENTS.md"
     ];
-    # mcp = mcpServers;
+    mcp = {
+      inherit (mcpServers) duckduckgo;
+    };
     share = "disabled";
     # formatters = { };
     keybinds = {
