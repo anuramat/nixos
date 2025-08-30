@@ -206,7 +206,7 @@ let
         version = "0.27.0";
         src = prev.fetchurl {
           url = "https://github.com/openai/codex/releases/download/rust-v${version}/codex";
-          hash = "";
+          hash = "sha256-4RVYJCGvbQ2SMV3tGttK2nI9DBew6Es2klwqXRtblEo=";
         };
         dontUnpack = true;
         nativeBuildInputs = [ prev.makeWrapper ];
