@@ -36,7 +36,7 @@ let
       "AGENTS.md"
     ];
     # mcp = mcpServers;
-    sharing = "disabled";
+    share = "disabled";
     # formatters = { };
     keybinds = {
       editor_open = "<leader>ctrl+e";
