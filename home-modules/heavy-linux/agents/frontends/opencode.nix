@@ -19,4 +19,5 @@
       } "${config.xdg.configHome}/opencode/opencode.json";
     };
   };
+  xdg.configFile."opencode/AGENTS.md".text = config.lib.agents.instructions.generic;
 }
