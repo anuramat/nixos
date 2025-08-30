@@ -4,7 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-Personal NixOS flake configuration managing system and home configurations. Uses NixOS 25.05, home-manager, nixvim, and custom modules. Supports both Linux (NixOS) and macOS (Darwin) platforms. Email integration via hydroxide for ProtonMail bridge functionality.
+Personal NixOS flake configuration managing system and home configurations. Uses
+NixOS 25.05, home-manager, nixvim, and custom modules. Supports both Linux
+(NixOS) and macOS (Darwin) platforms. Email integration via hydroxide for
+ProtonMail bridge functionality. Features, comprehensive AI agent support, and
+extensive development tooling.
 
 ## Key Architecture
 
@@ -14,8 +18,6 @@ Personal NixOS flake configuration managing system and home configurations. Uses
 - `home-configurations/` - Standalone home-manager configs
 - `nixos-modules/` - NixOS system modules
 - `home-modules/` - Home-manager modules (default/heavy/heavy-linux/darwin/linux/standalone)
-  - Git configuration modularized into `default/tui/git/` (difft, ignores, jupyter)
-  - Pandoc document rendering tools with live preview support
 - `nixvim-modules/` - Neovim configuration modules
 - `hax/` - Helper functions library
 - `secrets/` - Age-encrypted secrets
@@ -165,10 +167,10 @@ The heavy module includes email support via hydroxide (ProtonMail bridge):
 
 The heavy-linux configuration includes comprehensive AI agent support:
 - Multiple agent frontends: Claude, Codex, Cursor, Avante, Forge, Gemini, Goose, OpenCode
-- Agent tools and sandbox environments with MCP-hub integration
+- MCP server integration for enhanced tool capabilities
+- Agent tools and sandbox environments
 - Custom agent instructions and role configurations
 - Command-line AI assistance via mods
-- MCP server integration for enhanced tool capabilities
 
 ## Testing Strategy
 
@@ -196,6 +198,23 @@ Located in `tests/integration/`, focused on username configuration:
 - Default system: `x86_64-linux`
 - Builder user: `builder`
 - Cache key: `/etc/nix/cache.pem.pub`
+
+## Git Configuration
+
+Git is configured with a modular structure in `home-modules/default/tui/git/`:
+
+- `default.nix` - Core git settings, aliases, and GitHub CLI configuration
+- `difft.nix` - Difftastic syntax highlighting with smart file skipping
+- `ignores.nix` - Comprehensive .gitignore patterns for various languages/tools
+- `jupyter.nix` - Jupyter notebook diff/merge support with nbdime
+
+Key features:
+
+- Difftastic for syntax-aware diffs (auto-skips e.g. lock files)
+- GitHub CLI with copilot integration
+- Jupyter notebook merge/diff support
+- Extensive aliases (st=status, lg=log graph, ds=diff staged, etc.)
+- Smart pager with file separator navigation
 
 ## Documentation
 
