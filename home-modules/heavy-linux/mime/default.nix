@@ -21,11 +21,11 @@ let
   mimeTypes = {
     text = generateMimeTypes [
       (mimeFromDesktop pkgs.neovim)
+      ./data/text.csv
     ];
 
     browser = generateMimeTypes [
       (mimeFromDesktop pkgs.librewolf)
-      # (mimeFromDesktop pkgs.google-chrome) # errors out due to context TODO
     ];
 
     images = generateMimeTypes [
