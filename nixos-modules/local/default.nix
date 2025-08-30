@@ -27,9 +27,21 @@ in
     };
   };
 
-  programs.appimage = {
-    enable = true;
-    binfmt = true;
+  programs = {
+    appimage = {
+      enable = true;
+      binfmt = true;
+    };
+    nix-ld = {
+      enable = true;
+      libraries = with pkgs; [
+        icu
+        gmp
+        glibc
+        openssl
+        stdenv.cc.cc
+      ];
+    };
   };
   hardware.graphics.enable = true;
 
