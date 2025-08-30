@@ -5,7 +5,7 @@
   ...
 }:
 let
-  fileSeparator = "\u2063";
+  fileSeparator = "\\u2063";
   ghSettings = {
     aliases = {
       login = "auth login --skip-ssh-key --hostname github.com --git-protocol ssh --web";
