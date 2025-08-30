@@ -21,7 +21,9 @@ in
     fi
     exec ${getExe pkgs.difftastic} --display inline --background dark "$@"
   '';
-  programs.git.extraConfig.core.pager = pkgs.writeShellScript "less-difft" ''
-    exec less -rp $'${invisibleSeparator}' "$@"
-  '';
+  programs.git.extraConfig.core.pager =
+    pkgs.writeShellScript "less-difft" ''
+      exec less -rp $'${invisibleSeparator}' "$@"
+    ''
+    |> toString;
 }
