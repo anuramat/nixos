@@ -25,7 +25,7 @@ let
     else
       {
         type = "local";
-        command = [ server.command ] ++ server.args;
+        command = [ server.command ] ++ (server.args or [ ]);
         environment = server.env or { };
         enabled = false;
       }
