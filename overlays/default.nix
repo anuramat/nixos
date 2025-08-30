@@ -64,8 +64,7 @@ let
   npxHacks =
     final: prev:
     let
-      mkNpx = pkg: mkNpxLink pkg pkg;
-      mkNpxLink =
+      mkNpx =
         binName: pkg:
         let
           npx = prev.lib.getExe' prev.nodejs "npx";
@@ -75,8 +74,9 @@ let
         '';
     in
     {
-      gemini-cli = mkNpxLink "gemini" "@google/gemini-cli";
-      ccusage = mkNpx "ccusage";
+      gemini-cli = mkNpx "gemini" "@google/gemini-cli";
+      ccusage = mkNpx "ccusage" "ccusage@latest";
+      opencode = mkNpx "opencode" "opencode-ai@latest";
     };
 
   inputOverlays =
