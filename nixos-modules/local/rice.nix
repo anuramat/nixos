@@ -6,7 +6,7 @@
 {
   imports = [
     inputs.stylix.nixosModules.stylix
-    inputs.self.genericModules.stylix
+    inputs.self.sharedModules.stylix
   ];
   stylix.autoEnable = true;
   # loading screen rice

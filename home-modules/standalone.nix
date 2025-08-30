@@ -5,8 +5,8 @@
   ];
   imports = [
     inputs.agenix.homeManagerModules.default
-    inputs.self.genericModules.age
-    inputs.self.genericModules.stylix
+    inputs.self.sharedModules.age
+    inputs.self.sharedModules.stylix
     inputs.stylix.homeModules.stylix
   ];
 }

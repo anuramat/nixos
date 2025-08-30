@@ -16,7 +16,7 @@
     ../user-config.nix
 
     inputs.agenix.nixosModules.default
-    inputs.self.genericModules.age
+    inputs.self.sharedModules.age
     inputs.nix-topology.nixosModules.default
     inputs.home-manager.nixosModules.home-manager
   ];
