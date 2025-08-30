@@ -14,9 +14,12 @@ Personal NixOS flake configuration managing system and home configurations. Uses
 - `home-configurations/` - Standalone home-manager configs
 - `nixos-modules/` - NixOS system modules
 - `home-modules/` - Home-manager modules (default/heavy/heavy-linux/darwin/linux/standalone)
+  - Git configuration modularized into `default/tui/git/` (difft, ignores, jupyter)
+  - Pandoc document rendering tools with live preview support
 - `nixvim-modules/` - Neovim configuration modules
 - `hax/` - Helper functions library
 - `secrets/` - Age-encrypted secrets
+- `overlays/` - Package overlays for custom/patched packages
 - `parts/` - Flake-parts modules (treefmt, pre-commit, tests)
 - `docs/` - Documentation (USERNAME_CUSTOMIZATION.md)
 - `tests/integration/` - Integration testing framework
@@ -161,10 +164,11 @@ The heavy module includes email support via hydroxide (ProtonMail bridge):
 ### AI Agent Integration
 
 The heavy-linux configuration includes comprehensive AI agent support:
-- Multiple agent frontends: Claude, Codex, Cursor, Avante, Forge, Gemini, Goose
-- Agent tools and sandbox environments
+- Multiple agent frontends: Claude, Codex, Cursor, Avante, Forge, Gemini, Goose, OpenCode
+- Agent tools and sandbox environments with MCP-hub integration
 - Custom agent instructions and role configurations
 - Command-line AI assistance via mods
+- MCP server integration for enhanced tool capabilities
 
 ## Testing Strategy
 
