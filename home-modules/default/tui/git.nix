@@ -5,7 +5,7 @@
   ...
 }:
 let
-  file_separator_string = "<filesep>";
+  fileSeparator = "\u2063";
   ghSettings = {
     aliases = {
       login = "auth login --skip-ssh-key --hostname github.com --git-protocol ssh --web";
@@ -87,7 +87,7 @@ let
           git
         ];
         text = ''
-          echo '${file_separator_string}'
+          printf '${fileSeparator}'
           path="$1"
           state=$(git check-attr diff -- "$path" | awk '{print $3}')
           if [[ $state == "unset" ]]; then # corresponds to `pattern -diff` in `.gitattributes`
@@ -130,7 +130,7 @@ in
         core.pager =
           let
             wrapped = pkgs.writeShellScriptBin "less-difft" ''
-              exec less -rp '${file_separator_string}' "$@"
+              exec less -rp $'${fileSeparator}' "$@"
             '';
           in
           lib.getExe wrapped;
