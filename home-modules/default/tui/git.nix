@@ -129,19 +129,11 @@ in
         pull.ff = "only";
         core.pager =
           let
-            less-with-search =
-              let
-                wrapped = pkgs.writeShellScriptBin "less-difft" ''
-                  exec less -rp '${file_separator_string}' "$@"
-                '';
-              in
-              lib.getExe wrapped;
+            wrapped = pkgs.writeShellScriptBin "less-difft" ''
+              exec less -rp '${file_separator_string}' "$@"
+            '';
           in
-          {
-            diff = less-with-search;
-            show = less-with-search;
-            log = less-with-search;
-          };
+          lib.getExe wrapped;
         init.defaultBranch = "main";
         advice = {
           addEmptyPathspec = false;

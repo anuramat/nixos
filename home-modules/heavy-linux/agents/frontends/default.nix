@@ -7,6 +7,7 @@
     ./cursor.nix
     ./forge.nix
     ./gemini.nix
-    ./goose.nix # TODO
+    ./goose.nix
+    ./opencode.nix
   ];
 }
