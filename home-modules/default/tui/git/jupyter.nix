@@ -1,9 +1,12 @@
 { pkgs, lib, ... }:
 let
-  inherit (pkgs) nbdime;
   inherit (lib) getExe';
+  inherit (pkgs.python3Packages) nbdime; # ipynb diff, merge
 in
 {
+  home.packages = [
+    nbdime
+  ];
   programs.git = {
     attributes = [
       "*.ipynb diff=jupyternotebook merge=jupyternotebook"

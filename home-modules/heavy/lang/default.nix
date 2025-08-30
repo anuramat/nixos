@@ -66,7 +66,6 @@
     nixtract # dependency graph of derivations
     pup # html
     python3Packages.jupytext
-    python3Packages.nbdime # ipynb diff, merge
     yq-go # basic yaml, json, xml, csv, toml processor
     quicktype # json to types
   ];
