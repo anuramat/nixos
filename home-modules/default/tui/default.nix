@@ -3,7 +3,7 @@
     ./bash
     ./search.nix
     ./bin
-    ./git.nix
+    ./git
     ./misc.nix
     ./packages.nix
     ./readline.nix
