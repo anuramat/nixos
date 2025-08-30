@@ -1,0 +1,100 @@
+{
+  inputs,
+  lib,
+  ...
+}:
+let
+  inherit (builtins)
+    mapAttrs
+    ;
+
+  flakes =
+    final: prev:
+    (mapAttrs (n: v: v.packages.${prev.system}.default) {
+      inherit (inputs)
+        subcat
+        gothink
+        mcp-nixos
+        nil
+        mdformat-myst
+        claude-desktop
+        modagent
+        mods
+        zotero-mcp
+        ;
+    });
+  unstablePkgs = final: prev: {
+    inherit (import inputs.nixpkgs-unstable { inherit (prev) config system; })
+      playwright-mcp
+      github-mcp-server
+      keymapp
+      proton-pass
+      goose-cli
+      ;
+  };
+  pythonPackages = final: prev: {
+    python3 = prev.python3.override {
+      packageOverrides = pfinal: pprev: {
+        mdformat-deflist = pfinal.buildPythonPackage rec {
+          pname = "mdformat_deflist";
+          version = "0.1.3";
+          format = "pyproject";
+          src = pfinal.fetchPypi {
+            inherit pname version;
+            hash = "sha256-slCRzhcFo3wMyH3bHHij5+tD1Qrc21rUdjQR90Oub34=";
+          };
+          nativeBuildInputs = [ pfinal.flit-core ];
+          propagatedBuildInputs = [
+            pfinal.mdformat
+            pfinal.mdit-py-plugins
+          ];
+          pythonImportsCheck = [ "mdformat_deflist" ];
+        };
+      };
+    };
+  };
+
+  npxHacks =
+    final: prev:
+    let
+      mkNpx =
+        binName: pkg:
+        let
+          npx = prev.lib.getExe' prev.nodejs "npx";
+        in
+        prev.writeShellScriptBin binName ''
+          exec ${npx} -y ${pkg} "$@"
+        '';
+    in
+    {
+      gemini-cli = mkNpx "gemini" "@google/gemini-cli";
+      ccusage = mkNpx "ccusage" "ccusage@latest";
+      opencode = mkNpx "opencode" "opencode-ai@latest";
+    };
+
+  inputOverlays =
+    with inputs;
+    [
+      neovim-nightly-overlay
+      nur
+    ]
+    |> map (v: v.overlays.default);
+
+  overlays = inputOverlays ++ [
+    # autoimport these
+    (import ./anytype.nix)
+    (import ./cursor.nix)
+    (import ./forge.nix)
+    (import ./misc.nix inputs)
+    npxHacks
+    unstablePkgs
+    pythonPackages
+    flakes
+  ];
+in
+final: prev:
+let
+  unwrapped = map (x: x final prev) overlays;
+  merge = lib.fold (a: b: a // b) { };
+in
+merge unwrapped
