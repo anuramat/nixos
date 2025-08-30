@@ -21,7 +21,7 @@ extensive development tooling.
 - `nixvim-modules/` - Neovim configuration modules
 - `hax/` - Helper functions library
 - `secrets/` - Age-encrypted secrets
-- `overlays/` - Package overlays for custom/patched packages
+- `overlays/` - Package overlays organized by domain (anytype, cursor, forge, misc)
 - `parts/` - Flake-parts modules (treefmt, pre-commit, tests)
 - `docs/` - Documentation (USERNAME_CUSTOMIZATION.md)
 - `tests/integration/` - Integration testing framework
@@ -45,6 +45,18 @@ Located in `hax/`, provides utilities:
 - `common.nix` - Core utilities
 - `home.nix`, `hosts.nix`, `vim.nix`, `web.nix` - Domain-specific helpers
 - Uses Nix pipe operators extensively
+
+### Package Overlays
+
+Overlays are organized in `overlays/default/` by domain:
+
+- `anytype.nix` - Anytype knowledge management application
+- `cursor.nix` - Cursor CLI agent for AI pair programming
+- `forge.nix` - Forge AI pair programmer for multiple models
+- `misc.nix` - Miscellaneous package overlays and utilities
+- `default.nix` - Main overlay orchestrator that imports and combines all overlays
+
+The overlay system supports flakes, unstable packages, Python packages, and npx-based CLI tools.
 
 ## Common Commands
 
