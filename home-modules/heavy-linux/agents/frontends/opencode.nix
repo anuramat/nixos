@@ -44,6 +44,13 @@ let
   };
 
   cfgDir = config.xdg.configHome + "/opencode";
+  opencode = config.lib.home.agenixWrapPkg pkgs.opencode (
+    (t: {
+      inherit (t)
+        openrouter
+        ;
+    })
+  );
 in
 {
   xdg.configFile = (
@@ -55,10 +62,10 @@ in
 
   home = {
     packages = [
-      pkgs.opencode
+      opencode
       (agents.mkSandbox {
         wrapperName = "ocd";
-        package = pkgs.opencode;
+        package = opencode;
       })
     ];
 
