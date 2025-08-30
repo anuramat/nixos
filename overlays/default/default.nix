@@ -84,6 +84,7 @@ let
     (import ./anytype.nix)
     (import ./cursor.nix)
     (import ./forge.nix)
+    (import ./ddgmcp.nix)
     (import ./misc.nix inputs)
     npxHacks
     unstablePkgs
