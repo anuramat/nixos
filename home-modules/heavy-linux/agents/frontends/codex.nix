@@ -66,7 +66,7 @@ in
       (config.lib.agents.mkSandbox {
         binName = "codex";
         package = pkgs.codex;
-        args = " --dangerously-bypass-approvals-and-sandbox";
+        args = " --dangerously-bypass-approvals-and-sandbox --search";
         inherit env;
         agentDir = null;
         wrapperName = "cdx";

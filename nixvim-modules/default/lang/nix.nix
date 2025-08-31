@@ -14,7 +14,9 @@
     ];
 
     lsp.servers = {
-      statix = { }; # enable when they have pipes: <https://github.com/oppiliappan/statix/issues/88>
+      statix = {
+        # enable = true;
+      }; # enable when they have pipes: <https://github.com/oppiliappan/statix/issues/88>
 
       nil_ls = {
         enable = true;
