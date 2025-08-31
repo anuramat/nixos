@@ -31,6 +31,20 @@ let
       }
   ) config.lib.agents.mcp.raw;
 
+  notifications = # javascript
+    ''
+      export const NotificationPlugin = async ({ client, $ }) => {
+      	return {
+      		event: async ({ event }) => {
+      			// Send notification on session completion
+      			if (event.type === "session.idle") {
+      				await $`notify-send -a opencode "OpenCode" Session completed!"`;
+      			}
+      		},
+      	};
+      };
+    '';
+
   opencodeConfig = {
     instructions = [
       "AGENTS.md"
@@ -58,6 +72,7 @@ in
   xdg.configFile = (
     {
       "opencode/AGENTS.md".text = agents.instructions.generic;
+      "opencode/plugin/notifications.js".text = notifications;
     }
     // commands
   );
