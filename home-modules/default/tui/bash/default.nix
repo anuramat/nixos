@@ -95,12 +95,6 @@ in
     };
     less = {
       enable = true;
-      keys =
-        # less
-        ''
-          #env
-          LESS = -ir
-        '';
     };
     starship = {
       enable = true;
