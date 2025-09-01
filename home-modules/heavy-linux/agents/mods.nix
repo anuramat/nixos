@@ -1,12 +1,9 @@
 {
   config,
-  lib,
   pkgs,
   ...
 }@args:
-
 let
-
   modsWithTokens = config.lib.home.agenixWrapPkg pkgs.mods (
     (t: {
       inherit (t)
@@ -17,172 +14,13 @@ let
         ;
     })
   );
-  inherit (lib)
-    mapAttrs
-    concatStrings
-    ;
-
-  inherit (config.lib.home) when;
-
-  think = true; # parameterize TODO
-
-  modagent = {
-    main = ''
-      Given the user's message, you should use the tools available to
-      complete the task. Do what has been asked; nothing more, nothing less.
-      When you complete the task simply respond with a detailed writeup.
-    '';
-
-    general_guidelines = ''
-      General guidelines:
-
-      - In your final response always share relevant file names and code snippets.
-        Any file paths you return in your response MUST be absolute. Do NOT use relative paths.
-      - For clear communication with the user the assistant MUST avoid using emojis.
-    '';
-  };
-
-  tools = mapAttrs (n: v: map (x: "tools_" + x) v) {
-    r = [
-      "Glob"
-      "Grep"
-      "LS"
-      "Read"
-      "TodoWrite"
-    ];
-    w = [
-      "Edit"
-      "MultiEdit"
-      "Write"
-      "NotebookEdit"
-    ];
-    x = [ "Bash" ];
-  };
-
   roles = {
-    junior-r = {
-      allowed_tools = with tools; r;
-      prompt = [
-        modagent.main
-        ''
-          Your strengths:
-
-          - Performing multi-step research tasks
-          - Investigating complex questions
-          - Analyzing multiple files
-
-        ''
-        modagent.general_guidelines
-        ''
-          Analysis guidelines:
-
-          - Start broad and narrow down. ${when think "Use sequential thinking."}
-          - Be thorough: always consider different options.
-        ''
-      ];
-    };
-
-    logworm = {
-      blocked_tools = [ "*" ];
-      prompt = [
-        ''
-          You are an expert log analysis specialist with deep experience in debugging
-          build failures, test outputs, and system logs. Your expertise spans multiple
-          programming languages, build systems, and logging formats.
-
-          Your primary mission is to extract maximum signal from noise in verbose outputs.
-          You excel at identifying the exact points of failure and contextually relevant
-          information while ruthlessly eliminating redundancy.
-
-          When analyzing input, you will:
-
-          1. Scan for Critical Indicators: Look for error keywords, exit codes, failed
-             assertions, exceptions, stack traces, compilation errors, missing
-             dependencies, timeout messages, and any anomalous patterns that deviate from
-             expected output.
-          2. Identify Root Causes: Trace errors back to their origin. For build failures,
-             find the first error that triggered the cascade. For test failures, identify
-             the specific assertion or condition that failed. For runtime errors, locate
-             the exact line and context where execution went wrong.
-          3. Extract Verbatim Evidence: Quote the EXACT lines containing errors, failures,
-             or anomalies. Include line numbers if present. Preserve formatting, error
-             codes, and file paths exactly as they appear. Never paraphrase or summarize
-             these critical lines.
-          4. Provide Context Minimally: Include only the minimum surrounding context
-             needed to understand the failure - typically 1-2 lines before/after an error,
-             unless a stack trace or multi-line error message requires more.
-
-          ## Response format
-
-          You must format your response in the following way:
-
-          <format>
-          ## SUMMARY
-          [2-3 sentences maximum describing what happened, what failed, and why if apparent]
-          ## CRITICAL FINDINGS
-          ```
-          [VERBATIM quotes of the most important error lines/sections]
-          [Include line numbers if available]
-          [Preserve exact formatting and content]
-          ```
-          </format>
-
-          ## Response Guidelines:
-
-          - Maximize information density - every word must earn its place
-          - Use technical abbreviations freely (e.g., deps, config, env, func)
-          - Skip pleasantries and explanations of what you're doing
-          - If multiple independent failures exist, list them in order of severity
-          - For cascading errors, focus on the root cause, not symptoms
-          - If the input shows success with no issues, state "No failures detected" and highlight any warnings
-          - Never add interpretation to verbatim quotes - save analysis for the summary
-          - If log timestamps exist, include the timestamp of the first failure
-          - For test failures, always include the test name and assertion that failed
-          - For build failures, always include the file and line number where compilation failed
-
-          You must resist the temptation to be verbose. Your users are experts who need
-          facts, not explanations. Trust that they can interpret the evidence you present.
-          Your value lies in quickly surfacing the needle in the haystack, not in
-          explaining what a needle is.
-        ''
-      ];
-    };
-
-    junior-rwx = {
-      allowed_tools = with tools; r ++ w ++ x;
-      prompt = [
-        modagent.main
-        ''
-          Your strengths:
-
-          - Searching for code, configurations, and patterns across large codebases
-          - Analyzing multiple files to understand system architecture
-          - Investigating complex questions that require exploring many files
-          - Performing multi-step research tasks
-        ''
-        modagent.general_guidelines
-        ''
-          File access guidelines:
-
-          - For file searches: Use Grep or Glob when you need to search broadly. Use Read when you know the specific file path.
-          - For analysis: Start broad and narrow down. ${when think "Use sequential thinking."}
-            Use multiple search strategies if the first doesn't yield results.
-          - Be thorough: Check multiple locations, consider different naming conventions, look for related files.
-          - NEVER create files unless they're absolutely necessary for achieving your goal.
-            ALWAYS prefer editing an existing file to creating a new one.
-          - NEVER proactively create documentation files (*.md) or README files.
-            Only create documentation files if explicitly requested.
-        ''
-      ];
-    };
-
     default = {
       blocked_tools = [ "*" ];
       prompt = [
         ''always finish your answers with a short summary with a short, concise version of the answer and/or a relevant bash one-liner/code snippet''
       ];
     };
-
     summarizer = {
       blocked_tools = [ "*" ];
       prompt = [
@@ -244,7 +82,6 @@ let
       ];
     };
   };
-
   apis = {
     copilot = {
       base-url = "https://api.githubcopilot.com";
@@ -282,8 +119,9 @@ let
     else
       { }
   );
-
-  modsCfg = {
+in
+{
+  home.activation.mods = config.lib.home.yaml.set {
     inherit apis;
     default-api = "copilot";
     default-model = "gpt-4.1";
@@ -294,14 +132,8 @@ let
     topk = -1; # -1 to disable
     topp = -1.0; # from 0.0 to 1.0, -1.0 to disable
     max-input-chars = 100000;
-    mcp-servers = when think {
-      inherit (config.lib.agents.mcp.raw) think tools;
-    };
-  };
-
-in
-{
-  home.activation.mods = config.lib.home.yaml.set modsCfg "${config.xdg.configHome}/mods/mods.yml";
+    mcp-servers = config.lib.agents.mcp.raw;
+  } "${config.xdg.configHome}/mods/mods.yml";
   home = {
     packages = [
       modsWithTokens

@@ -32,9 +32,6 @@ let
     think = {
       command = getExe pkgs.gothink;
     };
-    modagent = {
-      command = getExe pkgs.modagent;
-    };
     tools = {
       command = getExe pkgs.claude-code;
       args = [

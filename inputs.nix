@@ -38,7 +38,6 @@ in
   ctrlsn = mkInput "git+ssh://git@github.com/anuramat/ctrl.sn?ref=main";
   figtree = mkInput "github:anuramat/figtree.nvim";
   gothink = mkInput "github:anuramat/gothink";
-  modagent = mkInput "github:anuramat/modagent";
   subcat = mkInput "github:anuramat/subcat";
   todo = mkInput "github:anuramat/todo";
 

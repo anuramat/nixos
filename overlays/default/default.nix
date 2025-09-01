@@ -18,7 +18,6 @@ let
         nil
         mdformat-myst
         claude-desktop
-        modagent
         mods
         zotero-mcp
         todo
