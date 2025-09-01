@@ -33,6 +33,7 @@
       enable = true;
 
       aliases = {
+        ch = "checkout";
         wt = "worktree";
         st = "status";
         sh = "show --ext-diff";
