@@ -289,11 +289,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1756758062,
-        "narHash": "sha256-VAQVDteMISOIvAbP03Wpb3xiwuRH7CDMwI8nw03Cu2A=",
+        "lastModified": 1756762007,
+        "narHash": "sha256-iuQ9QqphC7iSjL/FOgozxicadKPcPzN+5i9cW4zObb8=",
         "owner": "anuramat",
         "repo": "duckduckgo-mcp-server",
-        "rev": "c275ddb0892723cd3220c20dd59ea2a28c17932e",
+        "rev": "e1b5b618797256441eed19aa507eb3ebbdb09e00",
         "type": "github"
       },
       "original": {
