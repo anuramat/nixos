@@ -78,8 +78,15 @@ let
             book=$(${fd} . "${bookdir}" -at f | ${bemenu} -p read -l 20) || exit
             swaymsg exec ${zathura} $book
           '';
-      drun = ''exec ${pkill} -x bemenu || swaymsg exec "$(${j4} -d '${bemenu} -p drun' -t ${term_cmd} -x --no-generic)"'';
-      todo_add = ''exec ${pkill} -x bemenu || swaymsg exec "$(echo ''' | ${bemenu} -p ${todo} -l 0 | xargs -I{} ${todo} add \"{}\")"'';
+      drun =
+        mkMenu
+          # bash
+          ''
+            app=$(${j4} -d '${bemenu} -p drun' -t ${term_cmd} -x --no-generic)
+            swaymsg exec "$app"
+          '';
+      # TODO these two as well
+      todo_add = ''exec ${pkill} -x bemenu || swaymsg exec "$(echo ''' | ${bemenu} -p todo -l 0 | xargs -I{} ${todo} add \"{}\")"'';
       todo_done = ''exec ${pkill} -x bemenu || swaymsg exec "$(${todo} ls | tac | ${bemenu} -p done | sed 's/^\s*//' | cut -d ' ' -f 1 | xargs ${todo} rm)"'';
     };
 
