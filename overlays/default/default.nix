@@ -76,6 +76,7 @@ let
     in
     {
       gemini-cli = mkNpx "gemini" "@google/gemini-cli";
+      inspector = mkNpx "inspector" "@modelcontextprotocol/inspector";
       ccusage = mkNpx "ccusage" "ccusage@latest";
       opencode = mkNpx "opencode" "opencode-ai@latest";
       claude-monitor = mkUv "claude-monitor" "claude-monitor";
