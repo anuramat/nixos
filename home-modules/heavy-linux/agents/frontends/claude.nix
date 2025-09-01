@@ -129,3 +129,4 @@ in
     };
   };
 }
+# MAX_THINKING_TOKENS=1024
