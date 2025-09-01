@@ -96,8 +96,16 @@ in
 
   home.activation.mcphub =
     let
-      enabledServers = { inherit (config.lib.agents.mcp.raw) ddg nixos; };
-      # TODO add the rest with merged in `disabled: true` property
+      enabledServers =
+        let
+          servers = config.lib.agents.mcp.raw;
+          enabledServers = { inherit (servers) ddg nixos; };
+          disabledServers =
+            servers
+            |> lib.filterAttrs (n: _: !lib.hasAttr n enabledServers)
+            |> lib.mapAttrs (_: v: v // { disabled = true; });
+        in
+        enabledServers // disabledServers;
     in
     config.lib.home.json.set {
       mcpServers = enabledServers;
