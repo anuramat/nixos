@@ -114,6 +114,10 @@ in
         includeCoAuthoredBy = false;
         env = {
           MAX_THINKING_TOKENS = 1024;
+          CLAUDE_CODE_DISABLE_TERMINAL_TITLE = 1;
+          # DISABLE_NON_ESSENTIAL_MODEL_CALLS (1 for disable)
+          # MAX_MCP_OUTPUT_TOKENS default 25k
+          # BASH_MAX_OUTPUT_LENGTH default 30k chars
         };
         inherit
           hooks
