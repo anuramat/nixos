@@ -146,10 +146,7 @@ let
             sort_by(.name) as $outs | $outs |
             map(.focused) | index(true) |
             if . == ($outs | length) - 1 then $outs[0] else $outs[. + 1] end |
-            .name') || {
-              notify-send "Error" "next_output script failed at $0"
-              exit 1
-            }
+            .name')
             swaymsg ${action} output "$next_output"
           '';
         in
