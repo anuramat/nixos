@@ -109,14 +109,6 @@
     mdmath = {
       url = "github:anuramat/mdmath.nvim";
     };
-    modagent = {
-      inputs = {
-        nixpkgs = {
-          follows = "nixpkgs";
-        };
-      };
-      url = "github:anuramat/modagent";
-    };
     mods = {
       url = "github:anuramat/mods";
     };
