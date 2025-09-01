@@ -8,28 +8,29 @@ let
   inherit (lib) mapAttrs;
   inherit (config.lib) agents;
 
-  commands =
+  mcp =
     let
-      adaptedCommands = agents.commands |> mapAttrs (n: v: v.withFM { inherit (v) description; });
+      rawServers = mapAttrs (
+        name: server:
+        if server ? type && server.type == "http" then
+          {
+            type = "remote";
+            url = server.url;
+          }
+        else
+          {
+            type = "local";
+            command = [ server.command ] ++ (server.args or [ ]);
+            environment = server.env or { };
+          }
+      ) config.lib.agents.mcp.raw;
+      enabledServers = { inherit (rawServers) ddg nixos; };
+      disabledServers =
+        rawServers
+        |> lib.filterAttrs (n: _: !lib.hasAttr n enabledServers)
+        |> lib.mapAttrs (_: v: v // { disabled = true; });
     in
-    agents.mkPrompts "opencode/commands" adaptedCommands;
-
-  mcpServers = mapAttrs (
-    name: server:
-    if server ? type && server.type == "http" then
-      {
-        type = "remote";
-        url = server.url;
-        enabled = false;
-      }
-    else
-      {
-        type = "local";
-        command = [ server.command ] ++ (server.args or [ ]);
-        environment = server.env or { };
-        enabled = false;
-      }
-  ) config.lib.agents.mcp.raw;
+    enabledServers // disabledServers;
 
   notifications = # javascript
     ''
@@ -44,53 +45,48 @@ let
       	};
       };
     '';
-
-  opencodeConfig = {
-    instructions = [
-      "AGENTS.md"
-    ];
-    mcp = {
-      inherit (mcpServers) ddg;
-    };
-    share = "disabled";
-    keybinds = {
-      editor_open = "<leader>ctrl+e,<leader>e";
-    };
-    provider.anthropic.models.claude-sonnet-4-20250514.options.thinking = {
-      type = "enabled";
-      budgetTokens = 1024;
-    };
-  };
-
-  cfgDir = config.xdg.configHome + "/opencode";
-  opencode = config.lib.home.agenixWrapPkg pkgs.opencode (
-    (t: {
-      inherit (t)
-        openrouter
-        ;
-    })
-  );
 in
 {
-  xdg.configFile = (
-    {
-      "opencode/AGENTS.md".text = agents.instructions.generic;
-      "opencode/plugin/notifications.js".text = notifications;
-    }
-    // commands
-  );
+  xdg.configFile =
+    let
+      commands =
+        let
+          adaptedCommands = agents.commands |> mapAttrs (n: v: v.withFM { inherit (v) description; });
+        in
+        agents.mkPrompts "opencode/commands" adaptedCommands;
+    in
+    (
+      {
+        "opencode/AGENTS.md".text = agents.instructions.generic;
+        "opencode/plugin/notifications.js".text = notifications;
+      }
+      // commands
+    );
 
   home = {
     packages = [
-      opencode
+      pkgs.opencode
       (agents.mkSandbox {
         wrapperName = "ocd";
-        package = opencode;
+        package = pkgs.opencode;
       })
     ];
 
     activation = {
-      opencodeSettings = config.lib.home.json.set opencodeConfig "${cfgDir}/opencode.json";
+      opencodeSettings = config.lib.home.json.set {
+        inherit mcp;
+        instructions = [
+          "AGENTS.md"
+        ];
+        share = "disabled";
+        keybinds = {
+          editor_open = "<leader>ctrl+e,<leader>e";
+        };
+        provider.anthropic.models.claude-sonnet-4-20250514.options.thinking = {
+          type = "enabled";
+          budgetTokens = 1024;
+        };
+      } (config.xdg.configHome + "/opencode/opencode.json");
     };
   };
 }

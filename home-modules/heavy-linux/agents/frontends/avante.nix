@@ -96,18 +96,18 @@ in
 
   home.activation.mcphub =
     let
-      enabledServers =
+      servers =
         let
-          servers = config.lib.agents.mcp.raw;
-          enabledServers = { inherit (servers) ddg nixos; };
+          rawServers = config.lib.agents.mcp.raw;
+          enabledServers = { inherit (rawServers) ddg nixos; };
           disabledServers =
-            servers
+            rawServers
             |> lib.filterAttrs (n: _: !lib.hasAttr n enabledServers)
             |> lib.mapAttrs (_: v: v // { disabled = true; });
         in
         enabledServers // disabledServers;
     in
     config.lib.home.json.set {
-      mcpServers = enabledServers;
+      mcpServers = servers;
     } "${config.xdg.configHome}/mcphub/servers.json";
 }
