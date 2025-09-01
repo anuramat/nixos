@@ -138,17 +138,23 @@ let
 
   cycle =
     let
-      jq_expr = hax.common.join ''
-        sort_by(.name) as $outs | $outs |
-        map(.focused) | index(true) |
-        if . == ($outs | length) - 1 then $outs[0] else $outs[. + 1] end |
-        .name
-      '';
-      next_output = "$(swaymsg -t get_outputs | ${getExe pkgs.jq} -r '${jq_expr}')";
+      mkCycle =
+        action:
+        let
+          script = pkgs.writeShellScript "cycle-${action}" ''
+            next_output=$(swaymsg -t get_outputs | ${getExe pkgs.jq} -r '
+            sort_by(.name) as $outs | $outs |
+            map(.focused) | index(true) |
+            if . == ($outs | length) - 1 then $outs[0] else $outs[. + 1] end |
+            .name') || exit
+            swaymsg ${action} output "$next_output"
+          '';
+        in
+        "exec ${script}";
     in
     {
-      focus = "exec swaymsg focus output ${next_output}";
-      move = "exec swaymsg move output ${next_output}";
+      focus = mkCycle "focus";
+      move = mkCycle "move";
     };
 in
 {
