@@ -65,11 +65,20 @@ let
         prev.writeShellScriptBin binName ''
           exec ${npx} -y ${pkg} "$@"
         '';
+      mkUv =
+        binName: pkg:
+        let
+          uv = prev.lib.getExe prev.uv;
+        in
+        prev.writeShellScriptBin binName ''
+          exec ${uv} tool run ${pkg} "$@"
+        '';
     in
     {
       gemini-cli = mkNpx "gemini" "@google/gemini-cli";
       ccusage = mkNpx "ccusage" "ccusage@latest";
       opencode = mkNpx "opencode" "opencode-ai@latest";
+      claude-monitor = mkUv "claude-monitor" "claude-monitor";
     };
 
   inputOverlays =
