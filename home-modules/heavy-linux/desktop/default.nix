@@ -1,11 +1,12 @@
 args:
 {
   imports = [
-    ./sway
     ./clipboard.nix
     ./mako.nix
     ./menu.nix
+    ./mime
     ./portals.nix
+    ./sway
     ./swaylock.nix
   ];
 }

@@ -2,7 +2,6 @@
 {
   imports = [
     ./agents
-    ./mime
     ./desktop
   ];
 
