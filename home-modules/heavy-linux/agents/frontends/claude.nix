@@ -112,6 +112,9 @@ in
     activation = {
       claudeSettings = config.lib.home.json.set {
         includeCoAuthoredBy = false;
+        env = {
+          MAX_THINKING_TOKENS = 1024;
+        };
         inherit
           hooks
           permissions
