@@ -27,7 +27,7 @@ let
             model_provider = "llama-cpp";
           };
         };
-        experimental_resume = "${codexHome}/history.jsonl";
+        # experimental_resume = "${codexHome}/history.jsonl";
         model_providers = {
           openai = {
             hide_agent_reasoning = false;
