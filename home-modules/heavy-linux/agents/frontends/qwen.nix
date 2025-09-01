@@ -3,34 +3,29 @@
   config,
   ...
 }:
-# let
-#   inherit (config.lib) agents;
-#
-#   contextFileName = "AGENTS.md";
-#   geminiConfig = config.lib.home.json.set {
-#     inherit contextFileName;
-#   } (config.home.homeDirectory + "/.gemini/settings.json");
-#
-# in
+let
+  inherit (config.lib) agents;
+  contextFileName = "AGENTS.md";
+  qwenConfig = config.lib.home.json.set {
+    inherit contextFileName;
+  } (config.home.homeDirectory + "/.qwen/settings.json");
+in
 {
-  # home = {
-  #   activation = {
-  #     inherit
-  #       geminiConfig
-  #       ;
-  #   };
-  #   file.".gemini/${contextFileName}".text = agents.instructions.generic;
-
+  home = {
+    activation = {
+      inherit qwenConfig;
+    };
+    file.".qwen/${contextFileName}".text = agents.instructions.generic;
     packages = [
-      pkgs.qwen
+      pkgs.qwen-code
       (config.lib.agents.mkSandbox {
-        package = pkgs.qwen;
+        package = pkgs.qwen-code;
         wrapperName = "qwn";
         args = "--yolo";
         agentDir = null;
-        # extraRwDirs = [
-        #   "$HOME/.gemini"
-        # ];
+        extraRwDirs = [
+          "$HOME/.qwen"
+        ];
       })
     ];
   };
