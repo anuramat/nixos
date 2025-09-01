@@ -58,6 +58,7 @@ in
         TERMCMD = "foot";
         ESCDELAY = "25";
 
+        # TODO move this somewhere
         TODO_FILE = "/home/anuramat/notes/todo.txt";
       };
       sessionPath = [
