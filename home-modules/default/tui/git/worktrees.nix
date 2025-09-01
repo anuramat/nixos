@@ -9,7 +9,7 @@
           exit 1
         fi
 
-        reponame=$(basename "$(git rev-parse --show-toplevel)")
+        reponame=$(basename "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")")
         worktree_path="''${XDG_DATA_HOME:-$HOME/.local/share}/git/worktrees/$reponame/$1"
 
         mkdir -p "$(dirname "$worktree_path")"
