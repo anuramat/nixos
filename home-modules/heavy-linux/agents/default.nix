@@ -124,5 +124,6 @@ in
     ghcp-models
     summarize
     transcribe
+    inspector
   ];
 }

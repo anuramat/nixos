@@ -108,6 +108,7 @@ in
       claudeBoxed
       pkgs.claude-desktop
       pkgs.ccusage
+      pkgs.claude-monitor
     ];
     activation = {
       claudeSettings = config.lib.home.json.set {
