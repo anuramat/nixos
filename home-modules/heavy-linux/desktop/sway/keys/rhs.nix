@@ -85,9 +85,21 @@ let
             app=$(${j4} -d '${bemenu} -p drun' -t ${term_cmd} -x --no-generic)
             swaymsg exec "$app"
           '';
-      # TODO these two as well
-      todo_add = ''exec ${pkill} -x bemenu || swaymsg exec "$(echo ''' | ${bemenu} -p todo -l 0 | xargs -I{} ${todo} add \"{}\")"'';
-      todo_done = ''exec ${pkill} -x bemenu || swaymsg exec "$(${todo} ls | tac | ${bemenu} -p done | sed 's/^\s*//' | cut -d ' ' -f 1 | xargs ${todo} rm)"'';
+      todo_add =
+        mkMenu
+          # bash
+          ''
+            task=$(echo "" | ${bemenu} -p todo -l 0) || exit
+            ${todo} add "$task"
+          '';
+      todo_done =
+        mkMenu
+          # bash
+          ''
+            task=$(${todo} ls | tac | ${bemenu} -p done) || exit
+            task_id=$(echo "$task" | sed 's/^\s*//' | cut -d ' ' -f 1)
+            ${todo} rm "$task_id"
+          '';
     };
 
   screen =
