@@ -6,17 +6,17 @@
 }:
 {
   imports = [
-    ./keyring.nix
-    ./lib.nix
     ./bash
-    ./search.nix
     ./bin
     ./git
+    ./keyring.nix
+    ./lib.nix
     ./misc.nix
     ./packages.nix
-    ./readline.nix
-    ./yazi.nix
     ./pandoc.nix
+    ./readline.nix
+    ./search.nix
+    ./yazi.nix
   ];
 
   xdg.enable = true; # set xdg basedir vars in .profile
