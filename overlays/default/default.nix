@@ -22,6 +22,7 @@ let
         mods
         zotero-mcp
         todo
+        duckduckgo-mcp-server
         ;
     });
   unstablePkgs = final: prev: {
@@ -95,7 +96,6 @@ let
     (import ./anytype.nix)
     (import ./cursor.nix)
     (import ./forge.nix)
-    (import ./ddgmcp.nix)
     (import ./misc.nix inputs)
     npxHacks
     unstablePkgs

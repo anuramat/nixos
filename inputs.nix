@@ -47,6 +47,7 @@ in
   mdmath.url = "github:anuramat/mdmath.nvim";
   mods.url = "github:anuramat/mods";
   zotero-mcp.url = "github:anuramat/zotero-mcp";
+  duckduckgo-mcp-server.url = "github:anuramat/duckduckgo-mcp-server";
 
   # misc
   claude-desktop = mkInput "github:k3d3/claude-desktop-linux-flake";
