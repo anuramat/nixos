@@ -21,8 +21,9 @@ extensive development tooling.
 - `nixvim-modules/` - Neovim configuration modules
 - `hax/` - Helper functions library
 - `secrets/` - Age-encrypted secrets
-- `overlays/` - Package overlays organized by domain (anytype, cursor, forge, misc)
+- `overlays/` - Package overlays organized by domain (anytype, cursor, forge, ddgmcp, misc)
 - `parts/` - Flake-parts modules (treefmt, pre-commit, tests)
+- `shared-modules/` - Shared modules (age, stylix)
 - `docs/` - Documentation (USERNAME_CUSTOMIZATION.md)
 - `tests/integration/` - Integration testing framework
 - `PROBLEMS.md` - Known issues and technical debt tracking
@@ -53,6 +54,7 @@ Overlays are organized in `overlays/default/` by domain:
 - `anytype.nix` - Anytype knowledge management application
 - `cursor.nix` - Cursor CLI agent for AI pair programming
 - `forge.nix` - Forge AI pair programmer for multiple models
+- `ddgmcp.nix` - DuckDuckGo MCP server for web search capabilities
 - `misc.nix` - Miscellaneous package overlays and utilities
 - `default.nix` - Main overlay orchestrator that imports and combines all overlays
 
@@ -179,10 +181,18 @@ The heavy module includes email support via hydroxide (ProtonMail bridge):
 
 The heavy-linux configuration includes comprehensive AI agent support:
 - Multiple agent frontends: Claude, Codex, Cursor, Avante, Forge, Gemini, Goose, OpenCode
-- MCP server integration for enhanced tool capabilities
+- MCP server integration for enhanced tool capabilities (including DuckDuckGo search)
 - Agent tools and sandbox environments
 - Custom agent instructions and role configurations
 - Command-line AI assistance via mods
+
+### MIME Type Management
+
+The heavy-linux module includes comprehensive MIME type associations in `home-modules/heavy-linux/mime/`:
+- Automatic application associations for text, images, video, documents
+- Extensible data-driven configuration via CSV files in `data/` directory
+- Smart defaults with application-specific overrides
+- Support for custom schemes (magnet links, directories)
 
 ## Testing Strategy
 
@@ -219,12 +229,14 @@ Git is configured with a modular structure in `home-modules/default/tui/git/`:
 - `difft.nix` - Difftastic syntax highlighting with smart file skipping
 - `ignores.nix` - Comprehensive .gitignore patterns for various languages/tools
 - `jupyter.nix` - Jupyter notebook diff/merge support with nbdime
+- `worktrees.nix` - Git worktree management with `gwt` command
 
 Key features:
 
 - Difftastic for syntax-aware diffs (auto-skips e.g. lock files)
 - GitHub CLI with copilot integration
 - Jupyter notebook merge/diff support
+- Git worktree management with interactive creation (`gwt` command)
 - Extensive aliases (st=status, lg=log graph, ds=diff staged, etc.)
 - Smart pager with file separator navigation
 
