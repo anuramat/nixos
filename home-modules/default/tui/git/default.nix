@@ -8,6 +8,7 @@
     ./difft.nix
     ./ignores.nix
     ./jupyter.nix
+    ./worktrees.nix
   ];
   programs = {
     gh = {
