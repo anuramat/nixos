@@ -8,7 +8,15 @@
   imports = [
     ./keyring.nix
     ./lib.nix
-    ./tui
+    ./bash
+    ./search.nix
+    ./bin
+    ./git
+    ./misc.nix
+    ./packages.nix
+    ./readline.nix
+    ./yazi.nix
+    ./pandoc.nix
   ];
 
   xdg.enable = true; # set xdg basedir vars in .profile

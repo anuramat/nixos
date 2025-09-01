@@ -223,7 +223,7 @@ Located in `tests/integration/`, focused on username configuration:
 
 ## Git Configuration
 
-Git is configured with a modular structure in `home-modules/default/tui/git/`:
+Git is configured with a modular structure in `home-modules/default/git/`:
 
 - `default.nix` - Core git settings, aliases, and GitHub CLI configuration
 - `difft.nix` - Difftastic syntax highlighting with smart file skipping
@@ -256,4 +256,3 @@ Key features:
 5. Tests should pass before committing (`just test`)
 6. Run linters before committing (`just lint`)
 7. Format code with `just format` or `nix fmt`
-
