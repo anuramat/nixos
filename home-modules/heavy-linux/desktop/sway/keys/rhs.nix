@@ -52,16 +52,35 @@ let
     let
       j4 = getExe pkgs.j4-dmenu-desktop;
       pkill = "${pkgs.procps}/bin/pkill";
-      todo = "todo";
+      todo = getExe pkgs.todo;
       fd = getExe pkgs.fd;
       zathura = getExe pkgs.zathura;
       bemenu = getExe pkgs.bemenu;
+
+      mkMenu =
+        command:
+        let
+          script = pkgs.writeShellScript "mkmenu" ''
+            if ${pkill} -x bemenu; then
+              exit 0
+            fi
+            ${command}
+          '';
+        in
+        "exec ${script}";
     in
     {
-      books = ''exec ${pkill} -f ^${bemenu} || swaymsg exec "echo \"$(cd ${bookdir} && ${fd} -t f | ${bemenu} -p read -l 20)\" | xargs -rI{} ${zathura} '${bookdir}/{}'"'';
-      drun = ''exec ${pkill} -f ^${bemenu} || swaymsg exec "$(${j4} -d '${bemenu} -p drun' -t ${term_cmd} -x --no-generic)"'';
-      todo_add = ''exec ${pkill} -f ^${bemenu} || swaymsg exec "$(echo ''' | ${bemenu} -p ${todo} -l 0 | xargs -I{} ${todo} add \"{}\")"'';
-      todo_done = ''exec ${pkill} -f ^${bemenu} || swaymsg exec "$(${todo} ls | tac | ${bemenu} -p done | sed 's/^\s*//' | cut -d ' ' -f 1 | xargs ${todo} rm)"'';
+      books =
+        mkMenu
+          # bash
+          ''
+            cd ${bookdir}
+            book=$(${fd} . "${bookdir}" -at f | ${bemenu} -p read -l 20) || exit
+            swaymsg exec ${zathura} $book
+          '';
+      drun = ''exec ${pkill} -x bemenu || swaymsg exec "$(${j4} -d '${bemenu} -p drun' -t ${term_cmd} -x --no-generic)"'';
+      todo_add = ''exec ${pkill} -x bemenu || swaymsg exec "$(echo ''' | ${bemenu} -p ${todo} -l 0 | xargs -I{} ${todo} add \"{}\")"'';
+      todo_done = ''exec ${pkill} -x bemenu || swaymsg exec "$(${todo} ls | tac | ${bemenu} -p done | sed 's/^\s*//' | cut -d ' ' -f 1 | xargs ${todo} rm)"'';
     };
 
   screen =

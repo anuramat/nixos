@@ -40,7 +40,7 @@ in
   gothink = mkInput "github:anuramat/gothink";
   modagent = mkInput "github:anuramat/modagent";
   subcat = mkInput "github:anuramat/subcat";
-  todo = mkNonFlake "github:anuramat/todo";
+  todo = mkInput "github:anuramat/todo";
 
   # forks
   mdformat-myst = mkInput "github:anuramat/mdformat-myst/dev"; # I think I broke the formatter...

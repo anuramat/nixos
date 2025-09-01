@@ -21,6 +21,7 @@ let
         modagent
         mods
         zotero-mcp
+        todo
         ;
     });
   unstablePkgs = final: prev: {

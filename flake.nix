@@ -189,7 +189,11 @@
       url = "github:anuramat/subcat";
     };
     todo = {
-      flake = false;
+      inputs = {
+        nixpkgs = {
+          follows = "nixpkgs";
+        };
+      };
       url = "github:anuramat/todo";
     };
     treefmt-nix = {
