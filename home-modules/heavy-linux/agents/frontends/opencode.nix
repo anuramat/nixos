@@ -53,9 +53,12 @@ let
       inherit (mcpServers) ddg;
     };
     share = "disabled";
-    # formatters = { };
     keybinds = {
-      editor_open = "<leader>ctrl+e";
+      editor_open = "<leader>ctrl+e,<leader>e";
+    };
+    provider.anthropic.models.claude-sonnet-4-20250514.options.thinking = {
+      type = "enabled";
+      budgetTokens = 1024;
     };
   };
 
