@@ -17,6 +17,7 @@
     llvm
     lua
     nodejs_20
+    bun
     perl
     ruby
     rustc

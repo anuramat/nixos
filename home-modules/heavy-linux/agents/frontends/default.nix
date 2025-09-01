@@ -9,5 +9,6 @@
     ./gemini.nix
     ./goose.nix
     ./opencode.nix
+    ./qwen.nix
   ];
 }
