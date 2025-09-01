@@ -54,7 +54,7 @@ let
     };
   };
 
-  npxHacks =
+  impureWrappers =
     final: prev:
     let
       mkNpx =
@@ -96,7 +96,7 @@ let
     (import ./cursor.nix)
     (import ./forge.nix)
     (import ./misc.nix inputs)
-    npxHacks
+    impureWrappers
     unstablePkgs
     pythonPackages
     flakes

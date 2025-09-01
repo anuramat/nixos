@@ -27,14 +27,25 @@ let
             model_provider = "llama-cpp";
           };
         };
-        model_providers.llama-cpp = {
-          name = "llama-cpp";
-          base_url =
-            let
-              port = toString osConfig.services.llama-cpp.port;
-            in
-            "http://localhost:${port}";
-          wire_api = "chat";
+        experimental_resume = "${codexHome}/history.jsonl";
+        model_providers = {
+          openai = {
+            hide_agent_reasoning = false;
+            show_raw_agent_reasoning = true;
+            model_reasoning_effort = "medium";
+            model_verbosity = "low";
+            model_reasoning_summary = "detailed"; # auto/concise/detailed
+            wire_api = "responses";
+          };
+          llama-cpp = {
+            name = "llama-cpp";
+            base_url =
+              let
+                port = toString osConfig.services.llama-cpp.port;
+              in
+              "http://localhost:${port}";
+            wire_api = "chat";
+          };
         };
         notify =
           let
