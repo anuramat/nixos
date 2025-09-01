@@ -32,6 +32,9 @@
       };
       url = "git+ssh://git@github.com/anuramat/ctrl.sn?ref=main";
     };
+    duckduckgo-mcp-server = {
+      url = "github:anuramat/duckduckgo-mcp-server/dev";
+    };
     ez-configs = {
       inputs = {
         flake-parts = {
