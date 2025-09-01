@@ -29,4 +29,7 @@ in
       K back-search ${invisibleSeparator}\n
     '';
   };
+  home.packages = [
+    pkgs.difftastic
+  ];
 }

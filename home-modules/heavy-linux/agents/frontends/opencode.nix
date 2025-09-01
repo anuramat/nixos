@@ -50,7 +50,7 @@ let
       "AGENTS.md"
     ];
     mcp = {
-      inherit (mcpServers) duckduckgo;
+      inherit (mcpServers) ddg;
     };
     share = "disabled";
     # formatters = { };

@@ -12,7 +12,7 @@ let
     let
       # https://github.com/openai/codex/blob/main/codex-rs/config.md
       cfg = {
-        # mcp_servers = { inherit (config.lib.agents.mcp.raw) zotero; };
+        mcp_servers = { inherit (config.lib.agents.mcp.raw) ddg; };
         profiles = {
           high = {
             model_reasoning_effort = "high";

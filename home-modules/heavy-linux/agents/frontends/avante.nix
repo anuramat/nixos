@@ -94,7 +94,12 @@ in
     };
   };
 
-  home.activation.mcphub = config.lib.home.json.set {
-    mcpServers = config.lib.agents.mcp.raw;
-  } "${config.xdg.configHome}/mcphub/servers.json";
+  home.activation.mcphub =
+    let
+      enabledServers = { inherit (config.lib.agents.mcp.raw) ddg nixos; };
+      # TODO add the rest with merged in `disabled: true` property
+    in
+    config.lib.home.json.set {
+      mcpServers = enabledServers;
+    } "${config.xdg.configHome}/mcphub/servers.json";
 }

@@ -48,7 +48,7 @@ let
         ZOTERO_LOCAL = "true";
       };
     };
-    duckduckgo = {
+    ddg = {
       command = getExe pkgs.duckduckgo-mcp-server;
     };
   };
