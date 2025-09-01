@@ -1266,11 +1266,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1754701771,
-        "narHash": "sha256-qbd8jdkEx7u6gAjfPu+QKFSuvikK8O3J9rVQ3FlMdt8=",
+        "lastModified": 1756127405,
+        "narHash": "sha256-+tYd59Z/2qIz9VFxg4hBv/aktg+J+zb/XVBgcIhkk9U=",
         "owner": "anuramat",
         "repo": "modagent",
-        "rev": "527746e803ae96d1de78c009ae5d1076e2f5ec94",
+        "rev": "8a56e809420688debdf0cbad6c9aad082b5647ce",
         "type": "github"
       },
       "original": {
