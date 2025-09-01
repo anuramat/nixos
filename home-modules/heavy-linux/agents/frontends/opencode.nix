@@ -28,7 +28,7 @@ let
       disabledServers =
         rawServers
         |> lib.filterAttrs (n: _: !lib.hasAttr n enabledServers)
-        |> lib.mapAttrs (_: v: v // { disabled = true; });
+        |> lib.mapAttrs (_: v: v // { enabled = false; });
     in
     enabledServers // disabledServers;
 
