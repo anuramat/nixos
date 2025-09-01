@@ -33,6 +33,7 @@
       enable = true;
 
       aliases = {
+        sw = "switch";
         ch = "checkout";
         wt = "worktree";
         st = "status";
