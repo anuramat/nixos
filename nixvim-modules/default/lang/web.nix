@@ -8,6 +8,10 @@
     ts-autotag = {
       enable = true;
     };
+    # TODO
+    # conform-nvim.settings.formatters_by_ft.html = [
+    #   "prettier"
+    # ];
     conform-nvim.settings.formatters_by_ft.javascript = [
       "biome-check"
     ];
