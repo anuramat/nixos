@@ -24,7 +24,12 @@ let
             environment = server.env or { };
           }
       ) config.lib.agents.mcp.raw;
-      enabledServers = { inherit (rawServers) ddg nixos; };
+      enabledServers = {
+        inherit (rawServers)
+          ddg
+          think
+          ;
+      };
       disabledServers =
         rawServers
         |> lib.filterAttrs (n: _: !lib.hasAttr n enabledServers)
