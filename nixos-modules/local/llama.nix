@@ -31,9 +31,26 @@ let
         ];
     };
 
-    gpt =
-      let
-        effort = "high";
+    gpt = {
+      small = {
+        flags = [
+          "-c" # context size
+          "0" # inherit
+          "-fa" # flash attention
+          "-ncmoe" # MoE blocks on cpu
+          "17"
+          "--n-gpu-layers" # layers on GPU
+          "999"
+          "--jinja"
+          "--chat-template-kwargs"
+          ''{"reasoning_effort": "high"}''
+          "-np" # number of cache slots
+          "4"
+        ];
+        filename = "gpt-oss-20b-GGUF_gpt-oss-20b-mxfp4.gguf";
+
+      };
+      big = {
         flags = [
           "-c" # context size
           "0" # inherit
@@ -43,30 +60,18 @@ let
           "999"
           "--jinja"
           "--chat-template-kwargs"
-          ''{"reasoning_effort": "${effort}"}''
+          ''{"reasoning_effort": "high"}''
           "-np" # number of cache slots
           "10"
         ];
-
-      in
-
-      {
-        small = {
-          inherit flags;
-          filename = "gpt-oss-20b-GGUF_gpt-oss-20b-mxfp4.gguf";
-
-        };
-        big = {
-          inherit flags;
-          filename = "gpt-oss-120b-mxfp4-00001-of-00003.gguf";
-        };
+        filename = "gpt-oss-120b-mxfp4-00001-of-00003.gguf";
       };
+    };
   };
 
 in
 
 {
-
   environment.systemPackages = [
     pkgs.llama-cpp
     pkgs.python313Packages.huggingface-hub
