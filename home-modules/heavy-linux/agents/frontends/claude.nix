@@ -128,11 +128,11 @@ in
       } "${cfgDir}/settings.json";
       claudeMcp = config.lib.home.json.set {
         mcpServers = {
-          # inherit (config.lib.agents.mcp.raw) ...;
+          inherit (config.lib.agents.mcp.raw) ddg;
         };
       } "${cfgDir}/.claude.json";
       claudeDesktopMcp = config.lib.home.json.set {
-        mcpServers = { inherit (config.lib.agents.mcp.raw) github; };
+        mcpServers = { };
       } "${config.xdg.configHome}/Claude/claude_desktop_config.json";
     };
   };
