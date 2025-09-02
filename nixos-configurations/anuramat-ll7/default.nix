@@ -77,6 +77,10 @@
     ];
   };
 
+  services = {
+    tlp.settings.CPU_MAX_PERF_ON_BAT = 20;
+  };
+
   # GPU {{{1
   nixpkgs.config.cudaSupport = true;
   hardware = {
