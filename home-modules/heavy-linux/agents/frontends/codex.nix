@@ -12,16 +12,15 @@ let
     let
       # https://github.com/openai/codex/blob/main/codex-rs/config.md
       cfg = {
+        hide_agent_reasoning = false;
+        show_raw_agent_reasoning = true;
+        model_reasoning_effort = "medium";
+        model_verbosity = "low";
+        model_reasoning_summary = "detailed"; # auto/concise/detailed
+        wire_api = "responses";
+
         mcp_servers = { inherit (config.lib.agents.mcp.raw) ddg; };
         profiles = {
-          high = {
-            model_reasoning_effort = "high";
-            model_provider = "openai";
-          };
-          low = {
-            model_reasoning_effort = "low";
-            model_provider = "openai";
-          };
           oss = {
             model = "dummy";
             model_provider = "llama-cpp";
@@ -29,14 +28,6 @@ let
         };
         # experimental_resume = "${codexHome}/history.jsonl";
         model_providers = {
-          openai = {
-            hide_agent_reasoning = false;
-            show_raw_agent_reasoning = true;
-            model_reasoning_effort = "medium";
-            model_verbosity = "low";
-            model_reasoning_summary = "detailed"; # auto/concise/detailed
-            wire_api = "responses";
-          };
           llama-cpp = {
             name = "llama-cpp";
             base_url =
