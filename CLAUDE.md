@@ -49,16 +49,15 @@ Located in `hax/`, provides utilities:
 
 ### Package Overlays
 
-Overlays are organized in `overlays/default/` by domain:
+Overlays are organized in `overlays/default/` by domain and are orchestrated via `default.nix`:
 
-- `anytype.nix` - Anytype knowledge management application
-- `cursor.nix` - Cursor CLI agent for AI pair programming
-- `forge.nix` - Forge AI pair programmer for multiple models
-- `ddgmcp.nix` - DuckDuckGo MCP server for web search capabilities
-- `misc.nix` - Miscellaneous package overlays and utilities
-- `default.nix` - Main overlay orchestrator that imports and combines all overlays
+- Flake-based overlays for agent tools and MCP servers (e.g., DuckDuckGo MCP, Claude Desktop, Mods, Zotero MCP, Subcat, Gothink, Todo)
+- Unstable package overlays for bleeding-edge tools (e.g., github-mcp-server, keymapp, proton-pass, goose-cli)
+- Python package overrides for markdown formatting (e.g., mdformat-deflist)
+- Shell wrappers for agent CLIs (Qwen, Gemini, Opencode, Claude Monitor, Inspector, CCUsage)
+- Modular orchestration of overlays from a wide set of sources, including custom and forked projects
 
-The overlay system supports flakes, unstable packages, Python packages, and npx-based CLI tools.
+The overlay system supports flakes, unstable packages, Python packages, npx/bunx-based CLI tools, and impure wrappers for agent binaries.
 
 ## Common Commands
 
@@ -180,19 +179,24 @@ The heavy module includes email support via hydroxide (ProtonMail bridge):
 ### AI Agent Integration
 
 The heavy-linux configuration includes comprehensive AI agent support:
-- Multiple agent frontends: Claude, Codex, Cursor, Avante, Forge, Gemini, Goose, OpenCode
+- Multiple agent frontends: Opencode, Claude, Codex, Qwen, Avante, Cursor, Forge, Gemini, Goose
+- Sandboxed wrappers for agent binaries (e.g., ocd, cld, cdx, qwn, gmn, gse)
+- Per-agent configuration files (JSON, TOML, YAML) for settings, MCP server integration, and context files (AGENTS.md, CLAUDE.md)
+- Notification hooks and session variables for agent environments
+- Sophisticated roles and prompts (e.g., academic summarizer, tool restrictions)
+- Neovim integration for Avante via MCP hub
+- Home activation scripts generate config files for agents and MCP servers
 - MCP server integration for enhanced tool capabilities (including DuckDuckGo search)
-- Agent tools and sandbox environments
-- Custom agent instructions and role configurations
 - Command-line AI assistance via mods
 
 ### MIME Type Management
 
-The heavy-linux module includes comprehensive MIME type associations in `home-modules/heavy-linux/mime/`:
-- Automatic application associations for text, images, video, documents
-- Extensible data-driven configuration via CSV files in `data/` directory
+The heavy-linux module includes comprehensive MIME type associations in `home-modules/heavy-linux/desktop/mime/`:
+- Data-driven MIME configuration using CSV files for extensibility (audio, text, font, video, image)
+- Centralized module assigns default applications for all major MIME types
+- Special handling for magnet links and directories
+- Integrated into the desktop environment for NixOS
 - Smart defaults with application-specific overrides
-- Support for custom schemes (magnet links, directories)
 
 ## Testing Strategy
 
@@ -226,7 +230,7 @@ Located in `tests/integration/`, focused on username configuration:
 Git is configured with a modular structure in `home-modules/default/git/`:
 
 - `default.nix` - Core git settings, aliases, and GitHub CLI configuration
-- `difft.nix` - Difftastic syntax highlighting with smart file skipping
+- `difft.nix` - Difftastic integration for syntax-aware diffs, with auto-skip for files marked `-diff` in .gitattributes
 - `ignores.nix` - Comprehensive .gitignore patterns for various languages/tools
 - `jupyter.nix` - Jupyter notebook diff/merge support with nbdime
 - `worktrees.nix` - Git worktree management with `gwt` command
@@ -234,11 +238,20 @@ Git is configured with a modular structure in `home-modules/default/git/`:
 Key features:
 
 - Difftastic for syntax-aware diffs (auto-skips e.g. lock files)
-- GitHub CLI with copilot integration
+- Extensive git and GitHub CLI aliases and extensions
 - Jupyter notebook merge/diff support
 - Git worktree management with interactive creation (`gwt` command)
-- Extensive aliases (st=status, lg=log graph, ds=diff staged, etc.)
-- Smart pager with file separator navigation
+- Smart pager navigation for diffs using invisible separator
+
+## Language Modules
+
+The heavy language module provides a full suite of compilers, linters, formatters, debuggers, and code utilities for multiple languages:
+- Compilers: Go, Haskell, Rust, Julia, C/C++, Lua, Node, Bun, Perl, Ruby, Sage, etc.
+- Linters: Nix, Go, Lua, Shell, YAML
+- Formatters: Python, Go, Haskell, HTML, Markdown (with plugins), Nix, Shell, Lua, YAML
+- Debuggers: Go, C, Python
+- Miscellaneous tools for code search, JSON/YAML/HTML processing, dependency graphing, notebook conversion, type generation
+- Python and YAML modules imported for extended support
 
 ## Documentation
 
@@ -246,6 +259,14 @@ Key features:
 - `docs/USERNAME_CUSTOMIZATION.md` - Complete guide for username configuration
 - `PROBLEMS.md` - Technical debt and known issues tracking
 - `tests/integration/README.md` - Integration testing documentation
+
+## Flake Inputs & Overlays
+
+The flake inputs now include a wide range of overlays and MCP servers for agents, markdown formatting, math, and desktop integration:
+- Flake-based overlays for agent tools and MCP servers (e.g., DuckDuckGo MCP, Claude Desktop, Mods, Zotero MCP, Subcat, Gothink, Todo)
+- Custom overlays for personal and forked projects (e.g., ctrlsn, figtree, mdformat-myst, mdmath, mods, zotero-mcp)
+- Inputs for neovim-nightly, NUR, nixpkgs-unstable, home-manager, stylix, treefmt, git-hooks, ez-configs, and more
+- Modular and extensible input organization for overlays and MCP servers
 
 ## Development Notes
 
