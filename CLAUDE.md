@@ -33,7 +33,7 @@ extensive development tooling.
 - Default modules: Minimal base configuration
 - Heavy modules: Full desktop environment (GUI, agents, editors)
 - Heavy-linux modules: Linux-specific heavy configuration with desktop/agents/Sway
-- Darwin modules: macOS-specific configuration 
+- Darwin modules: macOS-specific configuration
 - Linux modules: Linux-specific base configuration
 - Platform-specific examples in `home-configurations/` (e.g., `darwin-example.nix`)
 - Two entrypoints each for home-manager and nixvim (NixOS module vs standalone)
@@ -154,15 +154,14 @@ The system supports configurable usernames via the `userConfig` module:
 {
   userConfig = {
     username = "alice";
-    fullName = "Alice Smith";  # Optional: defaults to git.userName
-    email = "alice@example.com";  # Optional: defaults to git.userEmail
+    fullName = "Alice Smith"; # Optional: defaults to git.userName
+    email = "alice@example.com"; # Optional: defaults to git.userEmail
   };
 }
 ```
 
 - Personal home modules auto-load from `home-modules/${username}.nix`
 - Git settings provide fallback defaults for fullName/email
-- See `docs/USERNAME_CUSTOMIZATION.md` for complete guide
 
 ### Secrets Management
 
@@ -171,6 +170,7 @@ Uses ragenix for secrets. Encrypted files in `secrets/` with configuration in `s
 ### Email Configuration
 
 The heavy module includes email support via hydroxide (ProtonMail bridge):
+
 - Himalaya CLI email client with ProtonMail integration
 - Hydroxide service for ProtonMail bridge functionality
 - Requires manual authentication: `hydroxide auth`, then save to `pass hydroxide`
@@ -179,6 +179,7 @@ The heavy module includes email support via hydroxide (ProtonMail bridge):
 ### AI Agent Integration
 
 The heavy-linux configuration includes comprehensive AI agent support:
+
 - Multiple agent frontends: Opencode, Claude, Codex, Qwen, Avante, Cursor, Forge, Gemini, Goose
 - Sandboxed wrappers for agent binaries (e.g., ocd, cld, cdx, qwn, gmn, gse)
 - Per-agent configuration files (JSON, TOML, YAML) for settings, MCP server integration, and context files (AGENTS.md, CLAUDE.md)
@@ -192,6 +193,7 @@ The heavy-linux configuration includes comprehensive AI agent support:
 ### MIME Type Management
 
 The heavy-linux module includes comprehensive MIME type associations in `home-modules/heavy-linux/desktop/mime/`:
+
 - Data-driven MIME configuration using CSV files for extensibility (audio, text, font, video, image)
 - Centralized module assigns default applications for all major MIME types
 - Special handling for magnet links and directories
@@ -201,18 +203,23 @@ The heavy-linux module includes comprehensive MIME type associations in `home-mo
 ## Testing Strategy
 
 ### Unit Tests
+
 Tests are in `tests/` directory, run via nix-unit. Test files mirror module structure:
+
 - `tests/hax/` - Helper library tests
 - `tests/home-modules/lib/` - Home-manager module library tests (activation-scripts)
 
 ### Integration Tests
+
 Located in `tests/integration/`, focused on username configuration:
+
 - `username.nix` - Unit tests for username configuration
 - `build-matrix.sh` - Tests building all host configurations
 - `snapshot-username.sh` - Captures configuration state for comparison
 - `snapshots/` - Baseline snapshots for regression testing
 
 ### Testing Workflow
+
 1. Before refactoring: `just test-snapshot`
 2. During development: `just test` after each change
 3. Build validation: `just test-matrix`
@@ -246,6 +253,7 @@ Key features:
 ## Language Modules
 
 The heavy language module provides a full suite of compilers, linters, formatters, debuggers, and code utilities for multiple languages:
+
 - Compilers: Go, Haskell, Rust, Julia, C/C++, Lua, Node, Bun, Perl, Ruby, Sage, etc.
 - Linters: Nix, Go, Lua, Shell, YAML
 - Formatters: Python, Go, Haskell, HTML, Markdown (with plugins), Nix, Shell, Lua, YAML
@@ -263,6 +271,7 @@ The heavy language module provides a full suite of compilers, linters, formatter
 ## Flake Inputs & Overlays
 
 The flake inputs now include a wide range of overlays and MCP servers for agents, markdown formatting, math, and desktop integration:
+
 - Flake-based overlays for agent tools and MCP servers (e.g., DuckDuckGo MCP, Claude Desktop, Mods, Zotero MCP, Subcat, Gothink, Todo)
 - Custom overlays for personal and forked projects (e.g., ctrlsn, figtree, mdformat-myst, mdmath, mods, zotero-mcp)
 - Inputs for neovim-nightly, NUR, nixpkgs-unstable, home-manager, stylix, treefmt, git-hooks, ez-configs, and more
