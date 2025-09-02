@@ -14,7 +14,7 @@ let
       cfg = {
         hide_agent_reasoning = false;
         show_raw_agent_reasoning = true;
-        model_reasoning_effort = "medium";
+        model_reasoning_effort = "high";
         model_verbosity = "low";
         model_reasoning_summary = "detailed"; # auto/concise/detailed
         wire_api = "responses";
