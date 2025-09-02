@@ -93,7 +93,10 @@ in
             npm = "@ai-sdk/openai-compatible";
             options.baseURL = "http://localhost:11343";
             name = "llama.cpp";
-            models.dummy = { };
+            models.dummy.limit = {
+              output = 99999999;
+              context = 50000;
+            };
           };
           anthropic.models.claude-sonnet-4-20250514.options.thinking = {
             type = "enabled";

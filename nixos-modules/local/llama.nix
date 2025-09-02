@@ -34,34 +34,34 @@ let
     gpt = {
       small = {
         flags = [
-          "-c" # context size
-          "0" # inherit
+          "-c" # context size, 0 for inherit
+          "42000"
           "-fa" # flash attention
-          "-ncmoe" # MoE blocks on cpu
-          "17"
+          "-ncmoe" # MoE blocks on cpu, -cmoe for +infty
+          "12"
           "--n-gpu-layers" # layers on GPU
           "999"
           "--jinja"
           "--chat-template-kwargs"
           ''{"reasoning_effort": "high"}''
           "-np" # number of cache slots
-          "4"
+          "2"
         ];
         filename = "gpt-oss-20b-GGUF_gpt-oss-20b-mxfp4.gguf";
 
       };
       big = {
         flags = [
-          "-c" # context size
-          "0" # inherit
-          "-fa" # flash attention
-          "-cmoe" # all MoE blocks on CPU
-          "--n-gpu-layers" # how many layers on GPU
+          "-c"
+          "0"
+          "-fa"
+          "-cmoe"
+          "--n-gpu-layers"
           "999"
           "--jinja"
           "--chat-template-kwargs"
           ''{"reasoning_effort": "high"}''
-          "-np" # number of cache slots
+          "-np"
           "10"
         ];
         filename = "gpt-oss-120b-mxfp4-00001-of-00003.gguf";
