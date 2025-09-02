@@ -53,7 +53,7 @@ in
         let
           adaptedCommands = agents.commands |> mapAttrs (n: v: v.withFM { inherit (v) description; });
         in
-        agents.mkPrompts "opencode/commands" adaptedCommands;
+        agents.mkPrompts "opencode/command" adaptedCommands;
     in
     (
       {
