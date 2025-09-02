@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  lib,
   ...
 }@args:
 let
@@ -14,6 +15,19 @@ let
         ;
     })
   );
+
+  # mods expects env to be an array of strings "ENVVAR=value"
+  mcp-servers = builtins.mapAttrs (
+    name: server:
+    if server ? env then
+      server
+      // {
+        env = lib.mapAttrsToList (n: v: "${n}=${v}") server.env;
+      }
+    else
+      server
+  ) config.lib.agents.mcp.raw;
+
   roles = {
     default = {
       blocked_tools = [ "*" ];
@@ -122,7 +136,7 @@ let
 in
 {
   home.activation.mods = config.lib.home.yaml.set {
-    inherit apis;
+    inherit apis mcp-servers;
     default-api = "copilot";
     default-model = "gpt-4.1";
     fanciness = 0;
@@ -132,7 +146,6 @@ in
     topk = -1; # -1 to disable
     topp = -1.0; # from 0.0 to 1.0, -1.0 to disable
     max-input-chars = 100000;
-    mcp-servers = config.lib.agents.mcp.raw;
   } "${config.xdg.configHome}/mods/mods.yml";
   home = {
     packages = [
