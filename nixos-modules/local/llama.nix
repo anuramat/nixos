@@ -78,7 +78,7 @@ in
     {
       llama-cpp =
         let
-          modelAttrs = models.gpt.big;
+          modelAttrs = models.gpt.small;
         in
         {
           enable = true;
