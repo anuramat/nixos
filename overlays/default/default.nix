@@ -75,11 +75,11 @@ let
         '';
     in
     {
-      qwen-code = mkBunx "qwen-code" "@qwen-code/qwen-code@latest";
+      qwen-code = mkBunx "qwen-code" "@qwen-code/qwen-code";
       gemini-cli = mkBunx "gemini" "@google/gemini-cli";
       inspector = mkBunx "inspector" "@modelcontextprotocol/inspector";
-      ccusage = mkBunx "ccusage" "ccusage@latest";
-      opencode = mkBunx "opencode" "opencode-ai@latest";
+      ccusage = mkBunx "ccusage" "ccusage";
+      opencode = mkBunx "opencode" "opencode-ai";
       claude-monitor = mkUv "claude-monitor" "claude-monitor";
     };
 
