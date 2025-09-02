@@ -81,7 +81,7 @@ in
           {
             # alphabetic priority
             ll7-0 = [
-              ll7
+              (ll7 // { mode = "3200x2000@60Hz"; })
             ];
             ll7-1-home = [
               (ll7 // { scale = 2.0; })

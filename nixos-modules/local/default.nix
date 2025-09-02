@@ -101,7 +101,7 @@ in
 
   hardware.bluetooth = {
     enable = true;
-    powerOnBoot = true;
+    powerOnBoot = false;
   };
   services.blueman.enable = true; # bluetooth gui
 

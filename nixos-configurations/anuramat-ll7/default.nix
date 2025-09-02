@@ -26,6 +26,10 @@
     ];
   };
 
+  services.tlp.settings = {
+    CPU_MAX_PERF_ON_BAT = 0;
+  };
+
   imports = [
     inputs.self.nixosModules.default
     inputs.self.nixosModules.local
@@ -77,10 +81,6 @@
     ];
   };
 
-  services = {
-    tlp.settings.CPU_MAX_PERF_ON_BAT = 20;
-  };
-
   # GPU {{{1
   nixpkgs.config.cudaSupport = true;
   hardware = {
@@ -95,6 +95,7 @@
     };
   };
   services.xserver.videoDrivers = [ "nvidia" ]; # use proprietary drivers
+  environment.sessionVariables.WLR_DRM_DEVICES = "/dev/dri/by-path/pci-0000:00:02.0-card"; # used by sway to start on iGPU
   hardware = {
     nvidia = {
       open = true; # recommended on turing+
