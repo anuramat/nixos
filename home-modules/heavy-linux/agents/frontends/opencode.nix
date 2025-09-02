@@ -82,6 +82,7 @@ in
         keybinds = {
           editor_open = "<leader>ctrl+e,<leader>e";
         };
+        # reasoning effort for gpt5: https://github.com/sst/opencode/issues/1823
         provider.anthropic.models.claude-sonnet-4-20250514.options.thinking = {
           type = "enabled";
           budgetTokens = 1024;
