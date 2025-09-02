@@ -19,7 +19,9 @@ let
         model_reasoning_summary = "detailed"; # auto/concise/detailed
         wire_api = "responses";
 
-        mcp_servers = { inherit (config.lib.agents.mcp.raw) ddg; };
+        mcp_servers = {
+          inherit (config.lib.agents.mcp.raw) ddg;
+        };
         profiles = {
           oss = {
             model = "dummy";
@@ -68,7 +70,7 @@ in
       (config.lib.agents.mkSandbox {
         binName = "codex";
         package = pkgs.codex;
-        args = " --dangerously-bypass-approvals-and-sandbox --search";
+        args = "--dangerously-bypass-approvals-and-sandbox"; # "--search" is bloated
         inherit env;
         agentDir = null;
         wrapperName = "cdx";
