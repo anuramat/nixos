@@ -30,9 +30,21 @@ let
 
   roles = {
     default = {
-      blocked_tools = [ "*" ];
+      allowed_tools = [
+        "ddg_*"
+      ];
       prompt = [
-        ''always finish your answers with a short summary with a short, concise version of the answer and/or a relevant bash one-liner/code snippet''
+        ''
+          - you MUST always finish your answers with a short, concise summary of
+            the answer and/or a relevant bash one-liner/code snippet
+          - you SHOULD answer in less than 30 lines
+        ''
+      ];
+    };
+    zotero = {
+      allowed_tools = [
+        "ddg_*"
+        "zotero_*"
       ];
     };
     summarizer = {
