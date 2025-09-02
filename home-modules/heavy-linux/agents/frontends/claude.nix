@@ -18,7 +18,6 @@ let
           input=$(cat)
           model_display=$(echo "$input" | jq -r '.model.display_name')
           output_style=$(echo "$input" | jq -r '.output_style.name')
-          # TODO output_style.name
 
           starship module directory
           starship module git_branch
@@ -128,7 +127,7 @@ in
       } "${cfgDir}/settings.json";
       claudeMcp = config.lib.home.json.set {
         mcpServers = {
-          inherit (config.lib.agents.mcp.raw) ddg;
+          inherit (config.lib.agents.mcp.raw) ddg deepwiki think;
         };
       } "${cfgDir}/.claude.json";
       claudeDesktopMcp = config.lib.home.json.set {
