@@ -20,7 +20,7 @@ let
         wire_api = "responses";
 
         mcp_servers = {
-          inherit (config.lib.agents.mcp.raw) ddg think deepwiki;
+          inherit (config.lib.agents.mcp.raw) ddg think;
         };
         profiles = {
           oss = {
