@@ -83,6 +83,7 @@ in
     ./mods.nix
     ./sandbox.nix
     ./tools.nix
+    ./vllm.nix
   ];
 
   lib.agents = {
@@ -125,6 +126,5 @@ in
     summarize
     transcribe
     inspector
-    vllm
   ];
 }
