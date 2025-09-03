@@ -26,10 +26,6 @@
     ];
   };
 
-  services.tlp.settings = {
-    CPU_MAX_PERF_ON_BAT = 0;
-  };
-
   imports = [
     inputs.self.nixosModules.default
     inputs.self.nixosModules.local
