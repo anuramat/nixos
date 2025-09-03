@@ -39,10 +39,10 @@ inputs:
 
   codex = prev.stdenv.mkDerivation rec {
     pname = "codex";
-    version = "0.27.0";
+    version = "0.29.0";
     src = prev.fetchurl {
       url = "https://github.com/openai/codex/releases/download/rust-v${version}/codex";
-      hash = "sha256-4RVYJCGvbQ2SMV3tGttK2nI9DBew6Es2klwqXRtblEo=";
+      hash = "sha256-RyHFqYhdDwLgC+XHQuOnMcZqoQ1iBuTu3sI6TH8Rtw8=";
     };
     dontUnpack = true;
     nativeBuildInputs = [ prev.makeWrapper ];
