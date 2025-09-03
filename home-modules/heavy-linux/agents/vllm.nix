@@ -6,7 +6,7 @@
 
 {
   home.packages = with pkgs; [
-    vllm
+    # vllm
   ];
 
   # systemd.user.services.vllm = {
