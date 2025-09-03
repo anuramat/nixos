@@ -25,10 +25,6 @@
       # Restart = "on-failure";
       # RestartSec = "5s";
 
-      Environment = [
-        "VLLM_TARGET_DEVICE=cuda"
-      ];
-
       ExecStart =
         let
           vllm = lib.getExe pkgs.vllm;
