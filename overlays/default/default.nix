@@ -30,7 +30,6 @@ let
       keymapp
       proton-pass
       goose-cli
-      vllm
       ;
   };
   pythonPackages = final: prev: {
