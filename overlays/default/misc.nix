@@ -8,7 +8,7 @@ inputs:
       owner = "vllm-project";
       repo = "vllm";
       tag = "v${version}";
-      hash = "";
+      hash = "sha256-XvXesxT7BI5bhJcPSFmlXBRlrXVhnr3WHRRj4seGF7g=";
     };
   });
 

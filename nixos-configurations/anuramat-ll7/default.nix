@@ -48,13 +48,6 @@
     ./hardware-configuration.nix
   ];
 
-  # swapDevices = [
-  #   {
-  #     device = "/var/lib/swapfile";
-  #     size = 64 * 1024;
-  #   }
-  # ];
-
   # vendor specifics {{{1
   environment.systemPackages = with pkgs; [
     lenovo-legion
