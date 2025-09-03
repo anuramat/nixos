@@ -125,5 +125,6 @@ in
     summarize
     transcribe
     inspector
+    vllm
   ];
 }
