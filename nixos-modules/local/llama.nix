@@ -76,6 +76,9 @@ in
     pkgs.llama-cpp
     pkgs.python313Packages.huggingface-hub
   ];
+  environment.sessionVariables = {
+    LLAMA_CACHE = "/mnt/storage/llama-cpp";
+  };
   services =
     let
       cuda = config.hardware.nvidia.enabled;
