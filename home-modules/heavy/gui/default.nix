@@ -48,6 +48,11 @@ in
         # rejecting all; fallback -- do nothing
         "cookiebanners.service.mode" = 1;
         "cookiebanners.service.mode.privateBrowsing" = 1;
+
+        # ai slop
+        "browser.tabs.groups.smart.optin" = true;
+        "browser.tabs.groups.smart.enabled" = true;
+        "browser.ml.chat.enabled" = true;
       };
     };
   };
