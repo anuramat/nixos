@@ -81,6 +81,7 @@ in
     ./git.nix
     ./instructions.nix
     ./mods.nix
+    ./roles.nix
     ./sandbox.nix
     ./tools.nix
     ./vllm.nix

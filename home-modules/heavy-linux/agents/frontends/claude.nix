@@ -8,7 +8,8 @@
   ...
 }:
 let
-  inherit (lib) mapAttrs;
+  inherit (lib) mapAttrs stringToCharacters concatStringsSep;
+
   inherit (config.lib) agents;
   statusLine = {
     type = "command";
@@ -74,6 +75,33 @@ let
     in
     agents.mkPrompts "claude/commands" adaptedCommands;
 
+  roles =
+    let
+      toolsetParts = {
+        i = "WebFetch, WebSearch";
+        # TODO split junior into two, r and rwx
+
+        r = "Glob, Grep, LS, Read, TodoWrite";
+        w = "Edit, MultiEdit, Write, NotebookEdit";
+        x = "Bash, KillBash, BashOutput, mcp__modagent__junior";
+      };
+      adaptedRoles =
+        agents.roles
+        |> mapAttrs (
+          n: v:
+          v.withFM {
+            inherit (v) name description;
+            model = "inherit";
+            tools =
+              if v.toolset == null then
+                null
+              else
+                stringToCharacters v.toolset |> map (x: toolsetParts.${x}) |> concatStringsSep ", ";
+          }
+        );
+    in
+    agents.mkPrompts "claude/agents" adaptedRoles;
+
   claudeWrapped =
     # turn on when this is fixed: https://github.com/anthropics/claude-code/issues/4085
     if false then
@@ -97,6 +125,7 @@ in
       "claude/CLAUDE.md".text = agents.instructions.claude;
     }
     // commands
+    // roles
   );
   home = {
     sessionVariables = {
