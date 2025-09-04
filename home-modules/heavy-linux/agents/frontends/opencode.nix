@@ -27,7 +27,6 @@ let
       enabledServers = {
         inherit (rawServers)
           ddg
-          think
           ;
       };
       disabledServers =
@@ -95,7 +94,7 @@ in
             name = "llama.cpp";
             models.dummy.limit = {
               output = 99999999;
-              context = 50000;
+              context = 20000; # TODO add a common env var with llama server
             };
           };
           anthropic.models.claude-sonnet-4-20250514.options.thinking = {
