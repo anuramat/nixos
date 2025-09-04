@@ -8,7 +8,7 @@
   ...
 }:
 let
-  inherit (lib) mapAttrs stringToCharacters concatStringsSep;
+  inherit (lib) mapAttrs;
 
   inherit (config.lib) agents;
   statusLine = {
@@ -77,26 +77,13 @@ let
 
   roles =
     let
-      toolsetParts = {
-        i = "WebFetch, WebSearch";
-        # TODO split junior into two, r and rwx
-
-        r = "Glob, Grep, LS, Read, TodoWrite";
-        w = "Edit, MultiEdit, Write, NotebookEdit";
-        x = "Bash, KillBash, BashOutput, mcp__modagent__junior";
-      };
       adaptedRoles =
         agents.roles
         |> mapAttrs (
           n: v:
           v.withFM {
             inherit (v) name description;
-            model = "inherit";
-            tools =
-              if v.toolset == null then
-                null
-              else
-                stringToCharacters v.toolset |> map (x: toolsetParts.${x}) |> concatStringsSep ", ";
+            model = "inherit"; # TODO
           }
         );
     in
