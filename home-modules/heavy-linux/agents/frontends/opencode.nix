@@ -68,13 +68,23 @@ in
     );
 
   home = {
-    packages = [
-      pkgs.opencode
-      (agents.mkSandbox {
-        wrapperName = "ocd";
-        package = pkgs.opencode;
-      })
-    ];
+    packages =
+      let
+        opencode = config.lib.home.agenixWrapPkg pkgs.opencode (
+          (t: {
+            inherit (t)
+              openrouter
+              ;
+          })
+        );
+      in
+      [
+        opencode
+        (agents.mkSandbox {
+          wrapperName = "ocd";
+          package = opencode;
+        })
+      ];
 
     activation = {
       opencodeSettings = config.lib.home.json.set {
