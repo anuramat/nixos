@@ -50,6 +50,7 @@ let
           - You SHOULD always consider delegating each sub-task to sub-agents (`Task` tool), unless it's more efficient to work on it yourself.
           - When presenting a plan to the user using `ExitPlanMode` tool, you SHOULD keep the plan under 10 lines -- only outline the high-level steps.
         '');
+        # - When not sure about the best practices (e.g. in nix packaging), use a general-purpose sub-agent to perform a web search for best practices
 
         git = ''
           - You MUST make commits after each atomic unit of work that changes files, so that the user can backtrack the trajectory of the changes step by step.
