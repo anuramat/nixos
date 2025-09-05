@@ -25,7 +25,7 @@ let
     ];
 
     browser = generateMimeTypes [
-      (mimeFromDesktop pkgs.librewolf)
+      (mimeFromDesktop pkgs.librewolf-bin)
     ];
 
     images = generateMimeTypes [

@@ -38,6 +38,7 @@ in
         "browser.urlbar.suggest.history" = true;
         "widget.use-xdg-desktop-portal.file-picker" = 1;
         "identity.fxaccounts.enabled" = true;
+        "widget.wayland.fractional-scale.enabled" = true;
 
         # since it breaks a lot of pages
         "privacy.resistFingerprinting" = false;
