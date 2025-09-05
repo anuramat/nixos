@@ -3,7 +3,6 @@ inputs:
 
   vllm = prev.vllm.overrideAttrs (oldAttrs: rec {
     version = "0.10.2rc1";
-    cudaSupport = false;
     src = prev.fetchFromGitHub {
       owner = "vllm-project";
       repo = "vllm";

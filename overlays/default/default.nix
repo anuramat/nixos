@@ -31,6 +31,7 @@ let
       proton-pass
       goose-cli
       librewolf
+      librewolf-bin
       ;
   };
   pythonPackages = final: prev: {
@@ -88,7 +89,7 @@ let
     with inputs;
     [
       neovim-nightly-overlay
-      nur
+      # nur
     ]
     |> map (v: v.overlays.default);
 
