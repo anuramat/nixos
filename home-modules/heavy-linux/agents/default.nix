@@ -84,7 +84,6 @@ in
     ./roles.nix
     ./sandbox.nix
     ./tools.nix
-    ./vllm.nix
   ];
 
   lib.agents = {

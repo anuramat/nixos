@@ -1,16 +1,6 @@
 inputs:
 (final: prev: {
 
-  vllm = prev.vllm.overrideAttrs (oldAttrs: rec {
-    version = "0.10.2rc1";
-    src = prev.fetchFromGitHub {
-      owner = "vllm-project";
-      repo = "vllm";
-      tag = "v${version}";
-      hash = "sha256-XvXesxT7BI5bhJcPSFmlXBRlrXVhnr3WHRRj4seGF7g=";
-    };
-  });
-
   ollama = prev.ollama.overrideAttrs (oldAttrs: rec {
     version = "0.11.3";
     src = prev.fetchFromGitHub {
