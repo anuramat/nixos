@@ -47,7 +47,7 @@ let
           "-np" # number of cache slots
           "2"
         ];
-        filename = "gpt-oss-20b-GGUF_gpt-oss-20b-mxfp4.gguf";
+        filename = "ggml-org_gpt-oss-20b-GGUF_gpt-oss-20b-mxfp4.gguf";
 
       };
       big = {
@@ -64,7 +64,7 @@ let
           "-np"
           "10"
         ];
-        filename = "gpt-oss-120b-mxfp4-00001-of-00003.gguf";
+        filename = "ggml-org_gpt-oss-120b-GGUF_gpt-oss-120b-mxfp4-00001-of-00003.gguf";
       };
     };
   };
