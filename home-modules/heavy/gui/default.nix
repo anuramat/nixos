@@ -33,7 +33,7 @@ in
 
     librewolf = {
       enable = true;
-      package = pkgs.librewolf;
+      package = pkgs.librewolf-bin;
       settings = {
         "browser.urlbar.suggest.history" = true;
         "widget.use-xdg-desktop-portal.file-picker" = 1;
