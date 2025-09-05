@@ -31,6 +31,7 @@ let
       proton-pass
       goose-cli
       librewolf-bin
+      librewolf
       ;
   };
   pythonPackages = final: prev: {
