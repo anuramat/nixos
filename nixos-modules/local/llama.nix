@@ -7,7 +7,7 @@
 let
   # TODO make sure this is not built for t480
 
-  rootdir = "/mnt/storage/llama-cpp/";
+  rootdir = "/mnt/storage/llama-cpp/"; # put in sessionvar TODO
   models = {
 
     gemma = {
