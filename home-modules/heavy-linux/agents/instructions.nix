@@ -26,6 +26,7 @@ let
         else
           throw "huh";
       for = agent: when (agent == args.agent);
+      # TODO make it take a list -- set of agent names
 
       sections = {
         codestyle = ''
@@ -47,7 +48,6 @@ let
           - To find required packages in `nixpkgs`, you SHOULD use `nh search $PACKAGE_NAME`${for "claude" "; if you need to find multiple packages, you MUST delegate package search to a sub-agent."}.
         ''
         + (for "claude" ''
-          - You SHOULD always consider delegating each sub-task to sub-agents (`Task` tool), unless it's more efficient to work on it yourself.
           - When presenting a plan to the user using `ExitPlanMode` tool, you SHOULD keep the plan under 10 lines -- only outline the high-level steps.
         '');
         # - When not sure about the best practices (e.g. in nix packaging), use a general-purpose sub-agent to perform a web search for best practices
@@ -93,6 +93,11 @@ in
     generic = mkInstructions {
       agent = null;
       planningTool = null;
+    };
+    opencode = mkInstructions {
+      agent = "opencode";
+      planningTool = "todowrite";
+      subagentTool = "task";
     };
     claude = mkInstructions {
       agent = "claude";
