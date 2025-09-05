@@ -30,7 +30,6 @@ let
       keymapp
       proton-pass
       goose-cli
-      librewolf-bin
       librewolf
       ;
   };
