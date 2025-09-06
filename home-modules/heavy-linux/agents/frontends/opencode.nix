@@ -111,7 +111,7 @@ in
           };
           anthropic.models.claude-sonnet-4-20250514.options.thinking = {
             type = "enabled";
-            budgetTokens = 1024;
+            budgetTokens = 10000;
           };
           openrouter.options.apiKey = "{env:OPENROUTER_KEY}";
           zhipuai.options.apiKey = "{env:ZAI_KEY}";

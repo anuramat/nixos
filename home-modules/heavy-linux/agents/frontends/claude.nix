@@ -149,7 +149,7 @@ in
       claudeSettings = config.lib.home.json.set {
         includeCoAuthoredBy = false;
         env = {
-          MAX_THINKING_TOKENS = 1024;
+          MAX_THINKING_TOKENS = 10000;
           CLAUDE_CODE_DISABLE_TERMINAL_TITLE = 1;
           # DISABLE_NON_ESSENTIAL_MODEL_CALLS (1 for disable)
           # MAX_MCP_OUTPUT_TOKENS default 25k
@@ -172,4 +172,3 @@ in
     };
   };
 }
-# MAX_THINKING_TOKENS=1024
