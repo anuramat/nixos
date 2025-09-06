@@ -109,7 +109,7 @@ let
       api-key-env = "CEREBRAS_API_KEY";
       models = {
         qwen-3-coder-480b = {
-          aliases = "coder";
+          aliases = [ "coder" ];
         };
       };
     };
