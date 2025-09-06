@@ -11,6 +11,7 @@ let
   models = {
 
     gemma = {
+      # TODO replace
       filename = "gemma-3-4b-it-GGUF_gemma-3-4b-it-Q8_0.gguf";
       flags =
         let
@@ -29,6 +30,7 @@ let
     };
 
     qwen = {
+      # TODO replace with M quant
       filename = "unsloth_Qwen3-Coder-30B-A3B-Instruct-GGUF_Qwen3-Coder-30B-A3B-Instruct-UD-Q4_K_XL.gguf";
       flags = [
         "--jinja"
@@ -70,17 +72,18 @@ let
         small = {
           flags = [
             "-c" # context size, 0 for inherit
-            "42000"
+            "55000"
             "-ncmoe" # MoE blocks on cpu, -cmoe for +infty
             "12"
             "-np" # number of cache slots
             "2"
           ]
           ++ common;
-          filename = "ggml-org_gpt-oss-20b-GGUF_gpt-oss-20b-mxfp4.gguf";
+          filename = "unsloth_gpt-oss-20b-GGUF_gpt-oss-20b-Q4_K_M.gguf";
 
         };
         big = {
+          # TODO maybe replace with a quant
           flags = [
             "-c"
             "0"
