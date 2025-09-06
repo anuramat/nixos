@@ -108,7 +108,7 @@ let
           })
         );
       in
-      claudeWrapped;
+      claudeZai;
     args = "--dangerously-skip-permissions";
     env = {
       ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
