@@ -10,7 +10,7 @@ inputs:
       version = inputs.crush.shortRev;
       src = inputs.crush;
       doCheck = false;
-      vendorHash = "sha256-qUcgVu6+cSFYDCsIB1pB5Vy3adWua2Rs8P9SNXJEjcA=";
+      vendorHash = "sha256-k7yfCyfeW2TW5DpVmxfNLXV08FxhpW4SQNAcDyrYKPc=";
     };
 
   ollama = prev.ollama.overrideAttrs (oldAttrs: rec {
