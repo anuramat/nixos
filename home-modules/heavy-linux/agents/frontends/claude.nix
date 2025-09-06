@@ -143,7 +143,7 @@ in
       } "${cfgDir}/settings.json";
       claudeMcp = config.lib.home.json.set {
         mcpServers = {
-          inherit (config.lib.agents.mcp.raw) ddg deepwiki think;
+          inherit (config.lib.agents.mcp.raw) ddg deepwiki;
         };
       } "${cfgDir}/.claude.json";
       claudeDesktopMcp = config.lib.home.json.set {
