@@ -109,6 +109,8 @@ let
     };
   };
   apis = {
+    zai = {
+    };
     copilot = {
       base-url = "https://api.githubcopilot.com";
       models = {
