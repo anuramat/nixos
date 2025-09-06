@@ -111,6 +111,8 @@ let
       claudeZai;
     args = "--dangerously-skip-permissions";
     env = {
+      ANTHROPIC_MODEL = "glm-4.5";
+      ANTHROPIC_SMALL_FAST_MODEL = "glm-4.5-air";
       ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
     };
   };
