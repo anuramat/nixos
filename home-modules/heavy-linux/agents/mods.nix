@@ -106,7 +106,7 @@ let
   };
   apis = {
     cerebras = {
-      base_url = "https://api.cerebras.ai/v1";
+      base-url = "https://api.cerebras.ai/v1";
       api-key-env = "CEREBRAS_API_KEY";
       models = {
         qwen-3-coder-480b = {
