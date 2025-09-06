@@ -74,7 +74,7 @@ in
           (t: {
             OPENROUTER_KEY = t.openrouter;
             ZAI_KEY = t.zai;
-            CEREBRAS_KEY = t.cerebras;
+            CEREBRAS_KEY = t.cerebras-code;
           })
         );
       in

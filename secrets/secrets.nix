@@ -22,6 +22,7 @@ in
 [
   "anthropic.age"
   "cerebras.age"
+  "cerebras-org.age"
   "claudecode.age"
   "gemini.age"
   "ghmcp.age"
