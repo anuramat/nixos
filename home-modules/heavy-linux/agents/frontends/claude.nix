@@ -98,6 +98,23 @@ let
     else
       pkgs.claude-code;
 
+  claudeBoxedZai = config.lib.agents.mkSandbox {
+    wrapperName = "cld-zai";
+    package =
+      let
+        claudeZai = config.lib.home.agenixWrapPkg pkgs.claude (
+          (t: {
+            ANTHROPIC_AUTH_TOKEN = t.zai;
+          })
+        );
+      in
+      claudeWrapped;
+    args = "--dangerously-skip-permissions";
+    env = {
+      ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
+    };
+  };
+
   claudeBoxed = config.lib.agents.mkSandbox {
     wrapperName = "cld";
     package = claudeWrapped;
@@ -121,6 +138,7 @@ in
     packages = [
       claudeWrapped
       claudeBoxed
+      claudeBoxedZai
       pkgs.claude-desktop
       pkgs.ccusage
       pkgs.claude-monitor

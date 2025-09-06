@@ -72,9 +72,9 @@ in
       let
         opencode = config.lib.home.agenixWrapPkg pkgs.opencode (
           (t: {
-            inherit (t)
-              openrouter
-              ;
+            OPENROUTER_KEY = t.openrouter;
+            ZAI_KEY = t.zai;
+            CEREBRAS_KEY = t.cerebras;
           })
         );
       in
@@ -87,6 +87,8 @@ in
       ];
 
     activation = {
+      # opencodeAuth = config.lib.home.json.set {
+      # } (config.xdg.dataHome + "/opencode/auth.json");
       opencodeSettings = config.lib.home.json.set {
         inherit mcp;
         instructions = [
@@ -111,6 +113,9 @@ in
             type = "enabled";
             budgetTokens = 1024;
           };
+          openrouter.options.apiKey = "{env:OPENROUTER_KEY}";
+          zhipuai.options.apiKey = "{env:ZAI_KEY}";
+          cerebras.options.apiKey = "{env:CEREBRAS_KEY}";
         };
       } (config.xdg.configHome + "/opencode/opencode.json");
     };
