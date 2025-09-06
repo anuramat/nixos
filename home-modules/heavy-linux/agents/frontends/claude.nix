@@ -102,7 +102,7 @@ let
     wrapperName = "cld-zai";
     package =
       let
-        claudeZai = config.lib.home.agenixWrapPkg pkgs.claude (
+        claudeZai = config.lib.home.agenixWrapPkg pkgs.claude-code (
           (t: {
             ANTHROPIC_AUTH_TOKEN = t.zai;
           })
