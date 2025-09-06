@@ -8,6 +8,7 @@ let
   modsWithTokens = config.lib.home.agenixWrapPkg pkgs.mods (
     (t: {
       ZAI_API_KEY = t.zai;
+      CEREBRAS_API_KEY = t.cerebras;
     })
   );
 
