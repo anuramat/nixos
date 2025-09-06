@@ -21,11 +21,13 @@ let
 in
 [
   "anthropic.age"
+  "cerebras.age"
   "claudecode.age"
   "gemini.age"
   "ghmcp.age"
-  "openrouter.age"
   "oai.age"
+  "openrouter.age"
+  "zai.age"
 ]
 |> map (x: {
   name = x;
