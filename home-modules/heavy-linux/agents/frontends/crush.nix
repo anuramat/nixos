@@ -10,8 +10,9 @@ let
     inherit (config.lib.agents.mcp.raw) ddg;
   };
   options = {
-    context_paths = config.lib.agents.contextFiles ++ [
-      config.lib.agents.instructions.path
+    context_paths = [
+      "AGENTS.md"
+      (pkgs.writeText "AGENTS.md" config.lib.agents.instructions.generic)
     ];
   };
   configPath = config.xdg.configHome + "/crush/crush.json";

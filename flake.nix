@@ -24,6 +24,10 @@
       };
       url = "github:k3d3/claude-desktop-linux-flake";
     };
+    crush = {
+      flake = false;
+      url = "github:charmbracelet/crush/v0.7.1";
+    };
     ctrlsn = {
       inputs = {
         nixpkgs = {
