@@ -20,9 +20,23 @@ let
   };
   api_config = {
     providers = {
+      cerebras = {
+        type = "openai";
+        name = "Cerebras";
+        base_url = "https://api.cerebras.ai/v1";
+        api_key = "$CEREBRAS_API_KEY";
+        models = [
+          {
+            id = "qwen-3-coder-480b";
+            name = "Qwen3 Coder 480B";
+            context_window = 131072;
+            default_max_tokens = 8192;
+          }
+        ];
+      };
       zai-code = {
         type = "anthropic";
-        name = "zai-code";
+        name = "ZAI (plan)";
         base_url = "https://api.z.ai/api/anthropic";
         api_key = "$ZAI_API_KEY";
         models = [
@@ -75,6 +89,7 @@ let
       OPENAI_API_KEY = t.oai;
       OPENROUTER_API_KEY = t.openrouter;
       ZAI_API_KEY = t.zai;
+      CEREBRAS_API_KEY = t.cerebras-org;
     });
 
   crushBoxed = config.lib.agents.mkSandbox {

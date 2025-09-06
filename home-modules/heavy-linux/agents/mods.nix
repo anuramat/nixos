@@ -7,12 +7,7 @@
 let
   modsWithTokens = config.lib.home.agenixWrapPkg pkgs.mods (
     (t: {
-      inherit (t)
-        gemini
-        openrouter
-        anthropic
-        oai
-        ;
+      ZAI_API_KEY = t.zai;
     })
   );
 
@@ -109,7 +104,24 @@ let
     };
   };
   apis = {
-    zai = {
+    cerebras = {
+      base_url = "https://api.cerebras.ai/v1";
+      api-key-env = "CEREBRAS_API_KEY";
+      models = {
+        qwen-3-coder-480b = {
+          aliases = "coder";
+        };
+      };
+    };
+    zai-code = {
+      api = "anthropic";
+      base-url = "https://api.z.ai/api/anthropic";
+      api-key-env = "ZAI_API_KEY";
+      models = {
+        "glm-4.5" = {
+          aliases = [ "glm" ];
+        };
+      };
     };
     copilot = {
       base-url = "https://api.githubcopilot.com";
@@ -151,8 +163,8 @@ in
 {
   home.activation.mods = config.lib.home.yaml.set {
     inherit apis mcp-servers;
-    default-api = "copilot";
-    default-model = "gpt-4.1";
+    default-api = "cerebras";
+    default-model = "qwen-3-coder-480b";
     fanciness = 0;
     role = "default";
     inherit roles;
