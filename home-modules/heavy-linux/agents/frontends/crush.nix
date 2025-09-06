@@ -7,13 +7,59 @@
 }@args:
 let
   mcp = {
-    inherit (config.lib.agents.mcp.raw) ddg;
+    # TODO like in ./opencode.nix
+    ddg = config.lib.agents.mcp.raw.ddg // {
+      type = "stdio";
+    };
   };
   options = {
     context_paths = [
       "AGENTS.md"
       (pkgs.writeText "AGENTS.md" config.lib.agents.instructions.generic)
     ];
+  };
+  api_config = {
+    providers = {
+      zai-code = {
+        type = "anthropic";
+        name = "zai-code";
+        base_url = "https://api.z.ai/api/anthropic";
+        api_key = "$ZAI_API_KEY";
+        models = [
+          {
+            id = "glm-4.5";
+            name = "GLM-4.5";
+            context_window = 128000;
+            default_max_tokens = 50000;
+            can_reason = true;
+            supports_attachments = true;
+          }
+        ];
+      };
+      llama-cpp = {
+        name = "llama.cpp";
+        base_url = "http://localhost:11343/v1/"; # TODO reference config
+        type = "openai";
+        models = [
+          {
+            name = "dummy";
+            id = "dummy";
+            context_window = 131072;
+            default_max_tokens = 20000;
+          }
+        ];
+      };
+    };
+    models = {
+      large = {
+        model = "glm-4.5";
+        provider = "zai-code";
+      };
+      small = {
+        model = "dummy";
+        provider = "llama-cpp";
+      };
+    };
   };
   configPath = config.xdg.configHome + "/crush/crush.json";
 
@@ -50,6 +96,7 @@ in
         inherit
           mcp
           options
+          api_config
           ;
       } configPath;
     };
