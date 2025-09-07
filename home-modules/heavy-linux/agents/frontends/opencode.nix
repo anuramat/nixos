@@ -120,7 +120,14 @@ in
           zai.options.apiKey = "{env:ZAI_KEY}"; # TODO add _API
           cerebras.options.apiKey = "{env:CEREBRAS_KEY}";
           groq.options.apiKey = "{env:GROQ_API_KEY}";
-          ollama-turbo.options.apiKey = "{env:OLLAMA_TURBO_API_KEY}";
+          ollama-turbo = {
+            name = "Ollama Turbo";
+            npm = "ollama-ai-provider-v2";
+            options = {
+              apiKey = "{env:OLLAMA_TURBO_API_KEY}";
+              baseURL = "https://ollama.com/api";
+            };
+          };
         };
       } (config.xdg.configHome + "/opencode/opencode.json");
     };
