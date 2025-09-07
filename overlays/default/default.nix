@@ -76,7 +76,7 @@ let
         '';
     in
     {
-      qwen-code = mkBunx "qwen-code" "@qwen-code/qwen-code";
+      qwen-code = mkBunx "qwen-code" "@qwen-code/qwen-code@latest";
       gemini-cli = mkBunx "gemini" "@google/gemini-cli";
       inspector = mkBunx "inspector" "@modelcontextprotocol/inspector";
       ccusage = mkBunx "ccusage" "ccusage";
