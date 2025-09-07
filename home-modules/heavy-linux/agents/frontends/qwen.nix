@@ -8,6 +8,8 @@ let
   contextFileName = "AGENTS.md";
   qwenConfig = config.lib.home.json.set {
     inherit contextFileName;
+    hideTips = true;
+    hideBanner = true;
   } (config.home.homeDirectory + "/.qwen/settings.json");
 in
 {
