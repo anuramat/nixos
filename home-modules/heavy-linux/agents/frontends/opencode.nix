@@ -92,6 +92,7 @@ in
       # } (config.xdg.dataHome + "/opencode/auth.json");
       opencodeSettings = config.lib.home.json.set {
         inherit mcp;
+        autoupdate = false;
         instructions = [
           "AGENTS.md"
         ];
