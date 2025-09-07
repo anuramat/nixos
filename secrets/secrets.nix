@@ -26,6 +26,7 @@ in
   "claudecode.age"
   "gemini.age"
   "ghmcp.age"
+  "groq.age"
   "oai.age"
   "openrouter.age"
   "zai.age"

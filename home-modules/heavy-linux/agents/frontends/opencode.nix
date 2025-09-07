@@ -75,6 +75,7 @@ in
             OPENROUTER_KEY = t.openrouter;
             ZAI_KEY = t.zai;
             CEREBRAS_KEY = t.cerebras-org;
+            GROQ_API_KEY = t.groq;
           })
         );
       in
@@ -116,6 +117,7 @@ in
           openrouter.options.apiKey = "{env:OPENROUTER_KEY}";
           zhipuai.options.apiKey = "{env:ZAI_KEY}";
           cerebras.options.apiKey = "{env:CEREBRAS_KEY}";
+          groq.options.apiKey = "{env:GROQ}";
         };
       } (config.xdg.configHome + "/opencode/opencode.json");
     };
