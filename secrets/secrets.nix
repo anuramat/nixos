@@ -21,13 +21,14 @@ let
 in
 [
   "anthropic.age"
-  "cerebras.age"
   "cerebras-org.age"
+  "cerebras.age"
   "claudecode.age"
   "gemini.age"
   "ghmcp.age"
   "groq.age"
   "oai.age"
+  "ollama-turbo.age"
   "openrouter.age"
   "zai.age"
 ]

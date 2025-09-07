@@ -76,6 +76,7 @@ in
             ZAI_KEY = t.zai;
             CEREBRAS_KEY = t.cerebras-org;
             GROQ_API_KEY = t.groq;
+            OLLAMA_TURBO_API_KEY = t.ollama-turbo;
           })
         );
       in
@@ -116,9 +117,10 @@ in
             budgetTokens = 10000;
           };
           openrouter.options.apiKey = "{env:OPENROUTER_KEY}";
-          zhipuai.options.apiKey = "{env:ZAI_KEY}";
+          zai.options.apiKey = "{env:ZAI_KEY}"; # TODO add _API
           cerebras.options.apiKey = "{env:CEREBRAS_KEY}";
-          groq.options.apiKey = "{env:GROQ}";
+          groq.options.apiKey = "{env:GROQ_API_KEY}";
+          ollama-turbo.options.apiKey = "{env:OLLAMA_TURBO_API_KEY}";
         };
       } (config.xdg.configHome + "/opencode/opencode.json");
     };
