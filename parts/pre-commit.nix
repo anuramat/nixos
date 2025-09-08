@@ -4,19 +4,18 @@
   # https://flake.parts/options/git-hooks-nix.html
   settings.hooks = {
     treefmt.enable = true;
-    flake-inputs-freshness = {
+    flake = {
       enable = true;
-      name = "Check flake inputs freshness";
-      entry = pkgs.writeShellScript "flake-inputs-check" ''
-        #!/usr/bin/env bash
-        echo "pre commit flake inputs check"
-        prev="$(mktemp)"
-        cat ./flake.nix >"$prev"
-        just flake &>/dev/null
-        diff "$prev" ./flake.nix || exit 1
-      '';
+      name = "Flake inputs";
+      entry =
+        pkgs.writeShellScript "flake-inputs-check" ''
+          prev="$(mktemp)"
+          cat ./flake.nix >"$prev"
+          just flake &>/dev/null
+          diff "$prev" ./flake.nix || exit 1
+        ''
+        |> toString;
       files = "^flake\\.nix$";
-      language = "system";
     };
   };
 }
