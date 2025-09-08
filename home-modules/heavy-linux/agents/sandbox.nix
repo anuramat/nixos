@@ -61,7 +61,7 @@ let
     |> builtins.concatStringsSep "\n";
 in
 {
-  lib.agents.mkSandbox =
+  lib.agents.mkPackages =
     agent:
     let
       binName = agent.package.meta.mainProgram or agent.binName;

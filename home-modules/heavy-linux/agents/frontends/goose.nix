@@ -63,7 +63,7 @@ in
       goose = config.lib.home.yaml.set gooseConfig "${config.xdg.configHome}/goose/config.yaml";
     };
 
-    packages = config.lib.agents.mkSandbox {
+    packages = config.lib.agents.mkPackages {
       package = pkgs.goose-cli;
       wrapperName = "gse";
     };

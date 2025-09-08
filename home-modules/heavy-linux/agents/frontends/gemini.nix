@@ -18,7 +18,7 @@ in
       inherit geminiConfig;
     };
     file.".gemini/${contextFileName}".text = agents.instructions.generic;
-    packages = config.lib.agents.mkSandbox {
+    packages = config.lib.agents.mkPackages {
       package = pkgs.gemini-cli;
       wrapperName = "gmn";
       args = "--yolo";

@@ -92,7 +92,7 @@ let
       CEREBRAS_API_KEY = t.cerebras-org;
     });
 
-  crushBoxed = config.lib.agents.mkSandbox {
+  crushBoxed = config.lib.agents.mkPackages {
     wrapperName = "crs";
     package = crush;
     args = "--yolo";

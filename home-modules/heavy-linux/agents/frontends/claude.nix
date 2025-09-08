@@ -89,7 +89,7 @@ let
     in
     agents.mkPrompts "claude/agents" adaptedRoles;
 
-  claudeBoxed = config.lib.agents.mkSandbox {
+  claudeBoxed = config.lib.agents.mkPackages {
     args = "--dangerously-skip-permissions";
     wrapperName = "cld";
     package =

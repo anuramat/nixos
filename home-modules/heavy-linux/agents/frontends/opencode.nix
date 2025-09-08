@@ -80,7 +80,7 @@ in
           })
         );
       in
-      agents.mkSandbox {
+      agents.mkPackages {
         wrapperName = "ocd";
         package = opencode;
       };

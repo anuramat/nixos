@@ -65,7 +65,7 @@ in
 {
   home.sessionVariables = env;
   home = {
-    packages = config.lib.agents.mkSandbox {
+    packages = config.lib.agents.mkPackages {
       binName = "codex";
       package = pkgs.codex;
       args = "--dangerously-bypass-approvals-and-sandbox"; # "--search" is bloated

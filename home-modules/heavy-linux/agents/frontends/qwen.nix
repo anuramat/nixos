@@ -18,7 +18,7 @@ in
       inherit qwenConfig;
     };
     file.".qwen/${contextFileName}".text = agents.instructions.generic;
-    packages = config.lib.agents.mkSandbox {
+    packages = config.lib.agents.mkPackages {
       package = pkgs.qwen-code;
       wrapperName = "qwn";
       args = "--yolo";
