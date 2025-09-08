@@ -97,5 +97,11 @@ flake-parts.lib.mkFlake { inherit inputs; } {
         };
         module = inputs.self.nixvimModules.default;
       };
+      devShells.default = pkgs.mkShell {
+        shellHook = ''
+          ${config.pre-commit.installationScript}
+          echo 1>&2 "Welcome to the development shell!"
+        '';
+      };
     };
 }
