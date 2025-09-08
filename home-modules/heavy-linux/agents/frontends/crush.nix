@@ -102,10 +102,7 @@ in
 
 {
   home = {
-    packages = [
-      crush
-      crushBoxed
-    ];
+    packages = crushBoxed;
     activation = {
       crushConfig = config.lib.home.json.set {
         inherit

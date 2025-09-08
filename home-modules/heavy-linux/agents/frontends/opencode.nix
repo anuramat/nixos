@@ -80,13 +80,10 @@ in
           })
         );
       in
-      [
-        opencode
-        (agents.mkSandbox {
-          wrapperName = "ocd";
-          package = opencode;
-        })
-      ];
+      agents.mkSandbox {
+        wrapperName = "ocd";
+        package = opencode;
+      };
 
     activation = {
       # opencodeAuth = config.lib.home.json.set {

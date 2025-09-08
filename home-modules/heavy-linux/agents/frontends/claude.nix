@@ -89,38 +89,14 @@ let
     in
     agents.mkPrompts "claude/agents" adaptedRoles;
 
-  claudeWrapped =
-    # turn on when this is fixed: https://github.com/anthropics/claude-code/issues/4085
-    if false then
+  claudeBoxed = config.lib.agents.mkSandbox {
+    args = "--dangerously-skip-permissions";
+    wrapperName = "cld";
+    package =
+      # broken: https://github.com/anthropics/claude-code/issues/4085
       config.lib.home.agenixWrapPkg pkgs.claude-code (t: {
         CLAUDE_CODE_OAUTH_TOKEN = t.claude-code;
-      })
-    else
-      pkgs.claude-code;
-
-  claudeBoxedZai = config.lib.agents.mkSandbox {
-    wrapperName = "cld-zai";
-    package =
-      let
-        claudeZai = config.lib.home.agenixWrapPkg pkgs.claude-code (
-          (t: {
-            ANTHROPIC_AUTH_TOKEN = t.zai;
-          })
-        );
-      in
-      claudeZai;
-    args = "--dangerously-skip-permissions";
-    env = {
-      ANTHROPIC_MODEL = "glm-4.5";
-      ANTHROPIC_SMALL_FAST_MODEL = "glm-4.5-air";
-      ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
-    };
-  };
-
-  claudeBoxed = config.lib.agents.mkSandbox {
-    wrapperName = "cld";
-    package = claudeWrapped;
-    args = "--dangerously-skip-permissions";
+      });
   };
 
   cfgDir = config.xdg.configHome + "/claude";
@@ -137,10 +113,7 @@ in
     sessionVariables = {
       CLAUDE_CONFIG_DIR = cfgDir;
     };
-    packages = [
-      claudeWrapped
-      claudeBoxed
-      claudeBoxedZai
+    packages = claudeBoxed ++ [
       pkgs.claude-desktop
       pkgs.ccusage
       pkgs.claude-monitor
@@ -149,11 +122,10 @@ in
       claudeSettings = config.lib.home.json.set {
         includeCoAuthoredBy = false;
         env = {
-          MAX_THINKING_TOKENS = 10000;
           CLAUDE_CODE_DISABLE_TERMINAL_TITLE = 1;
-          # DISABLE_NON_ESSENTIAL_MODEL_CALLS (1 for disable)
-          # MAX_MCP_OUTPUT_TOKENS default 25k
-          # BASH_MAX_OUTPUT_LENGTH default 30k chars
+          DISABLE_NON_ESSENTIAL_MODEL_CALLS = 1;
+          # MAX_MCP_OUTPUT_TOKENS -- default 25k
+          # BASH_MAX_OUTPUT_LENGTH -- chars, default 30k
         };
         inherit
           hooks

@@ -65,20 +65,17 @@ in
 {
   home.sessionVariables = env;
   home = {
-    packages = [
-      pkgs.codex
-      (config.lib.agents.mkSandbox {
-        binName = "codex";
-        package = pkgs.codex;
-        args = "--dangerously-bypass-approvals-and-sandbox"; # "--search" is bloated
-        inherit env;
-        agentDir = null;
-        wrapperName = "cdx";
-        extraRwDirs = [
-          codexHome
-        ];
-      })
-    ];
+    packages = config.lib.agents.mkSandbox {
+      binName = "codex";
+      package = pkgs.codex;
+      args = "--dangerously-bypass-approvals-and-sandbox"; # "--search" is bloated
+      inherit env;
+      agentDir = null;
+      wrapperName = "cdx";
+      extraRwDirs = [
+        codexHome
+      ];
+    };
     activation = {
       codexConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         run cat ${codexTomlCfg} > "${codexCfgPath}";

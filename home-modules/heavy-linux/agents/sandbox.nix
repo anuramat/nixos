@@ -66,6 +66,7 @@ in
     let
       binName = agent.package.meta.mainProgram or agent.binName;
       args = agent.args or "";
+      passthroughName = agent.passthroughName or binName;
       wrapperName = agent.wrapperName or "${binName}-sandboxed";
       extraRwDirs = agent.extraRwDirs or [ ];
       agentDir = agent.agentDir or binName; # the one in xdg directories
@@ -89,42 +90,67 @@ in
       env = (agent.env or { }) // {
         ${varNames.agentName} = "'${agentName}'";
       };
+      scriptCommon = # bash
+        ''
+          unset GIT_EXTERNAL_DIFF
+          ${exportScript env}
+        '';
+      # TODO add a field for overridable env vars (ie they should be only set if not already set)
+      passthrough = pkgs.writeShellApplication {
+        name = passthroughName;
+        runtimeInputs = with pkgs; [
+          bubblewrap
+        ];
+        text =
+          scriptCommon
+          +
+          # bash
+          ''
+            ${cmd} "$@"
+          '';
+      };
+      sandboxed = (
+        pkgs.writeShellApplication {
+          name = wrapperName;
+          runtimeInputs = with pkgs; [
+            bubblewrap
+          ];
+
+          text =
+            scriptCommon
+            +
+            # bash
+            ''
+              # shadow some of the xdg directories with a tmp one
+              ${shadowXdgScript agentDir}
+
+              # collect RW dirs for bwrap
+              ${varNames.rwDirs}+=(${rwDirs})
+              if gitroot=$(git rev-parse --show-toplevel 2>/dev/null) && [ -d "$gitroot" ]; then
+                # root of the current worktree, if it's not CWD already
+                [[ $(realpath "$gitroot") == $(realpath "$PWD") ]] || ${varNames.rwDirs}+=("$gitroot")
+                # .git/ dir
+                ${varNames.rwDirs}+=("$(realpath "$(git rev-parse --git-common-dir)")") 
+              fi
+              export ${varNames.rwDirs}
+              echo "RW mounted directories:" && printf '\t%s\n' "''${${varNames.rwDirs}[@]}"
+
+              # build bwrap args
+              args=()
+              for i in "''${${varNames.rwDirs}[@]}"; do
+                mkdir -p "$i"
+              	args+=(--bind-try)
+              	args+=("$i")
+                args+=("$i")
+              done
+
+              bwrap --ro-bind / / --dev /dev "''${args[@]}" ${cmd} "$@"
+            '';
+        }
+      );
     in
-    (pkgs.writeShellApplication {
-      name = wrapperName;
-      runtimeInputs = with pkgs; [
-        bubblewrap
-      ];
-
-      text = ''
-        unset GIT_EXTERNAL_DIFF
-        # shadow some of the xdg directories with a tmp one
-        ${shadowXdgScript agentDir}
-
-        # set env variables
-        ${exportScript env}
-
-        # collect RW dirs
-        ${varNames.rwDirs}+=(${rwDirs})
-        if gitroot=$(git rev-parse --show-toplevel 2>/dev/null) && [ -d "$gitroot" ]; then
-          # root of the current worktree, if it's not CWD already
-          [[ $(realpath "$gitroot") == $(realpath "$PWD") ]] || ${varNames.rwDirs}+=("$gitroot")
-          # .git/ dir
-          ${varNames.rwDirs}+=("$(realpath "$(git rev-parse --git-common-dir)")") 
-        fi
-        export ${varNames.rwDirs}
-        echo "RW mounted directories:" && printf '\t%s\n' "''${${varNames.rwDirs}[@]}"
-
-        # build args
-        args=()
-        for i in "''${${varNames.rwDirs}[@]}"; do
-          mkdir -p "$i"
-        	args+=(--bind-try)
-        	args+=("$i")
-          args+=("$i")
-        done
-
-        bwrap --ro-bind / / --dev /dev "''${args[@]}" ${cmd} "$@"
-      '';
-    });
+    [
+      passthrough
+      sandboxed
+    ];
 }

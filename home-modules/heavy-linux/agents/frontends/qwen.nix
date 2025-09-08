@@ -18,17 +18,14 @@ in
       inherit qwenConfig;
     };
     file.".qwen/${contextFileName}".text = agents.instructions.generic;
-    packages = [
-      pkgs.qwen-code
-      (config.lib.agents.mkSandbox {
-        package = pkgs.qwen-code;
-        wrapperName = "qwn";
-        args = "--yolo";
-        agentDir = null;
-        extraRwDirs = [
-          "$HOME/.qwen"
-        ];
-      })
-    ];
+    packages = config.lib.agents.mkSandbox {
+      package = pkgs.qwen-code;
+      wrapperName = "qwn";
+      args = "--yolo";
+      agentDir = null;
+      extraRwDirs = [
+        "$HOME/.qwen"
+      ];
+    };
   };
 }

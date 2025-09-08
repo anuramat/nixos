@@ -18,17 +18,14 @@ in
       inherit geminiConfig;
     };
     file.".gemini/${contextFileName}".text = agents.instructions.generic;
-    packages = [
-      pkgs.gemini-cli
-      (config.lib.agents.mkSandbox {
-        package = pkgs.gemini-cli;
-        wrapperName = "gmn";
-        args = "--yolo";
-        agentDir = null;
-        extraRwDirs = [
-          "$HOME/.gemini"
-        ];
-      })
-    ];
+    packages = config.lib.agents.mkSandbox {
+      package = pkgs.gemini-cli;
+      wrapperName = "gmn";
+      args = "--yolo";
+      agentDir = null;
+      extraRwDirs = [
+        "$HOME/.gemini"
+      ];
+    };
   };
 }
