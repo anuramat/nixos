@@ -127,13 +127,14 @@ in
           openai = {
             apiKey = "{env:OPENAI_API_KEY}";
             models = {
-              # "gpt-5": {
-              # "options": {
-              #   "reasoningEffort": "high",
-              #   "textVerbosity": "low",
-              #   "reasoningSummary": "auto",
-              #   "include": ["reasoning.encrypted_content"],
-              # },
+              gpt-5 = {
+                options = {
+                  reasoningEffort = "high";
+                  textVerbosity = "low";
+                  # reasoningSummary = "auto";
+                  # include = [ "reasoning.encrypted_content" ];
+                };
+              };
             };
           };
           ollama-turbo = {
