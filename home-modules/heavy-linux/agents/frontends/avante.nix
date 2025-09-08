@@ -3,6 +3,7 @@
 {
   config,
   pkgs,
+  osConfig ? null,
   inputs,
   lib,
   hax,
@@ -94,8 +95,9 @@ in
           providers = {
             cerebras = {
               endpoint = "https://api.cerebras.ai/v1/chat/completions";
+              __inherited_from = "openai";
               model = "qwen-3-coder-480b";
-              api_key_name = "AVANTE_CEREBRAS_API_KEY";
+              api_key_name = if osConfig then "cmd:cat ${osConfig.age.secrets.cerebras.path}" else "";
               # extra_request_body = { };
             };
             copilot = {
