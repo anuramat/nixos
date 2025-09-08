@@ -29,6 +29,7 @@ let
           ddg
           think
           deepwiki
+          zotero
           ;
       };
       disabledServers =
