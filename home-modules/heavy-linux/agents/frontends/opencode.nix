@@ -133,6 +133,50 @@ in
               apiKey = "{env:OLLAMA_TURBO_API_KEY}";
               baseURL = "https://ollama.com/api";
             };
+            # "gpt-5": {
+            # "options": {
+            #   "reasoningEffort": "high",
+            #   "textVerbosity": "low",
+            #   "reasoningSummary": "auto",
+            #   "include": ["reasoning.encrypted_content"],
+            # },
+            models =
+              let
+                small = effort: {
+                  id = "gpt-oss:20b";
+                  name = "GPT-OSS 20B (${effort})";
+
+                  options = {
+                    reasoningEffort = effort;
+                  };
+
+                  attachment = false;
+                  reasoning = true;
+                  temperature = true;
+                  tool_call = true;
+                  limit = {
+                    output = 9999999;
+                    context = 131072;
+                  };
+                };
+                big =
+                  effort:
+                  (small effort)
+                  // {
+                    id = "gpt-oss:120b";
+                    name = "GPT-OSS 120B";
+                  };
+              in
+              {
+                "gpt-oss:20b-high" = small "high";
+                "gpt-oss:20b-low" = small "low";
+                "gpt-oss:120b" = big "high";
+                "deepseek-v3.1:671b" = {
+                  limit = {
+                    context = 163840;
+                  };
+                };
+              };
           };
         };
       } (config.xdg.configHome + "/opencode/opencode.json");
