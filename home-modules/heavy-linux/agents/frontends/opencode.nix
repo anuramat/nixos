@@ -97,8 +97,21 @@ in
         instructions = [
           "AGENTS.md"
         ];
-        # agent = {
-        # };
+        tools = {
+          webfetch = false;
+        };
+        agent = {
+          # build = {
+          # };
+          plan = {
+            tools = {
+              bash = false;
+              patch = false;
+              edit = false;
+              write = false;
+            };
+          };
+        };
         share = "disabled";
         keybinds = {
           editor_open = "<leader>ctrl+e,<leader>e";
