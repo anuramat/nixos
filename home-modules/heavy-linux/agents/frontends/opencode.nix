@@ -94,7 +94,7 @@ in
       # } (config.xdg.dataHome + "/opencode/auth.json");
       opencodeSettings = config.lib.home.json.set {
         model = "cerebras/qwen-3-coder-480b";
-        small_model = "cerebras/qwen-3-coder-480b";
+        small_model = "github-copilot/gpt-4.1";
         inherit mcp;
         autoupdate = false;
         instructions = [
