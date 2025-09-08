@@ -72,8 +72,8 @@ in
       let
         opencode = config.lib.home.agenixWrapPkg pkgs.opencode (
           (t: {
-            OPENROUTER_KEY = t.openrouter;
-            ZAI_KEY = t.zai;
+            OPENROUTER_API_KEY = t.openrouter;
+            ZAI_API_KEY = t.zai;
             CEREBRAS_KEY = t.cerebras-org;
             GROQ_API_KEY = t.groq;
             OLLAMA_TURBO_API_KEY = t.ollama-turbo;
@@ -116,8 +116,12 @@ in
             type = "enabled";
             budgetTokens = 10000;
           };
-          openrouter.options.apiKey = "{env:OPENROUTER_KEY}";
-          zai.options.apiKey = "{env:ZAI_KEY}"; # TODO add _API
+          openrouter.options.apiKey = "{env:OPENROUTER_API_KEY}";
+          zai = {
+            npm = "@ai-sdk/anthropic";
+            baseURL = "https://api.z.ai/api/anthropic";
+            options.apiKey = "{env:ZAI_API_KEY}";
+          };
           cerebras.options.apiKey = "{env:CEREBRAS_KEY}";
           groq.options.apiKey = "{env:GROQ_API_KEY}";
           ollama-turbo = {
