@@ -127,7 +127,9 @@ in
           cerebras.options.apiKey = "{env:CEREBRAS_KEY}";
           groq.options.apiKey = "{env:GROQ_API_KEY}";
           openai = {
-            apiKey = "{env:OPENAI_API_KEY}";
+            options = {
+              apiKey = "{env:OPENAI_API_KEY}";
+            };
             models = {
               gpt-5 = {
                 options = {
