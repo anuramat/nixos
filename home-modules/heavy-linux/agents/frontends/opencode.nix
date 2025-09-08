@@ -77,6 +77,7 @@ in
             CEREBRAS_KEY = t.cerebras-org;
             GROQ_API_KEY = t.groq;
             OLLAMA_TURBO_API_KEY = t.ollama-turbo;
+            OPENAI_API_KEY = t.oai;
           })
         );
       in
@@ -124,6 +125,7 @@ in
           cerebras.options.apiKey = "{env:CEREBRAS_KEY}";
           groq.options.apiKey = "{env:GROQ_API_KEY}";
           openai = {
+            apiKey = "{env:OPENAI_API_KEY}";
             models = {
               # "gpt-5": {
               # "options": {
