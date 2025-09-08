@@ -26,6 +26,14 @@ let
   port = toString 37373;
 in
 {
+  # # Scoped keys (recommended)
+  # export AVANTE_ANTHROPIC_API_KEY=your-claude-api-key
+  # export AVANTE_OPENAI_API_KEY=your-openai-api-key
+  # export AVANTE_AZURE_OPENAI_API_KEY=your-azure-api-key
+  # export AVANTE_GEMINI_API_KEY=your-gemini-api-key
+  # export AVANTE_CO_API_KEY=your-cohere-api-key
+  # export AVANTE_AIHUBMIX_API_KEY=your-aihubmix-api-key
+  # export AVANTE_MOONSHOT_API_KEY=your-moonshot-api-key
 
   programs.nixvim = {
     plugins.blink-cmp.settings.sources = {
@@ -82,10 +90,15 @@ in
               require("mcphub.extensions.avante").mcp_tool(),
             }
           '';
-          provider = "copilot";
+          provider = "cerebras";
           providers = {
+            cerebras = {
+              endpoint = "https://api.cerebras.ai/v1/chat/completions";
+              model = "qwen-3-coder-480b";
+              api_key_name = "AVANTE_CEREBRAS_API_KEY";
+              # extra_request_body = { };
+            };
             copilot = {
-              # model = "claude-sonnet-4";
               model = "gpt-4.1";
             };
           };
