@@ -123,7 +123,7 @@ in
             # prompt = "you are...";
             # build = {
             # };
-            # TODO github has some useful stuff
+            # TODO github has some useful stuff -- resources mainly; wait for https://github.com/sst/opencode/issues/806
             zotero = {
               mode = "primary";
               tools = ro // {
