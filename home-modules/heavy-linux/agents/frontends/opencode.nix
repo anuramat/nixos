@@ -175,6 +175,7 @@ in
                 "deepseek-v3.1:671b" = {
                   limit = {
                     context = 163840;
+                    output = 999999;
                   };
                 };
               };
