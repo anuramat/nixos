@@ -119,8 +119,10 @@ in
           openrouter.options.apiKey = "{env:OPENROUTER_API_KEY}";
           zai = {
             npm = "@ai-sdk/anthropic";
-            baseURL = "https://api.z.ai/api/anthropic";
-            options.apiKey = "{env:ZAI_API_KEY}";
+            options = {
+              apiKey = "{env:ZAI_API_KEY}";
+              baseURL = "https://api.z.ai/api/anthropic/v1";
+            };
           };
           cerebras.options.apiKey = "{env:CEREBRAS_KEY}";
           groq.options.apiKey = "{env:GROQ_API_KEY}";
