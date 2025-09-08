@@ -147,7 +147,6 @@ in
         keybinds = {
           editor_open = "<leader>ctrl+e,<leader>e";
         };
-        # reasoning effort for gpt5: https://github.com/sst/opencode/issues/1823
         provider = {
           llama-cpp = {
             npm = "@ai-sdk/openai-compatible";
