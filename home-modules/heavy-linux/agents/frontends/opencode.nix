@@ -27,6 +27,8 @@ let
       enabledServers = {
         inherit (rawServers)
           ddg
+          think
+          deepwiki
           ;
       };
       disabledServers =
@@ -99,25 +101,47 @@ in
         ];
         tools = {
           webfetch = false;
+          "deepwiki_*" = false;
+          "think_*" = false;
         };
-        agent = {
-          # mode = "primary";
-          # mode = "subagent";
-          # description = "";
-          # model = "provider/model";
-          # prompt = "{file:./prompts/build.txt}";
-          # prompt = "you are...";
-          # build = {
-          # };
-          plan = {
-            tools = {
+        agent =
+          let
+            ro = {
               bash = false;
               patch = false;
               edit = false;
               write = false;
             };
+          in
+          {
+            # mode = "primary";
+            # mode = "subagent";
+            # description = "";
+            # model = "provider/model";
+            # prompt = "{file:./prompts/build.txt}";
+            # prompt = "you are...";
+            # build = {
+            # };
+            # TODO github has some useful stuff
+            zotero = {
+              mode = "primary";
+              tools = ro // {
+                "zotero_*" = true;
+              };
+            };
+            deepwiki = {
+              mode = "primary";
+              tools = ro // {
+                deepwiki_ask_question = true;
+                deepwiki_read_wiki_structure = true;
+              };
+            };
+            plan = {
+              tools = ro // {
+                "think_*" = true;
+              };
+            };
           };
-        };
         share = "disabled";
         keybinds = {
           editor_open = "<leader>ctrl+e,<leader>e";
