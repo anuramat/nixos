@@ -31,6 +31,7 @@ in
   "ollama-turbo.age"
   "openrouter.age"
   "zai.age"
+  "poe.age"
 ]
 |> map (x: {
   name = x;
