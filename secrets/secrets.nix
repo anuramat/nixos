@@ -31,7 +31,7 @@ in
   "ollama-turbo.age"
   "openrouter.age"
   "zai.age"
-  "poe.age"
+  "poe.age" # "https://api.poe.com/v1"
 ]
 |> map (x: {
   name = x;
