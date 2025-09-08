@@ -94,7 +94,7 @@ in
           provider = "cerebras";
           providers = {
             cerebras = {
-              endpoint = "https://api.cerebras.ai/v1/chat/completions";
+              endpoint = "https://api.cerebras.ai/v1";
               __inherited_from = "openai";
               model = "qwen-3-coder-480b";
               api_key_name = if osConfig != null then "cmd:cat ${osConfig.age.secrets.cerebras.path}" else "";
