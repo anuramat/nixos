@@ -101,6 +101,12 @@ in
           webfetch = false;
         };
         agent = {
+          # mode = "primary";
+          # mode = "subagent";
+          # description = "";
+          # model = "provider/model";
+          # prompt = "{file:./prompts/build.txt}";
+          # prompt = "you are...";
           # build = {
           # };
           plan = {
