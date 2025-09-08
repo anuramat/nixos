@@ -104,6 +104,7 @@ in
           webfetch = false;
           "deepwiki_*" = false;
           "think_*" = false;
+          "zotero_*" = false;
         };
         agent =
           let
