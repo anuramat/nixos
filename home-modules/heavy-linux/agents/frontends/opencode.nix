@@ -124,14 +124,16 @@ in
             # build = {
             # };
             # TODO github has some useful stuff -- resources mainly; wait for https://github.com/sst/opencode/issues/806
-            # zotero = {
-            #   mode = "primary";
-            #   tools = ro // {
-            #     "zotero_*" = true;
-            #   };
-            # };
+            zotero = {
+              mode = "primary";
+              disable = true;
+              tools = ro // {
+                "zotero_*" = true;
+              };
+            };
             deepwiki = {
               mode = "primary";
+              disable = true;
               tools = ro // {
                 deepwiki_ask_question = true;
                 deepwiki_read_wiki_structure = true;
