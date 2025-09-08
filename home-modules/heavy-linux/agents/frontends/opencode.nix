@@ -123,6 +123,17 @@ in
           };
           cerebras.options.apiKey = "{env:CEREBRAS_KEY}";
           groq.options.apiKey = "{env:GROQ_API_KEY}";
+          openai = {
+            models = {
+              # "gpt-5": {
+              # "options": {
+              #   "reasoningEffort": "high",
+              #   "textVerbosity": "low",
+              #   "reasoningSummary": "auto",
+              #   "include": ["reasoning.encrypted_content"],
+              # },
+            };
+          };
           ollama-turbo = {
             name = "Ollama Turbo";
             npm = "ollama-ai-provider-v2";
@@ -130,13 +141,6 @@ in
               apiKey = "{env:OLLAMA_TURBO_API_KEY}";
               baseURL = "https://ollama.com/api";
             };
-            # "gpt-5": {
-            # "options": {
-            #   "reasoningEffort": "high",
-            #   "textVerbosity": "low",
-            #   "reasoningSummary": "auto",
-            #   "include": ["reasoning.encrypted_content"],
-            # },
             models =
               let
                 small = effort: {
