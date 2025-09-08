@@ -90,13 +90,15 @@ in
       # opencodeAuth = config.lib.home.json.set {
       # } (config.xdg.dataHome + "/opencode/auth.json");
       opencodeSettings = config.lib.home.json.set {
-        model = "cerebras/qwen-qwen-3-coder-480b";
-        small_model = "cerebras/qwen-qwen-3-coder-480b";
+        model = "cerebras/qwen-3-coder-480b";
+        small_model = "cerebras/qwen-3-coder-480b";
         inherit mcp;
         autoupdate = false;
         instructions = [
           "AGENTS.md"
         ];
+        # agent = {
+        # };
         share = "disabled";
         keybinds = {
           editor_open = "<leader>ctrl+e,<leader>e";
