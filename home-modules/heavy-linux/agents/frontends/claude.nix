@@ -73,6 +73,7 @@ let
     package = pkgs.claude-code;
     args = "--dangerously-skip-permissions";
     wrapperName = "cld-zai";
+    passthroughName = "claude-zai";
     tokens = t: {
       ANTHROPIC_AUTH_TOKEN = t.zai;
     };
