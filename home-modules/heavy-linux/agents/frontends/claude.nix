@@ -69,14 +69,27 @@ let
     in
     agents.mkPrompts "claude/agents" adaptedRoles;
 
+  claudeBoxedZai = config.lib.agents.mkSandbox {
+    package = pkgs.claude-code;
+    args = "--dangerously-skip-permissions";
+    wrapperName = "cld-zai";
+    tokens = t: {
+      ANTHROPIC_AUTH_TOKEN = t.zai;
+    };
+    env = {
+      ANTHROPIC_MODEL = "glm-4.5";
+      ANTHROPIC_SMALL_FAST_MODEL = "glm-4.5-air";
+      ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
+    };
+  };
   claudeBoxed = config.lib.agents.mkPackages {
+    package = pkgs.claude-code;
     args = "--dangerously-skip-permissions";
     wrapperName = "cld";
     tokens = t: {
       # broken: https://github.com/anthropics/claude-code/issues/4085
       CLAUDE_CODE_OAUTH_TOKEN = t.claude-code;
     };
-    package = pkgs.claude-code;
   };
 
   cfgDir = config.xdg.configHome + "/claude";
@@ -93,11 +106,14 @@ in
     sessionVariables = {
       CLAUDE_CONFIG_DIR = cfgDir;
     };
-    packages = claudeBoxed ++ [
-      pkgs.claude-desktop
-      pkgs.ccusage
-      pkgs.claude-monitor
-    ];
+    packages =
+      claudeBoxed
+      ++ claudeBoxedZai
+      ++ [
+        pkgs.claude-desktop
+        pkgs.ccusage
+        pkgs.claude-monitor
+      ];
     activation = {
       claudeSettings = config.lib.home.json.set {
         includeCoAuthoredBy = false;
