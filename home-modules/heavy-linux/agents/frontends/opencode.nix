@@ -116,14 +116,16 @@ in
             };
           in
           {
-            # mode = "primary";
-            # mode = "subagent";
-            # description = "";
-            # model = "provider/model";
-            # prompt = "{file:./prompts/build.txt}";
-            # prompt = "you are...";
-            # build = {
-            # };
+            build = {
+              model = "zai/glm-4.5";
+            };
+            example = {
+              disable = true;
+              mode = "subagent";
+              description = "";
+              # prompt = "{file:./prompts/build.txt}";
+              # prompt = "you are...";
+            };
             # TODO github has some useful stuff -- resources mainly; wait for https://github.com/sst/opencode/issues/806
             zotero = {
               mode = "primary";
