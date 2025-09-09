@@ -65,7 +65,7 @@ inputs:
       '';
   };
 
-  opencode = prev.stdenv.mkDerivation rec {
+  opencode = prev.stdenvNoCC.mkDerivation rec {
     pname = "opencode";
     version = "0.6.8";
     src = prev.fetchzip {
@@ -73,8 +73,8 @@ inputs:
       hash = "sha256-0DCqfl0bCp/QJJVuooMJlU3zryCUeBiSgEk0Nxe63ik=";
     };
     dontFixup = true;
-    dontStrip = true;
-    dontPatchELF = true;
+    # dontStrip = true;
+    # dontPatchELF = true;
     installPhase = ''
       runHook preInstall
       install -Dt $out/bin opencode
