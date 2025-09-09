@@ -26,6 +26,9 @@ let
           oss = {
             model = "dummy";
             model_provider = "llama-cpp";
+            hide_agent_reasoning = false;
+            show_raw_agent_reasoning = true;
+            model_reasoning_summary = "detailed"; # auto/concise/detailed
           };
         };
         # experimental_resume = "${codexHome}/history.jsonl";
