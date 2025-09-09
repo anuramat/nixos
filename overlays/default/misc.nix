@@ -72,6 +72,9 @@ inputs:
       url = "https://github.com/sst/opencode/releases/download/v${version}/opencode-linux-x64.zip";
       hash = "sha256-0DCqfl0bCp/QJJVuooMJlU3zryCUeBiSgEk0Nxe63ik=";
     };
+    dontFixup = true;
+    dontStrip = true;
+    dontPatchELF = true;
     installPhase = ''
       runHook preInstall
       install -Dt $out/bin opencode
