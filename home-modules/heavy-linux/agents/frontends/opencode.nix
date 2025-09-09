@@ -74,6 +74,7 @@ let
       type = "enabled";
       budgetTokens = 10000;
     };
+    # TODO use {file:...} instead of env
     openrouter.options.apiKey = "{env:OPENROUTER_API_KEY}";
     zhipuai = {
       api = "https://api.z.ai/api/coding/paas/v4";
