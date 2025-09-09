@@ -31,6 +31,7 @@ let
 
     qwen = {
       # TODO replace with M quant
+      # TODO add non coder, both reasoner and not
       filename = "unsloth_Qwen3-Coder-30B-A3B-Instruct-GGUF_Qwen3-Coder-30B-A3B-Instruct-UD-Q4_K_XL.gguf";
       flags = [
         "--jinja"
@@ -83,7 +84,6 @@ let
 
         };
         big = {
-          # TODO maybe replace with a quant
           flags = [
             "-c"
             "0"
@@ -104,42 +104,25 @@ in
     pkgs.python313Packages.huggingface-hub
   ];
   environment.sessionVariables = {
+    # should be in ll7 module
     LLAMA_CACHE = "/mnt/storage/llama-cpp";
   };
-  services =
-    let
-      cuda = config.hardware.nvidia.enabled;
-    in
-    {
-      llama-cpp =
-        let
-          modelAttrs = models.gpt.small;
-        in
-        {
-          enable = true;
-          port = 11343;
-          openFirewall = false;
-          extraFlags = modelAttrs.flags ++ [
-            "-fa"
-
-            "-ngl"
-            "999"
-          ];
-          model = rootdir + modelAttrs.filename;
-        };
-      ollama = {
-        enable = false;
-        acceleration = lib.mkIf cuda "cuda";
-        loadModels = lib.mkIf cuda [ ]; # pull models on service start
-        models = "/mnt/storage/ollama"; # TODO abstract away; make a new variable that contains a path to a storage device; fill on different machines
-        environmentVariables = {
-          OLLAMA_FLASH_ATTENTION = "1";
-          OLLAMA_KEEP_ALIVE = "5m";
-          # OLLAMA_CONTEXT_LENGTH = "200000";
-        };
-        port = 11434; # explicit default
-        host = "127.0.0.1";
+  services = {
+    llama-cpp =
+      let
+        modelAttrs = models.qwen;
+      in
+      {
+        enable = true;
+        port = 11343;
         openFirewall = false;
+        extraFlags = modelAttrs.flags ++ [
+          "-fa"
+
+          "-ngl"
+          "999"
+        ];
+        model = rootdir + modelAttrs.filename;
       };
-    };
+  };
 }
