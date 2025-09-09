@@ -46,6 +46,7 @@ let
           - You MUST NOT do "band-aid" fixes -- ALWAYS fix the root cause of the problem.
           - If you need tools that are not available on the system, you SHOULD use `nix run nixpkgs#packagename -- arg1 arg2 ...`.
           - To find required packages in `nixpkgs`, you SHOULD use `nh search $PACKAGE_NAME`${for "claude" "; if you need to find multiple packages, you MUST delegate package search to a sub-agent."}.
+          - You MUST NOT use `nix search`, it's slow and unstable; instead, use `nh search`
         ''
         + (for "claude" ''
           - When presenting a plan to the user using `ExitPlanMode` tool, you SHOULD keep the plan under 10 lines -- only outline the high-level steps.
