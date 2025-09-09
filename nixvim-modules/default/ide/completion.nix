@@ -59,7 +59,9 @@
         should_attach = hax.vim.lua ''
           function(_, bufname)
             if string.match(bufname, 'notes') then return false end
-            return true
+            if string.match(bufname, '/home/anuramat/.local/share/ghq') then return true end
+            if string.match(bufname, '/etc/nixos') then return true end
+            return false
           end
         '';
       };
