@@ -120,12 +120,17 @@ in
       }) prompts;
   };
 
-  home.packages = with pkgs; [
-    openai-whisper
-    ghcp-models
-    summarize
-    transcribe
-    inspector
-    ollama
-  ];
+  home = {
+    packages = with pkgs; [
+      openai-whisper
+      ghcp-models
+      summarize
+      transcribe
+      inspector
+      ollama
+    ];
+    sessionVariables = {
+      OLLAMA_HOST = "ollama.com";
+    };
+  };
 }
