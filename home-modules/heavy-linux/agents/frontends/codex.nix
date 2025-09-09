@@ -14,10 +14,10 @@ let
       cfg = {
         hide_agent_reasoning = false;
         show_raw_agent_reasoning = true;
+        model_reasoning_summary = "detailed"; # auto/concise/detailed
+
         model_reasoning_effort = "high";
         model_verbosity = "low";
-        model_reasoning_summary = "detailed"; # auto/concise/detailed
-        wire_api = "responses";
 
         mcp_servers = {
           inherit (config.lib.agents.mcp.raw) ddg think;
@@ -26,9 +26,6 @@ let
           oss = {
             model = "dummy";
             model_provider = "llama-cpp";
-            hide_agent_reasoning = false;
-            show_raw_agent_reasoning = true;
-            model_reasoning_summary = "detailed"; # auto/concise/detailed
           };
         };
         # experimental_resume = "${codexHome}/history.jsonl";
