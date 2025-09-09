@@ -31,9 +31,9 @@ let
 
     qwen =
       let
+        context = 30000;
         flags = [
           "--jinja"
-
           "--temp"
           "0.7"
           "--min-p"
@@ -44,29 +44,24 @@ let
           "20"
           "--repeat-penalty"
           "1.05"
-
           "-ncmoe"
           "38"
           "-c"
-          "30000"
+          (toString context)
         ];
+        mk = filename: {
+          inherit
+            context
+            filename
+            flags
+            ;
+        };
       in
       {
         # TODO add reasoner
-        # TODO rewrite with a map to not repeat inherit flags
-        coder = {
-          filename = "unsloth_Qwen3-Coder-30B-A3B-Instruct-GGUF_Qwen3-Coder-30B-A3B-Instruct-Q4_K_M.gguf";
-          inherit flags;
-        };
-
-        instruct = {
-          filename = "unsloth_Qwen3-30B-A3B-Instruct-2507-GGUF_Qwen3-30B-A3B-Instruct-2507-Q4_K_M.gguf";
-          inherit flags;
-        };
-        reasoning = {
-          filename = "";
-          inherit flags;
-        };
+        coder = mk "unsloth_Qwen3-Coder-30B-A3B-Instruct-GGUF_Qwen3-Coder-30B-A3B-Instruct-Q4_K_M.gguf";
+        instruct = "unsloth_Qwen3-30B-A3B-Instruct-2507-GGUF_Qwen3-30B-A3B-Instruct-2507-Q4_K_M.gguf";
+        reasoning = "";
       };
 
     gpt =
@@ -78,30 +73,31 @@ let
           "0"
           "--temp"
           "1.0"
-
           "--jinja"
           "--chat-template-kwargs"
           ''{"reasoning_effort": "high"}''
         ];
       in
       {
-        small = {
+        small = rec {
+          context = 55000;
           flags = [
             "-c" # context size, 0 for inherit
-            "55000"
+            (toString context)
             "-ncmoe" # MoE blocks on cpu, -cmoe for +infty
             "12"
             "-np" # number of cache slots
-            "2"
+            "4"
           ]
           ++ common;
           filename = "unsloth_gpt-oss-20b-GGUF_gpt-oss-20b-Q4_K_M.gguf";
 
         };
-        big = {
+        big = rec {
+          context = 131072;
           flags = [
             "-c"
-            "0"
+            (toString context)
             "-cmoe"
             "-np"
             "10"
@@ -133,7 +129,6 @@ in
         openFirewall = false;
         extraFlags = modelAttrs.flags ++ [
           "-fa"
-
           "-ngl"
           "999"
         ];
