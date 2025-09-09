@@ -43,26 +43,6 @@ let
         matcher = "";
       }
     ];
-    # Stop = [
-    #   {
-    #     hooks = [
-    #       {
-    #         command = # bash
-    #           let
-    #             script = pkgs.writeShellScript "reminders" ''
-    #               if [[ -n "$(git status --porcelain)" ]]; then
-    #                 echo "automated reminder: repository is dirty -- if appropriate, consider updating CLAUDE.md, running formatters, and making a git commit" >&2
-    #                 exit 2
-    #               fi
-    #             '';
-    #           in
-    #           ''if [ $(jq .stop_hook_active -r) = true ]; then exit 0; fi; ${script}'';
-    #         type = "command";
-    #       }
-    #     ];
-    #     matcher = "";
-    #   }
-    # ];
   };
   permissions = {
     allow = [ ];
