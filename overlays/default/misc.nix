@@ -54,7 +54,7 @@ inputs:
     version = "0.31.0";
     src = prev.fetchurl {
       url = "https://github.com/openai/codex/releases/download/rust-v${version}/codex";
-      hash = "";
+      hash = "sha256-8fRnYhgXp+kS0LHSqZ3BNqTzmMXaS39x0GwIF1HDJOQ=";
     };
     dontUnpack = true;
     nativeBuildInputs = [ prev.makeWrapper ];
