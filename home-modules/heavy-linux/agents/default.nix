@@ -126,5 +126,6 @@ in
     summarize
     transcribe
     inspector
+    ollama
   ];
 }
