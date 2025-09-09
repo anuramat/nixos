@@ -27,14 +27,25 @@ let
 
   roles = {
     default = {
-      allowed_tools = [
-        "ddg_*"
-      ];
+      blocked_tools = [ "*" ];
       prompt = [
         ''
           - you MUST always finish your answers with a short, concise summary of
             the answer and/or a relevant bash one-liner/code snippet
           - you SHOULD answer in less than 30 lines
+          - if not specified otherwise, assume user wants you to solve the specified problem using a bash oneliner
+        ''
+      ];
+    };
+    search = {
+      allowed_tools = [
+        "ddg_*"
+      ];
+      prompt = [
+        ''
+          - use ddg_* tools to find relevant information and to answer the question provided by the user
+          - you MUST execute at least one web search
+          - you MUST fetch at least one page
         ''
       ];
     };
