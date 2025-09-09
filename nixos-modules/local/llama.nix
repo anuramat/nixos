@@ -125,7 +125,7 @@ in
   services = {
     llama-cpp =
       let
-        modelAttrs = models.qwen;
+        modelAttrs = models.qwen.instruct;
       in
       {
         enable = true;
