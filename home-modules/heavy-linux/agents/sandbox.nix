@@ -103,9 +103,6 @@ in
       # TODO add a field for overridable env vars (ie they should be only set if not already set)
       passthrough = pkgs.writeShellApplication {
         name = passthroughName;
-        runtimeInputs = with pkgs; [
-          bubblewrap
-        ];
         text =
           scriptCommon
           +
