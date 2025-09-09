@@ -82,6 +82,25 @@ in
               require("mcphub.extensions.avante").mcp_tool(),
             }
           '';
+          disabled_tools = [
+            # "read_file"
+            # "bash"
+            "rag_search"
+            "python"
+            "git_diff"
+            "git_commit"
+            "glob"
+            "search_keyword"
+            "read_file_toplevel_symbols"
+            "create_file"
+            "move_path"
+            "copy_path"
+            "delete_path"
+            "create_dir"
+            "web_search"
+            "fetch"
+          ];
+          # TODO ollama and z.ai
           provider = "cerebras";
           providers = {
             cerebras = {
