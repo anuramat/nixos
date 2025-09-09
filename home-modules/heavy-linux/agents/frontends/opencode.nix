@@ -28,7 +28,7 @@ let
     in
     {
       build = {
-        model = "zai/glm-4.5";
+        model = "zhipuai/glm-4.5";
       };
       example = {
         disable = true;
