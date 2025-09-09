@@ -239,3 +239,14 @@ in
     };
   };
 }
+# "models": {
+#   "glm-4.5": {
+#     "limit": {
+#       "context": 131072,
+#       "output": 98304
+#     },
+#     "temperature": true,
+#     "tool_call": true,
+#     "reasoning": true
+#   }
+# }
