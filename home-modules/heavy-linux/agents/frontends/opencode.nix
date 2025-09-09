@@ -9,15 +9,6 @@ let
   inherit (lib) mapAttrs;
   inherit (config.lib) agents;
 
-  tokens = t: {
-    OPENROUTER_API_KEY = t.openrouter;
-    ZAI_API_KEY = t.zai;
-    CEREBRAS_KEY = t.cerebras-org;
-    GROQ_API_KEY = t.groq;
-    OLLAMA_TURBO_API_KEY = t.ollama-turbo;
-    OPENAI_API_KEY = t.oai;
-  };
-
   agent =
     let
       ro = {
@@ -262,7 +253,6 @@ in
     packages = agents.mkPackages {
       wrapperName = "ocd";
       package = pkgs.opencode;
-      inherit tokens;
     };
   };
 }

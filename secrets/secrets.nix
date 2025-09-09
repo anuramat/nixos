@@ -21,7 +21,7 @@ let
 in
 [
   "anthropic.age"
-  "cerebras-org.age"
+  "cerebras-free.age"
   "cerebras.age"
   "claude-code.age"
   "gemini.age"
@@ -30,8 +30,8 @@ in
   "oai.age"
   "ollama-turbo.age"
   "openrouter.age"
-  "zai.age"
   "poe.age" # "https://api.poe.com/v1"
+  "zai.age"
 ]
 |> map (x: {
   name = x;
