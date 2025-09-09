@@ -10,6 +10,9 @@ let
     "/tmp"
     "$PWD"
     "$XDG_RUNTIME_DIR"
+    config.home.sessionVariables.RUSTUP_HOME
+    config.home.sessionVariables.CARGO_HOME
+    # TODO wipe these
     "${config.home.homeDirectory}/.npm"
     gopath
   ];

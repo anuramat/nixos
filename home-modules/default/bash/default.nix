@@ -25,6 +25,7 @@ in
     let
       home = config.home.homeDirectory;
       XDG_BIN_HOME = "${home}/.local/bin";
+      XDG_DATA_HOME = config.xdg.dataHome;
       bashStateDir = config.xdg.stateHome + "/bash";
     in
     {
@@ -60,6 +61,9 @@ in
 
         # TODO move this somewhere
         TODO_FILE = "/home/anuramat/notes/todo.txt";
+
+        RUSTUP_HOME = "${XDG_DATA_HOME}/rustup";
+        CARGO_HOME = "${XDG_DATA_HOME}/cargo";
       };
       sessionPath = [
         XDG_BIN_HOME
