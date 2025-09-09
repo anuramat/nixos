@@ -2,6 +2,7 @@
   lib,
   pkgs,
   config,
+  osConfig,
   ...
 }:
 let
@@ -25,17 +26,31 @@ let
         edit = false;
         write = false;
       };
+
+      gpt = "ollama-turbo/gpt-oss:120b";
+      qwen = "cerebras/qwen-3-coder-480b";
+      glm = "zhipuai/glm-4.5";
     in
     {
-      build = {
-        model = "zhipuai/glm-4.5";
+      plan = {
+        model = gpt;
+        tools = ro // {
+          # "think_*" = true;
+        };
       };
+      build = {
+        model = glm;
+      };
+      general = {
+        model = qwen;
+      };
+
       example = {
         disable = true;
         mode = "subagent";
         description = "";
+        prompt = "you are...";
         # prompt = "{file:./prompts/build.txt}";
-        # prompt = "you are...";
       };
       # TODO github has some useful stuff -- resources mainly; wait for https://github.com/sst/opencode/issues/806
       zotero = {
@@ -53,111 +68,110 @@ let
           deepwiki_read_wiki_structure = true;
         };
       };
-      plan = {
-        tools = ro // {
-          "think_*" = true;
-        };
-      };
     };
 
-  provider = {
-    llama-cpp = {
-      npm = "@ai-sdk/openai-compatible";
-      options.baseURL = "http://localhost:11343";
-      name = "llama.cpp";
-      models.dummy.limit = {
-        output = 99999999;
-        context = 20000; # TODO add a common env var with llama server
+  provider =
+    let
+      keys = mapAttrs (n: v: "{file:${v.path}}") osConfig.age.secrets;
+    in
+    {
+      llama-cpp = {
+        npm = "@ai-sdk/openai-compatible";
+        options.baseURL = "http://localhost:11343";
+        name = "llama.cpp";
+        models.dummy.limit = {
+          output = 99999999;
+          context = 20000; # TODO add a common env var with llama server
+        };
       };
-    };
-    anthropic.models.claude-sonnet-4-20250514.options.thinking = {
-      type = "enabled";
-      budgetTokens = 10000;
-    };
-    # TODO use {file:...} instead of env
-    openrouter.options.apiKey = "{env:OPENROUTER_API_KEY}";
-    zhipuai = {
-      api = "https://api.z.ai/api/coding/paas/v4";
-      options = {
-        apiKey = "{env:ZAI_API_KEY}";
+      anthropic.models.claude-sonnet-4-20250514.options.thinking = {
+        type = "enabled";
+        budgetTokens = 10000;
       };
-    };
-    cerebras.options.apiKey = "{env:CEREBRAS_KEY}";
-    groq.options.apiKey = "{env:GROQ_API_KEY}";
-    openai = {
-      options = {
-        apiKey = "{env:OPENAI_API_KEY}";
+      # TODO use {file:...} instead of env
+      openrouter.options.apiKey = keys.openrouter;
+      zhipuai = {
+        api = "https://api.z.ai/api/coding/paas/v4";
+        options = {
+          apiKey = keys.zai;
+        };
       };
-      models = {
-        gpt-5 = {
-          options = {
-            reasoningEffort = "high";
-            textVerbosity = "low";
-            # reasoningSummary = "auto";
-            # include = [ "reasoning.encrypted_content" ];
+      cerebras.options.apiKey = keys.cerebras;
+      groq.options.apiKey = keys.groq;
+      openai = {
+        options = {
+          apiKey = keys.openai;
+        };
+        models = {
+          gpt-5 = {
+            options = {
+              reasoningEffort = "high";
+              textVerbosity = "low";
+              # reasoningSummary = "auto";
+              # include = [ "reasoning.encrypted_content" ];
+            };
           };
         };
       };
-    };
-    ollama-turbo = {
-      name = "Ollama Turbo";
-      npm = "ollama-ai-provider-v2";
-      options = {
-        baseURL = "https://ollama.com/api";
-        headers = {
-          Authorization = "Bearer {env:OLLAMA_TURBO_API_KEY}";
-        };
-      };
-      models =
-        let
-          common = {
-            attachment = false;
-            reasoning = true;
-            temperature = true;
-            tool_call = true;
+      ollama-turbo = {
+        name = "Ollama Turbo";
+        npm = "ollama-ai-provider-v2";
+        options = {
+          baseURL = "https://ollama.com/api";
+          headers = {
+            Authorization = "Bearer ${keys.ollama}";
           };
-          gpt =
-            effort:
-            common
-            // {
-              options = {
-                reasoningEffort = effort;
-                think = effort;
-                effort = effort;
-                reasoning_effort = effort;
+        };
+        models =
+          let
+            common = {
+              attachment = false;
+              reasoning = true;
+              temperature = true;
+              tool_call = true;
+            };
+            gpt =
+              effort:
+              common
+              // {
+                options = {
+                  reasoningEffort = effort;
+                  think = effort;
+                  effort = effort;
+                  reasoning_effort = effort;
+                };
+                limit = rec {
+                  context = 131072;
+                  output = context;
+                };
               };
+            small =
+              effort:
+              (gpt effort)
+              // {
+                id = "gpt-oss:20b";
+                name = "GPT-OSS 20B (${effort})";
+              };
+            big =
+              effort:
+              (gpt effort)
+              // {
+                id = "gpt-oss:120b";
+                name = "GPT-OSS 120B (${effort})";
+              };
+          in
+          {
+            "gpt-oss:20b" = small "high";
+            "gpt-oss:120b" = big "high";
+            "deepseek-v3.1:671b" = common // {
               limit = rec {
                 context = 131072;
                 output = context;
               };
             };
-          small =
-            effort:
-            (gpt effort)
-            // {
-              id = "gpt-oss:20b";
-              name = "GPT-OSS 20B (${effort})";
-            };
-          big =
-            effort:
-            (gpt effort)
-            // {
-              id = "gpt-oss:120b";
-              name = "GPT-OSS 120B (${effort})";
-            };
-        in
-        {
-          "gpt-oss:20b" = small "high";
-          "gpt-oss:120b" = big "high";
-          "deepseek-v3.1:671b" = common // {
-            limit = rec {
-              context = 131072;
-              output = context;
-            };
           };
-        };
+      };
     };
-  };
   mcp =
     let
       rawServers = mapAttrs (

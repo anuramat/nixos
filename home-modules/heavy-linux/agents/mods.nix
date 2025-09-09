@@ -2,8 +2,9 @@
   config,
   pkgs,
   lib,
+  osConfig,
   ...
-}@args:
+}:
 let
   modsWithTokens = config.lib.home.agenixWrapPkg pkgs.mods (
     (t: {
@@ -142,12 +143,12 @@ let
     };
   }
   // (
-    if args ? osConfig then
+    if osConfig != null then
       {
         llama-cpp = {
           base-url =
             let
-              port = toString args.osConfig.services.llama-cpp.port;
+              port = toString osConfig.services.llama-cpp.port;
             in
             "http://localhost:${port}";
           api-key = "dummy";
