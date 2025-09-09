@@ -103,8 +103,10 @@ let
       name = "Ollama Turbo";
       npm = "ollama-ai-provider-v2";
       options = {
-        apiKey = "{env:OLLAMA_TURBO_API_KEY}";
         baseURL = "https://ollama.com/api";
+        headers = {
+          Authorization = "Bearer {env:OLLAMA_TURBO_API_KEY}";
+        };
       };
       models =
         let
