@@ -28,6 +28,9 @@ let
   roles = {
     default = {
       blocked_tools = [ "*" ];
+    };
+    shell = {
+      blocked_tools = [ "*" ];
       prompt = [
         ''
           - you MUST always finish your answers with a short, concise summary of
@@ -126,7 +129,7 @@ let
         };
       };
     };
-    zai-code = {
+    zai = {
       api = "anthropic";
       base-url = "https://api.z.ai/api/anthropic";
       api-key-env = "ZAI_API_KEY";
@@ -179,7 +182,7 @@ in
     default-api = "cerebras";
     default-model = "qwen-3-coder-480b";
     fanciness = 0;
-    role = "default";
+    role = "shell";
     inherit roles;
     temp = -1.0; # 0.0 to 2.0, -1.0 to disable
     topk = -1; # -1 to disable
