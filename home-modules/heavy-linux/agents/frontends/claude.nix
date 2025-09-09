@@ -89,7 +89,7 @@ let
     wrapperName = "cld";
     tokens = t: {
       # broken: https://github.com/anthropics/claude-code/issues/4085
-      CLAUDE_CODE_OAUTH_TOKEN = t.claude-code;
+      CLAUDE_CODE_OAUTH_TOKEN = t.claude;
     };
   };
 
