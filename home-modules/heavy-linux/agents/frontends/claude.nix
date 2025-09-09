@@ -72,11 +72,11 @@ let
   claudeBoxed = config.lib.agents.mkPackages {
     args = "--dangerously-skip-permissions";
     wrapperName = "cld";
-    package =
+    tokens = t: {
       # broken: https://github.com/anthropics/claude-code/issues/4085
-      config.lib.home.agenixWrapPkg pkgs.claude-code (t: {
-        CLAUDE_CODE_OAUTH_TOKEN = t.claude-code;
-      });
+      CLAUDE_CODE_OAUTH_TOKEN = t.claude-code;
+    };
+    package = pkgs.claude-code;
   };
 
   cfgDir = config.xdg.configHome + "/claude";

@@ -8,6 +8,144 @@ let
   inherit (lib) mapAttrs;
   inherit (config.lib) agents;
 
+  tokens = t: {
+    OPENROUTER_API_KEY = t.openrouter;
+    ZAI_API_KEY = t.zai;
+    CEREBRAS_KEY = t.cerebras-org;
+    GROQ_API_KEY = t.groq;
+    OLLAMA_TURBO_API_KEY = t.ollama-turbo;
+    OPENAI_API_KEY = t.oai;
+  };
+
+  agent =
+    let
+      ro = {
+        bash = false;
+        patch = false;
+        edit = false;
+        write = false;
+      };
+    in
+    {
+      build = {
+        model = "zai/glm-4.5";
+      };
+      example = {
+        disable = true;
+        mode = "subagent";
+        description = "";
+        # prompt = "{file:./prompts/build.txt}";
+        # prompt = "you are...";
+      };
+      # TODO github has some useful stuff -- resources mainly; wait for https://github.com/sst/opencode/issues/806
+      zotero = {
+        mode = "primary";
+        disable = true;
+        tools = ro // {
+          "zotero_*" = true;
+        };
+      };
+      deepwiki = {
+        mode = "primary";
+        disable = true;
+        tools = ro // {
+          deepwiki_ask_question = true;
+          deepwiki_read_wiki_structure = true;
+        };
+      };
+      plan = {
+        tools = ro // {
+          "think_*" = true;
+        };
+      };
+    };
+
+  provider = {
+    llama-cpp = {
+      npm = "@ai-sdk/openai-compatible";
+      options.baseURL = "http://localhost:11343";
+      name = "llama.cpp";
+      models.dummy.limit = {
+        output = 99999999;
+        context = 20000; # TODO add a common env var with llama server
+      };
+    };
+    anthropic.models.claude-sonnet-4-20250514.options.thinking = {
+      type = "enabled";
+      budgetTokens = 10000;
+    };
+    openrouter.options.apiKey = "{env:OPENROUTER_API_KEY}";
+    zai = {
+      npm = "@ai-sdk/anthropic";
+      options = {
+        apiKey = "{env:ZAI_API_KEY}";
+        baseURL = "https://api.z.ai/api/anthropic/v1";
+      };
+    };
+    cerebras.options.apiKey = "{env:CEREBRAS_KEY}";
+    groq.options.apiKey = "{env:GROQ_API_KEY}";
+    openai = {
+      options = {
+        apiKey = "{env:OPENAI_API_KEY}";
+      };
+      models = {
+        gpt-5 = {
+          options = {
+            reasoningEffort = "high";
+            textVerbosity = "low";
+            # reasoningSummary = "auto";
+            # include = [ "reasoning.encrypted_content" ];
+          };
+        };
+      };
+    };
+    ollama-turbo = {
+      name = "Ollama Turbo";
+      npm = "ollama-ai-provider-v2";
+      options = {
+        apiKey = "{env:OLLAMA_TURBO_API_KEY}";
+        baseURL = "https://ollama.com/api";
+      };
+      models =
+        let
+          small = effort: {
+            id = "gpt-oss:20b";
+            name = "GPT-OSS 20B (${effort})";
+
+            options = {
+              reasoningEffort = effort;
+            };
+
+            attachment = false;
+            reasoning = true;
+            temperature = true;
+            tool_call = true;
+            limit = {
+              output = 9999999;
+              context = 131072;
+            };
+          };
+          big =
+            effort:
+            (small effort)
+            // {
+              id = "gpt-oss:120b";
+              name = "GPT-OSS 120B";
+            };
+        in
+        {
+          "gpt-oss:20b-high" = small "high";
+          "gpt-oss:20b-low" = small "low";
+          "gpt-oss:120b" = big "high";
+          "deepseek-v3.1:671b" = {
+            limit = {
+              context = 163840;
+              output = 999999;
+            };
+          };
+        };
+    };
+  };
   mcp =
     let
       rawServers = mapAttrs (
@@ -56,6 +194,7 @@ in
 {
   xdg.configFile =
     let
+      # TODO put into config file as well
       commands =
         let
           adaptedCommands = agents.commands |> mapAttrs (n: v: v.withFM { inherit (v) description; });
@@ -71,31 +210,11 @@ in
     );
 
   home = {
-    packages =
-      let
-        opencode = config.lib.home.agenixWrapPkg pkgs.opencode (
-          (t: {
-            OPENROUTER_API_KEY = t.openrouter;
-            ZAI_API_KEY = t.zai;
-            CEREBRAS_KEY = t.cerebras-org;
-            GROQ_API_KEY = t.groq;
-            OLLAMA_TURBO_API_KEY = t.ollama-turbo;
-            OPENAI_API_KEY = t.oai;
-          })
-        );
-      in
-      agents.mkPackages {
-        wrapperName = "ocd";
-        package = opencode;
-      };
-
     activation = {
-      # opencodeAuth = config.lib.home.json.set {
-      # } (config.xdg.dataHome + "/opencode/auth.json");
       opencodeSettings = config.lib.home.json.set {
         model = "cerebras/qwen-3-coder-480b";
         small_model = "github-copilot/gpt-4.1";
-        inherit mcp;
+        inherit mcp provider agent;
         autoupdate = false;
         instructions = [
           "AGENTS.md"
@@ -106,139 +225,17 @@ in
           "think_*" = false;
           "zotero_*" = false;
         };
-        agent =
-          let
-            ro = {
-              bash = false;
-              patch = false;
-              edit = false;
-              write = false;
-            };
-          in
-          {
-            build = {
-              model = "zai/glm-4.5";
-            };
-            example = {
-              disable = true;
-              mode = "subagent";
-              description = "";
-              # prompt = "{file:./prompts/build.txt}";
-              # prompt = "you are...";
-            };
-            # TODO github has some useful stuff -- resources mainly; wait for https://github.com/sst/opencode/issues/806
-            zotero = {
-              mode = "primary";
-              disable = true;
-              tools = ro // {
-                "zotero_*" = true;
-              };
-            };
-            deepwiki = {
-              mode = "primary";
-              disable = true;
-              tools = ro // {
-                deepwiki_ask_question = true;
-                deepwiki_read_wiki_structure = true;
-              };
-            };
-            plan = {
-              tools = ro // {
-                "think_*" = true;
-              };
-            };
-          };
         share = "disabled";
         keybinds = {
           editor_open = "<leader>ctrl+e,<leader>e";
         };
-        provider = {
-          llama-cpp = {
-            npm = "@ai-sdk/openai-compatible";
-            options.baseURL = "http://localhost:11343";
-            name = "llama.cpp";
-            models.dummy.limit = {
-              output = 99999999;
-              context = 20000; # TODO add a common env var with llama server
-            };
-          };
-          anthropic.models.claude-sonnet-4-20250514.options.thinking = {
-            type = "enabled";
-            budgetTokens = 10000;
-          };
-          openrouter.options.apiKey = "{env:OPENROUTER_API_KEY}";
-          zai = {
-            npm = "@ai-sdk/anthropic";
-            options = {
-              apiKey = "{env:ZAI_API_KEY}";
-              baseURL = "https://api.z.ai/api/anthropic/v1";
-            };
-          };
-          cerebras.options.apiKey = "{env:CEREBRAS_KEY}";
-          groq.options.apiKey = "{env:GROQ_API_KEY}";
-          openai = {
-            options = {
-              apiKey = "{env:OPENAI_API_KEY}";
-            };
-            models = {
-              gpt-5 = {
-                options = {
-                  reasoningEffort = "high";
-                  textVerbosity = "low";
-                  # reasoningSummary = "auto";
-                  # include = [ "reasoning.encrypted_content" ];
-                };
-              };
-            };
-          };
-          ollama-turbo = {
-            name = "Ollama Turbo";
-            npm = "ollama-ai-provider-v2";
-            options = {
-              apiKey = "{env:OLLAMA_TURBO_API_KEY}";
-              baseURL = "https://ollama.com/api";
-            };
-            models =
-              let
-                small = effort: {
-                  id = "gpt-oss:20b";
-                  name = "GPT-OSS 20B (${effort})";
-
-                  options = {
-                    reasoningEffort = effort;
-                  };
-
-                  attachment = false;
-                  reasoning = true;
-                  temperature = true;
-                  tool_call = true;
-                  limit = {
-                    output = 9999999;
-                    context = 131072;
-                  };
-                };
-                big =
-                  effort:
-                  (small effort)
-                  // {
-                    id = "gpt-oss:120b";
-                    name = "GPT-OSS 120B";
-                  };
-              in
-              {
-                "gpt-oss:20b-high" = small "high";
-                "gpt-oss:20b-low" = small "low";
-                "gpt-oss:120b" = big "high";
-                "deepseek-v3.1:671b" = {
-                  limit = {
-                    context = 163840;
-                    output = 999999;
-                  };
-                };
-              };
-          };
-        };
       } (config.xdg.configHome + "/opencode/opencode.json");
+    };
+
+    packages = agents.mkPackages {
+      wrapperName = "ocd";
+      package = pkgs.opencode;
+      inherit tokens;
     };
   };
 }

@@ -64,14 +64,19 @@ in
   lib.agents.mkPackages =
     agent:
     let
-      binName = agent.package.meta.mainProgram or agent.binName;
+      package =
+        let
+          wrap = config.lib.home.agenixWrapPkg;
+        in
+        if agent ? tokens then wrap agent.package agent.tokens else agent.package;
+      binName = package.meta.mainProgram or agent.binName;
       args = agent.args or "";
       passthroughName = agent.passthroughName or binName;
       wrapperName = agent.wrapperName or "${binName}-sandboxed";
       extraRwDirs = agent.extraRwDirs or [ ];
       agentDir = agent.agentDir or binName; # the one in xdg directories
       agentName = agent.agentName or binName;
-      cmd = "${lib.getExe' agent.package binName} ${args}";
+      cmd = "${lib.getExe' package binName} ${args}";
 
       when = cond: str: if cond then str else ""; # TODO sorry
 

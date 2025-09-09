@@ -27,15 +27,6 @@ let
   port = toString 37373;
 in
 {
-  # # Scoped keys (recommended)
-  # export AVANTE_ANTHROPIC_API_KEY=your-claude-api-key
-  # export AVANTE_OPENAI_API_KEY=your-openai-api-key
-  # export AVANTE_AZURE_OPENAI_API_KEY=your-azure-api-key
-  # export AVANTE_GEMINI_API_KEY=your-gemini-api-key
-  # export AVANTE_CO_API_KEY=your-cohere-api-key
-  # export AVANTE_AIHUBMIX_API_KEY=your-aihubmix-api-key
-  # export AVANTE_MOONSHOT_API_KEY=your-moonshot-api-key
-
   programs.nixvim = {
     plugins.blink-cmp.settings.sources = {
       per_filetype = {
@@ -98,7 +89,6 @@ in
               __inherited_from = "openai";
               model = "qwen-3-coder-480b";
               api_key_name = if osConfig != null then "cmd:cat ${osConfig.age.secrets.cerebras.path}" else "";
-              # extra_request_body = { };
             };
             copilot = {
               model = "gpt-4.1";
