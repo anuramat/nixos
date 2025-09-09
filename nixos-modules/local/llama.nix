@@ -29,30 +29,45 @@ let
         ];
     };
 
-    qwen = {
-      # TODO replace with M quant
-      # TODO add non coder, both reasoner and not
-      filename = "unsloth_Qwen3-Coder-30B-A3B-Instruct-GGUF_Qwen3-Coder-30B-A3B-Instruct-UD-Q4_K_XL.gguf";
-      flags = [
-        "--jinja"
+    qwen =
+      let
+        flags = [
+          "--jinja"
 
-        "--temp"
-        "0.7"
-        "--min-p"
-        "0.0"
-        "--top-p"
-        "0.80"
-        "--top-k"
-        "20"
-        "--repeat-penalty"
-        "1.05"
+          "--temp"
+          "0.7"
+          "--min-p"
+          "0.0"
+          "--top-p"
+          "0.80"
+          "--top-k"
+          "20"
+          "--repeat-penalty"
+          "1.05"
 
-        "-ncmoe"
-        "38"
-        "-c"
-        "30000"
-      ];
-    };
+          "-ncmoe"
+          "38"
+          "-c"
+          "30000"
+        ];
+      in
+      {
+        # TODO add reasoner
+        # TODO rewrite with a map to not repeat inherit flags
+        coder = {
+          filename = "unsloth_Qwen3-Coder-30B-A3B-Instruct-GGUF_Qwen3-Coder-30B-A3B-Instruct-Q4_K_M.gguf";
+          inherit flags;
+        };
+
+        instruct = {
+          filename = "unsloth_Qwen3-30B-A3B-Instruct-2507-GGUF_Qwen3-30B-A3B-Instruct-2507-Q4_K_M.gguf";
+          inherit flags;
+        };
+        reasoning = {
+          filename = "";
+          inherit flags;
+        };
+      };
 
     gpt =
       let
