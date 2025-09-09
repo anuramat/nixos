@@ -110,39 +110,49 @@ let
       };
       models =
         let
-          small = effort: {
-            id = "gpt-oss:20b";
-            name = "GPT-OSS 20B (${effort})";
-
-            options = {
-              reasoningEffort = effort;
-            };
-
+          common = {
             attachment = false;
             reasoning = true;
             temperature = true;
             tool_call = true;
-            limit = {
-              output = 9999999;
-              context = 131072;
-            };
           };
+          gpt =
+            effort:
+            common
+            // {
+              options = {
+                reasoningEffort = effort;
+                think = effort;
+                effort = effort;
+                reasoning_effort = effort;
+              };
+              limit = rec {
+                context = 131072;
+                output = context;
+              };
+            };
+          small =
+            effort:
+            (gpt effort)
+            // {
+              id = "gpt-oss:20b";
+              name = "GPT-OSS 20B (${effort})";
+            };
           big =
             effort:
-            (small effort)
+            (gpt effort)
             // {
               id = "gpt-oss:120b";
-              name = "GPT-OSS 120B";
+              name = "GPT-OSS 120B (${effort})";
             };
         in
         {
-          "gpt-oss:20b-high" = small "high";
-          "gpt-oss:20b-low" = small "low";
+          "gpt-oss:20b" = small "high";
           "gpt-oss:120b" = big "high";
-          "deepseek-v3.1:671b" = {
-            limit = {
-              context = 163840;
-              output = 999999;
+          "deepseek-v3.1:671b" = common // {
+            limit = rec {
+              context = 131072;
+              output = context;
             };
           };
         };
