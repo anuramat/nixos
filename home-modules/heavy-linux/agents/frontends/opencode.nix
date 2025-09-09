@@ -75,11 +75,10 @@ let
       budgetTokens = 10000;
     };
     openrouter.options.apiKey = "{env:OPENROUTER_API_KEY}";
-    zai = {
-      npm = "@ai-sdk/anthropic";
+    zhipuai = {
+      api = "https://api.z.ai/api/coding/paas/v4";
       options = {
         apiKey = "{env:ZAI_API_KEY}";
-        baseURL = "https://api.z.ai/api/anthropic/v1";
       };
     };
     cerebras.options.apiKey = "{env:CEREBRAS_KEY}";
