@@ -65,6 +65,26 @@ inputs:
       '';
   };
 
+  opencode = prev.stdenv.mkDerivation rec {
+    pname = "opencode";
+    version = "0.6.8";
+    src = prev.fetchzip {
+      url = "https://github.com/sst/opencode/releases/download/v${version}/opencode-linux-x64.zip";
+      hash = "sha256-0DCqfl0bCp/QJJVuooMJlU3zryCUeBiSgEk0Nxe63ik=";
+    };
+    installPhase = ''
+      runHook preInstall
+      install -Dt $out/bin opencode
+      runHook postInstall
+    '';
+    meta = {
+      description = "Opencode CLI tool";
+      homepage = "https://github.com/sst/opencode";
+      license = prev.lib.licenses.mit;
+      mainProgram = "opencode";
+    };
+  };
+
   vimPlugins = prev.vimPlugins // {
     avante-nvim = prev.vimPlugins.avante-nvim.overrideAttrs (old: {
       src = inputs.avante;

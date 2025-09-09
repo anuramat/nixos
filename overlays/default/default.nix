@@ -80,7 +80,6 @@ let
       gemini-cli = mkNpx "gemini" "@google/gemini-cli";
       inspector = mkNpx "inspector" "@modelcontextprotocol/inspector";
       ccusage = mkNpx "ccusage" "ccusage";
-      opencode = mkNpx "opencode" "opencode-ai";
       claude-monitor = mkUv "claude-monitor" "claude-monitor";
     };
 
