@@ -58,13 +58,13 @@ let
   impureWrappers =
     final: prev:
     let
-      mkBunx =
+      mkNpx =
         binName: pkg:
         let
-          bunx = prev.lib.getExe' prev.bun "bunx";
+          npx = prev.lib.getExe' prev.nodejs "npx";
         in
         prev.writeShellScriptBin binName ''
-          exec ${bunx} -y ${pkg} "$@"
+          exec ${npx} -y ${pkg} "$@"
         '';
       mkUv =
         binName: pkg:
@@ -76,11 +76,11 @@ let
         '';
     in
     {
-      qwen-code = mkBunx "qwen-code" "@qwen-code/qwen-code@latest";
-      gemini-cli = mkBunx "gemini" "@google/gemini-cli";
-      inspector = mkBunx "inspector" "@modelcontextprotocol/inspector";
-      ccusage = mkBunx "ccusage" "ccusage";
-      opencode = mkBunx "opencode" "opencode-ai";
+      qwen-code = mkNpx "qwen-code" "@qwen-code/qwen-code";
+      gemini-cli = mkNpx "gemini" "@google/gemini-cli";
+      inspector = mkNpx "inspector" "@modelcontextprotocol/inspector";
+      ccusage = mkNpx "ccusage" "ccusage";
+      opencode = mkNpx "opencode" "opencode-ai";
       claude-monitor = mkUv "claude-monitor" "claude-monitor";
     };
 
