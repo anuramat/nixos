@@ -69,7 +69,7 @@ let
     in
     agents.mkPrompts "claude/agents" adaptedRoles;
 
-  claudeBoxedZai = config.lib.agents.mkSandbox {
+  claudeBoxedZai = config.lib.agents.mkPackages {
     package = pkgs.claude-code;
     args = "--dangerously-skip-permissions";
     wrapperName = "cld-zai";
