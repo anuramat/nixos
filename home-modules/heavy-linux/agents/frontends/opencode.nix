@@ -224,7 +224,8 @@ in
     activation = {
       opencodeSettings = config.lib.home.json.set {
         model = "cerebras/qwen-3-coder-480b";
-        small_model = "github-copilot/gpt-4.1";
+        # small_model = "github-copilot/gpt-4.1";
+        small_model = "llama-cpp/dummy";
         inherit mcp provider agent;
         autoupdate = false;
         instructions = [
