@@ -1,3 +1,4 @@
+# TODO add id and name fields to models
 {
   config,
   lib,
@@ -168,7 +169,7 @@ in
     pkgs.python313Packages.huggingface-hub
   ];
   environment.sessionVariables = {
-    # should be in ll7 module
+    # TODO should be reworked
     LLAMA_CACHE = "/mnt/storage/llama-cpp";
   };
   services = {
