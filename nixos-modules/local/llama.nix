@@ -10,7 +10,7 @@ let
   rootdir = "/mnt/storage/llama-cpp/"; # put in sessionvar TODO
   models = {
 
-    gemma = {
+    gemma = rec {
       # TODO replace
       filename = "gemma-3-4b-it-GGUF_gemma-3-4b-it-Q8_0.gguf";
       flags =
@@ -20,48 +20,101 @@ let
         in
         [
           "-c"
-          "20000"
+          (toString context)
           "--mmproj"
           mmproj
           # "--jinja"
           # "--chat-template-file"
           # template
         ];
+      context = 20000;
     };
 
     qwen =
       let
-        context = 30000;
-        flags = [
-          "--jinja"
-          "--temp"
-          "0.7"
-          "--min-p"
-          "0.0"
-          "--top-p"
-          "0.80"
-          "--top-k"
-          "20"
-          "--repeat-penalty"
-          "1.05"
-          "-ncmoe"
-          "38"
-          "-c"
-          (toString context)
-        ];
-        mk = filename: {
-          inherit
-            context
-            filename
-            flags
-            ;
-        };
+        mk =
+          {
+            filename,
+            thinking ? false,
+            size ? "small",
+          }:
+          let
+            context = if size == "small" then 30000 else 0;
+          in
+          {
+            inherit filename context;
+            flags =
+              let
+                flagsInstruct = [
+                  "--temp"
+                  "0.7"
+                  "--min-p"
+                  "0.0" # or 0.01
+                  "--top-p"
+                  "0.80"
+                ];
+                flagsThinking = [
+                  "--temp"
+                  "0.6"
+                  "--min-p"
+                  "0.0"
+                  "--top-p"
+                  "0.95"
+                ];
+                flagsBig = [
+                  "-ncmoe"
+                  "38"
+                ];
+                flagsSmall = [ ];
+              in
+              [
+                "--top-k"
+                "20"
+                "--jinja"
+                "-c"
+                (toString context)
+              ]
+              ++ (if thinking then flagsThinking else flagsInstruct)
+              ++ (
+                if size == "small" then
+                  [ ]
+                else if size == "big" then
+                  flagsBig
+                else
+                  throw "invalid size"
+              );
+          };
       in
       {
-        # TODO add reasoner
-        coder = mk "unsloth_Qwen3-Coder-30B-A3B-Instruct-GGUF_Qwen3-Coder-30B-A3B-Instruct-Q4_K_M.gguf";
-        instruct = mk "unsloth_Qwen3-30B-A3B-Instruct-2507-GGUF_Qwen3-30B-A3B-Instruct-2507-Q4_K_M.gguf";
-        reasoning = mk "";
+        small = {
+          instruct = mk {
+            filename = "unsloth_Qwen3-4B-Instruct-2507-GGUF_Qwen3-4B-Instruct-2507-Q4_K_M.gguf";
+            thinking = false;
+            size = "small";
+          };
+          thinking = mk {
+            filename = "unsloth_Qwen3-4B-Thinking-2507-GGUF_Qwen3-4B-Thinking-2507-Q4_K_M.gguf";
+            thinking = true;
+            size = "small";
+          };
+        };
+        big = {
+          coder = mk {
+            filename = "unsloth_Qwen3-Coder-30B-A3B-Instruct-GGUF_Qwen3-Coder-30B-A3B-Instruct-Q4_K_M.gguf";
+            thinking = false;
+            size = "big";
+          };
+          instruct = mk {
+            filename = "unsloth_Qwen3-30B-A3B-Instruct-2507-GGUF_Qwen3-30B-A3B-Instruct-2507-Q4_K_M.gguf";
+            thinking = false;
+            size = "big";
+          };
+          thinking = mk {
+            filename = "unsloth_Qwen3-30B-A3B-Thinking-2507-GGUF_Qwen3-30B-A3B-Thinking-2507-Q4_K_M.gguf";
+            thinking = true;
+            size = "big";
+          };
+        };
       };
 
     gpt =
