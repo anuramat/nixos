@@ -1,7 +1,3 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## Repository Overview
 
 Personal NixOS flake configuration managing system and home configurations. Uses
@@ -182,7 +178,7 @@ The heavy-linux configuration includes comprehensive AI agent support:
 
 - Multiple agent frontends: Opencode, Claude, Codex, Qwen, Avante, Cursor, Forge, Gemini, Goose
 - Sandboxed wrappers for agent binaries (e.g., ocd, cld, cdx, qwn, gmn, gse)
-- Per-agent configuration files (JSON, TOML, YAML) for settings, MCP server integration, and context files (AGENTS.md, CLAUDE.md)
+- Per-agent configuration files (JSON, TOML, YAML) for settings, MCP server integration, and context files (AGENTS.md)
 - Notification hooks and session variables for agent environments
 - Sophisticated roles and prompts (e.g., academic summarizer, tool restrictions)
 - Neovim integration for Avante via MCP hub
@@ -263,7 +259,7 @@ The heavy language module provides a full suite of compilers, linters, formatter
 
 ## Documentation
 
-- `CLAUDE.md` - This file; project guidance for Claude Code (symlinked as `AGENTS.md`)
+- `AGENTS.md` - This file; project guidance for AI agents
 - `docs/USERNAME_CUSTOMIZATION.md` - Complete guide for username configuration
 - `PROBLEMS.md` - Technical debt and known issues tracking
 - `tests/integration/README.md` - Integration testing documentation
