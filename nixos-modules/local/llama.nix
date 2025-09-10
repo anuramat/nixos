@@ -174,7 +174,7 @@ in
   services = {
     llama-cpp =
       let
-        modelAttrs = models.qwen.instruct;
+        modelAttrs = models.qwen.small.thinking;
       in
       {
         enable = true;
