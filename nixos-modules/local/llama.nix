@@ -43,7 +43,7 @@ let
             context =
               {
                 big = 30000;
-                small = 262144;
+                small = 35000;
               }
               .${size};
           in
