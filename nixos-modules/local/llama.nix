@@ -36,54 +36,54 @@ let
         mk =
           {
             filename,
-            thinking ? false,
-            size ? "small",
+            size,
+            thinking,
           }:
           let
-            context = if size == "small" then 30000 else 0;
+            context =
+              {
+                big = 30000;
+                small = 0;
+              }
+              .${size};
           in
           {
             inherit filename context;
-            flags =
-              let
-                flagsInstruct = [
-                  "--temp"
-                  "0.7"
-                  "--min-p"
-                  "0.0" # or 0.01
-                  "--top-p"
-                  "0.80"
-                ];
-                flagsThinking = [
+            flags = [
+              "--top-k"
+              "20"
+              "--jinja"
+              "-c"
+              (toString context)
+            ]
+            ++ {
+              big = [
+                "-ncmoe"
+                "38"
+              ];
+              small = [ ];
+            }
+            .${size}
+            ++ (
+              if thinking then
+                [
                   "--temp"
                   "0.6"
                   "--min-p"
                   "0.0"
                   "--top-p"
                   "0.95"
-                ];
-                flagsBig = [
-                  "-ncmoe"
-                  "38"
-                ];
-                flagsSmall = [ ];
-              in
-              [
-                "--top-k"
-                "20"
-                "--jinja"
-                "-c"
-                (toString context)
-              ]
-              ++ (if thinking then flagsThinking else flagsInstruct)
-              ++ (
-                if size == "small" then
-                  [ ]
-                else if size == "big" then
-                  flagsBig
-                else
-                  throw "invalid size"
-              );
+                ]
+              else
+                [
+                  "--temp"
+                  "0.7"
+                  "--min-p"
+                  "0.0" # or 0.01
+                  "--top-p"
+                  "0.80"
+                ]
+            );
           };
       in
       {
