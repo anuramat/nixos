@@ -9,6 +9,31 @@ let
   inherit (lib) mapAttrs;
   inherit (config.lib) agents;
 
+  oss = "ollama-turbo/gpt-oss:120b";
+  qwen = "cerebras/qwen-3-coder-480b";
+  glm = "zhipuai/glm-4.5";
+  gpt41 = "github-copilot/gpt-4.1";
+
+  opencodeConfig = {
+    model = "cerebras/qwen-3-coder-480b";
+    small_model = "llama-cpp/dummy";
+    inherit mcp provider agent;
+    autoupdate = false;
+    instructions = [
+      "AGENTS.md"
+    ];
+    tools = {
+      webfetch = false;
+      "deepwiki_*" = false;
+      "think_*" = false;
+      "zotero_*" = false;
+    };
+    share = "disabled";
+    keybinds = {
+      editor_open = "<leader>ctrl+e,<leader>e";
+    };
+  };
+
   agent =
     let
       ro = {
@@ -17,23 +42,19 @@ let
         edit = false;
         write = false;
       };
-
-      gpt = "ollama-turbo/gpt-oss:120b";
-      qwen = "cerebras/qwen-3-coder-480b";
-      glm = "zhipuai/glm-4.5";
     in
     {
       plan = {
-        model = gpt;
+        model = oss;
         tools = ro // {
           # "think_*" = true;
         };
       };
       build = {
-        model = glm;
+        model = oss;
       };
       general = {
-        model = qwen;
+        model = oss;
       };
 
       example = {
@@ -228,26 +249,9 @@ in
 
   home = {
     activation = {
-      opencodeSettings = config.lib.home.json.set {
-        model = "cerebras/qwen-3-coder-480b";
-        # small_model = "github-copilot/gpt-4.1";
-        small_model = "llama-cpp/dummy";
-        inherit mcp provider agent;
-        autoupdate = false;
-        instructions = [
-          "AGENTS.md"
-        ];
-        tools = {
-          webfetch = false;
-          "deepwiki_*" = false;
-          "think_*" = false;
-          "zotero_*" = false;
-        };
-        share = "disabled";
-        keybinds = {
-          editor_open = "<leader>ctrl+e,<leader>e";
-        };
-      } (config.xdg.configHome + "/opencode/opencode.json");
+      opencodeSettings = config.lib.home.json.set opencodeConfig (
+        config.xdg.configHome + "/opencode/opencode.json"
+      );
     };
 
     packages = agents.mkPackages {
@@ -256,14 +260,3 @@ in
     };
   };
 }
-# "models": {
-#   "glm-4.5": {
-#     "limit": {
-#       "context": 131072,
-#       "output": 98304
-#     },
-#     "temperature": true,
-#     "tool_call": true,
-#     "reasoning": true
-#   }
-# }
