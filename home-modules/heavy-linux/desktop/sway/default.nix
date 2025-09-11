@@ -26,7 +26,8 @@
         };
         seat = {
           "*" = {
-            hide_cursor = "when-typing enable";
+            # breaks games -- mouse movement gets disabled as well when "typing"
+            # hide_cursor = "when-typing enable";
           };
         };
         window = {
