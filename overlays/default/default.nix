@@ -92,10 +92,6 @@ let
     |> map (v: v.overlays.default);
 
   overlays = inputOverlays ++ [
-    # autoimport these
-    (import ./anytype.nix)
-    (import ./cursor.nix)
-    (import ./forge.nix)
     (import ./misc.nix inputs)
     impureWrappers
     unstablePkgs
