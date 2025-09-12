@@ -27,7 +27,7 @@ let
           {
             ${providerId} = {
               npm = "@ai-sdk/openai-compatible";
-              options.baseURL = "http://localhost:${osConfig.services.llama-cpp.port}";
+              options.baseURL = "http://localhost:${toString osConfig.services.llama-cpp.port}";
               name = "llama.cpp";
               models = {
                 ${model.id}.limit = {
