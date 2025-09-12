@@ -13,6 +13,14 @@ in
       options = {
         id = mkOption { type = types.str; }; # e.g. "qwen3:4b"
         name = mkOption { type = types.nullOr types.str; }; # e.g. "Qwen3 4B"; TODO default to id
+        thinking = mkOption {
+          type = types.bool;
+          default = false;
+        };
+        vision = mkOption {
+          type = types.bool;
+          default = false;
+        };
         params = mkOption {
           type = types.submodule {
             options = {
