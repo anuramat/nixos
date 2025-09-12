@@ -35,7 +35,7 @@
   programs.foot = {
     enable = true;
     settings = {
-      scrollback.lines = 13337;
+      scrollback.lines = 133337;
       bell = {
         urgent = "yes";
         visual = "yes";

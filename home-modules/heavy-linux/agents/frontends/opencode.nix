@@ -247,6 +247,7 @@ in
 
     packages = agents.mkPackages {
       wrapperName = "ocd";
+      agentDir = "opencode";
       package = pkgs.opencode;
     };
   };
