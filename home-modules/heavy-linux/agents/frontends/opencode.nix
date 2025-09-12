@@ -113,6 +113,17 @@ let
   provider =
     let
       keys = mapAttrs (n: v: "{file:${v.path}}") osConfig.age.secrets;
+      gpt5models =
+        let
+          gptOutputOptions = {
+            reasoningEffort = "high";
+            textVerbosity = "low";
+          };
+        in
+        {
+          gpt-5.options = gptOutputOptions;
+          gpt-5-mini.options = gptOutputOptions;
+        };
     in
     local.providerConfig
     // {
@@ -127,12 +138,10 @@ let
       };
       cerebras.options.apiKey = keys.cerebras;
       groq.options.apiKey = keys.groq;
+      github-copilot.models = gpt5models;
       openai = {
         options.apiKey = keys.openai;
-        models.gpt-5.options = {
-          reasoningEffort = "high";
-          textVerbosity = "low";
-        };
+        models = gpt5models;
       };
       ollama-turbo = {
         name = "Ollama Turbo";
