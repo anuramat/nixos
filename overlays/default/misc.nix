@@ -91,6 +91,7 @@ inputs:
       ''
         makeWrapper ${dotslash}/bin/dotslash $out/bin/codex --add-flags $src
       '';
+    meta.mainProgram = "codex";
   };
 
   opencode = prev.stdenvNoCC.mkDerivation rec {

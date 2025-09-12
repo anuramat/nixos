@@ -16,6 +16,7 @@ let
       ''
     )
     |> builtins.concatStringsSep "\n";
+
 in
 {
   lib.agents.mkPackages =
@@ -27,20 +28,23 @@ in
       wrapperName ? "${binName}-sandboxed",
       extraRwDirs ? [ ],
       agentDir, # name of subdir in xdg dirs
-      agentName ? null,
+      agentName ? binName,
       env ? { },
       tokens ? null,
     }:
     let
       cmd = "${lib.getExe (config.lib.home.agenixWrapPkg package tokens)} ${args}";
 
-      env = env // {
-        ${varNames.agentName} = "'${agentName}'";
-      };
-      scriptCommon = # bash
+      scriptCommon =
+        let
+          defaultEnv = {
+            ${varNames.agentName} = "'${agentName}'";
+          };
+        in
+        # bash
         ''
           unset GIT_EXTERNAL_DIFF
-          ${exportScript env}
+          ${exportScript (env // defaultEnv)}
         '';
       passthrough = pkgs.writeShellApplication {
         name = passthroughName;
