@@ -150,7 +150,9 @@ in
               ${getExe pkg} "$@"
             '';
       in
-      if args ? osConfig then
+      if vars == null then
+        pkg
+      else if args ? osConfig then
         aged args.osConfig.age
       else if config ? age then
         aged config.age

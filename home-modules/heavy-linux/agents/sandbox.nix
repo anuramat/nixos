@@ -5,53 +5,7 @@
   ...
 }:
 let
-  gopath = "${config.home.homeDirectory}/go";
-  baseRwDirs = [
-    "/tmp"
-    "$PWD"
-    "$XDG_RUNTIME_DIR"
-    config.home.sessionVariables.RUSTUP_HOME
-    config.home.sessionVariables.CARGO_HOME
-    # TODO wipe these
-    "${config.home.homeDirectory}/.npm"
-    gopath
-  ];
   inherit (config.lib.agents) varNames;
-
-  # Shadows XDG dirs with tmp, and links agent directories there
-  shadowXdgScript =
-    agentDir:
-    let
-      variables = [
-        "XDG_CACHE_HOME"
-        "XDG_DATA_HOME"
-        "XDG_STATE_HOME"
-      ];
-      shadowWithPassthrough =
-        var:
-        let
-          shadow = ''
-            ${var}="$TEMP_ROOT/${var}"
-            export ${var}
-            mkdir "${"$" + var}"
-          '';
-          passthrough = x: ''
-            agentDir="${"$" + var}/${agentDir}"
-            mkdir -p "$agentDir"
-            ${shadow}
-            [ -a "$agentDir" ] && ln -s -T "$agentDir" "${"$" + var}/${agentDir}"
-          '';
-        in
-        if agentDir == null then shadow else passthrough shadow;
-    in
-    ''
-      TEMP_ROOT=$(mktemp -d)
-
-      echo "tmp dir: $TEMP_ROOT"
-      echo "shadowed paths: ${variables |> builtins.concatStringsSep ", "}"
-    ''
-    + (variables |> map shadowWithPassthrough |> builtins.concatStringsSep "\n");
-
   exportScript =
     env:
     env
@@ -65,37 +19,22 @@ let
 in
 {
   lib.agents.mkPackages =
-    agent:
+    {
+      package,
+      binName ? package.meta.mainProgram,
+      args ? "",
+      passthroughName ? binName,
+      wrapperName ? "${binName}-sandboxed",
+      extraRwDirs ? [ ],
+      agentDir, # name of subdir in xdg dirs
+      agentName ? null,
+      env ? { },
+      tokens ? null,
+    }:
     let
-      package =
-        let
-          wrap = config.lib.home.agenixWrapPkg;
-        in
-        if agent ? tokens then wrap agent.package agent.tokens else agent.package;
-      binName = package.meta.mainProgram or agent.binName;
-      args = agent.args or "";
-      passthroughName = agent.passthroughName or binName;
-      wrapperName = agent.wrapperName or "${binName}-sandboxed";
-      extraRwDirs = agent.extraRwDirs or [ ];
-      agentDir = agent.agentDir or binName; # the one in xdg directories
-      agentName = agent.agentName or binName;
-      cmd = "${lib.getExe' package binName} ${args}";
+      cmd = "${lib.getExe (config.lib.home.agenixWrapPkg package tokens)} ${args}";
 
-      when = cond: str: if cond then str else ""; # TODO sorry
-
-      agentDirs =
-        if agentDir != null then
-          (map (v: "${v}/${agentDir}") [
-            config.xdg.cacheHome
-            config.xdg.configHome
-            config.xdg.dataHome
-            config.xdg.stateHome
-          ])
-        else
-          [ ];
-      rwDirs =
-        map (x: ''"${x}"'') (baseRwDirs ++ agentDirs ++ extraRwDirs) |> builtins.concatStringsSep " ";
-      env = (agent.env or { }) // {
+      env = env // {
         ${varNames.agentName} = "'${agentName}'";
       };
       scriptCommon = # bash
@@ -103,7 +42,6 @@ in
           unset GIT_EXTERNAL_DIFF
           ${exportScript env}
         '';
-      # TODO add a field for overridable env vars (ie they should be only set if not already set)
       passthrough = pkgs.writeShellApplication {
         name = passthroughName;
         text =
@@ -114,8 +52,72 @@ in
             ${cmd} "$@"
           '';
       };
-      sandboxed = (
-        pkgs.writeShellApplication {
+
+      sandboxed =
+        let
+          rwDirs =
+            let
+              agentDirs =
+                if agentDir != null then
+                  (map (v: "${v}/${agentDir}") [
+                    config.xdg.cacheHome
+                    config.xdg.configHome
+                    config.xdg.dataHome
+                    config.xdg.stateHome
+                  ])
+                else
+                  [ ];
+            in
+            map (x: ''"${x}"'') (baseRwDirs ++ agentDirs ++ extraRwDirs) |> builtins.concatStringsSep " ";
+
+          gopath = "${config.home.homeDirectory}/go";
+          baseRwDirs = [
+            "/tmp"
+            "$PWD"
+            "$XDG_RUNTIME_DIR"
+            config.home.sessionVariables.RUSTUP_HOME
+            config.home.sessionVariables.CARGO_HOME
+            # TODO wipe these
+            "${config.home.homeDirectory}/.npm"
+            gopath
+          ];
+
+          # Shadows XDG dirs with tmp, and links agent directories there
+          shadowXdgScript =
+            agentDir:
+            let
+              variables = [
+                "XDG_CACHE_HOME"
+                "XDG_DATA_HOME"
+                "XDG_STATE_HOME"
+              ];
+              shadowWithPassthrough =
+                var:
+                let
+                  shadow = ''
+                    ${var}="$TEMP_ROOT/${var}"
+                    export ${var}
+                    mkdir "${"$" + var}"
+                  '';
+                  passthrough = x: ''
+                    agentDir="${"$" + var}/${agentDir}"
+                    mkdir -p "$agentDir"
+                    ${shadow}
+                    [ -a "$agentDir" ] && ln -s -T "$agentDir" "${"$" + var}/${agentDir}"
+                  '';
+                in
+                if agentDir == null then shadow else passthrough shadow;
+            in
+            ''
+              TEMP_ROOT=$(mktemp -d)
+
+              echo "tmp dir: $TEMP_ROOT"
+              echo "shadowed paths: ${variables |> builtins.concatStringsSep ", "}"
+            ''
+            + (variables |> map shadowWithPassthrough |> builtins.concatStringsSep "\n");
+
+        in
+        (pkgs.writeShellApplication {
           name = wrapperName;
           runtimeInputs = with pkgs; [
             bubblewrap
@@ -151,8 +153,7 @@ in
 
               bwrap --ro-bind / / --dev /dev "''${args[@]}" ${cmd} "$@"
             '';
-        }
-      );
+        });
     in
     [
       passthrough
