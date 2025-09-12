@@ -66,7 +66,6 @@ in
 
               ctxSize = mkOption {
                 type = types.int;
-                default = 0;
               };
               flashAttn = mkOption {
                 type = types.bool;
@@ -127,7 +126,7 @@ in
           (builtins.toJSON p.chatTemplateKwargs)
         ]
 
-        ++ optionals (p.ctxSize != 0) [
+        ++ [
           "-c"
           (toString p.ctxSize)
         ]
