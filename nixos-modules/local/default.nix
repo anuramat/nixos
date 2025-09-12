@@ -12,7 +12,7 @@ let
 in
 {
   imports = [
-    ./llama.nix
+    ./llama
     ./peripherals.nix
     ./remaps.nix
     ./rice.nix
