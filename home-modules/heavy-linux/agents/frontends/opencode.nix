@@ -9,10 +9,11 @@ let
   inherit (lib) mapAttrs;
   inherit (config.lib) agents;
 
+  grok = "opencode/grok-code";
   oss = "ollama-turbo/gpt-oss:120b";
   qwen = "cerebras/qwen-3-coder-480b";
   glm = "zhipuai/glm-4.5";
-  gpt41 = "github-copilot/gpt-4.1";
+  mini = "github-copilot/gpt-5-mini";
 
   local =
     let
@@ -42,8 +43,8 @@ let
     };
 
   opencodeConfig = {
-    model = "cerebras/qwen-3-coder-480b";
-    small_model = if local.enabled then "${local.providerId}/${local.modelId}" else gpt41;
+    model = mini;
+    small_model = if local.enabled then "${local.providerId}/${local.modelId}" else mini;
     inherit mcp provider agent;
     autoupdate = false;
     instructions = [
@@ -72,16 +73,16 @@ let
     in
     {
       plan = {
-        model = oss;
+        model = mini;
         tools = ro // {
           # "think_*" = true;
         };
       };
       build = {
-        model = oss;
+        model = mini;
       };
       general = {
-        model = oss;
+        model = mini;
       };
 
       example = {
