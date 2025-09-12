@@ -6,6 +6,7 @@
   ...
 }:
 let
+  # TODO parameterize or smth
   bookdir = "${config.home.homeDirectory}/books";
 
   inherit (lib) getExe;
