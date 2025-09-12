@@ -6,13 +6,18 @@ let
     mkOption
     mkIf
     ;
+
+  inherit (config.services.llama-cpp) modelExtra;
 in
 {
   options.services.llama-cpp.modelExtra = mkOption {
     type = types.submodule {
       options = {
         id = mkOption { type = types.str; }; # e.g. "qwen3:4b"
-        name = mkOption { type = types.nullOr types.str; }; # e.g. "Qwen3 4B"; TODO default to id
+        name = mkOption {
+          type = types.nullOr types.str;
+          default = modelExtra.id;
+        }; # e.g. "Qwen3 4B"
         thinking = mkOption {
           type = types.bool;
           default = false;
