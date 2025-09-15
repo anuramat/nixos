@@ -31,7 +31,10 @@
     base16Scheme =
       let
         # black-metal -- almost grayscale -- 5/5; TODO swap green and red
-        # grayscale-dark -- grayscale -- 5/5
+        # black-metal-*
+        # grayscale-dark
+        # grayscale-light
+        # greenscreen
         # paraiso -- purple/burgundy, colorful text -- 3/5?
         # pandora -- pink/burgundy/red mostly, cyberpunk vibes -- 4/5
         # caroline -- warm tones, red/brown/bronze -- 4/5
@@ -51,6 +54,17 @@
         # windows-nt -- the highest contrast among windows, elf kinda
 
         # xcode-dusk -- grey + bright colors, very cool
+
+        # todo
+        # unikitty
+        # still-alive
+        # uvuunicorn
+        # outrun-dark
+        # moonlight
+        # mona-lisa
+        # mellow-purple
+        # heetch
+        # borland
 
         name = "tarot";
       in
