@@ -2,6 +2,7 @@
   pkgs,
   config,
   lib,
+  osConfig ? null,
   ...
 }@args:
 let
@@ -130,34 +131,33 @@ let
     in
     lib.hm.dag.entryAfter [ "writeBoundary" ] script;
 
+  mkAgenixExportScript =
+    vars:
+    let
+      mkScript =
+        cfg:
+        vars cfg.age.secrets
+        |> lib.mapAttrsToList (n: v: ''export ${n}=$(cat "${v.path}")'')
+        |> concatStringsSep "\n";
+    in
+    if osConfig ? null then
+      mkScript osConfig
+    else if config ? age then
+      mkScript config
+    else
+      "";
+
 in
 
 {
   lib.home = {
-    inherit mkGenericActivationScript;
-
+    inherit mkGenericActivationScript mkAgenixExportScript;
     agenixWrapPkg =
       pkg: vars:
-      let
-        agenixExport =
-          vars:
-          vars |> lib.mapAttrsToList (n: v: ''export ${n}=$(cat "${v.path}")'') |> concatStringsSep "\n";
-        aged =
-          age:
-          pkgs.writeShellScriptBin "${pkg.meta.mainProgram}" # bash
-            ''
-              ${agenixExport (vars age.secrets)}
-              ${getExe pkg} "$@"
-            '';
-      in
-      if vars == null then
-        pkg
-      else if args ? osConfig then
-        aged args.osConfig.age
-      else if config ? age then
-        aged config.age
-      else
-        pkg;
+      pkgs.writeShellScriptBin "${pkg.meta.mainProgram}" ''
+        ${mkAgenixExportScript vars}
+        ${getExe pkg} "$@"
+      '';
 
     json = {
       set = mkJqActivationScript "=";

@@ -23,18 +23,17 @@ in
     {
       package,
       binName ? package.meta.mainProgram,
-      args ? "",
+      args ? "", # TODO use escape helper from lib and switch this to list
       passthroughName ? binName,
       wrapperName ? "${binName}-sandboxed",
       extraRwDirs ? [ ],
       agentDir, # name of subdir in xdg dirs
       agentName ? binName,
       env ? { },
-      tokens ? null,
+      tokens ? (f: { }),
     }:
     let
-      cmd = "${lib.getExe (config.lib.home.agenixWrapPkg package tokens)} ${args}";
-
+      cmd = "${lib.getExe package} ${args}"; # TODO unfuck this
       scriptCommon =
         let
           defaultEnv = {
@@ -44,6 +43,7 @@ in
         # bash
         ''
           unset GIT_EXTERNAL_DIFF
+          ${config.lib.home.mkAgenixExportScript tokens}
           ${exportScript (env // defaultEnv)}
         '';
       passthrough = pkgs.writeShellApplication {
@@ -159,8 +159,15 @@ in
             '';
         });
     in
-    [
-      passthrough
-      sandboxed
-    ];
+    pkgs.symlinkJoin {
+      name = (lib.getName package) + "-wrappers";
+      paths = [
+        package
+      ];
+      postBuild = ''
+        rm -f "$out/bin/${binName}"
+        ln -s ${lib.getExe passthrough} "$out/bin/${passthroughName}"
+        ln -s ${lib.getExe sandboxed} "$out/bin/${sandboxed.name}"
+      '';
+    };
 }

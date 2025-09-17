@@ -65,21 +65,22 @@ let
   env = {
     CODEX_HOME = codexHome;
   };
+  pkg = config.lib.agents.mkPackages {
+    binName = "codex";
+    package = pkgs.codex;
+    args = "--dangerously-bypass-approvals-and-sandbox"; # "--search" is bloated
+    inherit env;
+    agentDir = null;
+    wrapperName = "cdx";
+    extraRwDirs = [
+      codexHome
+    ];
+  };
 in
 {
   home.sessionVariables = env;
   home = {
-    packages = config.lib.agents.mkPackages {
-      binName = "codex";
-      package = pkgs.codex;
-      args = "--dangerously-bypass-approvals-and-sandbox"; # "--search" is bloated
-      inherit env;
-      agentDir = null;
-      wrapperName = "cdx";
-      extraRwDirs = [
-        codexHome
-      ];
-    };
+    packages = [ pkg ];
     activation = {
       codexConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         run cat ${codexTomlCfg} > "${codexCfgPath}";

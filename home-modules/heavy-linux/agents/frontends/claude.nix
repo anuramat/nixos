@@ -69,7 +69,7 @@ let
     in
     agents.mkPrompts "claude/agents" adaptedRoles;
 
-  claudeBoxedZai = config.lib.agents.mkPackages {
+  zaiPkg = config.lib.agents.mkPackages {
     agentDir = "claude";
     package = pkgs.claude-code;
     args = "--dangerously-skip-permissions";
@@ -84,7 +84,7 @@ let
       ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
     };
   };
-  claudeBoxed = config.lib.agents.mkPackages {
+  pkg = config.lib.agents.mkPackages {
     agentDir = "claude";
     package = pkgs.claude-code;
     args = "--dangerously-skip-permissions";
@@ -109,14 +109,13 @@ in
     sessionVariables = {
       CLAUDE_CONFIG_DIR = cfgDir;
     };
-    packages =
-      claudeBoxed
-      ++ claudeBoxedZai
-      ++ [
-        pkgs.claude-desktop
-        pkgs.ccusage
-        pkgs.claude-monitor
-      ];
+    packages = [
+      pkg
+      zaiPkg
+      pkgs.claude-desktop
+      pkgs.ccusage
+      pkgs.claude-monitor
+    ];
     activation = {
       claudeSettings = config.lib.home.json.set {
         includeCoAuthoredBy = false;

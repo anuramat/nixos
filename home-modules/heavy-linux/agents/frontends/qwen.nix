@@ -11,6 +11,16 @@ let
     hideTips = true;
     hideBanner = true;
   } (config.home.homeDirectory + "/.qwen/settings.json");
+  pkg = config.lib.agents.mkPackages {
+    package = pkgs.qwen-code;
+    wrapperName = "qwn";
+    args = "--yolo";
+    agentDir = null;
+    extraRwDirs = [
+      "$HOME/.qwen"
+    ];
+  };
+
 in
 {
   home = {
@@ -18,14 +28,6 @@ in
       inherit qwenConfig;
     };
     file.".qwen/${contextFileName}".text = agents.instructions.generic;
-    packages = config.lib.agents.mkPackages {
-      package = pkgs.qwen-code;
-      wrapperName = "qwn";
-      args = "--yolo";
-      agentDir = null;
-      extraRwDirs = [
-        "$HOME/.qwen"
-      ];
-    };
+    packages = [ pkg ];
   };
 }

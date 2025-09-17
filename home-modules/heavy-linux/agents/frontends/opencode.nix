@@ -229,6 +229,11 @@ let
       	};
       };
     '';
+  pkg = agents.mkPackages {
+    wrapperName = "ocd";
+    agentDir = "opencode";
+    package = pkgs.opencode;
+  };
 in
 {
   xdg.configFile =
@@ -254,11 +259,6 @@ in
         config.xdg.configHome + "/opencode/opencode.json"
       );
     };
-
-    packages = agents.mkPackages {
-      wrapperName = "ocd";
-      agentDir = "opencode";
-      package = pkgs.opencode;
-    };
+    packages = [ pkg ];
   };
 }
