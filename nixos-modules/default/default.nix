@@ -53,9 +53,6 @@
     noAutostart = true;
   };
 
-  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
-    config.services.ollama.port
-  ];
   boot.initrd.systemd.enable = true; # TODO idk why I have this
 
   # TODO check through virtualisation; also maybe we can move some of it

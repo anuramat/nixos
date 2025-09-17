@@ -157,23 +157,20 @@ let
     };
   }
   // (
-    if osConfig != null then
-      {
-        llama-cpp = {
-          base-url =
-            let
-              port = toString osConfig.services.llama-cpp.port;
-            in
-            "http://localhost:${port}";
-          api-key = "dummy";
-          models = {
-            "dummy" = {
-            };
+    let
+      l = osConfig.services.llama-cpp;
+      when = v: if osConfig != null && l.enable then v else { };
+    in
+    when {
+      llama-cpp = {
+        base-url = "http://localhost:${l.port}";
+        api-key = "dummy";
+        models = {
+          ${l.modelExtra.id} = {
           };
         };
-      }
-    else
-      { }
+      };
+    }
   );
 in
 {

@@ -29,17 +29,21 @@ let
           };
         };
         # experimental_resume = "${codexHome}/history.jsonl";
-        model_providers = {
-          llama-cpp = {
-            name = "llama-cpp";
-            base_url =
-              let
-                port = toString osConfig.services.llama-cpp.port;
-              in
-              "http://localhost:${port}";
-            wire_api = "chat";
-          };
-        };
+        model_providers =
+          if osConfig != null && osConfig.services.llama-cpp.enable then
+            {
+              llama-cpp = {
+                name = "llama-cpp";
+                base_url =
+                  let
+                    port = toString osConfig.services.llama-cpp.port;
+                  in
+                  "http://localhost:${port}";
+                wire_api = "chat";
+              };
+            }
+          else
+            { };
         notify =
           let
             notifier = pkgs.writeShellApplication {

@@ -5,8 +5,6 @@
   ...
 }:
 let
-  # TODO make sure this is not built for t480, maybe make a new module
-
   modelDir = "/mnt/storage/llama-cpp";
 
   models = {
@@ -126,7 +124,6 @@ in
   imports = [ ./options.nix ];
   environment.systemPackages = [
     pkgs.llama-cpp
-    pkgs.python313Packages.huggingface-hub
   ];
   environment.sessionVariables = {
     LLAMA_CACHE = modelDir;
