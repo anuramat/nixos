@@ -44,14 +44,14 @@ in
   # forks
   mdformat-myst = mkInput "github:anuramat/mdformat-myst/dev"; # I think I broke the formatter...
   mdmath.url = "github:anuramat/mdmath.nvim";
-  mods.url = "github:anuramat/mods";
+  mods.url = "github:anuramat/mods/dev";
   zotero-mcp.url = "github:anuramat/zotero-mcp";
   duckduckgo-mcp-server.url = "github:anuramat/duckduckgo-mcp-server/dev";
 
   # misc
   claude-desktop = mkInput "github:k3d3/claude-desktop-linux-flake";
   crush = mkNonFlake "github:charmbracelet/crush/v0.7.5";
-  mcp-nixos = mkInput "github:utensils/mcp-nixos";
+  mcp-nixos.url = "github:utensils/mcp-nixos";
   mcphub = mkInput "github:ravitemer/mcphub.nvim";
   nil = mkInput "github:oxalica/nil/main";
   spicetify-nix = mkInput "github:Gerg-L/spicetify-nix";

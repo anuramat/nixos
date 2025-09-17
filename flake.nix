@@ -87,11 +87,6 @@
       url = "github:hraban/mac-app-util";
     };
     mcp-nixos = {
-      inputs = {
-        nixpkgs = {
-          follows = "nixpkgs";
-        };
-      };
       url = "github:utensils/mcp-nixos";
     };
     mcphub = {
@@ -114,7 +109,7 @@
       url = "github:anuramat/mdmath.nvim";
     };
     mods = {
-      url = "github:anuramat/mods";
+      url = "github:anuramat/mods/dev";
     };
     neovim-nightly-overlay = {
       url = "github:nix-community/neovim-nightly-overlay";
