@@ -5,7 +5,6 @@
 {
   programs.adb.enable = true; # android stuff
   hardware = {
-    flipperzero.enable = true;
     openrazer.enable = true;
   };
   environment.systemPackages = with pkgs; [
