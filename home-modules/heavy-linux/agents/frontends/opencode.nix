@@ -43,7 +43,7 @@ let
     };
 
   opencodeConfig = {
-    # model = mini; bugged
+    # model = mini; bugged -- overrides agent model on startup
     small_model = if local.enabled then "${local.providerId}/${local.modelId}" else grok;
     inherit mcp provider agent;
     autoupdate = false;
