@@ -6,6 +6,7 @@
   ];
   plugins = {
     friendly-snippets.enable = true;
+    llm.enable = true;
     blink-cmp = {
       enable = true;
       settings = {
