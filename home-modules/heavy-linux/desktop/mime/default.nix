@@ -8,7 +8,7 @@ let
   inherit (hax.mime) setMany generateMimeTypes mimeFromDesktop;
 
   applications = {
-    browser = "librewolf.desktop";
+    browser = "firefox.desktop";
     fileManager = "yazi.desktop";
     documentViewer = "org.pwmt.zathura.desktop";
     textEditor = "nvim.desktop";
