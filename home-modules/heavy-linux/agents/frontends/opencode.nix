@@ -73,7 +73,7 @@ let
     in
     {
       plan = {
-        model = mini;
+        model = grok;
         tools = ro // {
           # "think_*" = true;
         };
