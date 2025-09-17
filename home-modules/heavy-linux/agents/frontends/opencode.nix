@@ -44,7 +44,7 @@ let
 
   opencodeConfig = {
     model = mini;
-    small_model = if local.enabled then "${local.providerId}/${local.modelId}" else mini;
+    small_model = if local.enabled then "${local.providerId}/${local.modelId}" else grok;
     inherit mcp provider agent;
     autoupdate = false;
     instructions = [
