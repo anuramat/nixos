@@ -20,7 +20,7 @@ let
         model_verbosity = "low";
 
         mcp_servers = {
-          inherit (config.lib.agents.mcp.raw) ddg think;
+          inherit (config.lib.agents.mcp.raw) ddg nix;
         };
         profiles = {
           oss = {
