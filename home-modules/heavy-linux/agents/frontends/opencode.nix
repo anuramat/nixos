@@ -9,7 +9,6 @@ let
   inherit (lib) mapAttrs;
   inherit (config.lib) agents;
 
-  grok = "opencode/grok-code";
   oss = "ollama-turbo/gpt-oss:120b";
   qwen = "cerebras/qwen-3-coder-480b"; # cerebras recommends t=0.7 top_p=0.8
   glm = "zhipuai/glm-4.5";
@@ -44,7 +43,7 @@ let
 
   opencodeConfig = {
     # model = mini; bugged -- overrides agent model on startup
-    small_model = if local.enabled then "${local.providerId}/${local.modelId}" else grok;
+    small_model = if local.enabled then "${local.providerId}/${local.modelId}" else qwen;
     inherit mcp provider agent;
     autoupdate = false;
     instructions = [
@@ -81,7 +80,7 @@ let
     in
     {
       plan = {
-        model = grok;
+        model = qwen;
         tools = ro;
       };
       build = {
