@@ -1,5 +1,16 @@
 inputs:
 (final: prev: {
+  protonmail-bridge = prev.protonmail-bridge.overrideAttrs (oldAttrs: rec {
+    version = "3.21.2";
+    src = prev.fetchFromGitHub {
+      owner = "ProtonMail";
+      repo = "proton-bridge";
+      tag = "v${version}";
+      hash = "sha256-IQgP+eWUCyViEBi0WFIOW2rXZLtoyVlrQrtAaqaLOv0=";
+    };
+    vendorHash = "sha256-aW7N6uacoP99kpvw9E5WrHaQ0fZ4P5WGsNvR/FAZ+cA=";
+  });
+
   anytype = prev.appimageTools.wrapType2 rec {
     pname = "anytype";
     version = "0.49.2";
