@@ -79,18 +79,17 @@ inputs:
 
   codex = prev.stdenv.mkDerivation rec {
     pname = "codex";
-    version = "0.31.0";
+    version = "0.38.0";
     src = prev.fetchurl {
-      url = "https://github.com/openai/codex/releases/download/rust-v${version}/codex";
-      hash = "sha256-8fRnYhgXp+kS0LHSqZ3BNqTzmMXaS39x0GwIF1HDJOQ=";
+      url = "https://github.com/openai/codex/releases/download/rust-v${version}/codex-x86_64-unknown-linux-musl.zst";
+      hash = "sha256-MFOrr6byBG6M/+dQgTVJRNM7+1N5Bq/LxHcS5mQVVZI=";
     };
     dontUnpack = true;
-    nativeBuildInputs = [ prev.makeWrapper ];
-    installPhase =
-      with prev; # bash
-      ''
-        makeWrapper ${dotslash}/bin/dotslash $out/bin/codex --add-flags $src
-      '';
+    nativeBuildInputs = [ prev.zstd ];
+    installPhase = ''
+      zstd -d "$src" -o codex
+      install -Dt $out/bin codex
+    '';
     meta.mainProgram = "codex";
   };
 
