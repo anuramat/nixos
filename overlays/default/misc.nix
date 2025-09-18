@@ -89,6 +89,8 @@ inputs:
     installPhase = ''
       zstd -d "$src" -o codex
       install -Dt $out/bin codex
+      mkdir -p $out/share/bash-completion/completions
+      $out/bin/codex completion bash > $out/share/bash-completion/completions/codex
     '';
     meta.mainProgram = "codex";
   };
