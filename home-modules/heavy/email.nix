@@ -10,59 +10,59 @@ let
   fullname = git.userName;
 in
 {
-  programs.himalaya = {
-    enable = true;
-    settings = {
-      display-name = fullname;
-      signature = "Regards,\n";
-      signature-delim = "-- \n";
-      downloads-dir = "~/Downloads";
-    };
-  };
-  home.packages = with pkgs; [ hydroxide ];
+  home.packages = with pkgs; [ protonmail-bridge ];
 
-  systemd.user.services.hydroxide = {
-    # NOTE needs manual auth: `hydroxide auth`, then save to `pass hydroxide`
+  programs = {
+    neomutt.enable = true;
+  };
+
+  systemd.user.services.protonmail-bridge = {
+    # NOTE to log in:
+    # protonmail-bridge --cli
     Unit = {
-      Description = "Hydroxide ProtonMail Bridge";
+      Description = "ProtonMail Bridge";
+      After = [ "graphical-session.target" ];
     };
-    Install = {
-      WantedBy = [ "default.target" ];
-    };
+    Install.WantedBy = [ "default.target" ];
     Service = {
-      ExecStart = "${lib.getExe pkgs.hydroxide} serve";
+      ExecStart = "${lib.getExe pkgs.protonmail-bridge} --noninteractive";
       Restart = "always";
       RestartSec = 10;
     };
   };
-  accounts.email.accounts.primary = {
-    address = email;
-    primary = true;
-    realName = fullname;
-    himalaya = {
-      enable = true;
-      settings =
+
+  accounts.email = {
+    accounts.primary = {
+      primary = true;
+
+      userName = email;
+      address = email;
+      realName = fullname;
+      passwordCommand =
         let
-          backend = {
-            login = email;
-            type = "imap";
-            host = "127.0.0.1";
-            port = 1143;
-            encryption.type = "none";
-            auth = {
-              type = "password";
-              cmd = "pass show hydroxide";
-            };
-          };
+          pass = lib.getExe pkgs.pass;
         in
-        {
-          email = email;
-          inherit backend;
-          message.send.backend = backend // {
-            type = "smtp";
-            port = 1025;
-          };
-        };
+        "${pass} show proton-bridge/${email}";
+
+      imap = {
+        host = "127.0.0.1";
+        port = 1143;
+        tls.enable = false;
+      };
+      smtp = {
+        host = "127.0.0.1";
+        port = 1025;
+        tls.enable = false;
+      };
+
+      neomutt = {
+        enable = true;
+        mailboxType = "imap";
+      };
+      # TODO first start will ask for cert acceptance; can we automate that?
+      # NOTE to enable cache:
+      # mkdir -p ${config.xdg.cacheHome}/neomutt/messages/
     };
   };
+
 }
