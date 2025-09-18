@@ -140,7 +140,7 @@ let
         |> lib.mapAttrsToList (n: v: ''export ${n}=$(cat "${v.path}")'')
         |> concatStringsSep "\n";
     in
-    if osConfig ? null then
+    if osConfig != null then
       mkScript osConfig
     else if config ? age then
       mkScript config
