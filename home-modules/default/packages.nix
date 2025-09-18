@@ -101,6 +101,7 @@
     renameutils
     mitmproxy
     dotslash
+    hyperfine # CLI benchmarking, a-la `time`
     python3
     just
     wishlist # ssh menu
