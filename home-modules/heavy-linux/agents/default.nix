@@ -80,6 +80,7 @@ in
     ./frontends
     ./git.nix
     ./instructions.nix
+    ./litellm.nix
     ./mods.nix
     ./roles.nix
     ./sandbox.nix

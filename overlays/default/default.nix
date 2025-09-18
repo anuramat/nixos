@@ -30,6 +30,7 @@ let
       proton-pass
       goose-cli
       librewolf
+      litellm
       ;
   };
   pythonPackages = final: prev: {
