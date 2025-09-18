@@ -137,7 +137,12 @@ let
       mkScript =
         cfg:
         vars cfg.age.secrets
-        |> lib.mapAttrsToList (n: v: ''export ${n}=$(cat "${v.path}")'')
+        |> lib.mapAttrsToList (
+          name: secret: ''
+            export ${name}
+            ${name}=$(cat "${secret.path}")
+          ''
+        )
         |> concatStringsSep "\n";
     in
     if osConfig != null then
@@ -154,10 +159,25 @@ in
     inherit mkGenericActivationScript mkAgenixExportScript;
     agenixWrapPkg =
       pkg: vars:
-      pkgs.writeShellScriptBin "${pkg.meta.mainProgram}" ''
-        ${mkAgenixExportScript vars}
-        ${getExe pkg} "$@"
-      '';
+      let
+        name = "${getName pkg}-agenix";
+        script = pkgs.writeShellScript name ''
+          ${mkAgenixExportScript vars}
+          ${getExe pkg} "$@"
+        '';
+      in
+      (pkgs.symlinkJoin {
+        inherit name;
+        paths = [
+          pkg
+        ];
+        postBuild = ''
+          ln -sf ${script} "$out/bin/${pkg.meta.mainProgram}"
+        '';
+      }).overrideAttrs
+        (old: {
+          inherit (pkg) meta;
+        });
 
     json = {
       set = mkJqActivationScript "=";
