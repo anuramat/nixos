@@ -67,14 +67,6 @@
     git-hooks-nix = {
       url = "github:cachix/git-hooks.nix";
     };
-    gothink = {
-      inputs = {
-        nixpkgs = {
-          follows = "nixpkgs";
-        };
-      };
-      url = "github:anuramat/gothink";
-    };
     home-manager = {
       inputs = {
         nixpkgs = {

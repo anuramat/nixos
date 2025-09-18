@@ -11,7 +11,7 @@ let
 
   grok = "opencode/grok-code";
   oss = "ollama-turbo/gpt-oss:120b";
-  qwen = "cerebras/qwen-3-coder-480b";
+  qwen = "cerebras/qwen-3-coder-480b"; # cerebras recommends t=0.7 top_p=0.8
   glm = "zhipuai/glm-4.5";
   mini = "github-copilot/gpt-5-mini";
 
@@ -53,8 +53,15 @@ let
     tools = {
       webfetch = false;
       "deepwiki_*" = false;
-      "think_*" = false;
       "zotero_*" = false;
+      "nixos_*" = false;
+      "nixos_home_manager_info" = true;
+      "nixos_home_manager_options_by_prefix" = true;
+      "nixos_home_manager_search" = true;
+      "nixos_nixhub_find_version" = true;
+      "nixos_nixhub_package_versions" = true;
+      "nixos_nixos_info" = true;
+      "nixos_nixos_search" = true;
     };
     share = "disabled";
     keybinds = {
@@ -69,14 +76,13 @@ let
         patch = false;
         edit = false;
         write = false;
+        task = false;
       };
     in
     {
       plan = {
         model = grok;
-        tools = ro // {
-          # "think_*" = true;
-        };
+        tools = ro;
       };
       build = {
         model = mini;
@@ -124,6 +130,12 @@ let
           gpt-5.options = gptOutputOptions;
           gpt-5-mini.options = gptOutputOptions;
         };
+      baseModel = {
+        attachment = false;
+        reasoning = true;
+        temperature = true;
+        tool_call = true;
+      };
     in
     local.providerConfig
     // {
@@ -136,7 +148,17 @@ let
         api = "https://api.z.ai/api/coding/paas/v4";
         options.apiKey = keys.zai;
       };
-      cerebras.options.apiKey = keys.cerebras;
+      cerebras = {
+        options.apiKey = keys.cerebras;
+        models = {
+          qwen-3-235b-a22b-thinking-2507 = baseModel // {
+            limit = rec {
+              context = 131000;
+              output = context;
+            };
+          };
+        };
+      };
       groq.options.apiKey = keys.groq;
       github-copilot.models = gpt5models;
       openai = {
@@ -152,13 +174,7 @@ let
         };
         models =
           let
-            common = {
-              attachment = false;
-              reasoning = true;
-              temperature = true;
-              tool_call = true;
-            };
-            gpt = common // {
+            gpt = baseModel // {
               limit = rec {
                 context = 131072;
                 output = context;
@@ -174,7 +190,7 @@ let
               id = "gpt-oss:120b";
               name = "GPT-OSS 120B";
             };
-            "deepseek-v3.1:671b" = common // {
+            "deepseek-v3.1:671b" = baseModel // {
               limit = rec {
                 context = 163840;
                 output = context;
@@ -204,9 +220,9 @@ let
       enabledServers = {
         inherit (rawServers)
           ddg
-          think
           deepwiki
           zotero
+          nix
           ;
       };
       disabledServers =

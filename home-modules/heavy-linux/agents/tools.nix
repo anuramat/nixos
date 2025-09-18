@@ -10,7 +10,7 @@ let
     ;
 
   mcp = {
-    nixos = {
+    nix = {
       command = getExe pkgs.mcp-nixos;
     };
     deepwiki = {
@@ -29,16 +29,6 @@ let
           "stdio"
         ];
       };
-    think = {
-      command = getExe pkgs.gothink;
-    };
-    tools = {
-      command = getExe pkgs.claude-code;
-      args = [
-        "mcp"
-        "serve"
-      ];
-    };
     zotero = {
       command = getExe pkgs.zotero-mcp;
       env = {

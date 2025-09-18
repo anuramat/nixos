@@ -37,7 +37,6 @@ in
   # my stuff
   ctrlsn = mkInput "git+ssh://git@github.com/anuramat/ctrl.sn?ref=main";
   figtree = mkInput "github:anuramat/figtree.nvim";
-  gothink = mkInput "github:anuramat/gothink";
   subcat = mkInput "github:anuramat/subcat";
   todo = mkInput "github:anuramat/todo";
 
