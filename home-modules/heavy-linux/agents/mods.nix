@@ -142,8 +142,14 @@ let
     copilot = {
       base-url = "https://api.githubcopilot.com";
       models = {
-        "gpt-5" = {
+        "gpt-5-mini" = {
           fallback = "gpt-4.1";
+          aliases = [
+            "mini"
+          ];
+        };
+        "gpt-5" = {
+          fallback = "gpt-5-mini";
           aliases = [
             "5"
           ];

@@ -1222,11 +1222,11 @@
         "treefmt-nix": "treefmt-nix_2"
       },
       "locked": {
-        "lastModified": 1758137424,
-        "narHash": "sha256-Xz5ZpUmj2qxolyzfulZHuYdQLSjmAQ8LhErNMuQf95c=",
+        "lastModified": 1758168338,
+        "narHash": "sha256-8bJvmsJ+DZaeAjU7bltjXRCXhtQ5i7fJ6nYuw25b6F0=",
         "owner": "anuramat",
         "repo": "mods",
-        "rev": "24c44c582253ea1f756ff3602108b5e8e0a38555",
+        "rev": "5545ceed959a7ebc1ab6a7761beec2ab2a6c132b",
         "type": "github"
       },
       "original": {
