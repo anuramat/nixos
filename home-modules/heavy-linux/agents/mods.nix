@@ -6,17 +6,10 @@
   ...
 }:
 let
-  modsWithTokens = config.lib.home.agenixWrapPkg pkgs.mods (
-    (t: {
-      ZAI_API_KEY = t.zai;
-      CEREBRAS_API_KEY = t.cerebras;
-    })
-  );
-
-  # mods expects env to be an array of strings "ENVVAR=value"
   mcp-servers = builtins.mapAttrs (
     name: server:
     if server ? env then
+      # mods expects env to be an array of strings "ENVVAR=value"
       server
       // {
         env = lib.mapAttrsToList (n: v: "${n}=${v}") server.env;
@@ -119,65 +112,69 @@ let
       ];
     };
   };
-  apis = {
-    cerebras = {
-      base-url = "https://api.cerebras.ai/v1";
-      api-key-env = "CEREBRAS_API_KEY";
-      models = {
-        qwen-3-coder-480b = {
-          aliases = [ "coder" ];
-        };
-      };
-    };
-    zai = {
-      api = "anthropic";
-      base-url = "https://api.z.ai/api/anthropic";
-      api-key-env = "ZAI_API_KEY";
-      models = {
-        "glm-4.5" = {
-          aliases = [ "glm" ];
-        };
-      };
-    };
-    copilot = {
-      base-url = "https://api.githubcopilot.com";
-      models = {
-        "gpt-5-mini" = {
-          fallback = "gpt-4.1";
-          aliases = [
-            "mini"
-          ];
-        };
-        "gpt-5" = {
-          fallback = "gpt-5-mini";
-          aliases = [
-            "5"
-          ];
-        };
-        "gpt-4.1" = {
-          aliases = [
-            "4"
-          ];
-        };
-      };
-    };
-  }
-  // (
+  apis =
     let
-      l = osConfig.services.llama-cpp;
-      when = v: if osConfig != null && l.enable then v else { };
+      keys = lib.mapAttrs (n: v: "cat ${v.path}") osConfig.age.secrets;
     in
-    when {
-      llama-cpp = {
-        base-url = "http://localhost:${l.port}";
-        api-key = "dummy";
+    {
+      cerebras = {
+        base-url = "https://api.cerebras.ai/v1";
+        api-key-cmd = keys.cerebras;
         models = {
-          ${l.modelExtra.id} = {
+          qwen-3-coder-480b = {
+            aliases = [ "coder" ];
+          };
+        };
+      };
+      zai = {
+        api = "anthropic";
+        base-url = "https://api.z.ai/api/anthropic";
+        api-key-env = keys.zai;
+        models = {
+          "glm-4.5" = {
+            aliases = [ "glm" ];
+          };
+        };
+      };
+      copilot = {
+        base-url = "https://api.githubcopilot.com";
+        models = {
+          "gpt-5-mini" = {
+            fallback = "gpt-4.1";
+            aliases = [
+              "mini"
+            ];
+          };
+          "gpt-5" = {
+            fallback = "gpt-5-mini";
+            aliases = [
+              "5"
+            ];
+          };
+          "gpt-4.1" = {
+            aliases = [
+              "4"
+            ];
           };
         };
       };
     }
-  );
+    // (
+      let
+        l = osConfig.services.llama-cpp;
+        when = v: if osConfig != null && l.enable then v else { };
+      in
+      when {
+        llama-cpp = {
+          base-url = "http://localhost:${l.port}";
+          api-key = "dummy";
+          models = {
+            ${l.modelExtra.id} = {
+            };
+          };
+        };
+      }
+    );
 in
 {
   home.activation.mods = config.lib.home.yaml.set {
@@ -194,7 +191,7 @@ in
   } "${config.xdg.configHome}/mods/mods.yml";
   home = {
     packages = [
-      modsWithTokens
+      pkgs.mods
     ];
   };
 }
