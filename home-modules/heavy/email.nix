@@ -8,12 +8,27 @@ let
   inherit (config.programs) git;
   email = git.userEmail;
   fullname = git.userName;
+  mailcap = pkgs.writeText "mailcap" ''
+    text/html; ${lib.getExe pkgs.html2text} -links %s; copiousoutput
+  '';
 in
 {
   home.packages = with pkgs; [ protonmail-bridge ];
 
   programs = {
-    neomutt.enable = true;
+    neomutt = {
+      enable = true;
+      vimKeys = true;
+      # sidebar.enable = true;
+      sort = "date";
+      # TODO explain these
+      extraConfig = ''
+        auto_view text/html
+        set implicit_autoview
+        set mailcap_path=${mailcap}
+        alternative_order text/plain text/html
+      '';
+    };
   };
 
   systemd.user.services.protonmail-bridge = {
@@ -58,9 +73,13 @@ in
       neomutt = {
         enable = true;
         mailboxType = "imap";
+        extraConfig = ''
+          set imap_check_subscribed
+        '';
       };
       # TODO first start will ask for cert acceptance; can we automate that?
       # NOTE to enable cache:
+      # TODO BUG REPORT, it's not created by default
       # mkdir -p ${config.xdg.cacheHome}/neomutt/messages/
     };
   };
