@@ -3,6 +3,7 @@
   config,
   hax,
   inputs,
+  pkgs,
   ...
 }:
 {
@@ -80,4 +81,8 @@
     # setcap wrapper to use rootless
     enable = true;
   };
+
+  # environment.systemPackages = with pkgs; [
+  #   hyprpolkitagent
+  # ];
 }

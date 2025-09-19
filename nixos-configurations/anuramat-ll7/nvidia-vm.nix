@@ -21,7 +21,6 @@
   # iommu=pt = passthrough mode for better perf
   boot.kernelParams = [
     "intel_iommu=on"
-    "amd_iommu=on"
     "iommu=pt"
     "vfio-pci.ids=10de:2860,10de:22bd"
     # If you later hit BAR reservation issues, try also:
@@ -49,5 +48,6 @@
     };
   };
 
+  users.groups.libvirtd.members = [ "anuramat" ];
   users.users.anuramat.extraGroups = [ "libvirtd" ];
 }

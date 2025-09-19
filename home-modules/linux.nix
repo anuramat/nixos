@@ -28,6 +28,8 @@
     smem # ram usage
     v4l-utils # camera stuff
     wirelesstools # iwconfig etc
+
+    hyprpolkitagent
   ];
 
   # TODO figure out rust version or keyring locking

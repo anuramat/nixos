@@ -26,8 +26,14 @@
     ];
   };
 
+  # specialisation.vfio.configuration = {
+  #   imports = [
+  #   ];
+  # };
+
   imports = [
-    ./vm.nix
+    ./nvidia-vm.nix
+    # ./nvidia-host.nix
     inputs.self.nixosModules.default
     inputs.self.nixosModules.local
     inputs.self.nixosModules.builder
@@ -37,7 +43,6 @@
     inputs.nixos-hardware.nixosModules.common-cpu-intel
 
     inputs.nixos-hardware.nixosModules.common-gpu-intel # they don't have this in the repo
-    inputs.nixos-hardware.nixosModules.common-gpu-nvidia # compare to other modules
 
     inputs.nixos-hardware.nixosModules.common-hidpi
     inputs.nixos-hardware.nixosModules.common-pc-laptop
@@ -85,28 +90,6 @@
       enable32Bit = true; # compat
     };
   };
-  services.xserver.videoDrivers = [ "nvidia" ]; # use proprietary drivers
-  environment.sessionVariables.WLR_DRM_DEVICES = "/dev/dri/by-path/pci-0000:00:02.0-card"; # used by sway to start on iGPU
-  hardware = {
-    nvidia = {
-      open = true; # recommended on turing+
-      dynamicBoost.enable = true;
-      powerManagement = {
-        enable = true; # saves entire vram to /tmp/ instead of the bare minimum
-        finegrained = true; # turns off gpu when not in use
-      };
-      prime = {
-        intelBusId = "PCI:00:02:0";
-        nvidiaBusId = "PCI:01:00:0";
-        # prime offloading
-        offload = {
-          enable = true;
-          enableOffloadCmd = true; # `nvidia-offload`
-        };
-      };
-      nvidiaSettings = true;
-    };
-  };
-  # }}}
+  environment.sessionVariables.WLR_DRM_DEVICES = "/dev/dri/by-path/pci-0000:00:02.0-card"; # used by sway startup script to start on iGPU
 }
 # vim: fdm=marker fdl=0
