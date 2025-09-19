@@ -33,6 +33,6 @@
   };
   home.packages = with pkgs; [
     vis
-    zeditor
+    zed-editor
   ];
 }
