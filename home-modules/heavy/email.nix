@@ -77,11 +77,21 @@ in
           set imap_check_subscribed
         '';
       };
+      imapnotify = {
+        enable = true;
+        boxes = [ "INBOX" ];
+        onNotify = ''${lib.getExe pkgs.libnotify} -a mail "New email"'';
+      };
       # TODO first start will ask for cert acceptance; can we automate that?
       # NOTE to enable cache:
       # TODO BUG REPORT, it's not created by default
       # mkdir -p ${config.xdg.cacheHome}/neomutt/messages/
     };
+  };
+
+  services.imapnotify = {
+    enable = true;
+    path = [ pkgs.libnotify ];
   };
 
 }
