@@ -91,7 +91,33 @@ in
 
   services.imapnotify = {
     enable = true;
-    path = [ pkgs.libnotify ];
+    path = [
+      pkgs.libnotify
+      pkgs.gnupg
+      pkgs.pinentry
+    ];
+  };
+
+  systemd.user.services.imapnotify = {
+    Unit = {
+      After = [
+        "gpg-agent.service"
+        "protonmail-bridge.service"
+      ];
+      Wants = [
+        "gpg-agent.service"
+        "protonmail-bridge.service"
+      ];
+    };
+    Service = {
+      Environment =
+        let
+          dir = config.programs.password-store.settings.PASSWORD_STORE_DIR;
+        in
+        [
+          "PASSWORD_STORE_DIR=${dir}"
+        ];
+    };
   };
 
 }
