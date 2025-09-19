@@ -76,9 +76,9 @@ let
         };
       }
       {
-        model_name = "zhipuai/*";
+        model_name = "zai/*";
         litellm_params = {
-          model = "zhipuai/*";
+          model = "openai/*";
           api_base = "https://api.z.ai/api/coding/paas/v4";
           api_key = "os.environ/ZAI_API_KEY";
         };
