@@ -1,5 +1,6 @@
 # TODO commands (shortcuts); maybe plug into mcp-hub https://ravitemer.github.io/mcphub.nvim/mcp/native/prompts.html
 # NOTE supports most types of context files, but only reads the first one
+# TODO only allow file edits without asking for permission every time
 {
   config,
   pkgs,

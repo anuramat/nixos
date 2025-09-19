@@ -19,7 +19,7 @@ let
     # ];
     # environment_variables = { };
     general_settings = {
-      master_key = "dummy";
+      master_key = key;
     };
     model_list = [
       {
@@ -80,6 +80,10 @@ let
       check_provider_endpoint = true;
     };
   };
+
+  port = "11333";
+  host = "127.0.0.1";
+  key = "dummy";
 in
 {
   systemd.user.services.litellm = {
@@ -89,10 +93,14 @@ in
     };
     Install.WantedBy = [ "default.target" ];
     Service = {
-      ExecStart = "${pkg}/bin/litellm --host 127.0.0.1 --port 11333 --config ${cfg}";
+      ExecStart = "${pkg}/bin/litellm --host ${host} --port ${port} --config ${cfg}";
       Restart = "always";
       RestartSec = 3;
     };
   };
-  home.packages = [ pkg ];
+  home.packages = [
+    (pkgs.writeShellScriptBin "litellm-proxy" ''
+      exec ${pkg}/bin/litellm-proxy --base-url http://localhost:${host} --api-key ${key} "$@"
+    '')
+  ];
 }
