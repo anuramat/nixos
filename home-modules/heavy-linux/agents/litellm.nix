@@ -108,7 +108,7 @@ in
   };
   home.packages = [
     (pkgs.writeShellScriptBin "litellm-proxy" ''
-      exec ${pkg}/bin/litellm-proxy --base-url http://localhost:${host} --api-key ${key} "$@"
+      exec ${pkg}/bin/litellm-proxy --base-url http://localhost:${port} --api-key ${key} "$@"
     '')
   ];
 }
