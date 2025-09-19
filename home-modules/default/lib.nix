@@ -139,8 +139,8 @@ let
         vars cfg.age.secrets
         |> lib.mapAttrsToList (
           name: secret: ''
+            ${name}=$(<"${secret.path}")
             export ${name}
-            ${name}=$(cat "${secret.path}")
           ''
         )
         |> concatStringsSep "\n";
@@ -153,7 +153,6 @@ let
       "";
 
 in
-
 {
   lib.home = {
     inherit mkGenericActivationScript mkAgenixExportScript;
@@ -163,7 +162,7 @@ in
         name = "${getName pkg}-agenix";
         script = pkgs.writeShellScript name ''
           ${mkAgenixExportScript vars}
-          ${getExe pkg} "$@"
+          exec ${getExe pkg} "$@"
         '';
       in
       (pkgs.symlinkJoin {
