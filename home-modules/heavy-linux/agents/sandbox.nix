@@ -34,6 +34,7 @@ in
     let
       passthroughName = "${wrapperName}-unboxed";
       cmd = "${lib.getExe package} ${args}"; # TODO unfuck this
+      # TODO rename -- reflect that it's a preamble
       scriptCommon =
         let
           defaultEnv = {
@@ -59,6 +60,7 @@ in
 
       sandboxed =
         let
+          # XXX make more robust somehow? but then $PWD won't expand
           rwDirs =
             let
               agentDirs =
@@ -98,27 +100,33 @@ in
               shadowWithPassthrough =
                 var:
                 let
-                  shadow = ''
-                    ${var}="$TEMP_ROOT/${var}"
-                    export ${var}
-                    mkdir "${"$" + var}"
-                  '';
-                  passthrough = x: ''
-                    agentDir="${"$" + var}/${agentDir}"
-                    mkdir -p "$agentDir"
-                    ${shadow}
-                    [ -a "$agentDir" ] && ln -s -T "$agentDir" "${"$" + var}/${agentDir}"
-                  '';
+                  shadow = # bash
+                    ''
+                      ${var}="$TEMP_ROOT/${var}"
+                      export ${var}
+                      mkdir "${"$" + var}"
+                    '';
+                  passthrough =
+                    x: # bash
+                    ''
+                      agentDir="${"$" + var}/${agentDir}"
+                      mkdir -p "$agentDir"
+                      ${shadow}
+                      [ -a "$agentDir" ] && ln -s -T "$agentDir" "${"$" + var}/${agentDir}"
+                    '';
                 in
                 if agentDir == null then shadow else passthrough shadow;
+              header =
+                # bash
+                ''
+                  TEMP_ROOT=$(mktemp -d)
+                  # TODO make a helper for this
+                  ${varNames.agentSandboxLog}+="tmp dir: $TEMP_ROOT"$'\n'"shadowed vars: ${
+                    variables |> builtins.concatStringsSep ", "
+                  }"$'\n'
+                '';
             in
-            ''
-              TEMP_ROOT=$(mktemp -d)
-
-              echo "tmp dir: $TEMP_ROOT"
-              echo "shadowed paths: ${variables |> builtins.concatStringsSep ", "}"
-            ''
-            + (variables |> map shadowWithPassthrough |> builtins.concatStringsSep "\n");
+            header + (variables |> map shadowWithPassthrough |> builtins.concatStringsSep "\n");
 
         in
         (pkgs.writeShellApplication {
@@ -132,29 +140,33 @@ in
             +
             # bash
             ''
+              ${varNames.agentSandboxLogFile}="${config.xdg.cacheHome}/agents.log"
+              ${varNames.agentSandboxLog}=""
+
               # shadow some of the xdg directories with a tmp one
               ${shadowXdgScript agentDir}
 
               # collect RW dirs for bwrap
-              ${varNames.rwDirs}+=(${rwDirs})
+              RW_DIRS+=(${rwDirs})
               if gitroot=$(git rev-parse --show-toplevel 2>/dev/null) && [ -d "$gitroot" ]; then
                 # root of the current worktree, if it's not CWD already
-                [[ $(realpath "$gitroot") == $(realpath "$PWD") ]] || ${varNames.rwDirs}+=("$gitroot")
+                [[ $(realpath "$gitroot") == $(realpath "$PWD") ]] || RW_DIRS+=("$gitroot")
                 # .git/ dir
-                ${varNames.rwDirs}+=("$(realpath "$(git rev-parse --git-common-dir)")") 
+                RW_DIRS+=("$(realpath "$(git rev-parse --git-common-dir)")") 
               fi
-              export ${varNames.rwDirs}
-              echo "RW mounted directories:" && printf '\t%s\n' "''${${varNames.rwDirs}[@]}"
+
+              ${varNames.agentSandboxLog}+=$(echo "RW dirs:" && printf '\t%s\n' "''${RW_DIRS[@]}")
 
               # build bwrap args
               args=()
-              for i in "''${${varNames.rwDirs}[@]}"; do
+              for i in "''${RW_DIRS[@]}"; do
                 mkdir -p "$i"
               	args+=(--bind-try)
               	args+=("$i")
                 args+=("$i")
               done
 
+              echo "''$${varNames.agentSandboxLog}" >> "''$${varNames.agentSandboxLogFile}"
               bwrap --ro-bind / / --dev /dev "''${args[@]}" ${cmd} "$@"
             '';
         });
