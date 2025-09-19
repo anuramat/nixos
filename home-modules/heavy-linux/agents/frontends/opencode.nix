@@ -143,10 +143,7 @@ let
         budgetTokens = 10000;
       };
       openrouter.options.apiKey = keys.openrouter;
-      zhipuai = {
-        api = "https://api.z.ai/api/coding/paas/v4";
-        options.apiKey = keys.zai;
-      };
+      zai-coding-plan.options.apiKey = keys.zai;
       cerebras = {
         options.apiKey = keys.cerebras;
         models = {
