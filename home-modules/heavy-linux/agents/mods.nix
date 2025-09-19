@@ -166,7 +166,7 @@ let
       in
       when {
         llama-cpp = {
-          base-url = "http://localhost:${l.port}";
+          base-url = "http://localhost:${toString l.port}";
           api-key = "dummy";
           models = {
             ${l.modelExtra.id} = {
