@@ -23,15 +23,16 @@ in
   "anthropic.age"
   "cerebras-free.age"
   "cerebras.age"
-  "claude-code.age"
+  "claude.age"
   "gemini.age"
-  "ghmcp.age"
   "groq.age"
-  "oai.age"
-  "ollama-turbo.age"
+  "openai.age"
+  "ollama.age"
   "openrouter.age"
-  "poe.age" # "https://api.poe.com/v1"
+  "poe.age" # "https://api.poe.com/v1" TODO
   "zai.age"
+
+  "ghmcp.age"
 ]
 |> map (x: {
   name = x;
