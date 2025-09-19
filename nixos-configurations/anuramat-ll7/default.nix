@@ -32,8 +32,8 @@
   # };
 
   imports = [
-    ./nvidia-vm.nix
-    # ./nvidia-host.nix
+    # ./nvidia-vm.nix
+    ./nvidia-host.nix
     inputs.self.nixosModules.default
     inputs.self.nixosModules.local
     inputs.self.nixosModules.builder
