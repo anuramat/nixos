@@ -8,6 +8,7 @@ let
     mapAttrs
     ;
 
+  # TODO move to separate file
   flakes =
     final: prev:
     (mapAttrs (n: v: v.packages.${prev.system}.default) {
@@ -23,8 +24,10 @@ let
         duckduckgo-mcp-server
         ;
     });
+  # TODO move to separate file
   unstablePkgs = final: prev: {
     inherit (import inputs.nixpkgs-unstable { inherit (prev) config system; })
+      copilot-lua
       github-mcp-server
       keymapp
       proton-pass
@@ -33,6 +36,8 @@ let
       litellm
       ;
   };
+
+  # TODO move to misc.nix and rename misc.nix to IDK what
   pythonPackages = final: prev: {
     python3 = prev.python3.override {
       packageOverrides = pfinal: pprev: {
@@ -55,6 +60,7 @@ let
     };
   };
 
+  # TODO move to separate file
   impureWrappers =
     final: prev:
     let
@@ -83,6 +89,7 @@ let
       claude-monitor = mkUv "claude-monitor" "claude-monitor";
     };
 
+  # TODO move to separate file
   inputOverlays =
     with inputs;
     [
