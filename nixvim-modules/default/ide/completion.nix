@@ -49,8 +49,12 @@
         suggestion = {
           enabled = true;
           auto_trigger = true;
+          hide_during_completion = false;
+          debounce = 150;
           keymap = {
             accept = "<M-y>";
+            accept-line = "<M-j>";
+            accept-word = "<M-w>";
             next = "<M-n>";
             prev = "<M-p>";
             dismiss = "<M-e>";
