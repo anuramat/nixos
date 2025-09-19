@@ -72,7 +72,7 @@ let
   zaiPkg = config.lib.agents.mkPackages {
     agentDir = "claude";
     package = pkgs.claude-code;
-    args = "--dangerously-skip-permissions";
+    args = [ "--dangerously-skip-permissions" ];
     wrapperName = "claude-zai";
     tokens = t: {
       ANTHROPIC_AUTH_TOKEN = t.zai;
@@ -86,7 +86,7 @@ let
   pkg = config.lib.agents.mkPackages {
     agentDir = "claude";
     package = pkgs.claude-code;
-    args = "--dangerously-skip-permissions";
+    args = [ "--dangerously-skip-permissions" ];
     wrapperName = "cld";
     tokens = t: {
       # broken: https://github.com/anthropics/claude-code/issues/4085

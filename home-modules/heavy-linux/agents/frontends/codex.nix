@@ -68,7 +68,7 @@ let
   pkg = config.lib.agents.mkPackages {
     binName = "codex";
     package = pkgs.codex;
-    args = "--dangerously-bypass-approvals-and-sandbox"; # "--search" is bloated
+    args = [ "--dangerously-bypass-approvals-and-sandbox" ]; # "--search" is bloated
     inherit env;
     agentDir = null;
     extraRwDirs = [

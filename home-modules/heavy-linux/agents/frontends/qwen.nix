@@ -13,7 +13,7 @@ let
   } (config.home.homeDirectory + "/.qwen/settings.json");
   pkg = config.lib.agents.mkPackages {
     package = pkgs.qwen-code;
-    args = "--yolo";
+    args = [ "--yolo" ];
     agentDir = null;
     extraRwDirs = [
       "$HOME/.qwen"

@@ -24,7 +24,7 @@ in
       package,
       binName ? package.meta.mainProgram,
       wrapperName ? binName,
-      args ? "", # TODO use escape helper from lib and switch this to list
+      args ? [ ],
       extraRwDirs ? [ ],
       agentDir, # name of subdir in xdg dirs
       agentName ? binName,
@@ -33,7 +33,7 @@ in
     }:
     let
       passthroughName = "${wrapperName}-unboxed";
-      cmd = "${lib.getExe package} ${args}"; # TODO unfuck this
+      cmd = "${lib.getExe package} ${lib.escapeShellArgs args}";
       # TODO rename -- reflect that it's a preamble
       scriptCommon =
         let
@@ -155,7 +155,7 @@ in
                 RW_DIRS+=("$(realpath "$(git rev-parse --git-common-dir)")") 
               fi
 
-              ${varNames.agentSandboxLog}+=$(echo "RW dirs:" && printf '\t%s\n\n' "''${RW_DIRS[@]}")
+              ${varNames.agentSandboxLog}+=$(echo "RW dirs:" && printf '\t%s\n' "''${RW_DIRS[@]}")
 
               # build bwrap args
               args=()
