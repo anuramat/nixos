@@ -141,7 +141,7 @@ in
             # bash
             ''
               ${varNames.agentSandboxLogFile}="${config.xdg.cacheHome}/agents.log"
-              ${varNames.agentSandboxLog}=""
+              ${varNames.agentSandboxLog}="launching ${agentName} in $PWD: $(date '+%Y-%m-%d %H:%M:%S %z')"
 
               # shadow some of the xdg directories with a tmp one
               ${shadowXdgScript agentDir}
@@ -155,7 +155,7 @@ in
                 RW_DIRS+=("$(realpath "$(git rev-parse --git-common-dir)")") 
               fi
 
-              ${varNames.agentSandboxLog}+=$(echo "RW dirs:" && printf '\t%s\n' "''${RW_DIRS[@]}")
+              ${varNames.agentSandboxLog}+=$(echo "RW dirs:" && printf '\t%s\n\n' "''${RW_DIRS[@]}")
 
               # build bwrap args
               args=()
@@ -166,7 +166,7 @@ in
                 args+=("$i")
               done
 
-              echo "''$${varNames.agentSandboxLog}" >> "''$${varNames.agentSandboxLogFile}"
+              echo "''$${varNames.agentSandboxLog}"$'\n' >> "''$${varNames.agentSandboxLogFile}"
               bwrap --ro-bind / / --dev /dev "''${args[@]}" ${cmd} "$@"
             '';
         });
