@@ -242,7 +242,6 @@ let
       };
     '';
   pkg = agents.mkPackages {
-    wrapperName = "ocd";
     agentDir = "opencode";
     package = pkgs.opencode;
   };

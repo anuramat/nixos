@@ -71,7 +71,6 @@ let
     args = "--dangerously-bypass-approvals-and-sandbox"; # "--search" is bloated
     inherit env;
     agentDir = null;
-    wrapperName = "cdx";
     extraRwDirs = [
       codexHome
     ];

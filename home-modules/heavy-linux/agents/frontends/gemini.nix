@@ -13,7 +13,6 @@ let
   } (config.home.homeDirectory + "/.gemini/settings.json");
   pkg = config.lib.agents.mkPackages {
     package = pkgs.gemini-cli;
-    wrapperName = "gmn";
     args = "--yolo";
     agentDir = null;
     extraRwDirs = [

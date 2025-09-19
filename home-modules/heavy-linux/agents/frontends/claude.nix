@@ -73,8 +73,7 @@ let
     agentDir = "claude";
     package = pkgs.claude-code;
     args = "--dangerously-skip-permissions";
-    wrapperName = "cld-zai";
-    passthroughName = "claude-zai";
+    wrapperName = "claude-zai";
     tokens = t: {
       ANTHROPIC_AUTH_TOKEN = t.zai;
     };

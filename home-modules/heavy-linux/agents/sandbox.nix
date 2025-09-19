@@ -23,9 +23,8 @@ in
     {
       package,
       binName ? package.meta.mainProgram,
+      wrapperName ? binName,
       args ? "", # TODO use escape helper from lib and switch this to list
-      passthroughName ? binName,
-      wrapperName ? "${binName}-sandboxed",
       extraRwDirs ? [ ],
       agentDir, # name of subdir in xdg dirs
       agentName ? binName,
@@ -33,6 +32,7 @@ in
       tokens ? (f: { }),
     }:
     let
+      passthroughName = "${wrapperName}-unboxed";
       cmd = "${lib.getExe package} ${args}"; # TODO unfuck this
       scriptCommon =
         let
