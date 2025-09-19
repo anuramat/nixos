@@ -101,17 +101,17 @@ inputs:
       zstd -d "$src" -o codex
       install -Dt $out/bin codex
       mkdir -p $out/share/bash-completion/completions
-      $out/bin/codex completion bash > $out/share/bash-completion/completions/codex
+      $out/bin/codex completion bash >$out/share/bash-completion/completions/codex
     '';
     meta.mainProgram = "codex";
   };
 
   opencode = prev.stdenvNoCC.mkDerivation rec {
     pname = "opencode";
-    version = "0.6.8";
+    version = "0.10.2";
     src = prev.fetchzip {
       url = "https://github.com/sst/opencode/releases/download/v${version}/opencode-linux-x64.zip";
-      hash = "sha256-0DCqfl0bCp/QJJVuooMJlU3zryCUeBiSgEk0Nxe63ik=";
+      hash = "sha256-kQ6WwrNZuRz7Dk+5EbubIAEOc2vMc7A2EtFlXlUaxX4=";
     };
     dontFixup = true;
     # dontStrip = true;
