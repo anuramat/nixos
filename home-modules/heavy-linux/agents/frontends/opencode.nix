@@ -121,7 +121,7 @@ let
       gpt5models =
         let
           gptOutputOptions = {
-            reasoningEffort = "high";
+            reasoningEffort = "medium";
             textVerbosity = "low";
           };
         in

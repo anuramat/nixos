@@ -16,7 +16,7 @@ let
         show_raw_agent_reasoning = true;
         model_reasoning_summary = "detailed"; # auto/concise/detailed
 
-        model_reasoning_effort = "high";
+        model_reasoning_effort = "medium";
         model_verbosity = "low";
 
         mcp_servers = {
