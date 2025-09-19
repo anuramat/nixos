@@ -75,6 +75,14 @@ let
           };
         };
       }
+      {
+        model_name = "zhipuai/*";
+        litellm_params = {
+          model = "zhipuai/*";
+          api_base = "https://api.z.ai/api/coding/paas/v4";
+          api_key = "os.environ/ZAI_API_KEY";
+        };
+      }
     ];
     litellm_settings = {
       check_provider_endpoint = true;
