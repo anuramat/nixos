@@ -90,6 +90,8 @@
     fortune # random quotes
 
     # miscellaneous unfiled TODO
+    html2text # plain
+    percollate # markdown
     gron # make json greppable
     csvkit
     firefox-sync-client
