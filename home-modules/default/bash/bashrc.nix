@@ -97,6 +97,7 @@ let
       '';
   };
 
+  # either orphans or launched with `swaymsg exec`
   orphans = pkgs.writeShellApplication {
     name = "orphans";
     text = # bash
