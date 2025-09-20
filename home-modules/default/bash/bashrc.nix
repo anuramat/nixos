@@ -96,12 +96,22 @@ let
         find . -name stack.yaml -exec sed -i "s/^resolver:.*/resolver: $1/" {} \;
       '';
   };
+
+  orphans = pkgs.writeShellApplication {
+    name = "orphans";
+    text = # bash
+      ''
+        ps -o unit,ppid,pid,cmd --ppid 1 | awk '$1=="session-1.scope" {print substr($0, index($0, $3))}'
+      '';
+  };
+
 in
 {
   home.packages = [
     restack
     reflake
     template
+    orphans
   ];
   programs.bash.bashrcExtra =
     # bash
