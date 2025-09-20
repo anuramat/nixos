@@ -43,6 +43,17 @@ in
       ExecStart = "${lib.getExe pkgs.protonmail-bridge} --noninteractive";
       Restart = "always";
       RestartSec = 10;
+      Environment =
+        let
+          extraPackages = with pkgs; [
+            pass
+          ];
+          dir = config.programs.password-store.settings.PASSWORD_STORE_DIR;
+        in
+        [
+          "PASSWORD_STORE_DIR=${dir}"
+          "PATH=${lib.makeBinPath extraPackages}"
+        ];
     };
   };
 
