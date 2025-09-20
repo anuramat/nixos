@@ -97,8 +97,12 @@
     csvkit
     firefox-sync-client
     remarshal
+
+    # nix diffs:
     # dix # not in stable yet
+    nix-diff
     nvd # nix diff
+
     nix-unit
     rename
     renameutils
