@@ -66,7 +66,7 @@
         # heetch
         # borland
 
-        name = "tarot";
+        name = "eris";
       in
       "${inputs.tt-schemes}/base16/${name}.yaml";
   };

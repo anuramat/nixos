@@ -90,6 +90,7 @@
     fortune # random quotes
 
     # miscellaneous unfiled TODO
+    nix-search
     html2text # plain
     percollate # markdown
     gron # make json greppable
