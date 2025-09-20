@@ -72,6 +72,7 @@
     '';
 
   boot = {
+    tmp.useTmpfs = true; # TODO might want to enable swap later
     extraModulePackages = [
       config.boot.kernelPackages.lenovo-legion-module
     ];
