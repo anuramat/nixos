@@ -101,7 +101,7 @@ in
             "web_search"
             "fetch"
           ];
-          # TODO ollama and z.ai
+          # TODO hook up litellm
           provider = "cerebras";
           providers = {
             cerebras = {
