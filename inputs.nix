@@ -49,7 +49,7 @@ in
 
   # misc
   claude-desktop = mkInput "github:k3d3/claude-desktop-linux-flake";
-  crush = mkNonFlake "github:charmbracelet/crush/v0.7.5";
+  crush = mkNonFlake "github:charmbracelet/crush/v0.9.2";
   mcp-nixos.url = "github:utensils/mcp-nixos";
   mcphub = mkInput "github:ravitemer/mcphub.nvim";
   nil = mkInput "github:oxalica/nil/main";
