@@ -7,5 +7,6 @@
     ./lang
     ./email.nix
     inputs.spicetify-nix.homeManagerModules.spicetify
+    ./packages.nix
   ];
 }

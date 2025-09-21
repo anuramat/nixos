@@ -2,6 +2,7 @@
 {
   programs.go.enable = true;
   imports = [
+    ./nix.nix
     ./python.nix
     ./yaml.nix
   ];

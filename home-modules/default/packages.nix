@@ -9,27 +9,6 @@
     podman-tui # podman container status
     nvtopPackages.full # top for GPUs
 
-    # office
-    slides # markdown presentation in terminal
-    # lookatme -- slides with images; not in nixpkgs yet
-    tidy-viewer # csv viewer
-    glow # markdown tui viewer
-    poppler_utils # pdf utils
-    pdftk # more pdf tools
-    ghostscript # postscript/pdf utils
-    readability-cli # extracts main content from pages
-    easyocr # neural ocr
-    pandoc # document converter
-    quarto
-    mystmd
-    djvulibre # djvu tools
-    markdown-link-check # find dead md links
-    mermaid-cli
-
-    # audio
-    sox # cli audio processing
-    lame # mp3
-
     # containers
     dive # look into docker image layers
     kubectl
@@ -41,7 +20,6 @@
     bear # compilation database generator for clangd
     gomodifytags
     universal-ctags # maintained ctags
-    tree-sitter
     ast-grep # structural regex
 
     # security
@@ -70,17 +48,10 @@
     socat # socket cat
     speedtest-cli
 
-    # visualization/graphics
-    graphviz
-    graph-easy
-    gnuplot
-
     # system utilities
-    asciinema
-    pstree
+    pstree # ps tree :)
     progress # progress status for cp etc
     pv # pipe viewer
-    xdg-ninja # checks $HOME for junk
 
     # fun
     fastfetch
@@ -90,24 +61,19 @@
     fortune # random quotes
 
     # miscellaneous unfiled TODO
-    nix-search
-    html2text # plain
-    percollate # markdown
-    gron # make json greppable
+    html2text # html to plain text
+    percollate # html to markdown
+    gron # make json greppable (every value gets its own line)
     csvkit
     firefox-sync-client
-    remarshal
-
-    # nix diffs:
-    # dix # not in stable yet
-    nix-diff
-    nvd # nix diff
-
-    nix-unit
+    remarshal # convert between json, toml, yaml, ...
+    nix-bash-completions
     rename
     renameutils
     mitmproxy
     dotslash
+    xdg-ninja # checks $HOME for junk
+    asciinema
     hyperfine # CLI benchmarking, a-la `time`
     python3
     just
@@ -128,18 +94,6 @@
     entr # file watcher - runs command on change
     ghq # git repository manager
     expect # automating tuis
-    devenv # nix for retards
-
-    # img
-    imagemagickBig # CLI image manipulation
-    libwebp # tools for WebP image format
-    exiftool # read/write EXIF metadata
-    chafa # sixel, kitty, iterm2, blocks; faster than timg atm (ll7, 2025-06-20)
-    viu # kitty, iterm2, blocks, SOON sixel
-    timg # sixel, kitty, iterm2, blocks
-
-    # video
-    ffmpeg-full
 
     # file managers
     felix-fm # smallest, image previews -- :help<cr> for help; waiting for picker: <https://github.com/kyoheiu/felix/issues/261>
@@ -167,7 +121,6 @@
     less
     lsof
     moreutils # random unixy goodies
-    nix-bash-completions
     p7zip
     tmux # just in case
     tree
@@ -175,12 +128,5 @@
     unzip
     wget
     zip
-
-    # hardware
-    libusb1 # user-mode USB access lib
-    pciutils
-    procps # info from /proc
-    smartmontools # storage
-    usbutils
   ];
 }
