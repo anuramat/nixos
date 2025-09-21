@@ -66,6 +66,13 @@ let
         };
       }
       {
+        model_name = "openrouter/*";
+        litellm_params = {
+          model = "openrouter/*";
+          api_key = "os.environ/OPENROUTER_API_KEY";
+        };
+      }
+      {
         model_name = "github_copilot/*";
         litellm_params = {
           model = "github_copilot/*";
