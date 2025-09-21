@@ -4,8 +4,6 @@
   osConfig ? null,
   ...
 }:
-# BUG here, if we use args ? osConfig instead, it's missing osConfig!!!
-# somehow repro and report?
 {
   plugins = {
     conform-nvim.settings.formatters_by_ft.nix = [
