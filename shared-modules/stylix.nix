@@ -39,8 +39,8 @@
         # pandora -- pink/burgundy/red mostly, cyberpunk vibes -- 4/5
         # caroline -- warm tones, red/brown/bronze; very cozy -- 4/5
         # tarot -- red, burgundy, purple; cyberpunk vibes  -- 5/5
+        # eris -- navy + pastel red; cyber punk vibes but too much blue -- 4/5
 
-        # eris -- navy + pastel red; ok ig?
         # pinky -- very colorful, but looks mostly red/blue
 
         # stella -- pastel purple bg, otherwise dracula vibes
@@ -55,7 +55,6 @@
 
         # xcode-dusk -- grey + bright colors, very cool
 
-        # todo
         # unikitty
         # still-alive
         # uvuunicorn
@@ -66,7 +65,7 @@
         # heetch
         # borland
 
-        name = "eris";
+        name = "outrun-dark";
       in
       "${inputs.tt-schemes}/base16/${name}.yaml";
   };
