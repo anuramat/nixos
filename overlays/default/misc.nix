@@ -39,26 +39,6 @@ inputs:
     meta = prev.anytype.meta;
   };
 
-  crush =
-    let
-      unstable = (import inputs.nixpkgs-unstable { inherit (prev) config system; });
-    in
-    unstable.buildGo125Module rec {
-      pname = "crush";
-      meta.mainProgram = pname;
-      version = inputs.crush.shortRev;
-      src = inputs.crush;
-      doCheck = false;
-      vendorHash = "sha256-k7yfCyfeW2TW5DpVmxfNLXV08FxhpW4SQNAcDyrYKPc=";
-      installPhase = ''
-        runHook preInstall
-        install -Dt $out/bin crush
-        mkdir -p $out/share/bash-completion/completions
-        $out/bin/crush completions bash > $out/share/bash-completion/completions/crush
-        runHook postInstall
-      '';
-    };
-
   ollama = prev.ollama.overrideAttrs (oldAttrs: rec {
     version = "0.11.3";
     src = prev.fetchFromGitHub {
