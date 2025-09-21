@@ -20,7 +20,7 @@ in
       enable = true;
       vimKeys = true;
       # sidebar.enable = true;
-      sort = "date";
+      sort = "reverse-date";
       # TODO explain these
       extraConfig = ''
         auto_view text/html
