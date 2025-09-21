@@ -37,10 +37,10 @@
         # greenscreen
         # paraiso -- purple/burgundy, colorful text -- 3/5?
         # pandora -- pink/burgundy/red mostly, cyberpunk vibes -- 4/5
-        # caroline -- warm tones, red/brown/bronze -- 4/5
-        # tarot -- red, burgundy, purple -- 5/5
+        # caroline -- warm tones, red/brown/bronze; very cozy -- 4/5
+        # tarot -- red, burgundy, purple; cyberpunk vibes  -- 5/5
 
-        # eris -- navy + pastel red
+        # eris -- navy + pastel red; ok ig?
         # pinky -- very colorful, but looks mostly red/blue
 
         # stella -- pastel purple bg, otherwise dracula vibes
