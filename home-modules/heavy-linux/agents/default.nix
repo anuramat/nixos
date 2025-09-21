@@ -130,6 +130,7 @@ in
       transcribe
       inspector
       ollama
+      llmapibenchmark # TODO wrap with litellm args
     ];
     sessionVariables = {
       OLLAMA_HOST = "ollama.com";
