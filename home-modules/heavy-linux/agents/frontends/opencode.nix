@@ -188,6 +188,9 @@ let
             };
           in
           {
+            "qwen3-coder:480b" = {
+              name = "Qwen 3 Coder 480B";
+            };
             "gpt-oss:20b" = gpt // {
               id = "gpt-oss:20b";
               name = "GPT-OSS 20B";

@@ -27,7 +27,7 @@ let
         litellm_params = {
           model = "ollama_chat/*";
           api_key = "os.environ/OLLAMA_API_KEY";
-          api_base = "https://ollama.com/api";
+          api_base = "https://ollama.com/";
         };
       }
       {
