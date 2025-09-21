@@ -50,6 +50,13 @@ inputs:
       src = inputs.crush;
       doCheck = false;
       vendorHash = "sha256-k7yfCyfeW2TW5DpVmxfNLXV08FxhpW4SQNAcDyrYKPc=";
+      installPhase = ''
+        runHook preInstall
+        install -Dt $out/bin crush
+        mkdir -p $out/share/bash-completion/completions
+        $out/bin/crush completions bash > $out/share/bash-completion/completions/crush
+        runHook postInstall
+      '';
     };
 
   ollama = prev.ollama.overrideAttrs (oldAttrs: rec {
