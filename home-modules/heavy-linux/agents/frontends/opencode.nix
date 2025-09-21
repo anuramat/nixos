@@ -142,6 +142,16 @@ let
         type = "enabled";
         budgetTokens = 10000;
       };
+      litellm = {
+        npm = "@ai-sdk/openai-compatible";
+        options = {
+          baseURL = "http://localhost:11333";
+          apiKey = "dummy";
+        };
+        models = {
+          "zai/glm-4.5" = baseModel // { };
+        };
+      };
       openrouter.options.apiKey = keys.openrouter;
       zai-coding-plan.options.apiKey = keys.zai;
       cerebras = {
