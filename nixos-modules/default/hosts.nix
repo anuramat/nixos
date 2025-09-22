@@ -22,7 +22,7 @@
       substituters = h.mkSubstituters builderNames; # binary cache
       keyFiles = h.mkKeyFiles names; # ssh public keys
       knownHostsFiles = h.mkKnownHostsFiles names; # agenix(?)/ssh host auth
-      trusted-public-keys = map h.mkCacheKey builderNames; # packages signature
+      trusted-public-keys = map h.mkCacheKey names; # packages signature
       inherit hosts builders;
     };
 }
