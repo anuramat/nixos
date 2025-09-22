@@ -55,17 +55,17 @@
 
         # xcode-dusk -- grey + bright colors, very cool
 
-        # unikitty
-        # still-alive
-        # uvuunicorn
-        # outrun-dark
+        # outrun-dark -- blue/red, mid
+        # uwunicorn
         # moonlight
         # mona-lisa
         # mellow-purple
         # heetch
+
+        # TODO base24
         # borland
 
-        name = "outrun-dark";
+        name = "heetch";
       in
       "${inputs.tt-schemes}/base16/${name}.yaml";
   };

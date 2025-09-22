@@ -12,7 +12,7 @@
     {
       enable = true;
       inherit dark;
-      light = dark;
+      light = dark; # TODO find a light theme
       package = pkgs.dracula-icon-theme;
       # package = pkgs.xfce.xfce4-icon-theme;
     };
