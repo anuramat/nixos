@@ -17,6 +17,7 @@
     ".crush/"
     ".pytest_cache"
     ".goose/"
+    ".quarto/"
 
     # pytorch lightning
     "*.ckpt"
