@@ -60,7 +60,7 @@
         # moonlight
         # mona-lisa
         # mellow-purple
-        # heetch # red + blue, cool but unreadable -- wait for new vim colorscheme generator maybe?
+        # heetch # red + blue, cool but kinda unreadable
 
         # TODO base24
         # borland
