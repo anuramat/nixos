@@ -8,6 +8,7 @@
         cursor-style-blink = "false";
         shell-integration-features = "no-cursor";
         resize-overlay = "never";
+        title = "ghostty";
       };
     };
     kitty = {
