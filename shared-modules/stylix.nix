@@ -60,12 +60,12 @@
         # moonlight
         # mona-lisa
         # mellow-purple
-        # heetch
+        # heetch # red + blue, cool but unreadable -- wait for new vim colorscheme generator maybe?
 
         # TODO base24
         # borland
 
-        name = "heetch";
+        name = "mellow-purple";
       in
       "${inputs.tt-schemes}/base16/${name}.yaml";
   };

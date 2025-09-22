@@ -45,7 +45,7 @@
       {
         mode = "v";
         key = "<leader>gs";
-        action = "<cmd>stage_hunk<cr>";
+        action = "<cmd>Gitsigns stage_hunk<cr>";
         options = {
           desc = "stage selection";
         };
@@ -67,7 +67,7 @@
           "x"
         ];
         key = "ih";
-        action = hax.vim.luaf "require('gitsigns').select_hunk()";
+        action = hax.vim.luaf ''require("gitsigns").select_hunk()'';
         options.desc = "Inside hunk [gitsigns]";
       }
       {
@@ -76,7 +76,7 @@
           "x"
         ];
         key = "ah";
-        action = hax.vim.luaf "require('gitsigns').select_hunk({ greedy = true })";
+        action = hax.vim.luaf ''require("gitsigns").select_hunk({ greedy = true })'';
         options.desc = "Around hunk [gitsigns]";
       }
     ];
