@@ -15,8 +15,6 @@
 
   networking.hostName = "anuramat-t480";
 
-  services.tlp.settings.CPU_MAX_PERF_ON_BAT = 75;
-
   imports = [
     inputs.self.nixosModules.default
     inputs.self.nixosModules.local
@@ -24,6 +22,16 @@
     inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t480
     ./hardware-configuration.nix
   ];
+
+  services.tlp = {
+    enable = true;
+    settings = {
+      CPU_MIN_PERF_ON_AC = 100;
+      CPU_MAX_PERF_ON_AC = 100;
+      CPU_MIN_PERF_ON_BAT = 0;
+      CPU_MAX_PERF_ON_BAT = 100;
+    };
+  };
 
   swapDevices = [
     {
