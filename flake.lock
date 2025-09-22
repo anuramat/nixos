@@ -199,23 +199,6 @@
         "type": "github"
       }
     },
-    "crush": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1756836380,
-        "narHash": "sha256-NQHw3sascSgB1hzIpDNUQqp5R4NA9sdO30qa9I3CBew=",
-        "owner": "charmbracelet",
-        "repo": "crush",
-        "rev": "c10748b7e14956861edba44203b052a1b5b5bdd7",
-        "type": "github"
-      },
-      "original": {
-        "owner": "charmbracelet",
-        "ref": "v0.7.5",
-        "repo": "crush",
-        "type": "github"
-      }
-    },
     "ctrlsn": {
       "inputs": {
         "nixpkgs": [
@@ -1799,7 +1782,6 @@
         "avante": "avante",
         "blink-cmp-avante": "blink-cmp-avante",
         "claude-desktop": "claude-desktop",
-        "crush": "crush",
         "ctrlsn": "ctrlsn",
         "duckduckgo-mcp-server": "duckduckgo-mcp-server",
         "ez-configs": "ez-configs",
