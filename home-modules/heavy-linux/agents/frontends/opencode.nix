@@ -84,10 +84,10 @@ let
         tools = ro;
       };
       build = {
-        model = mini;
+        model = glm;
       };
       general = {
-        model = mini;
+        model = qwen;
       };
 
       example = {
