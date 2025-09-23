@@ -152,7 +152,7 @@ in
                 # root of the current worktree, if it's not CWD already
                 [[ $(realpath "$gitroot") == $(realpath "$PWD") ]] || RW_DIRS+=("$gitroot")
                 # .git/ dir
-                RW_DIRS+=("$(realpath "$(git rev-parse --git-common-dir)")") 
+                RW_DIRS+=("$(git rev-parse --absolute-git-dir)") 
               fi
 
               ${varNames.agentSandboxLog}+=$(echo "RW dirs:" && printf '\t%s\n' "''${RW_DIRS[@]}")

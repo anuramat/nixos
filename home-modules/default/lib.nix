@@ -209,9 +209,10 @@ in
         (
           ''
             hook_name=$(basename "$0")
-            local=./.git/hooks/$hook_name
+            git_dir="$(git rev-parse --absolute-git-dir)"
+            local="$git_dir/hooks/$hook_name"
             [ -x "$local" ] && [ -f "$local" ] && {
-            	exec "$local"
+            	"$local"
             }
           ''
           + body
