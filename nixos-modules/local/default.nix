@@ -34,13 +34,24 @@ in
     };
     nix-ld = {
       enable = true;
-      libraries = with pkgs; [
-        icu
-        gmp
-        glibc
-        openssl
-        stdenv.cc.cc
-      ];
+      libraries =
+        let
+          cudaLibs = lib.optionals config.nixpkgs.config.cudaSupport [
+            config.hardware.nvidia.package
+            pkgs.cudaPackages.cudatoolkit
+          ];
+        in
+        with pkgs;
+        [
+          icu
+          gmp
+          glibc
+          openssl
+          # TODO what is the difference?
+          stdenv.cc.cc
+          stdenv.cc.cc.lib
+        ]
+        ++ cudaLibs;
     };
   };
   hardware.graphics.enable = true;
