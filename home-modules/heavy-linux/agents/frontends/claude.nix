@@ -127,10 +127,13 @@ in
       pkg
       zaiPkg
       litePkg
-      pkgs.claude-desktop
-      pkgs.ccusage
-      pkgs.claude-monitor
-    ];
+    ]
+    ++ (with pkgs; [
+      claude-desktop
+      ccusage
+      ccusage-codex
+      claude-monitor
+    ]);
     activation = {
       claudeSettings = config.lib.home.json.set {
         includeCoAuthoredBy = false;
