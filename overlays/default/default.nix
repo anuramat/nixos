@@ -31,9 +31,9 @@ let
       github-mcp-server
       keymapp
       proton-pass
-      goose-cli
       librewolf
       litellm
+      ghostty
       ;
   };
 

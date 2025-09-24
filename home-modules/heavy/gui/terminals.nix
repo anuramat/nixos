@@ -9,6 +9,7 @@
         shell-integration-features = "no-cursor";
         resize-overlay = "never";
         title = "ghostty";
+        gtk-single-instance = true;
       };
     };
     kitty = {
