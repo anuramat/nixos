@@ -98,6 +98,15 @@ flake-parts.lib.mkFlake { inherit inputs; } {
         module = inputs.self.nixvimModules.default;
       };
       devShells.default = pkgs.mkShell {
+        packages = with pkgs; [
+          just
+          nixfmt-rfc-style
+          nix-unit
+          fd
+          shellcheck
+          yamllint
+          luaPackages.luacheck
+        ];
         shellHook = ''
           ${config.pre-commit.installationScript}
           echo 1>&2 "Welcome to the development shell!"
