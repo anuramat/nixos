@@ -80,7 +80,7 @@ inputs:
     version = "0.41.0";
     src = prev.fetchurl {
       url = "https://github.com/openai/codex/releases/download/rust-v${version}/codex-x86_64-unknown-linux-musl.zst";
-      hash = "";
+      hash = "sha256-QUbK/Q96nq+JDsaPESappaJKZ7NST3PD9+XQb4WNIiQ=";
     };
     dontUnpack = true;
     nativeBuildInputs = [ prev.zstd ];
