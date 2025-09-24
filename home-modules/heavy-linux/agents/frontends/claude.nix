@@ -74,10 +74,8 @@ let
     package = pkgs.claude-code;
     args = [ "--dangerously-skip-permissions" ];
     wrapperName = "claude-lite";
-    tokens = t: {
-      ANTHROPIC_AUTH_TOKEN = t.zai;
-    };
     env = {
+      ANTHROPIC_AUTH_TOKEN = "dummy";
       ANTHROPIC_DEFAULT_OPUS_MODEL = "github_copilot/gpt-5-mini";
       ANTHROPIC_DEFAULT_SONNET_MODEL = "cerebras/qwen-3-coder-480b";
       ANTHROPIC_MODEL = "opusplan";
