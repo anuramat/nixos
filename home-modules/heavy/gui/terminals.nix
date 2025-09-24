@@ -1,6 +1,16 @@
 {
   programs = {
     # alacritty -- fast but no kitty image protocol
+
+    # [window]
+    # opacity = 0.8
+    # option_as_alt = "Both"
+    #
+    # [font]
+    # size = 13.0
+    #
+    # [font.normal]
+    # family = "Hack Nerd Font"
     ghostty = {
       # cons: slowest startup; no scrollback search
       # pros: supports kitty image protocol; almost zero config; not bloated
