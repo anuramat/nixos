@@ -36,10 +36,14 @@ in
       enable = true;
       libraries =
         let
-          cudaLibs = lib.optionals config.nixpkgs.config.cudaSupport [
-            config.hardware.nvidia.package
-            pkgs.cudaPackages.cudatoolkit
-          ];
+          cudaLibs =
+            if (config.nixpkgs.config.cudaSupport or false) then
+              [
+                config.hardware.nvidia.package
+                pkgs.cudaPackages.cudatoolkit
+              ]
+            else
+              [ ];
         in
         with pkgs;
         [
