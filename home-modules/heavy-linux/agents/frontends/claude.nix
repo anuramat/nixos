@@ -69,6 +69,23 @@ let
     in
     agents.mkPrompts "claude/agents" adaptedRoles;
 
+  litePkg = config.lib.agents.mkPackages {
+    agentDir = "claude";
+    package = pkgs.claude-code;
+    args = [ "--dangerously-skip-permissions" ];
+    wrapperName = "claude-lite";
+    tokens = t: {
+      ANTHROPIC_AUTH_TOKEN = t.zai;
+    };
+    env = {
+      ANTHROPIC_DEFAULT_OPUS_MODEL = "github_copilot/gpt-5-mini";
+      ANTHROPIC_DEFAULT_SONNET_MODEL = "cerebras/qwen-3-coder-480b";
+      ANTHROPIC_MODEL = "opusplan";
+      ANTHROPIC_SMALL_FAST_MODEL = "github_copilot/gpt-4.1";
+      ANTHROPIC_BASE_URL = "http://localhost:11333";
+    };
+  };
+
   zaiPkg = config.lib.agents.mkPackages {
     agentDir = "claude";
     package = pkgs.claude-code;
@@ -111,6 +128,7 @@ in
     packages = [
       pkg
       zaiPkg
+      litePkg
       pkgs.claude-desktop
       pkgs.ccusage
       pkgs.claude-monitor
