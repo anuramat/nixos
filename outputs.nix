@@ -82,10 +82,14 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       config,
       system,
       pkgs,
-      inputs,
       ...
     }@args:
-    (mkDirSet (x: import x args) ./parts)
+    let
+      argsWithInputs = args // {
+        inherit inputs;
+      };
+    in
+    (mkDirSet (x: import x argsWithInputs) ./parts)
     // {
       apps.writer.program = config.files.writer.drv;
 
