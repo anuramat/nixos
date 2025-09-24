@@ -1,6 +1,9 @@
 {
   programs = {
+    # alacritty -- fast but no kitty image protocol
     ghostty = {
+      # cons: slowest startup; no scrollback search
+      # pros: supports kitty image protocol; almost zero config; not bloated
       enable = true;
       clearDefaultKeybinds = true;
       settings = {
@@ -13,6 +16,7 @@
       };
     };
     kitty = {
+      # cons: medium startup time; bloated
       enable = true;
       settings = {
         confirm_os_window_close = 0;
