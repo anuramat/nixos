@@ -41,7 +41,6 @@
             { app_id = "nm-connection-editor"; }
             { app_id = "keymapp"; }
             { app_id = "openrgb"; }
-            { app_id = "foot-float"; }
             { app_id = "Proton Pass"; }
           ];
         };

@@ -1,4 +1,9 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 let
   chooser = pkgs.xdg-desktop-portal-termfilechooser;
 in
@@ -20,7 +25,7 @@ in
       [filechooser]
       cmd=${lib.getExe wrapper}
       default_dir=$HOME/Downloads
-      env=TERMCMD=${pkgs.foot}/bin/foot
+      env=TERMCMD=${config.home.sessionVariables.TERMCMD}
     '';
 
   xdg = {

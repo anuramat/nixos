@@ -7,7 +7,7 @@
 let
   startCondition = # lua
     ''
-      os.getenv('TERM') == 'xterm-ghostty'
+      os.getenv('TERM') ~= 'foot'
     '';
 in
 {

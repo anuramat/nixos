@@ -56,7 +56,7 @@ in
         HISTFILE = bashStateDir + "/history"; # ~/.bash_history
         CUDA_CACHE_PATH = "${config.xdg.cacheHome}/nv"; # ~/.nv/
 
-        TERMCMD = "foot";
+        TERMCMD = "kitty -1";
         ESCDELAY = "25";
 
         # TODO move this somewhere

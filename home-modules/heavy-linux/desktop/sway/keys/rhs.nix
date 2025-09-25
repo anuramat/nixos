@@ -46,7 +46,7 @@ let
     wlan = "exec ${pkgs.tlp}/bin/wifi toggle";
   };
 
-  term_cmd = getExe pkgs.foot;
+  term_cmd = "${config.home.sessionVariables.TERMCMD}";
   term = "exec ${term_cmd}";
 
   pickers =
@@ -83,7 +83,7 @@ let
         mkMenu
           # bash
           ''
-            app=$(${j4} -d '${bemenu} -p drun' -t ${term_cmd} -x --no-generic)
+            app=$(${j4} -d '${bemenu} -p drun' -t '${term_cmd}' -x --no-generic)
             swaymsg exec "$app"
           '';
       todo_add =
