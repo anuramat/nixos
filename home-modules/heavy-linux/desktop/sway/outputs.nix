@@ -41,6 +41,11 @@ in
           command = "${pkgs.kanshi}/bin/kanshictl reload";
           always = true;
         }
+        {
+          # TODO move to a systemd service?
+          command = "${getExe pkgs.kitty} --start-as=hidden -1";
+          always = false;
+        }
       ];
       workspaceOutputAssign =
         let
