@@ -43,17 +43,6 @@ in
       ExecStart = "${lib.getExe pkgs.protonmail-bridge} --noninteractive";
       Restart = "always";
       RestartSec = 10;
-      Environment =
-        let
-          extraPackages = with pkgs; [
-            pass
-          ];
-          dir = config.programs.password-store.settings.PASSWORD_STORE_DIR;
-        in
-        [
-          "PASSWORD_STORE_DIR=${dir}"
-          "PATH=${lib.makeBinPath extraPackages}"
-        ];
     };
   };
 
@@ -66,9 +55,11 @@ in
       realName = fullname;
       passwordCommand =
         let
-          pass = lib.getExe pkgs.pass;
+          secret-tool = lib.getExe pkgs.libsecret;
+          server = "protonmail/bridge-v3/users/bridge-vault-key";
+          username = "bridge-vault-key";
         in
-        "${pass} show proton-bridge/${email}";
+        "${secret-tool} lookup server ${server} username ${username}";
 
       imap = {
         host = "127.0.0.1";
