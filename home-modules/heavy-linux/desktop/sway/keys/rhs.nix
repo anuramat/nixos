@@ -46,8 +46,8 @@ let
     wlan = "exec ${pkgs.tlp}/bin/wifi toggle";
   };
 
-  term_cmd = getExe pkgs.ghostty;
-  term = "exec ${term_cmd} +new-window";
+  term_cmd = getExe pkgs.foot;
+  term = "exec ${term_cmd}";
 
   pickers =
     let
