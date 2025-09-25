@@ -46,7 +46,7 @@ in
   mods.url = "github:anuramat/mods/dev";
   zotero-mcp.url = "github:anuramat/zotero-mcp";
   duckduckgo-mcp-server.url = "github:anuramat/duckduckgo-mcp-server/dev";
-  protonmail-bridge = mkInput "github:anuramat/protonmail-bridge";
+  protonmail-bridge = mkNonFlake "github:anuramat/proton-bridge/dev";
 
   # misc
   claude-desktop = mkInput "github:k3d3/claude-desktop-linux-flake";

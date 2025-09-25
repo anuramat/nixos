@@ -146,6 +146,10 @@
       };
       url = "github:nix-community/NUR";
     };
+    protonmail-bridge = {
+      flake = false;
+      url = "github:anuramat/proton-bridge/dev";
+    };
     spicetify-nix = {
       inputs = {
         nixpkgs = {

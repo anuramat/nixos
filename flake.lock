@@ -1776,6 +1776,23 @@
         "type": "github"
       }
     },
+    "protonmail-bridge": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1758840248,
+        "narHash": "sha256-tCtwbK+xRCktvdTWQF0Dl+fYYmtkMpHCtzvfko6oDQQ=",
+        "owner": "anuramat",
+        "repo": "proton-bridge",
+        "rev": "b30447e163bf2eef5305cb02544d3590b84ca29e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "anuramat",
+        "ref": "dev",
+        "repo": "proton-bridge",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "agenix": "agenix",
@@ -1805,6 +1822,7 @@
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nixvim": "nixvim",
         "nur": "nur",
+        "protonmail-bridge": "protonmail-bridge",
         "spicetify-nix": "spicetify-nix",
         "stylix": "stylix",
         "subcat": "subcat",
