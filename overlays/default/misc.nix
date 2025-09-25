@@ -2,12 +2,7 @@ inputs:
 (final: prev: {
   protonmail-bridge = prev.protonmail-bridge.overrideAttrs (oldAttrs: rec {
     version = "3.21.2";
-    src = prev.fetchFromGitHub {
-      owner = "ProtonMail";
-      repo = "proton-bridge";
-      tag = "v${version}";
-      hash = "sha256-IQgP+eWUCyViEBi0WFIOW2rXZLtoyVlrQrtAaqaLOv0=";
-    };
+    src = inputs.protonmail-bridge;
     vendorHash = "sha256-aW7N6uacoP99kpvw9E5WrHaQ0fZ4P5WGsNvR/FAZ+cA=";
   });
 
