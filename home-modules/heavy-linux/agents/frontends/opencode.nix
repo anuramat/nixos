@@ -148,9 +148,35 @@ let
           baseURL = "http://localhost:11333";
           apiKey = "dummy";
         };
-        models = {
-          "zai/glm-4.5" = baseModel // { };
-        };
+        models =
+          let
+            gpt = baseModel // {
+              limit = rec {
+                context = 131072;
+                output = context;
+              };
+            };
+          in
+          {
+            "ollama_chat/qwen3-coder:480b-cloud" = {
+              name = "Qwen 3 Coder 480B";
+            };
+            "ollama_chat/gpt-oss:20b-cloud" = gpt // {
+              id = "gpt-oss:20b";
+              name = "GPT-OSS 20B";
+            };
+            "ollama_chat/gpt-oss:120b-cloud" = gpt // {
+              id = "gpt-oss:120b";
+              name = "GPT-OSS 120B";
+            };
+            "ollama_chat/deepseek-v3.1:671b-cloud" = baseModel // {
+              limit = rec {
+                context = 163840;
+                output = context;
+              };
+            };
+            "zai/glm-4.5" = baseModel // { };
+          };
       };
       openrouter.options.apiKey = keys.openrouter;
       zai-coding-plan.options.apiKey = keys.zai;
@@ -171,45 +197,7 @@ let
         options.apiKey = keys.openai;
         models = gpt5models;
       };
-      ollama-turbo = {
-        name = "Ollama Turbo";
-        npm = "ollama-ai-provider-v2";
-        options = {
-          baseURL = "https://ollama.com/api";
-          headers.Authorization = "Bearer ${keys.ollama}";
-        };
-        models =
-          let
-            gpt = baseModel // {
-              limit = rec {
-                context = 131072;
-                output = context;
-              };
-            };
-          in
-          {
-            "qwen3-coder:480b" = {
-              name = "Qwen 3 Coder 480B";
-            };
-            "gpt-oss:20b" = gpt // {
-              id = "gpt-oss:20b";
-              name = "GPT-OSS 20B";
-            };
-            "gpt-oss:120b" = gpt // {
-              id = "gpt-oss:120b";
-              name = "GPT-OSS 120B";
-            };
-            "deepseek-v3.1:671b" = baseModel // {
-              limit = rec {
-                context = 163840;
-                output = context;
-              };
-            };
-          };
-      };
-    }
-
-  ;
+    };
   mcp =
     let
       rawServers = mapAttrs (
