@@ -82,6 +82,7 @@ in
     ./instructions.nix
     ./litellm.nix
     ./mods.nix
+    ./ollama.nix
     ./roles.nix
     ./sandbox.nix
     ./tools.nix
@@ -132,8 +133,5 @@ in
       ollama
       llmapibenchmark # TODO wrap with litellm args
     ];
-    sessionVariables = {
-      OLLAMA_HOST = "ollama.com";
-    };
   };
 }

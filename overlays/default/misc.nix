@@ -35,12 +35,12 @@ inputs:
   };
 
   ollama = prev.ollama.overrideAttrs (oldAttrs: rec {
-    version = "0.11.3";
+    version = "0.12.2";
     src = prev.fetchFromGitHub {
       owner = "ollama";
       repo = "ollama";
       tag = "v${version}";
-      hash = "sha256-FghgCtVQIxc9qB5vZZlblugk6HLnxoT8xanZK+N8qEc=";
+      hash = "sha256-D3b3ddW6s9NqV8mJZboQ/z8IkId8h7a4eTh/MkjPNqg=";
       fetchSubmodules = true;
     };
     vendorHash = "sha256-SlaDsu001TUW+t9WRp7LqxUSQSGDF1Lqu9M1bgILoX4=";
