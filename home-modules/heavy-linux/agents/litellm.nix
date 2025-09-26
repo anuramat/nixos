@@ -7,7 +7,6 @@ let
       GEMINI_API_KEY = gemini;
       GROQ_API_KEY = groq;
       OPENAI_API_KEY = openai;
-      OLLAMA_API_KEY = ollama;
       OPENROUTER_API_KEY = openrouter;
       POE_API_KEY = poe;
       ZAI_API_KEY = zai;
@@ -26,8 +25,6 @@ let
         model_name = "ollama_chat/*";
         litellm_params = {
           model = "ollama_chat/*";
-          api_key = "os.environ/OLLAMA_API_KEY";
-          api_base = "https://ollama.com/";
         };
       }
       {
