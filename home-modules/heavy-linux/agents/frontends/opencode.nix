@@ -158,18 +158,18 @@ let
             };
           in
           {
-            "ollama_chat/qwen3-coder:480b-cloud" = {
+            "ollama/qwen3-coder:480b-cloud" = {
               name = "Qwen 3 Coder 480B";
             };
-            "ollama_chat/gpt-oss:20b-cloud" = gpt // {
+            "ollama/gpt-oss:20b-cloud" = gpt // {
               id = "gpt-oss:20b";
               name = "GPT-OSS 20B";
             };
-            "ollama_chat/gpt-oss:120b-cloud" = gpt // {
+            "ollama/gpt-oss:120b-cloud" = gpt // {
               id = "gpt-oss:120b";
               name = "GPT-OSS 120B";
             };
-            "ollama_chat/deepseek-v3.1:671b-cloud" = baseModel // {
+            "ollama/deepseek-v3.1:671b-cloud" = baseModel // {
               limit = rec {
                 context = 163840;
                 output = context;

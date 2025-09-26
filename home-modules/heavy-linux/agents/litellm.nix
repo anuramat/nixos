@@ -22,9 +22,10 @@ let
     };
     model_list = [
       {
-        model_name = "ollama_chat/*";
+        # TODO switch to ollama_chat when it's fixed
+        model_name = "ollama/*";
         litellm_params = {
-          model = "ollama_chat/*";
+          model = "ollama/*";
         };
       }
       {
