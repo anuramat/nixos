@@ -1,5 +1,29 @@
 inputs:
 (final: prev: {
+  web-search-mcp =
+    let
+      webSearchMcpUrl = "https://raw.githubusercontent.com/ollama/ollama-python/main/examples/web-search-mcp.py";
+      webSearchMcpSha256 = "11q2hwnl4nzn9nw5m6s9c79phnnwjiqgqy4kzgjanhgfalvw47r3";
+      webSearchMcpSource = prev.fetchurl {
+        url = webSearchMcpUrl;
+        sha256 = webSearchMcpSha256;
+      };
+      webSearchMcpDir = prev.linkFarm "web-search-mcp" [
+        {
+          name = "web-search-mcp.py";
+          path = webSearchMcpSource;
+        }
+      ];
+    in
+    prev.writeShellApplication {
+      name = "web-search-mcp";
+      runtimeInputs = [ final.uv ];
+      text = ''
+        cd ${webSearchMcpDir}
+        exec uv run web-search-mcp.py "$@"
+      '';
+    };
+
   protonmail-bridge = prev.protonmail-bridge.overrideAttrs (oldAttrs: rec {
     version = "3.21.2";
     src = inputs.protonmail-bridge;
