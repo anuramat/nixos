@@ -9,7 +9,6 @@ let
   inherit (lib) mapAttrs;
   inherit (config.lib) agents;
 
-  oss = "ollama-turbo/gpt-oss:120b";
   qwen = "cerebras/qwen-3-coder-480b"; # cerebras recommends t=0.7 top_p=0.8
   glm = "zhipuai/glm-4.5";
   mini = "github-copilot/gpt-5-mini";
@@ -159,15 +158,10 @@ let
           in
           {
             "ollama/qwen3-coder:480b-cloud" = {
-              name = "Qwen 3 Coder 480B";
             };
             "ollama/gpt-oss:20b-cloud" = gpt // {
-              id = "gpt-oss:20b";
-              name = "GPT-OSS 20B";
             };
             "ollama/gpt-oss:120b-cloud" = gpt // {
-              id = "gpt-oss:120b";
-              name = "GPT-OSS 120B";
             };
             "ollama/deepseek-v3.1:671b-cloud" = baseModel // {
               limit = rec {
@@ -175,8 +169,20 @@ let
                 output = context;
               };
             };
-            "zai/glm-4.5" = baseModel // { };
+            "zai/glm-4.5" = baseModel // { }; # TODO
           };
+      };
+      ollama-turbo = {
+        name = "Ollama Turbo";
+        npm = "ollama-ai-provider-v2";
+        options = {
+          baseURL = "https://ollama.com/api";
+          headers.Authorization = "Bearer ${keys.ollama}";
+        };
+        models = {
+          "kimi-k2:1t" = {
+          };
+        };
       };
       openrouter.options.apiKey = keys.openrouter;
       zai-coding-plan.options.apiKey = keys.zai;
