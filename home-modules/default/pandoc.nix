@@ -68,6 +68,7 @@ let
           exit 1
         }
         input=$1 && shift
+        # TODO: if only 1 argument, output filename = input with pdf extension
         output=$1 && shift
 
         id=$(notify-send -a "${app}" -p "rendering")

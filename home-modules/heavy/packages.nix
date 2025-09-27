@@ -30,6 +30,7 @@
     readability-cli # extracts main content from pages
     easyocr # neural ocr
     pandoc # document converter
+    typst # better latex
     quarto
     mystmd
     djvulibre # djvu tools
