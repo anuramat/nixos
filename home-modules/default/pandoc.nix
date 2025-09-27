@@ -63,6 +63,7 @@ let
         echo '${pdfPlaceholder}' | base64 -d >"$pdf"
         nohup zathura "$pdf" &>/dev/null &
         zathura_pid="$!"
+        disown
 
         if [ -v HIDE ]; then
           {
@@ -72,7 +73,7 @@ let
             tail --pid="$zathura_pid" -f /dev/null
             kill "$watch_pid"
           } &>/dev/null &
-          disown -a
+          disown
         else
           typst watch "$@" "$typ" "$pdf"
           # TODO close zathura on ctrl-c somehow
