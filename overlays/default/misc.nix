@@ -223,6 +223,24 @@ inputs:
     blink-cmp-avante = prev.vimPlugins.blink-cmp-avante.overrideAttrs (old: {
       src = inputs.blink-cmp-avante;
     });
+    typst-term-preview-nvim =
+      let
+        rev = "3d0e5991c14099425ac002af30cdb3dc167e5587";
+      in
+      prev.vimUtils.buildVimPlugin {
+        pname = "typst-preview.nvim";
+        version = rev;
+        src = prev.fetchFromGitHub {
+          inherit rev;
+          owner = "al-kot";
+          repo = "typst-preview.nvim";
+          sha256 = "sha256-5cQcrOWn6VXHSPegAJgaYgYfYke8N7VRhUiJv4shtKw=";
+        };
+        propagatedBuildInputs = [
+          final.typst
+          final.poppler_utils
+        ];
+      };
   };
 
   llama-cpp = prev.llama-cpp.overrideAttrs (old: rec {
