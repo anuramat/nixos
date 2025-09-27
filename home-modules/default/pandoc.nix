@@ -4,6 +4,7 @@
   ...
 }:
 let
+  pdfPlaceholder = "JVBERi0xLgoxIDAgb2JqPDwvUGFnZXMgMiAwIFI+PmVuZG9iagoyIDAgb2JqPDwvS2lkc1szIDAgUl0vQ291bnQgMT4+ZW5kb2JqCjMgMCBvYmo8PC9QYXJlbnQgMiAwIFI+PmVuZG9iagp0cmFpbGVyIDw8L1Jvb3QgMSAwIFI+Pg==";
   hotdoc = pkgs.writeShellApplication {
     name = "hotdoc";
     runtimeInputs =
@@ -14,7 +15,6 @@ let
       ++ [ render ];
     text =
       let
-        pdfPlaceholder = "JVBERi0xLgoxIDAgb2JqPDwvUGFnZXMgMiAwIFI+PmVuZG9iagoyIDAgb2JqPDwvS2lkc1szIDAgUl0vQ291bnQgMT4+ZW5kb2JqCjMgMCBvYmo8PC9QYXJlbnQgMiAwIFI+PmVuZG9iagp0cmFpbGVyIDw8L1Jvb3QgMSAwIFI+Pg==";
       in
       # bash
       ''
@@ -41,6 +41,31 @@ let
           # stop watching if zathura is closed
           wait "$zathura_pid"
           kill "$entr_pid"
+        }
+        main "$@" &>/dev/null &
+        disown
+      '';
+  };
+  hotdocTypst = pkgs.writeShellApplication {
+    name = "hotdoc-typst";
+    runtimeInputs = with pkgs; [
+      typst
+      zathura
+    ];
+    text =
+      # bash
+      ''
+        main() {
+          typ=$(realpath "$1")
+          shift
+          pdf="$(mktemp --tmpdir "$(basename -s .typ "$typ")-XXXXXXXX.pdf")"
+          echo '${pdfPlaceholder}' | base64 -d >"$pdf"
+          nohup zathura "$pdf" &>/dev/null &
+          zathura_pid="$!"
+          typst watch "$@" "$typ" "$pdf" &
+          watch_pid="$!"
+          wait "$zathura_pid"
+          kill "$watch_pid"
         }
         main "$@" &>/dev/null &
         disown
@@ -90,10 +115,15 @@ let
     runtimeInputs = [
       pkgs.zathura
       hotdoc
+      hotdocTypst
     ];
     text = ''
       	if [[ $1 =~ \.md$ ]]; then
       	  hotdoc "$@"
+      	  exit
+      	fi
+      	if [[ $1 =~ \.typ$ ]]; then
+      	  hotdoc-typst "$@"
       	  exit
       	fi
       	zathura "$@" &>/dev/null &
@@ -106,5 +136,6 @@ in
     z
     render
     hotdoc
+    hotdocTypst
   ];
 }
