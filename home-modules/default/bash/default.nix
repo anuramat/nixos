@@ -22,7 +22,7 @@ let
       mkDir = dir: ''mkdir -p ${escapeShellArg dir}'';
       script = concatStringsSep " " (map mkDir dirs);
     in
-    lib.hm.dag.entryAfter [ "writeBoundary" ];
+    lib.hm.dag.entryAfter [ "writeBoundary" ] script;
 in
 {
   imports = [
