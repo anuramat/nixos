@@ -11,6 +11,7 @@
     ./rust.nix
     ./sh.nix
     ./tex.nix
+    ./typst.nix
     ./web.nix
   ];
 }
