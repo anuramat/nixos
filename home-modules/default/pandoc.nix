@@ -1,11 +1,15 @@
+# TODO try removing tmpdir
 {
   pkgs,
   config,
   ...
 }:
 let
+  # minimal valid pdf file, base64 encoded
+  # TODO maybe put to a file in nix store
   pdfPlaceholder = "JVBERi0xLgoxIDAgb2JqPDwvUGFnZXMgMiAwIFI+PmVuZG9iagoyIDAgb2JqPDwvS2lkc1szIDAgUl0vQ291bnQgMT4+ZW5kb2JqCjMgMCBvYmo8PC9QYXJlbnQgMiAwIFI+PmVuZG9iagp0cmFpbGVyIDw8L1Jvb3QgMSAwIFI+Pg==";
   hotdoc = pkgs.writeShellApplication {
+    # TODO add HIDE logic to hotdoc; in general -- rewrite to be in line with hotdoc-typst
     name = "hotdoc";
     runtimeInputs =
       (with pkgs; [
@@ -14,8 +18,6 @@ let
       ])
       ++ [ render ];
     text =
-      let
-      in
       # bash
       ''
         main() {
@@ -55,20 +57,26 @@ let
     text =
       # bash
       ''
-        main() {
-          typ=$(realpath "$1")
-          shift
-          pdf="$(mktemp --tmpdir "$(basename -s .typ "$typ")-XXXXXXXX.pdf")"
-          echo '${pdfPlaceholder}' | base64 -d >"$pdf"
-          nohup zathura "$pdf" &>/dev/null &
-          zathura_pid="$!"
-          typst watch "$@" "$typ" "$pdf" &
-          watch_pid="$!"
-          wait "$zathura_pid"
-          kill "$watch_pid"
-        }
-        main "$@" &>/dev/null &
-        disown
+        typ=$(realpath "$1")
+        shift
+        pdf="$(mktemp --tmpdir "$(basename -s .typ "$typ")-XXXXXXXX.pdf")"
+        echo '${pdfPlaceholder}' | base64 -d >"$pdf"
+        nohup zathura "$pdf" &>/dev/null &
+        zathura_pid="$!"
+
+        if [ -v HIDE ]; then
+          {
+            typst watch "$@" "$typ" "$pdf" &
+            watch_pid="$!"
+            # can't use wait because it's not a child
+            tail --pid="$zathura_pid" -f /dev/null
+            kill "$watch_pid"
+          } &>/dev/null &
+          disown -a
+        else
+          typst watch "$@" "$typ" "$pdf"
+          # TODO close zathura on ctrl-c somehow
+        fi
       '';
   };
   render = pkgs.writeShellApplication {
@@ -118,6 +126,7 @@ let
       hotdocTypst
     ];
     text = ''
+      	[[ $- == *i* ]] || export HIDE=1
       	if [[ $1 =~ \.md$ ]]; then
       	  hotdoc "$@"
       	  exit
