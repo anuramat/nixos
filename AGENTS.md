@@ -21,3 +21,4 @@
 - Shell: `set -euo pipefail`; lint with `shellcheck`.
 - Tests: put deterministic, self-contained attr-sets under `tests/*`; name in camelCase.
 - Git: commit small, focused changes; follow atomic commits for each logical change.
+- Packages: "add a package" means adding it to the default overlay only; do not wire it into NixOS/home-manager configs or flake outputs unless asked.
