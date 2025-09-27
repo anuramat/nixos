@@ -5,7 +5,7 @@
   ...
 }:
 let
-
+  inherit (lib) attrValues concatStringsSep escapeShellArg;
   excludeShellChecks = [
     2016 # expansion in '' won't work
     2059 # don't use variables in printf format string
@@ -16,6 +16,13 @@ let
     2312 # return value is masked by $()
     2154 # referenced but not assigned, e.g. $XDG_CONFIG_HOME
   ];
+  mkDirsActivationScript =
+    dirs:
+    let
+      mkDir = dir: ''mkdir -p ${escapeShellArg dir}'';
+      script = concatStringsSep " " (map mkDir dirs);
+    in
+    lib.hm.dag.entryAfter [ "writeBoundary" ];
 in
 {
   imports = [
@@ -27,22 +34,23 @@ in
       XDG_BIN_HOME = "${home}/.local/bin";
       XDG_DATA_HOME = config.xdg.dataHome;
       bashStateDir = config.xdg.stateHome + "/bash";
-    in
-    {
-      activation = {
-        # TODO not sure if this works; feels like it doesn't on anuramat-root
-        mkDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-          mkdir -p "${bashStateDir}"
-        '';
-      };
-      sessionVariables = {
-        inherit XDG_BIN_HOME;
-
-        # TODO ensure existence?
+      customXdg = {
         XDG_DOWNLOAD_DIR = "${home}/dl"; # XXX nobody gives a shit about this
         XDG_DOCUMENTS_DIR = "${home}/docs";
         XDG_PICTURES_DIR = "${home}/img";
         XDG_VIDEOS_DIR = "${home}/vid";
+      };
+    in
+    {
+      activation = {
+        # TODO not sure if this works; feels like it doesn't on anuramat-root
+        mkDirs = mkDirsActivationScript [
+          bashStateDir
+          (attrValues customXdg)
+        ];
+      };
+      sessionVariables = customXdg // {
+        inherit XDG_BIN_HOME;
 
         # TODO just in case; verify/move
         LC_ALL = "en_US.UTF-8";
