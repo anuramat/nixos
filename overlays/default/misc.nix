@@ -68,6 +68,7 @@ inputs:
       fetchSubmodules = true;
     };
     vendorHash = "sha256-SlaDsu001TUW+t9WRp7LqxUSQSGDF1Lqu9M1bgILoX4=";
+    acceleration = false;
   });
 
   claude-code = prev.claude-code.overrideAttrs (oldAttrs: rec {

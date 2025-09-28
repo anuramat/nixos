@@ -130,7 +130,6 @@ in
       summarize
       transcribe
       inspector
-      ollama
       llmapibenchmark # TODO wrap with litellm args
     ];
   };
