@@ -8,6 +8,7 @@
     chafa # sixel, kitty, iterm2, blocks; faster than timg atm (ll7, 2025-06-20)
     viu # kitty, iterm2, blocks, SOON sixel
     timg # sixel, kitty, iterm2, blocks
+    fontpreview
 
     # video
     ffmpeg-full
@@ -31,8 +32,6 @@
     easyocr # neural ocr
     pandoc # document converter
     typst # better latex
-    quarto
-    mystmd
     djvulibre # djvu tools
     markdown-link-check # find dead md links
     mermaid-cli
