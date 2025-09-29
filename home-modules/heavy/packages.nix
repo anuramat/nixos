@@ -1,6 +1,13 @@
 { pkgs, ... }:
 {
+  fonts.fontconfig.enable = true;
   home.packages = with pkgs; [
+    # fonts
+    fira-code
+    fira-code-symbols
+    nerd-fonts.monaspace
+    monaspace
+
     # img
     imagemagickBig # CLI image manipulation
     libwebp # tools for WebP image format
