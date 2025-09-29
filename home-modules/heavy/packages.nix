@@ -7,6 +7,8 @@
     fira-code-symbols
     nerd-fonts.monaspace
     monaspace
+    nerd-fonts.iosevka
+    iosevka
 
     # img
     imagemagickBig # CLI image manipulation
