@@ -7,5 +7,11 @@
     lsp.servers.tinymist = {
       enable = true;
     };
+    conform-nvim.settings = {
+      formatters_by_ft.typst = [
+        "typstyle"
+        "injected"
+      ];
+    };
   };
 }
