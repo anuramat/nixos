@@ -43,9 +43,7 @@
     haskellPackages.ormolu
     html-tidy
     (mdformat.withPlugins (p: [
-      pkgs.mdformat-myst
-      p.mdformat-deflist
-      p.mdformat-wikilink
+      p.mdformat-myst
     ]))
     nixfmt-rfc-style
     cbfmt # mdformat ought to be enough?

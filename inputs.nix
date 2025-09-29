@@ -41,8 +41,6 @@ in
   todo = mkInput "github:anuramat/todo";
 
   # forks
-  mdformat-myst = mkInput "github:anuramat/mdformat-myst/dev"; # I think I broke the formatter...
-  mdmath.url = "github:anuramat/mdmath.nvim";
   mods.url = "github:anuramat/mods/dev";
   zotero-mcp.url = "github:anuramat/zotero-mcp";
   duckduckgo-mcp-server.url = "github:anuramat/duckduckgo-mcp-server/dev";
