@@ -5,9 +5,8 @@
     # fonts
     fira-code
     fira-code-symbols
-    nerd-fonts.monaspace
+    nerd-fonts.symbols-only
     monaspace
-    nerd-fonts.iosevka
     iosevka
 
     # img
