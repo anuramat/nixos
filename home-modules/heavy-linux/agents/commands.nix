@@ -43,6 +43,7 @@ in
         '';
       };
     plan = rec {
+      description = "plan the changes";
       withFM = prependFrontmatter text;
       text = ''
         I want you to provide a plan for the following task:
