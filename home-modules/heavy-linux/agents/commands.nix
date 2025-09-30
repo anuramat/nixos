@@ -42,6 +42,19 @@ in
           project that are now reflected in the memory file.
         '';
       };
+    plan = rec {
+      withFM = prependFrontmatter text;
+      text = ''
+        I want you to provide a plan for the following task:
+
+        $ARGUMENTS
+
+        You can read files and search the web, but do not edit any files yet.
+        Gather the required information and provide a concise plan of the
+        changes required to accomplish the task. Provide key code snippets, if
+        applicable.
+      '';
+    };
     pandoc_fix = rec {
       description = "fix a pandoc render issue";
       withFM = prependFrontmatter text;
