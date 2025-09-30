@@ -129,5 +129,6 @@
     unzip
     wget
     zip
+    btrfs-progs
   ];
 }
