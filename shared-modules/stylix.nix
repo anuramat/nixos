@@ -59,13 +59,13 @@
         # uwunicorn
         # moonlight
         # mona-lisa
-        # mellow-purple
+        # mellow-purple --  blue/purple, cute, but comments are unreadable
         # heetch # red + blue, cool but kinda unreadable
 
         # TODO base24
         # borland
 
-        name = "mellow-purple";
+        name = "mona-lisa";
       in
       "${inputs.tt-schemes}/base16/${name}.yaml";
   };
