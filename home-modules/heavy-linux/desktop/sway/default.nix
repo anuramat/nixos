@@ -42,6 +42,7 @@
             { app_id = "keymapp"; }
             { app_id = "openrgb"; }
             { app_id = "Proton Pass"; }
+            { app_id = "udiskie"; }
           ];
         };
       };
