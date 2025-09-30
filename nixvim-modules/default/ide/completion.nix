@@ -1,4 +1,25 @@
-{ hax, pkgs, ... }:
+{
+  hax,
+  pkgs,
+  lib,
+  ...
+}:
+let
+  provider = "supermaven"; # "copilot" "llm" "supermaven"
+  inherit (hax.vim) luaf;
+  inherit (lib) genAttrs;
+  disabledFiletypes = [
+    "markdown"
+    "typst"
+  ];
+  shouldEnableFunc = luaf ''
+    local bufname = vim.api.nvim_buf_get_name(0)
+    if string.match(bufname, "notes") then return false end
+    if string.match(bufname, "/home/anuramat/.local/share/ghq") then return true end
+    if string.match(bufname, "/etc/nixos") then return true end
+    return false
+  '';
+in
 {
   # TODO https://github.com/netmute/ctags-lsp.nvim
   extraPlugins = [
@@ -6,6 +27,20 @@
   ];
   plugins = {
     friendly-snippets.enable = true;
+    supermaven = {
+      enable = provider == "supermaven";
+      keymaps = {
+        accept_suggestion = "<M-y>";
+        clear_suggestions = "<M-e>";
+        accept_word = "<M-w>";
+      };
+      ignore_filetypes = disabledFiletypes;
+      condition = luaf ''
+        local should_enable = ${shouldEnableFunc}
+        return not should_enable()
+      '';
+    };
+
     # llm.enable = true;
     blink-cmp = {
       enable = true;
@@ -28,14 +63,12 @@
             "path"
             "snippets"
             "buffer"
-            # "copilot"
           ];
         };
       };
     };
-    # blink-copilot.enable = true;
     copilot-lua = {
-      enable = true;
+      enable = provider == "copilot";
       settings = {
         # <https://github.com/microsoft/vscode/blob/be75065e817ebd7b6250a100cf5af78bb931265b/src/vs/platform/telemetry/common/telemetry.ts#L87>
         server_opts_overrides = {
@@ -60,17 +93,8 @@
             dismiss = "<M-e>";
           };
         };
-        filetypes = {
-          markdown = false;
-        };
-        should_attach = hax.vim.lua ''
-          function(_, bufname)
-            if string.match(bufname, 'notes') then return false end
-            if string.match(bufname, '/home/anuramat/.local/share/ghq') then return true end
-            if string.match(bufname, '/etc/nixos') then return true end
-            return false
-          end
-        '';
+        filetypes = genAttrs disabledFiletypes (ft: false);
+        should_attach = shouldEnableFunc;
       };
     };
   };
