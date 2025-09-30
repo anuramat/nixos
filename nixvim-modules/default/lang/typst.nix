@@ -1,9 +1,10 @@
 { pkgs, ... }:
 {
   extraPlugins = [
-    pkgs.vimPlugins.typst-term-preview-nvim
+    # pkgs.vimPlugins.typst-term-preview-nvim
   ];
   plugins = {
+    typst-preview.enable = true;
     lsp.servers.tinymist = {
       enable = true;
     };

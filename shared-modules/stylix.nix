@@ -14,8 +14,8 @@
     enable = true;
     fonts = {
       monospace = {
-        name = "Hack Nerd Font Mono";
-        package = pkgs.nerd-fonts.hack;
+        name = "Monaspace Krypton Frozen";
+        package = pkgs.monaspace;
       };
       sizes = {
         applications = 13;
