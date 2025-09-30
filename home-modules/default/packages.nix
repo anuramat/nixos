@@ -25,6 +25,7 @@
     # security
     age # file encryption
     ragenix # (r)agenix cli
+    cryptsetup # luks etc
 
     # network/communication
     aircrack-ng
