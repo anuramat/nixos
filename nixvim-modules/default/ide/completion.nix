@@ -5,9 +5,11 @@
   ...
 }:
 let
-  provider = "supermaven"; # "copilot" "llm" "supermaven"
   inherit (hax.vim) luaf;
   inherit (lib) genAttrs;
+
+  provider = "supermaven"; # "copilot" "llm" "supermaven"
+
   disabledFiletypes = [
     "markdown"
     "typst"
@@ -40,24 +42,18 @@ in
         return not should_enable()
       '';
     };
-
-    # llm.enable = true;
+    llm = {
+      enable = provider == "llm";
+    };
     blink-cmp = {
       enable = true;
       settings = {
         # completion = {
-        #   ghost_text.enabled = true;
-        #   menu.auto_show = false;
-        #   ghost_text.show_with_menu = false;
+        # ghost_text.enabled = true;
+        # menu.auto_show = false;
+        # ghost_text.show_with_menu = false;
         # };
         sources = {
-          providers = {
-            # copilot = {
-            #   async = true;
-            #   name = "copilot";
-            #   score_offset = 100;
-            # };
-          };
           default = [
             "lsp"
             "path"
