@@ -1,5 +1,3 @@
-# should be concise as possible
-# maybe bring back roles.nix
 # NOTE: only reads CLAUDE.md
 {
   lib,
@@ -98,11 +96,12 @@ let
       ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
     };
   };
+
   pkg = config.lib.agents.mkPackages {
     agentDir = "claude";
     package = pkgs.claude-code;
     args = [ "--dangerously-skip-permissions" ];
-    wrapperName = "cld";
+    wrapperName = "claude";
     tokens = t: {
       # broken: https://github.com/anthropics/claude-code/issues/4085
       CLAUDE_CODE_OAUTH_TOKEN = t.claude;
@@ -138,8 +137,8 @@ in
       claudeSettings = config.lib.home.json.set {
         includeCoAuthoredBy = false;
         env = {
-          CLAUDE_CODE_DISABLE_TERMINAL_TITLE = 1;
-          DISABLE_NON_ESSENTIAL_MODEL_CALLS = 1;
+          # CLAUDE_CODE_DISABLE_TERMINAL_TITLE = 1;
+          # DISABLE_NON_ESSENTIAL_MODEL_CALLS = 1;
           # MAX_MCP_OUTPUT_TOKENS -- default 25k
           # BASH_MAX_OUTPUT_LENGTH -- chars, default 30k
         };
