@@ -85,6 +85,12 @@ in
     enable = true;
     mountOnMedia = true;
   };
+  environment.etc."udisks2/mount_options.conf" = {
+    text = ''
+      [defaults]
+      btrfs_defaults=compress=zstd
+    '';
+  };
 
   # print/scan {{{1
   # TODO move this to notes?
