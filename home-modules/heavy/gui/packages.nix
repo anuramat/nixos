@@ -26,7 +26,6 @@
     # xournalpp # pdf markup, handwritten notes # TODO takes a long time to rebuild when changing stylix theme
     logseq # whiteboard is kinda worth it?
     standardnotes # only notes BUT might get proton integration -- soon (tm)
-    anytype
 
     # img
     # krita # raster graphics, digital art # XXX not in cache, takes ages to build
