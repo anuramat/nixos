@@ -30,23 +30,22 @@
     };
     base16Scheme =
       let
-        # favs: black-metal
+        # favs: black-metal tarot
         # mono: grayscale-dark grayscale-light greenscreen
-        # paraiso -- purple/burgundy, colorful text -- 3/5?
-        # pandora -- pink/burgundy/red mostly, cyberpunk vibes -- 4/5
-        # caroline -- warm tones, red/brown/bronze; very cozy -- 4/5
-        # tarot -- red, burgundy, purple; cyberpunk vibes  -- 5/5
-        # eris -- navy + pastel red; cyber punk vibes but too much blue -- 4/5
-
-        # outrun-dark -- blue/red, mid
-        # heetch -- red + blue, cool but kinda unreadable
-        # pinky -- very colorful, but looks mostly red/blue
-
         # plain: uwunicorn moonlight stella mellow-purple pasque tokyo-night-dark zenbones
         # elfie: onedark-dark pop
         # retro: windows-nt
         # quirky: xcode-dusk aztec
         # TODO base24: borland mona-lisa red-alert red-sands unikitty
+
+        # paraiso -- purple/burgundy, colorful text -- 3/5?
+        # pandora -- pink/burgundy/red mostly, cyberpunk vibes -- 4/5
+        # caroline -- warm tones, red/brown/bronze; very cozy -- 4/5
+        # tarot -- red, burgundy, purple; cyberpunk vibes  -- 5/5
+        # eris -- navy + pastel red; cyber punk vibes but too much blue -- 4/5
+        # outrun-dark -- blue/red, mid
+        # heetch -- red + blue, cool but kinda unreadable
+        # pinky -- very colorful, but looks mostly red/blue
 
         name = "tarot";
       in
