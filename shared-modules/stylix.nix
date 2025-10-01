@@ -41,13 +41,16 @@
         # tarot -- red, burgundy, purple; cyberpunk vibes  -- 5/5
         # eris -- navy + pastel red; cyber punk vibes but too much blue -- 4/5
 
+        # outrun-dark -- blue/red, mid
+        # heetch -- red + blue, cool but kinda unreadable
         # pinky -- very colorful, but looks mostly red/blue
 
-        # stella -- pastel purple bg, otherwise dracula vibes
+        # mellow-purple --  blue/purple, cute, but comments are unreadable
         # pasque -- kinda like helix, purple mostly
-
-        # zenbones -- almost like shuffled dracula
+        # stella -- pastel purple bg, otherwise dracula vibes
+        # moonlight -- dracula but mostly blue
         # tokyo-night-dark -- colder dracula
+        # zenbones -- almost like shuffled dracula
 
         # onedark-dark -- retro vibes, like elf
         # pop -- kinda like elf, but darker
@@ -55,17 +58,14 @@
 
         # xcode-dusk -- grey + bright colors, very cool
 
-        # outrun-dark -- blue/red, mid
         # uwunicorn
-        # moonlight
-        # mona-lisa
-        # mellow-purple --  blue/purple, cute, but comments are unreadable
-        # heetch # red + blue, cool but kinda unreadable
+        # aztec
 
         # TODO base24
         # borland
+        # mona-lisa
 
-        name = "mona-lisa";
+        name = "windows-nt";
       in
       "${inputs.tt-schemes}/base16/${name}.yaml";
   };
