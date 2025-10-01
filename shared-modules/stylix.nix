@@ -30,11 +30,8 @@
     };
     base16Scheme =
       let
-        # black-metal -- almost grayscale -- 5/5; TODO swap green and red
-        # black-metal-*
-        # grayscale-dark
-        # grayscale-light
-        # greenscreen
+        # favs: black-metal
+        # mono: grayscale-dark grayscale-light greenscreen
         # paraiso -- purple/burgundy, colorful text -- 3/5?
         # pandora -- pink/burgundy/red mostly, cyberpunk vibes -- 4/5
         # caroline -- warm tones, red/brown/bronze; very cozy -- 4/5
@@ -45,31 +42,13 @@
         # heetch -- red + blue, cool but kinda unreadable
         # pinky -- very colorful, but looks mostly red/blue
 
-        # mellow-purple --  blue/purple, cute, but comments are unreadable
-        # pasque -- kinda like helix, purple mostly
-        # stella -- pastel purple bg, otherwise dracula vibes
-        # moonlight -- dracula but mostly blue
-        # tokyo-night-dark -- colder dracula
-        # zenbones -- almost like shuffled dracula
+        # plain: uwunicorn moonlight stella mellow-purple pasque tokyo-night-dark zenbones
+        # elfie: onedark-dark pop
+        # retro: windows-nt
+        # quirky: xcode-dusk aztec
+        # TODO base24: borland mona-lisa red-alert red-sands unikitty
 
-        # onedark-dark -- retro vibes, like elf
-        # pop -- kinda like elf, but darker
-        # windows-nt -- the highest contrast among windows, elf kinda
-
-        # xcode-dusk -- grey + bright colors, very cool
-
-        # uwunicorn
-        # aztec
-        # wombat
-
-        # TODO base24
-        # borland
-        # mona-lisa
-        # red-alert
-        # red-sands
-        # unikitty
-
-        name = "windows-nt";
+        name = "aztec";
       in
       "${inputs.tt-schemes}/base16/${name}.yaml";
   };
