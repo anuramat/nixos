@@ -48,7 +48,7 @@
         # quirky: xcode-dusk aztec
         # TODO base24: borland mona-lisa red-alert red-sands unikitty
 
-        name = "aztec";
+        name = "tarot";
       in
       "${inputs.tt-schemes}/base16/${name}.yaml";
   };
