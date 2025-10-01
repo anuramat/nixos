@@ -60,10 +60,14 @@
 
         # uwunicorn
         # aztec
+        # wombat
 
         # TODO base24
         # borland
         # mona-lisa
+        # red-alert
+        # red-sands
+        # unikitty
 
         name = "windows-nt";
       in
