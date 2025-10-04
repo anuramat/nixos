@@ -1,11 +1,10 @@
-# TODO commands (shortcuts); maybe plug into mcp-hub https://ravitemer.github.io/mcphub.nvim/mcp/native/prompts.html
-# NOTE supports most types of context files, but only reads the first one
+# TODO commands (shortcuts)
+# NOTE reads most context file names, but only reads the first one
 # TODO only allow file edits without asking for permission every time
 {
   config,
   pkgs,
   osConfig ? null,
-  inputs,
   lib,
   hax,
   ...
@@ -24,8 +23,6 @@ let
         details = text;
       }
     );
-
-  port = toString 37373;
 in
 {
   programs.nixvim = {
@@ -40,19 +37,6 @@ in
         name = "avante";
       };
     };
-    extraPlugins = [
-      inputs.mcphub.packages.${pkgs.system}.default
-    ];
-    extraConfigLua = ''
-      require("mcphub").setup({
-        config = "${config.xdg.configHome}/mcphub/servers.json",
-        port = ${port},
-        auto_approve = false,
-        use_bundled_binary = true,
-        cmd = "npx",
-        cmdArgs = {"-y", "mcp-hub"},
-      })
-    '';
     plugins = {
       avante = {
         enable = true;
@@ -67,9 +51,6 @@ in
               path = pkgs.writeText "instructions.md" agents.instructions.generic;
             in
             hax.vim.luaf ''
-              local hub = require("mcphub").get_hub_instance()
-              local prompt = hub and hub:get_active_servers_prompt() or ""
-              -- read system prompt from file
               local file = io.open("${path}", "r")
               if file then
                 local instructions = file:read("*a")
@@ -78,11 +59,6 @@ in
               end
               return prompt
             '';
-          custom_tools = hax.vim.luaf ''
-            return {
-              require("mcphub.extensions.avante").mcp_tool(),
-            }
-          '';
           disabled_tools = [
             # "read_file"
             # "bash"
@@ -118,21 +94,4 @@ in
       };
     };
   };
-
-  home.activation.mcphub =
-    let
-      servers =
-        let
-          rawServers = config.lib.agents.mcp.raw;
-          enabledServers = { inherit (rawServers) ddg; };
-          disabledServers =
-            rawServers
-            |> lib.filterAttrs (n: _: !lib.hasAttr n enabledServers)
-            |> lib.mapAttrs (_: v: v // { disabled = true; });
-        in
-        enabledServers // disabledServers;
-    in
-    config.lib.home.json.set {
-      mcpServers = servers;
-    } "${config.xdg.configHome}/mcphub/servers.json";
 }
