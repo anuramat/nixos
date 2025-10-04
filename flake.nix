@@ -10,19 +10,11 @@
     };
     avante = {
       flake = false;
-      url = "github:yetone/avante.nvim/v0.0.27";
+      url = "github:yetone/avante.nvim/main";
     };
     blink-cmp-avante = {
       flake = false;
       url = "github:Kaiser-Yang/blink-cmp-avante";
-    };
-    claude-desktop = {
-      inputs = {
-        nixpkgs = {
-          follows = "nixpkgs";
-        };
-      };
-      url = "github:k3d3/claude-desktop-linux-flake";
     };
     ctrlsn = {
       inputs = {

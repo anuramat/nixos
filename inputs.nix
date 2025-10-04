@@ -47,14 +47,13 @@ in
   protonmail-bridge = mkNonFlake "github:anuramat/proton-bridge/dev";
 
   # misc
-  claude-desktop = mkInput "github:k3d3/claude-desktop-linux-flake";
   mcp-nixos.url = "github:utensils/mcp-nixos";
   mcphub = mkInput "github:ravitemer/mcphub.nvim";
   nil = mkInput "github:oxalica/nil/main";
   spicetify-nix = mkInput "github:Gerg-L/spicetify-nix";
 
   # non flakes
-  avante = mkNonFlake "github:yetone/avante.nvim/v0.0.27";
+  avante = mkNonFlake "github:yetone/avante.nvim/main";
   blink-cmp-avante = mkNonFlake "github:Kaiser-Yang/blink-cmp-avante";
   tt-schemes = mkNonFlake "github:tinted-theming/schemes";
 }

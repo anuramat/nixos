@@ -128,7 +128,6 @@ in
       litePkg
     ]
     ++ (with pkgs; [
-      claude-desktop
       ccusage
       ccusage-codex
       claude-monitor
@@ -153,9 +152,6 @@ in
           inherit (config.lib.agents.mcp.raw) ddg deepwiki;
         };
       } "${cfgDir}/.claude.json";
-      claudeDesktopMcp = config.lib.home.json.set {
-        mcpServers = { };
-      } "${config.xdg.configHome}/Claude/claude_desktop_config.json";
     };
   };
 }
