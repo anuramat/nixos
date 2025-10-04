@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (hax.vim) luaf;
+  inherit (hax.vim) luaf lua;
   inherit (lib) genAttrs;
 
   provider = "copilot"; # "copilot" "llm" "supermaven"
@@ -101,7 +101,7 @@ in
           };
         };
         filetypes = genAttrs disabledFiletypes (ft: false);
-        should_attach = shouldEnableFunc;
+        should_attach = lua shouldEnableFunc;
       };
     };
   };
