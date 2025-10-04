@@ -8,12 +8,18 @@ let
   inherit (hax.vim) luaf;
   inherit (lib) genAttrs;
 
-  provider = "supermaven"; # "copilot" "llm" "supermaven"
+  provider = "copilot"; # "copilot" "llm" "supermaven"
 
   disabledFiletypes = [
     "markdown"
     "typst"
+    "text"
+    "json"
+    "yaml"
+    "todotxt"
   ];
+  # BUG: with supermaven, runs at startup, and that blocks the session forever; so it can only rely on the working directory
+  # NOTE: calls back home even when disabled
   shouldEnableFunc = # lua
     ''
       function()
