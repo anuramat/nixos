@@ -25,6 +25,9 @@ let
     );
 in
 {
+  home.shellAliases = {
+    avante = ''nvim -c "lua vim.defer_fn(function()require(\"avante.api\").zen_mode()end, 100)"'';
+  };
   programs.nixvim = {
     plugins.blink-cmp.settings.sources = {
       per_filetype = {
