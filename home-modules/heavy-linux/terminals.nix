@@ -1,13 +1,4 @@
 {
-  lib,
-  pkgs,
-  config,
-  ...
-}:
-let
-  inherit (config.wayland.systemd) target;
-in
-{
   programs.ghostty.settings.window-decoration = "false";
   programs.foot = {
     enable = true;
@@ -24,19 +15,5 @@ in
         scrollback-end = "Shift+End";
       };
     };
-  };
-
-  systemd.user.services.kitty-autostart = {
-    Unit = {
-      Description = "Autostart Kitty terminal";
-      PartOf = [ target ];
-      After = [ target ];
-      Restart = "no";
-    };
-    Service = {
-      ExecStart = "${lib.getExe pkgs.kitty} --start-as=hidden -1";
-      RemainAfterExit = true;
-    };
-    Install.WantedBy = [ target ];
   };
 }
