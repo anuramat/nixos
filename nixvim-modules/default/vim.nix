@@ -4,15 +4,15 @@
     mini-align.enable = true;
     mini-ai.enable = true;
 
-    image = {
-      enable = true;
-      settings = {
-        settings.integrations.markdown.enabled = false;
-        backend = "kitty";
-        only_render_image_at_cursor = true;
-        integrations.markdown.only_render_image_at_cursor = true;
-      };
-    };
+    # image = {
+    #   enable = true;
+    #   settings = {
+    #     settings.integrations.markdown.enabled = false;
+    #     backend = "kitty";
+    #     only_render_image_at_cursor = true;
+    #     integrations.markdown.only_render_image_at_cursor = true;
+    #   };
+    # };
 
     aerial.enable = true;
 
@@ -45,9 +45,9 @@
       set = key: hax.vim.set ("<leader>h" + key);
     in
     [
-      (set "a" (luaf "require('harpoon'):list():add()") "Add")
-      (set "l" (luaf "require('harpoon').ui:toggle_quick_menu(m:list())") "List")
-      (set "n" (luaf "require('harpoon'):list():next()") "Next")
-      (set "p" (luaf "require('harpoon'):list():prev()") "Previous")
+      (set "a" (luaf ''require("harpoon"):list():add()'') "Add")
+      (set "l" (luaf ''require("harpoon").ui:toggle_quick_menu(m:list())'') "List")
+      (set "n" (luaf ''require("harpoon"):list():next()'') "Next")
+      (set "p" (luaf ''require("harpoon"):list():prev()'') "Previous")
     ];
 }

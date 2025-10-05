@@ -13,10 +13,12 @@
     imagemagickBig # CLI image manipulation
     libwebp # tools for WebP image format
     exiftool # read/write EXIF metadata
-    chafa # sixel, kitty, iterm2, blocks; faster than timg atm (ll7, 2025-06-20)
-    viu # kitty, iterm2, blocks, SOON sixel
-    timg # sixel, kitty, iterm2, blocks
     fontpreview
+
+    # terminal image viewers
+    chafa
+    viu
+    timg
 
     # video
     ffmpeg-full
