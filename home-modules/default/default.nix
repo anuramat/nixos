@@ -17,6 +17,7 @@
     ./readline.nix
     ./search.nix
     ./yazi.nix
+    ./typst.nix
   ];
 
   xdg.enable = true; # set xdg basedir vars in .profile
