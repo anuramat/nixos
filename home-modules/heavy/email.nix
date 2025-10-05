@@ -31,20 +31,20 @@ in
     };
   };
 
-  # systemd.user.services.protonmail-bridge = {
-  #   # NOTE to log in:
-  #   # protonmail-bridge --cli
-  #   Unit = {
-  #     Description = "ProtonMail Bridge";
-  #     After = [ "graphical-session.target" ];
-  #   };
-  #   Install.WantedBy = [ "default.target" ];
-  #   Service = {
-  #     ExecStart = "${lib.getExe pkgs.protonmail-bridge} --noninteractive";
-  #     Restart = "always";
-  #     RestartSec = 10;
-  #   };
-  # };
+  systemd.user.services.protonmail-bridge = {
+    # NOTE to log in:
+    # protonmail-bridge --cli
+    Unit = {
+      Description = "ProtonMail Bridge";
+      After = [ "graphical-session.target" ];
+    };
+    Install.WantedBy = [ "default.target" ];
+    Service = {
+      ExecStart = "${lib.getExe pkgs.protonmail-bridge} --noninteractive";
+      Restart = "always";
+      RestartSec = 10;
+    };
+  };
 
   accounts.email = {
     accounts.primary = {
@@ -55,11 +55,16 @@ in
       realName = fullname;
       passwordCommand =
         let
-          secret-tool = lib.getExe pkgs.libsecret;
-          server = "protonmail/bridge-v3/users/bridge-vault-key";
-          username = "bridge-vault-key";
+          pass = lib.getExe pkgs.pass;
         in
-        "${secret-tool} lookup server ${server} username ${username}";
+        "${pass} show proton-bridge/${email}";
+      # passwordCommand =
+      #   let
+      #     secret-tool = lib.getExe pkgs.libsecret;
+      #     server = "protonmail/bridge-v3/users/bridge-vault-key";
+      #     username = "bridge-vault-key";
+      #   in
+      #   "${secret-tool} lookup server ${server} username ${username}";
 
       imap = {
         host = "127.0.0.1";

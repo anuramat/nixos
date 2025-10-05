@@ -15,7 +15,26 @@
       enable = true;
       checkConfig = true;
       wrapperFeatures.gtk = true;
-      systemd.xdgAutostart = true;
+      systemd = {
+        xdgAutostart = true;
+        variables =
+          let
+            defaults = [
+              "DISPLAY"
+              "WAYLAND_DISPLAY"
+              "SWAYSOCK"
+              "XDG_CURRENT_DESKTOP"
+              "XDG_SESSION_TYPE"
+              "NIXOS_OZONE_WL"
+              "XCURSOR_THEME"
+              "XCURSOR_SIZE"
+            ];
+          in
+          defaults
+          ++ [
+            "DBUS_SESSION_BUS_ADDRESS" # for proton-bridge
+          ];
+      };
       config = {
         bars = [ ];
         focus = {
