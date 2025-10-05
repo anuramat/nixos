@@ -4,6 +4,9 @@
     enable = true;
     settings = {
       scrollback.lines = 133337;
+      url = {
+        osc8-underline = "always";
+      };
       bell = {
         urgent = "yes";
         visual = "yes";

@@ -1,5 +1,17 @@
 inputs:
 (final: prev: {
+  html2text = prev.html2text.overrideAttrs (oldAttrs: rec {
+    version = "unstable";
+    # add yacc to buildInputs to fix build error
+    buildInputs = oldAttrs.buildInputs ++ [ prev.bison ];
+    src = prev.fetchFromGitHub {
+      owner = "anuramat";
+      repo = "html2text";
+      rev = "dev";
+      hash = "sha256-6u0Bv64V4AtR3zzYnbFd8gVMKizQbIyYuHs/0pOLnm4=";
+    };
+  });
+
   web-search-mcp =
     let
       webSearchMcpUrl = "https://raw.githubusercontent.com/ollama/ollama-python/main/examples/web-search-mcp.py";

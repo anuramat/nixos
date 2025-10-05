@@ -9,7 +9,7 @@ let
   email = git.userEmail;
   fullname = git.userName;
   mailcap = pkgs.writeText "mailcap" ''
-    text/html; ${lib.getExe pkgs.html2text} -links %s; copiousoutput
+    text/html; ${lib.getExe pkgs.html2text} -width 120 -ansi -ignore-color -osc8 %s; copiousoutput
   '';
 in
 {
@@ -20,6 +20,7 @@ in
         mkdir -p ${config.xdg.cacheHome}/neomutt/messages
       '';
       # TODO robustify string
+      # TODO BUG REPORT, it's not created by default
     };
   };
   programs = {
@@ -33,7 +34,11 @@ in
         auto_view text/html
         set implicit_autoview
         set mailcap_path=${mailcap}
+        set allow_ansi = yes
         alternative_order text/plain text/html
+
+        set pager = "less -r -S"
+        unset prompt_after
       '';
     };
   };
@@ -90,16 +95,13 @@ in
         extraConfig = ''
           set imap_check_subscribed
         '';
+        # TODO first start will ask for cert acceptance; can we automate that?
       };
       imapnotify = {
         enable = true;
         boxes = [ "INBOX" ];
         onNotify = ''${lib.getExe pkgs.libnotify} -a mail "New email"'';
       };
-      # TODO first start will ask for cert acceptance; can we automate that?
-      # NOTE to enable cache:
-      # TODO BUG REPORT, it's not created by default
-      # mkdir -p ${config.xdg.cacheHome}/neomutt/messages/
     };
   };
 
