@@ -13,8 +13,15 @@ let
   '';
 in
 {
-  home.packages = with pkgs; [ protonmail-bridge ];
-
+  home = {
+    packages = with pkgs; [ protonmail-bridge ];
+    activation = {
+      neomuttCache = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        mkdir -p ${config.xdg.cacheHome}/neomutt/messages
+      '';
+      # TODO robustify string
+    };
+  };
   programs = {
     neomutt = {
       enable = true;
