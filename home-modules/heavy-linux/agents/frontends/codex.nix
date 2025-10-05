@@ -81,11 +81,9 @@ in
   home.sessionVariables = env;
   home = {
     packages = [ pkg ];
-    activation = {
-      codexConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        run cat ${codexTomlCfg} > "${codexCfgPath}";
-      '';
-    };
+    activation.codexConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      run cat ${codexTomlCfg} > "${codexCfgPath}";
+    '';
   };
   xdg.configFile = {
     "codex/AGENTS.md" = {

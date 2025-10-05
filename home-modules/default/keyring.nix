@@ -1,9 +1,13 @@
 {
   config,
+  lib,
   ...
 }:
 {
-  # TODO what did I mean even?: pinentryonsshs
+  home.activation.linkGpgHome = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    ln -sfn "$GNUPGHOME" "$HOME/.gnupg"
+  '';
+
   programs = {
     gpg = {
       enable = true;
