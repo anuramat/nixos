@@ -10,8 +10,8 @@ let
 
   # TODO move to separate file
   flakes =
-    _: prev:
-    (mapAttrs (_: v: v.packages.${prev.system}.default) {
+    final: prev:
+    (mapAttrs (n: v: v.packages.${prev.system}.default) {
       inherit (inputs)
         subcat
         mcp-nixos
@@ -26,7 +26,7 @@ let
         ;
     });
 
-  unstablePkgs = _: prev: {
+  unstablePkgs = final: prev: {
     inherit (import inputs.nixpkgs-unstable { inherit (prev) config system; })
       copilot-lua
       github-mcp-server
@@ -39,7 +39,7 @@ let
   };
 
   impureWrappers =
-    _: prev:
+    final: prev:
     let
       mkNpx =
         binName: pkg:
