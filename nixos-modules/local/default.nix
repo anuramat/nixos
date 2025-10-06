@@ -1,4 +1,4 @@
-# vim: fdl=0 fdm=marker
+# TODO tidy comments
 {
   lib,
   pkgs,
@@ -27,6 +27,10 @@ in
   };
 
   programs = {
+    captive-browser.enable = true;
+    gphoto2.enable = true; # dslr interface
+    obs-studio.enableVirtualCamera = true; # set up the v4l2loopback kernel module, used in home-manager
+    gnome-disks.enable = true; # udisks2 frontend
     appimage = {
       enable = true;
       binfmt = true;
@@ -58,31 +62,6 @@ in
     };
   };
 
-  services = {
-    pipewire = {
-      enable = true;
-      alsa = {
-        enable = true;
-      };
-      pulse.enable = true;
-      wireplumber = {
-        enable = true;
-      };
-    };
-  };
-
-  programs.captive-browser = {
-    enable = true;
-  };
-
-  programs.gphoto2.enable = true; # dslr interface
-  programs.obs-studio.enableVirtualCamera = true; # set up the v4l2loopback kernel module, used in home-manager
-
-  programs.gnome-disks.enable = true; # udisks2 frontend
-  services.udisks2 = {
-    enable = true;
-    mountOnMedia = true;
-  };
   environment.etc."udisks2/mount_options.conf" = {
     text = ''
       [defaults]
@@ -98,7 +77,55 @@ in
   # list printers - `lpstat -p`
   # list printer jobs - `lpstat`
   # cancel job - `cancel 1`
+
   services = {
+    # power:
+    # HandlePowerKeyLongPress=ignore
+    logind.extraConfig = ''
+      HandlePowerKey=suspend
+      HandleSuspendKey=suspend
+      HandleHibernateKey=suspend
+      HandleLidSwitch=ignore
+      HandleLidSwitchDocked=ignore
+      HandleLidSwitchExternalPower=ignore
+    '';
+    thermald.enable = true; # cooling
+    tlp = {
+      enable = true;
+      settings = {
+        CPU_SCALING_GOVERNOR_ON_AC = "performance";
+        CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
+
+        CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+        CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
+
+        CPU_MIN_PERF_ON_AC = mkDefault 50;
+        CPU_MAX_PERF_ON_AC = mkDefault 100;
+        CPU_MIN_PERF_ON_BAT = mkDefault 0;
+        CPU_MAX_PERF_ON_BAT = mkDefault 30;
+      };
+    };
+    upower = {
+      enable = true; # sleep on low battery
+      usePercentageForPolicy = true;
+      percentageCritical = 10;
+      criticalPowerAction = "Hibernate";
+    };
+    udisks2 = {
+      enable = true;
+      mountOnMedia = true;
+    };
+    pipewire = {
+      enable = true;
+      alsa = {
+        enable = true;
+      };
+      pulse.enable = true;
+      wireplumber = {
+        enable = true;
+      };
+    };
+    blueman.enable = true; # bluetooth gui
     # Enable CUPS to print documents, available @ http://localhost:631/
     printing = {
       enable = true;
@@ -122,42 +149,6 @@ in
     bluetooth = {
       enable = true;
       powerOnBoot = false;
-    };
-    services.blueman.enable = true; # bluetooth gui
-  };
-
-  # power {{{1
-  # HandlePowerKeyLongPress=ignore
-  services.logind.extraConfig = ''
-    HandlePowerKey=suspend
-    HandleSuspendKey=suspend
-    HandleHibernateKey=suspend
-    HandleLidSwitch=ignore
-    HandleLidSwitchDocked=ignore
-    HandleLidSwitchExternalPower=ignore
-  '';
-  services = {
-    thermald.enable = true; # cooling
-    tlp = {
-      enable = true;
-      settings = {
-        CPU_SCALING_GOVERNOR_ON_AC = "performance";
-        CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
-
-        CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
-        CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
-
-        CPU_MIN_PERF_ON_AC = mkDefault 50;
-        CPU_MAX_PERF_ON_AC = mkDefault 100;
-        CPU_MIN_PERF_ON_BAT = mkDefault 0;
-        CPU_MAX_PERF_ON_BAT = mkDefault 30;
-      };
-    };
-    upower = {
-      enable = true; # sleep on low battery
-      usePercentageForPolicy = true;
-      percentageCritical = 10;
-      criticalPowerAction = "Hibernate";
     };
   };
 
