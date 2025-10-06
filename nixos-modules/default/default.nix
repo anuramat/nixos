@@ -46,6 +46,7 @@
     pam.services.login.gnupg = {
       enable = true;
       noAutostart = true;
+      storeOnly = true;
     };
     pam.services.swaylock.gnupg = {
       enable = true;
