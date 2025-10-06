@@ -23,6 +23,7 @@ let
         todo
         duckduckgo-mcp-server
         statix
+        deadnix
         ;
     });
 
