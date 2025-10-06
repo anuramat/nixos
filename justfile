@@ -43,7 +43,7 @@ test-matrix:
 
 [group('code')]
 lint:
-    statix check -i hardware-configuration.nix || true
+    statix check || true
     deadnix -l || true
     fd -e nix | xargs nix-instantiate --parse --quiet >/dev/null
     fd -e lua | luacheck - --codes --globals=vim -q
