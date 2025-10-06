@@ -44,7 +44,7 @@ let
         ghostty
         ;
       vimPlugins = prev.vimPlugins // {
-        inherit (unstable)
+        inherit (unstable.vimPlugins)
           tinted-nvim
           ;
       };
