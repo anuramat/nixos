@@ -43,9 +43,9 @@ test-matrix:
 
 [group('code')]
 lint:
-    # Skipping nix linters due to lack of pipe operator support:
     statix check -i hardware-configuration.nix || true
     deadnix || true
+    fd -e nix | xargs nix-instantiate --parse --quiet >/dev/null
     fd -e lua | luacheck - --codes --globals=vim -q
     fd -e sh --print0 -E '/tests/' | xargs -0 shellcheck --enable=all --color=always
     yamllint .

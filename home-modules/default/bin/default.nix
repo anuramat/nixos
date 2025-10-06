@@ -4,7 +4,7 @@
   config,
   osConfig ? null,
   ...
-}@args:
+}:
 let
   inherit (pkgs) writeShellApplication writeScriptBin;
   inherit (builtins) readFile readDir;

@@ -34,11 +34,6 @@ let
   '';
 
   # Mock file with mime types for generateMimeTypes file pattern
-  mockMimeFile = pkgs.writeText "mimes.txt" ''
-    application/json
-    text/markdown
-    image/svg+xml
-  '';
 in
 {
   # Test mimeFromDesktop

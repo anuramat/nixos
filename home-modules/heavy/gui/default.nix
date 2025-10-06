@@ -53,11 +53,11 @@ in
         ];
     };
 
-    # librewolf = {
-    #   enable = true;
-    #   package = pkgs.librewolf;
-    #   settings = firefoxSettings;
-    # };
+    librewolf = {
+      # enable = true;
+      package = pkgs.librewolf;
+      settings = firefoxSettings;
+    };
     firefox = {
       # TODO reuse settings from librewolf when 25.11 is out
       enable = true;

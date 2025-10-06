@@ -10,7 +10,6 @@ let
   inherit (lib)
     getName
     getExe
-    mapAttrsToList
     concatStringsSep
     isDerivation
     isList
