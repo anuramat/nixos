@@ -22,6 +22,7 @@ let
         zotero-mcp
         todo
         duckduckgo-mcp-server
+        statix
         ;
     });
   # TODO move to separate file

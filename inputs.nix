@@ -51,6 +51,7 @@ in
   mcphub = mkInput "github:ravitemer/mcphub.nvim";
   nil = mkInput "github:oxalica/nil/main";
   spicetify-nix = mkInput "github:Gerg-L/spicetify-nix";
+  statix.url = "github:oppiliappan/statix/master";
 
   # non flakes
   avante = mkNonFlake "github:yetone/avante.nvim/main";

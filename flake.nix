@@ -139,6 +139,9 @@
       };
       url = "github:Gerg-L/spicetify-nix";
     };
+    statix = {
+      url = "github:oppiliappan/statix/master";
+    };
     stylix = {
       inputs = {
         nixpkgs = {
