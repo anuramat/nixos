@@ -38,7 +38,9 @@
         };
       };
     };
-    none-ls.sources.code_actions.statix.enable = true;
+    none-ls = {
+      enable = true;
+    };
     overseer = {
       # tasks
       settings = {

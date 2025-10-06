@@ -14,6 +14,9 @@
       "nixfmt" # WARN rename soon
       "injected"
     ];
+    none-ls.sources.code_actions = {
+      statix.enable = true;
+    };
     lsp.servers = {
       statix.enable = true;
       nil_ls.enable = true;
