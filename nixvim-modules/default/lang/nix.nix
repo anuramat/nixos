@@ -8,7 +8,7 @@
   plugins = {
     lint.lintersByFt.nix = [
       "statix"
-      "deadnix"
+      # "deadnix" # BUG still can't do pipe operator
     ];
     conform-nvim.settings.formatters_by_ft.nix = [
       "nixfmt" # WARN rename soon
