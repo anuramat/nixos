@@ -10,8 +10,8 @@ let
 
   # TODO move to separate file
   flakes =
-    final: prev:
-    (mapAttrs (n: v: v.packages.${prev.system}.default) {
+    _: prev:
+    (mapAttrs (_: v: v.packages.${prev.system}.default) {
       inherit (inputs)
         subcat
         mcp-nixos
@@ -28,20 +28,30 @@ let
         ;
     });
 
-  unstablePkgs = final: prev: {
-    inherit (import inputs.nixpkgs-unstable { inherit (prev) config system; })
-      copilot-lua
-      github-mcp-server
-      keymapp
-      proton-pass
-      librewolf
-      litellm
-      ghostty
-      ;
-  };
+  unstablePkgs =
+    _: prev:
+    let
+      unstable = import inputs.nixpkgs-unstable { inherit (prev) config system; };
+    in
+    {
+      inherit (unstable)
+        copilot-lua
+        github-mcp-server
+        keymapp
+        proton-pass
+        librewolf
+        litellm
+        ghostty
+        ;
+      vimPlugins = prev.vimPlugins // {
+        inherit (unstable)
+          tinted-nvim
+          ;
+      };
+    };
 
   impureWrappers =
-    final: prev:
+    _: prev:
     let
       mkNpx =
         binName: pkg:

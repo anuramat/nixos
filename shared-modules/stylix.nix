@@ -32,10 +32,10 @@
       let
         # favs: black-metal tarot
         # mono: grayscale-dark grayscale-light greenscreen
-        # plain: uwunicorn moonlight stella mellow-purple pasque tokyo-night-dark zenbones
-        # elfie: onedark-dark pop
-        # retro: windows-nt
-        # quirky: xcode-dusk aztec
+        # warm: mellow-purple uwunicorn pasque stella
+        # cold: moonlight
+        # retro: onedark-dark pop windows-*
+        # grey: xcode-dusk tokyo-night-dark
         # TODO base24: borland mona-lisa red-alert red-sands unikitty
 
         # paraiso -- purple/burgundy, colorful text -- 3/5?
