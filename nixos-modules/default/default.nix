@@ -41,13 +41,6 @@
 
   security = {
     rtkit.enable = true; # realtime kit, hands out realtime priority to user processes
-    # TODO doesn't work
-    # need to expose GNUPGHOME for starters
-    pam.services.login.gnupg = {
-      enable = true;
-      noAutostart = true;
-      storeOnly = true;
-    };
     pam.services.swaylock.gnupg = {
       enable = true;
       noAutostart = true;
