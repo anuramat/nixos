@@ -105,6 +105,9 @@
       };
       url = "github:nix-community/nix-unit/v2.30.0";
     };
+    nixd = {
+      url = "github:nix-community/nixd/2.7.0";
+    };
     nixos-hardware = {
       url = "github:NixOS/nixos-hardware/master";
     };

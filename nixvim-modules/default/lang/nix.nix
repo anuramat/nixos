@@ -19,7 +19,7 @@
       nil_ls.enable = true;
 
       nixd = {
-        enable = false;
+        enable = true;
         cmd = [
           "nixd"
           "--inlay-hints=false"
