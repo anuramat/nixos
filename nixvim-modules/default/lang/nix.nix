@@ -11,7 +11,7 @@
       "deadnix"
     ];
     conform-nvim.settings.formatters_by_ft.nix = [
-      "nixfmt-rfc-style"
+      "nixfmt" # WARN rename soon
       "injected"
     ];
     lsp.servers = {

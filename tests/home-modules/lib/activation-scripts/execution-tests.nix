@@ -2,7 +2,6 @@
 { testLib }:
 let
   inherit (testLib)
-    mkExecutionTest
     checkExecution
     mkRealActivationTest
     mkPureActivationTest

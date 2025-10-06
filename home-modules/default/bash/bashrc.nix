@@ -5,7 +5,6 @@
   ...
 }:
 let
-  inherit (lib) getExe;
   template = pkgs.writeShellApplication {
     name = "template";
     text = # bash

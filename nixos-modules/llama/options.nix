@@ -4,7 +4,6 @@ let
     optionals
     types
     mkOption
-    mkIf
     ;
 
   inherit (config.services.llama-cpp) modelExtra;

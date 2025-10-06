@@ -4,7 +4,7 @@
   lib,
   osConfig ? null,
   ...
-}@args:
+}:
 let
   diffFile = config.xdg.stateHome + "hm-activation-diffs.txt";
   inherit (lib)
@@ -13,7 +13,6 @@ let
     mapAttrsToList
     concatStringsSep
     isDerivation
-    isPath
     isList
     isString
     isAttrs

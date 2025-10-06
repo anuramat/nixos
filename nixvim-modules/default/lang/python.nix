@@ -1,8 +1,4 @@
 { hax, ... }:
-let
-  inherit (hax.vim) luaf;
-  set = key: hax.vim.set ("<localleader>" + key);
-in
 {
   plugins = {
     conform-nvim.settings.formatters_by_ft.python = [

@@ -4,7 +4,6 @@ let
   inherit (lib) trim replaceStrings;
   flatten = x: x |> replaceStrings [ "\n" ] [ " " ] |> trim;
   h1 = "##";
-  h2 = "###";
 in
 {
   lib.agents.roles = {

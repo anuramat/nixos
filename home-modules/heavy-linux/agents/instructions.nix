@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ lib, ... }:
 let
   topHead = "#";
   sectionHead = "${topHead}#";
@@ -84,7 +84,6 @@ let
         '';
         # TODO maybe refactor step? doc upd step?
       };
-
       prependTitle = body: lib.concatStringsSep "\n" ([ "${topHead} Global instructions\n" ] ++ body);
     in
     sections |> lib.mapAttrsToList (n: v: "${sectionHead} ${n}\n\n" + v) |> prependTitle;
