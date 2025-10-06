@@ -6,11 +6,14 @@
 }:
 {
   plugins = {
+    lint.lintersByFt.nix = [
+      "statix"
+      "deadnix"
+    ];
     conform-nvim.settings.formatters_by_ft.nix = [
       "nixfmt"
       "injected"
     ];
-
     lsp.servers = {
       statix.enable = true;
       nil_ls.enable = true;

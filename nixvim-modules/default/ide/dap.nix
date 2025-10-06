@@ -1,5 +1,6 @@
 {
   plugins = {
+    # TODO clean up and test
     dap.enable = true;
     #   local sign = vim.fn.sign_define
     #   sign('DapBreakpoint', { text = '', texthl = 'DapBreakpoint', linehl = '', numhl = '' })
