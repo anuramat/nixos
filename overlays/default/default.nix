@@ -8,7 +8,6 @@ let
     mapAttrs
     ;
 
-  # TODO move to separate file
   flakes =
     _: prev:
     (mapAttrs (_: v: v.packages.${prev.system}.default) {
@@ -43,11 +42,6 @@ let
         litellm
         ghostty
         ;
-      vimPlugins = prev.vimPlugins // {
-        inherit (unstable.vimPlugins)
-          tinted-nvim
-          ;
-      };
     };
 
   impureWrappers =
@@ -89,6 +83,7 @@ let
 
   overlays = inputOverlays ++ [
     (import ./misc.nix inputs)
+    (import ./vim-plugins.nix inputs)
     impureWrappers
     unstablePkgs
     flakes

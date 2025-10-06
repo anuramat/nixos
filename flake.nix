@@ -66,6 +66,9 @@
       };
       url = "github:nix-community/home-manager/release-25.05";
     };
+    html2text = {
+      url = "github:anuramat/html2text/dev";
+    };
     mac-app-util = {
       url = "github:hraban/mac-app-util";
     };

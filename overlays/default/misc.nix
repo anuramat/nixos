@@ -1,17 +1,5 @@
 inputs:
 (final: prev: {
-  html2text = prev.html2text.overrideAttrs (oldAttrs: {
-    version = "unstable";
-    # add yacc to buildInputs to fix build error
-    buildInputs = oldAttrs.buildInputs ++ [ prev.bison ];
-    src = prev.fetchFromGitHub {
-      owner = "anuramat";
-      repo = "html2text";
-      rev = "dev";
-      hash = "sha256-6u0Bv64V4AtR3zzYnbFd8gVMKizQbIyYuHs/0pOLnm4=";
-    };
-  });
-
   web-search-mcp =
     let
       webSearchMcpUrl = "https://raw.githubusercontent.com/ollama/ollama-python/main/examples/web-search-mcp.py";
@@ -199,15 +187,6 @@ inputs:
       license = prev.lib.licenses.gpl3Only;
       mainProgram = "llmapibenchmark";
     };
-  };
-
-  vimPlugins = prev.vimPlugins // {
-    avante-nvim = prev.vimPlugins.avante-nvim.overrideAttrs (old: {
-      src = inputs.avante;
-    });
-    blink-cmp-avante = prev.vimPlugins.blink-cmp-avante.overrideAttrs (old: {
-      src = inputs.blink-cmp-avante;
-    });
   };
 
   llama-cpp = prev.llama-cpp.overrideAttrs (old: rec {
