@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ lib, ... }:
 let
   toYAML = lib.generators.toYAML { };
 in

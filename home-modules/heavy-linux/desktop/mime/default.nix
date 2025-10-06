@@ -1,7 +1,6 @@
 {
   hax,
   pkgs,
-  lib,
   ...
 }:
 let

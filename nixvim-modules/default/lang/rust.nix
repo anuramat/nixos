@@ -1,6 +1,4 @@
 {
-  hax,
-  config,
   pkgs,
   ...
 }:

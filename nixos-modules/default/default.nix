@@ -3,7 +3,6 @@
   config,
   hax,
   inputs,
-  pkgs,
   ...
 }:
 {

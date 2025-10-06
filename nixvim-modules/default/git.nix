@@ -1,4 +1,4 @@
-{ lib, hax, ... }:
+{ hax, ... }:
 {
   plugins = {
     gitlinker = {

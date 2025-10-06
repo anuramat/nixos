@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ ... }:
 {
   # auto start on 1st tty
   programs.bash = {

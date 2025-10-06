@@ -1,5 +1,5 @@
 # Mock NixOS module for testing username configuration
-{ username, lib, ... }:
+{ username, ... }:
 {
   users.users.${username} = {
     isNormalUser = true;

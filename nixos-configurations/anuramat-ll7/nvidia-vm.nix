@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 # WARN doesn't work yet
 {
   # Bind the 4070 + its audio to vfio early

@@ -1,4 +1,4 @@
-{ pkgs, lib }:
+{ lib }:
 let
   hax = import ../../hax/vim.nix { inherit lib; };
 in

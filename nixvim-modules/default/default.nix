@@ -11,7 +11,6 @@
 # https://github.com/nvim-neotest/neotest
 # https://github.com/mattn/efm-langserver
 {
-  pkgs,
   inputs,
   ...
 }:

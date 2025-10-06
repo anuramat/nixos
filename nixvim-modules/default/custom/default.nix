@@ -1,4 +1,4 @@
-{ pkgs, inputs, ... }:
+{ ... }:
 {
   imports = [
     ./figtree.nix

@@ -1,7 +1,6 @@
 # TODO try removing tmpdir
 {
   pkgs,
-  config,
   ...
 }:
 let
