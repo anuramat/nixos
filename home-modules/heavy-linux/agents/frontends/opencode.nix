@@ -43,7 +43,12 @@ let
   opencodeConfig = {
     # model = mini; bugged -- overrides agent model on startup
     small_model = if local.enabled then "${local.providerId}/${local.modelId}" else qwen;
-    inherit mcp provider agent;
+    inherit
+      mcp
+      provider
+      agent
+      plugin
+      ;
     autoupdate = false;
     instructions = [
       "AGENTS.md"

@@ -15,13 +15,26 @@
       (set "l" (lua "vim.lsp.codelens.run") "CodeLens")
     ];
   plugins = {
-    lint.enable = true;
+    lint = {
+      enable = true;
+      autoCmd.event = [
+        "BufWritePost"
+        "FileType"
+      ];
+    };
     conform-nvim = {
       # the only formatter that can do injection formatting
       enable = true;
+      autoInstall.enable = true;
       settings = {
         format_on_save = {
+          timeout_ms = 300;
+        };
+        notify_on_error = false;
+        default_format_opts = {
+          timeout_ms = 3000;
           lsp_format = "fallback";
+          quiet = true;
         };
       };
     };
