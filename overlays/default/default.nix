@@ -10,8 +10,8 @@ let
 
   # TODO move to separate file
   flakes =
-    final: prev:
-    (mapAttrs (n: v: v.packages.${prev.system}.default) {
+    _: prev:
+    (mapAttrs (_: v: v.packages.${prev.system}.default) {
       inherit (inputs)
         subcat
         mcp-nixos
@@ -25,8 +25,8 @@ let
         statix
         ;
     });
-  # TODO move to separate file
-  unstablePkgs = final: prev: {
+
+  unstablePkgs = _: prev: {
     inherit (import inputs.nixpkgs-unstable { inherit (prev) config system; })
       copilot-lua
       github-mcp-server
@@ -38,32 +38,8 @@ let
       ;
   };
 
-  # TODO move to misc.nix and rename misc.nix to IDK what
-  pythonPackages = final: prev: {
-    python3 = prev.python3.override {
-      packageOverrides = pfinal: pprev: {
-        mdformat-deflist = pfinal.buildPythonPackage rec {
-          pname = "mdformat_deflist";
-          version = "0.1.3";
-          format = "pyproject";
-          src = pfinal.fetchPypi {
-            inherit pname version;
-            hash = "sha256-slCRzhcFo3wMyH3bHHij5+tD1Qrc21rUdjQR90Oub34=";
-          };
-          nativeBuildInputs = [ pfinal.flit-core ];
-          propagatedBuildInputs = [
-            pfinal.mdformat
-            pfinal.mdit-py-plugins
-          ];
-          pythonImportsCheck = [ "mdformat_deflist" ];
-        };
-      };
-    };
-  };
-
-  # TODO move to separate file
   impureWrappers =
-    final: prev:
+    _: prev:
     let
       mkNpx =
         binName: pkg:
@@ -91,7 +67,6 @@ let
       claude-monitor = mkUv "claude-monitor" "claude-monitor";
     };
 
-  # TODO move to separate file
   inputOverlays =
     with inputs;
     [
@@ -104,7 +79,6 @@ let
     (import ./misc.nix inputs)
     impureWrappers
     unstablePkgs
-    pythonPackages
     flakes
   ];
 in
