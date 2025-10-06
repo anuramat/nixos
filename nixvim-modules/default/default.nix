@@ -13,6 +13,7 @@
 {
   inputs,
   hax,
+  pkgs,
   ...
 }:
 {
@@ -35,6 +36,9 @@
     ./vim.nix
   ];
 
+  extraPlugins = [
+    pkgs.vimPlugins.blink-cmp-avante
+  ];
   plugins.lz-n.enable = true;
   luaLoader.enable = true;
   performance = {
