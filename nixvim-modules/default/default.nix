@@ -37,7 +37,7 @@
   ];
 
   extraPlugins = [
-    pkgs.vimPlugins.blink-cmp-avante
+    pkgs.vimPlugins.tinted-nvim
   ];
   plugins.lz-n.enable = true;
   luaLoader.enable = true;
