@@ -6,9 +6,7 @@
   ...
 }:
 {
-  stylix.targets = {
-    neovim.plugin = "base16-nvim";
-  };
+  stylix.targets.nixvim.plugin = "base16-nvim";
   programs = {
     nixvim = {
       enable = true;
