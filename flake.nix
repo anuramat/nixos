@@ -24,6 +24,9 @@
       };
       url = "git+ssh://git@github.com/anuramat/ctrl.sn?ref=main";
     };
+    deadnix = {
+      url = "github:astro/deadnix/main";
+    };
     duckduckgo-mcp-server = {
       url = "github:anuramat/duckduckgo-mcp-server/dev";
     };

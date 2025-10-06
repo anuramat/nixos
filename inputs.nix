@@ -52,6 +52,7 @@ in
   nil = mkInput "github:oxalica/nil/main";
   spicetify-nix = mkInput "github:Gerg-L/spicetify-nix";
   statix.url = "github:oppiliappan/statix/master";
+  deadnix.url = "github:astro/deadnix/main";
 
   # non flakes
   avante = mkNonFlake "github:yetone/avante.nvim/main";
