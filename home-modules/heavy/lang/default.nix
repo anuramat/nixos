@@ -1,6 +1,9 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
-  programs.go.enable = true;
+  programs.go = {
+    enable = true;
+    goPath = "${config.xdg.cacheHome}/go"; # ~/.cache/go
+  };
   imports = [
     ./nix.nix
     ./python.nix

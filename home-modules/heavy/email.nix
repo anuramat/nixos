@@ -31,6 +31,7 @@ in
       sort = "reverse-date";
       # TODO explain these
       extraConfig = ''
+        set certificate_file="${config.xdg.cacheHome}/neomutt/certificates"
         auto_view text/html
         set implicit_autoview
         set mailcap_path=${mailcap}

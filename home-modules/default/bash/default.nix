@@ -58,6 +58,9 @@ in
         MANPAGER = "less";
         NIXOS_OZONE_WL = "1"; # wayland chromium/electron
 
+        STACK_ROOT = "${config.xdg.dataHome}/stack";
+        STACK_XDG = "1";
+
         VIRTUAL_ENV_DISABLE_PROMPT = "1"; # hide python venv prompt
 
         # XDG TODO move stuff here from the shims file
@@ -83,6 +86,9 @@ in
           ezacmd = "eza --group-directories-first --group --header --git --icons=always --color=always --color-scale=all --sort=name";
         in
         {
+          mitmproxy = "mitmproxy --set confdir=$XDG_CONFIG_HOME/mitmproxy";
+          mitmweb = "mitmweb --set confdir=$XDG_CONFIG_HOME/mitmproxy";
+
           ls = "${ezacmd}";
           ll = "${ezacmd} --long";
           la = "${ezacmd} --long --all";
