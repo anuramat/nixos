@@ -158,12 +158,14 @@ let
     };
 in
 {
-  inherit
-    term
-    screen
-    pickers
-    notifications
-    ctl
-    cycle
-    ;
+  lib.sway.keyRhs = {
+    inherit
+      term
+      screen
+      pickers
+      notifications
+      ctl
+      cycle
+      ;
+  };
 }
