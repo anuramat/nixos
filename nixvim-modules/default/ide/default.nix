@@ -25,7 +25,7 @@
     conform-nvim = {
       # the only formatter that can do injection formatting
       enable = true;
-      autoInstall.enable = true;
+      # autoInstall.enable = true; # TODO coming soon
       settings = {
         format_on_save = {
           timeout_ms = 300;

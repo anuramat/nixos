@@ -22,7 +22,7 @@ in
   nixos-hardware.url = "github:NixOS/nixos-hardware/master"; # no follows: too dangerous
   nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
   nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
-  nixvim = mkInput "github:nix-community/nixvim";
+  nixvim = mkInput "github:nix-community/nixvim/nixos-25.05";
   nur = mkInput "github:nix-community/NUR";
   stylix = mkInput "github:danth/stylix/release-25.05";
   files.url = "github:mightyiam/files";
