@@ -28,7 +28,6 @@
     ./ft.nix
     ./fzf.nix
     ./git.nix
-    ./ide
     ./lang
     ./misc.nix
     ./treesitter.nix
