@@ -2,20 +2,22 @@
 # WARN doesn't work yet
 {
   # Bind the 4070 + its audio to vfio early
-  boot.initrd.kernelModules = [
-    "vfio_pci"
-    "vfio"
-    "vfio_iommu_type1"
-  ];
+  boot = {
+    initrd.kernelModules = [
+      "vfio_pci"
+      "vfio"
+      "vfio_iommu_type1"
+    ];
 
-  # Keep host NVIDIA drivers from grabbing the GPU
-  boot.blacklistedKernelModules = [
-    "nouveau"
-    "nvidia"
-    "nvidia_drm"
-    "nvidia_modeset"
-    "nvidia_uvm"
-  ];
+    # Keep host NVIDIA drivers from grabbing the GPU
+    blacklistedKernelModules = [
+      "nouveau"
+      "nvidia"
+      "nvidia_drm"
+      "nvidia_modeset"
+      "nvidia_uvm"
+    ];
+  };
 
   # Enable IOMMU on both vendors (harmless to pass both);
   # iommu=pt = passthrough mode for better perf

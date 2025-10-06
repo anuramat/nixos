@@ -92,8 +92,7 @@ in
     let
       mkFlags =
         p:
-        [ ]
-        ++ optionals (p.mmprojFile != null) [
+        optionals (p.mmprojFile != null) [
           "--mmproj"
           p.mmprojFile
         ]

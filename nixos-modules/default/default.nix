@@ -39,19 +39,21 @@
 
   # TODO move stuff that is not required on a server
 
-  security.rtkit.enable = true; # realtime kit, hands out realtime priority to user processes
-  i18n.defaultLocale = "en_US.UTF-8";
+  security = {
+    rtkit.enable = true; # realtime kit, hands out realtime priority to user processes
+    # TODO doesn't work
+    # need to expose GNUPGHOME for starters
+    pam.services.login.gnupg = {
+      enable = true;
+      noAutostart = true;
+    };
+    pam.services.swaylock.gnupg = {
+      enable = true;
+      noAutostart = true;
+    };
+  };
 
-  # TODO doesn't work
-  # need to expose GNUPGHOME for starters
-  security.pam.services.login.gnupg = {
-    enable = true;
-    noAutostart = true;
-  };
-  security.pam.services.swaylock.gnupg = {
-    enable = true;
-    noAutostart = true;
-  };
+  i18n.defaultLocale = "en_US.UTF-8";
 
   security.soteria.enable = true; # polkit auth agent
 

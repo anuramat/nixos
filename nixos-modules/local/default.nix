@@ -57,7 +57,6 @@ in
         ++ cudaLibs;
     };
   };
-  hardware.graphics.enable = true;
 
   services = {
     pipewire = {
@@ -113,17 +112,19 @@ in
       openFirewall = true; # Open udp 5353 for network devices discovery
     };
   };
-  hardware.printers = { }; # some printers need additional configuration
-  hardware.sane = {
-    enable = true;
-    extraBackends = [ ];
+  hardware = {
+    graphics.enable = true;
+    printers = { }; # some printers need additional configuration
+    sane = {
+      enable = true;
+      extraBackends = [ ];
+    };
+    bluetooth = {
+      enable = true;
+      powerOnBoot = false;
+    };
+    services.blueman.enable = true; # bluetooth gui
   };
-
-  hardware.bluetooth = {
-    enable = true;
-    powerOnBoot = false;
-  };
-  services.blueman.enable = true; # bluetooth gui
 
   # power {{{1
   # HandlePowerKeyLongPress=ignore
