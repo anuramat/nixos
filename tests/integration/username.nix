@@ -1,5 +1,5 @@
 # Integration tests for username configuration
-{ lib }:
+{ lib, ... }:
 let
   inherit (lib) evalModules;
 
