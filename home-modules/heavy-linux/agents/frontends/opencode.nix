@@ -199,11 +199,44 @@ let
       };
       groq.options.apiKey = keys.groq;
       github-copilot.models = gpt5models;
+      # openai = {
+      #   options.apiKey = keys.openai;
+      #   models = gpt5models;
+      # };
       openai = {
-        options.apiKey = keys.openai;
-        models = gpt5models;
+        options = {
+          reasoningEffort = "medium";
+          reasoningSummary = "detailed"; # auto
+          textVerbosity = "low";
+          include = [
+            "reasoning.encrypted_content"
+          ];
+        };
+        models = {
+          gpt-5-codex-low-oauth = {
+            name = "GPT-5 Codex Low (OAuth)";
+            options = {
+              reasoningEffort = "low";
+            };
+          };
+          gpt-5-codex-medium-oauth = {
+            name = "GPT-5 Codex Medium (OAuth)";
+            options = {
+              reasoningEffort = "medium";
+            };
+          };
+          gpt-5-codex-high-oauth = {
+            name = "GPT-5 Codex High (OAuth)";
+            options = {
+              reasoningEffort = "high";
+            };
+          };
+        };
       };
     };
+  plugin = [
+    "opencode-openai-codex-auth@2.1.1"
+  ];
   mcp =
     let
       rawServers = mapAttrs (
