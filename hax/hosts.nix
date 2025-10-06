@@ -49,7 +49,7 @@ rec {
       filenames = readDir keyDir |> attrNames;
       clientKeyFilenames = filter (x: lib.strings.hasSuffix ".pub" x && x != cacheFilename) filenames;
     in
-    (map (x: keyDir + /${x}) clientKeyFilenames);
+    map (x: keyDir + /${x}) clientKeyFilenames;
   mkKnownHostsFiles = names: map (v: cfgRoot + "/${v}/keys/host_keys") names;
 
   mkHostKeys =

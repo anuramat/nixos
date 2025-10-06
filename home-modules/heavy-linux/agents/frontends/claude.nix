@@ -111,13 +111,11 @@ let
   cfgDir = config.xdg.configHome + "/claude";
 in
 {
-  xdg.configFile = (
-    {
-      "claude/CLAUDE.md".text = agents.instructions.claude;
-    }
-    // commands
-    // roles
-  );
+  xdg.configFile = {
+    "claude/CLAUDE.md".text = agents.instructions.claude;
+  }
+  // commands
+  // roles;
   home = {
     sessionVariables = {
       CLAUDE_CONFIG_DIR = cfgDir;

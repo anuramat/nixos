@@ -8,7 +8,7 @@
 with lib;
 let
   cfg = config.userConfig;
-  username = cfg.username;
+  inherit (cfg) username;
   homeConfig = config.home-manager.users.${username};
 in
 {

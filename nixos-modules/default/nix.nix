@@ -76,7 +76,7 @@ in
       sshUser = inputs.self.consts.builderUsername;
       sshKey = keyPath;
       hostName = n;
-      system = v.system;
+      inherit (v) system;
       protocol = "ssh-ng";
     }) config.lib.hosts.builders;
   };

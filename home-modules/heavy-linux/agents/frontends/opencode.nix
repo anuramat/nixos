@@ -249,7 +249,7 @@ let
         if server ? type && server.type == "http" then
           {
             type = "remote";
-            url = server.url;
+            inherit (server) url;
           }
         else
           {
@@ -301,13 +301,11 @@ in
         in
         agents.mkPrompts "opencode/command" adaptedCommands;
     in
-    (
-      {
-        "opencode/AGENTS.md".text = agents.instructions.generic;
-        "opencode/plugin/notifications.js".text = notifications;
-      }
-      // commands
-    );
+    {
+      "opencode/AGENTS.md".text = agents.instructions.generic;
+      "opencode/plugin/notifications.js".text = notifications;
+    }
+    // commands;
 
   home = {
     activation = {

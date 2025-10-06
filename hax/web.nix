@@ -28,7 +28,7 @@ let
         from: w:
         let
           rw = {
-            root = w.root;
+            inherit (w) root;
             domain = from;
           };
         in

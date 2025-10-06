@@ -1,7 +1,4 @@
 {
-  ...
-}:
-{
   xdg.dataFile =
     let
       packageName = "preamble";

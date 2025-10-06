@@ -1,4 +1,3 @@
-{ ... }:
 let
   email = "x@ctrl.sn";
 in

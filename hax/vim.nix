@@ -26,7 +26,7 @@ in
         {
           action = "<cmd>${action}<cr>";
           options = {
-            desc = (if desc == "" then action else desc);
+            desc = if desc == "" then action else desc;
           };
         }
       else if type == "set" then

@@ -4,7 +4,7 @@ with lib;
 with builtins;
 let
   readLines = v: v |> readFile |> splitString "\n" |> filter (x: x != "");
-  getSchema = attrsets.mapAttrsRecursive (path: v: typeOf (v));
+  getSchema = attrsets.mapAttrsRecursive (path: typeOf);
   getMatches =
     patterns: x:
     mapAttrs (
@@ -18,7 +18,7 @@ in
       desktopFiles =
         package:
         let
-          dir = (package.outPath + "/share/applications");
+          dir = package.outPath + "/share/applications";
         in
         dir
         |> readDir

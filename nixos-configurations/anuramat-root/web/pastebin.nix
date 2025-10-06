@@ -10,7 +10,7 @@ in
 lib.mkMerge (
   (hax.web.serve w)
   ++ [
-    ({
+    {
       services.wastebin = {
         enable = true;
         settings = {
@@ -19,6 +19,6 @@ lib.mkMerge (
           WASTEBIN_MAX_BODY_SIZE = 1024 * 1024;
         };
       };
-    })
+    }
   ]
 )

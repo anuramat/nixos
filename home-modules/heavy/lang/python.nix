@@ -11,63 +11,61 @@ let
 in
 {
   home.sessionVariables.JUPYTER_CONFIG_DIR = "${config.xdg.configHome}/jupyter"; # ~/.jupyter/
-  xdg.configFile = (
-    {
-      "python/pythonrc".text = # python
-        '''';
-      "ipython/profile_default/startup/00-default.py".text = # python
-        '''';
-      "conda/condarc".text = toYAML {
-        channels = [
-          "conda-forge"
-          "conda"
-        ];
-        auto_activate_base = false;
-        changeps1 = false;
-      };
-      "jupyter/jupyter_server_config.py".text =
-        let
-          cfg = {
-            ContentsManager.allow_hidden = false; # show .files
-            ServerApp = {
-              ip = "0.0.0.0";
-              port = 8888;
-              open_browser = false;
-              password = "";
-              token = "";
-            };
-          };
-          root = "c";
-        in
-        # python
-        ''
-          ${root} = get_config()
-          ${hax.common.pythonConfig root cfg}
-        '';
-    }
-    // (
+  xdg.configFile = {
+    "python/pythonrc".text = # python
+      '''';
+    "ipython/profile_default/startup/00-default.py".text = # python
+      '''';
+    "conda/condarc".text = toYAML {
+      channels = [
+        "conda-forge"
+        "conda"
+      ];
+      auto_activate_base = false;
+      changeps1 = false;
+    };
+    "jupyter/jupyter_server_config.py".text =
       let
-        mkSettingsJSON =
-          root: settings:
-          settings
-          |> lib.mapAttrs' (path: contents: lib.nameValuePair (root + path) { text = (toJSON contents); });
+        cfg = {
+          ContentsManager.allow_hidden = false; # show .files
+          ServerApp = {
+            ip = "0.0.0.0";
+            port = 8888;
+            open_browser = false;
+            password = "";
+            token = "";
+          };
+        };
+        root = "c";
       in
-      mkSettingsJSON "jupyter/lab/user-settings/@jupyterlab/" {
-        "docmanager-extension/plugin.jupyterlab-settings" = {
-          autosave = false;
-        };
-        "extensionmanager-extension/plugin.jupyterlab-settings" = {
-          disclaimed = true;
-        };
-        "apputils-extension/notification.jupyterlab-settings" = {
-          fetchNews = "false"; # sic (!)
-          checkForUpdates = false;
-        };
-        "apputils-extension/themes.jupyterlab-settings" = {
-          adaptive-theme = true;
-        };
-      }
-    )
+      # python
+      ''
+        ${root} = get_config()
+        ${hax.common.pythonConfig root cfg}
+      '';
+  }
+  // (
+    let
+      mkSettingsJSON =
+        root: settings:
+        settings
+        |> lib.mapAttrs' (path: contents: lib.nameValuePair (root + path) { text = toJSON contents; });
+    in
+    mkSettingsJSON "jupyter/lab/user-settings/@jupyterlab/" {
+      "docmanager-extension/plugin.jupyterlab-settings" = {
+        autosave = false;
+      };
+      "extensionmanager-extension/plugin.jupyterlab-settings" = {
+        disclaimed = true;
+      };
+      "apputils-extension/notification.jupyterlab-settings" = {
+        fetchNews = "false"; # sic (!)
+        checkForUpdates = false;
+      };
+      "apputils-extension/themes.jupyterlab-settings" = {
+        adaptive-theme = true;
+      };
+    }
   );
 
   home.sessionVariables.IPYTHONDIR = "${config.xdg.configHome}/ipython"; # ~/.ipython/; mixes configs with data

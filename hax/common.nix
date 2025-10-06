@@ -4,7 +4,7 @@ with lib;
 with builtins;
 rec {
   readLines = v: v |> readFile |> splitString "\n" |> filter (x: x != "");
-  getSchema = attrsets.mapAttrsRecursive (path: v: typeOf v);
+  getSchema = attrsets.mapAttrsRecursive (path: typeOf);
   join = s: with lib; s |> splitString "\n" |> concatStringsSep " ";
   getMatches =
     patterns: x:
@@ -38,5 +38,5 @@ rec {
     |> attrNames
     |> map (n: lib.nameValuePair (lib.removeSuffix ".nix" n) (func /${dir}/${n})) # assert .nix equiv regular; assert no collisions
     |> lib.listToAttrs;
-  mkImportSet = mkDirSet (x: import x);
+  mkImportSet = mkDirSet import;
 }

@@ -129,7 +129,7 @@ in
             header + (variables |> map shadowWithPassthrough |> builtins.concatStringsSep "\n");
 
         in
-        (pkgs.writeShellApplication {
+        pkgs.writeShellApplication {
           name = wrapperName;
           runtimeInputs = with pkgs; [
             bubblewrap
@@ -169,7 +169,7 @@ in
               echo "''$${varNames.agentSandboxLog}"$'\n' >> "''$${varNames.agentSandboxLogFile}"
               bwrap --ro-bind / / --dev /dev "''${args[@]}" ${cmd} "$@"
             '';
-        });
+        };
     in
     pkgs.symlinkJoin {
       name = (lib.getName package) + "-wrappers";
