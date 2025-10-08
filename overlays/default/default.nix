@@ -37,6 +37,7 @@ let
         copilot-lua
         keymapp
         proton-pass
+        litellm
         ghostty
         ;
     };

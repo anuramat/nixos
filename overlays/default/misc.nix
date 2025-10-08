@@ -25,15 +25,16 @@ inputs:
       '';
     };
 
-  litellm = prev.litellm.overrideAttrs (_: rec {
-    version = "1.77.7.rc.2";
-    src = prev.fetchFromGitHub {
-      owner = "BerriAI";
-      repo = "litellm";
-      tag = "v${version}";
-      hash = "sha256-utXxzyx99O+/1VqumBnafh85cRZsk3cIrVjG/wdv6yk=";
-    };
-  });
+  # TODO this requires fastuuid which is not in nixpkgs
+  # litellm = prev.litellm.overrideAttrs (_: rec {
+  #   version = "1.77.7.rc.2";
+  #   src = prev.fetchFromGitHub {
+  #     owner = "BerriAI";
+  #     repo = "litellm";
+  #     tag = "v${version}";
+  #     hash = "sha256-utXxzyx99O+/1VqumBnafh85cRZsk3cIrVjG/wdv6yk=";
+  #   };
+  # });
 
   protonmail-bridge = prev.protonmail-bridge.overrideAttrs (oldAttrs: {
     version = "unstable";
