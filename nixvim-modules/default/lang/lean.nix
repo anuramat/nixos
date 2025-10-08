@@ -1,0 +1,10 @@
+{
+  ...
+}:
+{
+  plugins = {
+    lean = {
+      enable = true;
+    };
+  };
+}

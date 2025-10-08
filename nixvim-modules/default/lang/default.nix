@@ -2,6 +2,7 @@
   imports = [
     ./go.nix
     ./haskell.nix
+    ./lean.nix
     ./lua.nix
     ./markdown.nix
     ./markup
