@@ -91,6 +91,9 @@ let
     ];
     litellm_settings = {
       check_provider_endpoint = true;
+      # silently drop parameters if they're not supported by a given provider/model
+      # mainly for claude code with openai-compatible apis
+      drop_params = true;
     };
   };
 
