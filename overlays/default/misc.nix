@@ -31,7 +31,7 @@ inputs:
       owner = "BerriAI";
       repo = "litellm";
       tag = "v${version}";
-      hash = "";
+      hash = "sha256-utXxzyx99O+/1VqumBnafh85cRZsk3cIrVjG/wdv6yk=";
     };
   });
 
