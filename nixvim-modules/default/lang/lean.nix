@@ -1,7 +1,4 @@
 {
-  ...
-}:
-{
   plugins = {
     lean = {
       enable = true;
