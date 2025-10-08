@@ -177,28 +177,8 @@ let
           baseURL = "http://localhost:11333";
           apiKey = "dummy";
         };
-        models =
-          let
-            gpt = baseModel // {
-              limit = rec {
-                context = 131072;
-                output = context;
-              };
-            };
-          in
-          {
-            "ollama_chat/qwen3-coder:480b-cloud" = { };
-            "ollama_chat/gpt-oss:20b-cloud" = gpt // { };
-            "ollama_chat/gpt-oss:120b-cloud" = gpt // { };
-            "ollama_chat/kimi-k2:1t-cloud" = { };
-            "ollama_chat/deepseek-v3.1:671b-cloud" = baseModel // {
-              limit = rec {
-                context = 163840;
-                output = context;
-              };
-            };
-            "zai/glm-4.5" = baseModel // { }; # TODO
-          };
+        models = {
+        };
       };
       openrouter.options.apiKey = keys.openrouter;
       zai-coding-plan.options.apiKey = keys.zai;
