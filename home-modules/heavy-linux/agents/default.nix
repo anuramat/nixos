@@ -90,8 +90,7 @@ in
 
   lib.agents = {
     varNames = {
-      agentSandboxLogFile = "AGENT_SANDBOX_LOG_FILE";
-      agentSandboxLog = "AGENT_SANDBOX_LOG";
+      sandboxWrapperPath = "AGENT_SANDBOX_WRAPPER_PATH";
       agentName = "AGENT";
     };
 

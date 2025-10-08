@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, config, ... }:
 let
   topHead = "#";
   sectionHead = "${topHead}#";
@@ -42,6 +42,11 @@ let
         '';
 
         general = ''
+          - You are running in a sandbox. Some commands may not work as
+            expected. If you suspect that a command is not working because of the
+            sandbox, you MAY ask the user to run the command outside, or check
+            the sandbox script for missing permissions. The path to sandbox script is
+            stored in environment variable `${config.lib.agents.varNames.sandboxWrapperPath}`.
           - The key words "MUST", "MUST NOT", "SHOULD", "SHOULD NOT", "MAY" are to be interpreted as described in RFC 2119.
           - You MUST NOT do "band-aid" fixes -- ALWAYS fix the root cause of the problem.
           - If you need tools that are not available on the system, you SHOULD use `nix run nixpkgs#packagename -- arg1 arg2 ...`.

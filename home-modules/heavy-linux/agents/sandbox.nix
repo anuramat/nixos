@@ -6,17 +6,36 @@
 }:
 let
   inherit (config.lib.agents) varNames;
+  inherit (lib)
+    escapeShellArgs
+    getName
+    getExe
+    mapAttrsToList
+    ;
+  inherit (builtins) concatStringsSep;
   exportScript =
     env:
     env
-    |> lib.mapAttrsToList (
+    |> mapAttrsToList (
       n: v: ''
         ${n}=${v}
         export ${n}
       ''
     )
     |> builtins.concatStringsSep "\n";
-
+  mkArgs =
+    typeFlag: dirs:
+    dirs
+    |> map (
+      x:
+      [
+        typeFlag
+        x
+        x
+      ]
+      |> escapeShellArgs
+    )
+    |> concatStringsSep "\\\n";
 in
 {
   lib.agents.mkPackages =
@@ -29,11 +48,11 @@ in
       agentDir, # name of subdir in xdg dirs
       agentName ? binName,
       env ? { },
-      tokens ? (f: { }),
+      tokens ? (_: { }),
     }:
     let
       passthroughName = "${wrapperName}-unboxed";
-      cmd = "${lib.getExe package} ${lib.escapeShellArgs args}";
+      cmd = "${getExe package} ${escapeShellArgs args}";
       # TODO rename -- reflect that it's a preamble
       scriptCommon =
         let
@@ -60,9 +79,14 @@ in
 
       sandboxed =
         let
-          # XXX make more robust somehow? but then $PWD won't expand
           rwDirs =
             let
+              baseRwDirs = [
+                config.home.sessionVariables.RUSTUP_HOME
+                config.home.sessionVariables.CARGO_HOME
+                config.programs.go.goPath
+                "${config.home.homeDirectory}/.npm"
+              ];
               agentDirs =
                 if agentDir != null then
                   (map (v: "${v}/${agentDir}") [
@@ -74,56 +98,32 @@ in
                 else
                   [ ];
             in
-            map (x: ''"${x}"'') (baseRwDirs ++ agentDirs ++ extraRwDirs) |> builtins.concatStringsSep " ";
+            mkArgs "--bind" (baseRwDirs ++ agentDirs ++ extraRwDirs);
 
-          baseRwDirs = [
-            "$PWD"
-            config.home.sessionVariables.RUSTUP_HOME
-            config.home.sessionVariables.CARGO_HOME
-            config.programs.go.goPath
-            "${config.home.homeDirectory}/.npm"
-          ];
-
-          # Shadows XDG dirs with tmp, and links agent directories there
-          # TODO rewrite using bwrap stuff -- shadow root and bind agent dir
-          shadowXdgScript =
-            agentDir:
+          roDirs =
             let
-              variables = [
-                "XDG_CACHE_HOME"
-                "XDG_DATA_HOME"
-                "XDG_STATE_HOME"
-              ];
-              shadowWithPassthrough =
-                var:
-                let
-                  shadow = # bash
-                    ''
-                      ${var}="$TEMP_ROOT/${var}"
-                      export ${var}
-                      mkdir "${"$" + var}"
-                    '';
-                  passthrough =
-                    x: # bash
-                    ''
-                      agentDir="${"$" + var}/${agentDir}"
-                      mkdir -p "$agentDir"
-                      ${shadow}
-                      [ -a "$agentDir" ] && ln -s -T "$agentDir" "${"$" + var}/${agentDir}"
-                    '';
-                in
-                if agentDir == null then shadow else passthrough shadow;
-              header =
-                # bash
-                ''
-                  TEMP_ROOT=$(mktemp -d)
-                  # TODO make a helper for this
-                  ${varNames.agentSandboxLog}+="tmp dir: $TEMP_ROOT"$'\n'"shadowed vars: ${
-                    variables |> builtins.concatStringsSep ", "
-                  }"$'\n'
-                '';
+              homePaths =
+                [
+                  ".bashrc"
+                  ".bash_profile"
+                  ".profile"
+                ]
+                |> map (p: "${config.home.homeDirectory}/${p}");
             in
-            header + (variables |> map shadowWithPassthrough |> builtins.concatStringsSep "\n");
+            mkArgs "--ro-bind" (
+              [
+                "/nix"
+                "/bin"
+                "/usr"
+                "/etc"
+
+                "/run/current-system"
+                "/run/systemd/resolve/stub-resolv.conf"
+
+                config.xdg.configHome
+              ]
+              ++ homePaths
+            );
 
         in
         pkgs.writeShellApplication {
@@ -137,48 +137,46 @@ in
             +
             # bash
             ''
-              ${varNames.agentSandboxLogFile}="${config.xdg.cacheHome}/agents.log"
-              ${varNames.agentSandboxLog}="launching ${agentName} in $PWD: $(date '+%Y-%m-%d %H:%M:%S %z')"
-
-              # shadow some of the xdg directories with a tmp one
-              ${shadowXdgScript agentDir}
-
-              # collect RW dirs for bwrap
-              RW_DIRS+=(${rwDirs})
+              PROJECT_DIRS=("$PWD")
               if gitroot=$(git rev-parse --show-toplevel 2>/dev/null) && [ -d "$gitroot" ]; then
                 # root of the current worktree, if it's not CWD already
-                [[ $(realpath "$gitroot") == $(realpath "$PWD") ]] || RW_DIRS+=("$gitroot")
+                [[ $(realpath "$gitroot") == $(realpath "$PWD") ]] || PROJECT_DIRS+=("$gitroot")
                 # .git/ dir
-                RW_DIRS+=("$(git rev-parse --absolute-git-dir)") 
+                PROJECT_DIRS+=("$(git rev-parse --absolute-git-dir)")
               fi
-
-              ${varNames.agentSandboxLog}+=$(echo "RW dirs:" && printf '\t%s\n' "''${RW_DIRS[@]}")
-
-              # build bwrap args
-              args=()
-              for i in "''${RW_DIRS[@]}"; do
-                mkdir -p "$i"
-              	args+=(--bind-try)
-              	args+=("$i")
-                args+=("$i")
+              export PROJECT_DIRS
+              workspaceDirs=()
+              for i in "''${PROJECT_DIRS[@]}"; do
+                workspaceDirs+=(--bind-try)
+                workspaceDirs+=("$i")
+                workspaceDirs+=("$i")
               done
+              ${varNames.sandboxWrapperPath}="$0"
+              export ${varNames.sandboxWrapperPath}
 
-              echo "''$${varNames.agentSandboxLog}"$'\n' >> "''$${varNames.agentSandboxLogFile}"
-              # TODO add size limit to tmpfs mounts
-              # TODO shadow more stuff or remove root bind
-              bwrap --die-with-parent --ro-bind / / --dev /dev --tmpfs /tmp "''${args[@]}" ${cmd} "$@"
+              bwrap \
+                --die-with-parent \
+                --proc /proc \
+                --dev /dev \
+                --tmpfs /tmp \
+                \
+                ${roDirs} \
+                ${rwDirs} \
+                "''${workspaceDirs[@]}" \
+                \
+                ${cmd} "$@"
             '';
         };
     in
     pkgs.symlinkJoin {
-      name = (lib.getName package) + "-wrappers";
+      name = (getName package) + "-wrappers";
       paths = [
         package
       ];
       postBuild = ''
         rm -f "$out/bin/${binName}"
-        ln -s ${lib.getExe passthrough} "$out/bin/${passthroughName}"
-        ln -s ${lib.getExe sandboxed} "$out/bin/${sandboxed.name}"
+        ln -s ${getExe passthrough} "$out/bin/${passthroughName}"
+        ln -s ${getExe sandboxed} "$out/bin/${sandboxed.name}"
       '';
     };
 }
