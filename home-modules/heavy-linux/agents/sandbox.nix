@@ -76,19 +76,16 @@ in
             in
             map (x: ''"${x}"'') (baseRwDirs ++ agentDirs ++ extraRwDirs) |> builtins.concatStringsSep " ";
 
-          gopath = "${config.home.homeDirectory}/go";
           baseRwDirs = [
-            "/tmp"
             "$PWD"
-            "$XDG_RUNTIME_DIR"
             config.home.sessionVariables.RUSTUP_HOME
             config.home.sessionVariables.CARGO_HOME
-            # TODO wipe these
+            config.programs.go.goPath
             "${config.home.homeDirectory}/.npm"
-            gopath
           ];
 
           # Shadows XDG dirs with tmp, and links agent directories there
+          # TODO rewrite using bwrap stuff -- shadow root and bind agent dir
           shadowXdgScript =
             agentDir:
             let
@@ -167,7 +164,9 @@ in
               done
 
               echo "''$${varNames.agentSandboxLog}"$'\n' >> "''$${varNames.agentSandboxLogFile}"
-              bwrap --ro-bind / / --dev /dev "''${args[@]}" ${cmd} "$@"
+              # TODO add size limit to tmpfs mounts
+              # TODO shadow more stuff or remove root bind
+              bwrap --die-with-parent --ro-bind / / --dev /dev --tmpfs /tmp "''${args[@]}" ${cmd} "$@"
             '';
         };
     in
