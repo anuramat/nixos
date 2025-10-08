@@ -142,6 +142,8 @@ in
                 "/bin"
                 "/usr"
                 "/etc"
+                "/lib"
+                "/lib64"
 
                 "/run/current-system"
                 "/run/systemd/resolve/stub-resolv.conf"

@@ -119,9 +119,19 @@ let
       };
     };
 
+  tokens =
+    t: with t; {
+      inherit
+        cerebras
+        groq
+        ollama
+        openrouter
+        zai
+        ;
+    };
   provider =
     let
-      keys = mapAttrs (n: v: "{file:${v.path}}") osConfig.age.secrets;
+      keys = mapAttrs (n: _: "{env:${n}}") osConfig.age.secrets;
       gpt5models =
         let
           gptOutputOptions = {
@@ -245,7 +255,7 @@ let
   mcp =
     let
       rawServers = mapAttrs (
-        name: server:
+        _: server:
         if server ? type && server.type == "http" then
           {
             type = "remote";
@@ -289,6 +299,7 @@ let
   pkg = agents.mkPackages {
     agentDir = "opencode";
     package = pkgs.opencode;
+    inherit tokens;
   };
 in
 {
@@ -297,7 +308,7 @@ in
       # TODO put into config file as well
       commands =
         let
-          adaptedCommands = agents.commands |> mapAttrs (n: v: v.withFM { inherit (v) description; });
+          adaptedCommands = agents.commands |> mapAttrs (_: v: v.withFM { inherit (v) description; });
         in
         agents.mkPrompts "opencode/command" adaptedCommands;
     in
