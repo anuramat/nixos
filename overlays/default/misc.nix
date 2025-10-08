@@ -25,6 +25,16 @@ inputs:
       '';
     };
 
+  litellm = prev.litellm.overrideAttrs (_: rec {
+    version = "1.77.7.rc.2";
+    src = prev.fetchFromGitHub {
+      owner = "BerriAI";
+      repo = "litellm";
+      tag = "v${version}";
+      hash = "";
+    };
+  });
+
   protonmail-bridge = prev.protonmail-bridge.overrideAttrs (oldAttrs: {
     version = "unstable";
     src = inputs.protonmail-bridge;
