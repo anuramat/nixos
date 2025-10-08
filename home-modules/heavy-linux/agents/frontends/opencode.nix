@@ -13,6 +13,21 @@ let
   glm = "zhipuai/glm-4.5";
   # mini = "github-copilot/gpt-5-mini";
 
+  roleFiles =
+    let
+      readOnlyTools = "{ write: false, edit: false, bash: false }";
+    in
+    config.lib.agents.roles
+    |> mapAttrs (
+      n: v:
+      v.withFM {
+        inherit (v) description;
+        model = "github-copilot/gpt-4.1";
+        tools = if v.readonly then readOnlyTools else null;
+      }
+    )
+    |> agents.mkPrompts "opencode/agents";
+
   local =
     let
       model = osConfig.services.llama-cpp.modelExtra;
@@ -316,7 +331,8 @@ in
       "opencode/AGENTS.md".text = agents.instructions.generic;
       "opencode/plugin/notifications.js".text = notifications;
     }
-    // commands;
+    // commands
+    // roleFiles;
 
   home = {
     activation = {
