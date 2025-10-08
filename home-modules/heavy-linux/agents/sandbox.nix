@@ -24,15 +24,21 @@ let
     )
     |> builtins.concatStringsSep "\n";
   mkArgs =
-    typeFlag: dirs:
-    dirs
+    {
+      flag,
+      paths,
+      doublePath,
+    }:
+    paths
     |> map (
       x:
-      [
-        typeFlag
-        x
-        x
-      ]
+      (
+        [
+          flag
+          x
+        ]
+        ++ (if doublePath then [ x ] else [ ])
+      )
       |> escapeShellArgs
     )
     |> concatStringsSep "\\\n";
@@ -46,7 +52,7 @@ in
       args ? [ ],
       extraRwDirs ? [ ],
       agentDir, # name of subdir in xdg dirs
-      agentName ? binName,
+      agentName ? binName, # mostly for git co-authored-by
       env ? { },
       tokens ? (_: { }),
     }:
@@ -99,13 +105,21 @@ in
                 else
                   [ ];
             in
-            mkArgs "--bind-try" (baseRwDirs ++ agentDirs ++ extraRwDirs);
+            mkArgs {
+              flag = "--bind-try";
+              doublePath = true;
+              paths = baseRwDirs ++ agentDirs ++ extraRwDirs;
+            };
 
-          tmpDirs = mkArgs "--tmpfs" [
-            config.xdg.cacheHome
-            config.xdg.dataHome
-            config.xdg.stateHome
-          ];
+          tmpDirs = mkArgs {
+            flag = "--tmpfs";
+            doublePath = false;
+            paths = [
+              config.xdg.cacheHome
+              config.xdg.dataHome
+              config.xdg.stateHome
+            ];
+          };
 
           roDirs =
             let
@@ -117,8 +131,10 @@ in
                 ]
                 |> map (p: "${config.home.homeDirectory}/${p}");
             in
-            mkArgs "--ro-bind" (
-              [
+            mkArgs {
+              flag = "--ro-bind";
+              doublePath = true;
+              paths = [
                 "/nix"
                 "/bin"
                 "/usr"
@@ -129,8 +145,8 @@ in
 
                 config.xdg.configHome
               ]
-              ++ homePaths
-            );
+              ++ homePaths;
+            };
 
         in
         pkgs.writeShellApplication {
