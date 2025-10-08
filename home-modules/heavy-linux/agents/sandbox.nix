@@ -11,8 +11,9 @@ let
     getName
     getExe
     mapAttrsToList
+    concatMap
     ;
-  inherit (builtins) concatStringsSep;
+
   exportScript =
     env:
     env
@@ -23,25 +24,25 @@ let
       ''
     )
     |> builtins.concatStringsSep "\n";
+
   mkArgs =
     {
       flag,
       paths,
       doublePath,
     }:
-    paths
-    |> map (
-      x:
-      (
-        [
-          flag
-          x
-        ]
-        ++ (if doublePath then [ x ] else [ ])
-      )
-      |> escapeShellArgs
-    )
-    |> concatStringsSep "\\\n";
+    let
+      argsSingle =
+        x:
+        (
+          [
+            flag
+            x
+          ]
+          ++ (if doublePath then [ x ] else [ ])
+        );
+    in
+    paths |> concatMap argsSingle |> escapeShellArgs;
 in
 {
   lib.agents.mkPackages =
@@ -72,6 +73,7 @@ in
           ${config.lib.home.mkAgenixExportScript tokens}
           ${exportScript (env // defaultEnv)}
         '';
+
       passthrough = pkgs.writeShellApplication {
         name = passthroughName;
         text =
@@ -85,6 +87,7 @@ in
 
       sandboxed =
         let
+
           rwDirs =
             let
               # TODO use overlayfs instead?
@@ -154,7 +157,6 @@ in
           runtimeInputs = with pkgs; [
             bubblewrap
           ];
-
           text =
             scriptCommon
             +
@@ -191,6 +193,7 @@ in
                 ${cmd} "$@"
             '';
         };
+
     in
     pkgs.symlinkJoin {
       name = (getName package) + "-wrappers";
