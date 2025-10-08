@@ -23,7 +23,7 @@ let
       v.withFM {
         inherit (v) description;
         model = "github-copilot/gpt-4.1";
-        tools = if v.readonly then readOnlyTools else null;
+        # tools = if v.readonly then readOnlyTools else null; TODO
       }
     )
     |> agents.mkPrompts "opencode/agents";
@@ -187,12 +187,10 @@ let
             };
           in
           {
-            "ollama/qwen3-coder:480b-cloud" = {
-            };
-            "ollama/gpt-oss:20b-cloud" = gpt // {
-            };
-            "ollama/gpt-oss:120b-cloud" = gpt // {
-            };
+            "ollama/qwen3-coder:480b-cloud" = { };
+            "ollama/gpt-oss:20b-cloud" = gpt // { };
+            "ollama/gpt-oss:120b-cloud" = gpt // { };
+            "ollama/kimi-k2:1t-cloud" = { };
             "ollama/deepseek-v3.1:671b-cloud" = baseModel // {
               limit = rec {
                 context = 163840;
@@ -201,18 +199,6 @@ let
             };
             "zai/glm-4.5" = baseModel // { }; # TODO
           };
-      };
-      ollama-turbo = {
-        name = "Ollama Turbo";
-        npm = "ollama-ai-provider-v2";
-        options = {
-          baseURL = "https://ollama.com/api";
-          headers.Authorization = "Bearer ${keys.ollama}";
-        };
-        models = {
-          "kimi-k2:1t" = {
-          };
-        };
       };
       openrouter.options.apiKey = keys.openrouter;
       zai-coding-plan.options.apiKey = keys.zai;

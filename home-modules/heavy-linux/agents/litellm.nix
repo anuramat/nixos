@@ -23,9 +23,9 @@ let
     model_list = [
       {
         # TODO switch to ollama_chat when it's fixed
-        model_name = "ollama/*";
+        model_name = "ollama_chat/*";
         litellm_params = {
-          model = "ollama/*";
+          model = "ollama_chat/*";
         };
       }
       {

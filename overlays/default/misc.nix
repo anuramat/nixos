@@ -2,6 +2,7 @@ inputs:
 (final: prev: {
   web-search-mcp =
     let
+      # TODO
       webSearchMcpUrl = "https://raw.githubusercontent.com/ollama/ollama-python/main/examples/web-search-mcp.py";
       webSearchMcpSha256 = "11q2hwnl4nzn9nw5m6s9c79phnnwjiqgqy4kzgjanhgfalvw47r3";
       webSearchMcpSource = prev.fetchurl {
