@@ -99,7 +99,7 @@ in
                 else
                   [ ];
             in
-            mkArgs "--bind" (baseRwDirs ++ agentDirs ++ extraRwDirs);
+            mkArgs "--bind-try" (baseRwDirs ++ agentDirs ++ extraRwDirs);
 
           tmpDirs = mkArgs "--tmpfs" [
             config.xdg.cacheHome
