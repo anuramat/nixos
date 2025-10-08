@@ -167,7 +167,7 @@ in
                 --dev /dev \
                 --tmpfs /tmp \
                 \
-                config.xdg.configHome \
+                ${tmpDirs} \
                 ${roDirs} \
                 ${rwDirs} \
                 "''${workspaceDirs[@]}" \
