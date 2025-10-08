@@ -81,6 +81,7 @@ in
         let
           rwDirs =
             let
+              # TODO use overlayfs instead?
               baseRwDirs = [
                 config.home.sessionVariables.RUSTUP_HOME
                 config.home.sessionVariables.CARGO_HOME
@@ -99,6 +100,12 @@ in
                   [ ];
             in
             mkArgs "--bind" (baseRwDirs ++ agentDirs ++ extraRwDirs);
+
+          tmpDirs = mkArgs "--tmpfs" [
+            config.xdg.cacheHome
+            config.xdg.dataHome
+            config.xdg.stateHome
+          ];
 
           roDirs =
             let
@@ -160,6 +167,7 @@ in
                 --dev /dev \
                 --tmpfs /tmp \
                 \
+                config.xdg.configHome \
                 ${roDirs} \
                 ${rwDirs} \
                 "''${workspaceDirs[@]}" \
