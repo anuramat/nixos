@@ -187,11 +187,11 @@ let
             };
           in
           {
-            "ollama/qwen3-coder:480b-cloud" = { };
-            "ollama/gpt-oss:20b-cloud" = gpt // { };
-            "ollama/gpt-oss:120b-cloud" = gpt // { };
-            "ollama/kimi-k2:1t-cloud" = { };
-            "ollama/deepseek-v3.1:671b-cloud" = baseModel // {
+            "ollama_chat/qwen3-coder:480b-cloud" = { };
+            "ollama_chat/gpt-oss:20b-cloud" = gpt // { };
+            "ollama_chat/gpt-oss:120b-cloud" = gpt // { };
+            "ollama_chat/kimi-k2:1t-cloud" = { };
+            "ollama_chat/deepseek-v3.1:671b-cloud" = baseModel // {
               limit = rec {
                 context = 163840;
                 output = context;
