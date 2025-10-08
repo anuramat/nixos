@@ -35,10 +35,8 @@ let
     {
       inherit (unstable)
         copilot-lua
-        github-mcp-server
         keymapp
         proton-pass
-        librewolf
         litellm
         ghostty
         ;

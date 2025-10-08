@@ -17,18 +17,6 @@ let
       type = "http";
       url = "https://mcp.deepwiki.com/mcp";
     };
-    github =
-      let
-        githubPatched = config.lib.home.agenixWrapPkg pkgs.github-mcp-server (t: {
-          GITHUB_PERSONAL_ACCESS_TOKEN = t.ghmcp;
-        });
-      in
-      {
-        command = getExe githubPatched;
-        args = [
-          "stdio"
-        ];
-      };
     zotero = {
       command = getExe pkgs.zotero-mcp;
       env = {
