@@ -4,15 +4,7 @@
     nodePackages.jsonlint
   ];
   plugins = {
-    conform-nvim.settings.formatters_by_ft.json = [ ];
-    lsp.servers.jsonls = {
-      enable = true;
-      # TODO check if this is required
-      # cmd = [
-      #   "vscode-json-languageserver"
-      #   "--stdio"
-      # ];
-    };
+    lsp.servers.jsonls.enable = true;
     lint.lintersByFt.json = [
       "jsonlint"
     ];
