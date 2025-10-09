@@ -1,4 +1,3 @@
-# TODO simplify this hsit
 { lib, ... }:
 let
   lua = action: { __raw = action; }; # mentioned in nix injections
