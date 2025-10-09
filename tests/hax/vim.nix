@@ -71,14 +71,18 @@ in
 
   # Test files.ftp
   testFilesFtp = {
-    expr = hax.files.ftp {
+    expr = hax.files {
       python = {
-        expandtab = true;
-        shiftwidth = 4;
+        ftp = {
+          expandtab = true;
+          shiftwidth = 4;
+        };
       };
       nix = {
-        expandtab = true;
-        shiftwidth = 2;
+        ftp = {
+          expandtab = true;
+          shiftwidth = 2;
+        };
       };
     };
     expected = {
@@ -99,9 +103,13 @@ in
 
   # Test files.injections
   testFilesInjections = {
-    expr = hax.files.injections {
-      bash = "(comment) @comment";
-      python = "(string) @string";
+    expr = hax.files {
+      bash = {
+        injections = "(comment) @comment";
+      };
+      python = {
+        injections = "(string) @string";
+      };
     };
     expected = {
       "after/queries/bash/injections.scm" = {
@@ -115,9 +123,13 @@ in
 
   # Test files.textobjects
   testFilesTextobjects = {
-    expr = hax.files.textobjects {
-      rust = "@function.outer";
-      go = "@block.inner";
+    expr = hax.files {
+      rust = {
+        textobjects = "@function.outer";
+      };
+      go = {
+        textobjects = "@block.inner";
+      };
     };
     expected = {
       "after/queries/rust/textobjects.scm" = {
@@ -131,12 +143,14 @@ in
 
   # Test files.snippets
   testFilesSnippets = {
-    expr = hax.files.snippets {
+    expr = hax.files {
       javascript = {
-        "console.log" = {
-          prefix = "cl";
-          body = [ "console.log($1);" ];
-          description = "Console log";
+        snippets = {
+          "console.log" = {
+            prefix = "cl";
+            body = [ "console.log($1);" ];
+            description = "Console log";
+          };
         };
       };
     };
@@ -168,22 +182,29 @@ in
 
   # Test files with empty input
   testFilesEmpty = {
-    expr = hax.files.ftp { };
+    expr = hax.files { };
     expected = { };
   };
 
   # Test multiple file types in one call
   testFilesMultiple = {
     expr =
-      hax.files.ftp {
+      hax.files {
         python = {
-          tabstop = 4;
+          ftp = {
+            tabstop = 4;
+          };
+          injections = "(string) @string";
         };
         rust = {
-          tabstop = 4;
+          ftp = {
+            tabstop = 4;
+          };
         };
         go = {
-          tabstop = 8;
+          ftp = {
+            tabstop = 8;
+          };
         };
       }
       |> builtins.attrNames
@@ -192,6 +213,7 @@ in
       "after/ftplugin/go.lua"
       "after/ftplugin/python.lua"
       "after/ftplugin/rust.lua"
+      "after/queries/python/injections.scm"
     ];
   };
 }

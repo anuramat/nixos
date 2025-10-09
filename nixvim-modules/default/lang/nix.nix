@@ -49,22 +49,24 @@
       };
     };
   };
-  extraFiles = hax.vim.files.injections {
-    nix = # query
-      ''
-        ;; extends
+  extraFiles = hax.vim.files {
+    nix = {
+      injections = # query
+        ''
+          ;; extends
 
-        (apply_expression
-          function: (_) @_func
-          argument: [
-            (string_expression
-              ((string_fragment) @injection.content
-                (#set! injection.language "lua")))
-            (indented_string_expression
-              ((string_fragment) @injection.content
-                (#set! injection.language "lua")))
-          ]
-          (#match? @_func "(^|\\.)luaf?$"))
-      '';
+          (apply_expression
+            function: (_) @_func
+            argument: [
+              (string_expression
+                ((string_fragment) @injection.content
+                  (#set! injection.language "lua")))
+              (indented_string_expression
+                ((string_fragment) @injection.content
+                  (#set! injection.language "lua")))
+            ]
+            (#match? @_func "(^|\\.)luaf?$"))
+        '';
+    };
   };
 }

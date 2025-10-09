@@ -26,7 +26,6 @@
     ./custom
     ./dap.nix
     ./filemgr.nix
-    ./ft.nix
     ./fzf.nix
     ./git.nix
     ./lang
@@ -36,6 +35,11 @@
     ./vim.nix
   ];
 
+  filetype = {
+    filename = {
+      "todo.txt" = "todotxt";
+    };
+  };
   extraPlugins = [
     pkgs.vimPlugins.tinted-nvim
   ];

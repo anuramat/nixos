@@ -1,9 +1,11 @@
 { hax, ... }:
 {
-  files = hax.vim.files.ftp {
+  files = hax.vim.files {
     go = {
-      et = false;
-      ts = 4;
+      ftp = {
+        et = false;
+        ts = 4;
+      };
     };
   };
   # TODO ray-x/go.nvim

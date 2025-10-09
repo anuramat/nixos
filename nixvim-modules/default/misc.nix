@@ -15,9 +15,11 @@ in
     )
   ];
 
-  files = hax.vim.files.ftp {
+  files = hax.vim.files {
     just = {
-      ts = 4;
+      ftp = {
+        ts = 4;
+      };
     };
   };
 

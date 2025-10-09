@@ -1,17 +1,13 @@
 { hax, ... }:
 {
-  files =
-    let
-      ftp = hax.vim.files.ftp {
-        markdown = {
-          cc = "+1";
-          shiftwidth = 0;
-          tabstop = 2;
-          # TODO unmap gO
-        };
-      };
-    in
-    ftp;
+  files = hax.vim.files {
+    markdown.ftp = {
+      cc = "+1";
+      shiftwidth = 0;
+      tabstop = 2;
+      # TODO unmap gO
+    };
+  };
   plugins = {
     lsp.servers.marksman.enable = true;
     conform-nvim.settings = {

@@ -1,9 +1,7 @@
 { hax, config, ... }:
 {
-  files = hax.vim.files.ftp {
-    lua = {
-      fo = config.opts.formatoptions;
-    };
+  files = hax.vim.files {
+    lua.ftp.fo = config.opts.formatoptions; # TODO why do we do this again? see sh.nix and misc.nix
   };
 
   plugins = {

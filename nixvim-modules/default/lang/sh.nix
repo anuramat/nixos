@@ -1,21 +1,25 @@
 { hax, config, ... }:
 let
-  ftp = hax.vim.files.ftp {
+  ftp = hax.vim.files {
     sh = {
-      ts = 4;
-      et = false;
-      fo = config.opts.formatoptions;
+      ftp = {
+        ts = 4;
+        et = false;
+        fo = config.opts.formatoptions; # TODO why do we do this again? see lua.nix
+      };
     };
   };
-  snippets = hax.vim.files.snippets {
+  snippets = hax.vim.files {
     sh = {
-      loop = {
-        body = [
-          "while IFS= read -r -d '' $1; do"
-          "$0"
-          "done"
-        ];
-        prefix = "loop";
+      snippets = {
+        loop = {
+          body = [
+            "while IFS= read -r -d '' $1; do"
+            "$0"
+            "done"
+          ];
+          prefix = "loop";
+        };
       };
     };
   };
