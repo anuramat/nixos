@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (lib) attrValues concatStringsSep escapeShellArg;
+  inherit (lib) attrValues escapeShellArgs;
   excludeShellChecks = [
     2016 # expansion in '' won't work
     2059 # don't use variables in printf format string
@@ -16,13 +16,6 @@ let
     2312 # return value is masked by $()
     2154 # referenced but not assigned, e.g. $XDG_CONFIG_HOME
   ];
-  mkDirsActivationScript =
-    dirs:
-    let
-      mkDir = dir: ''mkdir -p ${escapeShellArg dir}'';
-      script = concatStringsSep "\n" (map mkDir dirs);
-    in
-    lib.hm.dag.entryAfter [ "writeBoundary" ] script;
 in
 {
   imports = [
@@ -43,10 +36,14 @@ in
     {
       activation = {
         # TODO not sure if this works; feels like it doesn't on anuramat-root
-        mkDirs = mkDirsActivationScript [
-          bashStateDir
-          (attrValues customXdg)
-        ];
+        mkDirs =
+          let
+            dirs = [
+              bashStateDir
+            ]
+            ++ (attrValues customXdg);
+          in
+          lib.hm.dag.entryAfter [ "writeBoundary" ] "mkdir -p ${escapeShellArgs dirs}";
       };
       sessionVariables = customXdg // {
         inherit XDG_BIN_HOME;
