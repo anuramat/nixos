@@ -20,7 +20,7 @@ let
     dirs:
     let
       mkDir = dir: ''mkdir -p ${escapeShellArg dir}'';
-      script = concatStringsSep " " (map mkDir dirs);
+      script = concatStringsSep "\n" (map mkDir dirs);
     in
     lib.hm.dag.entryAfter [ "writeBoundary" ] script;
 in
@@ -35,7 +35,6 @@ in
       XDG_DATA_HOME = config.xdg.dataHome;
       bashStateDir = config.xdg.stateHome + "/bash";
       customXdg = {
-        XDG_DOWNLOAD_DIR = "${home}/dl"; # XXX nobody gives a shit about this
         XDG_DOCUMENTS_DIR = "${home}/docs";
         XDG_PICTURES_DIR = "${home}/img";
         XDG_VIDEOS_DIR = "${home}/vid";
