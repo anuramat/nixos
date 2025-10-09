@@ -70,14 +70,6 @@ let
     ];
     tools = {
       webfetch = false;
-      "nix_*" = false;
-      "nix_home_manager_info" = true;
-      "nix_home_manager_options_by_prefix" = true;
-      "nix_home_manager_search" = true;
-      "nix_nixhub_find_version" = true;
-      "nix_nixhub_package_versions" = true;
-      "nix_nixos_info" = true;
-      "nix_nixos_search" = true;
     };
     share = "disabled";
     keybinds = {
@@ -234,7 +226,6 @@ let
         # NOTE waiting for mcp resources and prompt; https://github.com/sst/opencode/issues/806
         inherit (rawServers)
           ddg
-          nix
           ;
       };
       disabledServers =
