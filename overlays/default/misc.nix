@@ -56,10 +56,10 @@ inputs:
   });
 
   claude-code = prev.claude-code.overrideAttrs (oldAttrs: rec {
-    version = "2.0.1";
+    version = "2.0.13";
     src = prev.fetchzip {
       url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-      hash = "sha256-LUbDPFa0lY74MBU4hvmYVntt6hVZy6UUZFN0iB4Eno8=";
+      hash = "sha256-wazALudqwwYVCm7qCYIuOkOVcFxRTzLjkDnRXaHLFIQ=";
     };
     # https://www.npmjs.com/package/@anthropic-ai/claude-code
     # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
