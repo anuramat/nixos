@@ -17,6 +17,12 @@ let
       type = "http";
       url = "https://mcp.deepwiki.com/mcp";
     };
+    perplexity = {
+      command = getExe pkgs.perplexity-mcp;
+      env = {
+        PERPLEXITY_API_KEY = config.secrets.perplexity;
+      };
+    };
     # github =
     #   let
     #     githubPatched = config.lib.home.agenixWrapPkg pkgs.github-mcp-server (t: {

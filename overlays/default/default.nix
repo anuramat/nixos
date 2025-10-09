@@ -68,6 +68,7 @@ let
       inspector = mkNpx "inspector" "@modelcontextprotocol/inspector";
       ccusage = mkNpx "ccusage" "ccusage";
       ccusage-codex = mkNpx "ccusage-codex" "@ccusage/codex";
+      perplexity-mcp = mkNpx "perplexity-mcp" "@perplexity-ai/mcp-server";
       claude-monitor = mkUv "claude-monitor" "claude-monitor";
     };
 
