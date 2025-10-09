@@ -36,7 +36,7 @@ in
     );
   # signature: files.* { python = "text"; }
   # rewrite this to a diff signature:
-  # files = files "python" { ftp = ...; injections = ...; ...};
+  # TODO files = files "python" { ftp = ...; injections = ...; ...};
   files = {
     ftp = mkFile "after/ftplugin/" ".lua" (v: {
       localOpts = v;
