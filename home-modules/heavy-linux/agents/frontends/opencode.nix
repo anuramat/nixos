@@ -70,16 +70,14 @@ let
     ];
     tools = {
       webfetch = false;
-      "deepwiki_*" = false;
-      "zotero_*" = false;
-      "nixos_*" = false;
-      "nixos_home_manager_info" = true;
-      "nixos_home_manager_options_by_prefix" = true;
-      "nixos_home_manager_search" = true;
-      "nixos_nixhub_find_version" = true;
-      "nixos_nixhub_package_versions" = true;
-      "nixos_nixos_info" = true;
-      "nixos_nixos_search" = true;
+      "nix_*" = false;
+      "nix_home_manager_info" = true;
+      "nix_home_manager_options_by_prefix" = true;
+      "nix_home_manager_search" = true;
+      "nix_nixhub_find_version" = true;
+      "nix_nixhub_package_versions" = true;
+      "nix_nixos_info" = true;
+      "nix_nixos_search" = true;
     };
     share = "disabled";
     keybinds = {
@@ -112,25 +110,8 @@ let
       example = {
         disable = true;
         mode = "subagent";
-        description = "";
+        description = "this is...";
         prompt = "you are...";
-        # prompt = "{file:./prompts/build.txt}";
-      };
-      # TODO github has some useful stuff -- resources mainly; wait for https://github.com/sst/opencode/issues/806
-      zotero = {
-        mode = "primary";
-        disable = true;
-        tools = ro // {
-          "zotero_*" = true;
-        };
-      };
-      deepwiki = {
-        mode = "primary";
-        disable = true;
-        tools = ro // {
-          deepwiki_ask_question = true;
-          deepwiki_read_wiki_structure = true;
-        };
       };
     };
 
@@ -250,10 +231,9 @@ let
           }
       ) config.lib.agents.mcp.raw;
       enabledServers = {
+        # NOTE waiting for mcp resources and prompt; https://github.com/sst/opencode/issues/806
         inherit (rawServers)
           ddg
-          deepwiki
-          zotero
           nix
           ;
       };
