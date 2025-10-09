@@ -27,11 +27,12 @@ in
   "gemini.age"
   "groq.age"
   "openai.age"
-  "ollama.age"
   "openrouter.age"
+  "perplexity.age"
   "poe.age" # "https://api.poe.com/v1" TODO
   "zai.age"
 
+  "ollama.age"
   "ghmcp.age"
 ]
 |> map (x: {
