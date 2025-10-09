@@ -4,6 +4,7 @@ let
     t: with t; {
       ANTHROPIC_API_KEY = anthropic;
       CEREBRAS_API_KEY = cerebras;
+      CLAUDE_API_KEY = claude;
       GEMINI_API_KEY = gemini;
       GROQ_API_KEY = groq;
       OPENAI_API_KEY = openai;
