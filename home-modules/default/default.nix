@@ -10,11 +10,10 @@
     ./lib.nix
     ./misc.nix
     ./packages.nix
-    ./pandoc.nix
     ./readline.nix
     ./search.nix
-    ./yazi.nix
     ./typst.nix
+    ./yazi.nix
   ];
 
   xdg.enable = true; # set xdg basedir vars in .profile
