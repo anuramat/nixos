@@ -10,13 +10,13 @@ let
   inherit (config.lib) agents;
 
   qwen = "cerebras/qwen-3-coder-480b"; # cerebras recommends t=0.7 top_p=0.8
-  glm = "zhipuai/glm-4.5";
-  # mini = "github-copilot/gpt-5-mini";
+  # glm = "zhipuai/glm-4.5";
+  mini = "github-copilot/gpt-5-mini";
 
   roleFiles =
-    let
-      readOnlyTools = "{ write: false, edit: false, bash: false }";
-    in
+    # let
+    #   readOnlyTools = "{ write: false, edit: false, bash: false }";
+    # in
     config.lib.agents.roles
     |> mapAttrs (
       n: v:
@@ -93,7 +93,7 @@ let
         tools = ro;
       };
       build = {
-        model = glm;
+        model = mini;
       };
       general = {
         model = qwen;
