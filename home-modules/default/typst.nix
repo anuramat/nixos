@@ -21,7 +21,7 @@ let
         pdf="$(mktemp --tmpdir "$(basename -s .typ "$typ")-XXXXXXXX.pdf")"
         echo '${pdfPlaceholder}' | base64 -d >"$pdf"
         nohup zathura "$pdf" &>/dev/null &
-        zathura_pid="$!"
+        # zathura_pid="$!"
         disown
         typst watch "$@" "$typ" "$pdf"
         # TODO close zathura on ctrl-c somehow
