@@ -34,8 +34,8 @@ in
         throw "type ${type} is invalid for vim keymaps"
     );
   # signature: files.* { python = "text"; }
-  # rewrite this to a diff signature:
-  # TODO files = files "python" { ftp = ...; injections = ...; ...};
+  # TODO rewrite this to a different signature:
+  # ... = hax.vim.files { python = { ftp = ...; ... } ... };
   files = {
     ftp = mkFile "after/ftplugin/" ".lua" (v: {
       localOpts = v;
