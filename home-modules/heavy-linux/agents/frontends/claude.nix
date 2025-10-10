@@ -58,7 +58,7 @@ let
       adaptedRoles =
         agents.roles
         |> mapAttrs (
-          n: v:
+          _: v:
           v.withFM {
             inherit (v) name description;
             model = "inherit"; # TODO
@@ -67,44 +67,43 @@ let
     in
     agents.mkPrompts "claude/agents" adaptedRoles;
 
-  litePkg = config.lib.agents.mkPackages {
+  baseAttrs = {
     agentDir = "claude";
     package = pkgs.claude-code;
     args = [ "--dangerously-skip-permissions" ];
-    wrapperName = "claude-lite";
-    env = {
-      ANTHROPIC_AUTH_TOKEN = "dummy";
-      ANTHROPIC_DEFAULT_OPUS_MODEL = "cerebras/qwen-3-coder-480b";
-      ANTHROPIC_DEFAULT_SONNET_MODEL = "github_copilot/gpt-5-mini";
-      ANTHROPIC_MODEL = "opusplan";
-      ANTHROPIC_SMALL_FAST_MODEL = "github_copilot/gpt-4.1";
-      ANTHROPIC_BASE_URL = "http://localhost:11333";
+  };
+
+  claudePkg = config.lib.agents.mkPackages {
+    wrapperName = "claude";
+    tokens = t: {
+      CLAUDE_CODE_OAUTH_TOKEN = t.claude;
     };
   };
 
+  litePkg = config.lib.agents.mkPackages (
+    baseAttrs
+    // {
+      wrapperName = "claude-lite";
+      env = {
+        ANTHROPIC_AUTH_TOKEN = "dummy";
+        ANTHROPIC_DEFAULT_OPUS_MODEL = "cerebras/qwen-3-coder-480b";
+        ANTHROPIC_DEFAULT_SONNET_MODEL = "github_copilot/gpt-5-mini";
+        ANTHROPIC_SMALL_FAST_MODEL = "github_copilot/gpt-4.1";
+        ANTHROPIC_BASE_URL = "http://localhost:11333";
+      };
+    }
+  );
+
   zaiPkg = config.lib.agents.mkPackages {
-    agentDir = "claude";
-    package = pkgs.claude-code;
-    args = [ "--dangerously-skip-permissions" ];
     wrapperName = "claude-zai";
     tokens = t: {
       ANTHROPIC_AUTH_TOKEN = t.zai;
     };
     env = {
-      ANTHROPIC_MODEL = "glm-4.5";
+      ANTHROPIC_DEFAULT_OPUS_MODEL = "glm-4.6";
+      ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-4.6";
       ANTHROPIC_SMALL_FAST_MODEL = "glm-4.5-air";
       ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
-    };
-  };
-
-  pkg = config.lib.agents.mkPackages {
-    agentDir = "claude";
-    package = pkgs.claude-code;
-    args = [ "--dangerously-skip-permissions" ];
-    wrapperName = "claude";
-    tokens = t: {
-      # broken: https://github.com/anthropics/claude-code/issues/4085
-      CLAUDE_CODE_OAUTH_TOKEN = t.claude;
     };
   };
 
@@ -121,7 +120,7 @@ in
       CLAUDE_CONFIG_DIR = cfgDir;
     };
     packages = [
-      pkg
+      claudePkg
       zaiPkg
       litePkg
     ]
