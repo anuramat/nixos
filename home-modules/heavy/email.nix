@@ -30,6 +30,13 @@ in
       # sidebar.enable = true;
       sort = "reverse-date";
       # TODO explain these
+      binds = [
+        {
+          key = "R";
+          action = "imap-fetch-mail";
+          map = "index";
+        }
+      ];
       extraConfig = ''
         set certificate_file="${config.xdg.cacheHome}/neomutt/certificates"
         auto_view text/html
