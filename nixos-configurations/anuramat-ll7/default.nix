@@ -55,13 +55,12 @@
   hardware = {
     graphics = {
       extraPackages = with pkgs; [
-        vaapiVdpau # no fucking idea what this does TODO
-        # TODO maybe these?
-        # nvidia-vaapi-driver
-        # libvdpau-va-gl
+        # vaapiVdpau # no fucking idea what this does TODO
+        # TODO just removed this on 2025-10-11, should work fine without it
       ];
       enable32Bit = true; # compat
     };
   };
+
 }
 # vim: fdm=marker fdl=0
