@@ -56,20 +56,24 @@ in
     };
   };
 
-  systemd.user.services.protonmail-bridge = {
-    # NOTE to log in:
-    # protonmail-bridge --cli
-    Unit = {
-      Description = "ProtonMail Bridge";
-      After = [ "graphical-session.target" ];
+  systemd.user.services.protonmail-bridge =
+    let
+      target = config.wayland.systemd.target;
+    in
+    {
+      # NOTE to log in:
+      # protonmail-bridge --cli
+      Unit = {
+        Description = "ProtonMail Bridge";
+        After = [ target ];
+      };
+      Install.WantedBy = [ target ];
+      Service = {
+        ExecStart = "${lib.getExe pkgs.protonmail-bridge} --noninteractive";
+        Restart = "always";
+        RestartSec = 10;
+      };
     };
-    Install.WantedBy = [ "default.target" ];
-    Service = {
-      ExecStart = "${lib.getExe pkgs.protonmail-bridge} --noninteractive";
-      Restart = "always";
-      RestartSec = 10;
-    };
-  };
 
   accounts.email = {
     accounts.primary = {
