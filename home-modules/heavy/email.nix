@@ -38,6 +38,8 @@ in
         }
       ];
       extraConfig = ''
+        set trash = "+Trash"
+
         set certificate_file="${config.xdg.cacheHome}/neomutt/certificates"
         auto_view text/html
         set implicit_autoview
