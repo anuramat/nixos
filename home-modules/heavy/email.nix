@@ -49,6 +49,9 @@ in
 
         set pager = "less -r -S"
         unset prompt_after
+
+        set to_chars="       "
+        set index_format="%zt %4C %[%y-%m-%d] %-15.15L %s"
       '';
     };
   };
