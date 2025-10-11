@@ -24,6 +24,7 @@ let
         statix
         deadnix
         nixd
+        html2text
         ;
     });
 

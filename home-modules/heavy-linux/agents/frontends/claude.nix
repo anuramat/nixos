@@ -49,7 +49,7 @@ let
 
   commands =
     let
-      adaptedCommands = agents.commands |> mapAttrs (n: v: v.withFM { inherit (v) description; });
+      adaptedCommands = agents.commands |> mapAttrs (_: v: v.withFM { inherit (v) description; });
     in
     agents.mkPrompts "claude/commands" adaptedCommands;
 
@@ -67,46 +67,6 @@ let
     in
     agents.mkPrompts "claude/agents" adaptedRoles;
 
-  baseAttrs = {
-    agentDir = "claude";
-    package = pkgs.claude-code;
-    args = [ "--dangerously-skip-permissions" ];
-  };
-
-  claudePkg = config.lib.agents.mkPackages {
-    wrapperName = "claude";
-    tokens = t: {
-      CLAUDE_CODE_OAUTH_TOKEN = t.claude;
-    };
-  };
-
-  litePkg = config.lib.agents.mkPackages (
-    baseAttrs
-    // {
-      wrapperName = "claude-lite";
-      env = {
-        ANTHROPIC_AUTH_TOKEN = "dummy";
-        ANTHROPIC_DEFAULT_OPUS_MODEL = "cerebras/qwen-3-coder-480b";
-        ANTHROPIC_DEFAULT_SONNET_MODEL = "github_copilot/gpt-5-mini";
-        ANTHROPIC_SMALL_FAST_MODEL = "github_copilot/gpt-4.1";
-        ANTHROPIC_BASE_URL = "http://localhost:11333";
-      };
-    }
-  );
-
-  zaiPkg = config.lib.agents.mkPackages {
-    wrapperName = "claude-zai";
-    tokens = t: {
-      ANTHROPIC_AUTH_TOKEN = t.zai;
-    };
-    env = {
-      ANTHROPIC_DEFAULT_OPUS_MODEL = "glm-4.6";
-      ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-4.6";
-      ANTHROPIC_SMALL_FAST_MODEL = "glm-4.5-air";
-      ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
-    };
-  };
-
   cfgDir = config.xdg.configHome + "/claude";
 in
 {
@@ -119,16 +79,59 @@ in
     sessionVariables = {
       CLAUDE_CONFIG_DIR = cfgDir;
     };
-    packages = [
-      claudePkg
-      zaiPkg
-      litePkg
-    ]
-    ++ (with pkgs; [
-      ccusage
-      ccusage-codex
-      claude-monitor
-    ]);
+    packages =
+      let
+        mkClaude =
+          overrides:
+          config.lib.agents.mkPackages (
+            {
+              agentDir = "claude";
+              package = pkgs.claude-code;
+              args = [ "--dangerously-skip-permissions" ];
+            }
+            // overrides
+          );
+        claude = mkClaude {
+          wrapperName = "claude";
+          tokens = t: {
+            CLAUDE_CODE_OAUTH_TOKEN = t.claude;
+          };
+        };
+        claude-lite = mkClaude {
+          wrapperName = "claude-lite";
+          env = {
+            ANTHROPIC_AUTH_TOKEN = "dummy";
+            ANTHROPIC_DEFAULT_OPUS_MODEL = "cerebras/qwen-3-coder-480b";
+            ANTHROPIC_DEFAULT_SONNET_MODEL = "github_copilot/gpt-5-mini";
+            ANTHROPIC_SMALL_FAST_MODEL = "github_copilot/gpt-4.1";
+            ANTHROPIC_BASE_URL = "http://localhost:11333";
+          };
+        };
+        claude-zai = mkClaude {
+          wrapperName = "claude-zai";
+          tokens = t: {
+            ANTHROPIC_AUTH_TOKEN = t.zai;
+          };
+          env = {
+            ANTHROPIC_DEFAULT_OPUS_MODEL = "glm-4.6";
+            ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-4.6";
+            ANTHROPIC_SMALL_FAST_MODEL = "glm-4.5-air";
+            ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
+          };
+        };
+
+      in
+
+      [
+        claude
+        claude-zai
+        claude-lite
+      ]
+      ++ (with pkgs; [
+        ccusage
+        ccusage-codex
+        claude-monitor
+      ]);
     activation = {
       claudeSettings = config.lib.home.json.set {
         includeCoAuthoredBy = false;
