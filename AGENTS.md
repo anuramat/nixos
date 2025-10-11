@@ -36,9 +36,10 @@
    specify a version, find the latest version online -- search online for the
    github repository, and get the latest stable version from the releases.
    set the hash to empty string.
-3. build the package with `just build <package_name>` to get the hash
-4. replace the empty hash with the actual value returned by the build
-5. run `just build <package_name>` again.
+3. fetch the archive with `nix-prefetch-url --type sha256 <download_url>` (or `nix store prefetch-file`),
+   then convert its output to SRI via `nix hash to-sri --type sha256 <output>`
+4. replace the empty hash with the converted value
+5. run `just build <package_name>` once to verify everything works
 
 If the final step causes an error because of vendor/cargo hash mismatch, fix it
 and build again. If any other error occurs, stop and explain the problem to the
