@@ -5,18 +5,20 @@ let
   flatten = x: x |> replaceStrings [ "\n" ] [ " " ] |> trim;
   h1 = "##";
 in
+# TODO remove withFM
 {
   lib.agents.roles = {
-    researcher = {
+    researcher = rec {
       name = "researcher";
       description = flatten ''
         do not use this for now, work in progress
       '';
-      withFM = prependFrontmatter ''
+      text = ''
         ${h1} Header
 
         ${h1} Success criteria
       '';
+      withFM = prependFrontmatter text;
     };
   };
 }

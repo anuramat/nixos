@@ -2,6 +2,7 @@
 let
   inherit (config.lib.agents) prependFrontmatter;
 in
+# TODO remove withFM
 {
   lib.agents.commands = {
     memupdate =

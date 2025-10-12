@@ -13,22 +13,6 @@ let
   # glm = "zhipuai/glm-4.5";
   mini = "github-copilot/gpt-5-mini";
 
-  # # TODO put into config file as well
-  # roles =
-  #   # let
-  #   #   readOnlyTools = "{ write: false, edit: false, bash: false }";
-  #   # in
-  #   config.lib.agents.roles
-  #   |> mapAttrs (
-  #     _: v:
-  #     v.withFM {
-  #       inherit (v) description;
-  #       model = "github-copilot/gpt-4.1";
-  #       # tools = if v.readonly then readOnlyTools else null; TODO
-  #     }
-  #   )
-  #   |> agents.mkPrompts "opencode/agents";
-
   local =
     let
       model = osConfig.services.llama-cpp.modelExtra;
@@ -65,26 +49,30 @@ let
         write = false;
         task = false;
       };
+      default = {
+        plan = {
+          model = qwen;
+          tools = ro;
+        };
+        build = {
+          model = mini;
+        };
+        general = {
+          model = qwen;
+        };
+      };
+      custom =
+        config.lib.agents.roles
+        |> mapAttrs (
+          _: v: {
+            disable = true; # TODO enable
+            inherit (v) description;
+            prompt = v.text;
+            # tools, permissions, mode:subagent/primary/all, model
+          }
+        );
     in
-    {
-      plan = {
-        model = qwen;
-        tools = ro;
-      };
-      build = {
-        model = mini;
-      };
-      general = {
-        model = qwen;
-      };
-
-      example = {
-        disable = true;
-        mode = "subagent";
-        description = "this is...";
-        prompt = "you are...";
-      };
-    };
+    default // custom;
 
   tokens =
     t: with t; {
