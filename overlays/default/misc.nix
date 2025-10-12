@@ -81,10 +81,10 @@ inputs:
 
   codex = prev.stdenv.mkDerivation rec {
     pname = "codex";
-    version = "0.46.0";
+    version = "0.47.0-alpha.1";
     src = prev.fetchurl {
       url = "https://github.com/openai/codex/releases/download/rust-v${version}/codex-x86_64-unknown-linux-musl.zst";
-      hash = "sha256-LdcKU+bKubpJH34nXNiC1MndJIo0ow/D4lEJNKO6+J0=";
+      hash = "sha256-vcAc9auT87F2e+Cok0ab6FLX6FPMUk5iv40DzhTOPsM=";
     };
     dontUnpack = true;
     nativeBuildInputs = [ prev.zstd ];
@@ -99,10 +99,10 @@ inputs:
 
   opencode = prev.stdenvNoCC.mkDerivation rec {
     pname = "opencode";
-    version = "0.14.3";
+    version = "0.14.7";
     src = prev.fetchzip {
       url = "https://github.com/sst/opencode/releases/download/v${version}/opencode-linux-x64.zip";
-      sha256 = "sha256-H65Fxns/V/de1uYrKGljSfcj2iJmpXeUg0FZNtfZaWk=";
+      sha256 = "sha256-aKoKqQa6bgeMS//sr3W+nm7ijnNxmtjvslIxfYeefhE=";
     };
     dontFixup = true;
     # dontStrip = true;
