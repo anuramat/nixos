@@ -179,8 +179,8 @@ in
 {
   home.activation.mods = config.lib.home.yaml.set {
     inherit apis mcp-servers;
-    default-api = "cerebras";
-    default-model = "qwen-3-coder-480b";
+    default-api = "copilot";
+    default-model = "gpt-4.1";
     fanciness = 0;
     role = "shell";
     inherit roles;
