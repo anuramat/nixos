@@ -46,7 +46,7 @@ in
         settings = {
           inherit shortcuts;
           behaviour = {
-            auto_approve_tool_permissions = true;
+            auto_approve_tool_permissions = false; # TODO list of trusted tools
             enable_token_counting = false;
           };
           system_prompt =
@@ -62,8 +62,6 @@ in
               end
             '';
           disabled_tools = [
-            # "read_file"
-            # "bash"
             "rag_search"
             "python"
             "git_diff"
