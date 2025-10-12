@@ -17,6 +17,18 @@ in
     ./rice.nix
   ];
 
+  services.getty.autologinOnce = true; # TODO only if full disk encryption
+
+  security = {
+    soteria.enable = true; # polkit auth agent
+    rtkit.enable = true; # realtime kit, hands out realtime priority to user processes
+    pam.services.swaylock.gnupg = {
+      # TODO condition on home-manager swaylock
+      enable = true;
+      noAutostart = true;
+    };
+  };
+
   home-manager = {
     users.${username} = {
       imports = with inputs.self.homeModules; [
