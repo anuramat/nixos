@@ -6,9 +6,9 @@
 }:
 let
   inherit (lib) escapeShellArg getExe;
-  passDir = config.programs.password-store.settings.PASSWORD_STORE_DIR;
+
   pamGnupgPath = "${config.xdg.configHome}/pam-gnupg";
-  gpgIdPath = "${passDir}/.gpg-id";
+  gpgIdPath = "${config.programs.password-store.settings.PASSWORD_STORE_DIR}/.gpg-id";
   gnupgHome = config.programs.gpg.homedir;
 
   list = pkgs.writeShellApplication {
