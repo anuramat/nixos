@@ -102,7 +102,7 @@ inputs:
     version = "0.14.7";
     src = prev.fetchzip {
       url = "https://github.com/sst/opencode/releases/download/v${version}/opencode-linux-x64.zip";
-      sha256 = "sha256-aKoKqQa6bgeMS//sr3W+nm7ijnNxmtjvslIxfYeefhE=";
+      sha256 = "sha256-II/Rp3nWwoFDx7XvdZ7U6eoKdXHmokBfcCvjypOXDeo=";
     };
     dontFixup = true;
     # dontStrip = true;
