@@ -84,7 +84,7 @@ inputs:
     version = "0.47.0-alpha.1";
     src = prev.fetchurl {
       url = "https://github.com/openai/codex/releases/download/rust-v${version}/codex-x86_64-unknown-linux-musl.zst";
-      hash = "sha256-vcAc9auT87F2e+Cok0ab6FLX6FPMUk5iv40DzhTOPsM=";
+      hash = "sha256-aKoKqQa6bgeMS//sr3W+nm7ijnNxmtjvslIxfYeefhE=";
     };
     dontUnpack = true;
     nativeBuildInputs = [ prev.zstd ];
@@ -102,7 +102,7 @@ inputs:
     version = "0.14.7";
     src = prev.fetchzip {
       url = "https://github.com/sst/opencode/releases/download/v${version}/opencode-linux-x64.zip";
-      sha256 = "sha256-II/Rp3nWwoFDx7XvdZ7U6eoKdXHmokBfcCvjypOXDeo=";
+      sha256 = "sha256-DDdQqujXQlm+PsIRlAY8ErLfovr7J2MFzI/Y4aU1zo8=";
     };
     dontFixup = true;
     # dontStrip = true;
