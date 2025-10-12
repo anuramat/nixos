@@ -56,25 +56,6 @@ in
         applicable.
       '';
     };
-    pandoc_fix = rec {
-      description = "fix a pandoc render issue";
-      withFM = prependFrontmatter text;
-      text = ''
-        I want you to figure out why this markdown file doesn't get rendered
-        with my `pandoc` script. Usually, the problem is in the LaTeX code in
-        the math blocks. Use the command `render input.md output.pdf`, read the
-        error message, edit the file, and try to render again. Test command --
-        aforementioned `render`. 
-
-        - Do not try to debug `pandoc`, LaTeX engine itself, or the `render`
-          script -- it's practically never the issue.
-        - Error messages will show confusing line numbers -- they correspond to
-          an intermediate representation, and thus are irrelevant in the context
-          of fixing the markdown file. You can ignore the line numbers. Focus on
-          the LaTeX code mentioned in the error message, and grep for it (if
-          available).
-      '';
-    };
     pandoc_clean = rec {
       description = "replace non-ascii characters with latex in markdown files";
       withFM = prependFrontmatter text;

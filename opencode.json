@@ -3,13 +3,7 @@
   "command": {
     "update": {
       "template": "I want you to update packages $ARGUMENTS. For each package: 1. find the existing override in the default overlay; if it's not there, create a new override; 2. in the override, set the version to the requested one. if the user didn't specify a version, find the latest version online -- search online for the github repository, and get the latest stable version from the releases. set the hash to empty string.; 3. build the package with `just build <package_name>` to get the hash; 4. replace the empty hash with the actual value returned by the build; 5. run `just build <package_name>` again.; If the final step causes an error because of vendor/cargo hash mismatch, fix it and build again. If any other error occurs, stop and explain the problem to the user.",
-      "subtask": true,
       "description": "update a package"
-    },
-    "test": {
-      "template": "just say hi",
-      "subtask": true,
-      "description": "test"
     }
   }
 }
