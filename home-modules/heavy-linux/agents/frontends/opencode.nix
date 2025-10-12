@@ -252,6 +252,9 @@ let
     agentDir = "opencode";
     package = pkgs.opencode;
     inherit tokens;
+    env = {
+      OPENCODE_DISABLE_LSP_DOWNLOAD = "true";
+    };
   };
 in
 {
