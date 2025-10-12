@@ -14,20 +14,21 @@ let
   mini = "github-copilot/gpt-5-mini";
   small_model = if local.enabled then "${local.providerId}/${local.modelId}" else qwen;
 
-  roles =
-    # let
-    #   readOnlyTools = "{ write: false, edit: false, bash: false }";
-    # in
-    config.lib.agents.roles
-    |> mapAttrs (
-      _: v:
-      v.withFM {
-        inherit (v) description;
-        model = "github-copilot/gpt-4.1";
-        # tools = if v.readonly then readOnlyTools else null; TODO
-      }
-    )
-    |> agents.mkPrompts "opencode/agents";
+  # # TODO put into config file as well
+  # roles =
+  #   # let
+  #   #   readOnlyTools = "{ write: false, edit: false, bash: false }";
+  #   # in
+  #   config.lib.agents.roles
+  #   |> mapAttrs (
+  #     _: v:
+  #     v.withFM {
+  #       inherit (v) description;
+  #       model = "github-copilot/gpt-4.1";
+  #       # tools = if v.readonly then readOnlyTools else null; TODO
+  #     }
+  #   )
+  #   |> agents.mkPrompts "opencode/agents";
 
   local =
     let
@@ -243,20 +244,19 @@ let
       };
     '';
 
-  # TODO put into config file as well
-  commands =
-    let
-      adaptedCommands = agents.commands |> mapAttrs (_: v: v.withFM { inherit (v) description; });
-    in
-    agents.mkPrompts "opencode/command" adaptedCommands;
+  # # TODO put into config file as well
+  # commands =
+  #   let
+  #     adaptedCommands = agents.commands |> mapAttrs (_: v: v.withFM { inherit (v) description; });
+  #   in
+  #   agents.mkPrompts "opencode/command" adaptedCommands;
+
 in
 {
   xdg.configFile = {
     "opencode/AGENTS.md".text = agents.instructions.generic;
     "opencode/plugin/notifications.js".text = notifications;
-  }
-  // commands
-  // roles;
+  };
   home = {
     activation.opencodeSettings = config.lib.home.json.set {
       inherit
