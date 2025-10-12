@@ -115,6 +115,22 @@
         "type": "github"
       }
     },
+    "base16-mutt": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1504543890,
+        "narHash": "sha256-NIkZ0+UkyMMJksgZUXGTJ+P2ibdwqRHsT6ghJ/j8bkY=",
+        "owner": "josephholsten",
+        "repo": "base16-mutt",
+        "rev": "f1f7289f350c0fd09de8eea8e8104b07238e55fe",
+        "type": "github"
+      },
+      "original": {
+        "owner": "josephholsten",
+        "repo": "base16-mutt",
+        "type": "github"
+      }
+    },
     "base16-vim": {
       "flake": false,
       "locked": {
@@ -1839,6 +1855,7 @@
       "inputs": {
         "agenix": "agenix",
         "avante": "avante",
+        "base16-mutt": "base16-mutt",
         "blink-cmp-avante": "blink-cmp-avante",
         "ctrlsn": "ctrlsn",
         "deadnix": "deadnix",
