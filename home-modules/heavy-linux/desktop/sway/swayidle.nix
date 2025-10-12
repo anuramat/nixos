@@ -4,6 +4,9 @@
   lib,
   ...
 }:
+let
+  inherit (lib) getExe;
+in
 {
   services = {
     swayidle =
@@ -19,28 +22,9 @@
         lock =
           let
             screen = "${lib.getExe pkgs.swaylock} -f";
-            pass =
-              let
-                gpg-lock = pkgs.writeShellApplication {
-                  name = "gpg-lock";
-                  runtimeInputs = with pkgs; [
-                    gnupg # gpg and gpg-connect-agent
-                    gawk # awk
-                    findutils # xargs
-                  ];
-                  text = ''
-                    # takes a path to a .gpg-id file, clears the corresponding agent cache
-                    GNUPGHOME=${config.programs.gpg.homedir}
-                    export GNUPGHOME
-                    xargs -r gpg --list-keys --with-colons --with-keygrip < "$1" \
-                    	| awk -F: '/^sub/{x=1} x&&/^grp/{print $10;x=0}' \
-                    	| xargs -I{} gpg-connect-agent "clear_passphrase --mode=normal {}" /bye
-                  '';
-                };
-              in
-              "${lib.getExe gpg-lock} ${config.programs.password-store.settings.PASSWORD_STORE_DIR}/.gpg-id";
+            keyring = getExe config.lib.keyring.lock;
           in
-          "${pass}; ${screen}";
+          "${keyring}; ${screen}";
       in
       {
         enable = true;
