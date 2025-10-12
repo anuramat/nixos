@@ -58,9 +58,8 @@ in
               if file then
                 local instructions = file:read("*a")
                 file:close()
-                prompt = prompt .. "\n" .. instructions
+                return instructions
               end
-              return prompt
             '';
           disabled_tools = [
             # "read_file"
