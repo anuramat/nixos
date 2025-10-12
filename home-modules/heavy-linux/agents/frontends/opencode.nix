@@ -12,7 +12,6 @@ let
   qwen = "cerebras/qwen-3-coder-480b"; # cerebras recommends t=0.7 top_p=0.8
   # glm = "zhipuai/glm-4.5";
   mini = "github-copilot/gpt-5-mini";
-  small_model = if local.enabled then "${local.providerId}/${local.modelId}" else qwen;
 
   # # TODO put into config file as well
   # roles =
@@ -184,10 +183,6 @@ let
       };
     };
 
-  plugin = [
-    "opencode-openai-codex-auth@2.1.1"
-  ];
-
   # opencode debug lsp diagnostics ./path/to/file/with/error.ts
   lsp = {
     custom-lsp = {
@@ -244,12 +239,16 @@ let
       };
     '';
 
-  # # TODO put into config file as well
-  # commands =
-  #   let
-  #     adaptedCommands = agents.commands |> mapAttrs (_: v: v.withFM { inherit (v) description; });
-  #   in
-  #   agents.mkPrompts "opencode/command" adaptedCommands;
+  # TODO put into config file as well
+  command =
+    agents.commands
+    |> mapAttrs (
+      _: v: {
+        inherit (v) description;
+        template = v.text;
+        # model, agent, subtask: bool
+      }
+    );
 
 in
 {
@@ -262,11 +261,14 @@ in
       inherit
         provider
         agent
-        plugin
-        small_model
+        command
         mcp
         lsp
         ;
+      plugin = [
+        "opencode-openai-codex-auth@2.1.1"
+      ];
+      small_model = if local.enabled then "${local.providerId}/${local.modelId}" else qwen;
       autoupdate = false;
       instructions = [ "AGENTS.md" ];
       tools.webfetch = false;

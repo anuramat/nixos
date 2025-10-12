@@ -111,7 +111,7 @@ in
       ]
       |> concatStringsSep "\n";
 
-    # TODO rename
+    # TODO inline?
     mkPrompts =
       dir: prompts:
       lib.mapAttrs' (promptName: prompt: {
