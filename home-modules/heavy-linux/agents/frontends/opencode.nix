@@ -12,14 +12,15 @@ let
   qwen = "cerebras/qwen-3-coder-480b"; # cerebras recommends t=0.7 top_p=0.8
   # glm = "zhipuai/glm-4.5";
   mini = "github-copilot/gpt-5-mini";
+  small_model = if local.enabled then "${local.providerId}/${local.modelId}" else qwen;
 
-  roleFiles =
+  roles =
     # let
     #   readOnlyTools = "{ write: false, edit: false, bash: false }";
     # in
     config.lib.agents.roles
     |> mapAttrs (
-      n: v:
+      _: v:
       v.withFM {
         inherit (v) description;
         model = "github-copilot/gpt-4.1";
@@ -54,28 +55,6 @@ let
         else
           { };
     };
-
-  opencodeConfig = {
-    # model = mini; bugged -- overrides agent model on startup
-    small_model = if local.enabled then "${local.providerId}/${local.modelId}" else qwen;
-    inherit
-      mcp
-      provider
-      agent
-      plugin
-      ;
-    autoupdate = false;
-    instructions = [
-      "AGENTS.md"
-    ];
-    tools = {
-      webfetch = false;
-    };
-    share = "disabled";
-    keybinds = {
-      editor_open = "<leader>ctrl+e,<leader>e";
-    };
-  };
 
   agent =
     let
@@ -203,9 +182,24 @@ let
         };
       };
     };
+
   plugin = [
     "opencode-openai-codex-auth@2.1.1"
   ];
+
+  lsp = {
+    custom-lsp = {
+      command = [
+        "tinymist"
+        "lsp"
+      ];
+      extensions = [
+        ".typ"
+        "typ"
+      ];
+    };
+  };
+
   mcp =
     let
       rawServers = mapAttrs (
@@ -248,38 +242,46 @@ let
       	};
       };
     '';
-  pkg = agents.mkPackages {
-    agentDir = "opencode";
-    package = pkgs.opencode;
-    inherit tokens;
-    env = {
-      OPENCODE_DISABLE_LSP_DOWNLOAD = "true";
-    };
-  };
+
+  # TODO put into config file as well
+  commands =
+    let
+      adaptedCommands = agents.commands |> mapAttrs (_: v: v.withFM { inherit (v) description; });
+    in
+    agents.mkPrompts "opencode/command" adaptedCommands;
 in
 {
-  xdg.configFile =
-    let
-      # TODO put into config file as well
-      commands =
-        let
-          adaptedCommands = agents.commands |> mapAttrs (_: v: v.withFM { inherit (v) description; });
-        in
-        agents.mkPrompts "opencode/command" adaptedCommands;
-    in
-    {
-      "opencode/AGENTS.md".text = agents.instructions.generic;
-      "opencode/plugin/notifications.js".text = notifications;
-    }
-    // commands
-    // roleFiles;
-
+  xdg.configFile = {
+    "opencode/AGENTS.md".text = agents.instructions.generic;
+    "opencode/plugin/notifications.js".text = notifications;
+  }
+  // commands
+  // roles;
   home = {
-    activation = {
-      opencodeSettings = config.lib.home.json.set opencodeConfig (
-        config.xdg.configHome + "/opencode/opencode.json"
-      );
-    };
-    packages = [ pkg ];
+    activation.opencodeSettings = config.lib.home.json.set {
+      inherit
+        provider
+        agent
+        plugin
+        small_model
+        mcp
+        lsp
+        ;
+      autoupdate = false;
+      instructions = [ "AGENTS.md" ];
+      tools.webfetch = false;
+      share = "disabled";
+      keybinds.editor_open = "<leader>ctrl+e,<leader>e";
+    } (config.xdg.configHome + "/opencode/opencode.json");
+    packages = [
+      (agents.mkPackages {
+        agentDir = "opencode";
+        package = pkgs.opencode;
+        inherit tokens;
+        env = {
+          OPENCODE_DISABLE_LSP_DOWNLOAD = "true";
+        };
+      })
+    ];
   };
 }
