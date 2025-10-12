@@ -87,6 +87,7 @@ let
   provider =
     let
       keys = mapAttrs (n: _: "{env:${n}}") osConfig.age.secrets;
+      # TODO tidy gpt5 models
       gpt5models =
         let
           gptOutputOptions = {
@@ -98,12 +99,6 @@ let
           gpt-5.options = gptOutputOptions;
           gpt-5-mini.options = gptOutputOptions;
         };
-      baseModel = {
-        attachment = false;
-        reasoning = true;
-        temperature = true;
-        tool_call = true;
-      };
     in
     local.providerConfig
     // {
@@ -125,7 +120,11 @@ let
       cerebras = {
         options.apiKey = keys.cerebras;
         models = {
-          qwen-3-235b-a22b-thinking-2507 = baseModel // {
+          qwen-3-235b-a22b-thinking-2507 = {
+            attachment = false;
+            reasoning = true;
+            temperature = true;
+            tool_call = true;
             limit = rec {
               context = 131000;
               output = context;
