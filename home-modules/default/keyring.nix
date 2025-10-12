@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (lib) shellEscapeArg getExe;
+  inherit (lib) escapeShellArg getExe;
   passDir = config.programs.password-store.settings.PASSWORD_STORE_DIR;
 in
 {
@@ -42,9 +42,9 @@ in
       ];
       text = ''
         # TODO is this required? should already be set in the environment
-        GNUPGHOME=${shellEscapeArg config.programs.gpg.homedir}
+        GNUPGHOME=${escapeShellArg config.programs.gpg.homedir}
         export GNUPGHOME
-        xargs -r gpg --list-keys --with-colons --with-keygrip < ${shellEscapeArg passDir}/.gpg-id \
+        xargs -r gpg --list-keys --with-colons --with-keygrip < ${escapeShellArg passDir}/.gpg-id \
         	| awk -F: '/^sub/{x=1} x&&/^grp/{print $10;x=0}'
       '';
     };
@@ -58,7 +58,7 @@ in
       ];
       text = ''
         # TODO is this required? should already be set in the environment
-        GNUPGHOME=${shellEscapeArg config.programs.gpg.homedir}
+        GNUPGHOME=${escapeShellArg config.programs.gpg.homedir}
         export GNUPGHOME
         pass-list-keygrips | xargs -I{} gpg-connect-agent "clear_passphrase --mode=normal {}" /bye
       '';
