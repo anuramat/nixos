@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (lib) mapAttrs;
+  inherit (lib) mapAttrs getExe;
   inherit (config.lib) agents;
 
   qwen = "cerebras/qwen-3-coder-480b"; # cerebras recommends t=0.7 top_p=0.8
@@ -188,15 +188,15 @@ let
     "opencode-openai-codex-auth@2.1.1"
   ];
 
+  # opencode debug lsp diagnostics ./path/to/file/with/error.ts
   lsp = {
     custom-lsp = {
       command = [
-        "tinymist"
+        (getExe pkgs.tinymist)
         "lsp"
       ];
       extensions = [
         ".typ"
-        "typ"
       ];
     };
   };
