@@ -9,7 +9,6 @@ let
       GROQ_API_KEY = groq;
       OPENAI_API_KEY = openai;
       OPENROUTER_API_KEY = openrouter;
-      POE_API_KEY = poe;
       ZAI_API_KEY = zai;
     }
   );

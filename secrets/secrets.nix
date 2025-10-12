@@ -29,7 +29,6 @@ in
   "openai.age"
   "openrouter.age"
   "perplexity.age"
-  "poe.age" # "https://api.poe.com/v1" TODO
   "zai.age"
 
   "ollama.age"
