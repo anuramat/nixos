@@ -64,6 +64,7 @@
     # miscellaneous unfiled TODO
     html2text # html to plain text
     percollate # html to markdown
+    fx # json viewer
     gron # make json greppable (every value gets its own line)
     csvkit
     firefox-sync-client
