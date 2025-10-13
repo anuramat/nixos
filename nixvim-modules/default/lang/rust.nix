@@ -8,7 +8,7 @@
     rustfmt
   ];
   plugins = {
-    lint.lintersByFt.rust = [ "clippy" ];
+    # lint.lintersByFt.rust = [ "clippy" ];
     conform-nvim.settings.formatters_by_ft.rust = [
       "rustfmt"
     ];
