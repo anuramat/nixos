@@ -1,4 +1,5 @@
 {
+  # alternative -- felix-fm -- image previews, otherwise minimal -- :help<cr> for help; waiting for picker in <https://github.com/kyoheiu/felix/issues/261>
   programs.yazi = {
     enable = true;
     shellWrapperName = "y";
