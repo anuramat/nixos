@@ -14,26 +14,26 @@ inputs:
     };
     unstable = inputs.nixpkgs-unstable.legacyPackages.${prev.system};
     llguidanceSetup = prev.writeShellScript "llguidance-setup.sh" ''
-          set -euo pipefail
-          src=$1
-          rm -rf "$src"
-          mkdir -p "$src"
-          cp -R ${llguidanceSrc}/. "$src/"
-          chmod -R u+w "$src"
-          rm -rf "$src/vendor"
-          mkdir -p "$src/vendor"
-          cp -R ${llguidanceVendor}/. "$src/vendor/"
-          rm -rf "$src/.cargo-home"
-          mkdir -p "$src/.cargo-home"
-          cat > "$src/.cargo-home/config.toml" <<CFG
+      set -euo pipefail
+      src=$1
+      rm -rf "$src"
+      mkdir -p "$src"
+      cp -R ${llguidanceSrc}/. "$src/"
+      chmod -R u+w "$src"
+      rm -rf "$src/vendor"
+      mkdir -p "$src/vendor"
+      cp -R ${llguidanceVendor}/. "$src/vendor/"
+      rm -rf "$src/.cargo-home"
+      mkdir -p "$src/.cargo-home"
+      cat >"$src/.cargo-home/config.toml" <<CFG
       [source.crates-io]
       replace-with = "vendored-sources"
 
       [source.vendored-sources]
       directory = "$src/vendor"
       CFG
-          sed -i '/"python_ext",/d' "$src/Cargo.toml"
-          sed -i '/"python_ext"/d' "$src/Cargo.toml"
+      sed -i '/"python_ext",/d' "$src/Cargo.toml"
+      sed -i '/"python_ext"/d' "$src/Cargo.toml"
     '';
   in
   {
