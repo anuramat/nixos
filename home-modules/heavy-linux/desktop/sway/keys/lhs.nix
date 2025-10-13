@@ -22,12 +22,12 @@ let
 in
 {
   wayland.windowManager.sway = {
-    extraConfig = ''
-      bindsym --whole-window ${modifier}+button4 focus down
-      bindsym --whole-window ${modifier}+button5 focus up
-      bindsym --whole-window ${modifier}+button6 focus right
-      bindsym --whole-window ${modifier}+button7 focus left
-    '';
+    # extraConfig = ''
+    #   bindsym --whole-window ${modifier}+button4 focus down
+    #   bindsym --whole-window ${modifier}+button5 focus up
+    #   bindsym --whole-window ${modifier}+button6 focus right
+    #   bindsym --whole-window ${modifier}+button7 focus left
+    # '';
     config = {
       modes = { };
       bindkeysToCode = true;
