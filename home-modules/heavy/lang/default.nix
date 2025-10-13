@@ -62,6 +62,7 @@
     python3Packages.debugpy
 
     # misc TODO categorize
+    rustlings
     haskellPackages.hoogle
     htmlq
     jq # json processor
