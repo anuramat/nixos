@@ -8,6 +8,7 @@ let
 in
 {
   services.openssh.settings.AllowUsers = [ username ];
+  # TODO maybe move closer to specific services that need it
   users.users = {
     ${username} = {
       description = fullname;
@@ -28,6 +29,7 @@ in
         "scanner"
         "lp" # printers
         "adbusers" # adb (android)
+        "uinput" # mouse-actions
       ];
       openssh.authorizedKeys = {
         inherit (config.lib.hosts) keyFiles;

@@ -6,6 +6,10 @@
       message = "main keyboard not configured";
     }
   ];
+  programs.mouse-actions = {
+    enable = true;
+    autorun = true;
+  };
   services.keyd = {
     enable = true;
     keyboards = {
