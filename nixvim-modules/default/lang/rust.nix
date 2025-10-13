@@ -4,11 +4,10 @@
 }:
 {
   extraPackages = with pkgs; [
+    clippy
   ];
   plugins = {
-    lint.lintersByFt = {
-    };
-
+    lint.lintersByFt.rust = [ "clippy" ];
     lsp.servers = {
       rust_analyzer = {
         enable = true;
