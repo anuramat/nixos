@@ -11,6 +11,10 @@
     "5426:98:Razer_Razer_Atheris_-_Mobile_Gaming_Mouse_Keyboard" = {
     };
 
+    "12951:6519:ZSA_Technology_Labs_Voyager" = {
+      rotation_angle = "30";
+    };
+
     "5426:138:Razer_Razer_Viper_Mini" = {
     };
 
