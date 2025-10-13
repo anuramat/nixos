@@ -202,7 +202,7 @@ inputs:
   };
 
   llama-cpp = prev.llama-cpp.overrideAttrs (old: rec {
-    version = "6175";
+    version = "6750";
     cmakeFlags = old.cmakeFlags ++ [
       "-DLLAMA_LLGUIDANCE=ON"
     ];
