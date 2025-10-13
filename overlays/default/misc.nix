@@ -203,6 +203,9 @@ inputs:
 
   llama-cpp = prev.llama-cpp.overrideAttrs (old: rec {
     version = "6175";
+    cmakeFlags = old.cmakeFlags ++ [
+      "-DLLAMA_LLGUIDANCE=ON"
+    ];
     src = prev.fetchFromGitHub {
       owner = "ggml-org";
       repo = "llama.cpp";
