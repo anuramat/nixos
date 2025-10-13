@@ -29,7 +29,6 @@ in
         "scanner"
         "lp" # printers
         "adbusers" # adb (android)
-        "uinput" # mouse-actions
       ];
       openssh.authorizedKeys = {
         inherit (config.lib.hosts) keyFiles;

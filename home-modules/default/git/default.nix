@@ -38,7 +38,8 @@
         wt = "worktree";
         st = "status";
         sh = "show --ext-diff";
-        lp = "log --ext-diff";
+        cm = "!git add -A && git commit";
+        lp = "log --ext-diff -p";
         lg = "log --ext-diff --oneline --graph --all --decorate";
         ds = "diff --staged";
         hk = "!lh() { find .git/hooks -mindepth 1 -maxdepth 1 | grep -v sample; }; lh";
