@@ -67,7 +67,6 @@
           titlebar = true;
           criteria = [
             { app_id = "nm-connection-editor"; }
-            { app_id = "keymapp"; }
             { app_id = "openrgb"; }
             { app_id = "Proton Pass"; }
             { app_id = "udiskie"; }
