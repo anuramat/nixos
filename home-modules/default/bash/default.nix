@@ -26,7 +26,6 @@ in
       home = config.home.homeDirectory;
       XDG_BIN_HOME = "${home}/.local/bin";
       XDG_DATA_HOME = config.xdg.dataHome;
-      bashStateDir = config.xdg.stateHome + "/bash";
       customXdg = {
         XDG_DOCUMENTS_DIR = "${home}/docs";
         XDG_PICTURES_DIR = "${home}/img";
@@ -38,10 +37,7 @@ in
         # TODO not sure if this works; feels like it doesn't on anuramat-root
         mkDirs =
           let
-            dirs = [
-              bashStateDir
-            ]
-            ++ (attrValues customXdg);
+            dirs = attrValues customXdg;
           in
           lib.hm.dag.entryAfter [ "writeBoundary" ] "mkdir -p ${escapeShellArgs dirs}";
       };
@@ -60,7 +56,6 @@ in
         VIRTUAL_ENV_DISABLE_PROMPT = "1"; # hide python venv prompt
 
         # XDG TODO move stuff here from the shims file
-        HISTFILE = bashStateDir + "/history"; # ~/.bash_history
         CUDA_CACHE_PATH = "${config.xdg.cacheHome}/nv"; # ~/.nv/
 
         TERMCMD = "${lib.getExe pkgs.foot}";
@@ -108,6 +103,23 @@ in
       enable = true;
       historySize = -1;
       historyFileSize = -1;
+      historyFile = config.xdg.stateHome + "/bash/history";
+      historyIgnore = [
+        "la"
+        "f"
+        "git st"
+        "j nixos"
+        "up"
+        "y"
+        "m"
+        "j"
+        "just"
+        "ls"
+      ];
+      historyControl = [
+        "ignoreboth"
+        "erasedups"
+      ];
     };
     less = {
       enable = true;
