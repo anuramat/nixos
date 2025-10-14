@@ -1,7 +1,10 @@
 {
   plugins = {
     fidget.enable = true;
-    nvim-lightbulb.enable = true;
+    nvim-lightbulb = {
+      enable = true;
+      settings.virtual_text.enabled = true;
+    };
 
     rainbow-delimiters.enable = true;
 
