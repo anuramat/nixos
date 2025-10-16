@@ -103,14 +103,19 @@ let
       '';
   };
 
+  # edit a home-manager link
   hack = pkgs.writeShellApplication {
     name = "hack";
     text = # bash
       ''
+        [ -L "$1" ] || {
+          echo "$1 is not a symlink"
+          exit 1
+        }
         tempfile=$(mktemp)
-        cp -L "$1" "$tempfile"
-        mv "$1" "$1.HMLNK"
-        mv "$tempfile" "$1"
+        cp -nL "$1" "$tempfile"
+        mv -n "$1" "$1.HMLNK"
+        mv -n "$tempfile" "$1"
         chmod +w "$1"
         $EDITOR "$1"
       '';
