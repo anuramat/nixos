@@ -103,6 +103,18 @@ let
       '';
   };
 
+  hack = pkgs.writeShellApplication {
+    name = "hack";
+    text = # bash
+      ''
+        tempfile=$(mktemp)
+        cp -L "$1" "$tempfile"
+        mv "$tempfile" "$1"
+        chmod +w "$1"
+        $EDITOR "$1"
+      '';
+  };
+
 in
 {
   home.packages = [
@@ -110,6 +122,7 @@ in
     reflake
     template
     orphans
+    hack
   ];
   programs.bash.bashrcExtra =
     # bash
