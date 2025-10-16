@@ -109,6 +109,7 @@ let
       ''
         tempfile=$(mktemp)
         cp -L "$1" "$tempfile"
+        mv "$1" "$1.HMLNK"
         mv "$tempfile" "$1"
         chmod +w "$1"
         $EDITOR "$1"
