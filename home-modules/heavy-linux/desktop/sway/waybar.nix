@@ -22,7 +22,7 @@ in
           spacing = 5;
           tray.spacing = 10;
           clock = {
-            format = "{:%Y-%m-%d %H:%M:%S}";
+            format = "{:%Y-%m-%d %a %H:%M:%S}";
             interval = 1;
           };
         };
