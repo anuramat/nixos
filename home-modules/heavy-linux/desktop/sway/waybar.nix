@@ -68,7 +68,7 @@ in
             format = "{player_icon}  {status_icon} {dynamic}";
             interval = 1;
             max-length = 999;
-            player = "spotify";
+            # player = "spotify";
             player-icons = {
               default = "";
               spotify = "󰓇";
