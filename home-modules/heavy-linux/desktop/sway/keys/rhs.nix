@@ -31,7 +31,8 @@ let
       };
     playback =
       let
-        l = v: "exec ${pkgs.playerctl}/bin/playerctl -p spotify ${v}";
+        # `-p spotify` for specific player
+        l = v: "exec ${pkgs.playerctl}/bin/playerctl ${v}";
       in
       {
         prev = l "previous";
