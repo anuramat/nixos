@@ -13,6 +13,7 @@
     # compilers
     cabal-install
     # cargo
+    # rustc
     # clang # collision with gcc
     ghc
     gcc
@@ -24,7 +25,6 @@
     bun
     perl
     ruby
-    rustc
     sageWithDoc # computer algebra system
     stack
     texliveFull
