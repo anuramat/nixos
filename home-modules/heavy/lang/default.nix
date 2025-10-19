@@ -12,7 +12,7 @@
   home.packages = with pkgs; [
     # compilers
     cabal-install
-    cargo
+    # cargo
     # clang # collision with gcc
     ghc
     gcc

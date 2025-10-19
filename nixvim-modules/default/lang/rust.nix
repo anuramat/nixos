@@ -15,7 +15,10 @@
     lsp.servers = {
       rust_analyzer = {
         enable = true;
-        packageFallback = true;
+        installCargo = false;
+        installRustc = false;
+        # packageFallback = true;
+        # TODO on 25.11, uncomment, remove lines install.*false, enable cargo in packages
       };
     };
   };
