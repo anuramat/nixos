@@ -3,10 +3,6 @@
   ...
 }:
 {
-  extraPackages = with pkgs; [
-    clippy
-    rustfmt
-  ];
   plugins = {
     lint.lintersByFt.rust = [ "clippy" ];
     conform-nvim.settings.formatters_by_ft.rust = [
@@ -17,6 +13,7 @@
         enable = true;
         installCargo = false;
         installRustc = false;
+        package = pkgs.bat; # HACK
         # packageFallback = true;
         # TODO on 25.11, uncomment, remove lines install.*false, enable cargo in packages
       };
