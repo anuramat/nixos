@@ -17,6 +17,7 @@ let
     "json"
     "yaml"
     "todotxt"
+    "toml"
   ];
   # BUG: with supermaven, runs at startup, and that blocks the session forever; so it can only rely on the working directory
   # NOTE: calls back home even when disabled
