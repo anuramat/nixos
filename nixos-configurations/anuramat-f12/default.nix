@@ -7,6 +7,7 @@
   system.stateVersion = "25.05";
   home-manager.users.anuramat.home.stateVersion = "25.05";
   services.keyd.keyboards.main.ids = [
+    "0001:0001:70533846"
   ];
 
   networking.hostName = "anuramat-f12";
@@ -36,5 +37,5 @@
   #   }
   # ];
 
-  # programs.captive-browser.interface = "wlp3s0";
+  programs.captive-browser.interface = "wlp0s20f3";
 }
