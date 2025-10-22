@@ -68,6 +68,10 @@ in
               position = "0,0";
               scale = 1.5;
             };
+            f12 = {
+              criteria = "BOE NV122WUM-N42 Unknown";
+              position = "0,0";
+            };
             home = {
               criteria = "Dell Inc. DELL S2722QC 192SH24";
               scale = 1.5;
@@ -80,6 +84,7 @@ in
           in
           {
             # alphabetic priority
+
             ll7-0 = [
               (ll7 // { mode = "3200x2000@60Hz"; })
             ];
@@ -91,6 +96,7 @@ in
               ll7
               generic
             ];
+
             t480-0 = [
               t480
             ];
@@ -100,6 +106,18 @@ in
             ];
             t480-2-generic = [
               t480
+              generic
+            ];
+
+            f12-0 = [
+              f12
+            ];
+            f12-1-home = [
+              f12
+              (home // { position = "0,-2000"; })
+            ];
+            f12-2-generic = [
+              f12
               generic
             ];
           };
