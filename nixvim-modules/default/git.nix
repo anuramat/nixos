@@ -46,7 +46,7 @@
       {
         mode = "v";
         key = "<leader>gs";
-        action = hax.vim.luaf ''gitsigns.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })'';
+        action = hax.vim.luaf ''require("gitsigns").stage_hunk({ vim.fn.line("."), vim.fn.line("v") })'';
         options = {
           desc = "stage selection";
         };
@@ -58,7 +58,7 @@
       {
         mode = "v";
         key = "<leader>gr";
-        action = hax.vim.luaf ''gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })'';
+        action = hax.vim.luaf ''require("gitsigns").reset_hunk({ vim.fn.line("."), vim.fn.line("v") })'';
         options = {
           desc = "reset selection";
         };
