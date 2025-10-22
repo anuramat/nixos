@@ -103,6 +103,8 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       };
       devShells.default = pkgs.mkShell {
         packages = with pkgs; [
+          neovim
+          git
           just
           nixfmt-rfc-style
           nix-unit
