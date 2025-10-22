@@ -42,25 +42,35 @@
       set = key: action: hax.vim.set "<leader>g${key}" "Gitsigns ${action}" "${action} [Gitsigns]";
     in
     [
+      # stage
       {
         mode = "v";
         key = "<leader>gs";
-        action = "<cmd>Gitsigns stage_hunk<cr>";
+        action = hax.vim.luaf ''gitsigns.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })'';
         options = {
           desc = "stage selection";
         };
       }
       (set "s" "stage_hunk")
       (set "S" "stage_buffer")
+
+      # reset
+      {
+        mode = "v";
+        key = "<leader>gr";
+        action = hax.vim.luaf ''gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })'';
+        options = {
+          desc = "reset selection";
+        };
+      }
       (set "r" "reset_hunk")
       (set "R" "reset_buffer")
-      (set "b" "blame_line")
-      (set "p" "preview_hunk")
-      (set "d" "diffthis")
 
+      # navigation
       (hax.vim.set "]h" "Gitsigns next_hunk" "next hunk")
       (hax.vim.set "[h" "Gitsigns prev_hunk" "previous hunk")
 
+      # text objects
       {
         mode = [
           "o"
@@ -79,5 +89,10 @@
         action = hax.vim.luaf ''require("gitsigns").select_hunk({ greedy = true })'';
         options.desc = "Around hunk [gitsigns]";
       }
+
+      # misc
+      (set "b" "blame_line")
+      (set "p" "preview_hunk")
+      (set "d" "diffthis")
     ];
 }
