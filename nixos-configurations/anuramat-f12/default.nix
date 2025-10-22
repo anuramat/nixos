@@ -3,6 +3,11 @@
   ...
 }:
 {
+
+  # swap partition
+  boot.initrd.luks.devices."luks-ffc8e21f-2272-442f-8258-30742e29e1f0".device =
+    "/dev/disk/by-uuid/ffc8e21f-2272-442f-8258-30742e29e1f0";
+
   nix.distributedBuilds = true;
   system.stateVersion = "25.05";
   home-manager.users.anuramat.home.stateVersion = "25.05";
