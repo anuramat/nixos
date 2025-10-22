@@ -27,7 +27,6 @@
     ruby
     sageWithDoc # computer algebra system
     stack
-    texliveFull
     yarn
 
     # linters
