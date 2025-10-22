@@ -1,7 +1,6 @@
 {
   pkgs,
   hax,
-  osConfig ? null,
   ...
 }:
 {
@@ -29,19 +28,7 @@
         ];
         settings.options = {
           nixvim.expr = "(builtins.getFlake (builtins.toString ./.)).packages.${pkgs.system}.neovim.options";
-        }
-        // (
-          if osConfig != null then
-            let
-              nixosExpr = ''(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.${osConfig.networking.hostName}.options'';
-            in
-            {
-              nixos.expr = nixosExpr;
-              home-manager.expr = "${nixosExpr}.home-manager.users.type.getSubOptions []";
-            }
-          else
-            throw "TODO this is only configured for nixos.home-manager.nixvim setup for now"
-        );
+        };
         onAttach.function = # lua
           ''
             client.server_capabilities.renameProvider = false
