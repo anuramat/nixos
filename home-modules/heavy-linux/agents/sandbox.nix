@@ -135,7 +135,7 @@ in
                 |> map (p: "${config.home.homeDirectory}/${p}");
             in
             mkArgs {
-              flag = "--ro-bind";
+              flag = "--ro-bind-try";
               doublePath = true;
               paths = [
                 "/nix"
