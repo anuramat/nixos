@@ -29,7 +29,7 @@
     v4l-utils # camera stuff
     wirelesstools # iwconfig etc
 
-    hyprpolkitagent
+    seahorse
   ];
 
   # TODO figure out rust version or keyring locking
@@ -41,4 +41,5 @@
       program = "pinentry-wayprompt";
     };
   };
+
 }
