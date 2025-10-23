@@ -1,6 +1,9 @@
 { pkgs, ... }:
 {
-  programs.nix-index.enable = true;
+  programs.nix-index = {
+    enableBashIntegration = false; # annoying on "command not found"
+    enable = true;
+  };
   home.packages = with pkgs; [
     nix-web # derivation viewer
     nix-search # package search
