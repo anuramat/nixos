@@ -84,7 +84,10 @@ let
         );
       # TODO escape target here and in the rest of the file in similar places
       script = ''
-        [ -s "${target}" ] || echo '{}' >"${target}"
+        [ -s "${target}" ] || {
+          mkdir -p "$(dirname "${target}")"
+          echo '{}' >"${target}"
+        }
         ${calls}
       '';
     in
