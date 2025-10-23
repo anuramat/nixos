@@ -51,7 +51,7 @@ let
               case "$line" in
                 normal)
                   swaymsg output eDP-1 transform 0
-                  mode=laptop
+                  # mode=laptop
                   ;;
                 bottom-up) swaymsg output eDP-1 transform 180 ;;
                 right-up) swaymsg output eDP-1 transform 90 ;;
