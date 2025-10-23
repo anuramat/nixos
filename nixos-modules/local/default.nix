@@ -97,7 +97,7 @@ in
       HandlePowerKey=suspend
       HandleSuspendKey=suspend
       HandleHibernateKey=suspend
-      HandleLidSwitch=ignore
+      HandleLidSwitch=suspend
       HandleLidSwitchDocked=ignore
       HandleLidSwitchExternalPower=ignore
     '';
