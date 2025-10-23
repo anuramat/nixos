@@ -7,6 +7,9 @@
   networking = {
     firewall = {
       enable = true;
+      allowedTCPPorts = [
+        12345
+      ];
     };
     networkmanager = {
       enable = true;
