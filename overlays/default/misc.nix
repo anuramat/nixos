@@ -81,10 +81,10 @@ inputs:
 
   codex = prev.stdenv.mkDerivation rec {
     pname = "codex";
-    version = "0.47.0-alpha.1";
+    version = "0.47.0";
     src = prev.fetchurl {
       url = "https://github.com/openai/codex/releases/download/rust-v${version}/codex-x86_64-unknown-linux-musl.zst";
-      hash = "sha256-aKoKqQa6bgeMS//sr3W+nm7ijnNxmtjvslIxfYeefhE=";
+      hash = "sha256-FR7CZCxEq3RmbfPgl4aEUtIqN+sHI4qgamRe9zE3OTc=";
     };
     dontUnpack = true;
     nativeBuildInputs = [ prev.zstd ];
