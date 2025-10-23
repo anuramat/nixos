@@ -27,31 +27,50 @@ let
     ];
   };
 
-  autorotate =
-    pkgs.writeShellApplication {
-      runtimeInputs = with pkgs; [
-        mawk
-        iio-sensor-proxy
-      ];
-      name = "sway-autorotate";
-      text = ''
-        #!/usr/bin/env bash
-        monitor-sensor | mawk -W interactive '/Accelerometer orientation changed:/ { print $NF; fflush();}' | while read -r line; do
-          mode=tablet
-          case "$line" in
-            normal)
-              swaymsg output eDP-1 transform 0
-              mode=laptop
-              ;;
-            bottom-up) swaymsg output eDP-1 transform 180 ;;
-            right-up) swaymsg output eDP-1 transform 90 ;;
-            left-up) swaymsg output eDP-1 transform 270 ;;
-          esac
-          # framework_tool --tablet-mode "$mode"
-        done
-      '';
+  reloadKanshi = [
+    {
+      # <https://github.com/nix-community/home-manager/issues/2797>
+      command = "${pkgs.kanshi}/bin/kanshictl reload";
+      always = true;
     }
-    |> getExe;
+  ];
+  maybeAutorotate =
+    let
+      pkill = "${pkgs.procps}/bin/pkill";
+      name = "sway-autorotate";
+      script =
+        pkgs.writeShellApplication {
+          inherit name;
+          runtimeInputs = with pkgs; [
+            mawk
+            iio-sensor-proxy
+          ];
+          text = ''
+            #!/usr/bin/env bash
+            monitor-sensor | mawk -W interactive '/Accelerometer orientation changed:/ { print $NF; fflush();}' | while read -r line; do
+              mode=tablet
+              case "$line" in
+                normal)
+                  swaymsg output eDP-1 transform 0
+                  mode=laptop
+                  ;;
+                bottom-up) swaymsg output eDP-1 transform 180 ;;
+                right-up) swaymsg output eDP-1 transform 90 ;;
+                left-up) swaymsg output eDP-1 transform 270 ;;
+              esac
+              # framework_tool --tablet-mode "$mode"
+            done
+          '';
+        }
+        |> getExe;
+    in
+    ifEnable (osConfig != null && osConfig.hardware.sensor.iio.enable) [
+      {
+        command = "${pkill} ${name} || ${script}";
+        always = true;
+      }
+    ];
+
 in
 {
   services.mako.settings.output = out.int;
@@ -62,23 +81,7 @@ in
         bindswitch --locked lid:off output ${out.int} enable
       '';
     config = {
-      startup =
-        let
-          pkill = "${pkgs.procps}/bin/pkill";
-        in
-        [
-          {
-            # <https://github.com/nix-community/home-manager/issues/2797>
-            command = "${pkgs.kanshi}/bin/kanshictl reload";
-            always = true;
-          }
-        ]
-        ++ (ifEnable (osConfig != null && osConfig.hardware.sensor.iio.enable) [
-          {
-            command = "${pkill} sway-autorotate || ${autorotate}";
-            always = true;
-          }
-        ]);
+      startup = reloadKanshi ++ maybeAutorotate;
 
       workspaceOutputAssign =
         let
