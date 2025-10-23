@@ -46,7 +46,6 @@ let
             iio-sensor-proxy
           ];
           text = ''
-            #!/usr/bin/env bash
             monitor-sensor | mawk -W interactive '/Accelerometer orientation changed:/ { print $NF; fflush();}' | while read -r line; do
               mode=tablet
               case "$line" in
@@ -81,7 +80,7 @@ in
         bindswitch --locked lid:off output ${out.int} enable
       '';
     config = {
-      startup = reloadKanshi ++ maybeAutorotate;
+      startup = reloadKanshi;
 
       workspaceOutputAssign =
         let
