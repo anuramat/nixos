@@ -12,6 +12,9 @@ let
     let
       # https://github.com/openai/codex/blob/main/codex-rs/config.md
       cfg = {
+        notice = {
+          hide_full_access_warning = true;
+        };
         hide_agent_reasoning = false;
         show_raw_agent_reasoning = true;
         model_reasoning_summary = "detailed"; # auto/concise/detailed
