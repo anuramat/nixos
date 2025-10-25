@@ -1837,11 +1837,11 @@
     "protonmail-bridge": {
       "flake": false,
       "locked": {
-        "lastModified": 1761355703,
+        "lastModified": 1761358837,
         "narHash": "sha256-mdvHP11OUJ0hkYq1Qpa7hyTkIHC/oC74rX2dw4TXImo=",
         "owner": "anuramat",
         "repo": "proton-bridge",
-        "rev": "5099d666654c07150369cd22eb1534a649ffc69d",
+        "rev": "ccd09c574d1e5ae85d17c604f53a30a12b87ceb2",
         "type": "github"
       },
       "original": {

@@ -96,9 +96,10 @@ in
 
       passwordCommand =
         let
-          pass = getExe pkgs.pass;
+          secret-tool = lib.getExe pkgs.libsecret;
+          server = "protonmail/bridge-v3/users/${email}/imap-password";
         in
-        "${pass} show proton-bridge/${email}";
+        "${secret-tool} lookup server ${server}";
 
       neomutt = {
         enable = true;
