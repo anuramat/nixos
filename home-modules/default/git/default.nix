@@ -50,6 +50,7 @@
 
       attributes = [
         "flake.lock -diff"
+        "Cargo.lock -diff"
       ];
 
       extraConfig = {
