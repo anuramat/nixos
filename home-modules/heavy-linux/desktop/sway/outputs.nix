@@ -21,6 +21,7 @@ let
       "DP-1"
       "DP-2"
       "DP-3"
+      "DP-4"
       "HDMI-A-2"
       "HDMI-A-3"
       "HEADLESS-1"
