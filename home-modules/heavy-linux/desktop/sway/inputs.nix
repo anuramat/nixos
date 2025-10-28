@@ -2,9 +2,6 @@
   wayland.windowManager.sway.config.input = {
     "*" = {
       accel_profile = "flat";
-    };
-
-    "type:keyboard" = {
       repeat_delay = "250";
       repeat_rate = "50";
       xkb_layout = "us,ru";
