@@ -99,10 +99,10 @@ inputs:
 
   opencode = prev.stdenvNoCC.mkDerivation rec {
     pname = "opencode";
-    version = "0.15.16";
+    version = "1.0.0";
     src = prev.fetchzip {
       url = "https://github.com/sst/opencode/releases/download/v${version}/opencode-linux-x64.zip";
-      sha256 = "sha256-a7pGgf6zn6uZ4+5rPxEm1i577QZ4WQH3QQHhKAwFkyo=";
+      sha256 = "sha256-c2Ul+OEQXgd+hWjgQovB2lj+hWIimUXsxwp6XJeKB4w=";
     };
     dontFixup = true;
     # dontStrip = true;
