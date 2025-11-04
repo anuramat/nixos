@@ -87,6 +87,7 @@ let
           - You MUST NOT use unicode symbols:
             - Math symbols MUST be represented with dollar math.
             - Accents in e.g. French or umlauts in German MUST be dropped.
+          - Topics that were explicitly mentioned to be relevant for the exam must be listed in a dedicated "Exam-relevant topics" section at the end of the summary.
 
           ## Quality standards
 
