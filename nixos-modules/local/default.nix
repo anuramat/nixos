@@ -15,6 +15,7 @@ in
     ./peripherals.nix
     ./remaps.nix
     ./rice.nix
+    ./virtualisation.nix
   ];
 
   services.getty.autologinOnce = true; # TODO only if full disk encryption
