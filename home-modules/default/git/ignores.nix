@@ -18,6 +18,8 @@
     ".pytest_cache"
     ".goose/"
     ".quarto/"
+    "/target" # rust
+    "**/*.rs.bk"
 
     # pytorch lightning
     "*.ckpt"
