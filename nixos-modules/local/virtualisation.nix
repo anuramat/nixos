@@ -1,5 +1,5 @@
-{ config, ... }:
-{
+{ lib, config, ... }:
+lib.mkIf (config.nixpkgs.config.cudaSupport or false) {
   # TODO check through virtualisation; also maybe we can move some of it
   virtualisation = {
     containers.enable = true; # common container config files in /etc/containers
