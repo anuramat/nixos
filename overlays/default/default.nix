@@ -15,8 +15,6 @@ let
         subcat
         mcp-nixos
         nil
-        mdformat-myst
-        claude-desktop
         mods
         zotero-mcp
         todo
@@ -35,6 +33,7 @@ let
     in
     {
       inherit (unstable)
+        opencode
         copilot-lua
         keymapp
         proton-pass

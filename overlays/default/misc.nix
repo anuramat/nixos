@@ -97,29 +97,6 @@ inputs:
     meta.mainProgram = "codex";
   };
 
-  opencode = prev.stdenvNoCC.mkDerivation rec {
-    pname = "opencode";
-    version = "1.0.0";
-    src = prev.fetchzip {
-      url = "https://github.com/sst/opencode/releases/download/v${version}/opencode-linux-x64.zip";
-      sha256 = "sha256-c2Ul+OEQXgd+hWjgQovB2lj+hWIimUXsxwp6XJeKB4w=";
-    };
-    dontFixup = true;
-    # dontStrip = true;
-    # dontPatchELF = true;
-    installPhase = ''
-      runHook preInstall
-      install -Dt $out/bin opencode
-      runHook postInstall
-    '';
-    meta = {
-      description = "Opencode CLI tool";
-      homepage = "https://github.com/sst/opencode";
-      license = prev.lib.licenses.mit;
-      mainProgram = "opencode";
-    };
-  };
-
   zed-editor-bin =
     let
       runtimeLibs = prev.lib.makeLibraryPath [
