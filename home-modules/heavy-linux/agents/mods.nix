@@ -122,21 +122,21 @@ let
         base-url = "https://api.cerebras.ai/v1";
         api-key-cmd = keys.cerebras;
         models = {
-          qwen-3-coder-480b = {
-            aliases = [ "coder" ];
-          };
-        };
-      };
-      zai = {
-        api = "anthropic";
-        base-url = "https://api.z.ai/api/anthropic";
-        api-key-env = keys.zai;
-        models = {
-          "glm-4.5" = {
+          "zai-glm-4.6" = {
             aliases = [ "glm" ];
           };
         };
       };
+      # zai = {
+      #   api = "anthropic";
+      #   base-url = "https://api.z.ai/api/anthropic";
+      #   api-key-env = keys.zai;
+      #   models = {
+      #     "glm-4.5" = {
+      #       aliases = [ "glm" ];
+      #     };
+      #   };
+      # };
       copilot = {
         base-url = "https://api.githubcopilot.com";
         models = {

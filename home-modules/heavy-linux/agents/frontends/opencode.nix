@@ -9,8 +9,7 @@ let
   inherit (lib) mapAttrs getExe;
   inherit (config.lib) agents;
 
-  qwen = "cerebras/qwen-3-coder-480b"; # cerebras recommends t=0.7 top_p=0.8
-  # glm = "zhipuai/glm-4.5";
+  glm = "cerebras/zai-glm-4.6";
   mini = "github-copilot/gpt-5-mini";
 
   local =
@@ -51,14 +50,14 @@ let
       };
       default = {
         plan = {
-          model = qwen;
+          model = glm;
           tools = ro;
         };
         build = {
           model = mini;
         };
         general = {
-          model = qwen;
+          model = glm;
         };
       };
       custom =
@@ -255,7 +254,7 @@ in
       plugin = [
         "opencode-openai-codex-auth@2.1.1"
       ];
-      small_model = if local.enabled then "${local.providerId}/${local.modelId}" else qwen;
+      small_model = if local.enabled then "${local.providerId}/${local.modelId}" else glm;
       autoupdate = false;
       instructions = [ "AGENTS.md" ];
       tools.webfetch = false;
