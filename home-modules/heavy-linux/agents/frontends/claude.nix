@@ -78,9 +78,9 @@ in
           );
         claude = mkClaude {
           wrapperName = "claude";
-          tokens = t: {
-            CLAUDE_CODE_OAUTH_TOKEN = t.claude;
-          };
+          # tokens = t: {
+          #   CLAUDE_CODE_OAUTH_TOKEN = t.claude;
+          # };
         };
         claude-lite = mkClaude {
           wrapperName = "claude-lite";
