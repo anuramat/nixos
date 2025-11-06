@@ -83,7 +83,6 @@ in
     ./litellm.nix
     ./mods.nix
     ./ollama.nix
-    ./roles.nix
     ./sandbox.nix
     ./tools.nix
   ];

@@ -53,28 +53,13 @@ let
     in
     agents.mkPrompts "claude/commands" adaptedCommands;
 
-  roles =
-    let
-      adaptedRoles =
-        agents.roles
-        |> mapAttrs (
-          _: v:
-          v.withFM {
-            inherit (v) name description;
-            model = "inherit"; # TODO
-          }
-        );
-    in
-    agents.mkPrompts "claude/agents" adaptedRoles;
-
   cfgDir = config.xdg.configHome + "/claude";
 in
 {
   xdg.configFile = {
     "claude/CLAUDE.md".text = agents.instructions.claude;
   }
-  // commands
-  // roles;
+  // commands;
   home = {
     sessionVariables = {
       CLAUDE_CONFIG_DIR = cfgDir;

@@ -60,18 +60,8 @@ let
           model = glm;
         };
       };
-      custom =
-        config.lib.agents.roles
-        |> mapAttrs (
-          _: v: {
-            disable = true; # TODO enable
-            inherit (v) description;
-            prompt = v.text;
-            # tools, permissions, mode:subagent/primary/all, model
-          }
-        );
     in
-    default // custom;
+    default;
 
   tokens =
     t: with t; {
