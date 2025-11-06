@@ -183,11 +183,13 @@ in
               ${varNames.sandboxWrapperPath}="$0"
               export ${varNames.sandboxWrapperPath}
 
+              [ -v TMPDIR ] || TMPDIR="/tmp"
               bwrap \
                 --die-with-parent \
                 --proc /proc \
                 --dev /dev \
                 --tmpfs /tmp \
+                --tmpfs $TMPDIR \
                 \
                 ${tmpDirs} \
                 ${roDirs} \
