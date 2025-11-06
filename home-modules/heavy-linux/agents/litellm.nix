@@ -30,7 +30,7 @@ let
       {
         model_name = "cerebras/zai-glm-4.6";
         litellm_params = {
-          model = "cerebras/*";
+          model = "cerebras/zai-glm-4.6";
           api_key = "os.environ/CEREBRAS_API_KEY";
         };
       }
