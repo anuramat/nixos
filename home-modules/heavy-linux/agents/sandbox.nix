@@ -149,6 +149,7 @@ in
                 "/run/systemd/resolve/stub-resolv.conf"
 
                 config.xdg.configHome
+                config.home.sessionVariables.XDG_BIN_HOME
                 config.programs.git.extraConfig.ghq.root
               ]
               ++ homePaths;
