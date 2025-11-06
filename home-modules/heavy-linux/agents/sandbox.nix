@@ -189,7 +189,7 @@ in
                 --proc /proc \
                 --dev /dev \
                 --tmpfs /tmp \
-                --tmpfs $TMPDIR \
+                --tmpfs "$TMPDIR" \
                 \
                 ${tmpDirs} \
                 ${roDirs} \
