@@ -32,6 +32,7 @@ let
         litellm_params = {
           model = "cerebras/zai-glm-4.6";
           api_key = "os.environ/CEREBRAS_API_KEY";
+          additional_drop_params = [ "max_tool_calls" ];
         };
       }
       {
@@ -39,6 +40,7 @@ let
         litellm_params = {
           model = "cerebras/*";
           api_key = "os.environ/CEREBRAS_API_KEY";
+          additional_drop_params = [ "max_tool_calls" ];
         };
       }
       {
