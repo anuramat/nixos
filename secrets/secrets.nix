@@ -23,7 +23,6 @@ in
   "anthropic.age"
   "cerebras-free.age"
   "cerebras.age"
-  "claude.age"
   "gemini.age"
   "groq.age"
   "openai.age"
