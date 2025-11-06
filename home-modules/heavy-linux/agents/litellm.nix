@@ -116,8 +116,8 @@ in
     Install.WantedBy = [ "default.target" ];
     Service = {
       ExecStart = "${pkg}/bin/litellm --host ${host} --port ${port} --config ${cfg}";
-      Restart = "always";
-      RestartSec = 3;
+      Restart = "never";
+      # RestartSec = 3;
     };
   };
   home.packages = [
