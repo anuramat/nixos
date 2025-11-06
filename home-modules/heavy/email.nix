@@ -13,10 +13,26 @@ let
   mailcap = pkgs.writeText "mailcap" ''
     text/html; ${getExe pkgs.html2text} -width 120 -ansi -ignore-color -osc8 %s; copiousoutput
   '';
+
+  neomuttDesktop = pkgs.writeTextFile {
+    name = "neomutt.desktop";
+    destination = "/share/applications/neomutt.desktop";
+    text = ''
+      [Desktop Entry]
+      Type=Application
+      Name=neomutt
+      Exec=neomutt %u
+      Terminal=true
+      MimeType=x-scheme-handler/mailto;
+    '';
+  };
 in
 {
   home = {
-    packages = with pkgs; [ protonmail-bridge ];
+    packages = with pkgs; [
+      protonmail-bridge
+      neomuttDesktop
+    ];
     activation = {
       # BUG doesn't get created on first run, report/contribute
       neomuttCache =
@@ -111,7 +127,10 @@ in
       imapnotify = {
         enable = true;
         boxes = [ "INBOX" ];
-        onNotify = ''${getExe pkgs.libnotify} -a mail "New email"'';
+        # TODO make sure this works and replace second notify with neomutt start
+        onNotify = ''
+          [ "$(${getExe pkgs.libnotify} "New email" -a mail -A default=Open -e)" = default ] && ${getExe pkgs.libnotify} "open neomutt"
+        '';
       };
     };
   };
