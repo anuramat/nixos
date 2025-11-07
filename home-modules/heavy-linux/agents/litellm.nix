@@ -12,16 +12,11 @@ let
     }
   );
   cfg = (pkgs.formats.yaml { }).generate "config.yaml" {
-    # include = [
-    #   "${config.xdg.configHome}/litellm/github_copilot_models.yaml"
-    # ];
-    # environment_variables = { };
     general_settings = {
       master_key = key;
     };
     model_list = [
       {
-        # TODO switch to ollama_chat when it's fixed
         model_name = "ollama_chat/*";
         litellm_params = {
           model = "ollama_chat/*";
@@ -118,8 +113,7 @@ in
     Install.WantedBy = [ "default.target" ];
     Service = {
       ExecStart = "${pkg}/bin/litellm --host ${host} --port ${port} --config ${cfg}";
-      Restart = "never";
-      # RestartSec = 3;
+      RestartSec = 3;
     };
   };
   home.packages = [
