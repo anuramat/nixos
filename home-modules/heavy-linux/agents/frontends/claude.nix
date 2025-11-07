@@ -78,16 +78,13 @@ in
           );
         claude = mkClaude {
           wrapperName = "claude";
-          # tokens = t: {
-          #   CLAUDE_CODE_OAUTH_TOKEN = t.claude;
-          # };
         };
         claude-lite = mkClaude {
           wrapperName = "claude-lite";
           env = {
             ANTHROPIC_AUTH_TOKEN = "dummy";
-            ANTHROPIC_DEFAULT_OPUS_MODEL = "cerebras/zai-glm-4.6";
-            ANTHROPIC_DEFAULT_SONNET_MODEL = "github_copilot/gpt-5-mini";
+            ANTHROPIC_DEFAULT_OPUS_MODEL = "github_copilot/gpt-5-mini";
+            ANTHROPIC_DEFAULT_SONNET_MODEL = "cerebras/zai-glm-4.6";
             ANTHROPIC_SMALL_FAST_MODEL = "github_copilot/gpt-4.1";
             ANTHROPIC_BASE_URL = "http://localhost:11333";
           };
