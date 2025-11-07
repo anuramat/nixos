@@ -33,7 +33,6 @@ let
     in
     {
       inherit (unstable)
-        opencode
         copilot-lua
         keymapp
         proton-pass
