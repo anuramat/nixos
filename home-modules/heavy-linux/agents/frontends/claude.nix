@@ -81,13 +81,19 @@ in
         };
         claude-lite = mkClaude {
           wrapperName = "claude-lite";
-          env = {
-            ANTHROPIC_AUTH_TOKEN = "dummy";
-            ANTHROPIC_DEFAULT_OPUS_MODEL = "github_copilot/gpt-5-mini";
-            ANTHROPIC_DEFAULT_SONNET_MODEL = "cerebras/zai-glm-4.6";
-            ANTHROPIC_SMALL_FAST_MODEL = "github_copilot/gpt-4.1";
-            ANTHROPIC_BASE_URL = "http://localhost:11333";
-          };
+          env =
+            let
+              gpt = "github_copilot/gpt-5-mini";
+              glm = "cerebras/zai-glm-4.6";
+            in
+            {
+              ANTHROPIC_AUTH_TOKEN = "dummy";
+              ANTHROPIC_DEFAULT_OPUS_MODEL = gpt;
+              ANTHROPIC_DEFAULT_SONNET_MODEL = glm;
+              ANTHROPIC_DEFAULT_HAIKU_MODEL = glm;
+              CLAUDE_CODE_SUBAGENT_MODEL = glm;
+              ANTHROPIC_BASE_URL = "http://localhost:11333";
+            };
         };
         claude-zai = mkClaude {
           wrapperName = "claude-zai";
@@ -95,9 +101,6 @@ in
             ANTHROPIC_AUTH_TOKEN = t.zai;
           };
           env = {
-            ANTHROPIC_DEFAULT_OPUS_MODEL = "glm-4.6";
-            ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-4.6";
-            ANTHROPIC_SMALL_FAST_MODEL = "glm-4.5-air";
             ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
           };
         };
