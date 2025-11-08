@@ -129,7 +129,7 @@ in
   services = {
     llama-cpp =
       let
-        selected = models.qwen.instruct4b;
+        selected = models.qwen.thinking4b;
       in
       {
         enable = true;
