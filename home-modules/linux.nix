@@ -47,9 +47,9 @@
           ];
           text = ''
             if [ -v DISPLAY ]; then
-              exec ${pkgs.pinentry}/bin/pinentry-tty "$@"
-            else
               exec ${pkgs.wayprompt}/bin/pinentry-wayprompt "$@"
+            else
+              exec ${pkgs.pinentry-tty}/bin/pinentry-tty "$@"
             fi
           '';
         };
