@@ -31,9 +31,26 @@ let
             model = "dummy";
             model_provider = "llama-cpp";
           };
+          openrouter = {
+            model = "z-ai/glm-4.6";
+            model_provider = "openrouter";
+            query_params = {
+              provider = {
+                only = [ "cerebras" ];
+              };
+            };
+          };
         };
         # experimental_resume = "${codexHome}/history.jsonl";
-        model_providers =
+        model_providers = {
+          openrouter = {
+            name = "openrouter";
+            base_url = "https://openrouter.ai/api/v1";
+            env_key = "OPENROUTER_API_KEY";
+            wire_api = "responses";
+          };
+        }
+        // (
           if osConfig != null && osConfig.services.llama-cpp.enable then
             {
               llama-cpp = {
@@ -47,7 +64,8 @@ let
               };
             }
           else
-            { };
+            { }
+        );
         notify =
           let
             notifier = pkgs.writeShellApplication {
