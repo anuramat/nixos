@@ -23,6 +23,14 @@ let
         };
       }
       {
+        model_name = "llama_cpp/*";
+        litellm_params = {
+          model = "openai/*";
+          api_base = "http://localhost:11343/v1";
+          api_key = "";
+        };
+      }
+      {
         model_name = "cerebras/zai-glm-4.6";
         litellm_params = {
           model = "cerebras/zai-glm-4.6";
