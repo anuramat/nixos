@@ -24,3 +24,10 @@
 - Shell: `set -euo pipefail`; lint with `shellcheck`.
 - Tests: put deterministic, self-contained attr-sets under `tests/*`; name in camelCase.
 - Git: commit small, focused changes; follow atomic commits for each logical change.
+
+## Updating tool packages (e.g., codex)
+
+- Touch `overlays/default/misc.nix` only for the target derivation; bump `version` and reuse the existing URL template.
+- Fetch the new release hash before editing by running `nix store prefetch-file --hash-type sha256 https://github.com/openai/codex/releases/download/rust-v$VERSION/codex-x86_64-unknown-linux-musl.zst` and paste the reported sha.
+- Validate the overlay in isolation with `nix build --impure --expr 'let flake = builtins.getFlake (toString ./.) ; pkgs = import flake.inputs.nixpkgs { system = builtins.currentSystem; overlays = [ flake.outputs.overlays.default ]; }; in pkgs.codex'`.
+- Commit just the overlay change plus the hash bump once the build succeeds.
