@@ -46,7 +46,7 @@
             pkgs.pinentry-tty
           ];
           text = ''
-            if [ -z "$DISPLAY" ]; then
+            if [ -v DISPLAY ]; then
               exec ${pkgs.pinentry}/bin/pinentry-tty "$@"
             else
               exec ${pkgs.wayprompt}/bin/pinentry-wayprompt "$@"
