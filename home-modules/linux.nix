@@ -36,10 +36,28 @@
   services.pass-secret-service.enable = true; # secret service api -- exposes password-store over dbus
   programs.wayprompt.enable = true;
   services.gpg-agent = {
-    pinentry = {
-      package = pkgs.wayprompt;
-      program = "pinentry-wayprompt";
-    };
+    pinentry =
+      let
+        name = "pinentry-auto";
+        package = pkgs.writeShellApplication {
+          inherit name;
+          runtimeInputs = [
+            pkgs.wayprompt
+            pkgs.pinentry-tty
+          ];
+          text = ''
+            if [ -z "$DISPLAY" ]; then
+              exec ${pkgs.pinentry}/bin/pinentry-tty "$@"
+            else
+              exec ${pkgs.wayprompt}/bin/pinentry-wayprompt "$@"
+            fi
+          '';
+        };
+      in
+      {
+        inherit package;
+        program = name;
+      };
   };
 
 }
