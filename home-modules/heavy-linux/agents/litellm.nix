@@ -25,12 +25,9 @@ let
       {
         model_name = "llama_cpp/*";
         litellm_params = {
-          model = "openai/*";
+          model = "cerebras/*";
           api_base = "http://localhost:11343/v1";
-          api_key = "";
-        };
-        model_info = {
-          mode = "chat";
+          api_key = "dummy";
         };
       }
       {
