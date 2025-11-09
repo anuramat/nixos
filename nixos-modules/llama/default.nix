@@ -116,6 +116,7 @@ let
       };
   };
 
+  port = 11343;
 in
 
 {
@@ -129,13 +130,16 @@ in
   services = {
     llama-cpp =
       let
-        selected = models.qwen.instruct4b;
+        selected = models.qwen.thinking4b;
       in
       {
         enable = true;
-        port = 11343;
+        port = port;
         openFirewall = false;
         inherit (selected) model modelExtra;
       };
   };
+  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
+    port
+  ];
 }
