@@ -127,16 +127,6 @@ let
           };
         };
       };
-      # zai = {
-      #   api = "anthropic";
-      #   base-url = "https://api.z.ai/api/anthropic";
-      #   api-key-env = keys.zai;
-      #   models = {
-      #     "glm-4.5" = {
-      #       aliases = [ "glm" ];
-      #     };
-      #   };
-      # };
       copilot = {
         base-url = "https://api.githubcopilot.com";
         models = {
