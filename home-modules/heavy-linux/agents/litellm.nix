@@ -29,6 +29,9 @@ let
           api_base = "http://localhost:11343/v1";
           api_key = "";
         };
+        model_info = {
+          mode = "chat";
+        };
       }
       {
         model_name = "cerebras/zai-glm-4.6";
