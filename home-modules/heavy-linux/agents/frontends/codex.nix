@@ -28,8 +28,8 @@ let
         };
         profiles = {
           oss = {
-            model = "dummy";
-            model_provider = "llama-cpp";
+            model = "llama_cpp/dummy";
+            model_provider = "litellm";
           };
           openrouter = {
             model = "z-ai/glm-4.6";
@@ -53,14 +53,15 @@ let
         // (
           if osConfig != null && osConfig.services.llama-cpp.enable then
             {
-              llama-cpp = {
-                name = "llama-cpp";
+              litellm = {
+                name = "litellm";
                 base_url =
                   let
-                    port = toString osConfig.services.llama-cpp.port;
+                    port = "11333";
                   in
                   "http://localhost:${port}";
-                wire_api = "chat";
+                experimental_bearer_token = "dummy";
+                wire_api = "responses";
               };
             }
           else
