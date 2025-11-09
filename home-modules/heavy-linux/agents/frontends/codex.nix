@@ -17,7 +17,7 @@ let
         };
         hide_agent_reasoning = false;
         show_raw_agent_reasoning = true;
-        model_reasoning_summary = "detailed"; # auto/concise/detailed
+        model_reasoning_summary = "detailed";
 
         model_reasoning_effort = "medium";
         model_verbosity = "low";
