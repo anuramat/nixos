@@ -11,7 +11,7 @@ lipsum() {
 	fi
 
 	result=""
-	for i in "$(seq 1 "$n")"; do
+	for ((i = 0; i < n; i++)); do
 		result="$result $lipsum"
 	done
 	echo "$result"

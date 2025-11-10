@@ -121,6 +121,14 @@ let
       '';
   };
 
+  litellm_speedtest = pkgs.writeShellApplication {
+    name = "litellm_speedtest";
+    runtimeInputs = with pkgs; [
+      curl
+    ];
+    text = builtins.readFile ./litellm_speedtest.sh;
+  };
+
 in
 {
   home.packages = [
@@ -129,6 +137,7 @@ in
     template
     orphans
     hack
+    litellm_speedtest
   ];
   programs.bash.bashrcExtra =
     # bash
