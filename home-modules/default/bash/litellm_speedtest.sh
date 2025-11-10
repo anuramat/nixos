@@ -21,14 +21,19 @@ measure_speed() {
 	model=$1
 	prompt=$2
 
-	data='{
-		"model": "'"$model"'",
-		"messages": [
-			{"role": "system", "content": "You are a helpful assistant."},
-			{"role": "user", "content": '"$(echo "$prompt" | jq -Rs .)"'}
-		],
-		"max_tokens": 100
-	}'
+	data=$(
+		jq -n \
+			--arg model "$model" \
+			--arg prompt "$prompt" \
+			'{
+				model: $model,
+				messages: [
+					{role: "system", content: "You are a helpful assistant."},
+					{role: "user", content: $prompt}
+				],
+				max_tokens: 100
+			}'
+	)
 
 	out=$(
 		curl -X POST http://localhost:11333/v1/chat/completions \
