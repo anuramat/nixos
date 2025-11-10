@@ -21,27 +21,27 @@ measure_speed() {
 	model=$1
 	prompt=$2
 
-	data=$(
-		printf '%s' "$prompt" \
-			| jq -n \
-				--arg model "$model" \
-				--rawfile prompt /dev/stdin \
-				'{
-					model: $model,
-					messages: [
-						{role: "system", content: "You are a helpful assistant."},
-						{role: "user", content: $prompt}
-					],
-					max_tokens: 100
-				}'
-	)
+	payload=$(mktemp)
+	printf '%s' "$prompt" \
+		| jq -n \
+			--arg model "$model" \
+			--rawfile prompt /dev/stdin \
+			'{
+				model: $model,
+				messages: [
+					{role: "system", content: "You are a helpful assistant."},
+					{role: "user", content: $prompt}
+				],
+				max_tokens: 100
+			}' >"$payload"
 
 	out=$(
 		curl -X POST http://localhost:11333/v1/chat/completions \
 			-H "Content-Type: application/json" \
 			-H "Authorization: Bearer dummy" \
-			-d "$data"
+			--data-binary "@$payload"
 	)
+	rm -f "$payload"
 
 	input_tokens=$(echo "$out" | jq '.usage.prompt_tokens')
 	output_tokens=$(echo "$out" | jq '.usage.completion_tokens')
