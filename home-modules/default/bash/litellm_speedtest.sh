@@ -22,17 +22,18 @@ measure_speed() {
 	prompt=$2
 
 	data=$(
-		jq -n \
-			--arg model "$model" \
-			--arg prompt "$prompt" \
-			'{
-				model: $model,
-				messages: [
-					{role: "system", content: "You are a helpful assistant."},
-					{role: "user", content: $prompt}
-				],
-				max_tokens: 100
-			}'
+		printf '%s' "$prompt" \
+			| jq -n \
+				--arg model "$model" \
+				--rawfile prompt /dev/stdin \
+				'{
+					model: $model,
+					messages: [
+						{role: "system", content: "You are a helpful assistant."},
+						{role: "user", content: $prompt}
+					],
+					max_tokens: 100
+				}'
 	)
 
 	out=$(
