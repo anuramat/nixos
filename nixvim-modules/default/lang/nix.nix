@@ -19,21 +19,6 @@
     lsp.servers = {
       statix.enable = true;
       nil_ls.enable = true;
-
-      nixd = {
-        enable = true;
-        cmd = [
-          "nixd"
-          "--inlay-hints=false"
-        ];
-        settings.options = {
-          nixvim.expr = "(builtins.getFlake (builtins.toString ./.)).packages.${pkgs.system}.neovim.options";
-        };
-        onAttach.function = # lua
-          ''
-            client.server_capabilities.renameProvider = false
-          '';
-      };
     };
   };
   extraFiles = hax.vim.files {

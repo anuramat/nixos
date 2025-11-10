@@ -54,7 +54,6 @@ in
   spicetify-nix = mkInput "github:Gerg-L/spicetify-nix";
   statix.url = "github:oppiliappan/statix/master";
   deadnix.url = "github:astro/deadnix/main";
-  nixd.url = "github:nix-community/nixd/2.7.0";
 
   # non flakes
   avante = mkNonFlake "github:yetone/avante.nvim/main";

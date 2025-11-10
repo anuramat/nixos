@@ -21,7 +21,6 @@ let
         duckduckgo-mcp-server
         statix
         deadnix
-        nixd
         html2text
         ;
     });
