@@ -32,15 +32,15 @@ measure_speed() {
 					{role: "system", content: "You are a helpful assistant."},
 					{role: "user", content: $prompt}
 				],
-				max_tokens: 100
 			}' >"$payload"
 
 	out=$(
-		curl -X POST http://localhost:11333/v1/chat/completions \
+		2>/dev/null curl -X POST http://localhost:11333/v1/chat/completions \
 			-H "Content-Type: application/json" \
 			-H "Authorization: Bearer dummy" \
 			--data-binary "@$payload"
 	)
+
 	rm -f "$payload"
 
 	input_tokens=$(echo "$out" | jq '.usage.prompt_tokens')
