@@ -127,10 +127,13 @@ in
       imapnotify = {
         enable = true;
         boxes = [ "INBOX" ];
-        # TODO make sure this works and replace second notify with neomutt start
-        onNotify = ''
-          [ "$(${getExe pkgs.libnotify} "New email" -a mail -A default=Open -e)" = default ] && ${getExe pkgs.libnotify} "open neomutt"
-        '';
+        onNotify =
+          let
+            term_cmd = "${config.home.sessionVariables.TERMCMD}";
+          in
+          ''
+            [ "$(${getExe pkgs.libnotify} "New email" -a mail -A default=Open -e)" = default ] && ${term_cmd} -e neomutt
+          '';
       };
     };
   };
