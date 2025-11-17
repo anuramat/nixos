@@ -25,6 +25,7 @@ in
   "cerebras.age"
   "gemini.age"
   "groq.age"
+  "minimax.age"
   "openai.age"
   "openrouter.age"
   "perplexity.age"
