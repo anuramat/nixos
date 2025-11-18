@@ -23,6 +23,7 @@ in
   "anthropic.age"
   "cerebras-free.age"
   "cerebras.age"
+  "claudecode.age"
   "gemini.age"
   "groq.age"
   "minimax.age"
