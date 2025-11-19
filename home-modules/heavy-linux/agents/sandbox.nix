@@ -150,7 +150,7 @@ in
 
                 config.xdg.configHome
                 config.home.sessionVariables.XDG_BIN_HOME
-                config.programs.git.extraConfig.ghq.root
+                config.home.sessionVariables.GHQ_ROOT
               ]
               ++ homePaths;
             };

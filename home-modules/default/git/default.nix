@@ -10,6 +10,8 @@
     ./jupyter.nix
     ./worktrees.nix
   ];
+
+  home.sessionVariables.GHQ_ROOT = "${config.xdg.dataHome}/ghq";
   programs = {
     lazygit = {
       enable = true;
@@ -29,8 +31,6 @@
         prompt = true;
       };
     };
-
-    git.extraConfig.ghq.root = "${config.xdg.dataHome}/ghq";
 
     git = {
       enable = true;
