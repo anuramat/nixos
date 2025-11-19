@@ -20,7 +20,7 @@ in
         echo "skipping $path"
         exit 0
       fi
-      exec ${getExe pkgs.difftastic} --display inline --background dark "$@"
+      exec ${getExe pkgs.difftastic} "$@"
     '';
     DFT_SORT_PATHS = "on";
     DFT_IGNORE_COMMENTS = "on";
