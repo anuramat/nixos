@@ -22,8 +22,8 @@ in
       fi
       exec ${getExe pkgs.difftastic} "$@"
     '';
-    DFT_SORT_PATHS = "on";
-    DFT_IGNORE_COMMENTS = "on";
+    DFT_SORT_PATHS = "true";
+    DFT_IGNORE_COMMENTS = "true";
     DFT_DISPLAY = "inline"; # other option: side-by-side
     DFT_STRIP_CR = "on";
     DFT_TAB_WIDTH = "2";
