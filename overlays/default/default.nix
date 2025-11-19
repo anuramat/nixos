@@ -32,6 +32,7 @@ let
     in
     {
       inherit (unstable)
+        lazygit
         copilot-lua
         keymapp
         proton-pass
