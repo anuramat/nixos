@@ -137,7 +137,6 @@ let
           <example>
             <user>a command is failing: ...</user>
             <acceptance_criteria>
-              I will add the following acceptance criteria to my plan:
               1. All currently passing tests remain passing.
               2. The specific command that was failing now succeeds.
             </acceptance_criteria>
@@ -145,7 +144,6 @@ let
           <example>
             <user>add a flake for the project</user>
             <acceptance_criteria>
-              I will add the following acceptance criteria to my plan:
               1. `nix build` succeeds.
               2. The program runs successfully using `nix run`.
             </acceptance_criteria>
