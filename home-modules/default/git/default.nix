@@ -1,39 +1,19 @@
 {
   config,
-  pkgs,
   ...
 }:
 {
   imports = [
     ./difft.nix
+    ./gh.nix
     ./ignores.nix
     ./jupyter.nix
+    ./lazygit.nix
     ./worktrees.nix
   ];
 
   home.sessionVariables.GHQ_ROOT = "${config.xdg.dataHome}/ghq";
   programs = {
-    lazygit = {
-      enable = true;
-      settings = {
-        git.pagers = [ { externalDiffCommand = "difft --color=always"; } ];
-      };
-    };
-    gh = {
-      enable = true;
-      settings = {
-        aliases = {
-          login = "auth login --skip-ssh-key --hostname github.com --git-protocol ssh --web";
-          push = "repo create --disable-issues --disable-wiki --public --source=.";
-        };
-        extensions = with pkgs; [
-          gh-f
-          gh-copilot
-        ];
-        git_protocol = "ssh";
-        prompt = true;
-      };
-    };
 
     git = {
       enable = true;
