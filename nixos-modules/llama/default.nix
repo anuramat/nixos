@@ -134,8 +134,8 @@ in
       in
       {
         enable = true;
-        port = port;
         openFirewall = false;
+        inherit port;
         inherit (selected) model modelExtra;
       };
   };
