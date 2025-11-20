@@ -48,7 +48,7 @@ let
             name = "openrouter";
             base_url = "https://openrouter.ai/api/v1";
             env_key = "OPENROUTER_API_KEY";
-            wire_api = "responses";
+            # wire_api = "responses";
           };
         }
         // (
@@ -62,7 +62,7 @@ let
                   in
                   "http://localhost:${port}";
                 experimental_bearer_token = "dummy";
-                wire_api = "responses";
+                # wire_api = "responses";
               };
             }
           else
