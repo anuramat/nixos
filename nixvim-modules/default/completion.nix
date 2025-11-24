@@ -5,10 +5,10 @@
   ...
 }:
 let
-  inherit (hax.vim) luaf lua;
+  inherit (hax.vim) lua;
   inherit (lib) genAttrs;
 
-  provider = "copilot"; # "copilot" "llm" "supermaven"
+  provider = "copilot"; # "copilot" "llm"
 
   disabledFiletypes = [
     "markdown"
@@ -19,7 +19,6 @@ let
     "todotxt"
     "toml"
   ];
-  # BUG: with supermaven, runs at startup, and that blocks the session forever; so it can only rely on the working directory
   # NOTE: calls back home even when disabled
   shouldEnableFunc = # lua
     ''
@@ -39,21 +38,6 @@ in
   ];
   plugins = {
     friendly-snippets.enable = true;
-    supermaven = {
-      enable = provider == "supermaven";
-      settings = {
-        keymaps = {
-          accept_suggestion = "<M-y>";
-          clear_suggestions = "<M-e>";
-          accept_word = "<M-w>";
-        };
-        ignore_filetypes = disabledFiletypes;
-        condition = luaf ''
-          local should_enable = ${shouldEnableFunc}
-          return not should_enable()
-        '';
-      };
-    };
     llm = {
       enable = provider == "llm";
     };
