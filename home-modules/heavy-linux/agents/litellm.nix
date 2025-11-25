@@ -1,6 +1,6 @@
 { config, pkgs, ... }:
 let
-  pkg = config.lib.home.agenixWrapPkg pkgs.litellm (
+  envVars =
     t: with t; {
       ANTHROPIC_API_KEY = anthropic;
       CEREBRAS_API_KEY = cerebras;
@@ -9,8 +9,31 @@ let
       OPENAI_API_KEY = openai;
       OPENROUTER_API_KEY = openrouter;
       ZAI_API_KEY = zai;
-    }
-  );
+    };
+
+  mkLitellm =
+    name: cmd:
+    pkgs.writeShellApplication {
+      inherit name;
+      meta.mainProgram = name;
+      runtimeInputs = [
+        pkgs.coreutils
+        pkgs.python3
+      ];
+      text = ''
+        libstdcpp=${pkgs.stdenv.cc.cc.lib}
+        export LD_LIBRARY_PATH="$libstdcpp/lib"
+        exec ${pkgs.uv}/bin/uv run --with "litellm[proxy]" ${cmd} "$@"
+      '';
+    };
+
+  bin =
+    let
+      name = "litellm";
+      pkg = config.lib.home.agenixWrapPkg (mkLitellm name name) envVars;
+    in
+    "${pkg}/bin/${name}";
+
   cfg = (pkgs.formats.yaml { }).generate "config.yaml" {
     general_settings = {
       master_key = key;
@@ -120,13 +143,8 @@ in
     };
     Install.WantedBy = [ "default.target" ];
     Service = {
-      ExecStart = "${pkg}/bin/litellm --host ${host} --port ${port} --config ${cfg}";
+      ExecStart = "${bin} --host ${host} --port ${port} --config ${cfg}";
       RestartSec = 3;
     };
   };
-  home.packages = [
-    (pkgs.writeShellScriptBin "litellm-proxy" ''
-      exec ${pkg}/bin/litellm-proxy --base-url http://localhost:${port} --api-key ${key} "$@"
-    '')
-  ];
 }
