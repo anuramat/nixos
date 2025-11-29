@@ -128,7 +128,10 @@ in
           "-c"
           (toString p.ctxSize)
         ]
-        ++ optionals p.flashAttn [ "-fa" ]
+        ++ optionals p.flashAttn [
+          "-fa"
+          "on"
+        ]
         ++ optionals (p.gpuLayers != null) [
           "-ngl"
           (toString p.gpuLayers)
