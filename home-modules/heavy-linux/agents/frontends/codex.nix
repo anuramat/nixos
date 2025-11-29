@@ -23,7 +23,7 @@ let
 
         model_reasoning_effort = "medium";
         model_verbosity = "low";
-        model = "gpt-5-codex";
+        model = "gpt-5.1-codex-max";
 
         mcp_servers = {
           inherit (config.lib.agents.mcp.raw) ddg;
