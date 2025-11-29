@@ -15,6 +15,7 @@ let
         notice = {
           hide_full_access_warning = true;
           hide_gpt5_1_migration_prompt = true;
+          "hide_gpt-5.1-codex-max_migration_prompt" = true;
         };
         hide_agent_reasoning = false;
         show_raw_agent_reasoning = true;

@@ -38,7 +38,7 @@ inputs:
   in
   {
     llama-cpp = prev.llama-cpp.overrideAttrs (old: rec {
-      version = "6750";
+      version = "7164";
       cmakeFlags = (old.cmakeFlags or [ ]) ++ [
         "-DLLAMA_LLGUIDANCE=ON"
       ];
@@ -80,7 +80,7 @@ inputs:
         owner = "ggml-org";
         repo = "llama.cpp";
         tag = "b${version}";
-        hash = "sha256-aoyJGyxvyoU37AGycd540w4b2DC4wNA7GkzmwaZKYRU=";
+        hash = "sha256-2jb3gqm5uYfx9L2gyNUoi+0akrLCN3FwnnFn8ypkRg4=";
         leaveDotGit = true;
         postFetch = ''
           git -C "$out" rev-parse --short HEAD >$out/COMMIT
