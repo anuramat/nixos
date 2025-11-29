@@ -160,6 +160,11 @@ in
       agent = null;
       planningTool = null;
     };
+    opencode = mkInstructions {
+      agent = "opencode";
+      planningTool = "todowrite";
+      subagentTool = "task";
+    };
     claude = mkInstructions {
       agent = "claude";
       planningTool = "TodoWrite";
