@@ -38,6 +38,7 @@ let
         proton-pass
         litellm
         ghostty
+        opencode
         ;
     };
 
