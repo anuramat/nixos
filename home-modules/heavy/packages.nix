@@ -22,6 +22,7 @@
 
     # video
     ffmpeg-full
+    losslesscut-bin
 
     # hardware
     libusb1 # user-mode USB access lib
@@ -56,5 +57,6 @@
     # audio
     sox # cli audio processing
     lame # mp3
+    audacity
   ];
 }
