@@ -5,7 +5,10 @@
 }:
 
 let
-  cfg = {
+  inherit (config.lib) agents;
+  contextFileName = "AGENTS.md";
+  geminiHome = config.home.homeDirectory + "/.gemini";
+  cfgFile = config.lib.home.json.set {
     general = {
       previewFeatures = true;
       disableAutoUpdate = true;
@@ -37,16 +40,13 @@ let
       };
       autoAccept = true;
     };
-  };
-  inherit (config.lib) agents;
-  contextFileName = "AGENTS.md";
-  cfgFile = config.lib.home.json.set cfg (config.home.homeDirectory + "/.gemini/settings.json");
+  } (geminiHome + "/settings.json");
   pkg = config.lib.agents.mkPackages {
     package = pkgs.gemini-cli;
     args = [ "--yolo" ];
     agentDir = null;
     extraRwDirs = [
-      "$HOME/.gemini"
+      geminiHome
     ];
   };
 in
