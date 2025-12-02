@@ -1,0 +1,31 @@
+{
+  pkgs,
+  config,
+  ...
+}:
+let
+  inherit (config.lib) agents;
+  contextFileName = "AGENTS.md";
+  geminiConfig = config.lib.home.json.set {
+    inherit contextFileName;
+    hideTips = true;
+    hideBanner = true;
+  } (config.home.homeDirectory + "/.gemini/settings.json");
+  pkg = config.lib.agents.mkPackages {
+    package = pkgs.gemini-cli;
+    args = [ "--yolo" ];
+    agentDir = null;
+    extraRwDirs = [
+      "$HOME/.gemini"
+    ];
+  };
+in
+{
+  home = {
+    activation = {
+      inherit geminiConfig;
+    };
+    file.".gemini/${contextFileName}".text = agents.instructions.generic;
+    packages = [ pkg ];
+  };
+}
