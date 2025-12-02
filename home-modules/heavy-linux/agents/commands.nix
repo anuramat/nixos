@@ -44,7 +44,7 @@ in
 {
   lib.agents.commands = {
     agupd = memupdate "AGENTS.md";
-    clupd = memupdate "AGENTS.md";
+    clupd = memupdate "CLAUDE.md";
     plan = rec {
       description = "plan the changes";
       withFM = prependFrontmatter text;
