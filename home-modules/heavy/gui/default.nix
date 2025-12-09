@@ -82,7 +82,10 @@ in
     };
   };
   stylix.targets = {
-    firefox.profileNames = [ "default" ];
+    firefox = {
+      colorTheme.enable = true;
+      profileNames = [ "default" ];
+    };
   };
   xdg.configFile = {
     "swappy/config".text = toINI {
