@@ -141,27 +141,4 @@ inputs:
         platforms = [ "x86_64-linux" ];
       };
     };
-
-  llmapibenchmark = prev.stdenvNoCC.mkDerivation rec {
-    pname = "llmapibenchmark";
-    version = "1.0.5";
-    src = prev.fetchurl {
-      url = "https://github.com/Yoosu-L/llmapibenchmark/releases/download/v${version}/llmapibenchmark_linux_amd64.tar.gz";
-      hash = "sha256-8cqlHwvEObTHM9wNmfEU5jVney/ZWYnKzjTVxka2j0A=";
-    };
-    dontBuild = true;
-    dontUnpack = true;
-    installPhase = ''
-      runHook preInstall
-      tar -xzf "$src" llmapibenchmark_linux_amd64
-      install -Dm755 llmapibenchmark_linux_amd64 $out/bin/llmapibenchmark
-      runHook postInstall
-    '';
-    meta = {
-      description = "Benchmark OpenAI-compatible inference APIs";
-      homepage = "https://github.com/Yoosu-L/llmapibenchmark";
-      license = prev.lib.licenses.gpl3Only;
-      mainProgram = "llmapibenchmark";
-    };
-  };
 })
