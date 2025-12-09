@@ -47,7 +47,7 @@
     (mdformat.withPlugins (p: [
       p.mdformat-myst
     ]))
-    nixfmt-rfc-style
+    nixfmt
     cbfmt # mdformat ought to be enough?
     shfmt # posix/bash/mksh
     shellharden # nazi quotes

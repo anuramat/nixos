@@ -10,7 +10,7 @@
       "deadnix"
     ];
     conform-nvim.settings.formatters_by_ft.nix = [
-      "nixfmt" # WARN rename soon
+      "nixfmt"
       "injected"
     ];
     none-ls.sources.code_actions = {

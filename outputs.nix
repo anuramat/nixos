@@ -106,7 +106,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
           neovim
           git
           just
-          nixfmt-rfc-style
+          nixfmt
           nix-unit
           fd
           shellcheck
