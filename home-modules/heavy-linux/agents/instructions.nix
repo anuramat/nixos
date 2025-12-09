@@ -3,7 +3,7 @@ let
   topHead = "#";
   sectionHead = "${topHead}#";
   head = "${sectionHead}#";
-  username = config.programs.git.userName;
+  username = config.home.username;
 
   mkInstructions =
     args:
