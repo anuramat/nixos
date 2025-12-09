@@ -12,7 +12,7 @@ inputs:
       src = llguidanceSrc;
       hash = "sha256-Or478a6/kKLJdEs38QlyUxmW8pfAk7thHsmL25uKByY=";
     };
-    unstable = inputs.nixpkgs-unstable.legacyPackages.${prev.system};
+    unstable = inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.hostPlatform.system};
     llguidanceSetup = prev.writeShellScript "llguidance-setup.sh" ''
       set -euo pipefail
       src=$1

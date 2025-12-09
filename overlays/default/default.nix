@@ -10,7 +10,7 @@ let
 
   flakes =
     _: prev:
-    (mapAttrs (_: v: v.packages.${prev.system}.default) {
+    (mapAttrs (_: v: v.packages.${prev.stdenv.hostPlatform.system}.default) {
       inherit (inputs)
         subcat
         mcp-nixos
@@ -28,7 +28,10 @@ let
   unstablePkgs =
     _: prev:
     let
-      unstable = import inputs.nixpkgs-unstable { inherit (prev) config system; };
+      unstable = import inputs.nixpkgs-unstable {
+        inherit (prev) config;
+        inherit (prev.stdenv.hostPlatform) system;
+      };
     in
     {
       inherit (unstable)

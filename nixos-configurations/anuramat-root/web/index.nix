@@ -12,6 +12,6 @@ lib.mkMerge (
     root = domain;
     cwd = "/var/www/";
     port = "8080";
-    binary = "${inputs.ctrlsn.packages.${pkgs.system}.default}/bin/ctrl.sn";
+    binary = "${inputs.ctrlsn.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/ctrl.sn";
   }
 )

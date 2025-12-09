@@ -2,7 +2,10 @@ inputs:
 (
   _: prev:
   let
-    unstable = import inputs.nixpkgs-unstable { inherit (prev) config system; };
+    unstable = import inputs.nixpkgs-unstable {
+      inherit (prev) config;
+      inherit (prev.stdenv.hostPlatform) system;
+    };
   in
   {
     vimPlugins = prev.vimPlugins // {
