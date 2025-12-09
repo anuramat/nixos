@@ -28,9 +28,11 @@
         };
       };
     };
+    zed-editor = {
+      enable = true;
+    };
   };
   home.packages = with pkgs; [
     vis
-    zed-editor
   ];
 }

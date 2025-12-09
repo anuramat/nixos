@@ -82,7 +82,7 @@ in
     };
   };
   stylix.targets = {
-    librewolf.profileNames = [ "default" ];
+    firefox.profileNames = [ "default" ];
   };
   xdg.configFile = {
     "swappy/config".text = toINI {
