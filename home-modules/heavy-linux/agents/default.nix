@@ -128,7 +128,6 @@ in
       summarize
       transcribe
       inspector
-      llmapibenchmark # TODO wrap with litellm args
     ];
   };
 }

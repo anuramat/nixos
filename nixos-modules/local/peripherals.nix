@@ -8,7 +8,7 @@
     openrazer.enable = true;
   };
   environment.systemPackages = with pkgs; [
-    easyeffects
+    # easyeffects # takes a while to build
     keymapp # ZSA keyboard thing
     polychromatic # openrazer frontend
     rpi-imager # raspbery pi
