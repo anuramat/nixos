@@ -25,7 +25,7 @@ let
     ];
 
     browser = generateMimeTypes [
-      (mimeFromDesktop pkgs.firefox)
+      (mimeFromDesktop pkgs.firefox-bin)
     ];
 
     images = generateMimeTypes [
