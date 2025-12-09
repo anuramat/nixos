@@ -113,10 +113,9 @@ let
         workflow = ''
           ${head} Acceptance criteria identification
 
-          Before starting a development task you MUST explicitly state acceptance criteria,
-          and add a criteria verification check (e.g. "Check tests") as a final step to your plan/todo list${
-            if (args.planningTool != null) then " using the `${args.planningTool}` tool" else ""
-          }.
+          When starting a development task,
+          you MUST identify the explicit acceptance criteria *before* editing any files,
+          and add the corresponding check/verification step to your plan/todo list.
 
           After finishing the task, you MUST verify that the solution meets the acceptance criteria.
           If some criteria are NOT met, you MUST continue iterating on the problem, until ALL the acceptance criteria are met.
