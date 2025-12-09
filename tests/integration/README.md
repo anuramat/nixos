@@ -8,8 +8,6 @@ These tests ensure that username configuration changes don't break the NixOS con
 
 - `username.nix` - Unit tests for username configuration with different values
 - `mock-nixos-module.nix` - Mock NixOS module for testing username propagation
-- `build-matrix.sh` - Tests building all host configurations
-- `snapshot-username.sh` - Captures current configuration state for comparison
 
 ## Running Tests
 
@@ -20,34 +18,6 @@ Run username configuration unit tests:
 ```bash
 just test
 ```
-
-### Build Matrix Test
-
-Test that all host configurations build:
-
-```bash
-just test-matrix
-```
-
-### Snapshot Tests
-
-Create snapshots before refactoring:
-
-```bash
-just test-snapshot
-```
-
-After refactoring, compare with snapshots:
-
-```bash
-./tests/integration/snapshots/compare.sh
-```
-
-## Test Strategy
-
-1. **Before Refactoring**: Run `just test-snapshot` to capture current state
-2. **During Refactoring**: Run `just test` after each change
-3. **After Refactoring**: Run all tests to ensure nothing broke
 
 ## What's Tested
 
