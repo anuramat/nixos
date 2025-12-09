@@ -13,12 +13,6 @@ inputs:
         tinted-nvim
         rustaceanvim
         ;
-      avante-nvim = prev.vimPlugins.avante-nvim.overrideAttrs (_: {
-        src = inputs.avante;
-      });
-      blink-cmp-avante = prev.vimPlugins.blink-cmp-avante.overrideAttrs (_: {
-        src = inputs.blink-cmp-avante;
-      });
     };
   }
 )

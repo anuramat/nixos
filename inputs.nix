@@ -56,8 +56,6 @@ in
   deadnix.url = "github:astro/deadnix/main";
 
   # non flakes
-  avante = mkNonFlake "github:yetone/avante.nvim/main";
-  blink-cmp-avante = mkNonFlake "github:Kaiser-Yang/blink-cmp-avante";
   tt-schemes = mkNonFlake "github:tinted-theming/schemes";
   base16-mutt = mkNonFlake "github:josephholsten/base16-mutt";
 }

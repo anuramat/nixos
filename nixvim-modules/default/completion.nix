@@ -33,9 +33,6 @@ let
 in
 {
   # TODO https://github.com/netmute/ctags-lsp.nvim
-  extraPlugins = [
-    pkgs.vimPlugins.blink-cmp-avante
-  ];
   plugins = {
     friendly-snippets.enable = true;
     llm = {
