@@ -10,7 +10,6 @@ let
   inherit (config.lib) agents;
 
   glm = "cerebras/zai-glm-4.6";
-  mini = "github-copilot/gpt-5-mini";
 
   local =
     let
@@ -54,7 +53,7 @@ let
           tools = ro;
         };
         build = {
-          model = mini;
+          model = glm;
         };
         general = {
           model = glm;
