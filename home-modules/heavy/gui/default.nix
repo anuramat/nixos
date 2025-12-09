@@ -84,8 +84,8 @@ in
   stylix.targets = {
     firefox = {
       # NOTE conflicts with outside extensions
-      # colorTheme.enable = true;
-      # profileNames = [ "default" ];
+      colorTheme.enable = true;
+      profileNames = [ ];
     };
   };
   xdg.configFile = {
