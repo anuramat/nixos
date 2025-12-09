@@ -1,6 +1,6 @@
 {
-  programs.git = {
-    userEmail = "x@ctrl.sn";
-    userName = "Arsen Nuramatov";
+  programs.git.user = {
+    email = "x@ctrl.sn";
+    name = "Arsen Nuramatov";
   };
 }
