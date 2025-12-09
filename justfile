@@ -44,7 +44,7 @@ test-matrix:
 [group('code')]
 lint:
     statix check
-    deadnix -l
+    fd -F hardware-configuration.nix | xargs deadnix -l --exclude
     fd -e nix | xargs nix-instantiate --parse --quiet >/dev/null
     fd -e lua | luacheck - --codes --globals=vim -q
     fd -e sh --print0 -E '/tests/' | xargs -0 shellcheck --enable=all --color=always
