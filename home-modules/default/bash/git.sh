@@ -93,10 +93,6 @@ check() {
 	__check nopull
 }
 
-down() {
-	__check
-}
-
 __check() {
 	# (pulls and) prints status of all repos
 	case "$1" in
@@ -147,57 +143,6 @@ __check() {
 	echo "$dirty" >&2
 	return 1
 }
-
-up() (
-	# fast push+commit for personal repos
-	# $1? - repo path
-	cd "$1" || return 1
-
-	local ok
-	# check that we're in a personal repo directory
-	for i in "${__free_repos[@]}"; do
-		[[ "$(realpath .)" == "$i"* ]] && {
-			ok=1
-			break
-		}
-	done
-	[ "$ok" = "" ] && {
-		echo "illegal directory"
-		return 1
-	}
-
-	git add -A
-
-	printf %s 'committing: '
-	if git diff-index --quiet HEAD; then
-		echo "nothing to commit"
-	else
-		git commit -qam "auto: $(hostname)" || return
-		echo "ok"
-	fi
-
-	printf %s 'pulling: '
-	local -r pull_before="$(git rev-parse "@{u}")"
-	git pull --ff --no-edit -q || return
-	if [ "$pull_before" == "$(git rev-parse "@{u}")" ]; then
-		echo "local is already up to date"
-	else
-		echo "updated local"
-	fi
-
-	printf %s 'pushing: '
-	local -r push_before="$(git rev-parse "@{push}")"
-	git push -q || return
-	if [ "$push_before" == "$(git rev-parse "@{push}")" ]; then
-		echo "remote is already up to date"
-	else
-		echo "updated remote"
-	fi
-
-	local prompt
-	prompt=$(__gitgud_git_prompt) || prompt="$(tput setaf 1)$prompt$(tput sgr0)"
-	echo "status:$prompt"
-)
 
 # XXX checked ok
 gfork() {

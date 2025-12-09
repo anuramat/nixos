@@ -83,8 +83,9 @@ in
   };
   stylix.targets = {
     firefox = {
-      colorTheme.enable = true;
-      profileNames = [ "default" ];
+      # NOTE conflicts with outside extensions
+      # colorTheme.enable = true;
+      # profileNames = [ "default" ];
     };
   };
   xdg.configFile = {
