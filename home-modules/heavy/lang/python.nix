@@ -1,5 +1,6 @@
 {
   config,
+  pkgs,
   ...
 }:
 {
@@ -23,4 +24,8 @@
     };
     uv.enable = true;
   };
+  home.packages = with pkgs; [
+    python313Packages.ptpython
+    python313Packages.bpython
+  ];
 }
