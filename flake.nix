@@ -8,17 +8,9 @@
       };
       url = "github:yaxitech/ragenix";
     };
-    avante = {
-      flake = false;
-      url = "github:yetone/avante.nvim/main";
-    };
     base16-mutt = {
       flake = false;
       url = "github:josephholsten/base16-mutt";
-    };
-    blink-cmp-avante = {
-      flake = false;
-      url = "github:Kaiser-Yang/blink-cmp-avante";
     };
     ctrlsn = {
       inputs = {

@@ -48,23 +48,6 @@
         "type": "github"
       }
     },
-    "avante": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1760246095,
-        "narHash": "sha256-zKDp9It/VgUD8BN5ktTmfbQX0s3SBo20T8no8nwsyfY=",
-        "owner": "yetone",
-        "repo": "avante.nvim",
-        "rev": "f092bb3ec0acf87b838e082209b6a7eddcbf5940",
-        "type": "github"
-      },
-      "original": {
-        "owner": "yetone",
-        "ref": "main",
-        "repo": "avante.nvim",
-        "type": "github"
-      }
-    },
     "base16": {
       "inputs": {
         "fromYaml": "fromYaml"
@@ -146,22 +129,6 @@
         "owner": "tinted-theming",
         "repo": "base16-vim",
         "rev": "577fe8125d74ff456cf942c733a85d769afe58b7",
-        "type": "github"
-      }
-    },
-    "blink-cmp-avante": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1753324560,
-        "narHash": "sha256-tozXOgP0dzIFd3a6mjGehUdytqerkWdfOo89CEVC/Rk=",
-        "owner": "Kaiser-Yang",
-        "repo": "blink-cmp-avante",
-        "rev": "4f494c6e124acbe31a8f5d58effa0c14aa38a6d5",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Kaiser-Yang",
-        "repo": "blink-cmp-avante",
         "type": "github"
       }
     },
@@ -1774,9 +1741,7 @@
     "root": {
       "inputs": {
         "agenix": "agenix",
-        "avante": "avante",
         "base16-mutt": "base16-mutt",
-        "blink-cmp-avante": "blink-cmp-avante",
         "ctrlsn": "ctrlsn",
         "deadnix": "deadnix",
         "duckduckgo-mcp-server": "duckduckgo-mcp-server",
