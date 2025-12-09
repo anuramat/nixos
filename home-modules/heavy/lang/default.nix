@@ -25,7 +25,7 @@
     bun
     perl
     ruby
-    sageWithDoc # computer algebra system
+    # sage # computer algebra system; takes a while to build
     stack
     yarn
 
