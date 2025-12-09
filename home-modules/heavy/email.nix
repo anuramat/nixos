@@ -52,7 +52,7 @@ in
         {
           key = "R";
           action = "imap-fetch-mail";
-          map = "index";
+          map = [ "index" ];
         }
       ];
       extraConfig = ''
