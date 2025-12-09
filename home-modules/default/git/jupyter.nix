@@ -12,7 +12,7 @@ in
       "*.ipynb diff=jupyternotebook merge=jupyternotebook"
     ];
 
-    extraConfig = {
+    settings = {
       diff.jupyternotebook.command = # bash
         "${getExe' nbdime "git-nbdiffdriver"} diff";
       merge.jupyternotebook = {
