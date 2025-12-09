@@ -32,7 +32,7 @@
     grpcui
     grpcurl
     httpie # curl++
-    aria # downloader
+    aria2 # downloader
     croc # send/receive files through relay with encryption
     ddgr # ddg search
     dig # dns utils
@@ -103,7 +103,7 @@
     cht-sh
 
     # modern replacements
-    du-dust # du++
+    dust # du++
     duf # df++
     ncdu # du++: interactive
     eza # ls++

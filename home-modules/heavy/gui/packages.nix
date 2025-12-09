@@ -48,7 +48,7 @@
     telegram-desktop
 
     # browsers
-    tor-browser-bundle-bin
+    tor-browser
     google-chrome
 
     # terminals

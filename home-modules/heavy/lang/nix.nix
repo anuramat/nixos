@@ -13,7 +13,5 @@
     # dix # nix diff # XXX not in stable yet
 
     nix-unit
-
-    devenv # nix for retards
   ];
 }

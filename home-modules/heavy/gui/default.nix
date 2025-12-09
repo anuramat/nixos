@@ -61,6 +61,7 @@ in
     firefox = {
       # TODO reuse settings from librewolf when 25.11 is out
       enable = true;
+      package = pkgs.firefox-bin;
     };
   };
   stylix.targets.librewolf.profileNames = [ "default" ];

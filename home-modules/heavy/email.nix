@@ -7,8 +7,7 @@
 }:
 let
   inherit (lib) escapeShellArg getExe;
-  email = config.programs.git.userEmail;
-  fullname = config.programs.git.userName;
+  inherit (config.programs.git.settings.user) email name;
 
   mailcap = pkgs.writeText "mailcap" ''
     text/html; ${getExe pkgs.html2text} -width 120 -ansi -ignore-color -osc8 %s; copiousoutput
@@ -97,7 +96,7 @@ in
       primary = true;
       userName = email;
       address = email;
-      realName = fullname;
+      realName = name;
 
       imap = {
         host = "127.0.0.1";
@@ -144,7 +143,7 @@ in
       pkgs.libnotify
       # TODO not sure if these are needed:
       pkgs.gnupg
-      pkgs.pinentry
+      pkgs.pinentry-tty
     ];
   };
 

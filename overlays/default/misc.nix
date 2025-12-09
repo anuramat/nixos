@@ -42,19 +42,6 @@ inputs:
     vendorHash = "sha256-aW7N6uacoP99kpvw9E5WrHaQ0fZ4P5WGsNvR/FAZ+cA=";
   });
 
-  ollama = prev.ollama.overrideAttrs (oldAttrs: rec {
-    version = "0.12.3";
-    src = prev.fetchFromGitHub {
-      owner = "ollama";
-      repo = "ollama";
-      tag = "v${version}";
-      hash = "sha256-ooDGwTklGJ/wzDlAY3uJiqpZUxT1cCsqVNJKU8BAPbQ=";
-      fetchSubmodules = true;
-    };
-    vendorHash = "sha256-SlaDsu001TUW+t9WRp7LqxUSQSGDF1Lqu9M1bgILoX4=";
-    acceleration = false;
-  });
-
   claude-code = prev.claude-code.overrideAttrs (oldAttrs: rec {
     version = "2.0.37";
     src = prev.fetchzip {

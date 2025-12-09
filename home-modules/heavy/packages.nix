@@ -21,7 +21,7 @@
     timg
 
     # video
-    ffmpeg-full
+    ffmpeg
     losslesscut-bin
 
     # hardware
@@ -36,11 +36,10 @@
     # lookatme -- slides with images; not in nixpkgs yet
     tidy-viewer # csv viewer
     glow # markdown tui viewer
-    poppler_utils # pdf utils
+    poppler-utils # pdf utils
     pdftk # more pdf tools
     ghostscript # postscript/pdf utils
     readability-cli # extracts main content from pages
-    easyocr # neural ocr
     pandoc # document converter
     # texliveFull
     typst # better latex

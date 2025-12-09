@@ -92,16 +92,14 @@ in
   # cancel job - `cancel 1`
 
   services = {
-    # power:
-    # HandlePowerKeyLongPress=ignore
-    logind.extraConfig = ''
-      HandlePowerKey=suspend
-      HandleSuspendKey=suspend
-      HandleHibernateKey=suspend
-      HandleLidSwitch=suspend
-      HandleLidSwitchDocked=ignore
-      HandleLidSwitchExternalPower=ignore
-    '';
+    logind.settings.Login = {
+      HandlePowerKey = "suspend";
+      HandleSuspendKey = "suspend";
+      HandleHibernateKey = "suspend";
+      HandleLidSwitch = "suspend";
+      HandleLidSwitchDocked = "ignore";
+      HandleLidSwitchExternalPower = "ignore";
+    };
     thermald.enable = true; # cooling
     tlp = {
       enable = true;

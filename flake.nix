@@ -68,7 +68,7 @@
           follows = "nixpkgs";
         };
       };
-      url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager/release-25.11";
     };
     html2text = {
       url = "github:anuramat/html2text/dev";
@@ -116,7 +116,7 @@
       url = "github:NixOS/nixos-hardware/master";
     };
     nixpkgs = {
-      url = "github:nixos/nixpkgs/nixos-25.05";
+      url = "github:nixos/nixpkgs/nixos-25.11";
     };
     nixpkgs-unstable = {
       url = "github:nixos/nixpkgs/nixos-unstable";
@@ -127,7 +127,7 @@
           follows = "nixpkgs";
         };
       };
-      url = "github:nix-community/nixvim/nixos-25.05";
+      url = "github:nix-community/nixvim/nixos-25.11";
     };
     nur = {
       inputs = {
@@ -158,7 +158,7 @@
           follows = "nixpkgs";
         };
       };
-      url = "github:danth/stylix/release-25.05";
+      url = "github:danth/stylix/release-25.11";
     };
     subcat = {
       inputs = {
