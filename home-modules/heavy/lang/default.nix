@@ -2,7 +2,7 @@
 {
   programs.go = {
     enable = true;
-    goPath = "${config.xdg.cacheHome}/go"; # ~/.cache/go
+    env.GOPATH = "${config.xdg.cacheHome}/go";
   };
   imports = [
     ./nix.nix

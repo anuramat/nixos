@@ -30,7 +30,7 @@ in
   };
   programs.less = {
     enable = true;
-    keys = ''
+    config = ''
       J forw-search ${invisibleSeparator}\n
       K back-search ${invisibleSeparator}\n
     '';

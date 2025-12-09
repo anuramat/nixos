@@ -18,25 +18,25 @@
     git = {
       enable = true;
 
-      aliases = {
-        sw = "switch";
-        ch = "checkout";
-        wt = "worktree";
-        st = "status";
-        sh = "show --ext-diff";
-        cm = "!git add -A && git commit";
-        lp = "log --ext-diff -p";
-        lg = "log --ext-diff --oneline --graph --all --decorate";
-        ds = "diff --staged";
-        hk = "!lh() { find .git/hooks -mindepth 1 -maxdepth 1 | grep -v sample; }; lh";
-      };
-
       attributes = [
         "flake.lock -diff"
         "Cargo.lock -diff"
       ];
 
-      extraConfig = {
+      settings = {
+        alias = {
+          sw = "switch";
+          ch = "checkout";
+          wt = "worktree";
+          st = "status";
+          sh = "show --ext-diff";
+          cm = "!git add -A && git commit";
+          lp = "log --ext-diff -p";
+          lg = "log --ext-diff --oneline --graph --all --decorate";
+          ds = "diff --staged";
+          hk = "!lh() { find .git/hooks -mindepth 1 -maxdepth 1 | grep -v sample; }; lh";
+        };
+
         init.defaultBranch = "main";
 
         push.autoSetupRemote = true;

@@ -94,7 +94,7 @@ in
               baseRwDirs = [
                 config.home.sessionVariables.RUSTUP_HOME
                 config.home.sessionVariables.CARGO_HOME
-                config.programs.go.goPath
+                config.programs.go.env.GOPATH
                 "${config.home.homeDirectory}/.npm"
               ];
               agentDirs =
