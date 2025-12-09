@@ -111,7 +111,7 @@ __check() {
 	# repos are taken from ghq and hardcoded array
 	local -r root="$(ghq root)"
 
-	# shellcheck disable=SC2317
+	# shellcheck disable=SC2317,SC2329
 	get_dirty() {
 		local -r nopull="$1"
 		local -r prefix_length="$2"
