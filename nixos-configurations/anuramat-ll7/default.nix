@@ -30,7 +30,7 @@
     inputs.self.nixosModules.local
     inputs.self.nixosModules.builder
     inputs.self.nixosModules.anuramat
-    inputs.self.nixosModules.llama
+    # inputs.self.nixosModules.llama # TODO re-enable?
 
     inputs.nixos-hardware.nixosModules.common-cpu-intel
 

@@ -3,10 +3,8 @@
   programs.obs-studio = {
     enable = true;
     plugins = with pkgs.obs-studio-plugins; [
-      obs-backgroundremoval # FUCK tensorRT doesn't use the GPU somehow, yet increases CPU usage???
-      obs-multi-rtmp # multi-site
+      obs-backgroundremoval # WARN takes ages to build
       obs-pipewire-audio-capture
-      obs-tuna # song info, not really using since waybar shows the song
       obs-vaapi
       wlrobs # screen capture for wlroots
     ];
