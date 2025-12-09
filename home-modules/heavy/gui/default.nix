@@ -7,28 +7,6 @@
 }:
 let
   toINI = lib.generators.toINI { };
-  firefoxSettings = {
-    "browser.urlbar.suggest.history" = true;
-    "widget.use-xdg-desktop-portal.file-picker" = 1;
-    "identity.fxaccounts.enabled" = true;
-    "widget.wayland.fractional-scale.enabled" = true;
-
-    # since it breaks a lot of pages
-    "privacy.resistFingerprinting" = false;
-
-    "sidebar.verticalTabs" = true;
-    # required by vertical tabs
-    "sidebar.revamp" = true;
-
-    # rejecting all; fallback -- do nothing
-    "cookiebanners.service.mode" = 1;
-    "cookiebanners.service.mode.privateBrowsing" = 1;
-
-    # ai slop
-    "browser.tabs.groups.smart.optin" = true;
-    "browser.tabs.groups.smart.enabled" = true;
-    "browser.ml.chat.enabled" = true;
-  };
 in
 {
   imports = [
@@ -53,18 +31,59 @@ in
         ];
     };
 
-    librewolf = {
-      # enable = true;
-      package = pkgs.librewolf;
-      settings = firefoxSettings;
-    };
     firefox = {
-      # TODO reuse settings from librewolf when 25.11 is out
       enable = true;
       package = pkgs.firefox-bin;
+      profiles.default = {
+        settings = {
+          "browser.urlbar.suggest.history" = true;
+          "widget.use-xdg-desktop-portal.file-picker" = 1;
+          "identity.fxaccounts.enabled" = true;
+          "widget.wayland.fractional-scale.enabled" = true;
+
+          # since it breaks a lot of pages
+          "privacy.resistFingerprinting" = false;
+
+          "sidebar.verticalTabs" = true;
+          # required by vertical tabs
+          "sidebar.revamp" = true;
+
+          # rejecting all; fallback -- do nothing
+          "cookiebanners.service.mode" = 1;
+          "cookiebanners.service.mode.privateBrowsing" = 1;
+
+          # ai slop
+          "browser.tabs.groups.smart.optin" = true;
+          "browser.tabs.groups.smart.enabled" = true;
+          "browser.ml.chat.enabled" = true;
+        };
+        search = {
+          default = "kagi";
+          privateDefault = "ddg";
+          force = true;
+          engines = {
+            kagi = {
+              name = "Kagi";
+              urls = [
+                {
+                  template = "https://kagi.com/search?q={searchTerms}";
+                }
+                {
+                  "template" = "https://kagisuggest.com/api/autosuggest?q={searchTerms}";
+                  "type" = "application/x-suggestions+json";
+                }
+              ];
+            };
+            bing.metaData.hidden = true;
+            # TODO same for google, ecosia, perplexity, wikipedia
+          };
+        };
+      };
     };
   };
-  stylix.targets.librewolf.profileNames = [ "default" ];
+  stylix.targets = {
+    librewolf.profileNames = [ "default" ];
+  };
   xdg.configFile = {
     "swappy/config".text = toINI {
       Default = {
