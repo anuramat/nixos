@@ -2,11 +2,10 @@
   lib,
   pkgs,
   config,
-  osConfig ? null,
   ...
 }:
 let
-  inherit (lib) getExe range ifEnable;
+  inherit (lib) getExe range;
   WSs =
     let
       mkOne = n: "${toString n}:${lib.mod n 10 |> toString}";
@@ -35,44 +34,35 @@ let
       always = true;
     }
   ];
-  maybeAutorotate =
-    let
-      pkill = "${pkgs.procps}/bin/pkill";
-      name = "sway-autorotate";
-      script =
-        pkgs.writeShellApplication {
-          inherit name;
-          runtimeInputs = with pkgs; [
-            mawk
-            iio-sensor-proxy
-          ];
-          text = ''
-            monitor-sensor | mawk -W interactive '/Accelerometer orientation changed:/ { print $NF; fflush();}' | while read -r line; do
-              # mode=tablet
-              case "$line" in
-                normal)
-                  swaymsg output eDP-1 transform 0
-                  # mode=laptop
-                  ;;
-                bottom-up) swaymsg output eDP-1 transform 180 ;;
-                right-up) swaymsg output eDP-1 transform 90 ;;
-                left-up) swaymsg output eDP-1 transform 270 ;;
-              esac
-              # framework_tool --tablet-mode "$mode"
-            done
-          '';
-        }
-        |> getExe;
-    in
-    ifEnable (osConfig != null && osConfig.hardware.sensor.iio.enable) [
-      {
-        command = "${pkill} ${name} || ${script}";
-        always = true;
-      }
+
+  autorotate = pkgs.writeShellApplication {
+    name = "autorotate";
+    runtimeInputs = with pkgs; [
+      mawk
+      iio-sensor-proxy
     ];
+    text = ''
+      monitor-sensor | mawk -W interactive '/Accelerometer orientation changed:/ { print $NF; fflush();}' | while read -r line; do
+        # mode=tablet
+        case "$line" in
+          normal)
+            swaymsg output eDP-1 transform 0
+            # mode=laptop
+            ;;
+          bottom-up) swaymsg output eDP-1 transform 180 ;;
+          right-up) swaymsg output eDP-1 transform 90 ;;
+          left-up) swaymsg output eDP-1 transform 270 ;;
+        esac
+        # framework_tool --tablet-mode "$mode"
+      done
+    '';
+  };
 
 in
 {
+  home.packages = [
+    autorotate
+  ];
   services.mako.settings.output = out.int;
   wayland.windowManager.sway = {
     extraConfig = # sway
@@ -81,7 +71,7 @@ in
         bindswitch --locked lid:off output ${out.int} enable
       '';
     config = {
-      startup = reloadKanshi ++ maybeAutorotate;
+      startup = reloadKanshi;
 
       workspaceOutputAssign =
         let
