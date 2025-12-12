@@ -27,6 +27,11 @@ nixos command="switch" *flags:
     # rebuild
     sudo nixos-rebuild {{ command }} --option extra-experimental-features pipe-operators {{ flags }}
 
+# Rebuild without remote builders
+[group('build')]
+nixos-local command="switch" *flags:
+    just nixos command="{{ command }}" -- {{ flags }} --builders ""
+
 [group('code')]
 test flag="--quiet" arch=`nix eval --raw .#nixosConfigurations.$(hostname).config.nixpkgs.hostPlatform.system`:
     nix-unit {{ flag }} --flake .#tests.systems.{{ arch }}
