@@ -3,6 +3,7 @@
     zathura = {
       enable = true;
       options = {
+        font = "monospace 14";
         adjust-open = "width";
         window-title-home-tilde = true;
         statusbar-basename = true;
