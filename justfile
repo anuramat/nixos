@@ -12,8 +12,8 @@ flake:
     # Lock
     nix flake lock
 
-[group('build')]
-nixos command="switch" *flags:
+[private]
+nixos-pre:
     # ask for permission first
     sudo true
     # store keys in repo:
@@ -24,13 +24,18 @@ nixos command="switch" *flags:
     grep -rL PRIVATE "$HOME/.ssh" | grep '\.pub$' | xargs cp -ft "{{ keys_dir }}"
     # copy binary cache public key
     cp -ft "{{ keys_dir }}" "/etc/nix/cache.pem.pub" 2>/dev/null || true
-    # rebuild
+
+[group('build')]
+nixos command="switch" *flags: nixos-pre
     sudo nixos-rebuild {{ command }} --option extra-experimental-features pipe-operators {{ flags }}
 
-# Rebuild without remote builders
+[group('build')]
+nixos-nh command="switch" *flags: nixos-pre
+    nh os switch . {{ flags }}
+
 [group('build')]
 nixos-local command="switch" *flags:
-    just nixos command="{{ command }}" -- {{ flags }} --builders ""
+    sudo nixos-rebuild {{ command }} --option extra-experimental-features pipe-operators --builders '' {{ flags }}
 
 [group('code')]
 test flag="--quiet" arch=`nix eval --raw .#nixosConfigurations.$(hostname).config.nixpkgs.hostPlatform.system`:
