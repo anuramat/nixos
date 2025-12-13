@@ -28,6 +28,7 @@
     ./filemgr.nix
     ./fzf.nix
     ./git.nix
+    ./image.nix
     ./lang
     ./misc.nix
     ./treesitter.nix
