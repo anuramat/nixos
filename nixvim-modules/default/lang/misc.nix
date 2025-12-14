@@ -87,6 +87,10 @@ in
     lsp.servers = {
       clangd.enable = true;
       zls.enable = true;
+      ast_grep = {
+        enable = true;
+        filetypes = [ "typst" ];
+      };
     };
   };
 
