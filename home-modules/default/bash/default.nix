@@ -20,6 +20,7 @@ in
 {
   imports = [
     ./bashrc.nix
+    ./template.nix
   ];
   home =
     let
