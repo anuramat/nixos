@@ -7,6 +7,7 @@ let
     name = "template";
     text = # bash
       ''
+        set +u
         main() (
           local root="$HOME/notes/templates"
           [ -z "$1" ] && ls root
