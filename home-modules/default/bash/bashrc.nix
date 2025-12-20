@@ -10,7 +10,10 @@ let
         set +u
         main() (
           local root="$HOME/notes/templates"
-          [ -z "$1" ] && ls root
+          if [ -z "$1" ]; then
+            ls "$root"
+            return
+          fi
           local path="$root/$1"
           [ -d "$path" ] || {
             echo "$path is not a directory"
