@@ -13,7 +13,7 @@ let
       # bash
       ''
         _template() {
-          local cur root
+          local root
           root="${root}"
 
           # only first argument and if root exists
@@ -45,6 +45,7 @@ let
           local path="$root/$1"
           [ -d "$path" ] || {
             echo "$path is not a directory"
+            return 1
           }
           shopt -s dotglob
           cp "$path"/* ./
