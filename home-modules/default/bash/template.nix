@@ -36,12 +36,11 @@ let
     name = "template";
     text = # bash
       ''
-        set +u
         main() (
           local root="${root}"
           if [ -z "$1" ]; then
-            ls "$root"
-            return
+            echo "no template specified"
+            return 1
           fi
           local path="$root/$1"
           [ -d "$path" ] || {
