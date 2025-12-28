@@ -35,7 +35,6 @@ in
     in
     {
       activation = {
-        # TODO not sure if this works; feels like it doesn't on anuramat-root
         mkDirs =
           let
             dirs = attrValues customXdg;
