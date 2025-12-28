@@ -6,7 +6,7 @@
   ...
 }:
 let
-  diffFile = config.xdg.stateHome + "hm-activation-diffs.txt";
+  diffFile = config.xdg.stateHome + "/hm-activation-diffs.txt";
   inherit (lib)
     getName
     getExe
