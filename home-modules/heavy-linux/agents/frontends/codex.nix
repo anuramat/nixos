@@ -16,6 +16,9 @@ let
           hide_full_access_warning = true;
           hide_gpt5_1_migration_prompt = true;
           "hide_gpt-5.1-codex-max_migration_prompt" = true;
+          model_migrations = {
+            "gpt-5.1-codex-max" = "gpt-5.2-codex";
+          };
         };
         hide_agent_reasoning = false;
         show_raw_agent_reasoning = true;
@@ -23,7 +26,7 @@ let
 
         model_reasoning_effort = "medium";
         model_verbosity = "low";
-        model = "gpt-5.1-codex-max";
+        model = "gpt-5.2-codex-max";
 
         mcp_servers = {
           inherit (config.lib.agents.mcp.raw) ddg;
