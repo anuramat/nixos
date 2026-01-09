@@ -6,7 +6,7 @@
 
 let
 
-  root = "${config.home.homeDirectory}/notes/templates";
+  root = "${config.home.homeDirectory}/notes/computing/templates";
 
   completion =
     pkgs.writeText "template-completion.sh"
