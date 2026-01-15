@@ -8,6 +8,7 @@ args:
     ./portals.nix
     ./sway
     ./swaylock.nix
+    ./syncthing.nix
   ];
 }
 // (
