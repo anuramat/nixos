@@ -24,17 +24,16 @@
   # };
 
   imports = [
-    # ./nvidia-vm.nix
-    ./nvidia-host.nix
     inputs.self.nixosModules.default
     inputs.self.nixosModules.local
     inputs.self.nixosModules.builder
     inputs.self.nixosModules.anuramat
+
     # inputs.self.nixosModules.llama # TODO re-enable?
 
     inputs.nixos-hardware.nixosModules.common-cpu-intel
-
-    inputs.nixos-hardware.nixosModules.common-gpu-intel # they don't have this in the repo
+    inputs.nixos-hardware.nixosModules.common-gpu-intel
+    ./nvidia-host.nix
 
     inputs.nixos-hardware.nixosModules.common-hidpi
     inputs.nixos-hardware.nixosModules.common-pc-laptop
