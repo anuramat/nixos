@@ -43,7 +43,7 @@
   ];
 
   boot = {
-    tmp.useTmpfs = true; # NOTE might want to enable swap later
+    tmp.useTmpfs = true; # TODO make a specialization with no tmpfs for big builds
     extraModulePackages = [
       config.boot.kernelPackages.lenovo-legion-module
     ];
