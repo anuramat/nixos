@@ -42,8 +42,17 @@
     ./hardware-configuration.nix
   ];
 
+  zramSwap = {
+    enable = true;
+    # memoryPercent = 50;
+  };
   boot = {
-    tmp.useTmpfs = true; # TODO make a specialization with no tmpfs for big builds
+    # TODO make a specialization with no tmpfs for big builds
+    # or use a disk tmp dir for builds
+    tmp = {
+      useTmpfs = true;
+      # tmpfsSize = "50%";
+    };
     extraModulePackages = [
       config.boot.kernelPackages.lenovo-legion-module
     ];

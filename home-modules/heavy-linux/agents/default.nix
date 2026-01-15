@@ -67,6 +67,7 @@ in
     ./ollama.nix
     ./sandbox.nix
     ./tools.nix
+    ./whisper.nix
   ];
 
   lib.agents = {
