@@ -22,9 +22,14 @@
             "yank"
           ];
         }
+        # TODO use dragon-drop package instead of command
         {
           on = "<C-n>";
-          run = ''shell -- dragon -x -i -T "$1"'';
+          run = ''shell -- dragon-drop -x -T "$@"'';
+        }
+        {
+          on = "<C-m>";
+          run = ''shell -- dragon-drop -A -x -T "$@"'';
         }
       ];
     };
