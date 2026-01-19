@@ -9,7 +9,7 @@ let
     ];
     text =
       let
-        modelName = "base-en";
+        modelName = "base.en";
         modelDir = config.xdg.dataHome + "/whisper-cpp/models";
         modelPath = modelDir + "/ggml-${modelName}.bin";
         find = ''fd --max-depth 1 -e "$1"'';
@@ -19,7 +19,7 @@ let
       ''
         [ -f "${modelPath}" ] || {
           mkdir -p "${modelDir}"
-          (cd "${modelDir}" && whisper-cpp-download-ggml-model base.en)
+          (cd "${modelDir}" && whisper-cpp-download-ggml-model ${modelName})
         }
         ${find}
         gum confirm || exit 1
