@@ -5,7 +5,7 @@ let
     runtimeInputs = with pkgs; [
       fd
       gum
-      openai-whisper
+      whisper-cpp
     ];
     text =
       let
@@ -21,7 +21,7 @@ let
 in
 {
   home.packages = with pkgs; [
-    openai-whisper
+    whisper-cpp
     transcribe
   ];
 }
