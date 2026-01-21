@@ -20,6 +20,8 @@ in
 
   services.getty.autologinOnce = true; # TODO only if full disk encryption
 
+  programs.steam.enable = true;
+
   security = {
     soteria.enable = true; # polkit auth agent
     rtkit.enable = true; # realtime kit, hands out realtime priority to user processes

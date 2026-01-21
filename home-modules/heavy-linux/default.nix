@@ -57,7 +57,6 @@
     libnotify # notify-send etc
     mesa-demos # some 3d demos, useful for graphics debugging
     proton-pass # password manager
-    steam
     waypipe # gui forwarding
     wev # wayland event viewer, useful for debugging
     wl-clip-persist # otherwise clipboard contents disappear on exit
