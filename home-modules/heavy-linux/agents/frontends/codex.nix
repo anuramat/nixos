@@ -12,23 +12,25 @@ let
   codexHome = config.xdg.configHome + "/codex";
   codexCfgPath = codexHome + "/config.toml";
 
-  commands =
-    let
-      skillFiles =
-        agents.commands
-        |> mapAttrs' (
-          n: v: {
-            name = "${n}/SKILL";
-            value = v.withFM {
+  skillFiles =
+    agents.commands
+    |> mapAttrs' (
+      n: v: {
+        name = "codexSkill" + n;
+        value =
+          let
+            text = v.withFM {
               name = n;
               inherit (v) description;
             };
-          }
-        );
-    in
-    # HACK kinda ugly because mkPrompts is made for slash commands and not skills
-    # TODO rework into a skills thing and use skills everywhere
-    agents.mkPrompts "codex/skills" skillFiles;
+            file = pkgs.writeTextFile {
+              name = "${n}-SKILL.md";
+              inherit text;
+            };
+          in
+          config.lib.home.mkGenericActivationScript file (codexHome + "/skills/${n}/SKILL.md");
+      }
+    );
 
   codexTomlCfg =
     let
@@ -142,7 +144,6 @@ in
     "codex/AGENTS.md" = {
       text = config.lib.agents.instructions.codex;
     };
-  }
-  // commands;
-
+  };
+  activation = skillFiles;
 }
