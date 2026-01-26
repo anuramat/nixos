@@ -44,7 +44,7 @@ in
   lib.agents.commands = {
     agupd = memupdate "AGENTS.md";
     clupd = memupdate "CLAUDE.md";
-    spec = rec {
+    specfix = rec {
       description = "refine feature specification in SPEC.md";
       withFM = prependFrontmatter text;
       text = ''
@@ -81,7 +81,7 @@ in
         - do not implement anything in the code
       '';
     };
-    plan = rec {
+    planmk = rec {
       description = "plan the changes";
       withFM = prependFrontmatter text;
       text = ''
