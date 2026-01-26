@@ -6,8 +6,27 @@
   ...
 }:
 let
+  inherit (lib) mapAttrs';
+  inherit (config.lib) agents;
+
   codexHome = config.xdg.configHome + "/codex";
   codexCfgPath = codexHome + "/config.toml";
+
+  commands =
+    let
+      skillFiles =
+        agents.commands
+        |> mapAttrs' (
+          n: v: {
+            name = "${n}/SKILL.md";
+            value = (v.withFM { inherit (v) description; }) // {
+              name = n;
+            };
+          }
+        );
+    in
+    agents.mkPrompts "codex/skills" skillFiles;
+
   codexTomlCfg =
     let
       # https://github.com/openai/codex/blob/main/codex-rs/config.md
@@ -96,7 +115,7 @@ let
   pkg = config.lib.agents.mkPackages {
     binName = "codex";
     package = pkgs.codex;
-    args = [ "--dangerously-bypass-approvals-and-sandbox" ]; # "--search" is bloated
+    args = [ "--dangerously-bypass-approvals-and-sandbox" ];
     inherit env;
     agentDir = null;
     extraRwDirs = [
@@ -115,6 +134,7 @@ in
   xdg.configFile = {
     "codex/AGENTS.md" = {
       text = config.lib.agents.instructions.codex;
-    };
+    }
+    // commands;
   };
 }

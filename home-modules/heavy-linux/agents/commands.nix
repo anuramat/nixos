@@ -40,11 +40,48 @@ let
       '';
     };
 in
-# TODO remove withFM
 {
   lib.agents.commands = {
     agupd = memupdate "AGENTS.md";
     clupd = memupdate "CLAUDE.md";
+    spec = rec {
+      description = "refine feature specification in SPEC.md";
+      withFM = prependFrontmatter text;
+      text = ''
+        @SPEC.md contains a specification of a feature I want to implement. It
+        describes desired behaviour: motivation, use cases, user-visible
+        behaviour, edge cases, and terminology.
+
+        Your task is to review the specification for implementation risks. You
+        may inspect relevant parts of the codebase if needed to assess conflicts
+        with existing behaviour. Do not explore unrelated code.
+
+        Identify and report:
+
+        - ambiguities and contradictions in described feature behaviour
+        - missing important edge cases
+        - implicit contradictions with existing code behaviour or assumptions
+        - behaviour that appears difficult to implement without major refactoring
+        - inconsistent naming or terminology
+        - any other issues likely to cause incorrect or error-prone implementation
+
+
+        Output format:
+
+        - group findings by category
+        - for each issue:
+          - quote the relevant part of the specification
+          - provide a concise explanation of the risk
+          - assign a severity: low / medium / high
+
+        Constraints:
+
+        - if referenced components do not exist in the codebase, assume they will be implemented later and do not flag this as an issue
+        - focus only on specification correctness and clarity, not technical design
+        - do not suggest implementation solutions
+        - do not implement anything in the code
+      '';
+    };
     plan = rec {
       description = "plan the changes";
       withFM = prependFrontmatter text;

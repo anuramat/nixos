@@ -7,8 +7,8 @@
 }:
 let
   inherit (lib) mapAttrs;
-
   inherit (config.lib) agents;
+
   statusLine = {
     type = "command";
     command =
