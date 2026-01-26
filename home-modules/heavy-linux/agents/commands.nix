@@ -65,7 +65,6 @@ in
         - inconsistent naming or terminology
         - any other issues likely to cause incorrect or error-prone implementation
 
-
         Output format:
 
         - group findings by category
