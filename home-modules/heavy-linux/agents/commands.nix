@@ -80,6 +80,10 @@ in
         - do not suggest implementation solutions
         - do not implement anything in the code
       '';
+
+      # TODO "if possible, assume the simplest behaviour that satisfies the spec when something is ambiguous"
+      # TODO add a follow-up command to fix the spec based on the analysis:
+      # I edited the spec in the last commit; review the last commit and list the remaining issues that were not fixed
     };
     planmk = rec {
       description = "plan the changes";
