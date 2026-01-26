@@ -19,8 +19,9 @@ let
         |> mapAttrs' (
           n: v: {
             name = "${n}/SKILL.md";
-            value = (v.withFM { inherit (v) description; }) // {
+            value = v.withFM {
               name = n;
+              inherit (v) description;
             };
           }
         );
