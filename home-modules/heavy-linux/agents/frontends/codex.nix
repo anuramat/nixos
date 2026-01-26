@@ -18,7 +18,7 @@ let
         agents.commands
         |> mapAttrs' (
           n: v: {
-            name = "${n}/SKILL.md";
+            name = "${n}/SKILL";
             value = v.withFM {
               name = n;
               inherit (v) description;
@@ -26,6 +26,8 @@ let
           }
         );
     in
+    # HACK kinda ugly because mkPrompts is made for slash commands and not skills
+    # TODO rework into a skills thing and use skills everywhere
     agents.mkPrompts "codex/skills" skillFiles;
 
   codexTomlCfg =
@@ -48,8 +50,12 @@ let
         model_verbosity = "low";
         model = "gpt-5.2-codex";
 
+        features = {
+          web_search_request = true;
+        };
+
         mcp_servers = {
-          inherit (config.lib.agents.mcp.raw) ddg;
+          # inherit (config.lib.agents.mcp.raw) ddg;
         };
         profiles = {
           oss = {
@@ -135,7 +141,8 @@ in
   xdg.configFile = {
     "codex/AGENTS.md" = {
       text = config.lib.agents.instructions.codex;
-    }
-    // commands;
-  };
+    };
+  }
+  // commands;
+
 }
