@@ -189,7 +189,6 @@ let
           }
       ) config.lib.agents.mcp.raw;
       enabledServers = {
-        # NOTE waiting for mcp resources and prompt; https://github.com/sst/opencode/issues/806
         inherit (rawServers)
           ddg
           ;
