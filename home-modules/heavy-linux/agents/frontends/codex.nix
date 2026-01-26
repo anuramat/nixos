@@ -16,7 +16,7 @@ let
     agents.commands
     |> mapAttrs' (
       n: v: {
-        name = "codexSkill" + n;
+        name = "codexSkill-" + n;
         value =
           let
             text = v.withFM {
@@ -136,14 +136,16 @@ in
   home.sessionVariables = env;
   home = {
     packages = [ pkg ];
-    activation.codexConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      run cat ${codexTomlCfg} > "${codexCfgPath}";
-    '';
+    activation = {
+      codexConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        run cat ${codexTomlCfg} > "${codexCfgPath}";
+      '';
+    }
+    // skillFiles;
   };
   xdg.configFile = {
     "codex/AGENTS.md" = {
       text = config.lib.agents.instructions.codex;
     };
   };
-  activation = skillFiles;
 }
