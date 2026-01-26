@@ -56,6 +56,12 @@ let
           web_search_request = true;
         };
 
+        projects = {
+          "/etc/nixos" = {
+            trust_level = "trusted";
+          };
+        };
+
         mcp_servers = {
           # inherit (config.lib.agents.mcp.raw) ddg;
         };
