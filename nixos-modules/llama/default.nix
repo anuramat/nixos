@@ -6,6 +6,21 @@ let
   modelDir = "/mnt/storage/llama-cpp";
 
   models = {
+    glm = {
+      model = modelDir + "/unsloth_GLM-4.7-Flash-GGUF_GLM-4.7-Flash-Q4_K_M.gguf";
+      modelExtra = {
+        id = "glm-4.7-flash";
+        params = {
+          topP = 1.0;
+          topK = 0;
+          temp = 1.0;
+
+          ctxSize = 30000;
+          parallel = 1;
+        };
+      };
+    };
+
     gemma = {
       model = modelDir + "/gemma-3-4b-it-GGUF_gemma-3-4b-it-Q8_0.gguf";
       modelExtra = {
@@ -41,7 +56,6 @@ let
                   }
                   .${size};
                 topK = 20;
-                nCpuMoe = if size == "30b" then 38 else null;
                 temp = if type == "thinking" then 0.6 else 0.7;
                 minP = 0.0; # for instruct/coder models 0.01 also works
                 topP = if type == "thinking" then 0.95 else 0.80;
@@ -97,7 +111,6 @@ let
             id = "gpt-oss:20b";
             params = commonParams // {
               ctxSize = 55000;
-              nCpuMoe = 12;
               parallel = 4;
             };
           };
@@ -108,7 +121,6 @@ let
             id = "gpt-oss:120b";
             params = commonParams // {
               ctxSize = 131072;
-              nCpuMoe = 999;
               parallel = 10;
             };
           };

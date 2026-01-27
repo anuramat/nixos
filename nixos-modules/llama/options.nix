@@ -19,7 +19,7 @@ in
         }; # e.g. "Qwen3 4B"
         thinking = mkOption {
           type = types.bool;
-          default = false;
+          default = true;
         };
         vision = mkOption {
           type = types.bool;
@@ -65,18 +65,6 @@ in
 
               ctxSize = mkOption {
                 type = types.int;
-              };
-              flashAttn = mkOption {
-                type = types.bool;
-                default = true;
-              };
-              gpuLayers = mkOption {
-                type = types.nullOr types.int;
-                default = 999;
-              };
-              nCpuMoe = mkOption {
-                type = types.nullOr types.int;
-                default = null;
               };
               parallel = mkOption {
                 type = types.nullOr types.int;
@@ -125,20 +113,8 @@ in
         ]
 
         ++ [
-          "-c"
+          "--fit-ctx"
           (toString p.ctxSize)
-        ]
-        ++ optionals p.flashAttn [
-          "-fa"
-          "on"
-        ]
-        ++ optionals (p.gpuLayers != null) [
-          "-ngl"
-          (toString p.gpuLayers)
-        ]
-        ++ optionals (p.nCpuMoe != null) [
-          "-ncmoe"
-          (toString p.nCpuMoe)
         ]
         ++ optionals (p.parallel != null) [
           "-np"
