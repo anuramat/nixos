@@ -90,7 +90,7 @@ inputs:
       owner = "ggml-org";
       repo = "llama.cpp";
       tag = "b${version}";
-      hash = "sha256-aoyJGyxvyoU37AGycd540w4b2DC4wNA7GkzmwaZKYRU=";
+      hash = "sha256-LA4o2WmiMEd8Q44aEtr2RRq9nJrIPpbOFmoKZyCpcjs=";
     };
   });
 
