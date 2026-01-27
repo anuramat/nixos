@@ -148,6 +148,7 @@ in
       {
         enable = true;
         openFirewall = false;
+        host = "0.0.0.0";
         inherit port;
         inherit (selected) model modelExtra;
       };
