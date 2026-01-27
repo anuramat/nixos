@@ -80,7 +80,7 @@ let
 
   overlays = inputOverlays ++ [
     (import ./misc.nix inputs)
-    (import ./llama-cpp.nix inputs)
+    # (import ./llama-cpp.nix inputs)
     (import ./vim-plugins.nix inputs)
     impureWrappers
     unstablePkgs

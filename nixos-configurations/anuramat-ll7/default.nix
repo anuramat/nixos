@@ -24,7 +24,7 @@
     inputs.self.nixosModules.builder
     inputs.self.nixosModules.anuramat
 
-    # inputs.self.nixosModules.llama # TODO re-enable?
+    inputs.self.nixosModules.llama # TODO re-enable?
 
     inputs.nixos-hardware.nixosModules.common-cpu-intel
     inputs.nixos-hardware.nixosModules.common-gpu-intel
