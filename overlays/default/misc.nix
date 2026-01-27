@@ -43,10 +43,10 @@ inputs:
   });
 
   claude-code = prev.claude-code.overrideAttrs (oldAttrs: rec {
-    version = "2.1.19";
+    version = "2.1.20";
     src = prev.fetchzip {
       url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-      hash = "sha256-K2fJf1eRAyqmtAvKBzpAtMohQ4B1icwC9yf5zEf52C8=";
+      hash = "sha256-V2BIqUUJnQpjIsCAAk932L8wp5T74s22q3KgFoxfdDg=";
     };
     # https://www.npmjs.com/package/@anthropic-ai/claude-code
     # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
@@ -68,10 +68,10 @@ inputs:
 
   codex = prev.stdenv.mkDerivation rec {
     pname = "codex";
-    version = "0.91.0";
+    version = "0.92.0";
     src = prev.fetchurl {
       url = "https://github.com/openai/codex/releases/download/rust-v${version}/codex-x86_64-unknown-linux-musl.zst";
-      sha256 = "sha256-EpuLaT7eu9cCRcIkGs3uiL3ls0C4dO8shd0pdEBw3EY=";
+      sha256 = "sha256-Alm782gnfaO68mdmM3XwCv//nFkc1xWj3LZJ66zFD1k=";
     };
     dontUnpack = true;
     nativeBuildInputs = [ prev.zstd ];
