@@ -142,7 +142,8 @@ in
   services = {
     llama-cpp =
       let
-        selected = models.qwen.thinking4b;
+        # selected = models.qwen.thinking4b;
+        selected = models.glm;
       in
       {
         enable = true;
