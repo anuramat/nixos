@@ -63,15 +63,16 @@ in
         - implicit contradictions with existing code behaviour or assumptions
         - behaviour that appears difficult to implement without major refactoring
         - inconsistent naming or terminology
-        - any other issues likely to cause incorrect or error-prone implementation
+        - anything else that is likely to cause incorrect or error-prone implementation
 
         Output format:
 
-        - group findings by category
-        - for each issue:
-          - quote the relevant part of the specification
-          - provide a concise explanation of the risk
-          - assign a severity: low / medium / high
+        - group findings into two categories:
+          - certain problems: self-contradictions, logical flaws
+          - potential problems: ambiguities, missing cases, contradictions with
+            existing code
+        - for each category, provide a list of concise bullet points describing
+          the issues found
 
         Constraints:
 
