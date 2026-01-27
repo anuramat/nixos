@@ -84,4 +84,14 @@ inputs:
     meta.mainProgram = "codex";
   };
 
+  llama-cpp = prev.llama-cpp.overrideAttrs (_: rec {
+    version = "7844";
+    src = prev.fetchFromGitHub {
+      owner = "ggml-org";
+      repo = "llama.cpp";
+      tag = "b${version}";
+      hash = "sha256-aoyJGyxvyoU37AGycd540w4b2DC4wNA7GkzmwaZKYRU=";
+    };
+  });
+
 })
