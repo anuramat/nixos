@@ -57,7 +57,7 @@ let
 
           # /experimental
           steer = true; # interrupt by sending a message
-          unified_exec = true; # background bash
+          unified_exec = false; # background bash
           shell_snapshot = true; # persist shell
         };
 
