@@ -54,6 +54,11 @@ let
 
         features = {
           web_search_request = true;
+
+          # /experimental
+          steer = true; # interrupt by sending a message
+          unified_exec = true; # background bash
+          shell_snapshot = true; # persist shell
         };
 
         projects = {
