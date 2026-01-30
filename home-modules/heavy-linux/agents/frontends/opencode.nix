@@ -243,7 +243,7 @@ in
       plugin = [
         "opencode-openai-codex-auth@2.1.1"
       ];
-      small_model = if local.enabled then "${local.providerId}/${local.modelId}" else glm;
+      small_model = glm;
       autoupdate = false;
       instructions = [ "AGENTS.md" ];
       tools.webfetch = false;
