@@ -52,8 +52,9 @@ let
         model_verbosity = "low";
         model = "gpt-5.2-codex";
 
+        web_search = true;
+
         features = {
-          web_search = true;
 
           # /experimental
           personality = true;
