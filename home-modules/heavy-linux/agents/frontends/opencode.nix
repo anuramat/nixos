@@ -241,7 +241,6 @@ in
         lsp
         ;
       plugin = [
-        "opencode-openai-codex-auth@2.1.1"
       ];
       small_model = glm;
       autoupdate = false;
