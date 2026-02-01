@@ -53,7 +53,7 @@ let
         model = "gpt-5.2-codex";
 
         features = {
-          web_search_request = true;
+          web_search = true;
 
           # /experimental
           steer = true; # interrupt by sending a message
