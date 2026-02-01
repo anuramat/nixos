@@ -56,6 +56,8 @@ let
           web_search = true;
 
           # /experimental
+          personality = true;
+          apps = true; # chatgpt apps
           steer = true; # interrupt by sending a message
           unified_exec = false; # background bash
           shell_snapshot = true; # persist shell
