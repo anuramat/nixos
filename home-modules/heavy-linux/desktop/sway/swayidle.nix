@@ -28,6 +28,9 @@ let
       pkgs.procps
       pkgs.swaylock
     ];
+    # TODO auto disown
+    # TODO set brightness to 100 on internal display: brightnessctl s 100%
+    # TODO brexit 100
     text = ''
       # unlock
       pkill -SIGUSR1 swaylock || true
