@@ -39,22 +39,18 @@ let
     text = ''
       SWAYSOCK=$(systemctl --user show-environment | sed -n 's/^SWAYSOCK=//p')
       export SWAYSOCK
-      WAYLAND_DISPLAY=wayland-1
-      export WAYLAND_DISPLAY
 
       # unlock
       pkill -SIGUSR1 swaylock
       # stop idle service
       systemctl --user --machine="$USER@.host" stop swayidle.service
       # enable screen
-      SWAYSOCK=$(systemctl --user show-environment | sed -n 's/^SWAYSOCK=//p') ${screen.on}
+      ${screen.on}
       # set brightness
       swaymsg 'exec "${lib.getExe pkgs.brightnessctl} s 100%"'
       ddcutil setvcp 10 100 --display 1
-      # lock with the chosen color
-      swaylock --color "$1"
-      # restart idle
-      systemctl --user --machine="$USER@.host" start swayidle.service
+      # lock with the chosen color; restart idle on unlock
+      sh -c "WAYLAND_DISPLAY=wayland-1 swaylock --color $1; systemctl --user --machine=$USER@.host start swayidle.service" &>/dev/null &
     '';
   };
 
@@ -74,6 +70,7 @@ let
       WAYLAND_DISPLAY=wayland-1
       export WAYLAND_DISPLAY
 
+      systemctl --user --machine="$USER@.host" start swayidle.service
       pkill -SIGUSR1 swaylock
       swaylock --daemonize
       pkill -SIGUSR1 swayidle
