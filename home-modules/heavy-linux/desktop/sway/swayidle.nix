@@ -22,8 +22,15 @@ let
     in
     "${keyring}; ${screen}";
 
+  # TODO put env stuff in a reusable var
+  # TODO put all deps in runtimeInputs
+  # TODO make a single script with args instead of two separate ones
   erotic = pkgs.writeShellApplication {
     name = "erotic";
+    bashOptions = [
+      "nounset"
+      "pipefail"
+    ];
     runtimeInputs = [
       pkgs.procps
       pkgs.swaylock
@@ -36,7 +43,7 @@ let
       export WAYLAND_DISPLAY
 
       # unlock
-      pkill -SIGUSR1 swaylock || true
+      pkill -SIGUSR1 swaylock
       # stop idle service
       systemctl --user --machine="$USER@.host" stop swayidle.service
       # enable screen
@@ -53,6 +60,10 @@ let
 
   unerotic = pkgs.writeShellApplication {
     name = "unerotic";
+    bashOptions = [
+      "nounset"
+      "pipefail"
+    ];
     runtimeInputs = [
       pkgs.procps
       pkgs.swaylock
@@ -63,9 +74,9 @@ let
       WAYLAND_DISPLAY=wayland-1
       export WAYLAND_DISPLAY
 
-      pkill -SIGUSR1 swaylock || true
+      pkill -SIGUSR1 swaylock
       swaylock --daemonize
-      ${screen.off}
+      pkill -SIGUSR1 swayidle
     '';
   };
 in
