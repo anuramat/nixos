@@ -29,19 +29,43 @@ let
       pkgs.swaylock
     ];
     # TODO auto disown
-    # TODO set brightness to 100 on internal display: brightnessctl s 100%
-    # TODO brexit 100
     text = ''
+      SWAYSOCK=$(systemctl --user show-environment | sed -n 's/^SWAYSOCK=//p')
+      export SWAYSOCK
+      WAYLAND_DISPLAY=wayland-1
+      export WAYLAND_DISPLAY
+
       # unlock
       pkill -SIGUSR1 swaylock || true
       # stop idle service
       systemctl --user --machine="$USER@.host" stop swayidle.service
       # enable screen
       SWAYSOCK=$(systemctl --user show-environment | sed -n 's/^SWAYSOCK=//p') ${screen.on}
+      # set brightness
+      swaymsg 'exec "${lib.getExe pkgs.brightnessctl} s 100%"'
+      ddcutil setvcp 10 100 --display 1
       # lock with the chosen color
-      WAYLAND_DISPLAY=wayland-1 swaylock --color "$1"
+      swaylock --color "$1"
       # restart idle
       systemctl --user --machine="$USER@.host" start swayidle.service
+    '';
+  };
+
+  unerotic = pkgs.writeShellApplication {
+    name = "unerotic";
+    runtimeInputs = [
+      pkgs.procps
+      pkgs.swaylock
+    ];
+    text = ''
+      SWAYSOCK=$(systemctl --user show-environment | sed -n 's/^SWAYSOCK=//p')
+      export SWAYSOCK
+      WAYLAND_DISPLAY=wayland-1
+      export WAYLAND_DISPLAY
+
+      pkill -SIGUSR1 swaylock || true
+      swaylock --daemonize
+      ${screen.off}
     '';
   };
 in
@@ -76,5 +100,6 @@ in
   };
   home.packages = [
     erotic
+    unerotic
   ];
 }
