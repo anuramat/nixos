@@ -44,5 +44,6 @@
     [
       (map "<leader>o" "<cmd>Oil<cr>" "Oil: parent directory of the file")
       (map "<leader>O" "<cmd>Oil .<cr>" "Oil: CWD")
+      (map "<leader>t" "<cmd>Neotree<cr>" "Neotree: focus")
     ];
 }
