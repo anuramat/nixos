@@ -71,7 +71,7 @@ in
       ];
     };
   };
-  environment.systemPackages = [
+  home.packages = [
     erotic
   ];
 }
