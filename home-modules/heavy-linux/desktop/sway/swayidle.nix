@@ -30,7 +30,7 @@ let
     ];
     text = ''
       # unlock
-      pkill -SIGUSR1 swaylock
+      pkill -SIGUSR1 swaylock || true
       # stop idle service
       systemctl --user --machine="$USER@.host" stop swayidle.service
       # enable screen
