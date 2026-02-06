@@ -34,7 +34,7 @@ let
       # stop idle service
       systemctl --user --machine="$USER@.host" stop swayidle.service
       # enable screen
-      ${screen.on}
+      SWAYSOCK=$(systemctl --user show-environment | sed -n 's/^SWAYSOCK=//p') ${screen.on}
       # lock with the chosen color
       WAYLAND_DISPLAY=wayland-1 swaylock --color "$1"
       # restart idle
