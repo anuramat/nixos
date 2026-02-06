@@ -25,6 +25,7 @@ let
   # TODO put env stuff in a reusable var
   # TODO put all deps in runtimeInputs
   # TODO make a single script with args instead of two separate ones
+  # TODO turn off keyboard/mouse lights
   erotic = pkgs.writeShellApplication {
     name = "erotic";
     bashOptions = [
