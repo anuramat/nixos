@@ -45,9 +45,9 @@
       (map "<leader>o" "<cmd>Oil<cr>" "Oil: parent directory of the file")
       (map "<leader>O" "<cmd>Oil .<cr>" "Oil: CWD")
 
-      (map "<leader>tt" "<cmd>Neotree toggle show<cr>" "Neotree: toggle")
-      (map "<leader>tf" "<cmd>Neotree focus<cr>" "Neotree: focus")
-      (map "<leader>tr" "<cmd>Neotree reveal<cr>" "Neotree: reveal current file")
-      (map "<leader>tg" "<cmd>Neotree git_status<cr>" "Neotree: git status")
+      (map "<leader>tt" "<cmd>Neotree show last toggle<cr>" "Neotree: toggle")
+      (map "<leader>tf" "<cmd>Neotree focus last<cr>" "Neotree: focus")
+      (map "<leader>tr" "<cmd>Neotree show reveal<cr>" "Neotree: current file")
+      (map "<leader>tg" "<cmd>Neotree show git_status<cr>" "Neotree: git status")
     ];
 }
