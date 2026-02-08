@@ -50,7 +50,7 @@ let
 
         model_reasoning_effort = "medium";
         model_verbosity = "low";
-        model = "gpt-5.2-codex";
+        model = "gpt-5.3-codex";
 
         web_search = "live"; # "disabled" | "cached" | "live"
 
