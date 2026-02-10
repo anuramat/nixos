@@ -27,6 +27,7 @@ in
       home = config.home.homeDirectory;
       XDG_BIN_HOME = "${home}/.local/bin";
       XDG_DATA_HOME = config.xdg.dataHome;
+      CARGO_HOME = "${XDG_DATA_HOME}/cargo";
       customXdg = {
         XDG_DOCUMENTS_DIR = "${home}/docs";
         XDG_PICTURES_DIR = "${home}/img";
@@ -42,7 +43,7 @@ in
           lib.hm.dag.entryAfter [ "writeBoundary" ] "mkdir -p ${escapeShellArgs dirs}";
       };
       sessionVariables = customXdg // {
-        inherit XDG_BIN_HOME;
+        inherit XDG_BIN_HOME CARGO_HOME;
 
         # TODO just in case; verify/move
         LC_ALL = "en_US.UTF-8";
@@ -66,10 +67,10 @@ in
         TODO_FILE = "/home/anuramat/notes/todo.txt";
 
         RUSTUP_HOME = "${XDG_DATA_HOME}/rustup";
-        CARGO_HOME = "${XDG_DATA_HOME}/cargo";
       };
       sessionPath = [
         XDG_BIN_HOME
+        "${CARGO_HOME}/bin"
       ];
 
       shellAliases =
