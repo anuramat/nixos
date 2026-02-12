@@ -87,7 +87,7 @@ in
           env =
             let
               gpt = "github_copilot/gpt-5-mini";
-              glm = "cerebras/zai-glm-4.6";
+              glm = "cerebras/zai-glm-4.7";
             in
             {
               ANTHROPIC_AUTH_TOKEN = "dummy";

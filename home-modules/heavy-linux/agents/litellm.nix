@@ -54,9 +54,9 @@ let
         };
       }
       {
-        model_name = "cerebras/zai-glm-4.6";
+        model_name = "cerebras/zai-glm-4.7";
         litellm_params = {
-          model = "cerebras/zai-glm-4.6";
+          model = "cerebras/zai-glm-4.7";
           api_key = "os.environ/CEREBRAS_API_KEY";
           additional_drop_params = [ "max_tool_calls" ];
         };

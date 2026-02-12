@@ -122,7 +122,7 @@ let
         base-url = "https://api.cerebras.ai/v1";
         api-key-cmd = keys.cerebras;
         models = {
-          "zai-glm-4.6" = {
+          "zai-glm-4.7" = {
             aliases = [ "glm" ];
           };
         };

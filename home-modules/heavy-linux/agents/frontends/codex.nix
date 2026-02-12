@@ -79,7 +79,7 @@ let
             model_provider = "litellm";
           };
           openrouter = {
-            model = "z-ai/glm-4.6";
+            model = "z-ai/glm-4.7";
             model_provider = "openrouter";
             query_params = {
               provider = {
