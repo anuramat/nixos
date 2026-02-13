@@ -65,7 +65,6 @@ in
     ./mods.nix
     ./ollama.nix
     ./sandbox.nix
-    ./tools.nix
     ./whisper.nix
   ];
 

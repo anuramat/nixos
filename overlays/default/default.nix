@@ -13,12 +13,9 @@ let
     (mapAttrs (_: v: v.packages.${prev.stdenv.hostPlatform.system}.default) {
       inherit (inputs)
         subcat
-        mcp-nixos
         nil
         mods
-        zotero-mcp
         todo
-        duckduckgo-mcp-server
         statix
         deadnix
         html2text
@@ -65,7 +62,6 @@ let
       inspector = mkNpx "inspector" "@modelcontextprotocol/inspector";
       ccusage = mkNpx "ccusage" "ccusage";
       ccusage-codex = mkNpx "ccusage-codex" "@ccusage/codex";
-      perplexity-mcp = mkNpx "perplexity-mcp" "@perplexity-ai/mcp-server";
       claude-monitor = mkUv "claude-monitor" "claude-monitor";
     };
 

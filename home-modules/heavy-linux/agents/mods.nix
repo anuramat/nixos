@@ -6,18 +6,6 @@
   ...
 }:
 let
-  mcp-servers = builtins.mapAttrs (
-    name: server:
-    if server ? env then
-      # mods expects env to be an array of strings "ENVVAR=value"
-      server
-      // {
-        env = lib.mapAttrsToList (n: v: "${n}=${v}") server.env;
-      }
-    else
-      server
-  ) config.lib.agents.mcp.raw;
-
   roles = {
     default = {
       blocked_tools = [ "*" ];
@@ -144,7 +132,7 @@ let
 in
 {
   home.activation.mods = config.lib.home.yaml.set {
-    inherit apis mcp-servers;
+    inherit apis;
     default-api = "zai";
     default-model = "glm";
     fanciness = 0;

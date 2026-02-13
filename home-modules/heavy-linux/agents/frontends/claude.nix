@@ -114,7 +114,6 @@ in
       } "${cfgDir}/settings.json";
       claudeMcp = config.lib.home.json.set {
         mcpServers = {
-          # inherit (config.lib.agents.mcp.raw) ddg;
         };
       } "${cfgDir}/.claude.json";
     };

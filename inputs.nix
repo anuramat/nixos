@@ -42,14 +42,10 @@ in
 
   # forks
   mods.url = "github:anuramat/mods/dev";
-  zotero-mcp.url = "github:anuramat/zotero-mcp";
-  duckduckgo-mcp-server.url = "github:anuramat/duckduckgo-mcp-server/dev";
   protonmail-bridge = mkNonFlake "github:anuramat/proton-bridge/dev";
   html2text.url = "github:anuramat/html2text/dev";
 
   # misc
-  mcp-nixos.url = "github:utensils/mcp-nixos";
-  mcphub = mkInput "github:ravitemer/mcphub.nvim";
   nil = mkInput "github:oxalica/nil/main";
   spicetify-nix = mkInput "github:Gerg-L/spicetify-nix";
   statix.url = "github:oppiliappan/statix/master";

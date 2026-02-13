@@ -1,40 +1,5 @@
 inputs:
 (final: prev: {
-  web-search-mcp =
-    let
-      # TODO
-      webSearchMcpUrl = "https://raw.githubusercontent.com/ollama/ollama-python/main/examples/web-search-mcp.py";
-      webSearchMcpSha256 = "11q2hwnl4nzn9nw5m6s9c79phnnwjiqgqy4kzgjanhgfalvw47r3";
-      webSearchMcpSource = prev.fetchurl {
-        url = webSearchMcpUrl;
-        sha256 = webSearchMcpSha256;
-      };
-      webSearchMcpDir = prev.linkFarm "web-search-mcp" [
-        {
-          name = "web-search-mcp.py";
-          path = webSearchMcpSource;
-        }
-      ];
-    in
-    prev.writeShellApplication {
-      name = "web-search-mcp";
-      runtimeInputs = [ final.uv ];
-      text = ''
-        cd ${webSearchMcpDir}
-        exec uv run web-search-mcp.py "$@"
-      '';
-    };
-
-  # TODO this requires fastuuid which is not in nixpkgs
-  # litellm = prev.litellm.overrideAttrs (_: rec {
-  #   version = "1.77.7.rc.2";
-  #   src = prev.fetchFromGitHub {
-  #     owner = "BerriAI";
-  #     repo = "litellm";
-  #     tag = "v${version}";
-  #     hash = "sha256-utXxzyx99O+/1VqumBnafh85cRZsk3cIrVjG/wdv6yk=";
-  #   };
-  # });
 
   protonmail-bridge = prev.protonmail-bridge.overrideAttrs (oldAttrs: {
     version = "unstable";

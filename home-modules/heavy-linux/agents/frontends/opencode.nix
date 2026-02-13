@@ -65,60 +65,20 @@ let
     {
       openrouter.options.apiKey = keys.openrouter;
       zai-coding-plan.options.apiKey = keys.zai;
-      cerebras = {
-        options.apiKey = keys.cerebras;
-        models = {
-          qwen-3-235b-a22b-thinking-2507 = {
-            attachment = false;
-            reasoning = true;
-            temperature = true;
-            tool_call = true;
-            limit = rec {
-              context = 131000;
-              output = context;
-            };
-          };
-        };
-      };
       groq.options.apiKey = keys.groq;
       github-copilot.models = gpt5models;
-      # openai = {
-      #   options.apiKey = keys.openai;
-      #   models = gpt5models;
-      # };
       openai = {
         options = {
-          reasoningEffort = "medium";
-          reasoningSummary = "detailed"; # auto
+          # apiKey = keys.openai;
+          reasoningSummary = "detailed";
           textVerbosity = "low";
           include = [
             "reasoning.encrypted_content"
           ];
         };
-        models = {
-          gpt-5-codex-low-oauth = {
-            name = "GPT-5 Codex Low (OAuth)";
-            options = {
-              reasoningEffort = "low";
-            };
-          };
-          gpt-5-codex-medium-oauth = {
-            name = "GPT-5 Codex Medium (OAuth)";
-            options = {
-              reasoningEffort = "medium";
-            };
-          };
-          gpt-5-codex-high-oauth = {
-            name = "GPT-5 Codex High (OAuth)";
-            options = {
-              reasoningEffort = "high";
-            };
-          };
-        };
       };
     };
 
-  # opencode debug lsp diagnostics ./path/to/file/with/error.ts
   lsp = {
     custom-lsp = {
       command = [
@@ -131,33 +91,7 @@ let
     };
   };
 
-  mcp =
-    let
-      rawServers = mapAttrs (
-        _: server:
-        if server ? type && server.type == "http" then
-          {
-            type = "remote";
-            inherit (server) url;
-          }
-        else
-          {
-            type = "local";
-            command = [ server.command ] ++ (server.args or [ ]);
-            environment = server.env or { };
-          }
-      ) config.lib.agents.mcp.raw;
-      enabledServers = {
-        inherit (rawServers)
-          ddg
-          ;
-      };
-      disabledServers =
-        rawServers
-        |> lib.filterAttrs (n: _: !lib.hasAttr n enabledServers)
-        |> lib.mapAttrs (_: v: v // { enabled = false; });
-    in
-    enabledServers // disabledServers;
+  mcp = { };
 
   notifications = # javascript
     ''

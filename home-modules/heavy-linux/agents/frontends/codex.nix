@@ -71,7 +71,6 @@ let
         };
 
         mcp_servers = {
-          # inherit (config.lib.agents.mcp.raw) ddg;
         };
         profiles = {
           oss = {
