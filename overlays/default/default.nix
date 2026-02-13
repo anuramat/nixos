@@ -35,7 +35,6 @@ let
     in
     {
       inherit (unstable)
-        litellm
         opencode
         ;
     };

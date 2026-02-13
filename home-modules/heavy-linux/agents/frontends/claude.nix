@@ -9,6 +9,8 @@ let
   inherit (lib) mapAttrs;
   inherit (config.lib) agents;
 
+  cfgDir = config.xdg.configHome + "/claude";
+
   statusLine = {
     type = "command";
     command =
@@ -28,6 +30,7 @@ let
       pkgs.writeShellScript "statusline.sh" script;
     padding = 0;
   };
+
   hooks = {
     Notification = [
       {
@@ -42,6 +45,7 @@ let
       }
     ];
   };
+
   permissions = {
     allow = [ ];
     deny = [ ];
@@ -52,8 +56,6 @@ let
       adaptedCommands = agents.commands |> mapAttrs (_: v: v.withFM { inherit (v) description; });
     in
     agents.mkPrompts "claude/commands" adaptedCommands;
-
-  cfgDir = config.xdg.configHome + "/claude";
 in
 {
   xdg.configFile = {
@@ -82,22 +84,6 @@ in
             CLAUDE_CODE_OAUTH_TOKEN = t.claudecode;
           };
         };
-        claude-lite = mkClaude {
-          wrapperName = "claude-lite";
-          env =
-            let
-              gpt = "github_copilot/gpt-5-mini";
-              glm = "cerebras/zai-glm-4.7";
-            in
-            {
-              ANTHROPIC_AUTH_TOKEN = "dummy";
-              ANTHROPIC_DEFAULT_OPUS_MODEL = gpt;
-              ANTHROPIC_DEFAULT_SONNET_MODEL = glm;
-              ANTHROPIC_DEFAULT_HAIKU_MODEL = glm;
-              CLAUDE_CODE_SUBAGENT_MODEL = glm;
-              ANTHROPIC_BASE_URL = "http://localhost:11333";
-            };
-        };
         claude-zai = mkClaude {
           wrapperName = "claude-zai";
           tokens = t: {
@@ -105,6 +91,7 @@ in
           };
           env = {
             ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
+            API_TIMEOUT_MS = "3000000";
           };
         };
 
@@ -113,22 +100,12 @@ in
       [
         claude
         claude-zai
-        claude-lite
-      ]
-      ++ (with pkgs; [
-        ccusage
-        ccusage-codex
-        claude-monitor
-      ]);
+        pkgs.ccusage
+        pkgs.claude-monitor
+      ];
     activation = {
       claudeSettings = config.lib.home.json.set {
         includeCoAuthoredBy = false;
-        env = {
-          # CLAUDE_CODE_DISABLE_TERMINAL_TITLE = 1;
-          # DISABLE_NON_ESSENTIAL_MODEL_CALLS = 1;
-          # MAX_MCP_OUTPUT_TOKENS -- default 25k
-          # BASH_MAX_OUTPUT_LENGTH -- chars, default 30k
-        };
         inherit
           hooks
           permissions

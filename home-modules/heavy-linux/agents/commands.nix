@@ -42,9 +42,9 @@ let
 in
 {
   lib.agents.commands = {
-    agupd = memupdate "AGENTS.md";
-    clupd = memupdate "CLAUDE.md";
-    specfix = rec {
+    update_agents = memupdate "AGENTS.md";
+    update_claude = memupdate "CLAUDE.md";
+    iterate_spec = rec {
       description = "refine feature specification in SPEC.md";
       withFM = prependFrontmatter text;
       text = ''
@@ -85,20 +85,6 @@ in
       # TODO "if possible, assume the simplest behaviour that satisfies the spec when something is ambiguous"
       # TODO add a follow-up command to fix the spec based on the analysis:
       # I edited the spec in the last commit; review the last commit and list the remaining issues that were not fixed
-    };
-    planmk = rec {
-      description = "plan the changes";
-      withFM = prependFrontmatter text;
-      text = ''
-        I want you to provide a plan for the following task:
-
-        $ARGUMENTS
-
-        You can read files and search the web, but do not edit any files yet.
-        Gather the required information and provide a concise plan of the
-        changes required to accomplish the task. Provide key code snippets, if
-        applicable.
-      '';
     };
   };
 }

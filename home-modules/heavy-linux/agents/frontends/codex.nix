@@ -135,7 +135,7 @@ let
   env = {
     CODEX_HOME = codexHome;
   };
-  pkg = config.lib.agents.mkPackages {
+  codex = config.lib.agents.mkPackages {
     binName = "codex";
     package = pkgs.codex;
     args = [ "--dangerously-bypass-approvals-and-sandbox" ];
@@ -149,7 +149,10 @@ in
 {
   home.sessionVariables = env;
   home = {
-    packages = [ pkg ];
+    packages = [
+      codex
+      pkgs.ccusage-codex
+    ];
     activation = {
       codexConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         run cat ${codexTomlCfg} > "${codexCfgPath}";

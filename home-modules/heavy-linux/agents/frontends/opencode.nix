@@ -9,35 +9,8 @@ let
   inherit (lib) mapAttrs getExe;
   inherit (config.lib) agents;
 
-  glm = "cerebras/zai-glm-4.7";
-  # glm = "zai-coding-plan/glm-4.7";
-
-  local =
-    let
-      model = osConfig.services.llama-cpp.modelExtra;
-    in
-    rec {
-      enabled = osConfig != null && osConfig.services.llama-cpp.enable;
-      providerId = "llama-cpp";
-      modelId = model.id;
-      providerConfig =
-        if enabled then
-          {
-            ${providerId} = {
-              npm = "@ai-sdk/openai-compatible";
-              options.baseURL = "http://localhost:${toString osConfig.services.llama-cpp.port}";
-              name = "llama.cpp";
-              models = {
-                ${model.id}.limit = {
-                  output = model.params.ctxSize;
-                  context = model.params.ctxSize;
-                };
-              };
-            };
-          }
-        else
-          { };
-    };
+  # glm = "cerebras/zai-glm-4.7";
+  glm = "zai-coding-plan/glm-5";
 
   agent =
     let
@@ -89,21 +62,7 @@ let
           gpt-5-mini.options = gptOutputOptions;
         };
     in
-    local.providerConfig
-    // {
-      anthropic.models.claude-sonnet-4-20250514.options.thinking = {
-        type = "enabled";
-        budgetTokens = 10000;
-      };
-      litellm = {
-        npm = "@ai-sdk/openai-compatible";
-        options = {
-          baseURL = "http://localhost:11333";
-          apiKey = "dummy";
-        };
-        models = {
-        };
-      };
+    {
       openrouter.options.apiKey = keys.openrouter;
       zai-coding-plan.options.apiKey = keys.zai;
       cerebras = {

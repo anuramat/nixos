@@ -33,24 +33,6 @@ let
         ''
       ];
     };
-    search = {
-      allowed_tools = [
-        "ddg_*"
-      ];
-      prompt = [
-        ''
-          - use ddg_* tools to find relevant information and to answer the question provided by the user
-          - you MUST execute at least one web search
-          - you MUST fetch at least one page
-        ''
-      ];
-    };
-    zotero = {
-      allowed_tools = [
-        "ddg_*"
-        "zotero_*"
-      ];
-    };
     summarizer = {
       blocked_tools = [ "*" ];
       prompt = [
@@ -127,6 +109,15 @@ let
           };
         };
       };
+      zai = {
+        base-url = "https://api.z.ai/api/paas/v4";
+        api-key-cmd = keys.zai;
+        models = {
+          "glm-5" = {
+            aliases = [ "glm" ];
+          };
+        };
+      };
       copilot = {
         base-url = "https://api.githubcopilot.com";
         models = {
@@ -149,29 +140,13 @@ let
           };
         };
       };
-    }
-    // (
-      let
-        l = osConfig.services.llama-cpp;
-        when = v: if osConfig != null && l.enable then v else { };
-      in
-      when {
-        llama-cpp = {
-          base-url = "http://localhost:${toString l.port}";
-          api-key = "dummy";
-          models = {
-            ${l.modelExtra.id} = {
-            };
-          };
-        };
-      }
-    );
+    };
 in
 {
   home.activation.mods = config.lib.home.yaml.set {
     inherit apis mcp-servers;
-    default-api = "copilot";
-    default-model = "gpt-4.1";
+    default-api = "zai";
+    default-model = "glm";
     fanciness = 0;
     role = "shell";
     inherit roles;
