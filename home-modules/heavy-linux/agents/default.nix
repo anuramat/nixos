@@ -107,6 +107,7 @@ in
       ghcp-models
       summarize
       inspector
+      agentfs
     ];
   };
 }
