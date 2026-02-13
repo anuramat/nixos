@@ -64,6 +64,8 @@ let
     in
     {
       openrouter.options.apiKey = keys.openrouter;
+      ollama-cloud.options.apiKey = keys.ollama;
+      cerebras.options.apiKey = keys.cerebras;
       zai-coding-plan.options.apiKey = keys.zai;
       groq.options.apiKey = keys.groq;
       github-copilot.models = gpt5models;
