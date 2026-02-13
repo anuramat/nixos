@@ -5,8 +5,8 @@
     zenith-nvidia # top WITH nvidia GPUs
     nvitop # nvidia gpu
 
-    mermaid-filter
     bubblewrap # sandboxing
+    agentfs
 
     parted
     geteduroam-cli
