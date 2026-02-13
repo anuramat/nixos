@@ -62,7 +62,6 @@ in
     ./frontends
     ./git.nix
     ./instructions.nix
-    ./litellm.nix
     ./mods.nix
     ./ollama.nix
     ./sandbox.nix
