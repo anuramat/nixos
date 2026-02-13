@@ -139,6 +139,19 @@ in
     "opencode/plugin/notifications.js".text = notifications;
   };
   home = {
+    # tui state
+    activation.opencodeKv = config.lib.home.json.set {
+      openrouter_warning = false;
+      terminal_title_enabled = false;
+      sidebar = "auto"; # auto | hide
+      thinking_visibility = false;
+      timestamps = "hide"; # show | hide
+      tool_details_visibility = false;
+      assistant_metadata_visibility = true;
+      scrollbar_visible = false;
+      animations_enabled = false;
+      theme_mode = "dark";
+    } (config.xdg.stateHome + "/opencode/kv.json");
     activation.opencodeSettings = config.lib.home.json.set {
       inherit
         provider
