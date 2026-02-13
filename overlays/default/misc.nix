@@ -17,20 +17,6 @@ inputs:
     # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
   });
 
-  mystmd = prev.stdenv.mkDerivation rec {
-    pname = "mystmd";
-    version = "1.6.0";
-    src = prev.fetchzip {
-      url = "https://registry.npmjs.org/mystmd/-/mystmd-${version}.tgz";
-      hash = "sha256-OatP9lv2/K4W3puaGAcECOfzNMR6a2zIntsxRnnAn4Q=";
-    };
-    installPhase = ''
-      runHook preInstall
-      install -D dist/myst.cjs $out/bin/myst
-      runHook postInstall
-    '';
-  };
-
   codex = prev.stdenv.mkDerivation rec {
     pname = "codex";
     version = "0.98.0";
@@ -47,6 +33,21 @@ inputs:
       $out/bin/codex completion bash >$out/share/bash-completion/completions/codex
     '';
     meta.mainProgram = "codex";
+  };
+
+  agentfs = prev.stdenv.mkDerivation rec {
+    pname = "agentfs";
+    version = "0.6.0";
+    src = prev.fetchzip {
+      url = "https://github.com/tursodatabase/agentfs/releases/download/v${version}/agentfs-x86_64-unknown-linux-gnu.tar.xz";
+      hash = "sha256-JWevVEE/AYzbc4/LiQR46BelGwnM/vWheR/s2U8nI4g=";
+    };
+    installPhase = ''
+      runHook preInstall
+      install -Dt $out/bin agentfs
+      runHook postInstall
+    '';
+    meta.mainProgram = "agentfs";
   };
 
   llama-cpp = prev.llama-cpp.overrideAttrs (_: rec {
