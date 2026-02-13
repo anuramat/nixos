@@ -42,6 +42,9 @@ in
           mkdir -p ${escapeShellArg path}
         '';
     };
+    shellAliases = {
+      mutt = "neomutt";
+    };
   };
   programs = {
     neomutt = {
