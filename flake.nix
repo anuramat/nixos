@@ -23,9 +23,6 @@
     deadnix = {
       url = "github:astro/deadnix/main";
     };
-    duckduckgo-mcp-server = {
-      url = "github:anuramat/duckduckgo-mcp-server/dev";
-    };
     ez-configs = {
       inputs = {
         flake-parts = {
@@ -67,17 +64,6 @@
     };
     mac-app-util = {
       url = "github:hraban/mac-app-util";
-    };
-    mcp-nixos = {
-      url = "github:utensils/mcp-nixos";
-    };
-    mcphub = {
-      inputs = {
-        nixpkgs = {
-          follows = "nixpkgs";
-        };
-      };
-      url = "github:ravitemer/mcphub.nvim";
     };
     mods = {
       url = "github:anuramat/mods/dev";
@@ -174,9 +160,6 @@
     tt-schemes = {
       flake = false;
       url = "github:tinted-theming/schemes";
-    };
-    zotero-mcp = {
-      url = "github:anuramat/zotero-mcp";
     };
   };
   outputs = args: import ./outputs.nix args;
