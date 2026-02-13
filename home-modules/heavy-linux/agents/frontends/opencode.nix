@@ -151,7 +151,7 @@ in
       tool_details_visibility = false;
       assistant_metadata_visibility = true;
       scrollbar_visible = false;
-      animations_enabled = false;
+      animations_enabled = true;
       theme_mode = "dark";
     } (config.xdg.stateHome + "/opencode/kv.json");
     activation.opencodeSettings = config.lib.home.json.set {
