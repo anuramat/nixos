@@ -46,9 +46,9 @@ let
         zai
         ;
     };
+  keys = mapAttrs (n: _: "{env:${n}}") osConfig.age.secrets;
   provider =
     let
-      keys = mapAttrs (n: _: "{env:${n}}") osConfig.age.secrets;
       # TODO tidy gpt5 models
       gpt5models =
         let
@@ -91,7 +91,21 @@ let
     };
   };
 
-  mcp = { };
+  mcp =
+    let
+      mkZaiMcp = url: {
+        inherit url;
+        type = "remote";
+        headers = {
+          Authorization = "Bearer ${keys.zai}";
+        };
+      };
+    in
+    {
+      web-search-prime = mkZaiMcp "https://api.z.ai/api/mcp/web_search_prime/mcp";
+      web-reader = mkZaiMcp "https://api.z.ai/api/mcp/web_reader/mcp";
+      zread = "https://api.z.ai/api/mcp/zread/mcp";
+    };
 
   notifications = # javascript
     ''
