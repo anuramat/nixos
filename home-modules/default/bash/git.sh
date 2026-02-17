@@ -184,3 +184,39 @@ __gitgud_git_prompt() {
 	# dirty => non-zero return code:
 	printf %s "$status" | ansifilter | grep -qv '\S'
 }
+
+gwt() {
+	local reponame
+	reponame=$(basename "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")")
+	local worktrees_dir
+	worktrees_dir="${XDG_DATA_HOME:-$HOME/.local/share}/git/worktrees/$reponame/"
+
+	case "$#" in
+		0)
+			cd "$(git worktree list --porcelain -z | grep -z '^worktree' | cut -z -d ' ' -f 2 | fzf --read0)" || return
+			;;
+		1)
+			cd "$(git worktree list --porcelain -z | grep -z '^worktree' | cut -z -d ' ' -f 2 | fzf --read0 -q "$1" -1 -0)" || return
+			;;
+		2)
+			local worktree
+			worktree="$2"
+			local worktree_path
+			case "$1" in
+				new)
+					worktree_path="$worktrees_dir/$worktree"
+					mkdir -p "$(dirname "$worktree_path")"
+					git worktree add "$worktree_path"
+					;;
+				rm)
+					worktree_path="$(git worktree list --porcelain -z | grep -z worktree | cut -z -d ' ' -f 2 | fzf -q "$worktree" -1 -0)" || return
+					gum confirm "delete $worktrees_dir/$2" && rm -rf "${match:?}/$2"
+					;;
+				*)
+					exit 1
+					;;
+			esac
+			;;
+		*) echo "usage: ..." && return 1 ;;
+	esac
+}

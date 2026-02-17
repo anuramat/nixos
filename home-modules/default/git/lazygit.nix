@@ -5,7 +5,10 @@
   programs.lazygit = {
     enable = true;
     settings = {
-      git.pagers = [ { externalDiffCommand = "difft"; } ];
+      git.pagers = [
+        { externalDiffCommand = "difft"; }
+        { pager = "delta --dark --paging=never"; }
+      ];
     };
   };
 }

@@ -9,11 +9,14 @@
     ./ignores.nix
     ./jupyter.nix
     ./lazygit.nix
-    ./worktrees.nix
   ];
 
   home.sessionVariables.GHQ_ROOT = "${config.xdg.dataHome}/ghq";
   programs = {
+    delta = {
+      enable = true;
+      enableGitIntegration = true;
+    };
 
     git = {
       enable = true;
