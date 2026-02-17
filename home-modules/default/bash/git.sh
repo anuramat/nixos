@@ -199,18 +199,18 @@ gwt() {
 			cd "$(git worktree list --porcelain -z | grep -z '^worktree' | cut -z -d ' ' -f 2 | fzf --read0 -q "$1" -1)" || return
 			;;
 		2)
+			local name
+			name="$2"
 			local worktree
-			worktree="$2"
-			local worktree_path
 			case "$1" in
 				new)
-					worktree_path="$worktrees_dir/$worktree"
-					mkdir -p "$(dirname "$worktree_path")"
-					git worktree add "$worktree_path"
+					worktree="$worktrees_dir/$name"
+					mkdir -p "$(dirname "$worktree")"
+					git worktree add "$worktree"
 					;;
 				rm)
-					worktree_path="$(git worktree list --porcelain -z | grep -z worktree | cut -z -d ' ' -f 2 | fzf --read0 -q "$worktree" -1)" || return
-					gum confirm "delete $worktrees_dir/$2" && rm -rf "${match:?}/$2"
+					worktree="$(git worktree list --porcelain -z | grep -z worktree | cut -z -d ' ' -f 2 | fzf --read0 -q "$name" -1)" || return
+					gum confirm "delete $worktree" && rm -rf "${worktree:?}/$2"
 					;;
 				*)
 					exit 1
