@@ -7,7 +7,7 @@
     settings = {
       git.pagers = [
         { externalDiffCommand = "difft"; }
-        { pager = "delta --dark --paging=never"; }
+        { pager = "delta --paging=never"; }
       ];
     };
   };
