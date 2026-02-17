@@ -196,7 +196,7 @@ gwt() {
 			cd "$(git worktree list --porcelain -z | grep -z '^worktree' | cut -z -d ' ' -f 2 | fzf --read0)" || return
 			;;
 		1)
-			cd "$(git worktree list --porcelain -z | grep -z '^worktree' | cut -z -d ' ' -f 2 | fzf --read0 -q "$1" -1 -0)" || return
+			cd "$(git worktree list --porcelain -z | grep -z '^worktree' | cut -z -d ' ' -f 2 | fzf --read0 -q "$1" -1)" || return
 			;;
 		2)
 			local worktree
@@ -209,7 +209,7 @@ gwt() {
 					git worktree add "$worktree_path"
 					;;
 				rm)
-					worktree_path="$(git worktree list --porcelain -z | grep -z worktree | cut -z -d ' ' -f 2 | fzf -q "$worktree" -1 -0)" || return
+					worktree_path="$(git worktree list --porcelain -z | grep -z worktree | cut -z -d ' ' -f 2 | fzf -q "$worktree" -1)" || return
 					gum confirm "delete $worktrees_dir/$2" && rm -rf "${match:?}/$2"
 					;;
 				*)
