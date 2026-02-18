@@ -105,7 +105,7 @@ in
             };
             home = {
               criteria = "Dell Inc. DELL S2722QC 192SH24";
-              scale = 1.0;
+              scale = 2.0;
               adaptiveSync = false;
             };
             generic = {
