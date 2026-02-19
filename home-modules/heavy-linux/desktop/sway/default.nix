@@ -5,8 +5,8 @@
     ./keys
     ./autologin.nix
     ./outputs.nix
-    ./waybar.nix
-    ./swayidle.nix
+    ./bar.nix
+    ./idle.nix
   ];
   wayland.systemd.target =
     let
@@ -45,7 +45,6 @@
           ];
       };
       config = {
-        bars = [ ];
         focus = {
           followMouse = "no";
           wrapping = "no";
