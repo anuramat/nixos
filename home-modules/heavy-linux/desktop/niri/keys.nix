@@ -149,21 +149,21 @@ in
 {
   programs.niri.settings.binds = {
 
+    "Mod+Shift+Slash".action.show-hotkey-overlay = { };
+
+    "Alt+Space".action.switch-layout = { };
     "Mod+Q" = {
       action."close-window" = { };
       repeat = false;
     };
     "Mod+semicolon".action.spawn = "foot";
-    "Mod+Shift+Slash".action.show-hotkey-overlay = { };
     "Mod+Space".action.spawn = pickers.drun;
-    "Mod+Ctrl+Q".action.spawn = [
-      "loginctl"
-      "lock-session"
-    ];
+    "Mod+Ctrl+Q".action.spawn = ctl.lock;
+    "Mod+Shift+Q".action.spawn = ctl.sleep;
+
     "Mod+P".action.screenshot = { };
     "Mod+Ctrl+P".action.screenshot-window = { };
     "Mod+Shift+P".action.screenshot-screen = { };
-    "Alt+Space".action.switch-layout = { };
 
     "Mod+Minus".action."set-column-width" = "-10%";
     "Mod+Equal".action."set-column-width" = "+10%";
@@ -172,6 +172,16 @@ in
     "Mod+V".action."toggle-window-floating" = { };
     "Mod+Shift+V".action."switch-focus-between-floating-and-tiling" = { };
     "Mod+W".action."toggle-column-tabbed-display" = { };
+    "Mod+Comma".action."consume-window-into-column" = { };
+    "Mod+Period".action."expel-window-from-column" = { };
+    "Mod+R".action."switch-preset-column-width" = { };
+    "Mod+Shift+R".action."switch-preset-window-height" = { };
+    "Mod+Ctrl+R".action."reset-window-height" = { };
+    "Mod+F".action."maximize-column" = { };
+    "Mod+Shift+F".action."fullscreen-window" = { };
+    "Mod+Ctrl+F".action."expand-column-to-available-width" = { };
+    "Mod+C".action."center-column" = { };
+    "Mod+Ctrl+C".action."center-visible-columns" = { };
 
     "Mod+H".action."focus-column-left" = { };
     "Mod+L".action."focus-column-right" = { };
