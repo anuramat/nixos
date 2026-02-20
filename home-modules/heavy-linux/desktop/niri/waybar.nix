@@ -31,13 +31,12 @@ in
             "pulseaudio"
             "backlight"
             "idle_inhibitor"
-            # "sway/language"
+            "niri/language"
             "mpris"
           ];
           modules-center = [
             "custom/rec"
-            # "sway/workspaces"
-            # "sway/scratchpad"
+            "niri/workspaces"
           ];
           modules-right = [
             "tray"
@@ -133,6 +132,7 @@ in
             path = "/";
           };
         };
+        niri = { };
         sway = {
           "sway/scratchpad" = {
             format = "{icon} {count}";
