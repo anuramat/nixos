@@ -1,3 +1,6 @@
+let
+  wm = "niri";
+in
 {
   # auto start on 1st tty
   programs.bash = {
@@ -10,7 +13,7 @@
           if [[ -v WLR_DRM_DEVICES ]]; then
             export WLR_DRM_DEVICES=$(realpath "$WLR_DRM_DEVICES")
           fi
-          exec sway
+          exec ${wm}
         fi
       '';
   };

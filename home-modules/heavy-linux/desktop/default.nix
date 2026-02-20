@@ -1,6 +1,7 @@
 args:
 {
   imports = [
+    ./autologin.nix
     ./clipboard.nix
     ./mako.nix
     ./menu.nix

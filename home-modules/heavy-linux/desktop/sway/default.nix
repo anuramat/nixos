@@ -9,7 +9,6 @@
   imports = [
     ./inputs.nix
     ./keys
-    ./autologin.nix
     ./outputs.nix
     ./bar.nix
     ./idle.nix
