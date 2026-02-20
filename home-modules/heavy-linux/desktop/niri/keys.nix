@@ -170,6 +170,23 @@ in
     "Mod+Shift+Minus".action."set-window-height" = "-10%";
     "Mod+Shift+Equal".action."set-window-height" = "+10%";
 
+    "Mod+H".action."focus-column-left" = { };
+    "Mod+L".action."focus-column-right" = { };
+    # "Mod+J".action."focus-window-down" = { };
+    "Mod+J".action."focus-window-or-workspace-down" = { };
+    # "Mod+K".action."focus-window-up" = { };
+    "Mod+K".action."focus-window-or-workspace-up" = { };
+
+    "Mod+Alt+H".action."consume-or-expel-window-left" = { };
+    "Mod+Alt+L".action."consume-or-expel-window-right" = { };
+
+    "Mod+Ctrl+H".action."move-column-left" = { };
+    "Mod+Ctrl+L".action."move-column-right" = { };
+    # "Mod+Ctrl+J".action."move-window-down" = { };
+    "Mod+Ctrl+J".action."move-window-down-or-to-workspace-down" = { };
+    # "Mod+Ctrl+K".action."move-window-up" = { };
+    "Mod+Ctrl+K".action."move-window-up-or-to-workspace-up" = { };
+
     # XXX --------------------------------------------------------------------------------------------
 
     # Mod+J     { focus-window-or-workspace-down; }
@@ -214,32 +231,17 @@ in
     "Mod+Shift+R".action."switch-preset-window-height" = { };
     "Mod+Ctrl+R".action."reset-window-height" = { };
 
-    "Mod+F".action."maximize-column" = { };
-    "Mod+Shift+F".action."fullscreen-window" = { };
-    "Mod+Ctrl+F".action."expand-column-to-available-width" = { };
+    "Mod+F".action."fullscreen-window" = { };
+    "Mod+Ctrl+F".action."maximize-column" = { };
+    "Mod+Shift+F".action."expand-column-to-available-width" = { };
 
     "Mod+C".action."center-column" = { };
     "Mod+Ctrl+C".action."center-visible-columns" = { };
 
-    "Mod+H".action."focus-column-left" = { };
-    "Mod+L".action."focus-column-right" = { };
-    "Mod+J".action."focus-window-down" = { };
-    "Mod+K".action."focus-window-up" = { };
-
-    "Mod+Ctrl+H".action."move-column-left" = { };
-    "Mod+Ctrl+L".action."move-column-right" = { };
-    # "Mod+Ctrl+J".action."move-window-down" = { };
-    "Mod+Ctrl+J".action."move-window-down-or-to-workspace-down" = { };
-    # "Mod+Ctrl+K".action."move-window-up" = { };
-    "Mod+Ctrl+K".action."move-window-up-or-to-workspace-up" = { };
-
-    "Mod+Shift+H".action."focus-monitor-left" = { };
-    "Mod+Shift+L".action."focus-monitor-right" = { };
-    "Mod+Shift+J".action."focus-monitor-down" = { };
-    "Mod+Shift+K".action."focus-monitor-up" = { };
-
-    "Mod+BracketLeft".action."consume-or-expel-window-left" = { };
-    "Mod+BracketRight".action."consume-or-expel-window-right" = { };
+    # "Mod+Shift+H".action."focus-monitor-left" = { };
+    # "Mod+Shift+L".action."focus-monitor-right" = { };
+    # "Mod+Shift+J".action."focus-monitor-down" = { };
+    # "Mod+Shift+K".action."focus-monitor-up" = { };
 
     # XXX --------------------------------------------------------------------------------------------
 
