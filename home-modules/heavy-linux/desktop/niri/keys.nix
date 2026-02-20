@@ -119,6 +119,7 @@ in
 
 {
   programs.niri.settings.binds = {
+
     "Mod+Q" = {
       action."close-window" = { };
       repeat = false;
@@ -126,7 +127,7 @@ in
     "Mod+semicolon".action.spawn = "foot";
     "Mod+Shift+Slash".action.show-hotkey-overlay = { };
     "Mod+Space".action.spawn = pickers.drun;
-    "Mod+Ctrl+Q".action.spawn = ctl.lock;
+    "Mod+Ctrl+Q".action.spawn-sh = ctl.lock;
 
     "Mod+H".action."focus-column-left" = { };
     "Mod+L".action."focus-column-right" = { };
@@ -170,6 +171,10 @@ in
     "Mod+Ctrl+7".action."move-column-to-workspace" = 7;
     "Mod+Ctrl+8".action."move-column-to-workspace" = 8;
     "Mod+Ctrl+9".action."move-column-to-workspace" = 9;
+
+    "Mod+Tab".action."focus-workspace-previous" = { };
+    "Mod+BracketLeft".action."consume-or-expel-window-left" = { };
+    "Mod+BracketRight".action."consume-or-expel-window-right" = { };
 
     "XF86MonBrightnessDown" = mkCtl ctl.brightness.down;
     "XF86MonBrightnessUp" = mkCtl ctl.brightness.up;
