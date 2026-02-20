@@ -6,6 +6,7 @@
   ...
 }:
 {
+  # TODO idle inputs default (from sway)
   imports = [
     inputs.niri.homeModules.stylix
     inputs.niri.homeModules.niri
