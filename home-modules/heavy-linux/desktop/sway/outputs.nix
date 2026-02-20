@@ -101,6 +101,7 @@ in
             };
             f12 = {
               criteria = "BOE NV122WUM-N42 Unknown";
+              scale = 1.0;
               position = "0,0";
             };
             home = {
