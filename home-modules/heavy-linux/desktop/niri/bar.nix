@@ -4,6 +4,7 @@ let
   toList = str: lib.splitString " " str;
 in
 {
+  # TODO make a builder and reuse in sway
   programs.waybar = {
     enable = true;
     # TODO MemoryMax="500M"

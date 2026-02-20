@@ -10,7 +10,6 @@
     ./inputs.nix
     ./keys
     ./outputs.nix
-    ./bar.nix
     ./idle.nix
   ];
   wayland.systemd.target =
