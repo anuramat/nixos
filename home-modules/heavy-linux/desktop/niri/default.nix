@@ -10,6 +10,7 @@
     inputs.niri.homeModules.stylix
     inputs.niri.homeModules.niri
     ./keys.nix
+    ./waybar.nix
   ];
   services.gnome-keyring.enable = lib.mkForce false;
   programs.niri = {
