@@ -137,8 +137,6 @@ let
       ];
     };
 
-  # TODO markup screenshots
-
   mkCtl = x: {
     allow-when-locked = true;
     action.spawn = x;
@@ -160,7 +158,9 @@ in
     "Mod+Space".action.spawn = pickers.drun;
     "Mod+Ctrl+Q".action.spawn = ctl.lock;
     "Mod+Shift+Q".action.spawn = ctl.sleep;
+    "Mod+Tab".action."focus-workspace-previous" = { };
 
+    # TODO markup screenshots and wf-recorder
     "Mod+P".action.screenshot = { };
     "Mod+Ctrl+P".action.screenshot-window = { };
     "Mod+Shift+P".action.screenshot-screen = { };
@@ -189,7 +189,6 @@ in
     # Mod+Shift+U         { move-workspace-down; }
     # Mod+Shift+I         { move-workspace-up; }
     # Mod+Ctrl+1 { move-window-to-workspace 1; }
-
     "Mod+Minus".action."set-column-width" = "-10%";
     "Mod+Equal".action."set-column-width" = "+10%";
     "Mod+Shift+Minus".action."set-window-height" = "-10%";
@@ -225,6 +224,9 @@ in
     "Mod+Shift+J".action."focus-monitor-down" = { };
     "Mod+Shift+K".action."focus-monitor-up" = { };
 
+    "Mod+BracketLeft".action."consume-or-expel-window-left" = { };
+    "Mod+BracketRight".action."consume-or-expel-window-right" = { };
+
     # NOTE
     # Keep in mind that niri is a dynamic workspace system, so these commands
     # are kind of "best effort". Trying to refer to a workspace index bigger
@@ -253,10 +255,6 @@ in
     "Mod+Ctrl+7".action."move-column-to-workspace" = 7;
     "Mod+Ctrl+8".action."move-column-to-workspace" = 8;
     "Mod+Ctrl+9".action."move-column-to-workspace" = 9;
-
-    "Mod+Tab".action."focus-workspace-previous" = { };
-    "Mod+BracketLeft".action."consume-or-expel-window-left" = { };
-    "Mod+BracketRight".action."consume-or-expel-window-right" = { };
 
     "XF86MonBrightnessDown" = mkCtl ctl.brightness.down;
     "XF86MonBrightnessUp" = mkCtl ctl.brightness.up;
