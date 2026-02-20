@@ -13,14 +13,7 @@
     ./outputs.nix
     ./bar.nix
     ./idle.nix
-    inputs.niri.homeModules.stylix
-    inputs.niri.homeModules.niri
   ];
-  programs.niri = {
-    enable = true;
-    package = pkgs.niri;
-  };
-  services.gnome-keyring.enable = lib.mkForce false;
   wayland.systemd.target =
     let
       name = "sway-session";
