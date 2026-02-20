@@ -79,6 +79,14 @@
       };
       url = "github:oxalica/nil/main";
     };
+    niri = {
+      inputs = {
+        nixpkgs = {
+          follows = "nixpkgs";
+        };
+      };
+      url = "github:sodiboo/niri-flake";
+    };
     nix-topology = {
       url = "github:oddlama/nix-topology";
     };
