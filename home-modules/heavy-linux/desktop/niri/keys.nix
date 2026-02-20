@@ -165,6 +165,31 @@ in
     "Mod+Ctrl+P".action.screenshot-window = { };
     "Mod+Shift+P".action.screenshot-screen = { };
 
+    # Mod+J     { focus-window-or-workspace-down; }
+    # Mod+K     { focus-window-or-workspace-up; }
+    # Mod+Ctrl+J     { move-window-down-or-to-workspace-down; }
+    # Mod+Ctrl+K     { move-window-up-or-to-workspace-up; }
+    # Mod+Home { focus-column-first; }
+    # Mod+End  { focus-column-last; }
+    # Mod+Ctrl+Home { move-column-to-first; }
+    # Mod+Ctrl+End  { move-column-to-last; }
+    # Mod+Shift+Ctrl+Left  { move-window-to-monitor-left; }
+    # Mod+Shift+Ctrl+Left  { move-workspace-to-monitor-left; }
+    # Mod+Page_Down      { focus-workspace-down; }
+    # Mod+Page_Up        { focus-workspace-up; }
+    # Mod+U              { focus-workspace-down; }
+    # Mod+I              { focus-workspace-up; }
+    # Mod+Ctrl+Page_Down { move-column-to-workspace-down; }
+    # Mod+Ctrl+Page_Up   { move-column-to-workspace-up; }
+    # Mod+Ctrl+U         { move-column-to-workspace-down; }
+    # Mod+Ctrl+I         { move-column-to-workspace-up; }
+    # Mod+Ctrl+Page_Down { move-window-to-workspace-down; }
+    # Mod+Shift+Page_Down { move-workspace-down; }
+    # Mod+Shift+Page_Up   { move-workspace-up; }
+    # Mod+Shift+U         { move-workspace-down; }
+    # Mod+Shift+I         { move-workspace-up; }
+    # Mod+Ctrl+1 { move-window-to-workspace 1; }
+
     "Mod+Minus".action."set-column-width" = "-10%";
     "Mod+Equal".action."set-column-width" = "+10%";
     "Mod+Shift+Minus".action."set-window-height" = "-10%";
