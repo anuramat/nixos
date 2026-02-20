@@ -119,8 +119,16 @@ in
 
 {
   programs.niri.settings.binds = {
-    "Mod+Q" = "close-window";
+    "Mod+Q" = {
+      action."close-window" = { };
+      repeat = false;
+    };
     "Mod+semicolon".action.spawn = "foot";
+
+    "Mod+H".action."focus-column-left" = { };
+    "Mod+J".action."focus-window-down" = { };
+    "Mod+K".action."focus-window-up" = { };
+    "Mod+L".action."focus-column-right" = { };
 
     "XF86MonBrightnessDown" = mkCtl ctl.brightness.down;
     "XF86MonBrightnessUp" = mkCtl ctl.brightness.up;
