@@ -18,6 +18,7 @@ in
     settings =
       let
         main = {
+          layer = "top";
           mode = "dock";
           position = "top";
           ipc = true;

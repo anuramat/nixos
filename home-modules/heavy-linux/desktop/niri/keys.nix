@@ -13,41 +13,65 @@ let
   ctl = {
     brightness =
       let
-        l = v: [
-          "${pkgs.avizo}/bin/lightctl"
-          v
-        ];
+        bin = "${pkgs.avizo}/bin/lightctl";
       in
       {
-        up = l "up";
-        down = l "down";
+        up = [
+          bin
+          "up"
+        ];
+        down = [
+          bin
+          "down"
+        ];
       };
     sound =
       let
-        l = v: [
-          "${pkgs.avizo}/bin/volumectl"
-          v
-        ];
+        bin = "${pkgs.avizo}/bin/volumectl";
       in
       {
-        up = l "-u up";
-        down = l "-u down";
-        mute = l "toggle-mute";
-        muteMic = l "-m toggle-mute";
+        up = [
+          bin
+          "-u"
+          "up"
+        ];
+        down = [
+          bin
+          "-u"
+          "down"
+        ];
+        mute = [
+          bin
+          "toggle-mute"
+        ];
+        muteMic = [
+          bin
+          "-m"
+          "toggle-mute"
+        ];
       };
     playback =
       let
         # `-p spotify` for specific player
-        l = v: [
-          "${pkgs.playerctl}/bin/playerctl"
-          v
-        ];
+        bin = "${pkgs.playerctl}/bin/playerctl";
       in
       {
-        prev = l "previous";
-        next = l "next";
-        playPause = l "play-pause";
-        stop = l "stop";
+        prev = [
+          bin
+          "previous"
+        ];
+        next = [
+          bin
+          "next"
+        ];
+        playPause = [
+          bin
+          "play-pause"
+        ];
+        stop = [
+          bin
+          "stop"
+        ];
       };
     bluetooth = [
       "${pkgs.tlp}/bin/bluetooth"
