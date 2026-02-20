@@ -12,6 +12,22 @@
     ./keys.nix
     ./bar.nix
   ];
+  systemd.user.targets.niri-session = {
+    Unit = {
+      Description = "Niri session";
+      # Requires = [ "graphical-session.target" ];
+      # After = [ "graphical-session.target" ];
+    };
+  };
+  # TODO parameterize and move out
+  wayland.systemd.target =
+    let
+      name = "niri-session";
+    in
+    if config.systemd.user.targets ? ${name} then
+      "${name}.target"
+    else
+      throw "target ${name} not found";
   services.gnome-keyring.enable = lib.mkForce false;
   programs.niri = {
     enable = true;

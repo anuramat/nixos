@@ -12,14 +12,14 @@
     ./outputs.nix
     ./idle.nix
   ];
-  wayland.systemd.target =
-    let
-      name = "sway-session";
-    in
-    if config.systemd.user.targets ? ${name} then
-      "${name}.target"
-    else
-      throw "target ${name} not found";
+  # wayland.systemd.target =
+  #   let
+  #     name = "sway-session";
+  #   in
+  #   if config.systemd.user.targets ? ${name} then
+  #     "${name}.target"
+  #   else
+  #     throw "target ${name} not found";
   wayland.windowManager.sway =
     let
       border = 3;
