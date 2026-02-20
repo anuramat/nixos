@@ -156,20 +156,22 @@ in
     };
     "Mod+semicolon".action.spawn = "foot";
     "Mod+Space".action.spawn = pickers.drun;
+    "Mod+Tab".action.focus-monitor-next = { };
+    "Mod+Ctrl+Tab".action.move-workspace-to-monitor-next = { };
+
+    "Mod+Alt+Q".action.power-off-monitors = { };
     "Mod+Ctrl+Q".action.spawn = ctl.lock;
     "Mod+Shift+Q".action.spawn = ctl.sleep;
-    "Mod+Tab".action."focus-monitor-next" = { };
-    "Mod+Ctrl+Tab".action."move-workspace-to-monitor-next" = { };
 
     # TODO markup screenshots and wf-recorder
     "Mod+P".action.screenshot = { };
     "Mod+Ctrl+P".action.screenshot-window = { };
     "Mod+Shift+P".action.screenshot-screen = { };
 
-    "Mod+Minus".action."set-column-width" = "-10%";
-    "Mod+Equal".action."set-column-width" = "+10%";
-    "Mod+Ctrl+Minus".action."set-window-height" = "-10%";
-    "Mod+Ctrl+Equal".action."set-window-height" = "+10%";
+    "Mod+Minus".action.set-column-width = "-10%";
+    "Mod+Equal".action.set-column-width = "+10%";
+    "Mod+Ctrl+Minus".action.set-window-height = "-10%";
+    "Mod+Ctrl+Equal".action.set-window-height = "+10%";
 
     # TODO
     # focus-column-first
@@ -264,4 +266,3 @@ in
 
 # TODO
 # Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
-# Mod+Shift+P { power-off-monitors; }
