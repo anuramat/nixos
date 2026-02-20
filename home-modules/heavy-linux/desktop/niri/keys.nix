@@ -159,9 +159,10 @@ in
     "Mod+Tab".action.focus-monitor-next = { };
     "Mod+Ctrl+Tab".action.move-workspace-to-monitor-next = { };
 
-    "Mod+Alt+Q".action.power-off-monitors = { };
+    # TODO change
     "Mod+Ctrl+Q".action.spawn = ctl.lock;
     "Mod+Shift+Q".action.spawn = ctl.sleep;
+    "Mod+Alt+Q".action.power-off-monitors = { };
 
     # TODO markup screenshots and wf-recorder
     "Mod+P".action.screenshot = { };
