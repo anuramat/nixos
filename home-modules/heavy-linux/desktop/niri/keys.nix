@@ -204,6 +204,9 @@ in
 
     # XXX --------------------------------------------------------------------------------------------
 
+    # TODO
+    # Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+
     "Mod+Comma".action."consume-window-into-column" = { };
     "Mod+Period".action."expel-window-from-column" = { };
 
@@ -264,6 +267,3 @@ in
     XF86Bluetooth = mkCtl ctl.bluetooth;
   };
 }
-
-# TODO
-# Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
