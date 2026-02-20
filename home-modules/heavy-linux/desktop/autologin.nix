@@ -1,5 +1,5 @@
 let
-  wm = "niri";
+  wm = "niri-session";
 in
 {
   # auto start on 1st tty
