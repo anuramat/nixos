@@ -1,5 +1,6 @@
 {
   lib,
+  pkgs,
   config,
   inputs,
   ...
@@ -15,7 +16,10 @@
     inputs.niri.homeModules.stylix
     inputs.niri.homeModules.niri
   ];
-  programs.niri.enable = true;
+  programs.niri = {
+    enable = true;
+    package = pkgs.niri;
+  };
   services.gnome-keyring.enable = lib.mkForce false;
   wayland.systemd.target =
     let
