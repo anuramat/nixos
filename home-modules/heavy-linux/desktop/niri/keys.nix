@@ -182,6 +182,8 @@ in
     "Mod+Ctrl+F".action."expand-column-to-available-width" = { };
     "Mod+C".action."center-column" = { };
     "Mod+Ctrl+C".action."center-visible-columns" = { };
+    # Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+    # Mod+Shift+P { power-off-monitors; }
 
     "Mod+H".action."focus-column-left" = { };
     "Mod+L".action."focus-column-right" = { };
