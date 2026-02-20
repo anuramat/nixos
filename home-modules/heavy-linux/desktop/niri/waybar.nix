@@ -6,7 +6,7 @@ in
 {
   programs.waybar = {
     enable = true;
-    systemd.enable = true;
+    # systemd.enable = true;
     style = # css
       ''
         #waybar > box {
@@ -31,13 +31,13 @@ in
             "pulseaudio"
             "backlight"
             "idle_inhibitor"
-            "sway/language"
+            # "sway/language"
             "mpris"
           ];
           modules-center = [
             "custom/rec"
-            "sway/workspaces"
-            "sway/scratchpad"
+            # "sway/workspaces"
+            # "sway/scratchpad"
           ];
           modules-right = [
             "tray"
