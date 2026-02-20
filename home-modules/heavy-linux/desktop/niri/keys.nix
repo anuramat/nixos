@@ -165,49 +165,61 @@ in
     "Mod+Ctrl+P".action.screenshot-window = { };
     "Mod+Shift+P".action.screenshot-screen = { };
 
+    # XXX --------------------------------------------------------------------------------------------
+
     # Mod+J     { focus-window-or-workspace-down; }
     # Mod+K     { focus-window-or-workspace-up; }
     # Mod+Ctrl+J     { move-window-down-or-to-workspace-down; }
     # Mod+Ctrl+K     { move-window-up-or-to-workspace-up; }
+
     # Mod+Home { focus-column-first; }
     # Mod+End  { focus-column-last; }
+
     # Mod+Ctrl+Home { move-column-to-first; }
     # Mod+Ctrl+End  { move-column-to-last; }
+
     # Mod+Shift+Ctrl+Left  { move-window-to-monitor-left; }
     # Mod+Shift+Ctrl+Left  { move-workspace-to-monitor-left; }
+
     # Mod+Page_Down      { focus-workspace-down; }
     # Mod+Page_Up        { focus-workspace-up; }
     # Mod+U              { focus-workspace-down; }
     # Mod+I              { focus-workspace-up; }
+
     # Mod+Ctrl+Page_Down { move-column-to-workspace-down; }
     # Mod+Ctrl+Page_Up   { move-column-to-workspace-up; }
     # Mod+Ctrl+U         { move-column-to-workspace-down; }
     # Mod+Ctrl+I         { move-column-to-workspace-up; }
     # Mod+Ctrl+Page_Down { move-window-to-workspace-down; }
+
     # Mod+Shift+Page_Down { move-workspace-down; }
     # Mod+Shift+Page_Up   { move-workspace-up; }
     # Mod+Shift+U         { move-workspace-down; }
     # Mod+Shift+I         { move-workspace-up; }
+
     # Mod+Ctrl+1 { move-window-to-workspace 1; }
+
     "Mod+Minus".action."set-column-width" = "-10%";
     "Mod+Equal".action."set-column-width" = "+10%";
     "Mod+Shift+Minus".action."set-window-height" = "-10%";
     "Mod+Shift+Equal".action."set-window-height" = "+10%";
-    "Mod+V".action."toggle-window-floating" = { };
-    "Mod+Shift+V".action."switch-focus-between-floating-and-tiling" = { };
-    "Mod+W".action."toggle-column-tabbed-display" = { };
+
+    "Mod+Ctrl+V".action."toggle-window-floating" = { };
+    "Mod+V".action."switch-focus-between-floating-and-tiling" = { };
+    "Mod+T".action."toggle-column-tabbed-display" = { };
     "Mod+Comma".action."consume-window-into-column" = { };
     "Mod+Period".action."expel-window-from-column" = { };
+
     "Mod+R".action."switch-preset-column-width" = { };
     "Mod+Shift+R".action."switch-preset-window-height" = { };
     "Mod+Ctrl+R".action."reset-window-height" = { };
+
     "Mod+F".action."maximize-column" = { };
     "Mod+Shift+F".action."fullscreen-window" = { };
     "Mod+Ctrl+F".action."expand-column-to-available-width" = { };
+
     "Mod+C".action."center-column" = { };
     "Mod+Ctrl+C".action."center-visible-columns" = { };
-    # Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
-    # Mod+Shift+P { power-off-monitors; }
 
     "Mod+H".action."focus-column-left" = { };
     "Mod+L".action."focus-column-right" = { };
@@ -227,14 +239,7 @@ in
     "Mod+BracketLeft".action."consume-or-expel-window-left" = { };
     "Mod+BracketRight".action."consume-or-expel-window-right" = { };
 
-    # NOTE
-    # Keep in mind that niri is a dynamic workspace system, so these commands
-    # are kind of "best effort". Trying to refer to a workspace index bigger
-    # than the current workspace count will instead refer to the bottommost
-    # (empty) workspace.
-    #
-    # For example, with 2 workspaces + 1 empty, indices 3, 4, 5 and so on will
-    # all refer to the 3rd workspace.
+    # XXX --------------------------------------------------------------------------------------------
 
     "Mod+1".action."focus-workspace" = 1;
     "Mod+2".action."focus-workspace" = 2;
@@ -270,3 +275,7 @@ in
     "XF86Bluetooth" = mkCtl ctl.bluetooth;
   };
 }
+
+# TODO
+# Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+# Mod+Shift+P { power-off-monitors; }
