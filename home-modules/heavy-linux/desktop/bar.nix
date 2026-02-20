@@ -6,7 +6,8 @@ in
 {
   programs.waybar = {
     enable = true;
-    # systemd.enable = true;
+    # TODO MemoryMax="500M"
+    systemd.enable = true;
     style = # css
       ''
         #waybar > box {
