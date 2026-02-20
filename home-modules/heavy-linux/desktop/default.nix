@@ -6,7 +6,7 @@ args:
     ./menu.nix
     ./mime
     ./portals.nix
-    ./niri.nix
+    ./niri
     ./sway
     ./swaylock.nix
     ./syncthing.nix
