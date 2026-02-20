@@ -13,7 +13,10 @@ let
   ctl = {
     brightness =
       let
-        l = v: "${pkgs.avizo}/bin/lightctl ${v}";
+        l = v: [
+          "${pkgs.avizo}/bin/lightctl"
+          v
+        ];
       in
       {
         up = l "up";
@@ -21,7 +24,10 @@ let
       };
     sound =
       let
-        l = v: "${pkgs.avizo}/bin/volumectl ${v}";
+        l = v: [
+          "${pkgs.avizo}/bin/volumectl"
+          v
+        ];
       in
       {
         up = l "-u up";
@@ -32,7 +38,10 @@ let
     playback =
       let
         # `-p spotify` for specific player
-        l = v: "${pkgs.playerctl}/bin/playerctl ${v}";
+        l = v: [
+          "${pkgs.playerctl}/bin/playerctl"
+          v
+        ];
       in
       {
         prev = l "previous";
@@ -40,13 +49,25 @@ let
         playPause = l "play-pause";
         stop = l "stop";
       };
-    bluetooth = "${pkgs.tlp}/bin/bluetooth toggle";
-    lock = "loginctl lock-session";
-    sleep = "systemctl suspend";
-    wlan = "${pkgs.tlp}/bin/wifi toggle";
+    bluetooth = [
+      "${pkgs.tlp}/bin/bluetooth"
+      "toggle"
+    ];
+    lock = [
+      "loginctl"
+      "lock-session"
+    ];
+    sleep = [
+      "systemctl"
+      "suspend"
+    ];
+    wlan = [
+      "${pkgs.tlp}/bin/wifi"
+      "toggle"
+    ];
   };
 
-  term_cmd = "${config.home.sessionVariables.TERMCMD}";
+  term = "${config.home.sessionVariables.TERMCMD}";
 
   pickers =
     let
@@ -77,7 +98,7 @@ let
         drun =
           # bash
           ''
-            "$(${j4} -d '${bemenu} -p drun' -t '${term_cmd}' -x --no-generic)"
+            "$(${j4} -d '${bemenu} -p drun' -t '${term}' -x --no-generic)"
           '';
         todo_add =
           # bash
@@ -101,9 +122,19 @@ let
       makoctl = "${pkgs.mako}/bin/makoctl";
     in
     {
-      invoke = "${makoctl} invoke";
-      dismiss = "${makoctl} dismiss";
-      dismiss_all = "${makoctl} dismiss --all";
+      invoke = [
+        makoctl
+        "invoke"
+      ];
+      dismiss = [
+        makoctl
+        "dismiss"
+      ];
+      dismiss_all = [
+        makoctl
+        "dismiss"
+        "--all"
+      ];
     };
 
   # TODO markup screenshots
