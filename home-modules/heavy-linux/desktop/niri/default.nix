@@ -15,9 +15,6 @@
     enable = true;
     package = pkgs.niri;
     settings = {
-      binds = {
-        "Mod+semicolon".action.spawn = "foot";
-      };
     };
   };
 }
