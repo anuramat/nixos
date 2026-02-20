@@ -158,7 +158,8 @@ in
     "Mod+Space".action.spawn = pickers.drun;
     "Mod+Ctrl+Q".action.spawn = ctl.lock;
     "Mod+Shift+Q".action.spawn = ctl.sleep;
-    "Mod+Tab".action."focus-workspace-previous" = { };
+    "Mod+Tab".action."focus-monitor-next" = { };
+    "Mod+Ctrl+Tab".action."move-workspace-to-monitor-next" = { };
 
     # TODO markup screenshots and wf-recorder
     "Mod+P".action.screenshot = { };
@@ -195,21 +196,19 @@ in
     # move-window-to-workspace-up
     "Mod+Ctrl+K".action."move-window-up-or-to-workspace-up" = { };
 
+    "Mod+Ctrl+M".action."toggle-window-floating" = { };
+    "Mod+M".action."switch-focus-between-floating-and-tiling" = { };
+    "Mod+T".action."toggle-column-tabbed-display" = { };
+
     # XXX --------------------------------------------------------------------------------------------
 
     # move-column-to-workspace-down
     # move-column-to-workspace-up
-
     # move-workspace-down
     # move-workspace-up
 
-    # move-window-to-monitor-left
-    # move-workspace-to-monitor-left
     # move-window-to-workspace 1
 
-    "Mod+Ctrl+V".action."toggle-window-floating" = { };
-    "Mod+V".action."switch-focus-between-floating-and-tiling" = { };
-    "Mod+T".action."toggle-column-tabbed-display" = { };
     "Mod+Comma".action."consume-window-into-column" = { };
     "Mod+Period".action."expel-window-from-column" = { };
 
@@ -218,16 +217,11 @@ in
     "Mod+Ctrl+R".action."reset-window-height" = { };
 
     "Mod+F".action."fullscreen-window" = { };
-    "Mod+Ctrl+F".action."maximize-column" = { };
-    "Mod+Shift+F".action."expand-column-to-available-width" = { };
+    "Mod+Ctrl+F".action."expand-column-to-available-width" = { };
+    "Mod+Shift+F".action."maximize-column" = { };
 
     "Mod+C".action."center-column" = { };
     "Mod+Ctrl+C".action."center-visible-columns" = { };
-
-    # "Mod+Shift+H".action."focus-monitor-left" = { };
-    # "Mod+Shift+L".action."focus-monitor-right" = { };
-    # "Mod+Shift+J".action."focus-monitor-down" = { };
-    # "Mod+Shift+K".action."focus-monitor-up" = { };
 
     # XXX --------------------------------------------------------------------------------------------
 
