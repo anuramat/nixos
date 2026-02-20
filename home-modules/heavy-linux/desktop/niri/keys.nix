@@ -160,6 +160,18 @@ in
       "loginctl"
       "lock-session"
     ];
+    "Mod+P".action.screenshot = { };
+    "Mod+Ctrl+P".action.screenshot-window = { };
+    "Mod+Shift+P".action.screenshot-screen = { };
+    "Alt+Space".action.switch-layout = { };
+
+    "Mod+Minus".action."set-column-width" = "-10%";
+    "Mod+Equal".action."set-column-width" = "+10%";
+    "Mod+Shift+Minus".action."set-window-height" = "-10%";
+    "Mod+Shift+Equal".action."set-window-height" = "+10%";
+    "Mod+V".action."toggle-window-floating" = { };
+    "Mod+Shift+V".action."switch-focus-between-floating-and-tiling" = { };
+    "Mod+W".action."toggle-column-tabbed-display" = { };
 
     "Mod+H".action."focus-column-left" = { };
     "Mod+L".action."focus-column-right" = { };
