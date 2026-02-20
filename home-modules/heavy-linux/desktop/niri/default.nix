@@ -16,7 +16,7 @@
     enable = true;
     package = pkgs.niri;
     settings = {
-      screenshot-path = "${config.home.sessionVariables.XDG_PICTURES_DIR}/screen";
+      screenshot-path = "${config.home.sessionVariables.XDG_PICTURES_DIR}/screen/shot_%F_%T.png";
       prefer-no-csd = true;
       hotkey-overlay.skip-at-startup = true;
     };
