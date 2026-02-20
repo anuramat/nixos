@@ -165,6 +165,11 @@ in
     "Mod+Ctrl+P".action.screenshot-window = { };
     "Mod+Shift+P".action.screenshot-screen = { };
 
+    "Mod+Minus".action."set-column-width" = "-10%";
+    "Mod+Equal".action."set-column-width" = "+10%";
+    "Mod+Shift+Minus".action."set-window-height" = "-10%";
+    "Mod+Shift+Equal".action."set-window-height" = "+10%";
+
     # XXX --------------------------------------------------------------------------------------------
 
     # Mod+J     { focus-window-or-workspace-down; }
@@ -198,11 +203,6 @@ in
     # Mod+Shift+I         { move-workspace-up; }
 
     # Mod+Ctrl+1 { move-window-to-workspace 1; }
-
-    "Mod+Minus".action."set-column-width" = "-10%";
-    "Mod+Equal".action."set-column-width" = "+10%";
-    "Mod+Shift+Minus".action."set-window-height" = "-10%";
-    "Mod+Shift+Equal".action."set-window-height" = "+10%";
 
     "Mod+Ctrl+V".action."toggle-window-floating" = { };
     "Mod+V".action."switch-focus-between-floating-and-tiling" = { };
