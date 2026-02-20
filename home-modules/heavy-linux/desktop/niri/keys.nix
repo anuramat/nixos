@@ -126,8 +126,11 @@ in
     };
     "Mod+semicolon".action.spawn = "foot";
     "Mod+Shift+Slash".action.show-hotkey-overlay = { };
-    "Mod+Space".action.spawn = pickers.drun;
-    "Mod+Ctrl+Q".action.spawn-sh = ctl.lock;
+    # "Mod+Space".action.spawn = pickers.drun;
+    "Mod+Ctrl+Q".action.spawn = [
+      "loginctl"
+      "lock-session"
+    ];
 
     "Mod+H".action."focus-column-left" = { };
     "Mod+L".action."focus-column-right" = { };
