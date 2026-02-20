@@ -58,7 +58,7 @@ let
       bemenu = getExe pkgs.bemenu;
 
       mkMenu =
-        command:
+        name: command:
         pkgs.writeShellScript "mkmenu" ''
           if ${pkill} -x bemenu; then
             exit 0
@@ -66,38 +66,35 @@ let
           ${command}
         ''
         |> toString;
-    in
-    {
-      books =
-        mkMenu
+      commands = {
+        books =
           # bash
           ''
             cd ${bookdir}
             book=$(${fd} . "${bookdir}" -at f | ${bemenu} -p read -l 20) || exit
             ${zathura} $book
           '';
-      drun =
-        mkMenu
+        drun =
           # bash
           ''
             "$(${j4} -d '${bemenu} -p drun' -t '${term_cmd}' -x --no-generic)"
           '';
-      todo_add =
-        mkMenu
+        todo_add =
           # bash
           ''
             task=$(echo "" | ${bemenu} -p todo -l 0) || exit
             ${todo} add "$task"
           '';
-      todo_done =
-        mkMenu
+        todo_done =
           # bash
           ''
             task=$(${todo} ls | tac | ${bemenu} -p done) || exit
             task_id=$(echo "$task" | sed 's/^\s*//' | cut -d ' ' -f 1)
             ${todo} rm "$task_id"
           '';
-    };
+      };
+    in
+    lib.mapAttrs (name: cmd: mkMenu name cmd) commands;
 
   notifications =
     let
