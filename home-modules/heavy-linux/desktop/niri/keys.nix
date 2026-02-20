@@ -228,8 +228,10 @@ in
 
     "Mod+Ctrl+H".action."move-column-left" = { };
     "Mod+Ctrl+L".action."move-column-right" = { };
-    "Mod+Ctrl+J".action."move-window-down" = { };
-    "Mod+Ctrl+K".action."move-window-up" = { };
+    # "Mod+Ctrl+J".action."move-window-down" = { };
+    "Mod+Ctrl+J".action."move-window-down-or-to-workspace-down" = { };
+    # "Mod+Ctrl+K".action."move-window-up" = { };
+    "Mod+Ctrl+K".action."move-window-up-or-to-workspace-up" = { };
 
     "Mod+Shift+H".action."focus-monitor-left" = { };
     "Mod+Shift+L".action."focus-monitor-right" = { };
