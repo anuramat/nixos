@@ -151,7 +151,7 @@ in
 
     "Mod+Shift+Slash".action.show-hotkey-overlay = { };
 
-    "Alt+Space".action.switch-layout = { };
+    "Alt+Space".action.switch-layout = "next";
     "Mod+Q" = {
       action."close-window" = { };
       repeat = false;
