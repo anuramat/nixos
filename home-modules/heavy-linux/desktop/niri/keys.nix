@@ -170,56 +170,42 @@ in
     "Mod+Shift+Minus".action."set-window-height" = "-10%";
     "Mod+Shift+Equal".action."set-window-height" = "+10%";
 
+    # focus-column-first
+    # focus-column-last
     "Mod+H".action."focus-column-left" = { };
     "Mod+L".action."focus-column-right" = { };
-    # "Mod+J".action."focus-window-down" = { };
+    # focus-window-down
+    # focus-workspace-down
     "Mod+J".action."focus-window-or-workspace-down" = { };
-    # "Mod+K".action."focus-window-up" = { };
+    # focus-window-up
+    # focus-workspace-up
     "Mod+K".action."focus-window-or-workspace-up" = { };
 
     "Mod+Alt+H".action."consume-or-expel-window-left" = { };
     "Mod+Alt+L".action."consume-or-expel-window-right" = { };
 
+    # move-column-to-first
+    # move-column-to-last
     "Mod+Ctrl+H".action."move-column-left" = { };
     "Mod+Ctrl+L".action."move-column-right" = { };
-    # "Mod+Ctrl+J".action."move-window-down" = { };
+    # move-window-down
+    # move-window-to-workspace-down
     "Mod+Ctrl+J".action."move-window-down-or-to-workspace-down" = { };
-    # "Mod+Ctrl+K".action."move-window-up" = { };
+    # move-window-up
+    # move-window-to-workspace-up
     "Mod+Ctrl+K".action."move-window-up-or-to-workspace-up" = { };
 
     # XXX --------------------------------------------------------------------------------------------
 
-    # Mod+J     { focus-window-or-workspace-down; }
-    # Mod+K     { focus-window-or-workspace-up; }
-    # Mod+Ctrl+J     { move-window-down-or-to-workspace-down; }
-    # Mod+Ctrl+K     { move-window-up-or-to-workspace-up; }
+    # move-column-to-workspace-down
+    # move-column-to-workspace-up
 
-    # Mod+Home { focus-column-first; }
-    # Mod+End  { focus-column-last; }
+    # move-workspace-down
+    # move-workspace-up
 
-    # Mod+Ctrl+Home { move-column-to-first; }
-    # Mod+Ctrl+End  { move-column-to-last; }
-
-    # Mod+Shift+Ctrl+Left  { move-window-to-monitor-left; }
-    # Mod+Shift+Ctrl+Left  { move-workspace-to-monitor-left; }
-
-    # Mod+Page_Down      { focus-workspace-down; }
-    # Mod+Page_Up        { focus-workspace-up; }
-    # Mod+U              { focus-workspace-down; }
-    # Mod+I              { focus-workspace-up; }
-
-    # Mod+Ctrl+Page_Down { move-column-to-workspace-down; }
-    # Mod+Ctrl+Page_Up   { move-column-to-workspace-up; }
-    # Mod+Ctrl+U         { move-column-to-workspace-down; }
-    # Mod+Ctrl+I         { move-column-to-workspace-up; }
-    # Mod+Ctrl+Page_Down { move-window-to-workspace-down; }
-
-    # Mod+Shift+Page_Down { move-workspace-down; }
-    # Mod+Shift+Page_Up   { move-workspace-up; }
-    # Mod+Shift+U         { move-workspace-down; }
-    # Mod+Shift+I         { move-workspace-up; }
-
-    # Mod+Ctrl+1 { move-window-to-workspace 1; }
+    # move-window-to-monitor-left
+    # move-workspace-to-monitor-left
+    # move-window-to-workspace 1
 
     "Mod+Ctrl+V".action."toggle-window-floating" = { };
     "Mod+V".action."switch-focus-between-floating-and-tiling" = { };
