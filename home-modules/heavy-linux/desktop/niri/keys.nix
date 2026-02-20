@@ -119,6 +119,7 @@ in
 
 {
   programs.niri.settings.binds = {
+    "Mod+Q" = "close-window";
     "Mod+semicolon".action.spawn = "foot";
 
     "XF86MonBrightnessDown" = mkCtl ctl.brightness.down;
