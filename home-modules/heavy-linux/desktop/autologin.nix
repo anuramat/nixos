@@ -17,6 +17,7 @@ in
         	    export WLR_DRM_DEVICES=$(realpath "$WLR_DRM_DEVICES")
         	  fi
         	  exec ${wm}
+        	  # TODO try sourcing instead
         	fi
       '';
   };
