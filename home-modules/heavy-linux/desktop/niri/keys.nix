@@ -168,6 +168,10 @@ in
     "Mod+Ctrl+P".action.screenshot-window = { };
     "Mod+Shift+P".action.screenshot-screen = { };
 
+    "Mod+N".action.spawn = notifications.invoke;
+    "Mod+Ctrl+N".action.spawn = notifications.dismiss;
+    "Mod+Shift+N".action.spawn = notifications.dismiss_all;
+
     "Mod+Minus".action.set-column-width = "-10%";
     "Mod+Equal".action.set-column-width = "+10%";
     "Mod+Ctrl+Minus".action.set-window-height = "-10%";
