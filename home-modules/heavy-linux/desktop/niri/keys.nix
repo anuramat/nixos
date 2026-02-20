@@ -147,7 +147,7 @@ in
 {
   programs.niri.settings.binds = {
 
-    "Mod+Shift+Slash".action.show-hotkey-overlay = { };
+    "Mod+Slash".action.show-hotkey-overlay = { };
 
     "Alt+Space".action.switch-layout = "next";
     "Mod+Q" = {
@@ -174,11 +174,10 @@ in
     "Mod+Ctrl+Minus".action.set-window-height = "-10%";
     "Mod+Ctrl+Equal".action.set-window-height = "+10%";
 
-    # TODO
-    # focus-column-first
-    # focus-column-last
-    # move-column-to-first
-    # move-column-to-last
+    "Mod+Comma".action."focus-column-first" = { };
+    "Mod+Period".action."focus-column-last" = { };
+    "Mod+Ctrl+Comma".action."move-column-to-first" = { };
+    "Mod+Ctrl+Period".action."move-column-to-last" = { };
 
     "Mod+H".action."focus-column-left" = { };
     "Mod+Ctrl+H".action."consume-or-expel-window-left" = { };
@@ -198,30 +197,25 @@ in
     "Mod+Shift+K".action."move-column-to-workspace-up" = { };
     "Mod+Alt+K".action."move-workspace-up" = { };
 
-    "Mod+Ctrl+M".action."toggle-window-floating" = { };
     "Mod+M".action."switch-focus-between-floating-and-tiling" = { };
+    "Mod+Ctrl+M".action."toggle-window-floating" = { };
+
     "Mod+T".action."toggle-column-tabbed-display" = { };
 
-    # XXX --------------------------------------------------------------------------------------------
+    # TODO Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
 
-    # TODO
-    # Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
-
-    "Mod+Comma".action."consume-window-into-column" = { };
-    "Mod+Period".action."expel-window-from-column" = { };
+    "Mod+I".action."consume-window-into-column" = { };
+    "Mod+O".action."expel-window-from-column" = { };
 
     "Mod+R".action."switch-preset-column-width" = { };
     "Mod+Ctrl+R".action."switch-preset-window-height" = { };
     "Mod+Shift+R".action."reset-window-height" = { };
 
-    "Mod+F".action."fullscreen-window" = { };
-    "Mod+Ctrl+F".action."expand-column-to-available-width" = { };
-    "Mod+Shift+F".action."maximize-column" = { };
+    "Mod+F".action."maximize-column" = { };
+    "Mod+Ctrl+F".action."fullscreen-window" = { };
 
     "Mod+C".action."center-column" = { };
     "Mod+Ctrl+C".action."center-visible-columns" = { };
-
-    # XXX --------------------------------------------------------------------------------------------
 
     "Mod+1".action.focus-workspace = 1;
     "Mod+2".action.focus-workspace = 2;
