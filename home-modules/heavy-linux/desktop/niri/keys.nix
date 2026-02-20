@@ -94,7 +94,7 @@ let
           '';
       };
     in
-    lib.mapAttrs (name: cmd: mkMenu name cmd) commands;
+    lib.mapAttrs (name: cmd: mkMenu "${name}-dmenu" cmd) commands;
 
   notifications =
     let
