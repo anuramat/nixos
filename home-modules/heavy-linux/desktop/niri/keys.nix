@@ -110,11 +110,29 @@ let
 
   # TODO markup screenshots
 
+  mkCtl = x: {
+    allow-when-locked = true;
+    action.spawn = x;
+  };
+
 in
 
 {
   programs.niri.settings.binds = {
     "Mod+semicolon".action.spawn = "foot";
+
+    "XF86MonBrightnessDown" = mkCtl ctl.brightness.down;
+    "XF86MonBrightnessUp" = mkCtl ctl.brightness.up;
+    "XF86AudioMicMute" = mkCtl ctl.sound.muteMic;
+    "XF86AudioMute" = mkCtl ctl.sound.mute;
+    "XF86AudioLowerVolume" = mkCtl ctl.sound.down;
+    "XF86AudioRaiseVolume" = mkCtl ctl.sound.up;
+    "XF86AudioPrev" = mkCtl ctl.playback.prev;
+    "XF86AudioNext" = mkCtl ctl.playback.next;
+    "XF86AudioStop" = mkCtl ctl.playback.stop;
+    "XF86AudioPlay" = mkCtl ctl.playback.playPause;
+    "XF86Wlan" = mkCtl ctl.wlan;
+    "XF86Bluetooth" = mkCtl ctl.bluetooth;
   };
 }
 # binds {
