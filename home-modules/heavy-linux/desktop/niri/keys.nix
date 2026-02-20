@@ -126,9 +126,14 @@ in
     "Mod+semicolon".action.spawn = "foot";
 
     "Mod+H".action."focus-column-left" = { };
+    "Mod+L".action."focus-column-right" = { };
     "Mod+J".action."focus-window-down" = { };
     "Mod+K".action."focus-window-up" = { };
-    "Mod+L".action."focus-column-right" = { };
+
+    "Mod+Ctrl+H".action."move-column-left" = { };
+    "Mod+Ctrl+L".action."move-column-right" = { };
+    "Mod+Ctrl+J".action."move-window-down" = { };
+    "Mod+Ctrl+K".action."move-window-up" = { };
 
     "XF86MonBrightnessDown" = mkCtl ctl.brightness.down;
     "XF86MonBrightnessUp" = mkCtl ctl.brightness.up;
