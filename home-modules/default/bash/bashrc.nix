@@ -94,7 +94,6 @@ let
           echo "$1 is not a symlink"
           exit 1
         }
-        tempfile=$(mktemp)
         mv "$1" "$1.HMLNK"
         cp -L "$1.HMLNK" "$1"
         chmod +w "$1"

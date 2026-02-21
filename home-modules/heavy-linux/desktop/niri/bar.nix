@@ -38,6 +38,7 @@ in
         };
         modules = {
           modules-left = [
+            "niri/workspaces"
             "pulseaudio"
             "backlight"
             "idle_inhibitor"
@@ -45,8 +46,8 @@ in
             "mpris"
           ];
           modules-center = [
-            "custom/rec"
-            "niri/workspaces"
+            # "custom/rec"
+            "cffi/niri-windows"
           ];
           modules-right = [
             "tray"
