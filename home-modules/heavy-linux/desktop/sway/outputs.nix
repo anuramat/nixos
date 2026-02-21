@@ -88,5 +88,7 @@ in
         assign out.int WSs.int ++ assign out.ext WSs.ext;
     };
   };
-  services.kanshi.settings.exec = toString moveWSs;
+  services.kanshi.exec = [
+    (toString moveWSs)
+  ];
 }

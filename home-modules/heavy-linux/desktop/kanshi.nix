@@ -100,13 +100,12 @@ in
           profile = {
             name = n;
             outputs = v;
-            exec = [ config.services.kanshi.exec ];
+            exec = config.services.kanshi.exec;
           };
         }) profiles;
     };
   };
   options.services.kanshi.exec = lib.mkOption {
     type = lib.types.listOf lib.types.str;
-    default = [ ];
   };
 }
