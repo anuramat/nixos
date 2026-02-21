@@ -2,6 +2,13 @@
 let
   inherit (lib) getExe;
   toList = str: lib.splitString " " str;
+  #
+
+  niriWindowsModule = pkgs.fetchurl {
+    url = "https://github.com/calico32/waybar-niri-windows/releases/download/v2.3.0/waybar-niri-windows.so";
+    hash = "sha256-sUWndS52KnAKBemkPdDM1hprq97LKsfraY0oXJE1Rnw=";
+  };
+
 in
 {
   # TODO make a builder and reuse in sway
@@ -135,7 +142,21 @@ in
             path = "/";
           };
         };
-        niri = { };
+        niri = {
+          "cffi/niri-windows" = {
+            module_path = niriWindowsModule;
+            options = {
+              floating-position = "right";
+              rules = [
+                {
+                  app-id = "foot";
+                  class = "foot";
+                  icon = "";
+                }
+              ];
+            };
+          };
+        };
         sway = {
           "sway/scratchpad" = {
             format = "{icon} {count}";
@@ -152,7 +173,7 @@ in
         };
       in
       [
-        (main // modules // indicators // sway // controls // metrics)
+        (main // modules // indicators // sway // controls // metrics // niri)
       ];
   };
 }

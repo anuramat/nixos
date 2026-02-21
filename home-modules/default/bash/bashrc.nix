@@ -95,9 +95,8 @@ let
           exit 1
         }
         tempfile=$(mktemp)
-        cp -nL "$1" "$tempfile"
-        mv -n "$1" "$1.HMLNK"
-        mv -n "$tempfile" "$1"
+        mv "$1" "$1.HMLNK"
+        cp -L "$1.HMLNK" "$1"
         chmod +w "$1"
         $EDITOR "$1"
       '';
