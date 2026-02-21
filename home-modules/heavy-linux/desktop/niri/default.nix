@@ -24,15 +24,9 @@
       prefer-no-csd = true;
       hotkey-overlay.skip-at-startup = true;
 
-      # TODO delete if everything works alright
-      # spawn-at-startup = [
-      #   {
-      #     argv = [
-      #       "${pkgs.kanshi}/bin/kanshictl"
-      #       "reload"
-      #     ];
-      #   }
-      # ];
+      spawn-at-startup = [
+        # { argv = [ ]; }
+      ];
 
       input = {
         keyboard = {
