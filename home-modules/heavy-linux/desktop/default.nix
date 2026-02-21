@@ -1,6 +1,7 @@
 args:
 {
   imports = [
+    ./i3.nix
     ./kanshi.nix
     ./autologin.nix
     ./clipboard.nix
