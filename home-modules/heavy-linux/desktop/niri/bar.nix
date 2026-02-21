@@ -26,11 +26,14 @@ in
       let
         main = {
           layer = "top";
-          mode = "dock";
+          exclusive = true;
           position = "top";
+
           ipc = true;
+
           spacing = 5;
           tray.spacing = 10;
+
           clock = {
             format = "{:%Y-%m-%d %a %H:%M:%S}";
             interval = 1;
