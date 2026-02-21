@@ -1,6 +1,7 @@
 args:
 {
   imports = [
+    ./kanshi.nix
     ./autologin.nix
     ./clipboard.nix
     ./mako.nix
