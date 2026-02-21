@@ -21,7 +21,10 @@
     package = pkgs.niri;
     settings = {
       screenshot-path = "${config.home.sessionVariables.XDG_PICTURES_DIR}/screen/shot_%F_%T.png";
-      xwayland-satellite.enable = true;
+      xwayland-satellite = {
+        path = lib.getExe pkgs.xwayland-satellite;
+        enable = true;
+      };
       prefer-no-csd = true;
       hotkey-overlay.skip-at-startup = true;
 
