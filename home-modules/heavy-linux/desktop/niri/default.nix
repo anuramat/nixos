@@ -24,7 +24,33 @@
       prefer-no-csd = true;
       hotkey-overlay.skip-at-startup = true;
 
-      # on start run "${pkgs.kanshi}/bin/kanshictl reload";
+      # TODO delete if everything works alright
+      # spawn-at-startup = [
+      #   {
+      #     argv = [
+      #       "${pkgs.kanshi}/bin/kanshictl"
+      #       "reload"
+      #     ];
+      #   }
+      # ];
+
+      input = {
+        keyboard = {
+          repeat-delay = 250;
+          repeat-rate = 50;
+          xkb.layout = "us,ru";
+        };
+        touchpad = {
+          accel-profile = "adaptive";
+          click-method = "clickfinger";
+          drag = true;
+          drag-lock = true;
+          dwt = true;
+          natural-scroll = true;
+          scroll-method = "two-finger";
+          tap = false;
+        };
+      };
     };
   };
 }
