@@ -20,6 +20,8 @@ in
 
   services.getty.autologinOnce = true; # TODO only if full disk encryption
 
+  programs.gpu-screen-recorder.enable = true;
+
   programs.steam.enable = true;
 
   security = {
