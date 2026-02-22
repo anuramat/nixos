@@ -175,7 +175,7 @@ let
     pkgs.writeShellScript "record" ''
       if ! ${pkill} -INT -x gpu-screen-reco; then
         mkdir -p ${dir}
-        ${bin} -f "${dir}/$(date +%Y-%m-%d_%H-%M-%S).mp4"
+        ${bin} -w screen -o "${dir}/$(date +%Y-%m-%d_%H-%M-%S).mp4"
       fi
     '';
 
