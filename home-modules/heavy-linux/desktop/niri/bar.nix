@@ -150,7 +150,6 @@ in
         niri = {
           "niri/language" = {
             format = "{short}";
-            format-en = "";
           };
           "cffi/niri-windows" = {
             module_path = niriWindowsModule;
