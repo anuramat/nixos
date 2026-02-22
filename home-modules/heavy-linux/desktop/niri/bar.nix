@@ -169,4 +169,10 @@ in
         (main // modules // indicators // controls // metrics // niri)
       ];
   };
+  systemd.user.services.waybar = {
+    Service = {
+      MemoryMax = "500M";
+      OOMPolicy = "kill";
+    };
+  };
 }
