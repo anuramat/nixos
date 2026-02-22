@@ -173,9 +173,10 @@ let
       pkill = "${pkgs.procps}/bin/pkill";
     in
     pkgs.writeShellScript "record" ''
-      ${pkill} -INT -x wf-recorder \
-        || mkdir -p ${dir} \
-        && ${bin} -f "${dir}/$(date +%Y-%m-%d_%H-%M-%S).mp4"
+      if ! ${pkill} -INT -x wf-recorder; then
+        mkdir -p ${dir}
+        ${bin} -f "${dir}/$(date +%Y-%m-%d_%H-%M-%S).mp4"
+      fi
     '';
 
 in
