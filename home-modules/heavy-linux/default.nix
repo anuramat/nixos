@@ -48,7 +48,7 @@
     shotman # screenshot, with simple preview afterwards, no markup
     slurp # select screen region
     swappy # screenshot markup
-    wf-recorder # CLI screen capture
+    gpu-screen-recorder # wf-recorder but uses GPU
 
     alsa-utils
     bemenu # slightly better -- has dynamic height

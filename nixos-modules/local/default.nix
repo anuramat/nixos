@@ -20,7 +20,7 @@ in
 
   services.getty.autologinOnce = true; # TODO only if full disk encryption
 
-  programs.gpu-screen-recorder.enable = true;
+  programs.gpu-screen-recorder.enable = true; # NOTE doesn't install the package
 
   programs.steam.enable = true;
 
