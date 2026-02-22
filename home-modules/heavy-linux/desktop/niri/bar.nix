@@ -11,7 +11,6 @@ let
 
 in
 {
-  # TODO make a builder and reuse in sway
   programs.waybar = {
     enable = true;
     # TODO MemoryMax="500M"
@@ -42,10 +41,6 @@ in
         modules = {
           modules-left = [
             "niri/workspaces"
-            "pulseaudio"
-            "backlight"
-            "idle_inhibitor"
-            "niri/language"
             "mpris"
           ];
           modules-center = [
@@ -54,6 +49,10 @@ in
           ];
           modules-right = [
             "tray"
+            "niri/language"
+            "idle_inhibitor"
+            "pulseaudio"
+            # "backlight"
             "disk"
             "battery"
             "clock"
@@ -101,9 +100,11 @@ in
         };
         controls = {
           pulseaudio = {
-            format = "{volume}% {icon}  {format_source}";
-            format-bluetooth = "{volume}% {icon}   {format_source}";
-            format-bluetooth-muted = "{volume}% 󰖁 {icon}   {format_source}";
+            # NOTE add "  {format_source}" to show source volume
+            format = "{volume}% {icon}";
+            format-muted = "{volume}% 󰖁";
+            format-bluetooth = "{volume}% {icon} ";
+            format-bluetooth-muted = "{volume}% 󰖁 {icon} ";
             format-icons = {
               car = "";
               default = [
@@ -117,7 +118,6 @@ in
               phone = "";
               portable = "";
             };
-            format-muted = "{volume}% 󰖁  {format_source}";
             format-source = "{volume}% 󰍬";
             format-source-muted = "{volume}% 󰍭";
             on-click = "${getExe pkgs.pavucontrol}";
@@ -147,6 +147,9 @@ in
           };
         };
         niri = {
+          "niri/language" = {
+            format = "{short}";
+          };
           "cffi/niri-windows" = {
             module_path = niriWindowsModule;
             options = {
@@ -161,23 +164,10 @@ in
             };
           };
         };
-        sway = {
-          "sway/scratchpad" = {
-            format = "{icon} {count}";
-            format-icons = [
-              ""
-              ""
-            ];
-            show-empty = false;
-          };
-          "sway/workspaces" = {
-            disable-scroll = true;
-            format = "{name}";
-          };
-        };
       in
+      # TODO unfuck this
       [
-        (main // modules // indicators // sway // controls // metrics // niri)
+        (main // modules // indicators // controls // metrics // niri)
       ];
   };
 }
