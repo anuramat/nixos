@@ -104,7 +104,7 @@ let
 
       mkMenu =
         name: command:
-        pkgs.writeShellScript "mkmenu" ''
+        pkgs.writeShellScript name ''
           if ${pkill} -x bemenu; then
             exit 0
           fi
@@ -166,6 +166,18 @@ let
     action.spawn = x;
   };
 
+  record =
+    let
+      dir = "${config.home.sessionVariables.XDG_VIDEOS_DIR}/screen";
+      bin = "${pkgs.wf-recorder}/bin/wf-recorder";
+    in
+    pkgs.writeShellScript "record" ''
+      if ! pgrep wf-recorder; then
+        mkdir -p ${dir}
+        ${bin} -f "${dir}/$(date +%Y-%m-%d_%H-%M-%S).mp4"
+      fi
+    '';
+
 in
 
 {
@@ -187,10 +199,11 @@ in
     "Mod+Shift+Q".action.power-off-monitors = { };
     "Mod+Alt+Q".action.spawn = ctl.sleep;
 
-    # TODO markup screenshots and wf-recorder
+    # TODO markup screenshots
     "Mod+P".action.screenshot = { };
     "Mod+Ctrl+P".action.screenshot-window = { };
     "Mod+Shift+P".action.screenshot-screen = { };
+    "Mod+Alt+P".action.spawn = [ (toString record) ];
 
     "Mod+N".action.spawn = notifications.invoke;
     "Mod+Ctrl+N".action.spawn = notifications.dismiss;

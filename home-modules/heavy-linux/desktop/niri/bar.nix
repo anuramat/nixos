@@ -13,12 +13,15 @@ in
 {
   programs.waybar = {
     enable = true;
-    # TODO MemoryMax="500M"
     systemd.enable = true;
     style = # css
       ''
         #waybar > box {
           padding: 0px 10px;
+        }
+        #custom-rc {
+          /* TODO use a color from the colorscheme */
+          color: red;
         }
       '';
     settings =
@@ -44,7 +47,7 @@ in
             "mpris"
           ];
           modules-center = [
-            # "custom/rec"
+            "custom/rec"
             "cffi/niri-windows"
           ];
           modules-right = [
@@ -60,7 +63,7 @@ in
         indicators = {
           "custom/rec" = {
             exec = "${pkgs.procps}/bin/pgrep -x wf-recorder >/dev/null && echo '⏺\'";
-            # TODO red color
+            # TODO update with signal on hotkey
             interval = 1;
             tooltip = false;
             on-click =
