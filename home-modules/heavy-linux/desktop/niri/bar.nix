@@ -50,12 +50,11 @@ in
           modules-right = [
             "tray"
             "niri/language"
-            "idle_inhibitor"
             "pulseaudio"
             # "backlight"
-            "disk"
             "battery"
             "clock"
+            "idle_inhibitor"
           ];
         };
         indicators = {
@@ -93,8 +92,8 @@ in
           idle_inhibitor = {
             format = "{icon}";
             format-icons = {
-              activated = " ";
-              deactivated = " ";
+              activated = "";
+              deactivated = "";
             };
           };
         };
