@@ -150,7 +150,7 @@ in
           "cffi/niri-windows" = {
             module_path = niriWindowsModule;
             options = {
-              floating-position = "right";
+              show-floating = "never";
               rules = [
                 {
                   app-id = "foot";
