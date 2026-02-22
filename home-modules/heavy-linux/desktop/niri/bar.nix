@@ -19,9 +19,14 @@ in
         #waybar > box {
           padding: 0px 10px;
         }
-        #custom-rc {
-          /* TODO use a color from the colorscheme */
-          color: red;
+        #custom-rec {
+          color: @base08;
+        }
+        #idle_inhibitor.activated {
+          color: @base08;
+        }
+        #idle_inhibitor.deactivated {
+          color: @base03;
         }
       '';
     settings =
@@ -151,6 +156,7 @@ in
         niri = {
           "niri/language" = {
             format = "{short}";
+            format-en = "";
           };
           "cffi/niri-windows" = {
             module_path = niriWindowsModule;

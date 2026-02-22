@@ -170,12 +170,12 @@ let
     let
       dir = "${config.home.sessionVariables.XDG_VIDEOS_DIR}/screen";
       bin = "${pkgs.wf-recorder}/bin/wf-recorder";
+      pkill = "${pkgs.procps}/bin/pkill";
     in
     pkgs.writeShellScript "record" ''
-      if ! pgrep wf-recorder; then
-        mkdir -p ${dir}
-        ${bin} -f "${dir}/$(date +%Y-%m-%d_%H-%M-%S).mp4"
-      fi
+      ${pkill} -INT -x wf-recorder \
+        || mkdir -p ${dir} \
+        && ${bin} -f "${dir}/$(date +%Y-%m-%d_%H-%M-%S).mp4"
     '';
 
 in
