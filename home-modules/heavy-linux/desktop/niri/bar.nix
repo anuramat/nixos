@@ -40,7 +40,7 @@ in
         layer = "top";
         exclusive = true;
         position = "top";
-        spacing = 20;
+        spacing = 10;
         tray.spacing = 10;
 
         modules-left = [
