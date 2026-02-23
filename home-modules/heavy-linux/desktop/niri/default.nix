@@ -20,6 +20,9 @@
     enable = true;
     package = pkgs.niri;
     settings = {
+      animations = {
+        slowdown = 0.5;
+      };
       screenshot-path = "${config.home.sessionVariables.XDG_PICTURES_DIR}/screen/shot_%F_%T.png";
       xwayland-satellite = {
         path = lib.getExe pkgs.xwayland-satellite;
