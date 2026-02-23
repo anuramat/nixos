@@ -21,7 +21,10 @@ in
     style = # css
       ''
         #waybar > box {
-          padding: 0px 10px;
+          padding: 5px 10px;
+        }
+        .cffi-niri-windows > * {
+          min-height: 30px;
         }
         #custom-rec {
           color: @base08;
