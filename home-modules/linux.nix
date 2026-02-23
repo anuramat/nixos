@@ -6,6 +6,7 @@
     nvitop # nvidia gpu
 
     bubblewrap # sandboxing
+    fuse-overlayfs
     agentfs
 
     parted
