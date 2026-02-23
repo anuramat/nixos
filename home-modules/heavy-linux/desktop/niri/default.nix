@@ -32,6 +32,10 @@
         # { argv = [ ]; }
       ];
 
+      layout = {
+        empty-workspace-above-first = true;
+      };
+
       input = {
         keyboard = {
           repeat-delay = 250;

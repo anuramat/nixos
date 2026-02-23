@@ -44,7 +44,8 @@ in
         tray.spacing = 10;
 
         modules-left = [
-          "niri/workspaces"
+          "idle_inhibitor"
+          "niri/language"
           "mpris"
         ];
 
@@ -55,11 +56,9 @@ in
 
         modules-right = [
           "tray"
-          "niri/language"
           "pulseaudio"
           "battery"
           "clock"
-          "idle_inhibitor"
         ];
 
         clock = {
