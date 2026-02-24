@@ -23,7 +23,7 @@ in
 
 {
   config = {
-    systemd.user.services.kanshi = {
+    systemd.user.services.kanshi.Service = {
       Restart = "always";
       RestartSec = 10;
     };

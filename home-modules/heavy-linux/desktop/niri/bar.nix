@@ -7,12 +7,12 @@ let
   };
 in
 {
-  systemd.user.services.waybar = {
-    Service = {
-      # in case it leaks
-      MemoryMax = "500M";
-      OOMPolicy = "kill";
-    };
+  systemd.user.services.waybar.Service = {
+    Restart = "always";
+    RestartSec = 10;
+    # in case it leaks
+    MemoryMax = "500M";
+    OOMPolicy = "kill";
   };
   programs.waybar = {
     enable = true;
