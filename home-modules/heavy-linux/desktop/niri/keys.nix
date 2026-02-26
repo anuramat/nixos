@@ -194,7 +194,9 @@ in
     "Mod+semicolon".action.spawn = "foot";
     "Mod+Space".action.spawn = pickers.drun;
     "Mod+Tab".action.focus-monitor-next = { };
-    "Mod+Ctrl+Tab".action.move-workspace-to-monitor-next = { };
+    "Mod+Ctrl+Tab".action.move-window-to-monitor-next = { };
+    "Mod+Shift+Tab".action.move-column-to-monitor-next = { };
+    "Mod+Alt+Tab".action.move-workspace-to-monitor-next = { };
 
     "Mod+Ctrl+Q".action.spawn = ctl.lock;
     "Mod+Shift+Q".action.power-off-monitors = { };

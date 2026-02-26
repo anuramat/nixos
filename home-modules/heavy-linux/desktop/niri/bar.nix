@@ -8,7 +8,7 @@ let
 in
 {
   systemd.user.services.waybar.Service = {
-    Restart = "always";
+    Restart = lib.mkForce "always";
     RestartSec = 10;
     # in case it leaks
     MemoryMax = "500M";
