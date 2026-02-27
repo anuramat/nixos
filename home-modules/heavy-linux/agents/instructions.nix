@@ -46,44 +46,6 @@ let
           - To find required packages in `nixpkgs`, you SHOULD use `nh search $PACKAGE_NAME`.
           - You MUST NOT use `nix search`, it's slow and unstable; instead, use `nh search`
           - To explore NixOS options, you SHOULD use `nixos-option $OPTION_NAME`
-
-          Examples:
-
-          <example>
-            <user>How do I configure git in home-manager?</user>
-            <assistant>I am going to use `nixos-option` to find the corresponding option</assistant>
-            <bash_command>home-manager.users.${username}.programs.git</bash_command>
-            <bash_output>
-            This attribute set contains:
-            aliases
-            attributes
-            ...
-            </bash_output>
-          </example>
-          <explanation>
-            Assistant uses `nixos-option` to explore the options available for configuring git in home-manager.
-          </explanation>
-
-          <example>
-            <user>solve the following task ...</user>
-            <assistant>... I am going to use `<command_name>` to ...</assistant>
-              <bash_command><command_name> ...</bash_command>
-              <bash_output><command_name> not found</bash_output>
-            <assistant>I am going to use `nh` to find the corresponding package</assistant>
-              <bash_command>nh search <command_name></bash_command>
-              <bash_output>
-                ...
-                <package_name> (<version>)
-                  <short_description>
-                  Homepage: <url>
-                  Defined at: <path>
-                ...
-              </bash_output>
-            <bash_command><command_name> ...</bash_command>
-          </example>
-          <explanation>
-          Assistant first tries to run the command, and because it's not found, it uses `nh search` to find the corresponding package.
-          </explanation>
         '';
 
         sandbox = ''
@@ -99,16 +61,11 @@ let
           - The key words "MUST", "MUST NOT", "SHOULD", "SHOULD NOT", "MAY" are to be interpreted as described in RFC 2119.
           - You MUST NOT do "band-aid" fixes -- ALWAYS fix the root cause of the problem.
           - If you need tools that are not available on the system, you SHOULD use `nix run nixpkgs#package_name -- arg1 ...`.
+          - When using git, keep commit messages as concise as possible.
         ''
         + (for "claude" ''
           - When presenting a plan to the user using `ExitPlanMode` tool, you SHOULD keep the plan under 10 lines -- only outline the high-level steps.
         '');
-
-        git = ''
-          - You MUST make commits after each atomic unit of work that changes files, so that the user can backtrack the trajectory of the changes step by step.
-            Ideally, each commit is the smallest possible self-contained logical unit, such that a different developer could seamlessly take over.
-          - Keep commit messages as concise as possible.
-        '';
 
         workflow = ''
           ${head} Acceptance criteria identification
