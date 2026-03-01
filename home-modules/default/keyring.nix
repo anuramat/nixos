@@ -70,7 +70,10 @@ in
       enable = true;
       homedir = "${config.xdg.dataHome}/gnupg";
     };
-    password-store.enable = true;
+    password-store = {
+      enable = true;
+      settings.PASSWORD_STORE_DIR = "${config.xdg.dataHome}/password-store";
+    };
   };
 
   # compat
