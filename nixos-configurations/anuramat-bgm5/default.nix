@@ -23,7 +23,11 @@
     inputs.nixos-hardware.nixosModules.common-gpu-amd
     inputs.nixos-hardware.nixosModules.common-pc-ssd
 
+    inputs.nixos-hardware.nixosModules.common-hidpi
+
+    inputs.self.nixosModules.llama # TODO re-enable?
   ];
+  # TODO zramSwap and tmpfs
 
   # recommended in nixos-hardware readme for framework desktop
   boot.kernelPackages = pkgs.linuxPackages_6_19;
