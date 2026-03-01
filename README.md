@@ -13,8 +13,8 @@
 
 
 ```bash
-# backup the defaults
-cp -r /etc/nixos ~/defaults
+# backup
+cp -r /etc/nixos ~/old
 
 # get the repo
 nix-shell -p git
@@ -22,15 +22,14 @@ git clone --depth 1 https://github.com/anuramat/nixos ~/nixos
 sudo rm -rf /etc/nixos
 sudo mv -T ~/nixos /etc/nixos
 
-# drop the hw config
-cd /etc/nixos
-cp "$HOME/defaults/hardware-configuration.nix" "/etc/nixos/nixos-configurations/$HOSTNAME"
-git add .
+# add hw config
+cp "$HOME/old/hardware-configuration.nix" "/etc/nixos/nixos-configurations/$HOSTNAME"
+git -C /etc/nixos add -A
 
 # install
 export NIX_CONFIG="experimental-features = nix-command flakes pipe-operators"
 nix develop
-nh os switch . -H "$HOSTNAME"
+nh os switch /etc/nixos -H "$HOSTNAME"
 ```
 
 todo:
@@ -53,8 +52,6 @@ sudo tailscale up "--operator=$(whoami)"
 
 ## Problems
 
-### Builder setup
-
 - sshKey and sshUser in nix.buildMachines are ignored: <https://github.com/NixOS/nix/issues/3423>;
   for now add this to /root/.ssh/config:
   ```ssh_config
@@ -64,9 +61,3 @@ sudo tailscale up "--operator=$(whoami)"
           User builder
           ConnectTimeout 3
   ```
-
-### Hardcoded variables
-
-- Personal data
-- `~/notes`, `~/books`, etc
-- `/etc/nix/cache.pem`
