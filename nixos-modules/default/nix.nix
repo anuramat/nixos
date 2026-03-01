@@ -80,4 +80,9 @@ in
       protocol = "ssh-ng";
     }) config.lib.hosts.builders;
   };
+  # TODO wire in non-builder substituters in hosts.nix
+  services.nix-serve = {
+    enable = true;
+    secretKeyFile = "/etc/nix/cache.pem";
+  };
 }
