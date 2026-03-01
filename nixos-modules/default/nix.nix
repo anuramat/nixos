@@ -14,7 +14,6 @@ let
     "https://devenv.cachix.org"
     "https://nix-community.cachix.org"
     "https://nixpkgs-python.cachix.org"
-    "http://anuramat-f12:5000?priority=100" # TODO automatic
   ]
   ++ config.lib.hosts.substituters;
   keyPath = "${config.users.users.${username}.home}/.ssh/id_ed25519";
