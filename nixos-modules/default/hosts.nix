@@ -19,7 +19,7 @@
       builders = filterAttrs (n: v: v.builder) hosts;
     in
     {
-      substituters = h.mkSubstituters builderNames; # binary cache
+      substituters = h.mkSubstituters names; # binary cache
       keyFiles = h.mkKeyFiles names; # ssh public keys
       knownHostsFiles = h.mkKnownHostsFiles names; # agenix(?)/ssh host auth
       trusted-public-keys = map h.mkCacheKey names; # packages signature
