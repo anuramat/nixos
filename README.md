@@ -29,7 +29,10 @@ git -C /etc/nixos add -A
 # install
 export NIX_CONFIG="experimental-features = nix-command flakes pipe-operators"
 nix develop
+# TODO put these into the justfile, together with some other bootstrap stuff
 nh os switch /etc/nixos -H "$HOSTNAME"
+# might fail; try
+sudo nixos-rebuild switch --option extra-experimental-features pipe-operators --flake ".#$HOSTNAME"
 ```
 
 todo:
