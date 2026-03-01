@@ -41,6 +41,10 @@ todo:
 # - new step: after installing minimal config -- generate keys, start tailscale, scp from a trusted machine, rekey secrets with agenix and commit
 # - keygen script -- make easily accessible from dev shell
 # - new step: unfuck the repo (switch to ssh and unshallow)
+# gpg --full-generate-key
+# pass init $EMAIL
+# protonmail-bridge -cli
+# firefox
 ```
 
 some extras:
