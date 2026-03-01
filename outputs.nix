@@ -103,6 +103,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       };
       devShells.default = pkgs.mkShell {
         packages = with pkgs; [
+          nh
           neovim
           git
           just

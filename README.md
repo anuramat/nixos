@@ -6,16 +6,49 @@
 
 ## Install
 
-- make sure the hostname matches the target
+0. prepare `nixos-configurations/$HOSTNAME/default.nix`
+1. install the base (reminder: swap and luks)
+2. connect with `nmtui`
+3. install the config:
+
 
 ```bash
-git clone --depth 1 -- git@github.com:anuramat/nixos
+# backup the defaults
+cp -r /etc/nixos ~/defaults
+
+# get the repo
+nix-shell -p git
+git clone --depth 1 https://github.com/anuramat/nixos ~/nixos
 sudo rm -rf /etc/nixos
-sudo mv -T nixos /etc/nixos
-nix-cache-keygen # only if this machine is a builder
+sudo mv -T ~/nixos /etc/nixos
+
+# drop the hw config
+cd /etc/nixos
+cp "$HOME/defaults/hardware-configuration.nix" "/etc/nixos/nixos-configurations/$HOSTNAME"
+git add .
+
+# install
+export NIX_CONFIG="experimental-features = nix-command flakes pipe-operators"
+nix develop
+nh os switch . -H "$HOSTNAME"
+```
+
+todo:
+
+```bash
+# - keygen script -- make easily accessible from dev shell
+# - new step: unfuck the repo (switch to ssh and unshallow)
+```
+
+some extras:
+
+```bash
+nix-cache-keygen # only if this machine is a builder XXX am I sure about this? seems like we need it regardless
 # misc
 gh auth login
+# TODO upload ssh key to github; might be doable with gh auth
 sudo tailscale up "--operator=$(whoami)"
+# TODO protonmail bridge
 ```
 
 ## Problems
