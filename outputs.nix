@@ -103,13 +103,15 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       };
       devShells.default = pkgs.mkShell {
         packages = with pkgs; [
-          nh
           neovim
+          zellij
           git
+          nh
           just
+          fd
+
           nixfmt
           nix-unit
-          fd
           shellcheck
           yamllint
           luaPackages.luacheck
