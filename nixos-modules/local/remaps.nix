@@ -1,11 +1,12 @@
 { config, ... }:
 {
-  assertions = [
-    {
-      assertion = (config.services.keyd.keyboards.main.ids != [ ]) || config.server;
-      message = "main keyboard not configured";
-    }
-  ];
+  # TODO enable if it's a laptop
+  # assertions = [
+  #   {
+  #     assertion = (config.services.keyd.keyboards.main.ids != [ ]);
+  #     message = "main keyboard not configured";
+  #   }
+  # ];
   services.keyd = {
     enable = true;
     keyboards = {
