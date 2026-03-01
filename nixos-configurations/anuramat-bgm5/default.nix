@@ -32,5 +32,9 @@
   # recommended in nixos-hardware readme for framework desktop
   boot.kernelPackages = pkgs.linuxPackages_6_18;
 
+  environment.systemPackages = with pkgs; [
+    rocmPackages.rocm-smi
+  ];
+
   programs.captive-browser.interface = "wlp195s0";
 }
