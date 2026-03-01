@@ -6,8 +6,7 @@
 }:
 let
   inherit (lib) getExe;
-in
-{
+
   screen =
     let
       niri = getExe pkgs.niri;
@@ -16,6 +15,7 @@ in
       off = "${niri} msg action power-off-monitors";
       on = "${niri} msg action power-on-monitors";
     };
+
   lock =
     let
       screen = "${lib.getExe pkgs.swaylock} -f";
@@ -23,6 +23,8 @@ in
     in
     "${keyring}; ${screen}";
 
+in
+{
   services = {
     swayidle = {
       enable = true;
@@ -51,10 +53,11 @@ in
       ];
     };
   };
-  home.packages = [
-    erotic
-    unerotic
-  ];
+
+  # home.packages = [
+  #   erotic
+  #   unerotic
+  # ];
 
   # # TODO put env stuff in a reusable var
   # # TODO put all deps in runtimeInputs
