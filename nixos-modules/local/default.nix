@@ -168,6 +168,7 @@ in
     };
   };
 
+  # TODO move to local-minimal; the rest to local-heavy
   boot.loader = {
     # on desktops we expect efi
     systemd-boot = {

@@ -4,6 +4,7 @@
   lib,
   ...
 }:
+# BUG GNUPGHOME is unset when activating without local nixos module
 let
   inherit (lib) escapeShellArg getExe;
 
