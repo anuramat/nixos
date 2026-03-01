@@ -32,6 +32,7 @@ let
     in
     {
       inherit (unstable)
+        llama-cpp
         opencode
         ;
     };
