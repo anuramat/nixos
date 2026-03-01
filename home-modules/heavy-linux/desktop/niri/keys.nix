@@ -78,8 +78,8 @@ let
       "toggle"
     ];
     lock = [
-      "loginctl"
-      "lock-session"
+      "swaylock"
+      "-f"
     ];
     sleep = [
       "systemctl"
