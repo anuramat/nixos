@@ -9,6 +9,7 @@ let
     ];
     text =
       let
+        # TODO if cuda is unavailable, switch to whisper-cpp-vulkan
         modelName = "base.en";
         modelDir = config.xdg.dataHome + "/whisper-cpp/models";
         modelPath = modelDir + "/ggml-${modelName}.bin";
