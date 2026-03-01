@@ -6,9 +6,9 @@
 
 ## Install
 
-0. prepare `nixos-configurations/$HOSTNAME/default.nix`
+0. prepare a minimal config in `nixos-configurations/$HOSTNAME/default.nix`
 1. install the base (reminder: swap and luks)
-2. connect with `nmtui`
+2. rebuild with the right hostname, connect to wifi with `nmtui`
 3. install the config:
 
 
@@ -38,6 +38,7 @@ sudo nixos-rebuild switch --option extra-experimental-features pipe-operators --
 todo:
 
 ```bash
+# - new step: after installing minimal config -- generate keys, start tailscale, scp from a trusted machine, rekey secrets with agenix and commit
 # - keygen script -- make easily accessible from dev shell
 # - new step: unfuck the repo (switch to ssh and unshallow)
 ```
