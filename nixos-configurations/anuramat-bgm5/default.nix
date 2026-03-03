@@ -25,9 +25,10 @@
 
     inputs.nixos-hardware.nixosModules.common-hidpi
 
-    inputs.self.nixosModules.llama # TODO re-enable?
+    inputs.self.nixosModules.llama
   ];
   # TODO zramSwap and tmpfs
+  # TODO drop laptop specific stuff: tlp, thermald
 
   # recommended in nixos-hardware readme for framework desktop
   boot.kernelPackages = pkgs.linuxPackages_6_18;
