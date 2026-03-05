@@ -51,7 +51,6 @@
       models = {
         big = {
           filename = "unsloth_Qwen3.5-122B-A10B-GGUF_Q4_K_M_Qwen3.5-122B-A10B-Q4_K_M-00001-of-00003.gguf";
-          id = "qwen3.5-122b";
           params = {
             topP = 0.95;
             topK = 20;
