@@ -1,4 +1,10 @@
 {
+lib,...
+}
+let 
+inherit (lib) mkDefault;
+in
+{
   thermald.enable = true; # cooling
   tlp = {
     enable = true;
