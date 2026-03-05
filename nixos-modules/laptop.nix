@@ -1,8 +1,9 @@
 {
-lib,...
-}
-let 
-inherit (lib) mkDefault;
+  lib,
+  ...
+}:
+let
+  inherit (lib) mkDefault;
 in
 {
   thermald.enable = true; # cooling
