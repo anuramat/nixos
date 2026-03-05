@@ -7,68 +7,74 @@ let
     ;
 
   inherit (config.services.llama-cpp) modelExtra;
+  port = 11343;
 in
 {
-  options.services.llama-cpp.modelExtra = mkOption {
-    type = types.submodule {
-      options = {
-        id = mkOption { type = types.str; }; # e.g. "qwen3:4b"
-        name = mkOption {
-          type = types.nullOr types.str;
-          default = modelExtra.id;
-        }; # e.g. "Qwen3 4B"
-        thinking = mkOption {
-          type = types.bool;
-          default = true;
-        };
-        vision = mkOption {
-          type = types.bool;
-          default = false;
-        };
-        params = mkOption {
-          type = types.submodule {
-            options = {
-              mmprojFile = mkOption {
-                type = types.nullOr types.str;
-                default = null;
-              };
+  options.services.llama-cpp = {
+    # modelDir = ...
+    # modelFile = ...
+    #  = ...
+    modelExtra = mkOption {
+      type = types.submodule {
+        options = {
+          id = mkOption { type = types.str; }; # e.g. "qwen3:4b"
+          name = mkOption {
+            type = types.nullOr types.str;
+            default = modelExtra.id;
+          }; # e.g. "Qwen3 4B"
+          thinking = mkOption {
+            type = types.bool;
+            default = true;
+          };
+          vision = mkOption {
+            type = types.bool;
+            default = false;
+          };
+          params = mkOption {
+            type = types.submodule {
+              options = {
+                mmprojFile = mkOption {
+                  type = types.nullOr types.str;
+                  default = null;
+                };
 
-              minP = mkOption {
-                type = types.nullOr types.float;
-                default = null;
-              };
-              temp = mkOption {
-                type = types.nullOr types.float;
-                default = null;
-              };
-              topK = mkOption {
-                type = types.nullOr types.int;
-                default = null;
-              };
-              topP = mkOption {
-                type = types.nullOr types.float;
-                default = null;
-              };
+                minP = mkOption {
+                  type = types.nullOr types.float;
+                  default = null;
+                };
+                temp = mkOption {
+                  type = types.nullOr types.float;
+                  default = null;
+                };
+                topK = mkOption {
+                  type = types.nullOr types.int;
+                  default = null;
+                };
+                topP = mkOption {
+                  type = types.nullOr types.float;
+                  default = null;
+                };
 
-              jinja = mkOption {
-                type = types.bool;
-                default = true;
-              };
-              chatTemplateFile = mkOption {
-                type = types.nullOr types.str;
-                default = null;
-              };
-              chatTemplateKwargs = mkOption {
-                type = types.nullOr types.attrs;
-                default = null;
-              };
+                jinja = mkOption {
+                  type = types.bool;
+                  default = true;
+                };
+                chatTemplateFile = mkOption {
+                  type = types.nullOr types.str;
+                  default = null;
+                };
+                chatTemplateKwargs = mkOption {
+                  type = types.nullOr types.attrs;
+                  default = null;
+                };
 
-              ctxSize = mkOption {
-                type = types.int;
-              };
-              parallel = mkOption {
-                type = types.nullOr types.int;
-                default = null;
+                ctxSize = mkOption {
+                  type = types.int;
+                };
+                parallel = mkOption {
+                  type = types.nullOr types.int;
+                  default = null;
+                };
               };
             };
           };
@@ -76,50 +82,74 @@ in
       };
     };
   };
-  config.services.llama-cpp.extraFlags =
+  config =
     let
-      mkFlags =
-        p:
-        optionals (p.mmprojFile != null) [
-          "--mmproj"
-          p.mmprojFile
-        ]
-
-        ++ optionals (p.minP != null) [
-          "--min-p"
-          (toString p.minP)
-        ]
-        ++ optionals (p.temp != null) [
-          "--temp"
-          (toString p.temp)
-        ]
-        ++ optionals (p.topK != null) [
-          "--top-k"
-          (toString p.topK)
-        ]
-        ++ optionals (p.topP != null) [
-          "--top-p"
-          (toString p.topP)
-        ]
-
-        ++ optionals p.jinja [ "--jinja" ]
-        ++ optionals (p.chatTemplateFile != null) [
-          "--chat-template-file"
-          p.chatTemplateFile
-        ]
-        ++ optionals (p.chatTemplateKwargs != null) [
-          "--chat-template-kwargs"
-          (builtins.toJSON p.chatTemplateKwargs)
-        ]
-
-        ++ [
-          "--fit-ctx"
-          (toString p.ctxSize)
-        ]
-        ++ optionals (p.parallel != null) [
-          "-np"
-          (toString p.parallel)
-        ];
+      cfg = config.services.llama-cpp;
     in
-    mkFlags config.services.llama-cpp.modelExtra.params;
+    {
+
+      environment.systemPackages = [
+        cfg.package
+      ];
+
+      environment.sessionVariables = {
+        LLAMA_CACHE = cfg.modelDir;
+      };
+
+      networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
+        port
+      ];
+      services.llama-cpp = {
+        openFirewall = false;
+        host = "0.0.0.0";
+        inherit port;
+        model = "${cfg.modelDir}/${cfg.modelFile}";
+        extraFlags =
+          let
+            mkFlags =
+              p:
+              optionals (p.mmprojFile != null) [
+                "--mmproj"
+                p.mmprojFile
+              ]
+
+              ++ optionals (p.minP != null) [
+                "--min-p"
+                (toString p.minP)
+              ]
+              ++ optionals (p.temp != null) [
+                "--temp"
+                (toString p.temp)
+              ]
+              ++ optionals (p.topK != null) [
+                "--top-k"
+                (toString p.topK)
+              ]
+              ++ optionals (p.topP != null) [
+                "--top-p"
+                (toString p.topP)
+              ]
+
+              ++ optionals p.jinja [ "--jinja" ]
+              ++ optionals (p.chatTemplateFile != null) [
+                "--chat-template-file"
+                p.chatTemplateFile
+              ]
+              ++ optionals (p.chatTemplateKwargs != null) [
+                "--chat-template-kwargs"
+                (builtins.toJSON p.chatTemplateKwargs)
+              ]
+
+              ++ [
+                "--fit-ctx"
+                (toString p.ctxSize)
+              ]
+              ++ optionals (p.parallel != null) [
+                "-np"
+                (toString p.parallel)
+              ];
+          in
+          mkFlags config.services.llama-cpp.modelExtra.params;
+      };
+    };
 }

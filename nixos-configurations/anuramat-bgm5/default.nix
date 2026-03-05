@@ -4,6 +4,37 @@
   ...
 }:
 {
+  services.llama-cpp =
+    let
+      models = {
+        big = {
+          modelFile = "unsloth_Qwen3.5-122B-A10B-GGUF_Q4_K_M_Qwen3.5-122B-A10B-Q4_K_M-00001-of-00003.gguf";
+          modelExtra = {
+            id = "qwen3.5-122b";
+            params = {
+              topP = 0.95;
+              topK = 20;
+              temp = 0.6;
+              minP = 0.00;
+
+              ctxSize = 30000;
+              parallel = 5;
+            };
+          };
+        };
+      };
+      selected = models.big;
+    in
+    {
+      enable = true;
+      modelDir = "/mnt/storage/llama-cpp";
+      package = pkgs.llama-cpp-vulkan;
+      extraFlags = [
+        "-dev"
+        "Vulkan0"
+      ];
+      inherit (selected) modelFile modelExtra;
+    };
   nix.distributedBuilds = false;
   system.stateVersion = "25.11";
   home-manager.users.anuramat.home.stateVersion = "25.11";
@@ -18,11 +49,6 @@
     device = "/dev/disk/by-uuid/6f11006b-bc8c-40f2-be8c-419feb43654d";
     fsType = "ext4";
   };
-
-  services.llama-cpp.extraFlags = [
-    "-dev"
-    "Vulkan0"
-  ];
 
   hardware.firmware = [ pkgs.linux-firmware ];
 
