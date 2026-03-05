@@ -32,7 +32,7 @@ let
     in
     {
       inherit (unstable)
-        llama-cpp
+        llama-cpp-vulkan
         opencode
         ;
     };
@@ -76,7 +76,6 @@ let
 
   overlays = inputOverlays ++ [
     (import ./misc.nix inputs)
-    # (import ./llama-cpp.nix inputs)
     (import ./vim-plugins.nix inputs)
     impureWrappers
     unstablePkgs

@@ -11,6 +11,11 @@
 
   nixpkgs.config.rocmSupport = true;
 
+  fileSystems."/mnt/storage" = {
+    device = "/dev/disk/by-uuid/6f11006b-bc8c-40f2-be8c-419feb43654d";
+    fsType = "ext4";
+  };
+
   imports = [
     inputs.self.nixosModules.default
     inputs.self.nixosModules.local
