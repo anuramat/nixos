@@ -91,7 +91,7 @@ in
         openFirewall = false;
         host = "0.0.0.0";
         inherit port;
-        model = "${cfg.modelDir}/${cfg.modelFile}";
+        model = "${cfg.modelDir}/${cfg.modelWrapped.filename}";
         extraFlags =
           let
             mkFlags =
