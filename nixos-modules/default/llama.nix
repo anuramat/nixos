@@ -6,7 +6,6 @@ let
     mkOption
     ;
 
-  inherit (config.services.llama-cpp) modelExtra;
   port = 11343;
 in
 {
@@ -14,25 +13,11 @@ in
     modelDir = mkOption {
       type = types.str;
     };
-    modelFile = mkOption {
-      type = types.str;
-    };
-    #  = ...
-    modelExtra = mkOption {
+    modelWrapped = mkOption {
       type = types.submodule {
         options = {
-          id = mkOption { type = types.str; }; # e.g. "qwen3:4b"
-          name = mkOption {
-            type = types.nullOr types.str;
-            default = modelExtra.id;
-          }; # e.g. "Qwen3 4B"
-          thinking = mkOption {
-            type = types.bool;
-            default = true;
-          };
-          vision = mkOption {
-            type = types.bool;
-            default = false;
+          filename = mkOption {
+            type = types.str;
           };
           params = mkOption {
             type = types.submodule {
@@ -41,7 +26,6 @@ in
                   type = types.nullOr types.str;
                   default = null;
                 };
-
                 minP = mkOption {
                   type = types.nullOr types.float;
                   default = null;
@@ -58,7 +42,6 @@ in
                   type = types.nullOr types.float;
                   default = null;
                 };
-
                 jinja = mkOption {
                   type = types.bool;
                   default = true;
@@ -71,7 +54,6 @@ in
                   type = types.nullOr types.attrs;
                   default = null;
                 };
-
                 ctxSize = mkOption {
                   type = types.int;
                 };
@@ -92,17 +74,19 @@ in
     in
     {
 
-      environment.systemPackages = [
-        cfg.package
-      ];
-
-      environment.sessionVariables = {
-        LLAMA_CACHE = cfg.modelDir;
+      environment = {
+        systemPackages = [
+          cfg.package
+        ];
+        sessionVariables = {
+          LLAMA_CACHE = cfg.modelDir;
+        };
       };
 
       networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
         port
       ];
+
       services.llama-cpp = {
         openFirewall = false;
         host = "0.0.0.0";
@@ -153,7 +137,7 @@ in
                 (toString p.parallel)
               ];
           in
-          mkFlags config.services.llama-cpp.modelExtra.params;
+          mkFlags cfg.modelWrapped.params;
       };
     };
 }
