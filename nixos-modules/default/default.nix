@@ -13,6 +13,7 @@
     ./net.nix
     ./nix.nix
     ./user.nix
+    ./llama.nix
     ../user-config.nix
 
     inputs.agenix.nixosModules.default
