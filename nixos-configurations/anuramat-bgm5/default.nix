@@ -42,6 +42,7 @@
 
   environment.systemPackages = with pkgs; [
     rocmPackages.rocm-smi
+    libdrm
   ];
 
   programs.captive-browser.interface = "wlp195s0";
