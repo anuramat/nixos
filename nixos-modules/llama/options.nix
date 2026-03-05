@@ -11,8 +11,12 @@ let
 in
 {
   options.services.llama-cpp = {
-    # modelDir = ...
-    # modelFile = ...
+    modelDir = mkOption {
+      type = types.str;
+    };
+    modelFile = mkOption {
+      type = types.str;
+    };
     #  = ...
     modelExtra = mkOption {
       type = types.submodule {
