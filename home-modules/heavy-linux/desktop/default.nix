@@ -9,7 +9,6 @@ args:
     ./mime
     ./portals.nix
     ./niri
-    ./sway
     ./swaylock.nix
     ./syncthing.nix
   ];
