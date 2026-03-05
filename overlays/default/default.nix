@@ -32,12 +32,15 @@ let
     in
     {
       inherit (unstable)
+        linux-firmware
+        rocmPackages
+
         ollama
         llama-cpp
         llama-cpp-rocm
         llama-cpp-vulkan
+
         opencode
-        rocmPackages
         ;
     };
 
