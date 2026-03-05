@@ -19,6 +19,7 @@
   imports = [
     inputs.self.nixosModules.default
     inputs.self.nixosModules.local
+    inputs.self.nixosModules.laptop
     inputs.self.nixosModules.anuramat
     inputs.nixos-hardware.nixosModules.framework-12-13th-gen-intel
     ./hardware-configuration.nix
