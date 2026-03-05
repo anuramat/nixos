@@ -32,6 +32,8 @@ let
     in
     {
       inherit (unstable)
+        llama-cpp
+        llama-cpp-rocm
         llama-cpp-vulkan
         opencode
         ;

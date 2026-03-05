@@ -43,6 +43,7 @@ in
 {
   imports = [ ./options.nix ];
   environment.systemPackages = [
+    package
   ];
   environment.sessionVariables = {
     LLAMA_CACHE = modelDir;
