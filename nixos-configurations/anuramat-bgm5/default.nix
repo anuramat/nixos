@@ -19,6 +19,13 @@
     fsType = "ext4";
   };
 
+  services.llama-cpp.extraFlags = [
+    "-dev"
+    "Vulkan0"
+  ];
+
+  hardware.firmware = [ pkgs.linux-firmware ];
+
   imports = [
     inputs.self.nixosModules.default
     inputs.self.nixosModules.local
