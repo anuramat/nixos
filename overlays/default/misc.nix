@@ -50,14 +50,14 @@ inputs:
     meta.mainProgram = "agentfs";
   };
 
-  llama-cpp = prev.llama-cpp.overrideAttrs (_: rec {
-    version = "7844";
-    src = prev.fetchFromGitHub {
-      owner = "ggml-org";
-      repo = "llama.cpp";
-      tag = "b${version}";
-      hash = "sha256-LA4o2WmiMEd8Q44aEtr2RRq9nJrIPpbOFmoKZyCpcjs=";
-    };
-  });
+  # llama-cpp = prev.llama-cpp.overrideAttrs (_: rec {
+  #   version = "";
+  #   src = prev.fetchFromGitHub {
+  #     owner = "ggml-org";
+  #     repo = "llama.cpp";
+  #     tag = "b${version}";
+  #     hash = "";
+  #   };
+  # });
 
 })

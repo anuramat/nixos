@@ -42,7 +42,7 @@ in
 {
   imports = [ ./options.nix ];
   environment.systemPackages = [
-    pkgs.llama-cpp
+    pkgs.llama-cpp-vulkan
   ];
   environment.sessionVariables = {
     LLAMA_CACHE = modelDir;
