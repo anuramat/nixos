@@ -57,15 +57,6 @@
 #   "5426:138:Razer_Razer_Viper_Mini" = {
 #   };
 #
-#   # anuramat-f12
-#
-#   # anuramat-ll7
-#   "1267:12928:ELAN06FA:00_04F3:3280_Touchpad" = {
-#   };
-#
-#   "1165:51607:ITE_Tech._Inc._ITE_Device(8258)_Keyboard" = {
-#   };
-#
 #   # anuramat-t480
 #   "1:1:AT_Translated_Set_2_keyboard" = {
 #   };

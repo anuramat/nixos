@@ -33,16 +33,13 @@ in
         enable = true;
         settings =
           let
+
+            # TODO create an option and move these to per device configs
             profiles =
               let
                 t480 = {
                   criteria = "LG Display 0x0521 Unknown";
                   position = "0,0";
-                };
-                ll7 = {
-                  criteria = "California Institute of Technology 0x1626 0x00006002";
-                  position = "0,0";
-                  scale = 1.5;
                 };
                 f12 = {
                   criteria = "BOE NV122WUM-N42 Unknown";
@@ -61,18 +58,6 @@ in
               in
               {
                 # alphabetic priority
-
-                ll7-0 = [
-                  (ll7 // { mode = "3200x2000@60Hz"; })
-                ];
-                ll7-1-home = [
-                  (ll7 // { scale = 2.0; })
-                  (home // { position = "1600,0"; })
-                ];
-                ll7-2-generic = [
-                  ll7
-                  generic
-                ];
 
                 t480-0 = [
                   t480
