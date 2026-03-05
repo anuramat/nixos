@@ -37,12 +37,12 @@ let
     };
   };
 
+  package = pkgs.llama-cpp-vulkan;
 in
 
 {
   imports = [ ./options.nix ];
   environment.systemPackages = [
-    pkgs.llama-cpp-vulkan
   ];
   environment.sessionVariables = {
     LLAMA_CACHE = modelDir;
@@ -54,6 +54,7 @@ in
       in
       {
         enable = true;
+        inherit package;
         openFirewall = false;
         host = "0.0.0.0";
         inherit port;

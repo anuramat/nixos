@@ -9,6 +9,9 @@
   home-manager.users.anuramat.home.stateVersion = "25.11";
   networking.hostName = "anuramat-bgm5";
 
+  hardware.amdgpu.opencl.enable = true;
+  services.ollama.acceleration = "vulkan";
+
   nixpkgs.config.rocmSupport = true;
 
   fileSystems."/mnt/storage" = {
@@ -35,8 +38,7 @@
   # TODO zramSwap and tmpfs
   # TODO drop laptop specific stuff: tlp, thermald
 
-  # recommended in nixos-hardware readme for framework desktop
-  boot.kernelPackages = pkgs.linuxPackages_6_18;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
   environment.systemPackages = with pkgs; [
     rocmPackages.rocm-smi
