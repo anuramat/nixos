@@ -35,8 +35,8 @@
 
     inputs.nixos-hardware.nixosModules.common-hidpi
   ];
+
   # TODO zramSwap and tmpfs
-  # TODO drop laptop specific stuff: tlp, thermald
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
@@ -52,7 +52,7 @@
       # TODO update ctx size and custom llama options
       models = {
         big = {
-          filename = "unsloth_Qwen3.5-122B-A10B-GGUF_Q4_K_M_Qwen3.5-122B-A10B-Q4_K_M-00001-of-00003.gguf";
+          filename = "unsloth_Qwen3.5-35B-A3B-GGUF_Qwen3.5-35B-A3B-UD-Q4_K_XL.gguf";
           params = {
             topP = 0.95;
             topK = 20;
