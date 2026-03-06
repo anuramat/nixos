@@ -63,6 +63,25 @@ let
         };
     in
     {
+      llama-cpp = {
+        # TODO parameterize
+        name = "llama.cpp";
+        options.baseURL = "http://anuramat-bgm5:11343/v1";
+        models.dummy = {
+          name = "dummy";
+          modalities = {
+            input = [
+              "image"
+              "text"
+            ];
+            output = [ "text" ];
+          };
+          limit = {
+            "context" = 100000;
+            "output" = 100000;
+          };
+        };
+      };
       openrouter.options.apiKey = keys.openrouter;
       ollama-cloud.options.apiKey = keys.ollama;
       cerebras.options.apiKey = keys.cerebras;
