@@ -42,10 +42,6 @@ in
                   type = types.nullOr types.float;
                   default = null;
                 };
-                jinja = mkOption {
-                  type = types.bool;
-                  default = true;
-                };
                 chatTemplateFile = mkOption {
                   type = types.nullOr types.str;
                   default = null;
@@ -54,12 +50,15 @@ in
                   type = types.nullOr types.attrs;
                   default = null;
                 };
+                fit = mkOption {
+                  type = types.bool;
+                  default = false;
+                };
                 ctxSize = mkOption {
                   type = types.int;
                 };
                 parallel = mkOption {
-                  type = types.nullOr types.int;
-                  default = null;
+                  type = types.int;
                 };
               };
             };
@@ -118,7 +117,6 @@ in
                 (toString p.topP)
               ]
 
-              ++ optionals p.jinja [ "--jinja" ]
               ++ optionals (p.chatTemplateFile != null) [
                 "--chat-template-file"
                 p.chatTemplateFile
@@ -129,10 +127,10 @@ in
               ]
 
               ++ [
-                "--fit-ctx"
+                (if p.fit then "--fit-ctx" else "-c")
                 (toString p.ctxSize)
               ]
-              ++ optionals (p.parallel != null) [
+              ++ [
                 "-np"
                 (toString p.parallel)
               ];
