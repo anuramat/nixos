@@ -7,22 +7,37 @@ inputs:
     vendorHash = "sha256-aW7N6uacoP99kpvw9E5WrHaQ0fZ4P5WGsNvR/FAZ+cA=";
   });
 
-  claude-code = prev.claude-code.overrideAttrs (oldAttrs: rec {
-    version = "2.1.37";
+  claude-code = prev.stdenv.mkDerivation rec {
+    pname = "claude-code";
+    version = "2.1.70";
     src = prev.fetchzip {
       url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-      hash = "sha256-ijyZCT4LEEtXWOBds8WzizcfED9hVgaJByygJ4P4Yss=";
+      hash = "sha256-mxZVgsaRGVd/3VNWJqVMfRyrDid0MOuzrGIcInQHIEk=";
+    };
+    nativeBuildInputs = [ prev.makeWrapper ];
+    installPhase = ''
+      runHook preInstall
+      mkdir -p $out/lib/claude-code $out/bin
+      cp -r . $out/lib/claude-code
+      makeWrapper ${prev.nodejs}/bin/node $out/bin/claude \
+        --add-flags $out/lib/claude-code/cli.js \
+        --set DISABLE_AUTOUPDATER 1 \
+        --unset DEV
+      runHook postInstall
+    '';
+    meta = prev.claude-code.meta // {
+      mainProgram = "claude";
     };
     # https://www.npmjs.com/package/@anthropic-ai/claude-code
     # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
-  });
+  };
 
   codex = prev.stdenv.mkDerivation rec {
     pname = "codex";
-    version = "0.106.0";
+    version = "0.111.0";
     src = prev.fetchurl {
       url = "https://github.com/openai/codex/releases/download/rust-v${version}/codex-x86_64-unknown-linux-musl.zst";
-      sha256 = "sha256-y/mZlTKpA5v33wUr7yAS3vLUgKs9ewwT0YNrfewZeVo=";
+      sha256 = "sha256-wOMnvh3iV0E3wx+q3opKzCgF3ff0JsoZ4EaTouqsvOw=";
     };
     dontUnpack = true;
     nativeBuildInputs = [ prev.zstd ];
