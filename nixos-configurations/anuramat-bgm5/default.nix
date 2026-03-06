@@ -51,7 +51,7 @@
     let
       # TODO update ctx size and custom llama options
       models = {
-        big = {
+        qwen35 = {
           filename = "unsloth_Qwen3.5-35B-A3B-GGUF_Qwen3.5-35B-A3B-UD-Q4_K_XL.gguf";
           params = {
             topP = 0.95;
@@ -59,8 +59,19 @@
             temp = 0.6;
             minP = 0.00;
 
-            ctxSize = 30000;
+            ctxSize = 262144;
             parallel = 5;
+          };
+        };
+        oss120 = {
+          filename = "ggml-org_gpt-oss-120b-GGUF_gpt-oss-120b-mxfp4-00001-of-00003.gguf";
+          params = {
+            topP = 1.0;
+            topK = 0;
+            temp = 1.0;
+            minP = 0.00;
+            ctxSize = 131072;
+            parallel = 3;
           };
         };
       };
@@ -73,6 +84,6 @@
         "-dev"
         "Vulkan0"
       ];
-      modelWrapped = models.big;
+      modelWrapped = models.oss120;
     };
 }
