@@ -9,8 +9,8 @@ let
   inherit (lib) mapAttrs getExe;
   inherit (config.lib) agents;
 
-  # glm = "cerebras/zai-glm-4.7";
-  glm = "zai-coding-plan/glm-5";
+  glm = "cerebras/zai-glm-4.7";
+  # glm = "zai-coding-plan/glm-5";
 
   agent =
     let
