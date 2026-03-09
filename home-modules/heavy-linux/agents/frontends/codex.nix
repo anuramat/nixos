@@ -52,7 +52,7 @@ let
 
         features = {
           multi_agent = true;
-          prevent_idle_sleep = true;
+          prevent_idle_sleep = false;
           personality = true;
           apps = false; # chatgpt apps
           steer = true; # interrupt by sending a message
