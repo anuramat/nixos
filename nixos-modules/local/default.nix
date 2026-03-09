@@ -13,10 +13,22 @@ in
 {
   imports = [
     ./cuda.nix
+    ./rocm.nix
     ./peripherals.nix
     ./remaps.nix
     ./rice.nix
   ];
+
+  virtualisation = {
+    containers.enable = true; # common container config files in /etc/containers
+    podman = {
+      enable = true;
+      dockerCompat = true;
+      # > Required for containers under podman-compose to be able to talk to each other.
+      # TODO is this still needed?
+      defaultNetwork.settings.dns_enabled = true;
+    };
+  };
 
   services.getty.autologinOnce = true; # TODO only if full disk encryption
 

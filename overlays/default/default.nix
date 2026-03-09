@@ -33,6 +33,7 @@ let
     {
       inherit (unstable)
         linux-firmware
+        linuxPackages_latest
         rocmPackages
 
         ollama

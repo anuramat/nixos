@@ -4,31 +4,20 @@
   ...
 }:
 {
-  virtualisation = {
-    containers.enable = true; # common container config files in /etc/containers
-    podman = {
-      enable = true;
-      dockerCompat = true;
-      # > Required for containers under podman-compose to be able to talk to each other.
-      # TODO is this still needed?
-      defaultNetwork.settings.dns_enabled = true;
-    };
-  };
   nix.distributedBuilds = false;
+  nixpkgs.config.rocmSupport = true;
+
   system.stateVersion = "25.11";
   home-manager.users.anuramat.home.stateVersion = "25.11";
   networking.hostName = "anuramat-bgm5";
-
-  hardware.amdgpu.opencl.enable = true;
-  services.ollama.acceleration = "vulkan";
-
-  nixpkgs.config.rocmSupport = true;
+  programs.captive-browser.interface = "wlp195s0";
 
   fileSystems."/mnt/storage" = {
     device = "/dev/disk/by-uuid/6f11006b-bc8c-40f2-be8c-419feb43654d";
     fsType = "ext4";
   };
 
+  boot.kernelPackages = pkgs.linuxPackages_latest;
   hardware.firmware = [ pkgs.linux-firmware ];
 
   imports = [
@@ -47,9 +36,6 @@
   ];
 
   # TODO zramSwap and tmpfs
-
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-  programs.captive-browser.interface = "wlp195s0";
 
   services.llama-cpp =
     let
