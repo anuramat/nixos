@@ -34,6 +34,7 @@ in
     inputs.flake-parts.follows = "flake-parts";
   };
   niri = mkInput "github:sodiboo/niri-flake";
+  nix-auth = mkInput "github:numtide/nix-auth";
 
   # my stuff
   ctrlsn = mkInput "git+ssh://git@github.com/anuramat/ctrl.sn?ref=main";

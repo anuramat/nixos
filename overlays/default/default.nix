@@ -19,6 +19,7 @@ let
         statix
         deadnix
         html2text
+        nix-auth
         ;
     });
 

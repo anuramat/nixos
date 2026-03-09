@@ -62,6 +62,7 @@
     fortune # random quotes
 
     # miscellaneous unfiled TODO
+    nix-auth
     html2text # html to plain text
     percollate # html to markdown
     fx # json viewer
