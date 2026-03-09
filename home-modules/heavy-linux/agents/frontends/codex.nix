@@ -38,11 +38,6 @@ let
       cfg = {
         notice = {
           hide_full_access_warning = true;
-          hide_gpt5_1_migration_prompt = true;
-          "hide_gpt-5.1-codex-max_migration_prompt" = true;
-          model_migrations = {
-            "gpt-5.1-codex-max" = "gpt-5.2-codex";
-          };
         };
         hide_agent_reasoning = false;
         show_raw_agent_reasoning = true;
@@ -50,15 +45,16 @@ let
 
         model_reasoning_effort = "medium";
         model_verbosity = "low";
-        model = "gpt-5.3-codex";
+        model = "gpt-5.4";
 
         web_search = "live"; # "disabled" | "cached" | "live"
+        service_tier = "fast"; # "fast" | unset
 
         features = {
-
-          # /experimental
+          multi_agent = true;
+          prevent_idle_sleep = true;
           personality = true;
-          apps = true; # chatgpt apps
+          apps = false; # chatgpt apps
           steer = true; # interrupt by sending a message
           unified_exec = false; # background bash
           shell_snapshot = true; # persist shell
@@ -73,46 +69,27 @@ let
         mcp_servers = {
         };
         profiles = {
-          oss = {
-            model = "llama_cpp/dummy";
-            model_provider = "litellm";
-          };
-          openrouter = {
-            model = "z-ai/glm-4.7";
-            model_provider = "openrouter";
-            query_params = {
-              provider = {
-                only = [ "cerebras" ];
-              };
-            };
+          local = {
+            model = "dummy";
+            model_provider = "llama_cpp";
           };
         };
         # experimental_resume = "${codexHome}/history.jsonl";
         model_providers = {
+          llama_cpp = {
+            name = "llama_cpp";
+            # TODO parameterize local model hostname
+            base_url = "http://anuramat-bgm5/v1";
+            experimental_bearer_token = "dummy";
+            wire_api = "responses";
+          };
           openrouter = {
             name = "openrouter";
             base_url = "https://openrouter.ai/api/v1";
             env_key = "OPENROUTER_API_KEY";
-            # wire_api = "responses";
+            wire_api = "responses";
           };
-        }
-        // (
-          if osConfig != null && osConfig.services.llama-cpp.enable then
-            {
-              litellm = {
-                name = "litellm";
-                base_url =
-                  let
-                    port = "11333";
-                  in
-                  "http://localhost:${port}";
-                experimental_bearer_token = "dummy";
-                # wire_api = "responses";
-              };
-            }
-          else
-            { }
-        );
+        };
         notify =
           let
             notifier = pkgs.writeShellApplication {
