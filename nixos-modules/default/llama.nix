@@ -12,6 +12,7 @@ in
   options.services.llama-cpp = {
     modelDir = mkOption {
       type = types.str;
+      default = "${config.xdg.cacheHome}/llama.cpp";
     };
     modelWrapped = mkOption {
       type = types.submodule {
