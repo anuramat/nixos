@@ -87,6 +87,14 @@
       };
       url = "github:sodiboo/niri-flake";
     };
+    nix-auth = {
+      inputs = {
+        nixpkgs = {
+          follows = "nixpkgs";
+        };
+      };
+      url = "github:numtide/nix-auth";
+    };
     nix-topology = {
       url = "github:oddlama/nix-topology";
     };
