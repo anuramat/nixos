@@ -4,6 +4,7 @@ let
     optionals
     types
     mkOption
+    mkIf
     ;
 
   port = 11343;
@@ -12,7 +13,6 @@ in
   options.services.llama-cpp = {
     modelDir = mkOption {
       type = types.str;
-      default = "${config.xdg.cacheHome}/llama.cpp";
     };
     modelWrapped = mkOption {
       type = types.submodule {
@@ -72,7 +72,7 @@ in
     let
       cfg = config.services.llama-cpp;
     in
-    {
+    mkIf cfg.enable {
 
       environment = {
         systemPackages = [
