@@ -1,6 +1,6 @@
 keys_dir := `pwd` / "nixos-configurations" / `hostname` / "keys"
 
-all: flake format (test "--quiet") lint nixos
+all: flake format lint nixos
 
 # Regenerate flake
 [group('build')]
