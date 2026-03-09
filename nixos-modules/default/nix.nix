@@ -19,6 +19,11 @@ let
   keyPath = "${config.users.users.${username}.home}/.ssh/id_ed25519";
 in
 {
+  hardware = {
+    enableAllFirmware = true;
+    enableAllHardware = true;
+    enableRedistributableFirmware = true;
+  };
   nixpkgs = {
     config = {
       allowUnfree = true;

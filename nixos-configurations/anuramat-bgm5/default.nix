@@ -37,9 +37,9 @@
     inputs.self.nixosModules.anuramat
     ./hardware-configuration.nix
 
-    # originally for framework desktop
     inputs.nixos-hardware.nixosModules.common-cpu-amd
     inputs.nixos-hardware.nixosModules.common-cpu-amd-pstate
+    inputs.nixos-hardware.nixosModules.common-cpu-amd-zenpower
     inputs.nixos-hardware.nixosModules.common-gpu-amd
     inputs.nixos-hardware.nixosModules.common-pc-ssd
 
@@ -49,12 +49,6 @@
   # TODO zramSwap and tmpfs
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
-
-  environment.systemPackages = with pkgs; [
-    rocmPackages.rocm-smi
-    libdrm
-  ];
-
   programs.captive-browser.interface = "wlp195s0";
 
   services.llama-cpp =
