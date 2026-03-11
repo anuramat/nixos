@@ -1,4 +1,8 @@
-args:
+{
+  pkgs,
+  osConfig ? null,
+  ...
+}:
 {
   imports = [
     ./kanshi.nix
@@ -12,12 +16,14 @@ args:
     ./swaylock.nix
     ./syncthing.nix
   ];
+
+  home.packages = with pkgs; [ shaderbg ];
 }
 // (
-  if args ? osConfig then
+  if osConfig != null then
     {
       services = {
-        blueman-applet.enable = args.osConfig.services.blueman.enable;
+        blueman-applet.enable = osConfig.services.blueman.enable;
         avizo = {
           enable = true;
           settings = {
@@ -27,13 +33,13 @@ args:
           };
         };
         udiskie = {
-          enable = args.osConfig.services.udisks2.enable;
+          enable = osConfig.services.udisks2.enable;
           notify = true;
           tray = "auto";
           automount = true;
         };
       };
-      services.network-manager-applet.enable = args.osConfig.networking.networkmanager.enable;
+      services.network-manager-applet.enable = osConfig.networking.networkmanager.enable;
     }
   else
     { }
