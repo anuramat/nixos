@@ -10,6 +10,7 @@
     ".ipynb_checkpoints/"
     ".stack-work/" # haskell
     "__pycache__/"
+    "__marimo__/"
     "node_modules/"
     "result" # nix
     "tags"
