@@ -78,7 +78,7 @@ let
       "toggle"
     ];
     lock = [
-      "swaylock"
+      "swaylock-plugin"
       "-f"
     ];
     sleep = [

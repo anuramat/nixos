@@ -43,6 +43,8 @@ let
         llama-cpp-vulkan
 
         opencode
+
+        swaylock-plugin
         ;
     };
 

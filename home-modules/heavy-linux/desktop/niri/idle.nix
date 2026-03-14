@@ -18,7 +18,7 @@ let
 
   lock =
     let
-      screen = "${lib.getExe pkgs.swaylock} -f";
+      screen = "${lib.getExe pkgs.swaylock-plugin} -f";
       keyring = getExe config.lib.keyring.lock;
     in
     "${keyring}; ${screen}";

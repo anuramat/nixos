@@ -39,11 +39,20 @@ in
   security = {
     soteria.enable = true; # polkit auth agent
     rtkit.enable = true; # realtime kit, hands out realtime priority to user processes
-    pam.services.swaylock.gnupg = {
-      # TODO condition on home-manager swaylock
-      enable = true;
-      noAutostart = true;
-    };
+    pam.services =
+      let
+        lockCfg = {
+          nodelay = true;
+          gnupg = {
+            enable = true;
+            noAutostart = true;
+          };
+        };
+      in
+      {
+        swaylock-plugin = lockCfg;
+        swaylock = lockCfg;
+      };
   };
 
   home-manager = {
