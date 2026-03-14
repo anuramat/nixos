@@ -100,6 +100,7 @@
       ];
 
       layout = {
+        background-color = "#008080";
         empty-workspace-above-first = true;
       };
 
