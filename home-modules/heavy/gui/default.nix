@@ -82,11 +82,7 @@ in
     };
   };
   stylix.targets = {
-    firefox = {
-      # NOTE conflicts with outside extensions
-      colorTheme.enable = true;
-      profileNames = [ ];
-    };
+    firefox.colorTheme.enable = false;
   };
   xdg.configFile = {
     "swappy/config".text = toINI {
