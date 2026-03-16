@@ -3,6 +3,7 @@
 }:
 {
   imports = [
+    ./hosts.nix
     ./bash
     ./bin
     ./git
