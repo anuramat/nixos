@@ -1,6 +1,6 @@
 {
   plugins = {
-    lint.lintersByFt.rust = [ "clippy" ];
+    # NOTE clippy and cargofmt already in somehow
     rustaceanvim = {
       enable = true;
     };
