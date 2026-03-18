@@ -98,7 +98,7 @@ let
         };
       };
       zai = {
-        base-url = "https://api.z.ai/api/paas/v4";
+        base-url = "https://api.z.ai/api/coding/paas/v4";
         api-key-cmd = keys.zai;
         models = {
           "glm-5" = {
