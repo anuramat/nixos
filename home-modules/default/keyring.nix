@@ -5,6 +5,7 @@
   ...
 }:
 # BUG GNUPGHOME is unset when activating without local nixos module
+# WARN keyring doesn't unlock on first boot, only when swaylock is open
 let
   inherit (lib) escapeShellArg getExe;
 
