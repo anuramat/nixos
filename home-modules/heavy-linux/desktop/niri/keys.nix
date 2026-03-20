@@ -122,7 +122,8 @@ let
         drun =
           # bash
           ''
-            "$(${j4} -d '${bemenu} -p drun' -t '${term}' -x --no-generic)"
+            selected="$(${j4} -d '${bemenu} -p drun' -t '${term}' --no-exec --no-generic)"
+            bash -lc "exec $selected"
           '';
         todo_add =
           # bash
