@@ -1,5 +1,6 @@
 {
   # alternative -- felix-fm -- image previews, otherwise minimal -- :help<cr> for help; waiting for picker in <https://github.com/kyoheiu/felix/issues/261>
+  # TODO disable wraparound
   programs.yazi = {
     enable = true;
     shellWrapperName = "y";
@@ -11,7 +12,10 @@
           run = "noop";
         }
       ];
-      mgr.sort_by = "natural";
+      mgr = {
+        title_format = "";
+        sort_by = "natural";
+      };
     };
     keymap = {
       mgr.prepend_keymap = [
