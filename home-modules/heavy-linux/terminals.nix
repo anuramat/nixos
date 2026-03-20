@@ -1,7 +1,6 @@
-{ pkgs, ... }:
 {
   programs.ghostty.settings = {
-    command = "${pkgs.bash}/bin/bash -l";
+    command = "bash -l";
     window-decoration = "false";
   };
   programs.foot = {
