@@ -77,8 +77,7 @@
     ./keys.nix
     ./bar.nix
   ];
-  # TODO move out
-  wayland.systemd.target = "niri.service";
+  wayland.systemd.target = "niri.service"; # NOTE using graphical-session.target breaks services that have ConditionEnvironment=WAYLAND_DISPLAY, because they start too early -- before niri sets variables
   services.gnome-keyring.enable = lib.mkForce false;
   programs.niri = {
     enable = true;
