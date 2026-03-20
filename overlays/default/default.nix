@@ -45,6 +45,7 @@ let
         opencode
 
         swaylock-plugin
+        ghostty
         ;
     };
 

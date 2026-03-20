@@ -1,5 +1,9 @@
+{ pkgs, ... }:
 {
-  programs.ghostty.settings.window-decoration = "false";
+  programs.ghostty.settings = {
+    command = "${pkgs.bash}/bin/bash -l";
+    window-decoration = "false";
+  };
   programs.foot = {
     enable = true;
     settings = {

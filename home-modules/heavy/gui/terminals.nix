@@ -12,7 +12,7 @@
     # [font.normal]
     # family = "Hack Nerd Font"
     ghostty = {
-      # cons: slowest startup; no scrollback search
+      # cons: slowest startup
       # pros: supports kitty image protocol; almost zero config; not bloated
       enable = true;
       clearDefaultKeybinds = true;
