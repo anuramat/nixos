@@ -95,7 +95,6 @@ let
 
   pickers =
     let
-      j4 = getExe pkgs.j4-dmenu-desktop;
       pkill = "${pkgs.procps}/bin/pkill";
       todo = getExe pkgs.todo;
       fd = getExe pkgs.fd;
@@ -122,7 +121,8 @@ let
         drun =
           # bash
           ''
-            selected="$(${j4} -d '${bemenu} -p drun' -t '${term}' --no-exec --no-generic)"
+            # NOTE: this is so that we have $PATH available
+            selected="$(${getExe pkgs.j4-dmenu-desktop} -d '${bemenu} -p drun' -t '${term}' --no-exec --no-generic)"
             bash -lc "exec $selected"
           '';
         todo_add =
