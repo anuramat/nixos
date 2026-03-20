@@ -78,7 +78,7 @@
     ./bar.nix
   ];
   # TODO move out
-  wayland.systemd.target = "graphical-session.target";
+  wayland.systemd.target = "niri.service";
   services.gnome-keyring.enable = lib.mkForce false;
   programs.niri = {
     enable = true;
