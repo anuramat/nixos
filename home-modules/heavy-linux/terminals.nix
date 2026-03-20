@@ -3,6 +3,7 @@
   programs.foot = {
     enable = true;
     settings = {
+      main.login-shell = "yes";
       scrollback.lines = 133337;
       url = {
         osc8-underline = "always";

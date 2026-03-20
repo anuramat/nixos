@@ -7,9 +7,9 @@ let
     fi
 
     systemctl --user reset-failed
-    # systemctl --user import-environment
-    dbus-update-activation-environment --all --systemd
-    systemctl --user unset-environment SHLVL
+    # systemctl --user import-environment ...
+    dbus-update-activation-environment --systemd XDG_VTNR XDG_SESSION_TYPE XDG_SESSION_ID BEMENU_OPTS
+    # GNUPG_HOME
     systemctl --user --wait start niri.service
     systemctl --user start --job-mode=replace-irreversibly niri-shutdown.target
     systemctl --user unset-environment WAYLAND_DISPLAY DISPLAY XDG_SESSION_TYPE XDG_CURRENT_DESKTOP NIRI_SOCKET

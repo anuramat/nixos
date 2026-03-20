@@ -78,7 +78,7 @@ let
       "toggle"
     ];
     lock = [
-      "swaylock-plugin"
+      (getExe pkgs.swaylock-plugin)
       "-f"
     ];
     sleep = [
@@ -191,7 +191,7 @@ in
       action."close-window" = { };
       repeat = false;
     };
-    "Mod+semicolon".action.spawn = "foot";
+    "Mod+semicolon".action.spawn = getExe pkgs.foot;
     "Mod+Space".action.spawn = pickers.drun;
     "Mod+Tab".action.focus-monitor-next = { };
     "Mod+Ctrl+Tab".action.move-window-to-monitor-next = { };
