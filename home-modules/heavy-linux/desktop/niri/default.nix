@@ -81,6 +81,8 @@
   xdg.configFile."systemd/user/niri.service.d/override.conf".text =
     let
       path = lib.makeBinPath [
+        pkgs.systemd
+        pkgs.dbus
         pkgs.coreutils
         pkgs.gawk
         pkgs.bash
