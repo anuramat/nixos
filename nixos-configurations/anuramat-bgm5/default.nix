@@ -41,6 +41,19 @@
     let
       # TODO update ctx size and custom llama options
       models = {
+
+        leanstral = {
+          filename = "jackcloudman_Leanstral-2603-GGUF_mistralai_Leanstral-128x3.9B-2603-Q4_K_M.gguf";
+          params = {
+            # topP = 0.95;
+            # topK = 20;
+            # temp = 0.6;
+            # minP = 0.00;
+            #
+            ctxSize = 1024;
+            parallel = 1;
+          };
+        };
         qwen35 = {
           filename = "unsloth_Qwen3.5-35B-A3B-GGUF_Qwen3.5-35B-A3B-UD-Q4_K_XL.gguf";
           params = {
@@ -74,6 +87,6 @@
         "-dev"
         "Vulkan0"
       ];
-      modelWrapped = models.oss120;
+      modelWrapped = models.leanstral;
     };
 }
