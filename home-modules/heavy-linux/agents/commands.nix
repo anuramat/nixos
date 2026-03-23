@@ -1,49 +1,9 @@
 { config, ... }:
 let
   inherit (config.lib.agents) prependFrontmatter;
-  memupdate =
-    memfile:
-    let
-      commit_cmd = "git log -1 --format=%H ${memfile}";
-      shortdiff_cmd = "${commit_cmd} | xargs git diff --numstat";
-    in
-    rec {
-      description = "memory file update guided by git history";
-      withFM = prependFrontmatter text;
-      text = ''
-        I want you to update ${memfile}, since the project changed a lot.
-
-        Last commit where the memory was updated is:
-
-        !`${commit_cmd}`
-
-        and the corresponding diff summary is:
-
-        !`${shortdiff_cmd}`
-
-        1. Based on the diff summary, identify which parts of the memory
-           file might need to be updated; if possible, group them logically.
-        2. Present the identified parts to the user.
-        3. Go through the parts one by one, and update the file. You should
-           read corresponding files if necessary.
-
-        Commit the changes with the message:
-
-        ```gitcommit
-        docs(${memfile}): update
-
-        <short_summary>
-        ```
-
-        where `<short_summary>` is a short description of the changes in the
-        project that are now reflected in the memory file.
-      '';
-    };
 in
 {
   lib.agents.commands = {
-    update_agents = memupdate "AGENTS.md";
-    update_claude = memupdate "CLAUDE.md";
     iterate_spec = rec {
       description = "refine feature specification in SPEC.md";
       withFM = prependFrontmatter text;

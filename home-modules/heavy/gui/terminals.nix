@@ -6,6 +6,9 @@
       enable = true;
       clearDefaultKeybinds = true;
       settings = {
+        # TODO ctrl-n doesn't inherit cwd
+        # TODO emoji font doesn't work
+        window-inherit-working-directory = false;
         cursor-style = "block";
         cursor-style-blink = "false";
         resize-overlay = "never";
