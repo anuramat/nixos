@@ -1,16 +1,5 @@
 {
   programs = {
-    # alacritty -- fast but no kitty image protocol
-
-    # [window]
-    # opacity = 0.8
-    # option_as_alt = "Both"
-    #
-    # [font]
-    # size = 13.0
-    #
-    # [font.normal]
-    # family = "Hack Nerd Font"
     ghostty = {
       # cons: slowest startup
       # pros: supports kitty image protocol; almost zero config; not bloated
@@ -19,10 +8,25 @@
       settings = {
         cursor-style = "block";
         cursor-style-blink = "false";
-        shell-integration-features = "no-cursor";
         resize-overlay = "never";
         title = "ghostty";
         gtk-single-instance = true;
+        confirm-close-surface = false;
+
+        keybind = [
+
+          "ctrl+shift+c=copy_to_clipboard"
+          "ctrl+shift+v=paste_from_clipboard"
+
+          "ctrl+shift+n=new_window"
+
+          "ctrl+shift+f=start_search"
+
+          "page_up=scroll_page_up"
+          "page_down=scroll_page_down"
+          "home=scroll_to_top"
+          "end=scroll_to_bottom"
+        ];
       };
     };
     kitty = {
