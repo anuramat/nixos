@@ -78,8 +78,7 @@ let
       "toggle"
     ];
     lock = [
-      (getExe pkgs.swaylock-plugin)
-      "-f"
+      config.lib.lockscreen.lock
     ];
     sleep = [
       "systemctl"
@@ -162,7 +161,7 @@ let
       ];
     };
 
-  mkCtl = x: {
+  mkGlobal = x: {
     allow-when-locked = true;
     action.spawn = x;
   };
@@ -192,7 +191,7 @@ in
       action."close-window" = { };
       repeat = false;
     };
-    "Mod+semicolon".action.spawn = getExe pkgs.foot;
+    "Mod+semicolon".action.spawn = term;
     "Mod+Space".action.spawn = pickers.drun;
     "Mod+Tab".action.focus-monitor-next = { };
     "Mod+Ctrl+Tab".action.move-window-to-monitor-next = { };
@@ -291,17 +290,17 @@ in
     "Mod+Shift+8".action.move-column-to-workspace = 8;
     "Mod+Shift+9".action.move-column-to-workspace = 9;
 
-    XF86MonBrightnessDown = mkCtl ctl.brightness.down;
-    XF86MonBrightnessUp = mkCtl ctl.brightness.up;
-    XF86AudioMicMute = mkCtl ctl.sound.muteMic;
-    XF86AudioMute = mkCtl ctl.sound.mute;
-    XF86AudioLowerVolume = mkCtl ctl.sound.down;
-    XF86AudioRaiseVolume = mkCtl ctl.sound.up;
-    XF86AudioPrev = mkCtl ctl.playback.prev;
-    XF86AudioNext = mkCtl ctl.playback.next;
-    XF86AudioStop = mkCtl ctl.playback.stop;
-    XF86AudioPlay = mkCtl ctl.playback.playPause;
-    XF86Wlan = mkCtl ctl.wlan;
-    XF86Bluetooth = mkCtl ctl.bluetooth;
+    XF86MonBrightnessDown = mkGlobal ctl.brightness.down;
+    XF86MonBrightnessUp = mkGlobal ctl.brightness.up;
+    XF86AudioMicMute = mkGlobal ctl.sound.muteMic;
+    XF86AudioMute = mkGlobal ctl.sound.mute;
+    XF86AudioLowerVolume = mkGlobal ctl.sound.down;
+    XF86AudioRaiseVolume = mkGlobal ctl.sound.up;
+    XF86AudioPrev = mkGlobal ctl.playback.prev;
+    XF86AudioNext = mkGlobal ctl.playback.next;
+    XF86AudioStop = mkGlobal ctl.playback.stop;
+    XF86AudioPlay = mkGlobal ctl.playback.playPause;
+    XF86Wlan = mkGlobal ctl.wlan;
+    XF86Bluetooth = mkGlobal ctl.bluetooth;
   };
 }

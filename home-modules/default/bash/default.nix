@@ -59,7 +59,8 @@ in
         # XDG TODO move stuff here from the shims file
         CUDA_CACHE_PATH = "${config.xdg.cacheHome}/nv"; # ~/.nv/
 
-        TERMCMD = "${lib.getExe pkgs.foot}";
+        # TERMCMD = "${lib.getExe pkgs.foot}";
+        TERMCMD = "${lib.getExe pkgs.ghostty}";
         # TERMCMD = "${lib.getExe pkgs.kitty} -1";
         ESCDELAY = "25";
 

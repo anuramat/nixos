@@ -76,6 +76,7 @@
     inputs.niri.homeModules.niri
     ./keys.nix
     ./bar.nix
+    ./idle.nix
   ];
   wayland.systemd.target = "niri.service"; # NOTE using graphical-session.target breaks services that have ConditionEnvironment=WAYLAND_DISPLAY, because they start too early -- before niri sets variables
   xdg.configFile."systemd/user/niri.service.d/override.conf".text =
@@ -86,6 +87,7 @@
         pkgs.coreutils
         pkgs.gawk
         pkgs.bash
+        pkgs.foot
       ];
     in
     # systemd

@@ -16,12 +16,7 @@ let
       on = "${niri} msg action power-on-monitors";
     };
 
-  lock =
-    let
-      screen = "${lib.getExe pkgs.swaylock-plugin} -f";
-      keyring = getExe config.lib.keyring.lock;
-    in
-    "${keyring}; ${screen}";
+  inherit (config.lib.lockscreen) lock unlock;
 
 in
 {
@@ -49,6 +44,10 @@ in
         {
           event = "lock";
           command = lock;
+        }
+        {
+          event = "unlock";
+          command = unlock;
         }
       ];
     };
