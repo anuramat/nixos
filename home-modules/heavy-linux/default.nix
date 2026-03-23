@@ -55,7 +55,7 @@
     cheese # webcam
     j4-dmenu-desktop # .desktop wrapper for dmenus
     libnotify # notify-send etc
-    mesa-demos # some 3d demos, useful for graphics debugging
+    # mesa-demos # some 3d demos, useful for graphics debugging
     proton-pass # password manager
     waypipe # gui forwarding
     wev # wayland event viewer, useful for debugging
