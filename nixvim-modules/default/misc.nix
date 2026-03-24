@@ -84,6 +84,10 @@ in
     todo-comments = {
       enable = true;
       settings = {
+        keywords.SLOP = {
+          icon = "󱚟";
+          color = "warning";
+        };
         keywords.FUCK = {
           icon = "💢";
           color = "warning";
