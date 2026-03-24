@@ -117,6 +117,9 @@ in
   # cancel job - `cancel 1`
 
   services = {
+    # FUCK
+    # BUG
+    # doesn't do anything on lid close
     logind.settings.Login = {
       HandlePowerKey = "suspend";
       HandleSuspendKey = "suspend";
