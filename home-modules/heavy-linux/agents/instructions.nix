@@ -35,11 +35,14 @@ let
           The user has to review the code thoroughly after the task is completed.
           The main limiting factor is the sheer amount of new/changed lines.
           You should aim for the smallest possible amount of code that does the job -- this will make it easier for the user to review the changes.
-          This does not apply to temporary files (e.g. debugging/test scripts), i.e. you can write as much code as you need in temporary files.
 
           - You MUST write concise code that prioritizes brevity and elegance over verbosity and caution.
           - You MUST NOT implement features that are neither explicitly requested by the user nor indirectly required.
           - You MUST avoid excessive comments, exhaustive error handling and edge case checks.
+
+          Exceptions:
+          - This does not apply to temporary files (e.g. debugging/test scripts), i.e. you MAY write as much code as you need in temporary files.
+          - If you change the types/semantics of existing code, you MUST rename the relevant functions/variables to reflect the changes; e.g. if variable name contains "list" but it is no longer a list, you MUST rename it to avoid confusion.
         '';
 
         nix = ''
