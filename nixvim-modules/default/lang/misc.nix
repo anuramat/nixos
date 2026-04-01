@@ -85,6 +85,7 @@ in
     };
 
     lsp.servers = {
+      tombi.enable = true;
       clangd.enable = true;
       zls.enable = true;
       ast_grep = {
