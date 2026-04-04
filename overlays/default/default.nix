@@ -12,6 +12,7 @@ let
     _: prev:
     (mapAttrs (_: v: v.packages.${prev.stdenv.hostPlatform.system}.default) {
       inherit (inputs)
+        vicode
         subcat
         nil
         mods
