@@ -178,11 +178,6 @@
       url = "github:tinted-theming/schemes";
     };
     vicode = {
-      inputs = {
-        nixpkgs = {
-          follows = "nixpkgs";
-        };
-      };
       url = "github:anuramat/vicode/dev";
     };
   };
