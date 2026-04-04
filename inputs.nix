@@ -41,7 +41,7 @@ in
   figtree = mkInput "github:anuramat/figtree.nvim";
   subcat = mkInput "github:anuramat/subcat";
   todo = mkInput "github:anuramat/todo";
-  vicode = mkInput "github:anuramat/vicode/dev";
+  vicode.url = "github:anuramat/vicode/dev";
 
   # forks
   mods.url = "github:anuramat/mods/dev";
