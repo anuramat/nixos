@@ -87,6 +87,6 @@
         "-dev"
         "Vulkan0"
       ];
-      modelWrapped = models.leanstral;
+      modelWrapped = models.qwen35;
     };
 }
