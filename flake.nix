@@ -177,6 +177,14 @@
       flake = false;
       url = "github:tinted-theming/schemes";
     };
+    vicode = {
+      inputs = {
+        nixpkgs = {
+          follows = "nixpkgs";
+        };
+      };
+      url = "github:anuramat/vicode";
+    };
   };
   outputs = args: import ./outputs.nix args;
 }
