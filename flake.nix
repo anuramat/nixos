@@ -183,7 +183,7 @@
           follows = "nixpkgs";
         };
       };
-      url = "github:anuramat/vicode";
+      url = "github:anuramat/vicode/dev";
     };
   };
   outputs = args: import ./outputs.nix args;
