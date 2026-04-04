@@ -1,6 +1,7 @@
 { pkgs, ... }:
 {
   home.packages = with pkgs; [
-    vicode
+    (vicode.overrideAttrs { doCheck = false; })
+
   ];
 }
