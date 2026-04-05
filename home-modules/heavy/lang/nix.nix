@@ -8,7 +8,8 @@
     nix-web # derivation viewer
     nix-search # package search
 
-    nix-output-monitor # `nom`
+    nix-output-monitor # `nom` -- pretty nix build output
+    nix-tree # dep tree
 
     nix-diff
     # nix diffs:
