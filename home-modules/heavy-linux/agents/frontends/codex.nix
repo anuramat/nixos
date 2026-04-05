@@ -2,7 +2,6 @@
   lib,
   pkgs,
   config,
-  osConfig,
   ...
 }:
 let
@@ -34,7 +33,6 @@ let
 
   codexTomlCfg =
     let
-      # https://github.com/openai/codex/blob/main/codex-rs/config.md
       cfg = {
         notice = {
           hide_full_access_warning = true;
@@ -44,6 +42,8 @@ let
         model_reasoning_summary = "detailed";
 
         model_reasoning_effort = "medium";
+        plan_mode_reasoning_effort = "high";
+
         model_verbosity = "low";
         model = "gpt-5.4";
 
@@ -60,36 +60,6 @@ let
           shell_snapshot = true; # persist shell
         };
 
-        projects = {
-          "/etc/nixos" = {
-            trust_level = "trusted";
-          };
-        };
-
-        mcp_servers = {
-        };
-        profiles = {
-          local = {
-            model = "dummy";
-            model_provider = "llama_cpp";
-          };
-        };
-        # experimental_resume = "${codexHome}/history.jsonl";
-        model_providers = {
-          llama_cpp = {
-            name = "llama_cpp";
-            # TODO parameterize local model hostname
-            base_url = "http://anuramat-bgm5/v1";
-            experimental_bearer_token = "dummy";
-            wire_api = "responses";
-          };
-          openrouter = {
-            name = "openrouter";
-            base_url = "https://openrouter.ai/api/v1";
-            env_key = "OPENROUTER_API_KEY";
-            wire_api = "responses";
-          };
-        };
         notify =
           let
             notifier = pkgs.writeShellApplication {
