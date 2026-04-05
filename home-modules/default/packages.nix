@@ -86,6 +86,7 @@
     exercism # cli for exercism.org
     libqalculate # `qalc` - advanced calculator
     yt-dlp # download youtube videos
+    cachix
 
     # dev
     ansifilter # filter out scary chars
