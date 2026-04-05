@@ -118,7 +118,6 @@ flake-parts.lib.mkFlake { inherit inputs; } {
         ];
         shellHook = ''
           ${config.pre-commit.installationScript}
-          echo 1>&2 "Welcome to the development shell!"
         '';
       };
     };
