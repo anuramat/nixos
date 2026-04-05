@@ -1,5 +1,6 @@
 {
   pkgs,
+  config,
   ...
 }:
 let
@@ -109,6 +110,10 @@ let
     text = builtins.readFile ./litellm_speedtest.sh;
   };
 
+  agenix = config.lib.home.mkAgenixExportScript (t: {
+    CACHIX_AUTH_TOKEN = t.cachix;
+  });
+
 in
 
 {
@@ -135,5 +140,6 @@ in
       # TODO does this even work/is this required
       PROMPT_COMMAND="''${PROMPT_COMMAND:+$PROMPT_COMMAND;}history -a"
       source ${./osc.sh}
+      ${agenix}
     '';
 }
