@@ -14,6 +14,8 @@ let
     "https://devenv.cachix.org"
     "https://nix-community.cachix.org"
     "https://nixpkgs-python.cachix.org"
+    "https://anuramat.cachix.org"
+    "https://vicode.cachix.org"
   ]
   ++ config.lib.hosts.substituters;
   keyPath = "${config.users.users.${username}.home}/.ssh/id_ed25519";
@@ -62,6 +64,8 @@ in
         "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         "nixpkgs-python.cachix.org-1:hxjI7pFxTyuTHn2NkvWCrAUcNZLNS3ZAvfYNuYifcEU="
+        "anuramat.cachix.org-1:INBlw2NfR37rCx/M+pSe6VfmZFzki54TjUwieEbJjPU="
+        "vicode.cachix.org-1:YypJTdIoHPXonAmAL5iz4eUYriMs9sTxToF0bfmm0BE="
       ]
       ++ config.lib.hosts.trusted-public-keys;
     };
