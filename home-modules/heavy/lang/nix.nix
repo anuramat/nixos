@@ -8,9 +8,12 @@
     nix-web # derivation viewer
     nix-search # package search
 
+    nix-output-monitor # `nom`
+
     nix-diff
-    nvd # nix diff
-    # dix # nix diff # XXX not in stable yet
+    # nix diffs:
+    nvd
+    dix
 
     nix-unit
   ];
