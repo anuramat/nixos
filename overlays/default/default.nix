@@ -47,6 +47,8 @@ let
 
         swaylock-plugin
         ghostty
+
+        tombi
         ;
     };
 

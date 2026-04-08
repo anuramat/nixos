@@ -123,9 +123,9 @@ let
       };
     in
     {
-      web-search-prime = mkZaiMcp "https://api.z.ai/api/mcp/web_search_prime/mcp";
-      web-reader = mkZaiMcp "https://api.z.ai/api/mcp/web_reader/mcp";
-      zread = mkZaiMcp "https://api.z.ai/api/mcp/zread/mcp";
+      # web-search-prime = mkZaiMcp "https://api.z.ai/api/mcp/web_search_prime/mcp";
+      # web-reader = mkZaiMcp "https://api.z.ai/api/mcp/web_reader/mcp";
+      # zread = mkZaiMcp "https://api.z.ai/api/mcp/zread/mcp";
     };
 
   notifications = # javascript
