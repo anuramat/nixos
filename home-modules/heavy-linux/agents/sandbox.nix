@@ -188,6 +188,11 @@ in
                 --die-with-parent \
                 --proc /proc \
                 --dev /dev \
+                --dev-bind-try /dev/dri /dev/dri \
+                --dev-bind-try /dev/kfd /dev/kfd \
+                --ro-bind-try /sys/class/drm /sys/class/drm \
+                --ro-bind-try /sys/devices /sys/devices \
+                --ro-bind-try /sys/bus/pci /sys/bus/pci \
                 --tmpfs /tmp \
                 --tmpfs "$TMPDIR" \
                 \
