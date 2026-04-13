@@ -58,7 +58,12 @@ let
           Some commands may not work as expected. If you suspect that a command
           is not working because of the sandbox, you MAY ask the user to run the
           command manually.
+
+          Important: `tmp`, `$TMPDIR`, and XDG cache/data/state home directories are bind mounted to tmpfs, so files created there will not persist after the session is finished.
+          Most of the other paths are bind mounted read-only.
         '';
+
+        # TODO build the sandbox instructions based on sandbox config
 
         general = ''
           - The key words "MUST", "MUST NOT", "SHOULD", "SHOULD NOT", "MAY" are to be interpreted as described in RFC 2119.
