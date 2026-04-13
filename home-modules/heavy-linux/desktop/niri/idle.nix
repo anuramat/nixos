@@ -48,6 +48,7 @@ in
         {
           event = "unlock";
           command = unlock;
+          # TODO also turn on screen
         }
       ];
     };
