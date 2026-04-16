@@ -24,6 +24,7 @@ in
   "cachix.age"
   "cerebras.age"
   "claudecode.age"
+  "claudecode-jojo.age"
   "gemini.age"
   "groq.age"
   "minimax.age"
