@@ -71,6 +71,7 @@ let
           - If you need tools that are not available on the system, you SHOULD use `nix run nixpkgs#package_name -- arg1 ...`.
           - When using git, keep commit messages as concise as possible.
           - Backward compatibility is not a goal, unless explicitly specified. You MUST NOT not add fallbacks, shims, wrappers, aliases, or dual behavior for old codepaths.
+          - If user refers to "spec" without specifying, ./SPEC.md is usually implied
         ''
         + (for "claude" ''
           - When presenting a plan to the user using `ExitPlanMode` tool, you SHOULD keep the plan under 10 lines -- only outline the high-level steps.
