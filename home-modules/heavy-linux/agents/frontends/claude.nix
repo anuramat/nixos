@@ -106,6 +106,7 @@ in
     activation = {
       claudeSettings = config.lib.home.json.set {
         includeCoAuthoredBy = false;
+        showClearContextOnPlanAccept = true;
         inherit
           hooks
           permissions
