@@ -107,7 +107,7 @@ in
       claudeSettings = config.lib.home.json.set {
         includeCoAuthoredBy = false;
         showClearContextOnPlanAccept = true;
-        disableAutoMode = true;
+        disableAutoMode = "disable";
         inherit
           hooks
           permissions
