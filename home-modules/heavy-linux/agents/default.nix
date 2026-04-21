@@ -60,7 +60,6 @@ in
   imports = [
     ./commands.nix
     ./frontends
-    ./git.nix
     ./instructions.nix
     ./mods.nix
     ./ollama.nix
@@ -71,7 +70,6 @@ in
   lib.agents = {
     varNames = {
       sandboxWrapperPath = "AGENT_SANDBOX_WRAPPER_PATH";
-      agentName = "AGENT";
     };
 
     prependFrontmatter =

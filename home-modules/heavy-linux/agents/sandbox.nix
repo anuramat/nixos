@@ -53,7 +53,6 @@ in
       args ? [ ],
       extraRwDirs ? [ ],
       agentDir, # name of subdir in xdg dirs
-      agentName ? binName, # mostly for git co-authored-by
       env ? { },
       tokens ? (_: { }),
     }:
@@ -62,16 +61,11 @@ in
       cmd = "${getExe package} ${escapeShellArgs args}";
       # TODO rename -- reflect that it's a preamble
       scriptCommon =
-        let
-          defaultEnv = {
-            ${varNames.agentName} = "'${agentName}'";
-          };
-        in
         # bash
         ''
           unset GIT_EXTERNAL_DIFF
           ${config.lib.home.mkAgenixExportScript tokens}
-          ${exportScript (env // defaultEnv)}
+          ${exportScript env}
         '';
 
       passthrough = pkgs.writeShellApplication {
