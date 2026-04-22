@@ -72,6 +72,7 @@ let
           - When using git, keep commit messages as concise as possible.
           - Backward compatibility is not a goal, unless explicitly specified. You MUST NOT not add fallbacks, shims, wrappers, aliases, or dual behavior for old codepaths.
           - If user refers to "spec" without specifying, ./SPEC.md is usually implied
+          - Don't run `find` and similar commands on paths like `/` or `/nix/store` -- those are huge.
         ''
         + (for "claude" ''
           - When presenting a plan to the user using `ExitPlanMode` tool, you SHOULD keep the plan under 10 lines -- only outline the high-level steps.
