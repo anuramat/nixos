@@ -80,7 +80,7 @@
       };
     in
     {
-      enable = true;
+      enable = false;
       modelDir = "/mnt/storage/llama-cpp";
       package = pkgs.llama-cpp-vulkan;
       extraFlags = [
