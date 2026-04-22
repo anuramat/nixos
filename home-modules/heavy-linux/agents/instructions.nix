@@ -32,17 +32,19 @@ let
       sections = {
         codestyle = ''
           Background:
-          The user has to review the code thoroughly after the task is completed.
-          The main limiting factor is the sheer amount of new/changed lines.
-          You should aim for the smallest possible amount of code that does the job -- this will make it easier for the user to review the changes.
+          The user works on a solo project and wants it to be easy to maintain.
+          The biggest burden is the sheer amount of code -- every line is a potential bug, takes up space on the screen, and increases cognitive load.
+          You should aim for the smallest possible amount of code that does the job.
 
           - You MUST write concise code that prioritizes brevity and elegance over verbosity and caution.
           - You MUST NOT implement features that are neither explicitly requested by the user nor indirectly required.
-          - You MUST avoid excessive comments, exhaustive error handling and edge case checks.
+          - You MUST avoid exhaustive error handling and edge case checks;
 
           Exceptions:
-          - This does not apply to temporary files (e.g. debugging/test scripts), i.e. you MAY write as much code as you need in temporary files.
-          - If you change the types/semantics of existing code, you MUST rename the relevant functions/variables to reflect the changes; e.g. if variable name contains "list" but it is no longer a list, you MUST rename it to avoid confusion.
+          - Temporary files (e.g. debugging/test scripts) -- you MAY write as much code as you need in temporary files.
+          - Helper functions -- you SHOULD decompose complex logic into helper functions when appropriate.
+          - Tests
+          - AI-owned code ("SLOP")
         '';
 
         nix = ''
@@ -51,6 +53,7 @@ let
           - To explore NixOS options, you SHOULD use `nixos-option $OPTION_NAME`
         '';
 
+        # TODO drop sandboxWrapperPath
         sandbox = ''
           You are running in a sandbox. The path to sandbox script is stored in
           environment variable `${config.lib.agents.varNames.sandboxWrapperPath}`.
@@ -63,7 +66,17 @@ let
           Most of the other paths are bind mounted read-only.
         '';
 
-        # TODO build the sandbox instructions based on sandbox config
+        code-ownership = ''
+          Code marked by user as "SLOP" is "AI-owned": it was "vibecoded" -- generated
+          by the assistant with little to no supervision/review from the user,
+          and is thus treated by the user as a black box.
+
+          - User will not edit it manually in the future, unless the user decides to take ownership by reviewing the code and removing the "SLOP" mark.
+          - All general code style instructions are relaxed for SLOP
+          - You SHOULD write comprehensive tests for SLOP -- it's a higher priority for SLOP than the rest of the codebase.
+          - If an entire directory is marked as SLOP, you MAY freely add/remove files in this directory
+          - SLOP should be minimally coupled to the rest of the codebase -- ideally, it should have a well-defined interface and be used as a black box by the rest of the codebase.
+        '';
 
         general = ''
           - The key words "MUST", "MUST NOT", "SHOULD", "SHOULD NOT", "MAY" are to be interpreted as described in RFC 2119.
@@ -73,10 +86,9 @@ let
           - Backward compatibility is not a goal, unless explicitly specified. You MUST NOT not add fallbacks, shims, wrappers, aliases, or dual behavior for old codepaths.
           - If user refers to "spec" without specifying, ./SPEC.md is usually implied
           - Don't run `find` and similar commands on paths like `/` or `/nix/store` -- those are huge.
-        ''
-        + (for "claude" ''
-          - When presenting a plan to the user using `ExitPlanMode` tool, you SHOULD keep the plan under 10 lines -- only outline the high-level steps.
-        '');
+          - If you change the types/semantics of existing code, you MUST rename the relevant functions/variables to reflect the changes; e.g. if variable name contains "list" but it is no longer a list, you MUST rename it to avoid confusion.
+          - You MUST NOT remove existing comments, unless they're outdated. if you do, you SHOULD inform the user.
+        '';
 
         workflow = ''
           ${head} Acceptance criteria identification
