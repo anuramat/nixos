@@ -9,10 +9,10 @@ inputs:
 
   claude-code = prev.stdenv.mkDerivation rec {
     pname = "claude-code";
-    version = "2.1.111";
+    version = "2.1.118";
     src = prev.fetchzip {
       url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-      hash = "sha256-K3qhZXVJ2DIKv7YL9f/CHkuUYnK0lkIR1wjEa+xeSCk=";
+      hash = "sha256-k87UsSqh9YOih0z4st05yM/fIi2D3H/GTFuzdi8LK7E=";
     };
     nativeBuildInputs = [ prev.makeWrapper ];
     installPhase = ''
@@ -34,10 +34,10 @@ inputs:
 
   codex = prev.stdenv.mkDerivation rec {
     pname = "codex";
-    version = "0.121.0";
+    version = "0.123.0";
     src = prev.fetchurl {
       url = "https://github.com/openai/codex/releases/download/rust-v${version}/codex-x86_64-unknown-linux-musl.zst";
-      sha256 = "sha256-lrKZYxyHWXt0TvxvzW48bPwLTsLtiXY4zx1QXAjE0+4=";
+      sha256 = "sha256-7HlEMphRlvTmgod+UlBZnHuBr6xTbS/wXyZxBRBBPH0=";
     };
     dontUnpack = true;
     nativeBuildInputs = [ prev.zstd ];
