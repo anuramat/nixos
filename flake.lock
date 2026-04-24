@@ -2040,11 +2040,11 @@
     "protonmail-bridge": {
       "flake": false,
       "locked": {
-        "lastModified": 1761358837,
-        "narHash": "sha256-mdvHP11OUJ0hkYq1Qpa7hyTkIHC/oC74rX2dw4TXImo=",
+        "lastModified": 1777057017,
+        "narHash": "sha256-jq1tMw7we1SIb2DWT+2xJk+2LHS3m/08bnrffg3d2A4=",
         "owner": "anuramat",
         "repo": "proton-bridge",
-        "rev": "ccd09c574d1e5ae85d17c604f53a30a12b87ceb2",
+        "rev": "86408ce419e75d77a4eaa1c2983a77042c5f420f",
         "type": "github"
       },
       "original": {
