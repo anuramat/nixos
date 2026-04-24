@@ -23,7 +23,7 @@ in
   lib.lockscreen = {
     lock =
       pkgs.writeShellScript "lock" ''
-        ${config.lib.keyring.lock} || true
+        ${getExe config.lib.keyring.lock} || true
         ${getExe pkgs.swaylock-plugin} -f
       ''
       |> toString;
