@@ -105,6 +105,12 @@ in
       ];
     activation = {
       claudeSettings = config.lib.home.json.set {
+        tui = "fullscreen";
+        model = "opus";
+        enabledPlugins = {
+          "rust-analyzer-lsp@claude-plugins-official" = true;
+          "pyright-lsp@claude-plugins-official" = true;
+        };
         includeCoAuthoredBy = false;
         showClearContextOnPlanAccept = true;
         disableAutoMode = "disable";
