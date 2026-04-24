@@ -41,8 +41,8 @@ let
         show_raw_agent_reasoning = true;
         model_reasoning_summary = "detailed";
 
-        model_reasoning_effort = "medium";
-        plan_mode_reasoning_effort = "high";
+        model_reasoning_effort = "xhigh";
+        plan_mode_reasoning_effort = "xhigh";
 
         model_verbosity = "low";
         model = "gpt-5.5";
