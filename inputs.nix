@@ -49,6 +49,8 @@ in
   html2text.url = "github:anuramat/html2text/dev";
 
   # misc
+  claude-code = mkInput "github:sadjow/claude-code-nix";
+  codex = mkInput "github:sadjow/codex-cli-nix";
   nil = mkInput "github:oxalica/nil/main";
   spicetify-nix = mkInput "github:Gerg-L/spicetify-nix";
   statix.url = "github:oppiliappan/statix/master";

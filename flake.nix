@@ -12,6 +12,22 @@
       flake = false;
       url = "github:josephholsten/base16-mutt";
     };
+    claude-code = {
+      inputs = {
+        nixpkgs = {
+          follows = "nixpkgs";
+        };
+      };
+      url = "github:sadjow/claude-code-nix";
+    };
+    codex = {
+      inputs = {
+        nixpkgs = {
+          follows = "nixpkgs";
+        };
+      };
+      url = "github:sadjow/codex-cli-nix";
+    };
     ctrlsn = {
       inputs = {
         nixpkgs = {
