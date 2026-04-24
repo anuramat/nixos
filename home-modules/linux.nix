@@ -7,7 +7,6 @@
 
     bubblewrap # sandboxing
     fuse-overlayfs
-    agentfs
 
     parted
     geteduroam-cli

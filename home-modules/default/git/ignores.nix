@@ -1,6 +1,5 @@
 {
   programs.git.ignores = [
-    ".agentfs/"
     "*.db" # jupyter-lab, maybe etc
     ".DS_Store" # macOS
     ".cache/" # clangd, maybe etc
