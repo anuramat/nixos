@@ -60,8 +60,6 @@ sudo tailscale up "--operator=$(whoami)"
 
 ## Problems
 
-- Offline builders break `nh` and slow down `nix` a little
-- Offline substituters slow down everything A LOT
 - sshKey and sshUser in nix.buildMachines are ignored: <https://github.com/NixOS/nix/issues/3423>;
   for now add this to /root/.ssh/config:
   ```ssh_config
