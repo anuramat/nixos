@@ -112,6 +112,9 @@ in
           "pyright-lsp@claude-plugins-official" = true;
         };
         includeCoAuthoredBy = false;
+
+        preferredNotifChannel = "ghostty"; # kitty = osc99, ghostty = osc777
+
         showClearContextOnPlanAccept = true;
         disableAutoMode = "disable";
         inherit
