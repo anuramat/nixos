@@ -45,7 +45,7 @@ let
         plan_mode_reasoning_effort = "high";
 
         model_verbosity = "low";
-        model = "gpt-5.4";
+        model = "gpt-5.5";
 
         web_search = "live"; # "disabled" | "cached" | "live"
         service_tier = "fast"; # "fast" | unset
