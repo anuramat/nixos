@@ -31,6 +31,7 @@ let
     padding = 0;
   };
 
+  # TODO: curl -d 'test' ntfy.sh/topic-name
   hooks = {
     Notification = [
       {
