@@ -134,7 +134,7 @@ in
             term_cmd = "${config.home.sessionVariables.TERMCMD}";
           in
           ''
-            [ "$(${getExe pkgs.libnotify} "New email" -a mail -A default=Open -e)" = default ] && niri msg action spawn -- ${term_cmd} -e neomutt
+            [ "$(${getExe pkgs.libnotify} "New email" -a mail -A default=Open -e)" = default ] && niri msg action spawn -- ${term_cmd} -e ${getExe pkgs.neomutt}
           '';
       };
     };
