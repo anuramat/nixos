@@ -6,10 +6,14 @@
     };
     rustaceanvim = {
       enable = true;
-      settings.server.default_settings = {
-        references = {
-          excludeTests = true;
-          excludeImports = true;
+      settings.server = {
+        default_settings = {
+          rust_analyzer = {
+            references = {
+              excludeTests = true;
+              excludeImports = true;
+            };
+          };
         };
       };
     };

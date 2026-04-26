@@ -8,13 +8,6 @@
       enable = true;
       settings = {
         highlight.enable = true;
-        incremental_selection = {
-          enable = true;
-          keymaps = {
-            node_decremental = "<bs>";
-            node_incremental = "<c-space>";
-          };
-        };
       };
     };
 
@@ -43,6 +36,6 @@
       inherit (hax.vim) set luaf;
     in
     [
-      (set "<leader>j" (luaf "require('treesj').toggle()") "TreeSJ: Split/Join a Treesitter node")
+      (set "<leader>j" (luaf ''require("treesj").toggle()'') "TreeSJ: Split/Join a Treesitter node")
     ];
 }
