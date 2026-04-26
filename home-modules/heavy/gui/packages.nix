@@ -46,6 +46,7 @@
     # qtox # p2p IM XXX broken
     # slack # XXX broken
     telegram-desktop
+    discord
 
     # browsers
     tor-browser
