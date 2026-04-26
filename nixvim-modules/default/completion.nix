@@ -18,6 +18,8 @@ let
     "yaml"
     "todotxt"
     "toml"
+    "grug-far"
+    "grug-far-history"
   ];
   # NOTE: calls back home even when disabled
   shouldEnableFunc = # lua
