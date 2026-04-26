@@ -14,6 +14,7 @@
           repo = "tree_climber_rust.nvim";
           sha256 = "0y1y7n1cysplhjpgzhacnk6g7lv2vdvwa5ip0gd8yrlikpzzqfqw";
         };
+        dependencies = [ pkgs.vimPlugins.nvim-treesitter ];
       }
     )
   ];
