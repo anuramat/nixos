@@ -33,7 +33,6 @@ in
     inputs.nixpkgs.follows = "nixpkgs";
     inputs.flake-parts.follows = "flake-parts";
   };
-  niri = mkInput "github:sodiboo/niri-flake";
   nix-auth = mkInput "github:numtide/nix-auth";
 
   # my stuff
@@ -51,6 +50,8 @@ in
   # misc
   claude-code = mkInput "github:sadjow/claude-code-nix";
   codex = mkInput "github:sadjow/codex-cli-nix";
+  niri = mkInput "github:sodiboo/niri-flake";
+  zed.url = "github:zed-industries/zed";
   nil = mkInput "github:oxalica/nil/main";
   spicetify-nix = mkInput "github:Gerg-L/spicetify-nix";
   statix.url = "github:oppiliappan/statix/master";

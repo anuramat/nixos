@@ -23,6 +23,7 @@ let
         nix-auth
         claude-code
         codex
+        zed
         ;
     });
 
