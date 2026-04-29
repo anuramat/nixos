@@ -196,7 +196,7 @@
     vicode = {
       url = "github:anuramat/vicode/dev";
     };
-    zed = {
+    zed-editor = {
       url = "github:zed-industries/zed";
     };
   };

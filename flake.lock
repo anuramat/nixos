@@ -2155,7 +2155,7 @@
         "treefmt-nix": "treefmt-nix_7",
         "tt-schemes": "tt-schemes",
         "vicode": "vicode",
-        "zed": "zed"
+        "zed-editor": "zed-editor"
       }
     },
     "rust-analyzer-src": {
@@ -2199,7 +2199,7 @@
     "rust-overlay_2": {
       "inputs": {
         "nixpkgs": [
-          "zed",
+          "zed-editor",
           "nixpkgs"
         ]
       },
@@ -2907,7 +2907,7 @@
         "type": "github"
       }
     },
-    "zed": {
+    "zed-editor": {
       "inputs": {
         "crane": "crane_3",
         "flake-parts": "flake-parts_12",

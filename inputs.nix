@@ -51,7 +51,7 @@ in
   claude-code = mkInput "github:sadjow/claude-code-nix";
   codex = mkInput "github:sadjow/codex-cli-nix";
   niri = mkInput "github:sodiboo/niri-flake";
-  zed.url = "github:zed-industries/zed";
+  zed-editor.url = "github:zed-industries/zed";
   nil = mkInput "github:oxalica/nil/main";
   spicetify-nix = mkInput "github:Gerg-L/spicetify-nix";
   statix.url = "github:oppiliappan/statix/master";
