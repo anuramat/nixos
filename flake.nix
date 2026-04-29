@@ -196,6 +196,9 @@
     vicode = {
       url = "github:anuramat/vicode/dev";
     };
+    zed = {
+      url = "github:zed-industries/zed";
+    };
   };
   outputs = args: import ./outputs.nix args;
 }
