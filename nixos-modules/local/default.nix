@@ -189,4 +189,10 @@ in
     8080
     8888
   ];
+
+  # networking.firewall.checkReversePath = false;
+  environment.systemPackages = with pkgs; [
+    # wireguard-tools
+    protonvpn-gui
+  ];
 }
