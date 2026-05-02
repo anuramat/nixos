@@ -38,6 +38,7 @@
     helvum # pipewire patchbay
     networkmanagerapplet # networking
     pavucontrol # audio
+    pulseaudio
     system-config-printer # printer
     wdisplays # GUI kanshi config generator
 
