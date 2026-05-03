@@ -2860,11 +2860,11 @@
         "treefmt-nix": "treefmt-nix_8"
       },
       "locked": {
-        "lastModified": 1777000766,
-        "narHash": "sha256-kosSbnPLsSWgR15fAQ/UVI32VegxeE9CPJ8No+LPnR0=",
+        "lastModified": 1777780343,
+        "narHash": "sha256-QycbM5bUFUhanb8O6r5SfdOCawDwhgaLgUrQCdcfmh0=",
         "owner": "anuramat",
         "repo": "vicode",
-        "rev": "ffd85f3510f447aeaaae7011e70fad3d452147ef",
+        "rev": "8599ccf3a0f24f90f9390edeb32ecea735f3379a",
         "type": "github"
       },
       "original": {
