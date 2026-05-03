@@ -52,7 +52,7 @@ let
         ghostty
 
         tombi
-        protonvpn-gui
+        proton-vpn
         ;
     };
 
