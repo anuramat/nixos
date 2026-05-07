@@ -54,6 +54,7 @@ let
         tombi
         proton-vpn
         typst
+        rnote
         ;
     };
 
