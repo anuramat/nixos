@@ -53,6 +53,7 @@ let
 
         tombi
         proton-vpn
+        typst
         ;
     };
 
