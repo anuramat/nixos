@@ -47,6 +47,7 @@
     djvulibre # djvu tools
     markdown-link-check # find dead md links
     mermaid-cli
+    zoom-us
 
     # visualization/graphics
     graphviz
