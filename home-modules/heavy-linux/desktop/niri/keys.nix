@@ -183,6 +183,9 @@ in
 
 {
   programs.niri.settings.binds = {
+    "Mod+A".action.spawn = [ pickers.todo_add ];
+    "Mod+Ctrl+A".action.spawn = [ pickers.todo_done ];
+    "Mod+B".action.spawn = [ pickers.books ];
 
     "Mod+Slash".action.show-hotkey-overlay = { };
 
