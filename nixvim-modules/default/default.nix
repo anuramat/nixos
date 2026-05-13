@@ -88,6 +88,11 @@
       enable = true;
       autoInstall.enable = true;
       settings = {
+        formatters = {
+          injected = {
+            ignore_errors = true;
+          };
+        };
         format_on_save = {
           timeout_ms = 300;
         };
