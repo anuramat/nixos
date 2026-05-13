@@ -1,4 +1,7 @@
-# AGENTS — repo helper for agentic coding
+# AGENTS.md
+
+NOTE: CLAUDE.md is a symlink to this file; don't read both since the contents
+are identical
 
 ## Commands
 
