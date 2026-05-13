@@ -59,6 +59,8 @@
     # mesa-demos # some 3d demos, useful for graphics debugging
     proton-pass # password manager
     waypipe # gui forwarding
+    remmina # vnc client
+    wayvnc # vnc server
     wev # wayland event viewer, useful for debugging
     wl-clip-persist # otherwise clipboard contents disappear on exit
     wl-clipboard # wl-copy/wl-paste: copy from stdin/paste to stdout
