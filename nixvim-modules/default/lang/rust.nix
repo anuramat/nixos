@@ -1,3 +1,4 @@
+{ hax, ... }:
 {
   plugins = {
     # NOTE clippy and cargofmt already in somehow
@@ -26,4 +27,34 @@
       };
     };
   };
+
+  extraFiles."after/ftplugin/rust.lua".text =
+    let
+      script = # lua
+        ''
+          vim.schedule(function()
+            local ok, parser = pcall(vim.treesitter.get_parser, 0, "rust")
+            if not ok or not parser then return end
+            local query = vim.treesitter.query.parse("rust", [[
+              ((attribute_item
+                 (attribute
+                   (identifier) @_cfg
+                   arguments: (token_tree (identifier) @_test)))
+               .
+               (mod_item) @target
+               (#eq? @_cfg "cfg")
+               (#eq? @_test "test"))
+            ]])
+            local root = parser:parse()[1]:root()
+            for id, node in query:iter_captures(root, 0) do
+              if query.captures[id] == "target" then
+                local row = node:range() + 2
+                pcall(vim.cmd, row .. "foldclose")
+              end
+            end
+          end)
+        '';
+    in
+    script;
+
 }
