@@ -1,10 +1,10 @@
 {
-  hax,
+  config,
   pkgs,
   ...
 }:
 let
-  inherit (hax.vim) set lua;
+  inherit (config.lib) set lua;
 in
 {
   keymaps = [
@@ -15,7 +15,7 @@ in
     )
   ];
 
-  files = hax.vim.files {
+  files = config.lib.files {
     just = {
       ftp = {
         ts = 4;

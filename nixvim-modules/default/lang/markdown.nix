@@ -1,6 +1,6 @@
-{ hax, ... }:
+{ config, ... }:
 {
-  files = hax.vim.files {
+  files = config.lib.files {
     markdown.ftp = {
       cc = "+1";
       shiftwidth = 0;

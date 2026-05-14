@@ -1,6 +1,6 @@
-{ hax, ... }:
+{ config, ... }:
 {
-  files = hax.vim.files {
+  files = config.lib.files {
     go = {
       ftp = {
         et = false;

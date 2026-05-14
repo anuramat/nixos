@@ -1,6 +1,6 @@
-{ hax, config, ... }:
+{ config, ... }:
 {
-  files = hax.vim.files {
+  files = config.lib.files {
     lua.ftp.fo = config.opts.formatoptions; # TODO why do we do this again? see sh.nix and misc.nix
   };
 

@@ -1,11 +1,11 @@
 {
-  hax,
+  config,
   pkgs,
   lib,
   ...
 }:
 let
-  inherit (hax.vim) lua;
+  inherit (config.lib) lua;
   inherit (lib) genAttrs;
 
   provider = "copilot"; # "copilot" "llm"

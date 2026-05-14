@@ -1,11 +1,11 @@
 { lib, ... }:
 let
-  hax = import ../../hax/vim.nix { inherit lib; };
+  vimLib = import ../../nixvim-modules/default/lib.nix { inherit lib; };
 in
 {
   # Test lua helper
   testLua = {
-    expr = hax.lua ''vim.cmd("echo")'';
+    expr = vimLib.lua ''vim.cmd("echo")'';
     expected = {
       __raw = ''vim.cmd("echo")'';
     };
@@ -13,7 +13,7 @@ in
 
   # Test luaf helper (wrapped in function)
   testLuaf = {
-    expr = hax.luaf "return 42";
+    expr = vimLib.luaf "return 42";
     expected = {
       __raw = "function() return 42 end";
     };
@@ -21,7 +21,7 @@ in
 
   # Test set with string action
   testSetString = {
-    expr = hax.set "gd" "Telescope lsp_definitions" "Go to definition";
+    expr = vimLib.set "gd" "Telescope lsp_definitions" "Go to definition";
     expected = {
       mode = "n";
       key = "gd";
@@ -34,7 +34,7 @@ in
 
   # Test set with string action and empty description
   testSetStringNoDesc = {
-    expr = hax.set "gr" "Telescope lsp_references" "";
+    expr = vimLib.set "gr" "Telescope lsp_references" "";
     expected = {
       mode = "n";
       key = "gr";
@@ -48,7 +48,7 @@ in
   # Test set with raw lua action (set type)
   testSetLuaAction = {
     expr =
-      hax.set "<leader>p" (hax.lua ''require("telescope").extensions.projects.projects()'')
+      vimLib.set "<leader>p" (vimLib.lua ''require("telescope").extensions.projects.projects()'')
         "Projects";
     expected = {
       mode = "n";
@@ -64,14 +64,14 @@ in
 
   # Test set with invalid action type
   testSetInvalidType = {
-    expr = hax.set "x" 123 "Invalid";
+    expr = vimLib.set "x" 123 "Invalid";
     expectedError.type = "ThrownError";
     expectedError.msg = "type int is invalid for vim keymaps";
   };
 
   # Test files.ftp
   testFilesFtp = {
-    expr = hax.files {
+    expr = vimLib.files {
       python = {
         ftp = {
           expandtab = true;
@@ -103,7 +103,7 @@ in
 
   # Test files.injections
   testFilesInjections = {
-    expr = hax.files {
+    expr = vimLib.files {
       bash = {
         injections = "(comment) @comment";
       };
@@ -123,7 +123,7 @@ in
 
   # Test files.textobjects
   testFilesTextobjects = {
-    expr = hax.files {
+    expr = vimLib.files {
       rust = {
         textobjects = "@function.outer";
       };
@@ -143,7 +143,7 @@ in
 
   # Test files.snippets
   testFilesSnippets = {
-    expr = hax.files {
+    expr = vimLib.files {
       javascript = {
         snippets = {
           "console.log" = {
@@ -165,9 +165,9 @@ in
   testComplexKeymap = {
     expr =
       let
-        luaAction = hax.luaf "vim.diagnostic.goto_next()";
+        luaAction = vimLib.luaf "vim.diagnostic.goto_next()";
       in
-      hax.set "]d" luaAction "Next diagnostic";
+      vimLib.set "]d" luaAction "Next diagnostic";
     expected = {
       mode = "n";
       key = "]d";
@@ -182,14 +182,14 @@ in
 
   # Test files with empty input
   testFilesEmpty = {
-    expr = hax.files { };
+    expr = vimLib.files { };
     expected = { };
   };
 
   # Test multiple file types in one call
   testFilesMultiple = {
     expr =
-      hax.files {
+      vimLib.files {
         python = {
           ftp = {
             tabstop = 4;

@@ -11,8 +11,8 @@
 # https://github.com/nvim-neotest/neotest
 # https://github.com/mattn/efm-langserver
 {
+  config,
   inputs,
-  hax,
   pkgs,
   ...
 }:
@@ -34,6 +34,8 @@
     ./treesitter.nix
     ./ui.nix
     ./vim.nix
+    ./lib.nix
+    ./options.nix
   ];
 
   filetype = {
@@ -67,8 +69,8 @@
 
   keymaps =
     let
-      inherit (hax.vim) lua;
-      set = key: hax.vim.set ("gr" + key);
+      inherit (config.lib) lua;
+      set = key: config.lib.set ("gr" + key);
     in
     [
       (set "d" (lua "vim.lsp.buf.declaration") "Goto Declaration")

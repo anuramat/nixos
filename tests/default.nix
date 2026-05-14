@@ -7,9 +7,9 @@ foldl' mergeAttrs { } (
   map (x: import x args) [
     ./hax/mime.nix
     ./hax/web.nix
-    ./hax/vim.nix
     ./hax/common.nix
     ./hax/hosts.nix
+    ./nixvim/lib.nix
     ./home-modules/lib/activation-scripts.nix
     ./integration/username.nix
   ]

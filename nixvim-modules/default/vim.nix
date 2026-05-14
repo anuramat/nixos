@@ -1,4 +1,4 @@
-{ hax, ... }:
+{ config, ... }:
 {
   plugins = {
     # TODO enable when available (in 25.11?)
@@ -29,8 +29,8 @@
   plugins.harpoon.enable = true;
   keymaps =
     let
-      inherit (hax.vim) luaf;
-      set = key: hax.vim.set ("<leader>h" + key);
+      inherit (config.lib) luaf;
+      set = key: config.lib.set ("<leader>h" + key);
     in
     [
       (set "a" (luaf ''require("harpoon"):list():add()'') "Add")

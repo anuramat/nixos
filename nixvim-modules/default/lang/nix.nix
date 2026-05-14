@@ -1,5 +1,5 @@
 {
-  hax,
+  config,
   ...
 }:
 {
@@ -20,7 +20,7 @@
       nil_ls.enable = true;
     };
   };
-  extraFiles = hax.vim.files {
+  extraFiles = config.lib.files {
     nix = {
       injections = # query
         ''

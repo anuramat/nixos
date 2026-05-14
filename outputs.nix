@@ -97,7 +97,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       packages.neovim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
         inherit system;
         extraSpecialArgs = {
-          inherit inputs hax;
+          inherit inputs;
         };
         module = inputs.self.nixvimModules.default;
       };

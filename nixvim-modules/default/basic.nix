@@ -1,4 +1,4 @@
-{ hax, ... }:
+{ config, ... }:
 {
   diagnostic.settings = {
     severity_sort = true;
@@ -49,7 +49,7 @@
   };
   keymaps =
     let
-      inherit (hax.vim) set;
+      inherit (config.lib) set;
     in
     [
       (set "<c-j>" "cnext" "next qf item")

@@ -1,5 +1,5 @@
 {
-  hax,
+  config,
   ...
 }:
 {
@@ -33,7 +33,7 @@
 
   keymaps =
     let
-      inherit (hax.vim) set luaf;
+      inherit (config.lib) set luaf;
     in
     [
       (set "<leader>j" (luaf ''require("treesj").toggle()'') "TreeSJ: Split/Join a Treesitter node")

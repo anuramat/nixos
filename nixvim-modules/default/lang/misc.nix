@@ -1,12 +1,11 @@
 {
-  hax,
-  lib,
   config,
+  lib,
   pkgs,
   ...
 }:
 let
-  snippets = hax.vim.files {
+  snippets = config.lib.files {
     toml = {
       snippets =
         let
@@ -95,7 +94,7 @@ in
     };
   };
 
-  files = hax.vim.files {
+  files = config.lib.files {
     vim = {
       ftp = {
         fo = config.opts.formatoptions; # TODO why do we do this again? see lua.nix

@@ -1,4 +1,4 @@
-{ hax, ... }:
+{ config, ... }:
 {
   plugins = {
     gitlinker = {
@@ -39,14 +39,14 @@
 
   keymaps =
     let
-      set = key: action: hax.vim.set "<leader>g${key}" "Gitsigns ${action}" "${action} [Gitsigns]";
+      set = key: action: config.lib.set "<leader>g${key}" "Gitsigns ${action}" "${action} [Gitsigns]";
     in
     [
       # stage
       {
         mode = "v";
         key = "<leader>gs";
-        action = hax.vim.luaf ''require("gitsigns").stage_hunk({ vim.fn.line("."), vim.fn.line("v") })'';
+        action = config.lib.luaf ''require("gitsigns").stage_hunk({ vim.fn.line("."), vim.fn.line("v") })'';
         options = {
           desc = "stage selection";
         };
@@ -58,7 +58,7 @@
       {
         mode = "v";
         key = "<leader>gr";
-        action = hax.vim.luaf ''require("gitsigns").reset_hunk({ vim.fn.line("."), vim.fn.line("v") })'';
+        action = config.lib.luaf ''require("gitsigns").reset_hunk({ vim.fn.line("."), vim.fn.line("v") })'';
         options = {
           desc = "reset selection";
         };
@@ -67,8 +67,8 @@
       (set "R" "reset_buffer")
 
       # navigation
-      (hax.vim.set "]h" "Gitsigns next_hunk" "next hunk")
-      (hax.vim.set "[h" "Gitsigns prev_hunk" "previous hunk")
+      (config.lib.set "]h" "Gitsigns next_hunk" "next hunk")
+      (config.lib.set "[h" "Gitsigns prev_hunk" "previous hunk")
 
       # text objects
       {
@@ -77,7 +77,7 @@
           "x"
         ];
         key = "ih";
-        action = hax.vim.luaf ''require("gitsigns").select_hunk()'';
+        action = config.lib.luaf ''require("gitsigns").select_hunk()'';
         options.desc = "Inside hunk [gitsigns]";
       }
       {
@@ -86,7 +86,7 @@
           "x"
         ];
         key = "ah";
-        action = hax.vim.luaf ''require("gitsigns").select_hunk({ greedy = true })'';
+        action = config.lib.luaf ''require("gitsigns").select_hunk({ greedy = true })'';
         options.desc = "Around hunk [gitsigns]";
       }
 

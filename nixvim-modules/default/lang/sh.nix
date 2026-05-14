@@ -1,6 +1,6 @@
-{ hax, config, ... }:
+{ config, ... }:
 let
-  ftp = hax.vim.files {
+  ftp = config.lib.files {
     sh = {
       ftp = {
         ts = 4;
@@ -9,7 +9,7 @@ let
       };
     };
   };
-  snippets = hax.vim.files {
+  snippets = config.lib.files {
     sh = {
       snippets = {
         loop = {

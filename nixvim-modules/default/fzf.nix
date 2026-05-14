@@ -1,11 +1,11 @@
-{ hax, ... }:
+{ config, ... }:
 let
-  inherit (hax.vim) lua;
+  inherit (config.lib) lua;
 in
 {
   keymaps =
     let
-      set = key: action: hax.vim.set ("<leader>f" + key) "FzfLua ${action}" "${action} [fzf]";
+      set = key: action: config.lib.set ("<leader>f" + key) "FzfLua ${action}" "${action} [fzf]";
     in
     [
       (set "o" "files")
