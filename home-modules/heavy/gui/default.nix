@@ -82,7 +82,7 @@ in
     };
   };
   stylix.targets = {
-    firefox.colorTheme.enable = false;
+    firefox.enable = false;
   };
   xdg.configFile = {
     "swappy/config".text = toINI {
