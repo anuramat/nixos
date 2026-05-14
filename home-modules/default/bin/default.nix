@@ -14,16 +14,14 @@ let
   packages =
     with lib;
     readDir ./.
-    |> filterAttrs (filename: _: hasSuffix ".sh" filename)
+    |> filterAttrs (name: type: hasSuffix ".sh" name && type == "regular")
     |> attrNames
     |> map (
-      filename:
-      let
-        text = readFile ./${filename};
-        name = removeSuffix ".sh" filename;
-      in
+      name:
       writeShellApplication {
-        inherit name text excludeShellChecks;
+        name = removeSuffix ".sh" name;
+        text = readFile ./${name};
+        inherit excludeShellChecks;
       }
     );
 
