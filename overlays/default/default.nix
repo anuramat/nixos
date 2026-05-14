@@ -24,7 +24,7 @@ let
         claude-code
         codex
         zed-editor
-        # hermes
+        hermes
         ;
     });
 
