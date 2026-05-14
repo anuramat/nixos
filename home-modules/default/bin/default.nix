@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (pkgs) writeShellApplication writeScriptBin;
+  inherit (pkgs) writeShellApplication;
   inherit (builtins) readFile readDir;
 
   excludeShellChecks = map (v: "SC" + toString v) config.lib.excludeShellChecks.numbers;
@@ -14,20 +14,17 @@ let
   packages =
     with lib;
     readDir ./.
+    |> filterAttrs (filename: _: hasSuffix ".sh" filename)
     |> attrNames
     |> map (
       filename:
       let
         text = readFile ./${filename};
-        name = removeSuffix ("." + ext) filename;
-        ext = filename |> splitString "." |> last;
+        name = removeSuffix ".sh" filename;
       in
-      if ext == "sh" then
-        writeShellApplication {
-          inherit name text excludeShellChecks;
-        }
-      else
-        writeScriptBin name text
+      writeShellApplication {
+        inherit name text excludeShellChecks;
+      }
     );
 
   nix-cache-keygen =
