@@ -67,6 +67,9 @@
     git-hooks-nix = {
       url = "github:cachix/git-hooks.nix";
     };
+    hermes = {
+      url = "github:NousResearch/hermes-agent";
+    };
     home-manager = {
       inputs = {
         nixpkgs = {

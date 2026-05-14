@@ -49,7 +49,7 @@ in
 
   claude-code = mkInput "github:sadjow/claude-code-nix";
   codex = mkInput "github:sadjow/codex-cli-nix";
-  hermes-agent.url = "github:NousResearch/hermes-agent";
+  hermes.url = "github:NousResearch/hermes-agent";
   niri = mkInput "github:sodiboo/niri-flake";
   zed-editor.url = "github:zed-industries/zed";
   nil = mkInput "github:oxalica/nil/main";
