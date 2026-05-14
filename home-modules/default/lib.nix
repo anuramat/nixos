@@ -36,6 +36,7 @@ let
     trim
       # bash
       ''
+        mkdir -p "$(dirname "${diffFile}")"
         if [[ -s ${targetFile} ]]; then
           diff "${sourceFile}" "${targetFile}" || echo "*** ${targetFile} diff above ***"
         fi | tee -a "${diffFile}" >&2
