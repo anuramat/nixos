@@ -88,7 +88,13 @@ let
           - Don't run `find` and similar commands on paths like `/` or `/nix/store` -- those are huge.
           - If you change the types/semantics of existing code, you MUST rename the relevant functions/variables to reflect the changes; e.g. if variable name contains "list" but it is no longer a list, you MUST rename it to avoid confusion.
           - You MUST NOT remove existing comments, unless they're outdated. if you do, you SHOULD inform the user.
-        '';
+        ''
+        + (for "claude" ''
+          - You SHOULD use the `AskUserQuestion` tool whenever you have questions for the user — it lets them pick options instead of typing, and consolidates scattered questions into one place. Exceptions:
+            - The answer requires freeform input (names, paths, values, snippets, open-ended feedback).
+            - You can't come up with 2+ genuinely distinct options.
+            - Plan approval — use `ExitPlanMode`.
+        '');
 
         workflow = ''
           ${head} Acceptance criteria identification
