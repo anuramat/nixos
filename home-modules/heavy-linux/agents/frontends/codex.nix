@@ -96,7 +96,6 @@ in
   home = {
     packages = [
       codex
-      pkgs.ccusage-codex
     ];
     activation = {
       codexConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
