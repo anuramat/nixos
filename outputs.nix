@@ -14,7 +14,13 @@ let
       root
       ;
   };
-  inherit (hax.common) mkImportSet mkDirSet;
+  mkDirSet =
+    func: dir:
+    builtins.readDir dir
+    |> builtins.attrNames
+    |> map (n: lib.nameValuePair (lib.removeSuffix ".nix" n) (func /${dir}/${n}))
+    |> lib.listToAttrs;
+  mkImportSet = mkDirSet import;
 in
 flake-parts.lib.mkFlake { inherit inputs; } {
   imports = [
