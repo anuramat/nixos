@@ -14,7 +14,7 @@ let
       port = mkOption { type = types.str; };
       noRobots = mkOption {
         type = types.bool;
-        default = false;
+        default = true;
       };
       binary = mkOption {
         type = types.nullOr types.str;

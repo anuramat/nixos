@@ -6,7 +6,6 @@
 {
   web.sites = [
     {
-      noRobots = true;
       domain = "ctrl.sn";
       root = "ctrl.sn";
       cwd = "/var/www/";

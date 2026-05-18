@@ -4,7 +4,6 @@ let
     root = "ctrl.sn";
     domain = "bin.ctrl.sn";
     port = "8081";
-    noRobots = true;
   };
 in
 {
