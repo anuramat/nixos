@@ -82,7 +82,7 @@ in
         claude = mkClaude {
           wrapperName = "claude";
           tokens = t: {
-            CLAUDE_CODE_OAUTH_TOKEN = t.claudecode-jojo;
+            CLAUDE_CODE_OAUTH_TOKEN = t.claudecode;
           };
         };
         claude-zai = mkClaude {
