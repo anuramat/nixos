@@ -3,7 +3,6 @@ let
   topHead = "#";
   sectionHead = "${topHead}#";
   head = "${sectionHead}#";
-  username = config.home.username;
 
   mkInstructions =
     args:
