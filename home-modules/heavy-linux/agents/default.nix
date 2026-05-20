@@ -1,6 +1,5 @@
 {
   pkgs,
-  config,
   lib,
   ...
 }:
@@ -10,28 +9,6 @@ let
     mapAttrsToList
     filterAttrs
     ;
-
-  ghcp-models =
-    let
-      tokenFile = config.xdg.configHome + "/github-copilot/apps.json";
-    in
-    pkgs.writeShellApplication {
-      name = "ghcp-models";
-      runtimeInputs = with pkgs; [
-        jq
-        curl
-      ];
-      text =
-        # bash
-        ''
-          if ! [ -s "${tokenFile}" ]; then
-            echo "No GitHub Copilot token found."
-            exit 1
-          fi
-          token=$(jq -r '.[].oauth_token' '${tokenFile}') || exit 1
-          curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $token" https://api.githubcopilot.com/models | jq '.data'
-        '';
-    };
 
   summarize = pkgs.writeShellApplication {
     name = "summarize";
@@ -102,7 +79,6 @@ in
 
   home = {
     packages = with pkgs; [
-      ghcp-models
       summarize
       inspector
     ];
