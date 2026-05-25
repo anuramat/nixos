@@ -69,38 +69,43 @@ in
     };
     packages =
       let
-        mkClaude =
-          overrides:
-          config.lib.agents.mkPackages (
-            {
-              agentDir = "claude";
-              package = pkgs.claude-code;
-              args = [ "--dangerously-skip-permissions" ];
-            }
-            // overrides
-          );
-        claude = mkClaude {
-          wrapperName = "claude";
-          tokens = t: {
-            CLAUDE_CODE_OAUTH_TOKEN = t.claudecode;
-          };
-        };
-        claude-zai = mkClaude {
-          wrapperName = "claude-zai";
-          tokens = t: {
-            ANTHROPIC_AUTH_TOKEN = t.zai;
-          };
-          env = {
-            ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
-            API_TIMEOUT_MS = "3000000";
-          };
-        };
-
+        wrapped =
+          let
+            mkWrapper =
+              overrides:
+              config.lib.agents.mkPackages (
+                {
+                  agentDir = "claude";
+                  package = pkgs.claude-code;
+                  args = [ "--dangerously-skip-permissions" ];
+                }
+                // overrides
+              );
+            wrapperOverrides = {
+              claude = {
+              };
+              claude-oauth = {
+                tokens = t: {
+                  CLAUDE_CODE_OAUTH_TOKEN = t.claudecode;
+                };
+              };
+              claude-zai = {
+                tokens = t: {
+                  ANTHROPIC_AUTH_TOKEN = t.zai;
+                };
+                env = {
+                  ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
+                  API_TIMEOUT_MS = "3000000";
+                };
+              };
+            };
+          in
+          lib.mapAttrsToList (
+            wrapperName: overrides: mkWrapper (overrides // { inherit wrapperName; })
+          ) wrapperOverrides;
       in
-
-      [
-        claude
-        claude-zai
+      wrapped
+      ++ [
         pkgs.ccusage
         pkgs.claude-monitor
       ];
