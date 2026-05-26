@@ -33,7 +33,7 @@ in
 
     firefox = {
       enable = true;
-      package = pkgs.firefox-bin;
+      package = pkgs.firefox;
       profiles.default = {
         settings = {
           "browser.urlbar.suggest.history" = true;
