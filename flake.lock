@@ -1737,6 +1737,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-unstable-misc": {
+      "locked": {
+        "lastModified": 1779560665,
+        "narHash": "sha256-tpyBcxPpcQb8ukyNF7DoCwfSY3VPsxHoYwj00Cayv5o=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "64c08a7ca051951c8eae34e3e3cb1e202fe36786",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs_10": {
       "locked": {
         "lastModified": 1755027561,
@@ -2314,6 +2330,7 @@
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_11",
         "nixpkgs-unstable": "nixpkgs-unstable",
+        "nixpkgs-unstable-misc": "nixpkgs-unstable-misc",
         "nixvim": "nixvim",
         "nur": "nur",
         "protonmail-bridge": "protonmail-bridge",

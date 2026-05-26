@@ -134,6 +134,9 @@
     nixpkgs-unstable = {
       url = "github:nixos/nixpkgs/nixos-unstable";
     };
+    nixpkgs-unstable-misc = {
+      url = "github:nixos/nixpkgs/nixos-unstable";
+    };
     nixvim = {
       inputs = {
         nixpkgs = {
