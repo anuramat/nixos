@@ -1,4 +1,3 @@
-# TODO is it possible to only look up nixpkgs stuff in cache
 # TODO use max-jobs to fetch caches
 let
   mkInput = x: {
