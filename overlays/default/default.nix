@@ -56,6 +56,8 @@ let
         proton-vpn
         typst
         rnote
+        firefox-bin
+        firefox
         ;
     };
 
