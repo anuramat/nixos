@@ -31,6 +31,10 @@ let
   unstablePkgs =
     _: prev:
     let
+      unstable-misc = import inputs.nixpkgs-unstable-misc {
+        inherit (prev) config;
+        inherit (prev.stdenv.hostPlatform) system;
+      };
       unstable = import inputs.nixpkgs-unstable {
         inherit (prev) config;
         inherit (prev.stdenv.hostPlatform) system;
@@ -46,18 +50,18 @@ let
         llama-cpp
         llama-cpp-rocm
         llama-cpp-vulkan
+        ;
 
-        opencode
-
-        swaylock-plugin
-        ghostty
-
-        tombi
-        proton-vpn
-        typst
-        rnote
-        firefox-bin
+      inherit (unstable-misc)
         firefox
+        firefox-bin
+        ghostty
+        opencode
+        proton-vpn
+        rnote
+        swaylock-plugin
+        tombi
+        typst
         ;
     };
 
