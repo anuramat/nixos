@@ -101,7 +101,7 @@ let
         base-url = "https://api.z.ai/api/coding/paas/v4";
         api-key-cmd = keys.zai;
         models = {
-          "glm-5" = {
+          "glm-5.1" = {
             aliases = [ "glm" ];
           };
         };
@@ -115,7 +115,7 @@ let
               "mini"
             ];
           };
-          "gpt-5" = {
+          "gpt-5.4" = {
             fallback = "gpt-5-mini";
             aliases = [
               "5"
