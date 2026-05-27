@@ -112,7 +112,7 @@ let
     ];
 
     browser = generateMimeTypes [
-      (mimeFromDesktop pkgs.firefox-bin)
+      (mimeFromDesktop pkgs.firefox)
     ];
 
     images = generateMimeTypes [

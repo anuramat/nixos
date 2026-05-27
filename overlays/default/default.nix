@@ -54,7 +54,6 @@ let
 
       inherit (unstable-misc)
         firefox
-        firefox-bin
         ghostty
         opencode
         proton-vpn
