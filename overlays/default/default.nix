@@ -61,6 +61,7 @@ let
         swaylock-plugin
         tombi
         typst
+        google-chrome
         ;
     };
 
