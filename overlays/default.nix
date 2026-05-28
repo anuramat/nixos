@@ -63,6 +63,13 @@ let
         typst
         google-chrome
         ;
+
+      vimPlugins = prev.vimPlugins // {
+        inherit (unstable-misc.vimPlugins)
+          tinted-nvim
+          rustaceanvim
+          ;
+      };
     };
 
   impureWrappers =
@@ -93,6 +100,14 @@ let
       claude-monitor = mkUv "claude-monitor" "claude-monitor";
     };
 
+  freeform = _: prev: {
+    protonmail-bridge = prev.protonmail-bridge.overrideAttrs (_: {
+      version = "unstable";
+      src = inputs.protonmail-bridge;
+      vendorHash = "sha256-aW7N6uacoP99kpvw9E5WrHaQ0fZ4P5WGsNvR/FAZ+cA=";
+    });
+  };
+
   inputOverlays =
     with inputs;
     [
@@ -102,8 +117,7 @@ let
     |> map (v: v.overlays.default);
 
   overlays = inputOverlays ++ [
-    (import ./misc.nix inputs)
-    (import ./vim-plugins.nix inputs)
+    freeform
     impureWrappers
     unstablePkgs
     flakes
