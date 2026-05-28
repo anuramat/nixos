@@ -1,10 +1,17 @@
 {
-  pkgs,
   config,
   lib,
   ...
 }:
 let
+  inherit (lib) mkOption types;
+
+  cfg = config.services.kanshi;
+
+  displayType = types.submodule {
+    freeformType = types.attrsOf types.anything;
+    options.criteria = mkOption { type = types.str; };
+  };
 
   out = {
     int = "eDP-1";
@@ -22,6 +29,11 @@ let
 in
 
 {
+  options.services.kanshi.machineDisplay = mkOption {
+    type = types.nullOr displayType;
+    default = null;
+  };
+
   config = {
     systemd.user.services.kanshi.Service = {
       Restart = "always";
@@ -34,16 +46,8 @@ in
         settings =
           let
 
-            # TODO create an option and move these to per device configs
             profiles =
               let
-                t480 = {
-                  criteria = "LG Display 0x0521 Unknown";
-                };
-                f12 = {
-                  criteria = "BOE NV122WUM-N42 Unknown";
-                  scale = 1.0;
-                };
                 home = {
                   criteria = "Dell Inc. DELL S2722QC 192SH24";
                   scale = 1.5;
@@ -60,46 +64,32 @@ in
               {
                 # alphabetic priority
 
-                t480-0 = [
-                  t480
+                "p0" = [
+                  cfg.machineDisplay
                 ];
-                t480-1-home = [
-                  t480
+                "p1-home" = [
+                  cfg.machineDisplay
                   home
                 ];
-                t480-2-audimax = [
-                  t480
+                "p2-audimax" = [
+                  cfg.machineDisplay
                   audimax
                 ];
-                t480-3-generic = [
-                  t480
-                  generic
-                ];
-
-                f12-0 = [
-                  f12
-                ];
-                f12-1-home = [
-                  f12
-                  home
-                ];
-                f12-2-audimax = [
-                  f12
-                  audimax
-                ];
-                f12-3-generic = [
-                  f12
+                "p3-generic" = [
+                  cfg.machineDisplay
                   generic
                 ];
               };
 
           in
-          lib.mapAttrsToList (n: v: {
-            profile = {
-              name = n;
-              outputs = v;
-            };
-          }) profiles;
+          lib.optionals (cfg.machineDisplay != null) (
+            lib.mapAttrsToList (n: v: {
+              profile = {
+                name = n;
+                outputs = v;
+              };
+            }) profiles
+          );
       };
     };
   };
