@@ -67,7 +67,11 @@ in
                   t480
                   home
                 ];
-                t480-2-generic = [
+                t480-2-audimax = [
+                  t480
+                  audimax
+                ];
+                t480-3-generic = [
                   t480
                   generic
                 ];
