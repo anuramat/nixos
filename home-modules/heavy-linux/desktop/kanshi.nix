@@ -39,12 +39,10 @@ in
               let
                 t480 = {
                   criteria = "LG Display 0x0521 Unknown";
-                  position = "0,0";
                 };
                 f12 = {
                   criteria = "BOE NV122WUM-N42 Unknown";
                   scale = 1.0;
-                  position = "0,0";
                 };
                 home = {
                   criteria = "Dell Inc. DELL S2722QC 192SH24";
@@ -53,7 +51,10 @@ in
                 };
                 generic = {
                   criteria = "*";
-                  position = "0,-99999";
+                };
+                audimax = {
+                  criteria = "PNP(LTM) RallyBar Mini 0x88888800";
+                  scale = 1.0;
                 };
               in
               {
@@ -64,7 +65,7 @@ in
                 ];
                 t480-1-home = [
                   t480
-                  (home // { position = "0,-2000"; })
+                  home
                 ];
                 t480-2-generic = [
                   t480
@@ -76,9 +77,13 @@ in
                 ];
                 f12-1-home = [
                   f12
-                  (home // { position = "0,-2000"; })
+                  home
                 ];
-                f12-2-generic = [
+                f12-2-audimax = [
+                  f12
+                  audimax
+                ];
+                f12-3-generic = [
                   f12
                   generic
                 ];
