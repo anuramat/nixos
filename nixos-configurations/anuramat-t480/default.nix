@@ -6,6 +6,9 @@
   nix.distributedBuilds = true;
   system.stateVersion = "24.05";
   home-manager.users.anuramat.home.stateVersion = "24.11";
+  home-manager.users.anuramat.services.kanshi.machineDisplay = {
+    criteria = "LG Display 0x0521 Unknown";
+  };
   services.keyd.keyboards.main.ids = [
     # same keyboard
     "0001:0001:a38e6885"

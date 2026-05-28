@@ -5,6 +5,10 @@
 {
   system.stateVersion = "25.05";
   home-manager.users.anuramat.home.stateVersion = "25.05";
+  home-manager.users.anuramat.services.kanshi.machineDisplay = {
+    criteria = "BOE NV122WUM-N42 Unknown";
+    scale = 1.0;
+  };
 
   # swap partition
   boot.initrd.luks.devices."luks-ffc8e21f-2272-442f-8258-30742e29e1f0".device =
