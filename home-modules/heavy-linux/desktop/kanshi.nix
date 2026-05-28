@@ -29,7 +29,7 @@ let
 in
 
 {
-  options.services.kanshi.machineDisplay = mkOption {
+  options.services.kanshi.builtinDisplay = mkOption {
     type = types.nullOr displayType;
     default = null;
   };
@@ -65,24 +65,24 @@ in
                 # alphabetic priority
 
                 "p0" = [
-                  cfg.machineDisplay
+                  cfg.builtinDisplay
                 ];
                 "p1-home" = [
-                  cfg.machineDisplay
+                  cfg.builtinDisplay
                   home
                 ];
                 "p2-audimax" = [
-                  cfg.machineDisplay
+                  cfg.builtinDisplay
                   audimax
                 ];
                 "p3-generic" = [
-                  cfg.machineDisplay
+                  cfg.builtinDisplay
                   generic
                 ];
               };
 
           in
-          lib.optionals (cfg.machineDisplay != null) (
+          lib.optionals (cfg.builtinDisplay != null) (
             lib.mapAttrsToList (n: v: {
               profile = {
                 name = n;

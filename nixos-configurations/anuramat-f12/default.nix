@@ -5,7 +5,7 @@
 {
   system.stateVersion = "25.05";
   home-manager.users.anuramat.home.stateVersion = "25.05";
-  home-manager.users.anuramat.services.kanshi.machineDisplay = {
+  home-manager.users.anuramat.services.kanshi.builtinDisplay = {
     criteria = "BOE NV122WUM-N42 Unknown";
     scale = 1.0;
   };
