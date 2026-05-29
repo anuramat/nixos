@@ -42,7 +42,7 @@
                       arguments: (token_tree (identifier) @_test)
                   ))
                   .
-                  (mod_item) @target
+                  (_) @target
 
                   (#eq? @_cfg "cfg")
                   (#eq? @_test "test")
