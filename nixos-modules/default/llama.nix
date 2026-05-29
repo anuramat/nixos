@@ -1,12 +1,20 @@
-{ lib, config, ... }:
+{
+  lib,
+  config,
+  options,
+  ...
+}:
 let
   inherit (lib)
+    mkIf
+    mkMerge
     optionals
     types
     mkOption
-    mkIf
     ;
 
+  cfg = config.services.llama-cpp;
+  modelDirSet = options.services.llama-cpp.modelDir.isDefined;
   port = 11343;
 in
 {
@@ -68,19 +76,17 @@ in
       };
     };
   };
-  config =
-    let
-      cfg = config.services.llama-cpp;
-    in
-    mkIf cfg.enable {
+  config = mkMerge [
+    (mkIf modelDirSet {
+      environment.sessionVariables.LLAMA_CACHE = cfg.modelDir;
+    })
+
+    (mkIf cfg.enable {
 
       environment = {
         systemPackages = [
           cfg.package
         ];
-        sessionVariables = {
-          LLAMA_CACHE = cfg.modelDir;
-        };
       };
 
       networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
@@ -138,5 +144,6 @@ in
           in
           mkFlags cfg.modelWrapped.params;
       };
-    };
+    })
+  ];
 }
