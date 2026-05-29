@@ -4,13 +4,14 @@
 }:
 {
   programs.adb.enable = true; # android stuff
+  # NOTE 2026-05-29 razer commented out because it breaks with newer kernel
   hardware = {
-    openrazer.enable = true;
+    # openrazer.enable = true;
   };
   environment.systemPackages = with pkgs; [
     # easyeffects # takes a while to build
     keymapp # ZSA keyboard thing
-    polychromatic # openrazer frontend
+    # polychromatic # openrazer frontend
     rpi-imager # raspbery pi
   ];
   services = {
