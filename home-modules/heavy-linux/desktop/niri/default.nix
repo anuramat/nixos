@@ -114,10 +114,27 @@
       spawn-at-startup = [
         # { argv = [ ]; }
       ];
-
+      window-rules = [
+        {
+          matches = [ { is-active = false; } ];
+          opacity = 0.9;
+        }
+      ];
       layout = {
+        border = {
+          width = 0;
+        };
+        focus-ring = {
+          # active.color = "#008080";
+          enable = true;
+          width = 4;
+        };
         background-color = "#008080";
-        empty-workspace-above-first = true;
+        empty-workspace-above-first = false;
+        shadow = {
+          color = "#000000FF";
+          inactive-color = "#00000000";
+        };
       };
 
       input = {
