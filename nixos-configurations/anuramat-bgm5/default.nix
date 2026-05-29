@@ -3,6 +3,9 @@
   inputs,
   ...
 }:
+let
+  llamaPkg = pkgs.llama-cpp-vulkan;
+in
 {
   nix.distributedBuilds = false;
   nixpkgs.config.rocmSupport = true;
@@ -70,11 +73,17 @@
     {
       enable = false;
       modelDir = "/mnt/storage/llama-cpp";
-      package = pkgs.llama-cpp-vulkan;
+      package = llamaPkg;
       extraFlags = [
         "-dev"
         "Vulkan0"
       ];
       modelWrapped = models.qwen35;
     };
+
+  environment = {
+    systemPackages = [
+      llamaPkg
+    ];
+  };
 }
