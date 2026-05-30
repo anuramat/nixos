@@ -36,6 +36,7 @@
         # cold: moonlight
         # retro: onedark-dark pop windows-*
         # grey: xcode-dusk tokyo-night-dark
+        # TODO purpledream darkviolet isotope cyberpunk black-metal-venom
         # TODO base24: borland mona-lisa red-alert red-sands unikitty
 
         # paraiso -- purple/burgundy, colorful text -- 3/5?
