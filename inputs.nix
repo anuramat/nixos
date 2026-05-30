@@ -14,15 +14,15 @@ in
   mac-app-util.url = "github:hraban/mac-app-util";
 
   flake-parts.url = "github:hercules-ci/flake-parts";
-  home-manager = mkInput "github:nix-community/home-manager/release-25.11";
-  neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay"; # no follows: has a cache
+  home-manager = mkInput "github:nix-community/home-manager/release-26.05";
+  neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
   nix-topology.url = "github:oddlama/nix-topology";
   nix-unit = mkInput "github:nix-community/nix-unit/v2.30.0";
-  nixos-hardware.url = "github:NixOS/nixos-hardware/master"; # no follows: too dangerous
+  nixos-hardware.url = "github:NixOS/nixos-hardware/master";
   nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
   nixpkgs-unstable-misc.url = "github:nixos/nixpkgs/nixos-unstable";
-  nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
-  nixvim = mkInput "github:nix-community/nixvim/nixos-25.11";
+  nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
+  nixvim.url = "github:nix-community/nixvim/nixos-26.05";
   nur = mkInput "github:nix-community/NUR";
   stylix = mkInput "github:danth/stylix/release-25.11";
   files.url = "github:mightyiam/files";
