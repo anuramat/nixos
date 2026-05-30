@@ -114,8 +114,8 @@ in
         tui = "fullscreen";
         model = "opus";
         enabledPlugins = {
-          "rust-analyzer-lsp@claude-plugins-official" = true;
-          "pyright-lsp@claude-plugins-official" = true;
+          "rust-analyzer-lsp@claude-plugins-official" = false;
+          "pyright-lsp@claude-plugins-official" = false;
         };
         includeCoAuthoredBy = false;
 
