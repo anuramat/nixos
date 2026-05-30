@@ -9,7 +9,6 @@
       };
       extensions = with pkgs; [
         gh-f
-        gh-copilot
       ];
       git_protocol = "ssh";
       prompt = true;

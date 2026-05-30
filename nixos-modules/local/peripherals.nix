@@ -3,7 +3,6 @@
   ...
 }:
 {
-  programs.adb.enable = true; # android stuff
   # NOTE 2026-05-29 razer commented out because it breaks with newer kernel
   hardware = {
     # openrazer.enable = true;

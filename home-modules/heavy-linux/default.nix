@@ -35,7 +35,7 @@
   home.packages = with pkgs; [
     # settings
     ddcutil # configure external monitors (eg brightness)
-    helvum # pipewire patchbay
+    crosspipe # pipewire graph
     networkmanagerapplet # networking
     pavucontrol # audio
     pulseaudio

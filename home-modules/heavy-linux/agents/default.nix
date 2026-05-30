@@ -19,7 +19,7 @@ let
     ];
     text =
       let
-        find = ''fd -e txt --max-depth=1'';
+        find = "fd -e txt --max-depth=1";
       in
       # bash
       ''
@@ -39,7 +39,6 @@ in
     ./frontends
     ./instructions.nix
     ./mods.nix
-    ./ollama.nix
     ./sandbox.nix
     ./whisper.nix
   ];

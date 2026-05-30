@@ -21,7 +21,7 @@
     julia
     llvm
     lua
-    nodejs_20
+    nodejs_26
     bun
     perl
     ruby

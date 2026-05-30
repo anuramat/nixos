@@ -47,6 +47,8 @@ let
         rocmPackages
 
         ollama
+        ollama-rocm
+        ollama-vulkan
         llama-cpp
         llama-cpp-rocm
         llama-cpp-vulkan
@@ -126,6 +128,6 @@ in
 final: prev:
 let
   unwrapped = map (x: x final prev) overlays;
-  merge = lib.fold (a: b: a // b) { };
+  merge = lib.foldr (a: b: a // b) { };
 in
 merge unwrapped
