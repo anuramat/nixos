@@ -101,7 +101,6 @@ flake-parts.lib.mkFlake { inherit inputs; } {
 
       # TODO move? somehow sync extraspecialargs with home-manager import
       packages.neovim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
-        inherit system;
         extraSpecialArgs = {
           inherit inputs;
         };
