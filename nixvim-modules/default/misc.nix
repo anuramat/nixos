@@ -4,15 +4,13 @@
   ...
 }:
 let
-  inherit (config.lib) set lua;
+  inherit (config.lib) luaf keymap;
 in
 {
   keymaps = [
-    (set "<leader>u" "UndotreeToggle" "Undotree")
-    (set "<leader>r" (lua "function() require('flash').jump() end") "Jump")
-    (
-      (set "r" (lua "function() require('flash').treesitter() end") "Treesitter node") // { mode = "o"; }
-    )
+    (keymap "n" "<leader>u" "<cmd>UndotreeToggle<cr>" "Undotree")
+    (keymap "n" "<leader>r" (luaf ''require("flash").jump()'') "Jump")
+    (keymap "o" "r" (luaf ''require("flash").treesitter()'') "Treesitter node")
   ];
 
   files = config.lib.files {
@@ -95,7 +93,7 @@ in
         signs = false;
         highlight = {
           keyword = "bg"; # only highlight the KEYWORD
-          pattern = ''<(KEYWORDS)>'';
+          pattern = "<(KEYWORDS)>";
           multiline = false;
         };
         search = {

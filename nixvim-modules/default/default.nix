@@ -69,13 +69,12 @@
 
   keymaps =
     let
-      inherit (config.lib) lua;
-      set = key: config.lib.set ("gr" + key);
+      inherit (config.lib) lua keymap;
     in
     [
-      (set "d" (lua "vim.lsp.buf.declaration") "Goto Declaration")
-      (set "q" (lua "vim.diagnostic.setqflist") "Diagnostic QF List")
-      (set "l" (lua "vim.lsp.codelens.run") "CodeLens")
+      (keymap "n" "grd" (lua "vim.lsp.buf.declaration") "Goto Declaration")
+      (keymap "n" "grq" (lua "vim.diagnostic.setqflist") "Diagnostic QF List")
+      (keymap "n" "grl" (lua "vim.lsp.codelens.run") "CodeLens")
     ];
   plugins = {
     lint = {

@@ -1,47 +1,38 @@
 { config, ... }:
 let
-  inherit (config.lib) lua;
+  inherit (config.lib) lua luaf keymap;
 in
 {
   keymaps =
     let
-      set = key: action: config.lib.set ("<leader>f" + key) "FzfLua ${action}" "${action} [fzf]";
+      mapAction = key: action: keymap "n" "<leader>f${key}" "<cmd>FzfLua ${action}<cr>" "fzf: ${action}";
     in
     [
-      (set "o" "files")
-      (set "O" "oldfiles")
-      (set "a" "args")
-      (set "b" "buffers")
-      (set "m" "marks")
+      (mapAction "o" "files")
+      (mapAction "O" "oldfiles")
+      (mapAction "a" "args")
+      (mapAction "b" "buffers")
+      (mapAction "m" "marks")
 
-      (set "/" "curbuf")
-      (set "g" "live_grep")
-      (set "G" "grep_last")
-      # (map "G" "grep") # useful on large projects
+      (mapAction "/" "curbuf")
+      (mapAction "g" "live_grep")
+      (mapAction "G" "grep_last")
+      # (keymap "G" "grep") # useful on large projects
 
-      (set "d" "diagnostics_document")
-      (set "D" "diagnostics_workspace")
-      (set "s" "lsp_document_symbols")
-      (set "S" "lsp_workspace_symbols")
-      (set "t" "treesitter")
+      (mapAction "d" "diagnostics_document")
+      (mapAction "D" "diagnostics_workspace")
+      (mapAction "s" "lsp_document_symbols")
+      (mapAction "S" "lsp_workspace_symbols")
+      (mapAction "t" "treesitter")
 
-      (set "r" "resume")
-      (set "h" "helptags")
-      (set "k" "keymaps")
-      (set "p" "builtin")
-      {
-        mode = "i";
-        key = "<C-x><C-f>";
-        action.__raw = ''
-          function()
-            require('fzf-lua').complete_file({
-              cmd = 'fd -t f -HL',
-              winopts = { preview = { hidden = 'nohidden' } },
-            })
-          end
-        '';
-        options.desc = "path completion";
-      }
+      (mapAction "r" "resume")
+      (mapAction "h" "helptags")
+      (mapAction "k" "keymaps")
+      (mapAction "p" "builtin")
+      (config.lib.keymap "i" "<C-x><C-f>"
+        (luaf ''require("fzf-lua").complete_file({ cmd = "fd -t f -HL", winopts = { preview = { hidden = "nohidden" } } })'')
+        "path completion"
+      )
     ];
 
   plugins.fzf-lua = {

@@ -49,10 +49,10 @@
   };
   keymaps =
     let
-      inherit (config.lib) set;
+      inherit (config.lib) keymap;
     in
     [
-      (set "<c-j>" "cnext" "next qf item")
-      (set "<c-k>" "cprev" "prev qf item")
+      (keymap "n" "<c-j>" "<cmd>cnext<cr>" "next qf item")
+      (keymap "n" "<c-k>" "<cmd>cprev<cr>" "prev qf item")
     ];
 }

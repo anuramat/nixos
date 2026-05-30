@@ -39,60 +39,48 @@
 
   keymaps =
     let
-      set = key: action: config.lib.set "<leader>g${key}" "Gitsigns ${action}" "${action} [Gitsigns]";
+      inherit (config.lib) keymap luaf;
+      setAction = key: action: keymap "n" key "<cmd>Gitsigns ${action}<cr>" "gitsigns: ${action}";
     in
     [
       # stage
-      {
-        mode = "v";
-        key = "<leader>gs";
-        action = config.lib.luaf ''require("gitsigns").stage_hunk({ vim.fn.line("."), vim.fn.line("v") })'';
-        options = {
-          desc = "stage selection";
-        };
-      }
-      (set "s" "stage_hunk")
-      (set "S" "stage_buffer")
+      (keymap "v" "<leader>gs"
+        (luaf ''require("gitsigns").stage_hunk({ vim.fn.line("."), vim.fn.line("v") })'')
+        "gitsigns: stage selection"
+      )
+      (setAction "<leader>gs" "stage_hunk")
+      (setAction "<leader>gS" "stage_buffer")
 
       # reset
-      {
-        mode = "v";
-        key = "<leader>gr";
-        action = config.lib.luaf ''require("gitsigns").reset_hunk({ vim.fn.line("."), vim.fn.line("v") })'';
-        options = {
-          desc = "reset selection";
-        };
-      }
-      (set "r" "reset_hunk")
-      (set "R" "reset_buffer")
+      (keymap "v" "<leader>gr"
+        (config.lib.luaf ''require("gitsigns").reset_hunk({ vim.fn.line("."), vim.fn.line("v") })'')
+        "gitsigns: reset selection"
+      )
+      (setAction "<leader>gr" "reset_hunk")
+      (setAction "<leader>gR" "reset_buffer")
 
       # navigation
-      (config.lib.set "]h" "Gitsigns next_hunk" "next hunk")
-      (config.lib.set "[h" "Gitsigns prev_hunk" "previous hunk")
+      (setAction "]h" "next_hunk")
+      (setAction "[h" "prev_hunk")
 
       # text objects
-      {
-        mode = [
+      (keymap [
+        "o"
+        "x"
+      ] "ih" (config.lib.luaf ''require("gitsigns").select_hunk()'') "gitsigns: inside hunk")
+      (keymap
+        [
           "o"
           "x"
-        ];
-        key = "ih";
-        action = config.lib.luaf ''require("gitsigns").select_hunk()'';
-        options.desc = "Inside hunk [gitsigns]";
-      }
-      {
-        mode = [
-          "o"
-          "x"
-        ];
-        key = "ah";
-        action = config.lib.luaf ''require("gitsigns").select_hunk({ greedy = true })'';
-        options.desc = "Around hunk [gitsigns]";
-      }
+        ]
+        "ah"
+        (config.lib.luaf ''require("gitsigns").select_hunk({ greedy = true })'')
+        "gitsigns: around hunk"
+      )
 
       # misc
-      (set "b" "blame_line")
-      (set "p" "preview_hunk")
-      (set "d" "diffthis")
+      (setAction "<leader>gb" "blame_line")
+      (setAction "<leader>gp" "preview_hunk")
+      (setAction "<leader>gd" "diffthis")
     ];
 }
