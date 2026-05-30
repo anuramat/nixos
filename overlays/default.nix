@@ -25,6 +25,7 @@ let
         codex
         zed-editor
         hermes
+        copilot-cli
         ;
     });
 

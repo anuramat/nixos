@@ -210,6 +210,26 @@
         "type": "github"
       }
     },
+    "copilot-cli": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1780013294,
+        "narHash": "sha256-jEm3K+WvnMCa/M2kuDKCR2fyEd3AdHG4lC+4VG9ZqNE=",
+        "owner": "scarisey",
+        "repo": "copilot-cli-flake",
+        "rev": "c9705876b5d77fbbf18362c501fc1966f32ebdaa",
+        "type": "github"
+      },
+      "original": {
+        "owner": "scarisey",
+        "repo": "copilot-cli-flake",
+        "type": "github"
+      }
+    },
     "crane": {
       "locked": {
         "lastModified": 1741481578,
@@ -2147,6 +2167,7 @@
         "base16-mutt": "base16-mutt",
         "claude-code": "claude-code",
         "codex": "codex",
+        "copilot-cli": "copilot-cli",
         "ctrlsn": "ctrlsn",
         "deadnix": "deadnix",
         "ez-configs": "ez-configs",

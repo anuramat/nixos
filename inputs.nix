@@ -49,6 +49,7 @@ in
 
   claude-code = mkInput "github:sadjow/claude-code-nix";
   codex = mkInput "github:sadjow/codex-cli-nix";
+  copilot-cli = mkInput "github:scarisey/copilot-cli-flake";
   hermes.url = "github:NousResearch/hermes-agent";
   niri = mkInput "github:sodiboo/niri-flake";
   zed-editor.url = "github:zed-industries/zed";

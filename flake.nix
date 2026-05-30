@@ -28,6 +28,14 @@
       };
       url = "github:sadjow/codex-cli-nix";
     };
+    copilot-cli = {
+      inputs = {
+        nixpkgs = {
+          follows = "nixpkgs";
+        };
+      };
+      url = "github:scarisey/copilot-cli-flake";
+    };
     ctrlsn = {
       inputs = {
         nixpkgs = {
