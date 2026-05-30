@@ -8,7 +8,7 @@
       plugin.preloaders = [ ];
       plugin.prepend_previewers = [
         {
-          name = "/media/**";
+          url = "/media/**";
           run = "noop";
         }
       ];
