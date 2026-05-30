@@ -114,6 +114,10 @@
       spawn-at-startup = [
         # { argv = [ ]; }
       ];
+      overview = {
+        zoom = 0.3;
+        workspace-shadow.enable = true;
+      };
       window-rules = [
         {
           matches = [ { is-active = false; } ];
@@ -132,6 +136,7 @@
         background-color = "#008080";
         empty-workspace-above-first = false;
         shadow = {
+          enable = true;
           color = "#000000FF";
           inactive-color = "#00000000";
         };
