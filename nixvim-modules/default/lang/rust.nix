@@ -7,7 +7,7 @@
       enable = true;
       settings.server = {
         default_settings = {
-          rust_analyzer = {
+          "rust-analyzer" = {
             references = {
               excludeTests = true;
               excludeImports = true;

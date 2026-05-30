@@ -62,6 +62,7 @@
     fortune # random quotes
 
     # miscellaneous unfiled TODO
+    lspmux
     wavemon # wifi signal plot
     nix-auth
     html2text # html to plain text
