@@ -8,6 +8,8 @@
     # openrazer.enable = true;
   };
   environment.systemPackages = with pkgs; [
+    android-tools
+    universal-android-debloater
     # easyeffects # takes a while to build
     keymapp # ZSA keyboard thing
     # polychromatic # openrazer frontend
