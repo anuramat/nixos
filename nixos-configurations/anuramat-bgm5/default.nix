@@ -7,6 +7,11 @@ let
   llamaPkg = pkgs.llama-cpp-vulkan;
 in
 {
+
+  services.immich = {
+    enable = true;
+  };
+
   nix.distributedBuilds = false;
   nixpkgs.config.rocmSupport = true;
 
