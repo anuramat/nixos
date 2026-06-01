@@ -20,6 +20,7 @@ in
   ];
 
   virtualisation = {
+    waydroid.enable = true;
     containers.enable = true; # common container config files in /etc/containers
     podman = {
       enable = true;
