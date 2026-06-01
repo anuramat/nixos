@@ -156,7 +156,7 @@
           dwt = true;
           natural-scroll = true;
           scroll-method = "two-finger";
-          tap = false;
+          tap = lib.mkDefault false;
         };
       };
     };
