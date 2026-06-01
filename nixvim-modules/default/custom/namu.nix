@@ -17,5 +17,5 @@
       }
     )
   ];
-  extraConfigLua = '''';
+  extraConfigLua = "";
 }

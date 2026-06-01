@@ -36,6 +36,8 @@
       inherit (config.lib) keymap luaf;
     in
     [
-      (keymap "n" "<leader>j" (luaf ''require("treesj").toggle()'') "TreeSJ: Split/Join a Treesitter node")
+      (keymap "n" "<leader>j" (luaf ''require("treesj").toggle()'')
+        "TreeSJ: Split/Join a Treesitter node"
+      )
     ];
 }

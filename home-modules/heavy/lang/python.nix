@@ -13,9 +13,9 @@
   };
   xdg.configFile = {
     "python/pythonrc".text = # python
-      '''';
+      "";
     "ipython/profile_default/startup/00-default.py".text = # python
-      '''';
+      "";
   };
   programs = {
     matplotlib = {
