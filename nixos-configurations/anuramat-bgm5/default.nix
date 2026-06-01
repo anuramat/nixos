@@ -5,12 +5,19 @@
 }:
 let
   llamaPkg = pkgs.llama-cpp-vulkan;
+  immichPort = 2283;
 in
 {
 
   services.immich = {
     enable = true;
+    host = "0.0.0.0";
+    port = immichPort;
   };
+
+  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
+    immichPort
+  ];
 
   nix.distributedBuilds = false;
   nixpkgs.config.rocmSupport = true;
