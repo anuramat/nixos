@@ -114,6 +114,7 @@
 
     # absolute minimum
     xxd
+    tshark
     bc # simple calculator
     coreutils-full
     curl
