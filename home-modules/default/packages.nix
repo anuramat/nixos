@@ -113,6 +113,7 @@
     eza # ls++
 
     # absolute minimum
+    xxd
     bc # simple calculator
     coreutils-full
     curl
