@@ -19,7 +19,10 @@
 
   nix.distributedBuilds = true;
 
-  services.keyd.keyboards.main.ids = [ "0001:0001:70533846" ];
+  services.keyd.keyboards.main.ids = [
+    "0001:0001:70533846"
+    "0001:0001:09b4e68d"
+  ];
 
   networking.hostName = "anuramat-f12";
 
