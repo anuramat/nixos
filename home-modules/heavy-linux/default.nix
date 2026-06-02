@@ -58,6 +58,7 @@
     libnotify # notify-send etc
     # mesa-demos # some 3d demos, useful for graphics debugging
     proton-pass # password manager
+    proton-pass-cli
     waypipe # gui forwarding
     remmina # vnc client
     wayvnc # vnc server
