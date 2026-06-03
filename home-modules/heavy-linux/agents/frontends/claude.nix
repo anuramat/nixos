@@ -120,7 +120,7 @@ in
         includeCoAuthoredBy = false;
 
         preferredNotifChannel = "ghostty"; # kitty = osc99, ghostty = osc777
-
+        remoteControlAtStartup = true;
         showClearContextOnPlanAccept = true;
         disableAutoMode = "disable";
         inherit
