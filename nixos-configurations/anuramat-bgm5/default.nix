@@ -62,16 +62,17 @@ in
 
   nixpkgs.overlays = [
     (
-      _final: _prev:
+      final: prev:
       let
-        pkgs = inputs.nix-strix-halo.legacyPackages.x86_64-linux;
+        pkgs = inputs.nix-strix-halo.lib.mkPkgsOverlay {
+          rocmTarget = inputs.nix-strix-halo.lib.therockTargets.defaultRocmTarget;
+        } final prev;
       in
       {
         inherit (pkgs)
           ec-su-axb35
           ec-su-axb35-monitor
           strix-halo-mes-firmware
-          fastflowlm
           ;
       }
     )
