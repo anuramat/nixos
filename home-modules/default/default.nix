@@ -11,6 +11,7 @@
     ./lib.nix
     ./misc.nix
     ./packages.nix
+    ./pss.nix
     ./readline.nix
     ./search.nix
     ./typst.nix

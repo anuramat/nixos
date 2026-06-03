@@ -32,8 +32,7 @@
     seahorse
   ];
 
-  # TODO figure out rust version or keyring locking
-  services.pass-secret-service.enable = true; # secret service api -- exposes password-store over dbus
+  services.pss.enable = true; # secret service api -- exposes password-store over dbus
   programs.wayprompt.enable = true;
   services.gpg-agent = {
     pinentry =
