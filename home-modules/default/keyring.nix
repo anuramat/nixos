@@ -66,6 +66,10 @@ let
 in
 {
   lib = { inherit keyring; };
+  home.packages = with keyring; [
+    list
+    lock
+  ];
 
   programs = {
     gpg = {
