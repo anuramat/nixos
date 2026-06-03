@@ -133,4 +133,11 @@ in
       text = config.lib.agents.instructions.codex;
     };
   };
+  systemd.user.services."codex-remote" = {
+    Unit.Description = "codex remote control service";
+    Service = {
+      ExecStart = "${codex-remote}/bin/codex-remote";
+      WorkingDirectory = "/tmp";
+    };
+  };
 }
