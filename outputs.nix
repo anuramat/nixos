@@ -25,7 +25,6 @@ in
 flake-parts.lib.mkFlake { inherit inputs; } {
   imports = [
     inputs.ez-configs.flakeModule
-    inputs.files.flakeModules.default
     inputs.git-hooks-nix.flakeModule
     inputs.home-manager.flakeModules.home-manager
     inputs.nix-topology.flakeModule
@@ -97,8 +96,6 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     in
     (mkDirSet (x: import x argsWithInputs) ./parts)
     // {
-      apps.writer.program = config.files.writer.drv;
-
       # TODO move? somehow sync extraspecialargs with home-manager import
       packages.neovim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
         extraSpecialArgs = {

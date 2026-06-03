@@ -2,16 +2,6 @@ keys_dir := `pwd` / "nixos-configurations" / `hostname` / "keys"
 
 all: flake format lint nixos
 
-# Regenerate flake
-[group('build')]
-flake:
-    # Regenerate flake.nix
-    nix run .#writer
-    # Format
-    nixfmt flake.nix
-    # Lock
-    nix flake lock
-
 [private]
 nixos-pre:
     # ask for permission first
