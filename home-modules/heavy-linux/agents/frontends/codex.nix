@@ -54,6 +54,7 @@ let
         service_tier = "fast"; # "fast" | unset
 
         features = {
+          terminal_resize_reflow = true;
           multi_agent = true;
           prevent_idle_sleep = false;
           personality = true;
@@ -61,6 +62,7 @@ let
           steer = true; # interrupt by sending a message
           unified_exec = false; # background bash
           shell_snapshot = true; # persist shell
+          memories = true;
         };
 
         notify =
