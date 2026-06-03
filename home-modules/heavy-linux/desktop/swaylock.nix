@@ -24,7 +24,7 @@ in
     lock =
       pkgs.writeShellScript "lock" ''
         ${getExe config.lib.keyring.lock} || true
-        ${getExe pkgs.swaylock-plugin} -f
+        ${getExe pkgs.swaylock-plugin} -f || true
       ''
       |> toString;
     unlock =
