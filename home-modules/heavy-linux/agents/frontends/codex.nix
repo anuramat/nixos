@@ -5,9 +5,10 @@
   ...
 }:
 let
-  inherit (lib) mapAttrs';
+  inherit (lib) mapAttrs' mkEnableOption mkIf;
   inherit (config.lib) agents;
 
+  cfg = config.services.codexRemote;
   codexHome = config.xdg.configHome + "/codex";
   codexCfgPath = codexHome + "/config.toml";
 
@@ -115,29 +116,35 @@ let
   };
 in
 {
-  home.sessionVariables = env;
-  home = {
-    packages = [
-      codex
-      codex-remote
-    ];
-    activation = {
-      codexConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        run cat ${codexTomlCfg} > "${codexCfgPath}";
-      '';
-    }
-    // skillFiles;
-  };
-  xdg.configFile = {
-    "codex/AGENTS.md" = {
-      text = config.lib.agents.instructions.codex;
+  options.services.codexRemote.enable = mkEnableOption "codex remote control service";
+
+  config = {
+    home.sessionVariables = env;
+    home = {
+      packages = [
+        codex
+        codex-remote
+      ];
+      activation = {
+        codexConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          run cat ${codexTomlCfg} > "${codexCfgPath}";
+        '';
+      }
+      // skillFiles;
     };
-  };
-  systemd.user.services."codex-remote" = {
-    Unit.Description = "codex remote control service";
-    Service = {
-      ExecStart = "${codex-remote}/bin/codex-remote";
-      WorkingDirectory = "/tmp";
+    xdg.configFile = {
+      "codex/AGENTS.md" = {
+        text = config.lib.agents.instructions.codex;
+      };
+    };
+    systemd.user.services = mkIf cfg.enable {
+      "codex-remote" = {
+        Unit.Description = "codex remote control service";
+        Service = {
+          ExecStart = "${codex-remote}/bin/codex-remote";
+          WorkingDirectory = "/tmp";
+        };
+      };
     };
   };
 }

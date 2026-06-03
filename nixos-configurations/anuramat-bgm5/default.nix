@@ -11,6 +11,7 @@ in
 
   home-manager.users.anuramat = {
     programs.niri.settings.input.touchpad.tap = true;
+    services.codexRemote.enable = true;
   };
 
   services.immich = {
