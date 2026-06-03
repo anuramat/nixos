@@ -101,6 +101,7 @@ let
     extraRwDirs = [
       codexHome
       config.home.sessionVariables.GHQ_ROOT
+      "/home/anuramat/Documents/Codex"
       "/etc/nixos"
     ];
   };
