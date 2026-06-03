@@ -7,6 +7,7 @@
 }:
 let
   inherit (lib)
+    escapeShellArg
     getExe
     mkEnableOption
     mkIf
@@ -31,6 +32,21 @@ let
   };
 
   cfg = config.services.pss;
+  python = pkgs.python3.withPackages (ps: [ ps.dbus-next ]);
+  migrate = pkgs.writeShellApplication {
+    name = "pss-migrate";
+    runtimeInputs = [
+      python
+      pkgs.gnupg
+    ];
+    text = ''
+      ${optionalString (
+        cfg.storePath != null
+      ) "export PASSWORD_STORE_DIR=${escapeShellArg cfg.storePath}"}
+      export GNUPGHOME=${escapeShellArg config.programs.gpg.homedir}
+      exec python ${./pss-migrate.py} "$@"
+    '';
+  };
   command = "${getExe cfg.package}${
     optionalString (cfg.storePath != null) " --path ${cfg.storePath}"
   }";
@@ -46,6 +62,10 @@ in
       type = types.nullOr types.str;
       default = config.programs.password-store.settings.PASSWORD_STORE_DIR or null;
       defaultText = "$HOME/.password-store";
+    };
+    migrationPackage = mkOption {
+      type = types.package;
+      default = migrate;
     };
   };
 
@@ -81,6 +101,8 @@ in
       };
       Install.WantedBy = [ "default.target" ];
     };
+
+    home.packages = [ cfg.migrationPackage ];
 
     xdg.dataFile."dbus-1/services/${busName}.service".text = ''
       [D-BUS Service]
