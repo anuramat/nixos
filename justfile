@@ -1,6 +1,6 @@
 keys_dir := `pwd` / "nixos-configurations" / `hostname` / "keys"
 
-all: flake format lint nixos
+all: format lint nixos
 
 [private]
 nixos-pre:
