@@ -99,13 +99,16 @@
     statix.url = "github:oppiliappan/statix/master";
     deadnix.url = "github:astro/deadnix/main";
 
-    # non flakes
     tt-schemes = {
       url = "github:tinted-theming/schemes";
       flake = false;
     };
     base16-mutt = {
       url = "github:josephholsten/base16-mutt";
+      flake = false;
+    };
+    pass-secret-service = {
+      url = "github:grimsteel/pass-secret-service/v0.7.0";
       flake = false;
     };
   };
