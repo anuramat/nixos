@@ -53,7 +53,40 @@ in
     inputs.nixos-hardware.nixosModules.common-pc-ssd
 
     inputs.nixos-hardware.nixosModules.common-hidpi
+
+    inputs.nix-strix-halo.nixosModules.ec-su-axb35
+    inputs.nix-strix-halo.nixosModules.tuning
+    inputs.nix-strix-halo.nixosModules.fastflowlm
+    inputs.nix-strix-halo.nixosModules.ryzenadj
   ];
+
+  nixpkgs.overlays = [
+    (
+      _final: _prev:
+      let
+        pkgs = inputs.nix-strix-halo.legacyPackages.x86_64-linux;
+      in
+      {
+        inherit (pkgs)
+          ec-su-axb35
+          ec-su-axb35-monitor
+          strix-halo-mes-firmware
+          fastflowlm
+          ;
+      }
+    )
+  ];
+
+  services = {
+    ryzenadj = {
+      enable = true;
+    };
+    ec-su-axb35 = {
+      enable = true;
+      monitor.enable = true;
+      # powerMode = "balanced";
+    };
+  };
 
   # TODO zramSwap and tmpfs
 
@@ -100,6 +133,7 @@ in
   environment = {
     systemPackages = [
       llamaPkg
+      pkgs.amd-debug-tools
     ];
   };
 }
