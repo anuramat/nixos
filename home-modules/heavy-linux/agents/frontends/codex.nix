@@ -37,11 +37,15 @@ let
         notice = {
           hide_full_access_warning = true;
         };
-        hide_agent_reasoning = false;
-        show_raw_agent_reasoning = true;
-
+        tui.keymap.composer = {
+          queue = "alt-enter";
+        };
         model_reasoning_effort = "xhigh";
         plan_mode_reasoning_effort = "xhigh";
+
+        # meh
+        projects."/etc/nixos".trust_level = "trusted";
+        projects."/home/anuramat/.local/share/ghq/github.com/anuramat/vicode".trust_level = "trusted";
 
         model_verbosity = "low";
         model = "gpt-5.5";
