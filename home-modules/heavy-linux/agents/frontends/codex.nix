@@ -86,6 +86,23 @@ let
   env = {
     CODEX_HOME = codexHome;
   };
+  # codex remote-control
+  codex-remote = config.lib.agents.mkPackages {
+    wrapperName = "codex-remote";
+    binName = "codex";
+    package = pkgs.codex;
+    args = [
+      "--dangerously-bypass-approvals-and-sandbox"
+      "remote-control"
+    ];
+    inherit env;
+    agentDir = null;
+    extraRwDirs = [
+      codexHome
+      config.home.sessionVariables.GHQ_ROOT
+      "/etc/nixos"
+    ];
+  };
   codex = config.lib.agents.mkPackages {
     binName = "codex";
     package = pkgs.codex;
@@ -102,6 +119,7 @@ in
   home = {
     packages = [
       codex
+      codex-remote
     ];
     activation = {
       codexConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
