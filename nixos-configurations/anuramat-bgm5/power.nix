@@ -3,6 +3,7 @@
   services = {
     tuned = {
       enable = false;
+      # TODO: enable, make default profile repeat whatever we already have, add a custom quieter profile for gpu runs at night
     };
     ryzenadj = {
       enable = false;
@@ -13,8 +14,8 @@
       powerMode = "quiet";
       fans =
         let
-          rampupCurve = "35,50,60,95,97";
-          rampdownCurve = "0,45,55,94,96";
+          rampupCurve = "35,50,60,85,90";
+          rampdownCurve = "0,45,55,70,85";
         in
         {
           fan1 = {
