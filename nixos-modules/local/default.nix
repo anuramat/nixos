@@ -19,6 +19,7 @@ in
     ./rice.nix
   ];
 
+  programs.corefreq.enable = true;
   virtualisation = {
     waydroid = {
       enable = true;
