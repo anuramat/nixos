@@ -8,7 +8,7 @@ let
   # TODO parameterize or smth
   bookdir = "${config.home.homeDirectory}/books";
 
-  inherit (lib) getExe;
+  inherit (lib) escapeShellArg getExe;
 
   ctl = {
     brightness =
@@ -96,6 +96,7 @@ let
     let
       pkill = "${pkgs.procps}/bin/pkill";
       todo = getExe pkgs.todo;
+      todoFile = escapeShellArg config.home.sessionVariables.TODO_FILE;
       fd = getExe pkgs.fd;
       zathura = getExe pkgs.zathura;
       bemenu = getExe pkgs.bemenu;
@@ -127,12 +128,14 @@ let
         todo_add =
           # bash
           ''
+            export TODO_FILE=${todoFile}
             task=$(echo "" | ${bemenu} -p todo -l 0) || exit
             ${todo} add "$task"
           '';
         todo_done =
           # bash
           ''
+            export TODO_FILE=${todoFile}
             task=$(${todo} ls | tac | ${bemenu} -p done) || exit
             task_id=$(echo "$task" | sed 's/^\s*//' | cut -d ' ' -f 1)
             ${todo} rm "$task_id"
