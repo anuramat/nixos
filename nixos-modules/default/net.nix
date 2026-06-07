@@ -1,6 +1,7 @@
 {
-  lib,
   config,
+  pkgs,
+  lib,
   ...
 }:
 {
@@ -15,6 +16,9 @@
       enable = true;
     };
   };
+  environment.systemPackages = with pkgs; [
+    networkmanager-openconnect
+  ];
 
   services.resolved = {
     enable = true;
