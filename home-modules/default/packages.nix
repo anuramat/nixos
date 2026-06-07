@@ -62,6 +62,7 @@
     fortune # random quotes
 
     # miscellaneous unfiled TODO
+    sem
     lspmux
     wavemon # wifi signal plot
     nix-auth
