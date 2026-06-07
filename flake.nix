@@ -2,6 +2,10 @@
 {
   inputs = {
     bundlers.url = "github:NixOS/bundlers";
+    sem = {
+      url = "github:Ataraxy-Labs/sem";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     agenix = {
       url = "github:yaxitech/ragenix";
       inputs.nixpkgs.follows = "nixpkgs";
