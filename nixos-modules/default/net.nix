@@ -41,21 +41,6 @@ in
 
   programs.ssh = {
     inherit (config.lib.hosts) knownHostsFiles;
-    extraConfig =
-      let
-        prefix = config.userConfig.username + "-";
-        mkAliasEntry =
-          hostname: # ssh_config
-          ''
-            Host ${lib.strings.removePrefix prefix hostname}
-              HostName ${hostname}
-          '';
-      in
-      (builtins.attrNames config.lib.hosts.hosts)
-      |> lib.filter (x: lib.strings.hasPrefix prefix x)
-      |> map mkAliasEntry
-      |> lib.strings.intersperse "\n"
-      |> lib.concatStrings;
   };
   services = {
     fail2ban.enable = true; # intrusion prevention

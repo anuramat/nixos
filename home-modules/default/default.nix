@@ -1,4 +1,7 @@
 {
+  config,
+  osConfig ? null,
+  lib,
   ...
 }:
 {
@@ -17,6 +20,36 @@
     ./typst.nix
     ./yazi.nix
   ];
+
+  programs.ssh = {
+    enable = true;
+    extraConfig =
+      let
+        prefix = config.home.username + "-";
+        mkAliasEntry =
+          hostname: # ssh_config
+          ''
+            Host ${lib.strings.removePrefix prefix hostname}
+              HostName ${hostname}
+          '';
+        machines =
+          if osConfig == null then
+            [ ]
+          else
+            (
+              (builtins.attrNames osConfig.lib.hosts.hosts)
+              |> lib.filter (x: lib.strings.hasPrefix prefix x)
+              |> map mkAliasEntry
+            );
+        bw = ''
+          Host bw
+            User hd_un330
+            HostName bwunicluster.scc.kit.edu
+        '';
+        entries = machines ++ [ bw ];
+      in
+      entries |> lib.strings.intersperse "\n" |> lib.concatStrings;
+  };
 
   xdg.enable = true; # set xdg basedir vars in .profile
 
