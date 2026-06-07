@@ -1,6 +1,7 @@
 # TODO use max-jobs to fetch caches
 {
   inputs = {
+    bundlers.url = "github:NixOS/bundlers";
     agenix = {
       url = "github:yaxitech/ragenix";
       inputs.nixpkgs.follows = "nixpkgs";
