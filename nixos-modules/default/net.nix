@@ -28,6 +28,7 @@ in
     extraOptions = {
       token-mode = "totp";
       token-secret = "@${secrets.hdotp.path}";
+      script = "${pkgs.vpn-slice}/bin/vpn-slice --no-host-names --no-ns-hosts bwunicluster.scc.kit.edu 129.206.0.0/16 147.142.0.0/16";
     };
   };
   environment.systemPackages = with pkgs; [
