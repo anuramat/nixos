@@ -33,6 +33,8 @@ in
   "openrouter.age"
   "perplexity.age"
   "zai.age"
+  "hdotp.age"
+  "hdpw.age"
 ]
 |> map (x: {
   name = x;
