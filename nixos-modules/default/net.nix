@@ -4,6 +4,9 @@
   lib,
   ...
 }:
+let
+  inherit (config.age) secrets;
+in
 {
   networking = {
     firewall = {
@@ -14,6 +17,17 @@
     };
     networkmanager = {
       enable = true;
+    };
+  };
+  networking.openconnect.interfaces.uhd = {
+    autoStart = false;
+    gateway = "vpn-ac.urz.uni-heidelberg.de";
+    user = "un330";
+    protocol = "anyconnect";
+    passwordFile = secrets.hdpw.path;
+    extraOptions = {
+      token-mode = "totp";
+      token-secret = "@${secrets.hdotp.path}";
     };
   };
   environment.systemPackages = with pkgs; [
