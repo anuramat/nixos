@@ -88,6 +88,7 @@ let
           - If you change the types/semantics of existing code, you MUST rename the relevant functions/variables to reflect the changes; e.g. if variable name contains "list" but it is no longer a list, you MUST rename it to avoid confusion.
           - You MUST NOT remove existing comments, unless they're outdated. if you do, you SHOULD inform the user.
           - User is running NixOS, the flake is located in `/etc/nixos`. Whenever user refers to "the NixOS configuration", this path is implied. You MAY read files in this directory for context.
+          - If user asks you to "notify" them about something, `tgfy` command is implied. It takes a text message through standard input and optionally file attachments as arguments, and sends them to the user through Telegram.
         ''
         + (for "claude" ''
           - You SHOULD use the `AskUserQuestion` tool whenever you have questions for the user — it lets them pick options instead of typing, and consolidates scattered questions into one place. Exceptions:
