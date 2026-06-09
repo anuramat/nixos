@@ -57,7 +57,6 @@ in
         VIRTUAL_ENV_DISABLE_PROMPT = "1"; # hide python venv prompt
 
         # XDG TODO move stuff here from the shims file
-        CUDA_CACHE_PATH = "${config.xdg.cacheHome}/nv"; # ~/.nv/
 
         TERMCMD = "${lib.getExe pkgs.foot}";
         # TERMCMD = "${lib.getExe pkgs.ghostty}";

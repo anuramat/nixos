@@ -66,10 +66,19 @@ let
 in
 {
   lib = { inherit keyring; };
-  home.packages = with keyring; [
-    list
-    lock
-  ];
+  home.packages =
+    (with keyring; [
+      list
+      lock
+    ])
+    ++ (with pkgs; [
+      proton-pass-cli
+    ]);
+
+  home.sessionVariables = {
+    # TODO maybe wrap the cli with a script and put in an overlay?
+    PROTON_PASS_LINUX_KEYRING = "dbus";
+  };
 
   programs = {
     gpg = {
