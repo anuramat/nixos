@@ -73,6 +73,8 @@ in
     ])
     ++ (with pkgs; [
       proton-pass-cli
+      # $ pass-cli login
+      # $ pass-cli settings set default-vault --vault-name Personal
     ]);
 
   home.sessionVariables = {
