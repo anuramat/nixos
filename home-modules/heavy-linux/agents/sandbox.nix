@@ -142,6 +142,9 @@ in
                 "/run/current-system"
                 "/run/systemd/resolve/stub-resolv.conf"
 
+                config.lib.secrets.tgfy-token.path
+                config.lib.secrets.tgfy-id.path
+
                 config.xdg.configHome
                 config.home.sessionVariables.XDG_BIN_HOME
                 config.home.sessionVariables.GHQ_ROOT

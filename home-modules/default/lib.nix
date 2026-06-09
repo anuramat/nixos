@@ -156,6 +156,8 @@ let
 
 in
 {
+  # TODO use this everywhere
+  lib.secrets = if osConfig != null then osConfig.age.secrets else config.age.secrets;
   lib.home = {
     inherit mkGenericActivationScript mkAgenixExportScript;
     agenixWrapPkg =
