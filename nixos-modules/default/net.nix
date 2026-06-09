@@ -20,7 +20,7 @@ in
     };
   };
   networking.openconnect.interfaces.uhd = {
-    autoStart = true;
+    autoStart = lib.mkDefault false;
     gateway = "vpn-ac.urz.uni-heidelberg.de";
     user = "un330";
     protocol = "anyconnect";

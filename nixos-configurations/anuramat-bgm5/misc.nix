@@ -2,6 +2,7 @@ let
   immichPort = 2283;
 in
 {
+  networking.openconnect.interfaces.uhd.autoStart = true;
   services.immich = {
     enable = true;
     host = "0.0.0.0";
