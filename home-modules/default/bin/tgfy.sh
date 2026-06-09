@@ -2,10 +2,10 @@
 
 usage() {
 	cat <<'EOF'
+Send notification over telegram with optional file attachments.
+No output = success.
 Usage:
-  tgfy.sh [-h|--help]
-  command | tgfy.sh
-  command | tgfy.sh FILE...
+  command | tgfy.sh [file1 file2 ...]
 EOF
 }
 
@@ -23,14 +23,16 @@ CHAT_ID=$(cat /run/agenix/tgfy-id)
 BOT_TOKEN=$(cat /run/agenix/tgfy-token)
 API_URL="https://api.telegram.org/bot$BOT_TOKEN"
 
-curl -s \
+text_sent=$(curl -s \
 	-d chat_id="$CHAT_ID" \
 	--data-urlencode "text=$TEXT" \
-	"$API_URL/sendMessage"
+	"$API_URL/sendMessage" | jq -r '.ok' -r)
+[ "$text_sent" != "true" ] && echo "failed to send text message"
 
 for file; do
-	curl -s \
+	file_sent=$(curl -s \
 		-F chat_id="$CHAT_ID" \
 		-F document=@"$file" \
-		"$API_URL/sendDocument"
+		"$API_URL/sendDocument" | jq -r '.ok' -r)
+	[ "$file_sent" != "true" ] && echo "failed to send file: $file"
 done
