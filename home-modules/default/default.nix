@@ -41,12 +41,12 @@
               |> lib.filter (x: lib.strings.hasPrefix prefix x)
               |> map mkAliasEntry
             );
-        bw = ''
-          Host bw
+        uc3 = ''
+          Host uc3
             User hd_un330
             HostName bwunicluster.scc.kit.edu
         '';
-        entries = machines ++ [ bw ];
+        entries = machines ++ [ uc3 ];
       in
       entries |> lib.strings.intersperse "\n" |> lib.concatStrings;
   };
