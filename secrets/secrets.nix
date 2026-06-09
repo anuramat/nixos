@@ -35,6 +35,8 @@ in
   "zai.age"
   "hdotp.age"
   "hdpw.age"
+  "tgfy-token.age"
+  "tgfy-id.age"
 ]
 |> map (x: {
   name = x;
