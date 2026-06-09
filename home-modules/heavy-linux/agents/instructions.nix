@@ -81,7 +81,7 @@ let
           - The key words "MUST", "MUST NOT", "SHOULD", "SHOULD NOT", "MAY" are to be interpreted as described in RFC 2119.
           - You MUST NOT do "band-aid" fixes -- ALWAYS fix the root cause of the problem.
           - If you need tools that are not available on the system, you SHOULD use `nix run nixpkgs#package_name -- arg1 ...`.
-          - When using git, keep commit messages as concise as possible.
+          - When writing a commit message, the subject should be of the form `$SCOPE: $SHORT_DESCRIPTION`. WIP commits get an additional "WIP: " prefix.
           - Backward compatibility is not a goal, unless explicitly specified. You MUST NOT not add fallbacks, shims, wrappers, aliases, or dual behavior for old codepaths.
           - If user refers to "spec" without specifying, ./SPEC.md is usually implied
           - Don't run `find` and similar commands on paths like `/` or `/nix/store` -- those are huge.
