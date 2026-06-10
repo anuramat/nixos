@@ -31,12 +31,5 @@
     CPU_MAX_PERF_ON_BAT = 100;
   };
 
-  swapDevices = [
-    {
-      device = "/var/lib/swapfile";
-      size = 32 * 1024;
-    }
-  ];
-
   programs.captive-browser.interface = "wlp3s0";
 }
