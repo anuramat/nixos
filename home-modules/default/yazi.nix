@@ -1,4 +1,3 @@
-{ pkgs, lib, ... }:
 {
   # alternative -- felix-fm -- image previews, otherwise minimal -- :help<cr> for help; waiting for picker in <https://github.com/kyoheiu/felix/issues/261>
   programs.yazi = {
@@ -42,14 +41,6 @@
             ''shell -- for path in "$@"; do echo "file://$path"; done | wl-copy -t text/uri-list''
             "yank"
           ];
-        }
-        {
-          on = "<C-n>";
-          run = ''shell -- ${lib.getExe pkgs.dragon-drop} -x -T "$@"'';
-        }
-        {
-          on = "<C-m>";
-          run = ''shell -- ${lib.getExe pkgs.dragon-drop} -A -x -T "$@"'';
         }
       ];
     };
