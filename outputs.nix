@@ -104,6 +104,8 @@ flake-parts.lib.mkFlake { inherit inputs; } {
               |> builtins.filter (f: lib.hasSuffix ".pub" f && f != cacheFilename)
               |> map (f: keyDir + /${f});
           in
+          assert lib.assertMsg (builtins.pathExists keyDir)
+            "nixos-configurations/${host}/keys/ is missing (expected *.pub, known_hosts, ${cacheFilename})";
           lib.nameValuePair host {
             inherit clientKeyFiles;
             clientKeys = clientKeyFiles |> map builtins.readFile |> map lib.trim;
