@@ -47,7 +47,10 @@
   };
   autoCmd = [
     {
-      # runtime ftplugins clobber the global value
+      # $VIMRUNTIME ftplugins clobber the global value with their own
+      # buffer-local one (e.g. sh.vim does `setlocal fo+=croql`); this fires
+      # after them, since ftplugins are enabled before init is sourced
+      # see :h ftplugin-overrule
       event = "FileType";
       command = "setlocal formatoptions=${config.opts.formatoptions}";
     }
