@@ -72,31 +72,28 @@ let
     in
     lib.hm.dag.entryAfter [ "writeBoundary" ] script;
 
+  secrets =
+    if osConfig != null then
+      osConfig.age.secrets
+    else if config ? age then
+      config.age.secrets
+    else
+      { };
+
   mkAgenixExportScript =
     vars:
-    let
-      mkScript =
-        cfg:
-        vars cfg.age.secrets
-        |> lib.mapAttrsToList (
-          name: secret: ''
-            ${name}=$(<"${secret.path}")
-            export ${name}
-          ''
-        )
-        |> concatStringsSep "\n";
-    in
-    if osConfig != null then
-      mkScript osConfig
-    else if config ? age then
-      mkScript config
-    else
-      "";
+    vars secrets
+    |> lib.mapAttrsToList (
+      name: secret: ''
+        ${name}=$(<"${secret.path}")
+        export ${name}
+      ''
+    )
+    |> concatStringsSep "\n";
 
 in
 {
-  # TODO use this everywhere
-  lib.secrets = if osConfig != null then osConfig.age.secrets else config.age.secrets;
+  lib.secrets = secrets;
   lib.home = {
     inherit mkGenericActivationScript mkAgenixExportScript;
     json.set = mkJqActivationScript;

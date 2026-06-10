@@ -1,7 +1,7 @@
 {
+  config,
   pkgs,
   lib,
-  osConfig,
   ...
 }:
 let
@@ -84,7 +84,7 @@ let
   };
   apis =
     let
-      keys = lib.mapAttrs (n: v: "cat ${v.path}") osConfig.age.secrets;
+      keys = lib.mapAttrs (n: v: "cat ${v.path}") config.lib.secrets;
     in
     {
       cerebras = {
