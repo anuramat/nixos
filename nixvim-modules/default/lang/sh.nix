@@ -5,7 +5,6 @@ let
       ftp = {
         ts = 4;
         et = false;
-        fo = config.opts.formatoptions; # TODO why do we do this again? see lua.nix
       };
     };
   };

@@ -45,6 +45,13 @@
       "tex"
     ];
   };
+  autoCmd = [
+    {
+      # runtime ftplugins clobber the global value
+      event = "FileType";
+      command = "setlocal formatoptions=${config.opts.formatoptions}";
+    }
+  ];
   userCommands = {
     Trim = {
       command = "%s/ \\+$//g";

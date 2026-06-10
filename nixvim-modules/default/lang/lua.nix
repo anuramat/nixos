@@ -1,9 +1,4 @@
-{ config, ... }:
 {
-  files = config.lib.files {
-    lua.ftp.fo = config.opts.formatoptions; # TODO why do we do this again? see sh.nix and misc.nix
-  };
-
   plugins = {
     conform-nvim.settings.formatters_by_ft.lua = [ "stylua" ];
 

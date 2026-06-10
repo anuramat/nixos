@@ -94,14 +94,6 @@ in
     };
   };
 
-  files = config.lib.files {
-    vim = {
-      ftp = {
-        fo = config.opts.formatoptions; # TODO why do we do this again? see lua.nix
-      };
-    };
-  };
-
   filetype = {
     filename = {
       "todo.txt" = "todotxt";
