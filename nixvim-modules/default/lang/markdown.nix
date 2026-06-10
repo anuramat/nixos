@@ -1,12 +1,12 @@
-{ config, ... }:
 {
-  files = config.lib.files {
-    markdown.ftp = {
+  files."after/ftplugin/markdown.lua" = {
+    localOpts = {
       cc = "+1";
       shiftwidth = 0;
       tabstop = 2;
-      # TODO unmap gO
     };
+    # runtime ftplugin maps gO to a TOC picker
+    extraConfigLua = ''vim.keymap.del("n", "gO", { buffer = 0 })'';
   };
   plugins = {
     lsp.servers.marksman.enable = true;
