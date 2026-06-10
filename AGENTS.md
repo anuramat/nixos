@@ -81,7 +81,8 @@ change public flake outputs:
 - `sharedModules`: direct children of `shared-modules/`.
 - `overlays`: direct children of `overlays/`.
 
-`outputs.nix` also exposes `consts` (builder username) and `keys`: per-host key
+`outputs.nix` also exposes `consts` (builder username), `hosts` (a hand-written
+static registry of `{ system, builder }` per host), and `keys`: per-host key
 material discovered from `nixos-configurations/*/keys/` (client key files and
 strings, `known_hosts` file path and parsed keys, cache key). `keys` is the
 single source of truth for key discovery, consumed by
@@ -128,9 +129,11 @@ run inside the dev shell or pass the `pipe-operators` experimental feature.
   OpenConnect VPN, SSH, fail2ban, Tailscale, and known-host wiring.
 - `nixos-modules/default/user.nix`: `userConfig`, primary user creation,
   groups, authorized keys, autologin user, and OpenRazer user hook.
-- `nixos-modules/default/hosts.nix`: computes other hosts and builders, and
-  exposes substituters, authorized-key files, known-hosts files, and cache
-  keys by indexing the flake `keys` output.
+- `nixos-modules/default/hosts.nix`: derives other hosts and builders from the
+  flake `hosts` registry, and exposes substituters, authorized-key files,
+  known-hosts files, and cache keys by indexing the flake `keys` output.
+  Asserts the registry matches `nixos-configurations/` and the host's own
+  entry (system, builder user, dirname == hostName).
 - `nixos-modules/default/web.nix`: small `web.sites` abstraction that maps site
   records to nginx virtual hosts, ACME certs, and optional systemd services.
 - `nixos-modules/default/llama.nix`: wraps NixOS `services.llama-cpp` with
@@ -242,10 +245,12 @@ Major parts:
 - Direct directory children become public flake output names. A rename under
   `nixos-modules/`, `home-modules/`, `nixvim-modules/`, `shared-modules/`, or
   `nixos-configurations/` is an API change for this flake.
-- `nixos-modules/default/hosts.nix` evaluates the host set to derive other
-  hosts, builders, SSH key files, known-host files, cache substituters, and
-  trusted cache keys. Small host changes can affect secrets, SSH,
-  substituters, and remote-build behavior.
+- Cross-host facts come from the static `hosts` registry in `outputs.nix`, not
+  from evaluating sibling configurations. Adding a host (or changing its
+  system/builder status) requires updating the registry; assertions in
+  `nixos-modules/default/hosts.nix` catch stale entries when the drifting host
+  itself is built. Host changes can still affect secrets, SSH, substituters,
+  and remote-build behavior on every other host.
 - The repo uses the experimental Nix pipe operator throughout modules and
   helper code. Raw parsing/eval commands may need `pipe-operators` enabled.
 - `nixos-modules/builder.nix` asserts `!config.nix.distributedBuilds`; a builder
