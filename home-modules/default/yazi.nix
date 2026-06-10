@@ -1,3 +1,4 @@
+{ pkgs, lib, ... }:
 {
   # alternative -- felix-fm -- image previews, otherwise minimal -- :help<cr> for help; waiting for picker in <https://github.com/kyoheiu/felix/issues/261>
   # TODO disable wraparound
@@ -26,14 +27,13 @@
             "yank"
           ];
         }
-        # TODO use dragon-drop package instead of command
         {
           on = "<C-n>";
-          run = ''shell -- dragon-drop -x -T "$@"'';
+          run = ''shell -- ${lib.getExe pkgs.dragon-drop} -x -T "$@"'';
         }
         {
           on = "<C-m>";
-          run = ''shell -- dragon-drop -A -x -T "$@"'';
+          run = ''shell -- ${lib.getExe pkgs.dragon-drop} -A -x -T "$@"'';
         }
       ];
     };
