@@ -129,18 +129,24 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     // {
       # evaluate every host's toplevel (firing all assertions) without building it
       checks =
-        inputs.self.hosts
-        |> lib.filterAttrs (_: host: host.system == system)
-        |> lib.mapAttrs' (
-          name: _:
-          lib.nameValuePair "host-${name}" (
-            pkgs.runCommand "host-${name}" {
-              drv =
-                builtins.unsafeDiscardOutputDependency
-                  inputs.self.nixosConfigurations.${name}.config.system.build.toplevel.drvPath;
-            } "echo $drv > $out"
+        (
+          inputs.self.hosts
+          |> lib.filterAttrs (_: host: host.system == system)
+          |> lib.mapAttrs' (
+            name: _:
+            lib.nameValuePair "host-${name}" (
+              pkgs.runCommand "host-${name}" {
+                drv =
+                  builtins.unsafeDiscardOutputDependency
+                    inputs.self.nixosConfigurations.${name}.config.system.build.toplevel.drvPath;
+              } "echo $drv > $out"
+            )
           )
-        );
+        )
+        # hand-pinned vendorHash drift only surfaces at build time, so build these
+        // lib.optionalAttrs (system == "x86_64-linux") {
+          inherit (pkgs.extend inputs.self.overlays.default) protonmail-bridge waybar-niri-windows;
+        };
       # TODO move? somehow sync extraspecialargs with home-manager import
       packages.neovim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
         extraSpecialArgs = {

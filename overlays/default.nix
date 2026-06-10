@@ -110,6 +110,16 @@ let
       src = inputs.protonmail-bridge;
       vendorHash = "sha256-aW7N6uacoP99kpvw9E5WrHaQ0fZ4P5WGsNvR/FAZ+cA=";
     });
+    waybar-niri-windows = prev.buildGoModule {
+      pname = "waybar-niri-windows";
+      version = "unstable";
+      src = inputs.waybar-niri-windows;
+      vendorHash = "sha256-jK87vZYfUe8znk65SmJ1mN8qP5K3dtt950hKGWTYXs4=";
+      nativeBuildInputs = [ prev.pkg-config ];
+      buildInputs = [ prev.gtk3 ];
+      buildPhase = "go build -buildmode=c-shared -o waybar-niri-windows.so ./main";
+      installPhase = "install -Dm644 waybar-niri-windows.so $out/lib/waybar-niri-windows.so";
+    };
   };
 
   inputOverlays =

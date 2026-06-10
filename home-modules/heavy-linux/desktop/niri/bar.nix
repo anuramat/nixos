@@ -1,21 +1,10 @@
 {
   pkgs,
   lib,
-  inputs,
   ...
 }:
 let
   toList = str: lib.splitString " " str;
-  niriWindows = pkgs.buildGoModule {
-    pname = "waybar-niri-windows";
-    version = "unstable";
-    src = inputs.waybar-niri-windows;
-    vendorHash = "sha256-jK87vZYfUe8znk65SmJ1mN8qP5K3dtt950hKGWTYXs4=";
-    nativeBuildInputs = [ pkgs.pkg-config ];
-    buildInputs = [ pkgs.gtk3 ];
-    buildPhase = "go build -buildmode=c-shared -o waybar-niri-windows.so ./main";
-    installPhase = "install -Dm644 waybar-niri-windows.so $out/lib/waybar-niri-windows.so";
-  };
 in
 {
   systemd.user.services.waybar.Service = {
@@ -155,7 +144,7 @@ in
         };
 
         "cffi/niri-windows" = {
-          module_path = "${niriWindows}/lib/waybar-niri-windows.so";
+          module_path = "${pkgs.waybar-niri-windows}/lib/waybar-niri-windows.so";
           options = {
             show-floating = "never";
             rules = [
