@@ -6,7 +6,7 @@
 }:
 let
   cfg = config.userConfig;
-  inherit (cfg) username fullName;
+  inherit (cfg) username name;
   homeConfig = config.home-manager.users.${username};
 in
 {
@@ -17,9 +17,7 @@ in
         description = "primary username for the system";
       };
 
-      # TODO: rename fullName to name?
-
-      fullName = mkOption {
+      name = mkOption {
         type = types.str;
         default = homeConfig.programs.git.settings.user.name or (throw "no name provided");
       };
@@ -41,7 +39,7 @@ in
     # TODO maybe move closer to specific services that need it
     users.users = {
       ${username} = {
-        description = fullName;
+        description = name;
         isNormalUser = true;
         extraGroups = [
           "nginx"
