@@ -5,16 +5,21 @@ in
 {
   lib.agents.commands = {
     iterate_spec = rec {
-      description = "refine feature specification in SPEC.md";
+      description = "refine feature specification/implementation plan in files like SPEC.md/PLAN.md";
       withFM = prependFrontmatter text;
       text = ''
-        @SPEC.md contains a specification of a feature I want to implement. It
-        describes desired behaviour: motivation, use cases, user-visible
-        behaviour, edge cases, and terminology.
+        Specification describes a feature that was not yet implemented.
+
+        Properties of a good spec:
+
+        - internal consistency: spec should not contradict itself
+        - consistency with existing code: spec should not make incorrect assumptions about existing behaviour
+        - completeness of decription/deterministic result: there should be one obvious way to implement the spec
+        - quality of the end result: resulting implementation should be maintainable and correct
 
         Your task is to review the specification for implementation risks. You
         may inspect relevant parts of the codebase if needed to assess conflicts
-        with existing behaviour. Do not explore unrelated code.
+        with existing behaviour.
 
         Identify and report:
 
@@ -23,28 +28,16 @@ in
         - implicit contradictions with existing code behaviour or assumptions
         - behaviour that appears difficult to implement without major refactoring
         - inconsistent naming or terminology
-        - anything else that is likely to cause incorrect or error-prone implementation
+        - anything else that is likely to cause problems in the future: bugs, maintainability issues, etc.
 
-        Output format:
+        Note:
 
-        - group findings into two categories:
-          - certain problems: self-contradictions, logical flaws
-          - potential problems: ambiguities, missing cases, contradictions with
-            existing code
-        - for each category, provide a list of concise bullet points describing
-          the issues found
-
-        Constraints:
-
-        - if referenced components do not exist in the codebase, assume they will be implemented later and do not flag this as an issue
-        - focus only on specification correctness and clarity, not technical design
-        - do not suggest implementation solutions
-        - do not implement anything in the code
+        If the spec references components that don't exist, assume that they are
+        a part of the feature descibed by the spec. If it's not already obvious
+        from the spec, you must update the document to explicitly mention that
+        they are a part of the feature.
       '';
 
-      # TODO "if possible, assume the simplest behaviour that satisfies the spec when something is ambiguous"
-      # TODO add a follow-up command to fix the spec based on the analysis:
-      # I edited the spec in the last commit; review the last commit and list the remaining issues that were not fixed
     };
   };
 }
