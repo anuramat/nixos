@@ -74,13 +74,19 @@ async def migrate(args):
     store = args.store.expanduser()
     old_base = store / "secret_service"
     new_base = store / "secret-service"
-    backup = args.backup or store.with_name(f"{store.name}.pre-rust-pss.{time.strftime('%Y%m%d%H%M%S')}")
+    backup = args.backup or store.with_name(
+        f"{store.name}.pre-rust-pss.{time.strftime('%Y%m%d%H%M%S')}"
+    )
 
     if not old_base.exists():
         raise SystemExit(f"old store not found: {old_base}")
 
     collections = old_collections(old_base)
-    items = [(collection, item) for collection in collections for item in sorted(collection.glob("*.gpg"))]
+    items = [
+        (collection, item)
+        for collection in collections
+        for item in sorted(collection.glob("*.gpg"))
+    ]
     existing = new_secret_count(new_base)
 
     print(f"old collections: {len(collections)}")
@@ -89,7 +95,9 @@ async def migrate(args):
     print(f"backup: {backup}")
 
     if existing and not args.allow_existing:
-        raise SystemExit("new Rust store already has secrets; pass --allow-existing to import anyway")
+        raise SystemExit(
+            "new Rust store already has secrets; pass --allow-existing to import anyway"
+        )
     if args.dry_run:
         return
     if not args.yes:
@@ -123,7 +131,9 @@ async def migrate(args):
                 create_alias,
             )
             if prompt != "/":
-                raise RuntimeError(f"unexpected prompt while creating collection {collection.name}: {prompt}")
+                raise RuntimeError(
+                    f"unexpected prompt while creating collection {collection.name}: {prompt}"
+                )
 
             target = await interface(bus, path, "org.freedesktop.Secret.Collection")
             await target.set_label(label)

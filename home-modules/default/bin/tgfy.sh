@@ -43,7 +43,7 @@ for file; do
 done
 
 TEXT=$(cat)
-if [ -z "$TEXT" ] && [ "$#" -eq 0 ]; then
+if [ "$TEXT" = "" ] && [ "$#" -eq 0 ]; then
 	err "nothing to send: empty stdin and no files"
 fi
 
@@ -72,7 +72,7 @@ api() {
 	return 0
 }
 
-if [ -n "$TEXT" ]; then
+if [ "$TEXT" != "" ]; then
 	# telegram caps messages at 4096 UTF-16 units; deliver a truncated
 	# notification instead of failing outright
 	if [ "${#TEXT}" -gt 3900 ]; then
