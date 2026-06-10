@@ -1,4 +1,6 @@
-# Repository Guide
+# AGENTS.md
+
+NOTE: CLAUDE.md is symlink to AGENTS.md
 
 This is the user's NixOS and Home Manager flake at `/etc/nixos`. It configures
 NixOS hosts, Home Manager profiles, a nixvim setup, local overlays, ragenix
