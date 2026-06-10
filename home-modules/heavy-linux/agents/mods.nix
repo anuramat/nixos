@@ -1,5 +1,4 @@
 {
-  config,
   pkgs,
   lib,
   osConfig,
@@ -131,7 +130,7 @@ let
     };
 in
 {
-  home.activation.mods = config.lib.home.yaml.set {
+  xdg.configFile."mods/mods.yml".source = (pkgs.formats.yaml { }).generate "mods.yml" {
     inherit apis;
     default-api = "zai";
     default-model = "glm";
@@ -142,7 +141,7 @@ in
     topk = -1; # -1 to disable
     topp = -1.0; # from 0.0 to 1.0, -1.0 to disable
     max-input-chars = 100000;
-  } "${config.xdg.configHome}/mods/mods.yml";
+  };
   home = {
     packages = [
       pkgs.mods

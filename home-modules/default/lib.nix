@@ -49,37 +49,6 @@ let
     in
     lib.hm.dag.entryAfter [ "writeBoundary" ] script;
 
-  mkYqActivationScript =
-    # @returns: activation script, that updates a YAML file (in-place)
-    # note there is no diff logging compared to json version
-    # @args:
-    #   - target -- path of the file to update (relative to $HOME)
-    #   - source -- attribute set of key-value pairs to write, where
-    #     key is the YAML path, and value is any JSON-serializable value
-    source: target:
-    let
-      calls =
-        source
-        |> lib.concatMapAttrsStringSep "\n" (
-          key: value:
-          let
-            flags = "-i -py -oy"; # in-place, yaml input, yaml output
-            expr = ''select(fileIndex==0).${key} = select(fileIndex==1) | select(fileIndex==0) | ... style=""'';
-            yq = getExe pkgs.yq-go;
-          in
-          ''run ${yq} eval-all '${expr}' ${flags} "${target}" "${jsonFile value}"''
-        );
-      # TODO escape target here and in the rest of the file in similar places
-      script = ''
-        [ -s "${target}" ] || {
-          mkdir -p "$(dirname "${target}")"
-          echo '{}' >"${target}"
-        }
-        ${calls}
-      '';
-    in
-    lib.hm.dag.entryAfter [ "writeBoundary" ] script;
-
   # TODO: refactor to call jq once: write all sources to a single json file, then loop in jq or at least unroll a nix loop into a jq command (still just one jq command)
   mkJqActivationScript =
     # @returns: activation script, that updates a JSON file
@@ -140,6 +109,5 @@ in
   lib.home = {
     inherit mkGenericActivationScript mkAgenixExportScript;
     json.set = mkJqActivationScript;
-    yaml.set = mkYqActivationScript;
   };
 }
