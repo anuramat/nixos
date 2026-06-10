@@ -24,14 +24,11 @@
     ./hardware-configuration.nix
   ];
 
-  services.tlp = {
-    enable = true;
-    settings = {
-      CPU_MIN_PERF_ON_AC = 100;
-      CPU_MAX_PERF_ON_AC = 100;
-      CPU_MIN_PERF_ON_BAT = 50;
-      CPU_MAX_PERF_ON_BAT = 100;
-    };
+  # enabled with mkDefault perf limits in nixosModules.laptop
+  services.tlp.settings = {
+    CPU_MIN_PERF_ON_AC = 100;
+    CPU_MIN_PERF_ON_BAT = 50;
+    CPU_MAX_PERF_ON_BAT = 100;
   };
 
   swapDevices = [
