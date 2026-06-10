@@ -46,7 +46,6 @@
   extraPlugins = [
     pkgs.vimPlugins.tinted-nvim
   ];
-  plugins.lz-n.enable = true;
   luaLoader.enable = true;
   performance = {
     combinePlugins = {
