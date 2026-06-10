@@ -20,7 +20,6 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     inputs.git-hooks-nix.flakeModule
     inputs.home-manager.flakeModules.home-manager
     inputs.nix-topology.flakeModule
-    inputs.nix-unit.modules.flake.default
     inputs.treefmt-nix.flakeModule
   ];
   systems = [
@@ -160,7 +159,6 @@ flake-parts.lib.mkFlake { inherit inputs; } {
           fd
 
           nixfmt
-          nix-unit
           shellcheck
           yamllint
           luaPackages.luacheck

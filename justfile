@@ -32,16 +32,12 @@ nixos-no-sub command="switch" *flags:
     sudo nixos-rebuild {{ command }} --option substituters "" --option extra-experimental-features pipe-operators --builders '' {{ flags }}
 
 [group('code')]
-test flag="--quiet" arch=`nix eval --raw .#nixosConfigurations.$(hostname).config.nixpkgs.hostPlatform.system`:
-    nix-unit {{ flag }} --flake .#tests.systems.{{ arch }}
-
-[group('code')]
 lint:
     statix check
     fd -F hardware-configuration.nix | xargs deadnix -l --exclude
     fd -e nix | xargs nix-instantiate --parse --quiet >/dev/null
     fd -e lua | luacheck - --codes --globals=vim -q
-    fd -e sh --print0 -E '/tests/' | xargs -0 shellcheck --enable=all --color=always
+    fd -e sh --print0 | xargs -0 shellcheck --enable=all --color=always
     yamllint .
 
 [group('code')]

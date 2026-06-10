@@ -19,10 +19,6 @@
     };
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     nix-topology.url = "github:oddlama/nix-topology";
-    nix-unit = {
-      url = "github:nix-community/nix-unit/v2.30.0";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nix-strix-halo = {
       url = "github:hellas-ai/nix-strix-halo";
