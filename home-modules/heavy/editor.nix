@@ -1,6 +1,5 @@
 {
   pkgs,
-  hax,
   inputs,
   osConfig ? null,
   ...
@@ -16,7 +15,7 @@
       defaultEditor = true;
       _module.args = {
         # TODO is this the right/official way? underscore looks sketchy
-        inherit inputs hax;
+        inherit inputs;
       }
       // (if osConfig != null then { inherit osConfig; } else { osConfig = null; });
     };

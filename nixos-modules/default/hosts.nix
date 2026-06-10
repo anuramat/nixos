@@ -1,6 +1,5 @@
 # TODO move
 {
-  hax,
   config,
   inputs,
   lib,
@@ -9,9 +8,8 @@
 {
   lib.hosts =
     let
-      inherit (inputs.self.consts) builderUsername cacheFilename cfgRoot;
-      inherit (lib) filterAttrs attrNames;
-      inherit (builtins) readFile map;
+      inherit (inputs.self.consts) builderUsername;
+      inherit (lib) filterAttrs attrNames concatMap;
 
       name = config.networking.hostName;
 
@@ -43,14 +41,12 @@
 
       # lower priority number -> used earlier; cache.nixos.org=40, cachix=41
       mkSubstituters = map (x: "ssh-ng://${x}?priority=50");
-      mkKnownHostsFiles = map (v: cfgRoot + "/${v}/keys/host_keys");
-      mkCacheKey = v: readFile (cfgRoot + "/${v}/keys/${cacheFilename}");
     in
     {
       substituters = mkSubstituters builderNames; # binary cache
-      keyFiles = hax.hosts.mkKeyFiles names; # ssh public keys
-      knownHostsFiles = mkKnownHostsFiles names; # agenix(?)/ssh host auth
-      trusted-public-keys = map mkCacheKey names; # packages signature
+      keyFiles = names |> concatMap (h: inputs.self.keys.${h}.clientKeyFiles); # ssh public keys
+      knownHostsFiles = names |> map (h: inputs.self.keys.${h}.knownHostsFile); # agenix(?)/ssh host auth
+      trusted-public-keys = names |> map (h: inputs.self.keys.${h}.cacheKey); # packages signature
       inherit hosts builders;
     };
 }

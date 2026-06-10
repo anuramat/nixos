@@ -1,23 +1,9 @@
 let
-  inherit (import <nixpkgs> { }) lib;
-  keys =
-    let
-      flake = builtins.getFlake (toString ../.);
-      names = builtins.attrNames flake.outputs.nixosConfigurations;
-      inherit
-        (import ../hax/hosts.nix {
-          inherit lib;
-          inputs = flake.inputs // {
-            self = flake.outputs;
-          };
-        })
-        mkKeyFiles
-        mkHostKeys
-        ;
-      clientKeys = mkKeyFiles names |> map builtins.readFile |> map lib.trim;
-      hostKeys = mkHostKeys names;
-    in
-    clientKeys ++ hostKeys;
+  flake = builtins.getFlake (toString ../.);
+  recipients =
+    flake.outputs.keys
+    |> builtins.attrValues
+    |> builtins.concatMap (h: h.clientKeys ++ h.knownHostsKeys);
 in
 [
   "anthropic.age"
@@ -41,7 +27,7 @@ in
 |> map (x: {
   name = x;
   value = {
-    publicKeys = keys;
+    publicKeys = recipients;
   };
 })
-|> lib.listToAttrs
+|> builtins.listToAttrs

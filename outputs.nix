@@ -7,13 +7,6 @@
 let
   inherit (nixpkgs) lib;
   root = ./.;
-  hax = import ./hax {
-    inherit
-      lib
-      inputs
-      root
-      ;
-  };
   mkDirSet =
     func: dir:
     builtins.readDir dir
@@ -37,11 +30,10 @@ flake-parts.lib.mkFlake { inherit inputs; } {
   ];
   flake =
     let
-      # TODO hide root in inputs? rename hax?
+      # TODO hide root in inputs?
       specialArgs = {
         inherit
           inputs
-          hax
           root
           ;
       };
@@ -73,9 +65,38 @@ flake-parts.lib.mkFlake { inherit inputs; } {
 
       consts = {
         builderUsername = "builder";
-        cacheFilename = "cache.pem.pub";
-        cfgRoot = ./. + "/nixos-configurations/";
       };
+
+      # per-host key material discovered from nixos-configurations/*/keys/
+      keys =
+        let
+          cacheFilename = "cache.pem.pub";
+        in
+        builtins.readDir ./nixos-configurations
+        |> builtins.attrNames
+        |> map (
+          host:
+          let
+            keyDir = ./nixos-configurations + "/${host}/keys";
+            clientKeyFiles =
+              builtins.readDir keyDir
+              |> builtins.attrNames
+              |> builtins.filter (f: lib.hasSuffix ".pub" f && f != cacheFilename)
+              |> map (f: keyDir + /${f});
+          in
+          lib.nameValuePair host {
+            inherit clientKeyFiles;
+            clientKeys = clientKeyFiles |> map builtins.readFile |> map lib.trim;
+            knownHostsFile = keyDir + /known_hosts;
+            cacheKey = builtins.readFile (keyDir + /${cacheFilename});
+            knownHostsKeys =
+              builtins.readFile (keyDir + /known_hosts)
+              |> lib.splitString "\n"
+              |> lib.filter (v: v != "")
+              |> map (v: v |> lib.splitString " " |> lib.drop 1 |> lib.concatStringsSep " ");
+          }
+        )
+        |> lib.listToAttrs;
 
       overlays = mkDirSet (x: import x { inherit inputs lib; }) ./overlays; # use mkImportSet as well
       nixvimModules = mkImportSet ./nixvim-modules; # TODO split into default and heavy, then add light version to anuramat-root

@@ -1,7 +1,6 @@
 # vim: fdl=0 fdm=marker
 {
   config,
-  hax,
   inputs,
   ...
 }:
@@ -28,7 +27,7 @@
     in
     {
       extraSpecialArgs = {
-        inherit hax inputs;
+        inherit inputs;
       };
       users.${username} = {
         imports = with inputs.self.homeModules; [
