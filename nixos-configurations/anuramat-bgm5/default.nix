@@ -6,8 +6,6 @@
 {
   nix.distributedBuilds = false;
   system.stateVersion = "25.11";
-  home-manager.users.anuramat.home.stateVersion = "25.11";
-  networking.hostName = "anuramat-bgm5";
   programs.captive-browser.interface = "wlp195s0";
   nixpkgs.config.rocmSupport = true;
 

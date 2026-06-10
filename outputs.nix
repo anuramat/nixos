@@ -35,7 +35,11 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       mkNixosConfigurations = mkDirSet (
         x:
         inputs.nixpkgs.lib.nixosSystem {
-          modules = [ x ];
+          # hostname = directory name, by construction
+          modules = [
+            x
+            { networking.hostName = builtins.baseNameOf x; }
+          ];
           inherit specialArgs;
         }
       );

@@ -4,7 +4,6 @@
 }:
 {
   system.stateVersion = "25.05";
-  home-manager.users.anuramat.home.stateVersion = "25.05";
 
   home-manager.users.anuramat = {
     services.kanshi.builtinDisplay = {
@@ -23,8 +22,6 @@
     "0001:0001:70533846"
     "0001:0001:09b4e68d"
   ];
-
-  networking.hostName = "anuramat-f12";
 
   imports = [
     inputs.self.nixosModules.default

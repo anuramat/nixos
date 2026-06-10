@@ -2,6 +2,7 @@
 {
   config,
   inputs,
+  lib,
   ...
 }:
 {
@@ -34,6 +35,7 @@
           default
           linux
         ];
+        home.stateVersion = lib.mkDefault config.system.stateVersion;
       };
     };
 
