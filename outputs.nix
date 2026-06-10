@@ -67,6 +67,27 @@ flake-parts.lib.mkFlake { inherit inputs; } {
         builderUsername = "builder";
       };
 
+      # static host registry; each host asserts its own entry against its
+      # actual config in nixos-modules/default/hosts.nix
+      hosts = {
+        anuramat-bgm5 = {
+          system = "x86_64-linux";
+          builder = true;
+        };
+        anuramat-f12 = {
+          system = "x86_64-linux";
+          builder = false;
+        };
+        anuramat-root = {
+          system = "x86_64-linux";
+          builder = false;
+        };
+        anuramat-t480 = {
+          system = "x86_64-linux";
+          builder = false;
+        };
+      };
+
       # per-host key material discovered from nixos-configurations/*/keys/
       keys =
         let

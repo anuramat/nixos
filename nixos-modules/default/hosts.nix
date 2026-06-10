@@ -5,48 +5,39 @@
   lib,
   ...
 }:
+let
+  inherit (inputs.self) keys;
+  inherit (inputs.self.consts) builderUsername;
+  registry = inputs.self.hosts;
+
+  name = config.networking.hostName;
+  hosts = lib.filterAttrs (n: _: n != name) registry;
+  names = lib.attrNames hosts;
+  builders = lib.filterAttrs (n: v: v.builder) hosts;
+
+  # lower priority number -> used earlier; cache.nixos.org=40, cachix=41
+  mkSubstituters = map (x: "ssh-ng://${x}?priority=50");
+in
 {
-  lib.hosts =
-    let
-      inherit (inputs.self.consts) builderUsername;
-      inherit (lib) filterAttrs attrNames concatMap;
-
-      name = config.networking.hostName;
-
-      mkOthers =
-        let
-          cfgs = inputs.self.nixosConfigurations;
-          allNames = attrNames cfgs |> map (x: cfgs.${x}.config.networking.hostName);
-        in
-        allNames
-        |> lib.filter (v: v != name)
-        |> map (
-          x:
-          lib.nameValuePair x (
-            let
-              cfg = inputs.self.nixosConfigurations.${x}.config;
-            in
-            {
-              system = cfg.nixpkgs.hostPlatform.system;
-              builder = cfg.users.users ? ${builderUsername};
-            }
-          )
-        )
-        |> lib.listToAttrs;
-
-      hosts = mkOthers;
-      names = attrNames hosts;
-      builders = filterAttrs (n: v: v.builder) hosts;
-      builderNames = attrNames builders;
-
-      # lower priority number -> used earlier; cache.nixos.org=40, cachix=41
-      mkSubstituters = map (x: "ssh-ng://${x}?priority=50");
-    in
+  assertions = [
     {
-      substituters = mkSubstituters builderNames; # binary cache
-      keyFiles = names |> concatMap (h: inputs.self.keys.${h}.clientKeyFiles); # ssh public keys
-      knownHostsFiles = names |> map (h: inputs.self.keys.${h}.knownHostsFile); # agenix(?)/ssh host auth
-      trusted-public-keys = names |> map (h: inputs.self.keys.${h}.cacheKey); # packages signature
-      inherit hosts builders;
-    };
+      assertion = lib.attrNames registry == lib.attrNames inputs.self.nixosConfigurations;
+      message = "flake output `hosts` is out of sync with nixos-configurations/";
+    }
+    {
+      assertion =
+        registry ? ${name}
+        && registry.${name}.system == config.nixpkgs.hostPlatform.system
+        && registry.${name}.builder == (config.users.users ? ${builderUsername});
+      message = "flake output `hosts.${name}` is missing or stale";
+    }
+  ];
+
+  lib.hosts = {
+    substituters = mkSubstituters (lib.attrNames builders); # binary cache
+    keyFiles = names |> lib.concatMap (h: keys.${h}.clientKeyFiles); # ssh public keys
+    knownHostsFiles = names |> map (h: keys.${h}.knownHostsFile); # agenix(?)/ssh host auth
+    trusted-public-keys = names |> map (h: keys.${h}.cacheKey); # packages signature
+    inherit hosts builders;
+  };
 }
