@@ -24,7 +24,6 @@ in
   plugins = {
     web-devicons.enable = true;
     sniprun.enable = true;
-    nvim-lightbulb.enable = true;
     grug-far.enable = true;
     undotree.enable = true;
     schemastore.enable = true;

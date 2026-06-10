@@ -8,6 +8,9 @@
   extraConfigVim = builtins.readFile ./base.vim;
 
   opts = {
+    # q -- adds comment leader on format
+    # r -- adds comment leader on newline
+    # j -- removes leader on line join
     formatoptions = "qj";
   };
   globals = {

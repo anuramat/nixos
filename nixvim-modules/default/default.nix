@@ -38,11 +38,6 @@
     ./options.nix
   ];
 
-  filetype = {
-    filename = {
-      "todo.txt" = "todotxt";
-    };
-  };
   extraPlugins = [
     pkgs.vimPlugins.tinted-nvim
   ];

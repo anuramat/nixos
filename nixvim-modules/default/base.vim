@@ -18,10 +18,6 @@ nn <leader>q <cmd>call ToggleQuickFix()<cr>
 " formatting {{{1
 se shiftround shiftwidth=0 expandtab tabstop=2
 se textwidth=80
-se formatoptions=qj
-" q -- adds comment leader on format
-" r -- adds comment leader on newline
-" j -- removes leader on line join
 
 " general {{{1
 se shada+=r/tmp " no marks
