@@ -1,7 +1,6 @@
 # TODO use max-jobs to fetch caches
 {
   inputs = {
-    bundlers.url = "github:NixOS/bundlers";
     sem = {
       url = "github:Ataraxy-Labs/sem";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -28,21 +27,12 @@
     nixpkgs-unstable-misc.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     nixvim.url = "github:nix-community/nixvim/nixos-26.05";
-    nur = {
-      url = "github:nix-community/NUR";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     stylix = {
       url = "github:danth/stylix/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     treefmt-nix.url = "github:numtide/treefmt-nix";
     git-hooks-nix.url = "github:cachix/git-hooks.nix";
-    ez-configs = {
-      url = "github:ehllie/ez-configs";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-parts.follows = "flake-parts";
-    };
     nix-auth = {
       url = "github:numtide/nix-auth";
       inputs.nixpkgs.follows = "nixpkgs";

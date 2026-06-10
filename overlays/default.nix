@@ -116,7 +116,6 @@ let
     with inputs;
     [
       neovim-nightly-overlay
-      # nur
     ]
     |> map (v: v.overlays.default);
 

@@ -16,7 +16,6 @@ let
 in
 flake-parts.lib.mkFlake { inherit inputs; } {
   imports = [
-    inputs.ez-configs.flakeModule
     inputs.git-hooks-nix.flakeModule
     inputs.home-manager.flakeModules.home-manager
     inputs.nix-topology.flakeModule
