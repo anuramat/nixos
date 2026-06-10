@@ -1,7 +1,6 @@
 { pkgs, lib, ... }:
 {
   # alternative -- felix-fm -- image previews, otherwise minimal -- :help<cr> for help; waiting for picker in <https://github.com/kyoheiu/felix/issues/261>
-  # TODO disable wraparound
   programs.yazi = {
     enable = true;
     shellWrapperName = "y";
@@ -20,6 +19,23 @@
     };
     keymap = {
       mgr.prepend_keymap = [
+        # default arrow prev/next wraps around
+        {
+          on = "k";
+          run = "arrow -1";
+        }
+        {
+          on = "j";
+          run = "arrow 1";
+        }
+        {
+          on = "<Up>";
+          run = "arrow -1";
+        }
+        {
+          on = "<Down>";
+          run = "arrow 1";
+        }
         {
           on = "y";
           run = [
