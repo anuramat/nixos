@@ -19,7 +19,6 @@ in
     ./rice.nix
   ];
 
-  programs.corefreq.enable = true;
   virtualisation = {
     waydroid = {
       enable = true;
@@ -36,10 +35,6 @@ in
   };
 
   services.getty.autologinOnce = true; # TODO only if full disk encryption
-
-  programs.gpu-screen-recorder.enable = true; # NOTE doesn't install the package
-
-  programs.steam.enable = true;
 
   security = {
     soteria.enable = true; # polkit auth agent
@@ -70,6 +65,9 @@ in
   };
 
   programs = {
+    corefreq.enable = true;
+    gpu-screen-recorder.enable = true; # NOTE doesn't install the package
+    steam.enable = true;
     captive-browser.enable = true;
     gphoto2.enable = true; # dslr interface
     obs-studio.enableVirtualCamera = true; # set up the v4l2loopback kernel module, used in home-manager

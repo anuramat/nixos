@@ -1,4 +1,4 @@
-{ ... }:
+_:
 let
   w = {
     root = "ctrl.sn";

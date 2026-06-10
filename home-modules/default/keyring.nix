@@ -66,20 +66,27 @@ let
 in
 {
   lib = { inherit keyring; };
-  home.packages =
-    (with keyring; [
-      list
-      lock
-    ])
-    ++ (with pkgs; [
-      proton-pass-cli
-      # $ pass-cli login
-      # $ pass-cli settings set default-vault --vault-name Personal
-    ]);
+  home = {
+    packages =
+      (with keyring; [
+        list
+        lock
+      ])
+      ++ (with pkgs; [
+        proton-pass-cli
+        # $ pass-cli login
+        # $ pass-cli settings set default-vault --vault-name Personal
+      ]);
 
-  home.sessionVariables = {
-    # TODO maybe wrap the cli with a script and put in an overlay?
-    PROTON_PASS_LINUX_KEYRING = "dbus";
+    sessionVariables = {
+      # TODO maybe wrap the cli with a script and put in an overlay?
+      PROTON_PASS_LINUX_KEYRING = "dbus";
+    };
+
+    # compat
+    activation.linkGpgHome = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      ln -sfn "$GNUPGHOME" "$HOME/.gnupg"
+    '';
   };
 
   programs = {
@@ -92,11 +99,6 @@ in
       settings.PASSWORD_STORE_DIR = "${config.xdg.dataHome}/password-store";
     };
   };
-
-  # compat
-  home.activation.linkGpgHome = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    ln -sfn "$GNUPGHOME" "$HOME/.gnupg"
-  '';
 
   services.gpg-agent = {
     enable = true;
