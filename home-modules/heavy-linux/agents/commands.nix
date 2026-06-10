@@ -4,6 +4,26 @@ let
 in
 {
   lib.agents.commands = {
+    explain_diff = rec {
+      description = "explain a diff in a human-friendly way, so that the user can easily review it";
+      withFM = prependFrontmatter text;
+      text = ''
+        Help me review this diff by providing a review guide:
+
+        I will open it side by side with code, go through the review
+        instructions top to bottom, and read mentioned files.
+
+        Review instructions must be structured as a list of bullet points: each
+        point must mention a few files and a short explanation of the changes.
+
+        Order should be such that I can comfortably learn what changed in this
+        diff, and incrementally build a mental model of the changes.
+
+        You must omit the changes to tests from the review guide.
+
+        After the bullet points, provide a concise summary of the changes.
+      '';
+    };
     iterate_spec = rec {
       description = "refine feature specification/implementation plan in files like SPEC.md/PLAN.md";
       withFM = prependFrontmatter text;
