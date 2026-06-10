@@ -32,201 +32,73 @@ Useful repo commands:
 - `just lint`: run statix, deadnix, Nix parsing, luacheck, shellcheck, and
   yamllint.
 - `just test`: run the `nix-unit` tests for the current host architecture.
+- `just check`: run `nix flake check`; the `checks` output evaluates every
+  host's toplevel (firing all assertions) without building it.
 - `just check-nixos HOST`: dry-run build the NixOS toplevel for a host.
 - `just check-hm USER`: dry-run build a Home Manager activation package.
 - `just nixos-local build --flake .#HOST`: build a host without remote
   builders when full host validation is wanted.
 
-## Directory Structure
-
-- `flake.nix`: literal flake inputs. It imports `./outputs.nix` for outputs.
-- `outputs.nix`: flake-parts composition root. It scans direct children of
-  module/config directories into flake outputs.
-- `parts/`: flake-parts modules for treefmt, pre-commit, nix-unit, and
-  nix-topology.
-- `justfile`: human workflow commands for formatting, linting, tests, rebuilds,
-  dry-run checks, and package build/run helpers.
-- `nixos-configurations/`: NixOS host directories. Each host has a
-  `default.nix`, generated `hardware-configuration.nix`, and public keys under
-  `keys/`.
-- `nixos-modules/`: reusable NixOS modules. Direct children become
-  `self.nixosModules.*`.
-- `home-configurations/`: standalone Home Manager configurations. Currently
-  only `darwin-example.nix`.
-- `home-modules/`: reusable Home Manager modules. Direct children become
-  `self.homeModules.*`.
-- `nixvim-modules/`: nixvim module tree. Direct children become
-  `self.nixvimModules.*`; the real editor root is
-  `nixvim-modules/default/default.nix`.
-- `shared-modules/`: modules usable from NixOS and standalone Home Manager,
-  currently `age` and `stylix`.
-- `overlays/`: repo overlay. It pulls packages from flake inputs, selected
-  unstable packages, impure npx/uv wrappers, and a Proton Bridge override.
-- `secrets/`: ragenix encrypted secrets plus recipient mapping in
-  `secrets.nix`.
-- `tests/`: nix-unit test entrypoint. It is currently empty.
-- `README.md`: bootstrap notes for installing this repo onto a new machine.
-
 ## Flake Shape
 
-`outputs.nix` uses `mkDirSet` and `mkImportSet` to turn directory children into
-attributes. Adding, removing, or renaming a direct child of these directories can
-change public flake outputs:
+`flake.nix` holds literal inputs and imports `./outputs.nix` (a flake-parts
+composition root) for outputs. There is no `inputs.nix` or generated-flake
+pipeline.
 
-- `nixosConfigurations`: direct children of `nixos-configurations/`.
-- `homeConfigurations`: direct children of `home-configurations/`.
-- `nixosModules`: direct children of `nixos-modules/`.
-- `homeModules`: direct children of `home-modules/`.
-- `nixvimModules`: direct children of `nixvim-modules/`.
-- `sharedModules`: direct children of `shared-modules/`.
-- `overlays`: direct children of `overlays/`.
+`outputs.nix` turns direct directory children into public flake outputs, so
+adding, removing, or renaming a direct child is an API change for this flake:
 
-`outputs.nix` also exposes `hosts` (a hand-written static registry of
-`{ system, builder }` per host) and `keys`: per-host key
-material discovered from `nixos-configurations/*/keys/` (client key files and
-strings, `known_hosts` file path and parsed keys, cache key). `keys` is the
-single source of truth for key discovery, consumed by
-`nixos-modules/default/hosts.nix` and `secrets/secrets.nix`.
+- `nixosConfigurations`: `nixos-configurations/`. Each host directory has a
+  `default.nix`, generated `hardware-configuration.nix`, and public keys under
+  `keys/`.
+- `homeConfigurations`: `home-configurations/` (standalone Home Manager).
+- `nixosModules`: `nixos-modules/`.
+- `homeModules`: `home-modules/`.
+- `nixvimModules`: `nixvim-modules/`. The editor is nixvim-based, not a
+  hand-written `init.lua`; the real root is `nixvim-modules/default/default.nix`,
+  activated via `inputs.nixvim.homeModules.nixvim ->
+  home-modules/heavy/editor.nix -> self.nixvimModules.default`.
+- `sharedModules`: `shared-modules/`, usable from both NixOS and standalone
+  Home Manager.
+- `overlays`: `overlays/`.
 
-The per-system outputs currently include:
+`outputs.nix` also exposes:
 
-- `packages.neovim`: a nixvim-built Neovim using `self.nixvimModules.default`.
-- `devShells.default`: repo tools and pre-commit hook installation.
+- `hosts`: a hand-written static registry of `{ system, builder }` per host.
+  Cross-host facts come from this registry, not from evaluating sibling
+  configurations. Adding a host (or changing its system/builder status)
+  requires updating the registry. `nixos-modules/default/hosts.nix` asserts
+  the registry against the host's actual config, and the per-host
+  `checks.SYSTEM.host-NAME` outputs evaluate every host's toplevel, so
+  `nix flake check` catches drift on all hosts. Host changes can still affect
+  secrets, SSH, substituters, and remote-build behavior on every other host.
+- `keys`: per-host key material discovered from `nixos-configurations/*/keys/`
+  (client key files and strings, `known_hosts` file path and parsed keys,
+  cache key). Single source of truth for key discovery, consumed by
+  `nixos-modules/default/hosts.nix` and `secrets/secrets.nix`.
 
-The flake uses Nix's pipe operator (`|>`). If ad-hoc commands fail to parse it,
-run inside the dev shell or pass the `pipe-operators` experimental feature.
+Per-system outputs: `packages.neovim` (nixvim-built Neovim from
+`self.nixvimModules.default`), `devShells.default`, and the flake-parts
+modules under `parts/` (treefmt, pre-commit, nix-topology, and the nix-unit
+entrypoint at `tests/`).
 
-## Hosts
+The repo uses the experimental Nix pipe operator (`|>`) throughout modules and
+helper code. Raw parse/eval commands may need the `pipe-operators`
+experimental feature; run inside the dev shell or pass it explicitly.
 
-- `anuramat-root`: server-like QEMU guest. Imports `nixosModules.default`,
-  `nixosModules.anuramat`, and `./web`; uses GRUB on `/dev/vda`; hosts nginx,
-  ACME, `ctrl.sn`, and `bin.ctrl.sn` via wastebin. `system.stateVersion` and
-  Home Manager state are `24.11`.
-- `anuramat-t480`: Lenovo ThinkPad T480. Imports `default`, `local`, `laptop`,
-  `anuramat`, `nixos-hardware`'s T480 module, and hardware config. Uses TLP,
-  keyd keyboard IDs, a swapfile, and captive-browser on `wlp3s0`.
-  `system.stateVersion` is `24.05`; Home Manager state is `24.11`.
-- `anuramat-f12`: Framework 12 13th-gen Intel laptop. Imports `default`,
-  `local`, `laptop`, `anuramat`, Framework nixos-hardware, and hardware config.
-  Has LUKS swap wiring, kanshi builtin-display data, keyd IDs, distributed
-  builds, and captive-browser on `wlp0s20f3`. State versions are `25.05`.
-- `anuramat-bgm5`: AMD/Strix Halo workstation. Imports `default`, `local`,
-  `anuramat`, `builder`, local `llama`, `misc`, and `power` modules, plus AMD
-  nixos-hardware and selected `nix-strix-halo` modules. It disables distributed
-  builds, enables ROCm support, uses latest Linux, mounts `/mnt/storage`, adds a
-  narrow Strix Halo overlay, configures quiet EC/fan behavior, enables Immich on
-  Tailscale, and enables `codex-remote`. State versions are `25.11`.
+## Layering
 
-## NixOS Modules
-
-- `nixos-modules/default/`: baseline for every NixOS host. It imports agenix,
-  Home Manager, nix-topology, common user/home/network/nix/web/llama modules,
-  enables all firmware, iotop, and initrd systemd.
-- `nixos-modules/default/nix.nix`: Nix settings, flakes, pipe-operators,
-  registry/nixPath from inputs, substituters, trusted keys, remote build
-  machines, `nh`, and `nix-serve`.
-- `nixos-modules/default/net.nix`: firewall, NetworkManager, resolved,
-  OpenConnect VPN, SSH, fail2ban, Tailscale, and known-host wiring.
-- `nixos-modules/default/user.nix`: `userConfig`, primary user creation,
-  groups, authorized keys, autologin user, and OpenRazer user hook.
-- `nixos-modules/default/hosts.nix`: derives other hosts and builders from the
-  flake `hosts` registry, defines the builder username, and exposes
-  substituters, authorized-key files, known-hosts files, and cache keys by
-  indexing the flake `keys` output.
-  Asserts the registry matches `nixos-configurations/` and the host's own
-  entry (system, builder user, dirname == hostName).
-- `nixos-modules/default/web.nix`: small `web.sites` abstraction that maps site
-  records to nginx virtual hosts, ACME certs, and optional systemd services.
-- `nixos-modules/default/llama.nix`: wraps NixOS `services.llama-cpp` with
-  model-directory, model parameter, firewall, and flag generation options.
-- `nixos-modules/local/`: workstation layer. It imports CUDA/ROCm conditionals,
-  peripherals, keyd remaps, and rice; enables Waydroid, Podman with Docker
-  compatibility, Steam, nix-ld, PipeWire, Bluetooth, CUPS, Avahi, udisks2,
-  appimage binfmt, EFI/systemd-boot, GPU screen recorder, and heavy Home
-  Manager modules.
-- `nixos-modules/laptop.nix`: thermald, TLP defaults, and upower low-battery
-  behavior.
-- `nixos-modules/builder.nix`: creates the `builder` user for remote builds and
-  asserts the host is not itself using distributed builds.
-- `nixos-modules/anuramat.nix`: user identity and timezone defaults.
-
-## Home Manager Modules
-
-- `home-modules/default/`: base user environment: SSH aliases, XDG directories,
-  bash/starship/readline, local shell scripts, git/delta/lazygit, yazi, search,
-  typst preview helper, core CLI packages, GPG/password-store, and the custom
-  `services.pss` secret service.
-- `home-modules/linux.nix`: Linux-only user tools, bubblewrap/fuse-overlayfs,
-  distrobox, hardware CLIs, Wayprompt pinentry selection, and `services.pss`.
-- `home-modules/heavy/`: editor, GUI-independent media/document tools,
-  language toolchains, email, nixvim Home Manager module, Spicetify, and
-  heavier packages.
-- `home-modules/heavy/gui/`: Firefox, browsers, document/media apps, OBS,
-  viewers, terminals, theme hooks, Spicetify, and desktop app config files.
-- `home-modules/heavy-linux/`: Linux desktop layer with agents, Niri desktop,
-  terminal defaults, icon theme, screenshot/clipboard/display/audio helpers,
-  and Wayland GUI utilities.
-- `home-modules/heavy-linux/desktop/`: Niri, Waybar, swayidle/swaylock,
-  kanshi, mako, xdg-desktop-portals, MIME handling, syncthing, clipboard, menu,
-  and TTY autostart.
-- `home-modules/heavy-linux/agents/`: AI tooling, prompt/instruction
-  generation, bubblewrap sandbox wrappers, Codex/Claude/vicode frontends, mods
-  config, and whisper transcription helper.
-- `home-modules/darwin.nix` and `home-modules/standalone.nix`: standalone and
-  Darwin Home Manager support.
-
-## Nixvim
-
-The Neovim setup is nixvim-based, not a hand-written `init.lua`. Activation path
-on heavy hosts:
-
-`inputs.nixvim.homeModules.nixvim -> home-modules/heavy/editor.nix -> self.nixvimModules.default -> nixvim-modules/default/default.nix`
-
-Major parts:
-
-- Core modules: `basic`, `completion`, `custom`, `dap`, `filemgr`, `fzf`, `git`,
-  `image`, `lang`, `misc`, `treesitter`, `ui`, `vim`, `lib`, and `options`.
-- Completion: `blink-cmp`, friendly snippets, and Copilot Lua. Copilot attaches
-  only in selected repo paths such as `/etc/nixos` and `GHQ_ROOT`.
-- Formatting/linting: `conform-nvim`, `none-ls`, `lint`, injected formatting,
-  statix/deadnix/nixfmt, ruff/pyright, biome, shfmt/shellharden, yamlfmt, and
-  language-specific formatters.
-- Navigation/files: `fzf-lua`, Oil, Neo-tree, treesitter textobjects,
-  treesitter context, TreeSJ, Flash, gitsigns, diffview, and DAP plugins.
-- Languages: Nix, Rust with `rustaceanvim` and custom tree-climber integration,
-  Python, web/TS/CSS/HTML, Lua, Go, Haskell, Lean, shell, Typst, Markdown, YAML,
-  JSON, and miscellaneous language servers.
-- `nixvim-modules/default/lib.nix` provides helpers for raw Lua, keymaps, and
-  generating runtime files such as `after/ftplugin`, tree-sitter queries, and
-  snippets.
-
-## Important Software
-
-- Nix operations: flakes, `nh`, `nix-serve`, Cachix and SSH substituters,
-  distributed build host discovery, nix-unit, treefmt, pre-commit, statix,
-  deadnix, nixfmt, nix-diff, nvd, dix, nix-tree, and nix-output-monitor.
-- Desktop: Niri, Waybar, kanshi, mako, swayidle, swaylock-plugin, xdg portals
-  including terminal file chooser, PipeWire/WirePlumber, Avahi, CUPS, udisks2,
-  Blueman, NetworkManager applet, foot, Ghostty, Kitty, Firefox, Chrome,
-  Tor Browser, Discord, Telegram, OBS, mpv, LibreOffice, Okular, Zathura,
-  Zotero, Rnote, GIMP, Inkscape, Darktable, RawTherapee, and Spicetify.
-- Development: Neovim/nixvim, Helix, Zed, Go, Python/uv, Node/Bun/Yarn, Lua,
-  Haskell, Julia, Ruby, Perl, GCC/LLVM, gdb, delve, debugpy, shellcheck,
-  luacheck, yamllint, treefmt, markdown tooling, jq/yq, quicktype, ghq, just,
-  hyperfine, mprocs, and Git/delta/lazygit/difftastic.
-- AI and agents: Codex, Claude Code, vicode, mods, Hermes, Copilot CLI,
-  qwen-code, gemini-cli, MCP inspector, `ccusage`, `claude-monitor`, custom
-  sandbox wrappers, generated instruction files, and API keys from ragenix.
-- Secrets/keyring: ragenix, GPG, password-store, custom Rust
-  `pass-secret-service` exposed as `services.pss`, Proton Pass CLI, libsecret,
-  pam-gnupg regeneration, and the `tgfy` Telegram helper.
-- GPU/ML/media: ROCm conditionals, CUDA conditionals, `ollama-rocm`,
-  `llama-cpp-vulkan`, whisper-cpp, gpu-screen-recorder, `amd-debug-tools`,
-  `amdgpu_top`, `rocm-smi`, ffmpeg, image/PDF tooling, and bgm5 Strix Halo EC
-  and RyzenAdj controls.
-- Server/web: nginx, ACME, `web.sites`, `ctrl.sn`, wastebin at `bin.ctrl.sn`,
-  Immich on bgm5, Tailscale, OpenSSH, fail2ban, OpenConnect VPN, and
-  NetworkManager.
+- `nixos-modules/default/`: baseline imported by every NixOS host (agenix,
+  Home Manager, user/network/nix/web/llama plumbing).
+  `nixos-modules/local/`: workstation layer on top of it.
+- `home-modules/` layers: `default` (base CLI environment), `linux`
+  (Linux-only CLI), `heavy` (editor, toolchains, GUI-independent extras),
+  `heavy/gui` (graphical apps), `heavy-linux` (Niri desktop and AI agents).
+- Hosts: `anuramat-root` (server-like QEMU guest; nginx, ACME, `ctrl.sn`,
+  wastebin), `anuramat-t480` (ThinkPad T480 laptop), `anuramat-f12`
+  (Framework 12 laptop), `anuramat-bgm5` (AMD Strix Halo workstation; build
+  server, ROCm, llama, Immich). Per-host details live in
+  `nixos-configurations/*/default.nix`.
 
 ## Secrets and Keys
 
@@ -243,22 +115,8 @@ Major parts:
 
 ## Surprising Or Complex Parts
 
-- Direct directory children become public flake output names. A rename under
-  `nixos-modules/`, `home-modules/`, `nixvim-modules/`, `shared-modules/`, or
-  `nixos-configurations/` is an API change for this flake.
-- Cross-host facts come from the static `hosts` registry in `outputs.nix`, not
-  from evaluating sibling configurations. Adding a host (or changing its
-  system/builder status) requires updating the registry; assertions in
-  `nixos-modules/default/hosts.nix` catch stale entries when the drifting host
-  itself is built. Host changes can still affect secrets, SSH, substituters,
-  and remote-build behavior on every other host.
-- The repo uses the experimental Nix pipe operator throughout modules and
-  helper code. Raw parsing/eval commands may need `pipe-operators` enabled.
 - `nixos-modules/builder.nix` asserts `!config.nix.distributedBuilds`; a builder
   host is modeled as a build server, not as a distributed-build client.
-- The root flake is hand-maintained, but many outputs are still generated by
-  directory scanning. Do not look for an `inputs.nix` or generated-flake
-  pipeline.
 - `overlays/default.nix` mixes stable inputs, unstable package imports,
   personal flake packages, impure `npx`/`uv tool run` wrappers, and a Proton
   Bridge source override. Since the default NixOS module applies it globally,
