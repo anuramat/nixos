@@ -6,7 +6,6 @@
 }@inputs:
 let
   inherit (nixpkgs) lib;
-  root = ./.;
   mkDirSet =
     func: dir:
     builtins.readDir dir
@@ -30,12 +29,8 @@ flake-parts.lib.mkFlake { inherit inputs; } {
   ];
   flake =
     let
-      # TODO hide root in inputs?
       specialArgs = {
-        inherit
-          inputs
-          root
-          ;
+        inherit inputs;
       };
       nixosModules = mkImportSet ./nixos-modules;
       homeModules = mkImportSet ./home-modules;
