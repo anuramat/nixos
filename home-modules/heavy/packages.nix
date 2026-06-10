@@ -43,7 +43,6 @@
     pandoc # document converter
     # texliveFull
     typst # better latex
-    typstyle # typst formatter TODO move/add to nixvim
     djvulibre # djvu tools
     markdown-link-check # find dead md links
     mermaid-cli

@@ -1,5 +1,6 @@
 { pkgs, lib, ... }:
 {
+  extraPackages = [ pkgs.typstyle ];
   plugins = {
     typst-preview = {
       enable = true;
