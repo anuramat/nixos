@@ -2,6 +2,7 @@
   lib,
   config,
   options,
+  inputs,
   ...
 }:
 let
@@ -15,7 +16,7 @@ let
 
   cfg = config.services.llama-cpp;
   modelDirSet = options.services.llama-cpp.modelDir.isDefined;
-  port = 11343;
+  inherit (inputs.self.llama) port;
 in
 {
   options.services.llama-cpp = {

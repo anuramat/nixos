@@ -81,6 +81,12 @@ flake-parts.lib.mkFlake { inherit inputs; } {
         };
       };
 
+      # designated LLM inference endpoint
+      llama = {
+        host = "anuramat-bgm5";
+        port = 11343;
+      };
+
       # per-host key material discovered from nixos-configurations/*/keys/
       keys =
         let

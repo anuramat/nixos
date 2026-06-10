@@ -71,6 +71,8 @@ adding, removing, or renaming a direct child is an API change for this flake:
   `checks.SYSTEM.host-NAME` outputs evaluate every host's toplevel, so
   `nix flake check` catches drift on all hosts. Host changes can still affect
   secrets, SSH, substituters, and remote-build behavior on every other host.
+- `llama`: the designated LLM inference endpoint (host and port), consumed by
+  `nixos-modules/default/llama.nix` and `home-modules/default/hosts.nix`.
 - `keys`: per-host key material discovered from `nixos-configurations/*/keys/`
   (client key files and strings, `known_hosts` file path and parsed keys,
   cache key). Single source of truth for key discovery, consumed by
