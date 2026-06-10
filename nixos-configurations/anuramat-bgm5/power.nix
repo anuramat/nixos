@@ -6,7 +6,8 @@
       # TODO: enable, make default profile repeat whatever we already have, add a custom quieter profile for gpu runs at night
     };
     ryzenadj = {
-      enable = false;
+      enable = true;
+      tctlTemp = 45;
     };
     ec-su-axb35 = {
       enable = true;
