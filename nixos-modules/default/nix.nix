@@ -86,7 +86,7 @@ in
       #         ConnectTimeout 3
       # ```
       # TODO speedFactor, maxJobs
-      sshUser = inputs.self.consts.builderUsername;
+      sshUser = config.lib.hosts.builderUsername;
       sshKey = keyPath;
       hostName = n;
       inherit (v) system;

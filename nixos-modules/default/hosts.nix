@@ -7,8 +7,8 @@
 }:
 let
   inherit (inputs.self) keys;
-  inherit (inputs.self.consts) builderUsername;
   registry = inputs.self.hosts;
+  builderUsername = "builder";
 
   name = config.networking.hostName;
   hosts = lib.filterAttrs (n: _: n != name) registry;
@@ -38,6 +38,6 @@ in
     keyFiles = names |> lib.concatMap (h: keys.${h}.clientKeyFiles); # ssh public keys
     knownHostsFiles = names |> map (h: keys.${h}.knownHostsFile); # agenix(?)/ssh host auth
     trusted-public-keys = names |> map (h: keys.${h}.cacheKey); # packages signature
-    inherit hosts builders;
+    inherit hosts builders builderUsername;
   };
 }

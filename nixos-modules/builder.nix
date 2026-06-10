@@ -1,10 +1,6 @@
-{
-  config,
-  inputs,
-  ...
-}:
+{ config, ... }:
 let
-  inherit (inputs.self.consts) builderUsername;
+  inherit (config.lib.hosts) builderUsername;
 in
 {
   users.users.${builderUsername} =

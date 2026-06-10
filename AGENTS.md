@@ -81,8 +81,8 @@ change public flake outputs:
 - `sharedModules`: direct children of `shared-modules/`.
 - `overlays`: direct children of `overlays/`.
 
-`outputs.nix` also exposes `consts` (builder username), `hosts` (a hand-written
-static registry of `{ system, builder }` per host), and `keys`: per-host key
+`outputs.nix` also exposes `hosts` (a hand-written static registry of
+`{ system, builder }` per host) and `keys`: per-host key
 material discovered from `nixos-configurations/*/keys/` (client key files and
 strings, `known_hosts` file path and parsed keys, cache key). `keys` is the
 single source of truth for key discovery, consumed by
@@ -130,8 +130,9 @@ run inside the dev shell or pass the `pipe-operators` experimental feature.
 - `nixos-modules/default/user.nix`: `userConfig`, primary user creation,
   groups, authorized keys, autologin user, and OpenRazer user hook.
 - `nixos-modules/default/hosts.nix`: derives other hosts and builders from the
-  flake `hosts` registry, and exposes substituters, authorized-key files,
-  known-hosts files, and cache keys by indexing the flake `keys` output.
+  flake `hosts` registry, defines the builder username, and exposes
+  substituters, authorized-key files, known-hosts files, and cache keys by
+  indexing the flake `keys` output.
   Asserts the registry matches `nixos-configurations/` and the host's own
   entry (system, builder user, dirname == hostName).
 - `nixos-modules/default/web.nix`: small `web.sites` abstraction that maps site

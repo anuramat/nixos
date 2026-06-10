@@ -63,10 +63,6 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       nixosConfigurations = mkNixosConfigurations ./nixos-configurations;
       homeConfigurations = mkHomeConfigurations ./home-configurations;
 
-      consts = {
-        builderUsername = "builder";
-      };
-
       # static host registry; each host asserts its own entry against its
       # actual config in nixos-modules/default/hosts.nix
       hosts = {
