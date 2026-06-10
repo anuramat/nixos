@@ -6,6 +6,7 @@
 }:
 {
   imports = [
+    ./gui.nix
     ./hosts.nix
     ./bash
     ./bin

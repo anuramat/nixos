@@ -18,16 +18,7 @@
       # package = pkgs.xfce.xfce4-icon-theme;
     };
 
-  programs.yazi.keymap.mgr.prepend_keymap = [
-    {
-      on = "<C-n>";
-      run = ''shell -- ${lib.getExe pkgs.dragon-drop} -x -T "$@"'';
-    }
-    {
-      on = "<C-m>";
-      run = ''shell -- ${lib.getExe pkgs.dragon-drop} -A -x -T "$@"'';
-    }
-  ];
+  gui = true;
 
   programs.swayimg = {
     enable = true;
