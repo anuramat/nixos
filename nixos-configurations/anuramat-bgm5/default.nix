@@ -62,7 +62,8 @@
     )
   ];
 
-  # TODO zramSwap and tmpfs
+  # TODO tmpfs
+  zramSwap.enable = true;
 
   environment.systemPackages = [
     pkgs.amd-debug-tools
