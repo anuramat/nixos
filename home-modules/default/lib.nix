@@ -39,45 +39,36 @@ let
       script =
         # bash
         ''
-          source=${sourceFile}
-          target=${targetFile}
+          source=${lib.escapeShellArg sourceFile}
+          target=${lib.escapeShellArg targetFile}
           mkdir -p "$(dirname "$target")"
 
           ${diff "$source" "$target"}
-          run cat "$source" >"$target"
+          run cp --no-preserve=mode "$source" "$target"
         '';
     in
     lib.hm.dag.entryAfter [ "writeBoundary" ] script;
 
-  # TODO: refactor to call jq once: write all sources to a single json file, then loop in jq or at least unroll a nix loop into a jq command (still just one jq command)
   mkJqActivationScript =
     # @returns: activation script, that updates a JSON file
     # @args:
-    #   - target -- path of the file to update (relative to $HOME)
-    #   - source -- attribute set of key-value pairs to write, where
-    #     key is the JSON path, and value is any JSON-serializable value
+    #   - target -- path of the file to update
+    #   - source -- attribute set of top-level keys to set in the target;
+    #     unmanaged keys are preserved, values are any JSON-serializable value
     source: target:
     let
-      jqCalls =
-        targetCopy:
-        source
-        |> lib.concatMapAttrsStringSep "\n" (
-          key: value:
-          ''run ${getExe pkgs.jq} --slurpfile arg ${jsonFile value} '.${key} = $arg[0]' "${targetCopy}" | ${pkgs.moreutils}/bin/sponge "${targetCopy}" || exit''
-        );
+      script =
+        # bash
+        ''
+          target=${lib.escapeShellArg target}
+          source=$(mktemp)
+          mkdir -p "$(dirname "$target")"
+          { [ -s "$target" ] && cat "$target" || echo '{}'; } \
+            | ${getExe pkgs.jq} --slurpfile arg ${jsonFile source} '. + $arg[0]' >"$source"
 
-      script = ''
-        target=${target}
-        source=$(mktemp)
-        mkdir -p "$(dirname "$target")"
-        [ -s "$target" ] || echo '{}' >"$target"
-
-        cp "$target" "$source"
-        ${jqCalls "$source"}
-
-        ${diff "$source" "$target"}
-        mv "$source" "$target"
-      '';
+          ${diff "$source" "$target"}
+          run mv "$source" "$target"
+        '';
     in
     lib.hm.dag.entryAfter [ "writeBoundary" ] script;
 
