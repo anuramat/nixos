@@ -52,12 +52,6 @@ build pkg:
 run pkg *args:
     nix run ".#nixosConfigurations.$(hostname).pkgs.{{ pkg }}" -- {{ args }}
 
-# Install pre-commit hooks
-[group('util')]
-hooks:
-    # TODO format
-    # TODO `just flake`
-
 # Check a NixOS configuration
 [group('check')]
 check-nixos host=`hostname`: (check ".#nixosConfigurations." + host + ".config.system.build.toplevel")
@@ -68,9 +62,4 @@ check-hm user: (check ".#homeConfigurations." + user + ".activationPackage")
 
 [group('check')]
 check target="":
-    # TODO somehow parameterize "--show-trace"
-    # TODO would `if target {} else {}` work?
     {{ if target == "" { "nix flake check" } else { "nix build " + target + " --no-link --dry-run" } }}
-    # or
-    # {{ if target == "" { "nix flake check" } else { "nix eval " + target + ".drvPath" } }}
-    # nix flake check flakgs: --no-build (skips checks), --all-systems
