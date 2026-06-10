@@ -6,7 +6,7 @@
 }:
 let
   inherit (lib) attrValues escapeShellArgs;
-  excludeShellChecks = [
+  shellcheckExcludes = [
     2016 # expansion in '' won't work
     2059 # don't use variables in printf format string
     2292 # prefer [[]] over []
@@ -175,11 +175,11 @@ in
       };
     };
   };
-  lib.excludeShellChecks.numbers = excludeShellChecks; # TODO rename
+  lib.shellcheck.excludes = shellcheckExcludes;
   # Shellcheck configuration
   xdg.configFile."shellcheckrc".text = ''
     enable=all
     external-sources=true
   ''
-  + lib.strings.concatMapStrings (v: "disable=SC${toString v}\n") excludeShellChecks;
+  + lib.strings.concatMapStrings (v: "disable=SC${toString v}\n") shellcheckExcludes;
 }

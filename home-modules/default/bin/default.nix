@@ -9,7 +9,7 @@ let
   inherit (pkgs) writeShellApplication;
   inherit (builtins) readFile readDir;
 
-  excludeShellChecks = map (v: "SC" + toString v) config.lib.excludeShellChecks.numbers;
+  excludeShellChecks = map (v: "SC" + toString v) config.lib.shellcheck.excludes;
 
   packages =
     with lib;
