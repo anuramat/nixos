@@ -46,7 +46,8 @@ let
 
         # meh
         projects."/etc/nixos".trust_level = "trusted";
-        projects."/home/anuramat/.local/share/ghq/github.com/anuramat/vicode".trust_level = "trusted";
+        projects."${config.home.sessionVariables.GHQ_ROOT}/github.com/anuramat/vicode".trust_level =
+          "trusted";
 
         model_verbosity = "low";
         model = "gpt-5.5";
@@ -101,7 +102,7 @@ let
     extraRwDirs = [
       codexHome
       config.home.sessionVariables.GHQ_ROOT
-      "/home/anuramat/Documents/Codex"
+      "${config.home.homeDirectory}/Documents/Codex"
       "/etc/nixos"
     ];
   };
