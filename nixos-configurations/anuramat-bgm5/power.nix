@@ -7,7 +7,7 @@
     };
     ryzenadj = {
       enable = true;
-      tctlTemp = 45;
+      tctlTemp = 95;
     };
     ec-su-axb35 = {
       enable = true;
