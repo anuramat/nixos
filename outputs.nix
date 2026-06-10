@@ -129,6 +129,20 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     in
     (mkDirSet (x: import x argsWithInputs) ./parts)
     // {
+      # evaluate every host's toplevel (firing all assertions) without building it
+      checks =
+        inputs.self.hosts
+        |> lib.filterAttrs (_: host: host.system == system)
+        |> lib.mapAttrs' (
+          name: _:
+          lib.nameValuePair "host-${name}" (
+            pkgs.runCommand "host-${name}" {
+              drv =
+                builtins.unsafeDiscardOutputDependency
+                  inputs.self.nixosConfigurations.${name}.config.system.build.toplevel.drvPath;
+            } "echo $drv > $out"
+          )
+        );
       # TODO move? somehow sync extraspecialargs with home-manager import
       packages.neovim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
         extraSpecialArgs = {
