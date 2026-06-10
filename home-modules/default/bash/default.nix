@@ -88,7 +88,7 @@ in
           treedir = "${ezacmd} --tree --only-dirs";
 
           f = "nvim";
-          z = "zellij attach --create"
+          z = "zellij attach --create";
           ".." = "cd ..";
           "..." = "cd ../..";
           "...." = "cd ../../..";
