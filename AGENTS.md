@@ -62,8 +62,6 @@ Useful repo commands:
   currently `age` and `stylix`.
 - `overlays/`: repo overlay. It pulls packages from flake inputs, selected
   unstable packages, impure npx/uv wrappers, and a Proton Bridge override.
-- `hax/`: small helper library. `hax/hosts.nix` derives host key, builder, and
-  known-host information from configured hosts.
 - `secrets/`: ragenix encrypted secrets plus recipient mapping in
   `secrets.nix`.
 - `tests/`: nix-unit test entrypoint. It is currently empty.
@@ -82,6 +80,12 @@ change public flake outputs:
 - `nixvimModules`: direct children of `nixvim-modules/`.
 - `sharedModules`: direct children of `shared-modules/`.
 - `overlays`: direct children of `overlays/`.
+
+`outputs.nix` also exposes `consts` (builder username) and `keys`: per-host key
+material discovered from `nixos-configurations/*/keys/` (client key files and
+strings, `known_hosts` file path and parsed keys, cache key). `keys` is the
+single source of truth for key discovery, consumed by
+`nixos-modules/default/hosts.nix` and `secrets/secrets.nix`.
 
 The per-system outputs currently include:
 
@@ -124,8 +128,9 @@ run inside the dev shell or pass the `pipe-operators` experimental feature.
   OpenConnect VPN, SSH, fail2ban, Tailscale, and known-host wiring.
 - `nixos-modules/default/user.nix`: `userConfig`, primary user creation,
   groups, authorized keys, autologin user, and OpenRazer user hook.
-- `nixos-modules/default/hosts.nix`: computes other hosts, builders,
-  substituters, known-host files, authorized-key files, and cache keys.
+- `nixos-modules/default/hosts.nix`: computes other hosts and builders, and
+  exposes substituters, authorized-key files, known-hosts files, and cache
+  keys by indexing the flake `keys` output.
 - `nixos-modules/default/web.nix`: small `web.sites` abstraction that maps site
   records to nginx virtual hosts, ACME certs, and optional systemd services.
 - `nixos-modules/default/llama.nix`: wraps NixOS `services.llama-cpp` with
@@ -225,9 +230,11 @@ Major parts:
 - `shared-modules/age.nix` automatically creates `age.secrets` entries for
   every `.age` file under `secrets/`; on NixOS it sets the owner to the primary
   user.
-- `secrets/secrets.nix` computes recipients from host client keys and host keys.
-- Host public keys live under `nixos-configurations/$HOST/keys/`.
-- `just nixos-pre` refreshes the current host's SSH host keys, public client
+- `secrets/secrets.nix` computes recipients from the flake `keys` output:
+  client keys plus `known_hosts` keys of every host.
+- Host public keys live under `nixos-configurations/$HOST/keys/`: client
+  `*.pub` keys, `known_hosts`, and `cache.pem.pub`.
+- `just nixos-pre` refreshes the current host's `known_hosts`, public client
   keys, and binary-cache public key before rebuild-oriented commands.
 
 ## Surprising Or Complex Parts
@@ -235,10 +242,10 @@ Major parts:
 - Direct directory children become public flake output names. A rename under
   `nixos-modules/`, `home-modules/`, `nixvim-modules/`, `shared-modules/`, or
   `nixos-configurations/` is an API change for this flake.
-- `hax/hosts.nix` and `nixos-modules/default/hosts.nix` evaluate the host set to
-  derive other hosts, builders, SSH key files, known-host files, cache
-  substituters, and trusted cache keys. Small host changes can affect secrets,
-  SSH, substituters, and remote-build behavior.
+- `nixos-modules/default/hosts.nix` evaluates the host set to derive other
+  hosts, builders, SSH key files, known-host files, cache substituters, and
+  trusted cache keys. Small host changes can affect secrets, SSH,
+  substituters, and remote-build behavior.
 - The repo uses the experimental Nix pipe operator throughout modules and
   helper code. Raw parsing/eval commands may need `pipe-operators` enabled.
 - `nixos-modules/builder.nix` asserts `!config.nix.distributedBuilds`; a builder
