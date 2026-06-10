@@ -35,16 +35,6 @@ nixos-no-sub command="switch" *flags:
 test flag="--quiet" arch=`nix eval --raw .#nixosConfigurations.$(hostname).config.nixpkgs.hostPlatform.system`:
     nix-unit {{ flag }} --flake .#tests.systems.{{ arch }}
 
-# Create configuration snapshots before refactoring
-[group('code')]
-test-snapshot:
-    ./tests/integration/snapshot-username.sh
-
-# Test build matrix with different usernames
-[group('code')]
-test-matrix:
-    ./tests/integration/build-matrix.sh
-
 [group('code')]
 lint:
     statix check
