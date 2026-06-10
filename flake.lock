@@ -2720,6 +2720,7 @@
         "treefmt-nix": "treefmt-nix_5",
         "tt-schemes": "tt-schemes",
         "vicode": "vicode",
+        "waybar-niri-windows": "waybar-niri-windows",
         "zed-editor": "zed-editor"
       }
     },
@@ -4503,6 +4504,22 @@
         "owner": "vllm-project",
         "ref": "v0.22.0",
         "repo": "vllm",
+        "type": "github"
+      }
+    },
+    "waybar-niri-windows": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1780428216,
+        "narHash": "sha256-bnPxKRugnIGj/Od8R+6PAl0MRhhl361H9rYydCWQ/yw=",
+        "owner": "calico32",
+        "repo": "waybar-niri-windows",
+        "rev": "17828f901b56250e88acb421054b87ef311d8f3a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "calico32",
+        "repo": "waybar-niri-windows",
         "type": "github"
       }
     },

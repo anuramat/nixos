@@ -1,9 +1,20 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 let
   toList = str: lib.splitString " " str;
-  niriWindowsModule = pkgs.fetchurl {
-    url = "https://github.com/calico32/waybar-niri-windows/releases/download/v2.3.0/waybar-niri-windows.so";
-    hash = "sha256-sUWndS52KnAKBemkPdDM1hprq97LKsfraY0oXJE1Rnw=";
+  niriWindows = pkgs.buildGoModule {
+    pname = "waybar-niri-windows";
+    version = "unstable";
+    src = inputs.waybar-niri-windows;
+    vendorHash = "sha256-jK87vZYfUe8znk65SmJ1mN8qP5K3dtt950hKGWTYXs4=";
+    nativeBuildInputs = [ pkgs.pkg-config ];
+    buildInputs = [ pkgs.gtk3 ];
+    buildPhase = "go build -buildmode=c-shared -o waybar-niri-windows.so ./main";
+    installPhase = "install -Dm644 waybar-niri-windows.so $out/lib/waybar-niri-windows.so";
   };
 in
 {
@@ -144,7 +155,7 @@ in
         };
 
         "cffi/niri-windows" = {
-          module_path = niriWindowsModule;
+          module_path = "${niriWindows}/lib/waybar-niri-windows.so";
           options = {
             show-floating = "never";
             rules = [

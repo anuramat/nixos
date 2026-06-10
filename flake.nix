@@ -116,6 +116,10 @@
       url = "github:grimsteel/pass-secret-service/v0.7.0";
       flake = false;
     };
+    waybar-niri-windows = {
+      url = "github:calico32/waybar-niri-windows";
+      flake = false;
+    };
   };
 
   outputs = args: import ./outputs.nix args;
