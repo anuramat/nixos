@@ -40,7 +40,10 @@
     };
 
   i18n.defaultLocale = "en_US.UTF-8";
-  hardware.enableAllFirmware = true; # as in "regardless of license"
+  hardware = {
+    enableAllFirmware = true; # as in "regardless of license"; implies redistributable
+    enableAllHardware = true;
+  };
   programs.iotop = {
     # setcap wrapper to use rootless
     enable = true;
