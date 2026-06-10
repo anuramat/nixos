@@ -14,11 +14,6 @@ let
       suffix = "/injections.scm";
       toValue = v: { text = v; };
     };
-    textobjects = {
-      prefix = "after/queries/";
-      suffix = "/textobjects.scm";
-      toValue = v: { text = v; };
-    };
     snippets = {
       prefix = "snippets/";
       suffix = ".json";
