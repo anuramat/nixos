@@ -1,5 +1,7 @@
 # TODO try removing tmpdir
 {
+  config,
+  lib,
   pkgs,
   ...
 }:
@@ -29,7 +31,7 @@ let
   };
 in
 {
-  home.packages = [
+  home.packages = lib.optionals config.gui [
     hotdoc
   ];
   xdg.dataFile =
