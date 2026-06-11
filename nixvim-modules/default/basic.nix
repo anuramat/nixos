@@ -14,10 +14,6 @@
     formatoptions = "qj";
   };
   globals = {
-    # tree style, symlinks are broken tho: https://github.com/neovim/neovim/issues/27301
-    netrw_banner = 0;
-    netrw_liststyle = 3;
-
     matchparen_timeout = 50;
     matchparen_insert_timeout = 50;
 
