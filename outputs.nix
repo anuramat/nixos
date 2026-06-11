@@ -158,6 +158,13 @@ flake-parts.lib.mkFlake { inherit inputs; } {
         # hand-pinned vendorHash drift only surfaces at build time, so build these
         // lib.optionalAttrs (system == "x86_64-linux") {
           inherit (pkgs.extend inputs.self.overlays.default) protonmail-bridge waybar-niri-windows;
+        }
+        // {
+          # builds packages.neovim and runs it headless to catch startup errors
+          neovim = nixvim.lib.${system}.check.mkTestDerivationFromNvim {
+            name = "neovim";
+            nvim = config.packages.neovim;
+          };
         };
       # TODO move? somehow sync extraspecialargs with home-manager import
       packages.neovim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
