@@ -1,9 +1,27 @@
 {
+  pkgs,
   config,
   osConfig ? null,
   lib,
   ...
 }:
+let
+  uc3-askpass = pkgs.writeShellApplication {
+    name = "uc3-askpass";
+    runtimeInputs = [ pkgs.oath-toolkit ];
+    text = ''
+      case "$1" in
+      	*OTP*) oathtool --totp -b @${config.lib.secrets.uc3-totp.path} ;;
+      	*[Pp]assword*) cat ${config.lib.secrets.uc3-pw.path} ;;
+      	*) exit ;;
+      esac
+    '';
+  };
+  uc3 = pkgs.writeShellApplication {
+    name = "uc3";
+    text = "SSH_ASKPASS=${lib.getExe uc3-askpass} SSH_ASKPASS_REQUIRE=force ssh uc3";
+  };
+in
 {
   imports = [
     ./gui.nix
@@ -20,6 +38,11 @@
     ./search.nix
     ./typst.nix
     ./yazi.nix
+  ];
+
+  home.packages = [
+    uc3
+    uc3-askpass
   ];
 
   programs.ssh = {
