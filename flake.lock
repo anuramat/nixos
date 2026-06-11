@@ -519,11 +519,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1754707184,
-        "narHash": "sha256-PtsbCIpDdfOSzWR+oCCNdD9anSCjCUmdHPpq6D8M+ZI=",
+        "lastModified": 1781147650,
+        "narHash": "sha256-TplHmmpLJ5f/ZZJJ07X52M0YjEJPmT09qK/HV3Oicyk=",
         "owner": "anuramat",
         "repo": "figtree.nvim",
-        "rev": "adc19cfc24d128cbd8423cf8aef72380050a381c",
+        "rev": "820f31a121f47f5c825b9ddfac26f576bb2ea657",
         "type": "github"
       },
       "original": {
