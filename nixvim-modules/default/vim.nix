@@ -21,7 +21,10 @@
     in
     [
       (keymap "n" "<leader>ha" (luaf ''require("harpoon"):list():add()'') "Add")
-      (keymap "n" "<leader>hl" (luaf ''require("harpoon").ui:toggle_quick_menu(m:list())'') "List")
+      (keymap "n" "<leader>hl"
+        (luaf ''require("harpoon").ui:toggle_quick_menu(require("harpoon"):list())'')
+        "List"
+      )
       (keymap "n" "<leader>hn" (luaf ''require("harpoon"):list():next()'') "Next")
       (keymap "n" "<leader>hp" (luaf ''require("harpoon"):list():prev()'') "Previous")
 
