@@ -24,7 +24,6 @@
     ./basic.nix
     ./completion.nix
     ./custom
-    ./dap.nix
     ./filemgr.nix
     ./fzf.nix
     ./git.nix
