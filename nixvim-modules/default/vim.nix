@@ -1,9 +1,8 @@
 { config, ... }:
 {
   plugins = {
-    # TODO enable when available (in 25.11?)
-    # mini-align.enable = true;
-    # mini-ai.enable = true;
+    mini-align.enable = true;
+    mini-ai.enable = true;
     mini-bracketed.enable = true;
     aerial.enable = true;
     diffview.enable = true;
