@@ -69,6 +69,11 @@ in
           Host uc3
             User hd_un330
             HostName bwunicluster.scc.kit.edu
+            ControlMaster auto
+            ControlPath ~/.ssh/cm-%r@%h-%p
+            ControlPersist 4h
+            ServerAliveInterval 60
+            WarnWeakCrypto no
         '';
         entries = machines ++ [ uc3 ];
       in
