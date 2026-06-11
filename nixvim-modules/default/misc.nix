@@ -8,7 +8,7 @@ let
 in
 {
   keymaps = [
-    (keymap "n" "<leader>u" "<cmd>UndotreeToggle<cr>" "Undotree")
+    (keymap "n" "<leader>u" "<cmd>packadd nvim.undotree | Undotree<cr>" "Undotree")
     (keymap "n" "<leader>r" (luaf ''require("flash").jump()'') "Jump")
     (keymap "o" "r" (luaf ''require("flash").treesitter()'') "Treesitter node")
   ];
@@ -25,7 +25,6 @@ in
     web-devicons.enable = true;
     sniprun.enable = true;
     grug-far.enable = true;
-    undotree.enable = true;
     schemastore.enable = true;
     dressing.enable = true;
 

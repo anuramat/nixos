@@ -49,7 +49,6 @@
     [
       (keymap "n" "grd" (lua "vim.lsp.buf.declaration") "Goto Declaration")
       (keymap "n" "grq" (lua "vim.diagnostic.setqflist") "Diagnostic QF List")
-      (keymap "n" "grl" (lua "vim.lsp.codelens.run") "CodeLens")
     ];
   plugins = {
     lint = {

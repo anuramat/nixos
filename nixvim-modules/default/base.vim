@@ -20,7 +20,6 @@ se shiftround shiftwidth=0 expandtab tabstop=2
 se textwidth=80
 
 " general {{{1
-se shada+=r/tmp " no marks
 se tildeop
 pa cfilter
 se complete=t,i,d,.,w,b,u,U " completion source priority
@@ -51,7 +50,7 @@ se fcs=fold:\─,foldopen:,foldsep:\ ,foldclose:
 se foldtext=
 se laststatus=3 " show only one statusline
 se sbr=↪ list lcs=tab:│\ ,extends:❯,precedes:❮,trail:·
-au TextYankPost * silent! lua vim.highlight.on_yank()
+au TextYankPost * lua vim.hl.hl_op()
 se number relativenumber
 se scrolloff=0 sidescrolloff=30
 se report=0 shortmess=CFTWacqst " notification settings
@@ -68,9 +67,8 @@ augroup qf
   autocmd!
   autocmd FileType qf set nobuflisted
 augroup END
-" use ripgrep
+" use ripgrep, but respect ignore files unlike the default -uu
 se grepprg=rg\ --vimgrep
-se grepformat=%f:%l:%c:%m
 
 " left and center parts of the status line
 function! LM_STL()

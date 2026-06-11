@@ -34,16 +34,6 @@
       "help"
       "fzf"
     ];
-    markdown_fenced_languages = [
-      "python"
-      "lua"
-      "vim"
-      "haskell"
-      "bash"
-      "sh"
-      "json5=json"
-      "tex"
-    ];
   };
   autoCmd = [
     {
