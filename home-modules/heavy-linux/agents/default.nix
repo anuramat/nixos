@@ -40,6 +40,7 @@ in
     ./instructions.nix
     ./mods.nix
     ./sandbox.nix
+    ./uc3
     ./whisper.nix
   ];
 

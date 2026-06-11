@@ -181,6 +181,7 @@ in
               export ${varNames.sandboxWrapperPath}
 
               [ -v TMPDIR ] || TMPDIR="/tmp"
+              uc3sock="''${XDG_RUNTIME_DIR:-/run/user/$UID}/uc3.sock"
               bwrap \
                 --die-with-parent \
                 --proc /proc \
@@ -190,6 +191,7 @@ in
                 --ro-bind-try /sys /sys \
                 --tmpfs /tmp \
                 --tmpfs "$TMPDIR" \
+                --bind-try "$uc3sock" "$uc3sock" \
                 \
                 ${tmpDirs} \
                 ${roDirs} \
