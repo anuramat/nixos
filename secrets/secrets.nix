@@ -21,6 +21,8 @@ in
   "zai.age"
   "hdotp.age"
   "hdpw.age"
+  "uc3-pw.age"
+  "uc3-totp.age"
   "tgfy-token.age"
   "tgfy-id.age"
 ]

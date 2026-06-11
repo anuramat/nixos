@@ -67,21 +67,10 @@ in
 {
   lib = { inherit keyring; };
   home = {
-    packages =
-      (with keyring; [
-        list
-        lock
-      ])
-      ++ (with pkgs; [
-        proton-pass-cli
-        # $ pass-cli login
-        # $ pass-cli settings set default-vault --vault-name Personal
-      ]);
-
-    sessionVariables = {
-      # TODO maybe wrap the cli with a script and put in an overlay?
-      PROTON_PASS_LINUX_KEYRING = "dbus";
-    };
+    packages = with keyring; [
+      list
+      lock
+    ];
 
     # compat
     activation.linkGpgHome = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
