@@ -8,8 +8,6 @@ let
   inherit (config.lib) lua;
   inherit (lib) genAttrs;
 
-  provider = "copilot"; # "copilot" "llm"
-
   disabledFiletypes = [
     "markdown"
     "typst"
@@ -37,17 +35,9 @@ in
   # TODO https://github.com/netmute/ctags-lsp.nvim
   plugins = {
     friendly-snippets.enable = true;
-    llm = {
-      enable = provider == "llm";
-    };
     blink-cmp = {
       enable = true;
       settings = {
-        # completion = {
-        # ghost_text.enabled = true;
-        # menu.auto_show = false;
-        # ghost_text.show_with_menu = false;
-        # };
         sources = {
           default = [
             "lsp"
@@ -59,7 +49,7 @@ in
       };
     };
     copilot-lua = {
-      enable = provider == "copilot";
+      enable = true;
       settings = {
         # <https://github.com/microsoft/vscode/blob/be75065e817ebd7b6250a100cf5af78bb931265b/src/vs/platform/telemetry/common/telemetry.ts#L87>
         server_opts_overrides = {
