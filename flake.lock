@@ -1284,6 +1284,23 @@
         "url": "https://git.kernel.org/pub/scm/linux/kernel/git/westeri/thunderbolt.git"
       }
     },
+    "llama-cpp-diffusion": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1781113121,
+        "narHash": "sha256-PhIJ5aYVgq0zLV/cgR/MgTCPVJzln7QPyl62+f4w8Ig=",
+        "owner": "danielhanchen",
+        "repo": "llama.cpp",
+        "rev": "c84e85af61011f9fbfcf41479381d5ed1661a564",
+        "type": "github"
+      },
+      "original": {
+        "owner": "danielhanchen",
+        "ref": "diffusion-visual-updates",
+        "repo": "llama.cpp",
+        "type": "github"
+      }
+    },
     "llama-cpp-master": {
       "flake": false,
       "locked": {
@@ -2463,6 +2480,7 @@
         "hermes": "hermes",
         "home-manager": "home-manager_2",
         "html2text": "html2text",
+        "llama-cpp-diffusion": "llama-cpp-diffusion",
         "mac-app-util": "mac-app-util",
         "mods": "mods",
         "neovim-nightly-overlay": "neovim-nightly-overlay",

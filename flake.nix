@@ -64,6 +64,11 @@
       flake = false;
     };
     html2text.url = "github:anuramat/html2text/dev";
+    # llama.cpp PR 24423: DiffusionGemma support
+    llama-cpp-diffusion = {
+      url = "github:danielhanchen/llama.cpp/diffusion-visual-updates";
+      flake = false;
+    };
 
     claude-code = {
       url = "github:sadjow/claude-code-nix";

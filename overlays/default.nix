@@ -104,7 +104,21 @@ let
       claude-monitor = mkUv "claude-monitor" "claude-monitor";
     };
 
-  freeform = _: prev: {
+  # llama.cpp PR 24423 (DiffusionGemma) on top of a nixpkgs llama-cpp variant
+  diffusionGemma =
+    pkg:
+    pkg.overrideAttrs (old: {
+      version = "24423"; # PR number; must be numeric (becomes LLAMA_BUILD_NUMBER)
+      src = inputs.llama-cpp-diffusion;
+      npmDepsHash = "sha256-pjdbI6NcZRlJVd62xhgbLhWrwFYwgsIwjORqvo1+VD8=";
+      # nixpkgs creates COMMIT in postFetch; diffusion-cli lives in examples/
+      postPatch = "echo ${inputs.llama-cpp-diffusion.shortRev} > COMMIT";
+      cmakeFlags = old.cmakeFlags ++ [ "-DLLAMA_BUILD_EXAMPLES=ON" ];
+    });
+
+  freeform = final: prev: {
+    llama-cpp-diffusion-vulkan = diffusionGemma final.llama-cpp-vulkan;
+    llama-cpp-diffusion-rocm = diffusionGemma final.llama-cpp-rocm;
     protonmail-bridge = prev.protonmail-bridge.overrideAttrs (_: {
       version = "unstable";
       src = inputs.protonmail-bridge;
