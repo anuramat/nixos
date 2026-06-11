@@ -2,7 +2,21 @@
 {
   plugins = {
     mini-align.enable = true;
-    mini-ai.enable = true;
+    mini-ai = {
+      enable = true;
+      # treesitter-textobjects only provides the queries; selection goes
+      # through mini.ai (f/a override the pattern-based builtins)
+      settings.custom_textobjects =
+        let
+          spec = captures: config.lib.lua "require('mini.ai').gen_spec.treesitter(${captures})";
+        in
+        {
+          F = spec "{ a = '@function.outer', i = '@function.inner' }";
+          o = spec "{ a = { '@conditional.outer', '@loop.outer' }, i = { '@conditional.inner', '@loop.inner' } }";
+          f = spec "{ a = '@call.outer', i = '@call.inner' }";
+          a = spec "{ a = '@parameter.outer', i = '@parameter.inner' }";
+        };
+    };
     mini-bracketed.enable = true;
     aerial.enable = true;
     diffview.enable = true;
