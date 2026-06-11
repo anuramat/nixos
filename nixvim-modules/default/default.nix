@@ -41,24 +41,6 @@
     pkgs.vimPlugins.tinted-nvim
   ];
   luaLoader.enable = true;
-  performance = {
-    combinePlugins = {
-      enable = false;
-      standalonePlugins = [
-      ];
-    };
-    byteCompileLua = {
-      enable = false;
-      initLua = true;
-      configs = true;
-      plugins = true;
-      nvimRuntime = true;
-      luaLib = true;
-    };
-  };
-
-  viAlias = false;
-  vimAlias = false;
 
   keymaps =
     let
