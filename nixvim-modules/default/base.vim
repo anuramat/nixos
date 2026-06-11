@@ -5,7 +5,7 @@
 let mapleader = " "
 let maplocalleader = mapleader . ";"
 tno <esc> <c-\><c-n>
-nn <c-c> <silent><c-c>
+nn <silent> <c-c> <c-c>
 function! ToggleQuickFix()
     if empty(filter(getwininfo(), 'v:val.quickfix'))
         copen
