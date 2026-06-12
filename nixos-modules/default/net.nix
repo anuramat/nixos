@@ -31,6 +31,10 @@ in
       script = "${pkgs.vpn-slice}/bin/vpn-slice --no-host-names --no-ns-hosts bwunicluster.scc.kit.edu 129.206.0.0/16 147.142.0.0/16";
     };
   };
+  systemd.services.openconnect-uhd.serviceConfig = {
+    Restart = "always";
+    RestartSec = 10;
+  };
   environment.systemPackages = with pkgs; [
     networkmanager-openconnect
   ];
