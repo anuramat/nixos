@@ -33,7 +33,13 @@ let
   };
 in
 {
-  lib = {
+  options.lib = lib.mkOption {
+    type = lib.types.attrs;
+    default = { };
+    internal = true;
+  };
+
+  config.lib = {
     inherit
       lua
       luaf
@@ -44,25 +50,20 @@ in
     files =
       specs:
       let
-        # Create a list of all filetype/kind combinations with their properly named attributes
+        # one { path = value; } per filetype/kind combination, named by its kind
         fileAttrsList = lib.concatMap (
           ft:
-          lib.concatMap (
+          map (
             kind:
             let
-              value = specs.${ft}.${kind};
-              meta =
-                if builtins.hasAttr kind fileKinds then
-                  fileKinds.${kind}
-                else
-                  throw "unknown vim file kind ${kind}";
-              name = meta.prefix + ft + meta.suffix;
-              transformedValue = meta.toValue value;
+              meta = fileKinds.${kind} or (throw "unknown vim file kind ${kind}");
             in
-            [ { ${name} = transformedValue; } ]
+            {
+              ${meta.prefix + ft + meta.suffix} = meta.toValue specs.${ft}.${kind};
+            }
           ) (lib.attrNames specs.${ft})
         ) (lib.attrNames specs);
       in
-      lib.foldl' lib.recursiveUpdate { } fileAttrsList;
+      lib.mergeAttrsList fileAttrsList;
   };
 }

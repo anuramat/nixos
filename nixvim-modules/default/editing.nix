@@ -21,6 +21,7 @@
     aerial.enable = true;
     diffview.enable = true;
     nvim-surround.enable = true;
+    harpoon.enable = true;
   };
 
   globals = {
@@ -28,7 +29,6 @@
     nvim_surround_no_insert_mappings = true;
     nvim_surround_no_visual_mappings = true;
   };
-  plugins.harpoon.enable = true;
   keymaps =
     let
       inherit (config.lib) luaf keymap;

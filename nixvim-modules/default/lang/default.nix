@@ -5,7 +5,7 @@
     ./lean.nix
     ./lua.nix
     ./markdown.nix
-    ./markup
+    ./markup.nix
     ./misc.nix
     ./nix.nix
     ./python.nix

@@ -32,9 +32,8 @@
     ./misc.nix
     ./treesitter.nix
     ./ui.nix
-    ./vim.nix
+    ./editing.nix
     ./lib.nix
-    ./options.nix
   ];
 
   extraPlugins = [
