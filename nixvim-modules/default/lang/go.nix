@@ -8,7 +8,6 @@
       };
     };
   };
-  # TODO ray-x/go.nvim
   plugins.lsp.servers.gopls = {
     enable = true;
     settings = {
