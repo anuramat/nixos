@@ -3,6 +3,7 @@
   imports = [
     ./agents
     ./desktop
+    ./email.nix
     ./terminals.nix
   ];
 

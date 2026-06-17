@@ -1,6 +1,5 @@
 {
   config,
-  pkgs,
   lib,
   ...
 }:
@@ -49,7 +48,6 @@ in
         LC_ALL = "en_US.UTF-8";
         PAGER = "less";
         MANPAGER = "less";
-        NIXOS_OZONE_WL = "1"; # wayland chromium/electron
 
         STACK_ROOT = "${config.xdg.dataHome}/stack";
         STACK_XDG = "1";
@@ -58,9 +56,6 @@ in
 
         # XDG TODO move stuff here from the shims file
 
-        TERMCMD = "${lib.getExe pkgs.foot}";
-        # TERMCMD = "${lib.getExe pkgs.ghostty}";
-        # TERMCMD = "${lib.getExe pkgs.kitty} -1";
         ESCDELAY = "25";
 
         # TODO move this somewhere

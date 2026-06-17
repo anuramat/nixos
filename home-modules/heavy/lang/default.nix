@@ -16,7 +16,6 @@
     # rustc
     # clang # collision with gcc
     ghc
-    gcc
     cudaPackages.cuda_nvcc
     julia
     llvm

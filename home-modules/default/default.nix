@@ -36,7 +36,6 @@ in
     ./pss.nix
     ./readline.nix
     ./search.nix
-    ./typst.nix
     ./yazi.nix
   ];
 

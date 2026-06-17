@@ -42,7 +42,6 @@
     readability-cli # extracts main content from pages
     pandoc # document converter
     # texliveFull
-    typst # better latex
     djvulibre # djvu tools
     markdown-link-check # find dead md links
     mermaid-cli

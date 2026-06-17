@@ -14,6 +14,7 @@
     };
 
     mpv = {
+      enable = true;
       config = {
         profile = "gpu-hq";
         gpu-context = "wayland";

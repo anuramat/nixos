@@ -4,24 +4,6 @@ let
 in
 {
   xdg.configFile = {
-    "felix/config.yaml".text = toYAML {
-      default = "nvim";
-      exec = {
-        zathura = [ "pdf" ];
-        "feh -." = [
-          "jpg"
-          "jpeg"
-          "png"
-          "gif"
-          "svg"
-          "hdr"
-        ];
-      };
-    };
-
-    "glow/glow.yml".text = toYAML {
-    };
-
     "qrcp/config.yml".text = toYAML {
       interface = "any";
       keepalive = true;

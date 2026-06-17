@@ -31,7 +31,10 @@ let
   };
 in
 {
-  home.packages = lib.optionals config.gui [
+  home.packages = [
+    pkgs.typst
+  ]
+  ++ lib.optionals config.gui [
     hotdoc
   ];
   xdg.dataFile =

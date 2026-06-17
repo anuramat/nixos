@@ -19,7 +19,6 @@
     libreoffice # just in case
     pdfpc # pdf presentations, broken on wayland
     pympress # pdf presentations
-    zathura # keyboard-centric pdf/djvu reader
     zotero
 
     # notes
@@ -35,7 +34,6 @@
     rawtherapee
 
     # video
-    mpv
     footage # simple editor: trim, crop, etc
     # davinci-resolve # heavy duty editor
 

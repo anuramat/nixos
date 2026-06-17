@@ -5,7 +5,7 @@
     ./gui
     inputs.nixvim.homeModules.nixvim
     ./lang
-    ./email.nix
+    ./typst.nix
     inputs.spicetify-nix.homeManagerModules.spicetify
     ./packages.nix
   ];
