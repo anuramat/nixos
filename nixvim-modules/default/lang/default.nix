@@ -1,17 +1,8 @@
+{ lib, ... }:
 {
-  imports = [
-    ./go.nix
-    ./haskell.nix
-    ./lean.nix
-    ./lua.nix
-    ./markdown.nix
-    ./markup.nix
-    ./misc.nix
-    ./nix.nix
-    ./python.nix
-    ./rust.nix
-    ./sh.nix
-    ./typst.nix
-    ./web.nix
-  ];
+  imports =
+    builtins.readDir ./.
+    |> builtins.attrNames
+    |> lib.filter (n: n != "default.nix")
+    |> map (n: ./. + "/${n}");
 }

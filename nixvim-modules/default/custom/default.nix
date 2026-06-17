@@ -1,8 +1,8 @@
-{ ... }:
+{ lib, ... }:
 {
-  imports = [
-    ./figtree.nix
-    ./wastebin.nix
-    ./tree-climber-rust.nix
-  ];
+  imports =
+    builtins.readDir ./.
+    |> builtins.attrNames
+    |> lib.filter (n: n != "default.nix")
+    |> map (n: ./. + "/${n}");
 }
