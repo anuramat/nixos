@@ -1,4 +1,3 @@
-# NOTE: only reads CLAUDE.md
 {
   lib,
   config,
