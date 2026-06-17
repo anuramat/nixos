@@ -16,6 +16,15 @@ let
     |> lib.listToAttrs;
   mkImportSet = mkDirSet import;
   # }}}1
+
+  pkgsWithOverlay =
+    system:
+    import inputs.nixpkgs (
+      {
+        inherit system;
+      }
+      // (inputs.self.sharedModules.nixpkgs { inherit inputs; }).nixpkgs
+    );
 in
 flake-parts.lib.mkFlake { inherit inputs; } {
   imports = [
@@ -134,13 +143,13 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     {
       config,
       system,
-      pkgs,
       ...
     }@args:
     let
       argsWithInputs = args // {
-        inherit inputs;
+        inherit inputs pkgs;
       };
+      pkgs = pkgsWithOverlay system;
     in
     (mkDirSet (x: import x argsWithInputs) ./parts)
     // {
@@ -162,7 +171,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
         )
         # hand-pinned vendorHash drift only surfaces at build time, so build these
         // lib.optionalAttrs (system == "x86_64-linux") {
-          inherit (pkgs.extend inputs.self.overlays.default) protonmail-bridge waybar-niri-windows;
+          inherit (pkgs) protonmail-bridge waybar-niri-windows;
         }
         // {
           # builds packages.neovim and runs it headless to catch startup errors
