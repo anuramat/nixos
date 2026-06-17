@@ -111,7 +111,8 @@ in
     activation = {
       claudeSettings = config.lib.home.json.set {
         tui = "fullscreen";
-        model = "claude-fable-5[1m]";
+        # model = "claude-fable-5[1m]";
+        model = "opus[1m]";
         enabledPlugins = {
           "rust-analyzer-lsp@claude-plugins-official" = false;
           "pyright-lsp@claude-plugins-official" = false;
