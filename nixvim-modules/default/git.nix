@@ -1,46 +1,34 @@
-{ config, ... }:
+{ config, lib, ... }:
 {
   plugins = {
-    gitlinker = {
-      enable = true;
-    };
-
-    fugitive = {
-      enable = true;
-    };
+    gitlinker.enable = true;
+    fugitive.enable = true;
 
     gitsigns = {
       enable = true;
       settings = {
         sign_priority = 1000;
-        signs_staged = {
-          add = {
-            text = "▎";
-          };
-          change = {
-            text = "▎";
-          };
-          delete = {
-            text = "▎";
-          };
-          topdelete = {
-            text = "▎";
-          };
-          changedelete = {
-            text = "▎";
-          };
-          untracked = {
-            text = "▎";
-          };
-        };
+        signs_staged =
+          lib.genAttrs
+            [
+              "add"
+              "change"
+              "delete"
+              "topdelete"
+              "changedelete"
+              "untracked"
+            ]
+            (_: {
+              text = "▎";
+            });
       };
     };
   };
 
   keymaps =
     let
-      inherit (config.lib) keymap luaf;
-      setAction = key: action: keymap "n" key "<cmd>Gitsigns ${action}<cr>" "gitsigns: ${action}";
+      inherit (config.lib) keymap luaf cmd;
+      setAction = key: action: cmd "n" key "Gitsigns ${action}" "gitsigns: ${action}";
     in
     [
       # stage
@@ -53,7 +41,7 @@
 
       # reset
       (keymap "v" "<leader>gr"
-        (config.lib.luaf ''require("gitsigns").reset_hunk({ vim.fn.line("."), vim.fn.line("v") })'')
+        (luaf ''require("gitsigns").reset_hunk({ vim.fn.line("."), vim.fn.line("v") })'')
         "gitsigns: reset selection"
       )
       (setAction "<leader>gr" "reset_hunk")
@@ -67,16 +55,11 @@
       (keymap [
         "o"
         "x"
-      ] "ih" (config.lib.luaf ''require("gitsigns").select_hunk()'') "gitsigns: inside hunk")
-      (keymap
-        [
-          "o"
-          "x"
-        ]
-        "ah"
-        (config.lib.luaf ''require("gitsigns").select_hunk({ greedy = true })'')
-        "gitsigns: around hunk"
-      )
+      ] "ih" (luaf ''require("gitsigns").select_hunk()'') "gitsigns: inside hunk")
+      (keymap [
+        "o"
+        "x"
+      ] "ah" (luaf ''require("gitsigns").select_hunk({ greedy = true })'') "gitsigns: around hunk")
 
       # misc
       (setAction "<leader>gb" "blame_line")

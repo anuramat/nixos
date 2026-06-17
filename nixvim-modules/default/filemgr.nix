@@ -1,3 +1,4 @@
+{ config, ... }:
 {
   plugins = {
     neo-tree.enable = true;
@@ -35,19 +36,15 @@
   };
   keymaps =
     let
-      map = key: action: desc: {
-        mode = "n";
-        inherit key action;
-        options = { inherit desc; };
-      };
+      nmap = config.lib.cmd "n";
     in
     [
-      (map "<leader>o" "<cmd>Oil<cr>" "Oil: parent directory of the file")
-      (map "<leader>O" "<cmd>Oil .<cr>" "Oil: CWD")
+      (nmap "<leader>o" "Oil" "Oil: parent directory of the file")
+      (nmap "<leader>O" "Oil ." "Oil: CWD")
 
-      (map "<leader>tt" "<cmd>Neotree show last toggle<cr>" "Neotree: toggle")
-      (map "<leader>tf" "<cmd>Neotree focus last<cr>" "Neotree: focus")
-      (map "<leader>tr" "<cmd>Neotree show reveal<cr>" "Neotree: current file")
-      (map "<leader>tg" "<cmd>Neotree show git_status<cr>" "Neotree: git status")
+      (nmap "<leader>tt" "Neotree show last toggle" "Neotree: toggle")
+      (nmap "<leader>tf" "Neotree focus last" "Neotree: focus")
+      (nmap "<leader>tr" "Neotree show reveal" "Neotree: current file")
+      (nmap "<leader>tg" "Neotree show git_status" "Neotree: git status")
     ];
 }

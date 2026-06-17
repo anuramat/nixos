@@ -79,9 +79,7 @@
         };
       };
     };
-    none-ls = {
-      enable = true;
-    };
+    none-ls.enable = true;
     lsp = {
       enable = true;
       inlayHints = false;

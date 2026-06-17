@@ -1,11 +1,16 @@
 { config, ... }:
 let
-  inherit (config.lib) lua luaf keymap;
+  inherit (config.lib)
+    lua
+    luaf
+    keymap
+    cmd
+    ;
 in
 {
   keymaps =
     let
-      mapAction = key: action: keymap "n" "<leader>f${key}" "<cmd>FzfLua ${action}<cr>" "fzf: ${action}";
+      mapAction = key: action: cmd "n" "<leader>f${key}" "FzfLua ${action}" "fzf: ${action}";
     in
     [
       (mapAction "o" "files")
@@ -29,7 +34,7 @@ in
       (mapAction "h" "helptags")
       (mapAction "k" "keymaps")
       (mapAction "p" "builtin")
-      (config.lib.keymap "i" "<C-x><C-f>"
+      (keymap "i" "<C-x><C-f>"
         (luaf ''require("fzf-lua").complete_file({ cmd = "fd -t f -HL", winopts = { preview = { hidden = "nohidden" } } })'')
         "path completion"
       )

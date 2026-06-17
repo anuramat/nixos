@@ -1,6 +1,17 @@
 { lib, ... }:
 let
   lua = action: { __raw = action; };
+  luaf = action: lua "function() ${action} end";
+
+  keymap = mode: key: action: desc: {
+    inherit mode key action;
+    options = { inherit desc; };
+  };
+  # keymap that runs an ex command, sparing callers the <cmd>...<cr> wrapping
+  cmd =
+    mode: key: excmd: desc:
+    keymap mode key "<cmd>${excmd}<cr>" desc;
+
   toJSON = lib.generators.toJSON { };
 
   fileKinds = {
@@ -23,17 +34,12 @@ let
 in
 {
   lib = {
-    inherit lua;
-    luaf = action: (lua "function() ${action} end");
-
-    keymap = mode: key: action: desc: {
-      inherit
-        mode
-        key
-        action
-        ;
-      options = { inherit desc; };
-    };
+    inherit
+      lua
+      luaf
+      keymap
+      cmd
+      ;
 
     files =
       specs:

@@ -1,8 +1,6 @@
 {
   plugins = {
-    crates = {
-      enable = true;
-    };
+    crates.enable = true;
     rustaceanvim = {
       enable = true;
       settings.server = {
