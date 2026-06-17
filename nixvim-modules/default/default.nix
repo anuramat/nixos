@@ -30,6 +30,7 @@
     ./image.nix
     ./lang
     ./misc.nix
+    ./tags.nix
     ./treesitter.nix
     ./ui.nix
     ./editing.nix
