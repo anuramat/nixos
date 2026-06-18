@@ -73,6 +73,7 @@ let
           tinted-nvim
           rustaceanvim
           ;
+        figtree-nvim = inputs.figtree.packages.${prev.stdenv.hostPlatform.system}.default;
       };
     };
 

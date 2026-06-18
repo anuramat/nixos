@@ -1,7 +1,7 @@
-{ pkgs, inputs, ... }:
+{ pkgs, ... }:
 {
   extraPlugins = [
-    inputs.figtree.packages.${pkgs.stdenv.hostPlatform.system}.default
+    pkgs.vimPlugins.figtree-nvim
   ];
   extraConfigLua = ''
     require("figtree").setup({})
