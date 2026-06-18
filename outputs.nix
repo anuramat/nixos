@@ -8,13 +8,20 @@
 let
   inherit (nixpkgs) lib;
   # helper {{{1
-  mkDirSet =
+  mapModuleDir =
     func: dir:
     builtins.readDir dir
     |> builtins.attrNames
-    |> map (n: lib.nameValuePair (lib.removeSuffix ".nix" n) (func /${dir}/${n}))
+    |> map (
+      relativePath:
+      let
+        name = lib.removeSuffix ".nix" relativePath;
+        module = /${dir}/${relativePath};
+      in
+      lib.nameValuePair name (func name module)
+    )
     |> lib.listToAttrs;
-  mkImportSet = mkDirSet import;
+  mkImportSet = mapModuleDir (_: import);
   # }}}1
 
   pkgsWithOverlay =
@@ -41,13 +48,13 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     let
       nixosModules = mkImportSet ./nixos-modules;
       homeModules = mkImportSet ./home-modules;
-      mkNixosConfigurations = mkDirSet (
-        x:
+      mkNixosConfigurations = mapModuleDir (
+        name: module:
         inputs.nixpkgs.lib.nixosSystem {
           # hostname = directory name, by construction
           modules = [
-            x
-            { networking.hostName = builtins.baseNameOf x; }
+            module
+            { networking.hostName = name; }
           ];
           specialArgs = {
             inherit inputs;
@@ -56,11 +63,11 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       );
       mkHomeConfigurations =
         configSystem:
-        (mkDirSet (
-          x:
+        (mapModuleDir (
+          name: module:
           inputs.home-manager.lib.homeManagerConfiguration {
-            pkgs = pkgsWithOverlay configSystem.${builtins.baseNameOf x};
-            modules = [ x ];
+            pkgs = pkgsWithOverlay configSystem.${name};
+            modules = [ module ];
             extraSpecialArgs = {
               inherit inputs;
             };
@@ -136,7 +143,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
         |> lib.listToAttrs;
       # }}}1
 
-      overlays = mkDirSet (x: import x { inherit inputs lib; }) ./overlays; # use mkImportSet as well
+      overlays = mapModuleDir (_name: module: import module { inherit inputs lib; }) ./overlays; # TODO use mkImportSet as well?
       # TODO split into default and heavy, then add light version to anuramat-root
       nixvimModules = mkImportSet ./nixvim-modules;
       sharedModules = mkImportSet ./shared-modules;
@@ -154,7 +161,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       };
       pkgs = pkgsWithOverlay system;
     in
-    (mkDirSet (x: import x argsWithInputs) ./parts)
+    (mapModuleDir (_name: module: import module argsWithInputs) ./parts)
     // {
       # evaluate every host's toplevel (firing all assertions) without building it
       checks = # {{{1
