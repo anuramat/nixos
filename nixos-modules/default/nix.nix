@@ -23,13 +23,6 @@ let
   keyPath = "${config.users.users.${username}.home}/.ssh/id_ed25519";
 in
 {
-  nixpkgs = {
-    config = {
-      allowUnfree = true;
-    };
-    overlays = [ inputs.self.overlays.default ];
-  };
-
   programs.nh = {
     enable = true;
   };

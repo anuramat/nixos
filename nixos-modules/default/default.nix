@@ -18,6 +18,7 @@
 
     inputs.agenix.nixosModules.default
     inputs.self.sharedModules.age
+    inputs.self.sharedModules.nixpkgs
     inputs.nix-topology.nixosModules.default
     inputs.home-manager.nixosModules.home-manager
   ];

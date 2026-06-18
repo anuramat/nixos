@@ -5,10 +5,8 @@
   ...
 }:
 {
-  nixpkgs.overlays = [
-    inputs.self.overlays.default
-  ];
   imports = [
+    inputs.self.sharedModules.nixpkgs
     ./basic.nix
     ./completion.nix
     ./custom

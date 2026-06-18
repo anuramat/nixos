@@ -48,7 +48,6 @@ flake-parts.lib.mkFlake { inherit inputs; } {
         inputs.home-manager.lib.homeManagerConfiguration {
           pkgs = import inputs.nixpkgs {
             system = "aarch64-darwin";
-            config.allowUnfree = true;
           };
           modules = [ x ];
           extraSpecialArgs = specialArgs;
