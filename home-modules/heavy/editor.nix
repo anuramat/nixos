@@ -1,7 +1,6 @@
 {
   pkgs,
   inputs,
-  osConfig ? null,
   ...
 }:
 {
@@ -13,11 +12,6 @@
         inputs.self.nixvimModules.default
       ];
       defaultEditor = true;
-      _module.args = {
-        # TODO is this the right/official way? underscore looks sketchy
-        inherit inputs;
-      }
-      // (if osConfig != null then { inherit osConfig; } else { osConfig = null; });
     };
     helix = {
       enable = true;

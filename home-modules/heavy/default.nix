@@ -3,7 +3,6 @@
   imports = [
     ./editor.nix
     ./gui
-    inputs.nixvim.homeModules.nixvim
     ./lang
     ./typst.nix
     inputs.spicetify-nix.homeManagerModules.spicetify
