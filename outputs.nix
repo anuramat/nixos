@@ -1,3 +1,4 @@
+# vim: fdl=0 fdm=marker
 {
   nixpkgs,
   nixvim,
@@ -6,6 +7,7 @@
 }@inputs:
 let
   inherit (nixpkgs) lib;
+  # helper {{{1
   mkDirSet =
     func: dir:
     builtins.readDir dir
@@ -13,6 +15,7 @@ let
     |> map (n: lib.nameValuePair (lib.removeSuffix ".nix" n) (func /${dir}/${n}))
     |> lib.listToAttrs;
   mkImportSet = mkDirSet import;
+  # }}}1
 in
 flake-parts.lib.mkFlake { inherit inputs; } {
   imports = [
@@ -27,9 +30,6 @@ flake-parts.lib.mkFlake { inherit inputs; } {
   ];
   flake =
     let
-      specialArgs = {
-        inherit inputs;
-      };
       nixosModules = mkImportSet ./nixos-modules;
       homeModules = mkImportSet ./home-modules;
       mkNixosConfigurations = mkDirSet (
@@ -40,7 +40,9 @@ flake-parts.lib.mkFlake { inherit inputs; } {
             x
             { networking.hostName = builtins.baseNameOf x; }
           ];
-          inherit specialArgs;
+          specialArgs = {
+            inherit inputs;
+          };
         }
       );
       mkHomeConfigurations = mkDirSet (
@@ -50,7 +52,9 @@ flake-parts.lib.mkFlake { inherit inputs; } {
             system = "aarch64-darwin";
           };
           modules = [ x ];
-          extraSpecialArgs = specialArgs;
+          extraSpecialArgs = {
+            inherit inputs;
+          };
         }
       );
     in
@@ -86,7 +90,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
         port = 11343;
       };
 
-      # per-host key material discovered from nixos-configurations/*/keys/
+      # per-host key material discovered from nixos-configurations/*/keys/ {{{1
       keys =
         let
           cacheFilename = "cache.pem.pub";
@@ -118,9 +122,11 @@ flake-parts.lib.mkFlake { inherit inputs; } {
           }
         )
         |> lib.listToAttrs;
+      # }}}1
 
       overlays = mkDirSet (x: import x { inherit inputs lib; }) ./overlays; # use mkImportSet as well
-      nixvimModules = mkImportSet ./nixvim-modules; # TODO split into default and heavy, then add light version to anuramat-root
+      # TODO split into default and heavy, then add light version to anuramat-root
+      nixvimModules = mkImportSet ./nixvim-modules;
       sharedModules = mkImportSet ./shared-modules;
     };
 
@@ -139,7 +145,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     (mkDirSet (x: import x argsWithInputs) ./parts)
     // {
       # evaluate every host's toplevel (firing all assertions) without building it
-      checks =
+      checks = # {{{1
         (
           inputs.self.hosts
           |> lib.filterAttrs (_: host: host.system == system)
@@ -150,7 +156,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
                 drv =
                   builtins.unsafeDiscardOutputDependency
                     inputs.self.nixosConfigurations.${name}.config.system.build.toplevel.drvPath;
-              } "echo $drv > $out"
+              } "echo $drv >$out"
             )
           )
         )
@@ -165,7 +171,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
             nvim = config.packages.neovim;
           };
         };
-      # TODO move? somehow sync extraspecialargs with home-manager import
+      # }}}1
       packages.neovim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
         extraSpecialArgs = {
           inherit inputs;

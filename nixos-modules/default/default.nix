@@ -1,4 +1,3 @@
-# vim: fdl=0 fdm=marker
 {
   config,
   inputs,
