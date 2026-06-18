@@ -54,23 +54,26 @@ flake-parts.lib.mkFlake { inherit inputs; } {
           };
         }
       );
-      mkHomeConfigurations = mkDirSet (
-        x:
-        inputs.home-manager.lib.homeManagerConfiguration {
-          pkgs = import inputs.nixpkgs {
-            system = "aarch64-darwin";
-          };
-          modules = [ x ];
-          extraSpecialArgs = {
-            inherit inputs;
-          };
-        }
-      );
+      mkHomeConfigurations =
+        configSystem:
+        (mkDirSet (
+          x:
+          inputs.home-manager.lib.homeManagerConfiguration {
+            pkgs = pkgsWithOverlay configSystem.${builtins.baseNameOf x};
+            modules = [ x ];
+            extraSpecialArgs = {
+              inherit inputs;
+            };
+          }
+        ) ./home-configurations);
     in
     {
       inherit nixosModules homeModules;
       nixosConfigurations = mkNixosConfigurations ./nixos-configurations;
-      homeConfigurations = mkHomeConfigurations ./home-configurations;
+      homeConfigurations = mkHomeConfigurations {
+        "example-config-linux" = "x86_64-linux";
+        "example-config-darwin" = "aarch64-darwin";
+      };
 
       # static host registry; each host asserts its own entry against its
       # actual config in nixos-modules/default/hosts.nix
