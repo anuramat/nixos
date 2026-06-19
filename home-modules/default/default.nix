@@ -47,6 +47,18 @@ in
 
   programs.ssh = {
     enable = true;
+    # Defined via settings (not extraConfig) so this block renders *before* the
+    # generated `Host *` default block; otherwise its ControlMaster/ControlPath/
+    # ControlPersist defaults win by ssh_config first-match.
+    settings.uc3 = {
+      User = "hd_un330";
+      HostName = "bwunicluster.scc.kit.edu";
+      ControlMaster = "auto";
+      ControlPath = "~/.ssh/cm-%r@%h-%p";
+      ControlPersist = "yes";
+      ServerAliveInterval = 60;
+      WarnWeakCrypto = "no";
+    };
     extraConfig =
       let
         prefix = config.home.username + "-";
@@ -65,14 +77,8 @@ in
               |> lib.filter (x: lib.strings.hasPrefix prefix x)
               |> map mkAliasEntry
             );
-        uc3 = ''
-          Host uc3
-            User hd_un330
-            HostName bwunicluster.scc.kit.edu
-        '';
-        entries = machines ++ [ uc3 ];
       in
-      entries |> lib.strings.intersperse "\n" |> lib.concatStrings;
+      machines |> lib.strings.intersperse "\n" |> lib.concatStrings;
   };
 
   xdg.enable = true; # set xdg basedir vars in .profile
