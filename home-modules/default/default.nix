@@ -47,38 +47,30 @@ in
 
   programs.ssh = {
     enable = true;
-    # Defined via settings (not extraConfig) so this block renders *before* the
-    # generated `Host *` default block; otherwise its ControlMaster/ControlPath/
-    # ControlPersist defaults win by ssh_config first-match.
-    settings.uc3 = {
-      User = "hd_un330";
-      HostName = "bwunicluster.scc.kit.edu";
-      ControlMaster = "auto";
-      ControlPath = "~/.ssh/cm-%r@%h-%p";
-      ControlPersist = "yes";
-      ServerAliveInterval = 60;
-      WarnWeakCrypto = "no";
-    };
-    extraConfig =
+    settings =
       let
         prefix = config.home.username + "-";
-        mkAliasEntry =
-          hostname: # ssh_config
-          ''
-            Host ${lib.strings.removePrefix prefix hostname}
-              HostName ${hostname}
-          '';
-        machines =
+        aliases =
           if osConfig == null then
-            [ ]
+            { }
           else
-            (
-              (builtins.attrNames osConfig.lib.hosts.hosts)
-              |> lib.filter (x: lib.strings.hasPrefix prefix x)
-              |> map mkAliasEntry
-            );
+            builtins.attrNames osConfig.lib.hosts.hosts
+            |> lib.filter (lib.hasPrefix prefix)
+            |> map (h: lib.nameValuePair (lib.removePrefix prefix h) { HostName = h; })
+            |> builtins.listToAttrs;
       in
-      machines |> lib.strings.intersperse "\n" |> lib.concatStrings;
+      {
+        uc3 = {
+          User = "hd_un330";
+          HostName = "bwunicluster.scc.kit.edu";
+          ControlMaster = "auto";
+          ControlPath = "~/.ssh/cm-%r@%h-%p";
+          ControlPersist = "yes";
+          ServerAliveInterval = 60;
+          WarnWeakCrypto = "no";
+        };
+      }
+      // aliases;
   };
 
   xdg.enable = true; # set xdg basedir vars in .profile
