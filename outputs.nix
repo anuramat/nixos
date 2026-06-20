@@ -46,12 +46,17 @@ flake-parts.lib.mkFlake { inherit inputs; } {
   ];
   flake =
     let
+      homeSystems = {
+        # "example-config-linux" = "x86_64-linux";
+        # "example-config-darwin" = "aarch64-darwin";
+      };
+    in
+    {
       nixosModules = mkImportSet ./nixos-modules;
       homeModules = mkImportSet ./home-modules;
-      mkNixosConfigurations = mapModuleDir (
+      nixosConfigurations = mapModuleDir (
         name: module:
         inputs.nixpkgs.lib.nixosSystem {
-          # hostname = directory name, by construction
           modules = [
             module
             { networking.hostName = name; }
@@ -60,27 +65,17 @@ flake-parts.lib.mkFlake { inherit inputs; } {
             inherit inputs;
           };
         }
-      );
-      mkHomeConfigurations =
-        configSystem:
-        (mapModuleDir (
-          name: module:
-          inputs.home-manager.lib.homeManagerConfiguration {
-            pkgs = pkgsWithOverlay configSystem.${name};
-            modules = [ module ];
-            extraSpecialArgs = {
-              inherit inputs;
-            };
-          }
-        ) ./home-configurations);
-    in
-    {
-      inherit nixosModules homeModules;
-      nixosConfigurations = mkNixosConfigurations ./nixos-configurations;
-      homeConfigurations = mkHomeConfigurations {
-        "example-config-linux" = "x86_64-linux";
-        "example-config-darwin" = "aarch64-darwin";
-      };
+      ) ./nixos-configurations;
+      homeConfigurations = mapModuleDir (
+        name: module:
+        inputs.home-manager.lib.homeManagerConfiguration {
+          pkgs = pkgsWithOverlay homeSystems.${name};
+          modules = [ module ];
+          extraSpecialArgs = {
+            inherit inputs;
+          };
+        }
+      ) ./home-configurations;
 
       # static host registry; each host asserts its own entry against its
       # actual config in nixos-modules/default/hosts.nix
