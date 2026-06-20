@@ -2,7 +2,7 @@
 {
   plugins = {
     gitlinker.enable = true;
-    fugitive.enable = true;
+    neogit.enable = true;
 
     gitsigns = {
       enable = true;
