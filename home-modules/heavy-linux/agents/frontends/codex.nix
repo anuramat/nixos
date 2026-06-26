@@ -101,7 +101,6 @@ let
     agentDir = null;
     extraRwDirs = [
       codexHome
-      config.home.sessionVariables.GHQ_ROOT
       "${config.home.homeDirectory}/Documents/Codex"
       "/etc/nixos"
     ];

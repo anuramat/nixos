@@ -90,6 +90,7 @@ in
                 config.home.sessionVariables.CARGO_HOME
                 config.programs.go.env.GOPATH
                 "${config.home.homeDirectory}/.npm"
+                config.home.sessionVariables.GHQ_ROOT
               ];
               agentDirs =
                 if agentDir != null then
@@ -147,7 +148,6 @@ in
 
                 config.xdg.configHome
                 config.home.sessionVariables.XDG_BIN_HOME
-                config.home.sessionVariables.GHQ_ROOT
               ]
               ++ homePaths;
             };
