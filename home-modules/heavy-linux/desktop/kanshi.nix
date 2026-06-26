@@ -52,31 +52,37 @@ in
                   criteria = "Dell Inc. DELL S2722QC 192SH24";
                   scale = 1.5;
                   adaptiveSync = false;
+                  position = "0,-99999";
                 };
                 generic = {
                   criteria = "*";
+                  position = "0,-99999";
                 };
                 audimax = {
                   criteria = "PNP(LTM) RallyBar Mini 0x88888800";
                   scale = 1.0;
+                  position = "0,-99999";
+                };
+                builtinDisplay = cfg.builtinDisplay // {
+                  position = "0,0";
                 };
               in
               {
                 # alphabetic priority
 
                 "p0" = [
-                  cfg.builtinDisplay
+                  builtinDisplay
                 ];
                 "p1-home" = [
-                  cfg.builtinDisplay
+                  builtinDisplay
                   home
                 ];
                 "p2-audimax" = [
-                  cfg.builtinDisplay
+                  builtinDisplay
                   audimax
                 ];
                 "p3-generic" = [
-                  cfg.builtinDisplay
+                  builtinDisplay
                   generic
                 ];
               };
