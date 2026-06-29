@@ -1,13 +1,15 @@
 { config, ... }:
 {
-  files = config.lib.files {
-    go = {
-      ftp = {
+  inherit
+    (config.lib.mkVimFiles {
+      go.ftp = {
         et = false;
         ts = 4;
       };
-    };
-  };
+    })
+    files
+    extraFiles
+    ;
   plugins.lsp.servers.gopls = {
     enable = true;
     settings = {

@@ -4,10 +4,10 @@
   pkgs,
   ...
 }:
-let
-  snippets = config.lib.files {
-    toml = {
-      snippets =
+{
+  inherit
+    (config.lib.mkVimFiles {
+      toml.snippets =
         let
           fmt = x: x |> lib.trim |> lib.splitString "\n";
         in
@@ -69,10 +69,10 @@ let
               options = [ "-q" ]
             '';
           };
-    };
-  };
-in
-{
+    })
+    files
+    extraFiles
+    ;
   extraPackages = with pkgs; [
     hadolint
   ];
@@ -99,6 +99,4 @@ in
       "todo.txt" = "todotxt";
     };
   };
-
-  extraFiles = snippets;
 }

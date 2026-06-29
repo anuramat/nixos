@@ -13,13 +13,13 @@ in
     (keymap "o" "r" (luaf ''require("flash").treesitter()'') "Treesitter node")
   ];
 
-  files = config.lib.files {
-    just = {
-      ftp = {
-        ts = 4;
-      };
-    };
-  };
+  inherit
+    (config.lib.mkVimFiles {
+      just.ftp.ts = 4;
+    })
+    files
+    extraFiles
+    ;
 
   plugins = {
     web-devicons.enable = true;

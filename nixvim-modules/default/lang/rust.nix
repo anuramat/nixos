@@ -1,3 +1,4 @@
+{ config, ... }:
 {
   plugins = {
     crates.enable = true;
@@ -24,9 +25,9 @@
     };
   };
 
-  extraFiles."after/ftplugin/rust.lua".text =
-    let
-      fold_tests_by_default = # lua
+  inherit
+    (config.lib.mkVimFiles {
+      rust.ftp = # lua
         ''
           vim.schedule(function()
             local ok, parser = pcall(vim.treesitter.get_parser, 0, "rust")
@@ -56,7 +57,8 @@
             end
           end)
         '';
-    in
-    fold_tests_by_default;
-
+    })
+    files
+    extraFiles
+    ;
 }

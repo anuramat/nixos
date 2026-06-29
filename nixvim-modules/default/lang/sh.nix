@@ -1,17 +1,13 @@
 { config, ... }:
-let
-  ftp = config.lib.files {
-    sh = {
-      ftp = {
-        ts = 4;
-        et = false;
-      };
-    };
-  };
-  snippets = config.lib.files {
-    sh = {
-      snippets = {
-        loop = {
+{
+  inherit
+    (config.lib.mkVimFiles {
+      sh = {
+        ftp = {
+          ts = 4;
+          et = false;
+        };
+        snippets.loop = {
           body = [
             "while IFS= read -r -d '' $1; do"
             "$0"
@@ -20,12 +16,10 @@ let
           prefix = "loop";
         };
       };
-    };
-  };
-in
-{
-  files = ftp;
-  extraFiles = snippets;
+    })
+    files
+    extraFiles
+    ;
   plugins = {
     conform-nvim.settings = {
       formatters = {

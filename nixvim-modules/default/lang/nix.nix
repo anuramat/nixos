@@ -20,9 +20,9 @@
       nil_ls.enable = true;
     };
   };
-  extraFiles = config.lib.files {
-    nix = {
-      injections = # query
+  inherit
+    (config.lib.mkVimFiles {
+      nix.injections = # query
         ''
           ;; extends
 
@@ -38,6 +38,8 @@
             ]
             (#match? @_func "(^|\\.)luaf?$"))
         '';
-    };
-  };
+    })
+    files
+    extraFiles
+    ;
 }

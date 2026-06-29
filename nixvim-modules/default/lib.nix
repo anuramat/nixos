@@ -14,21 +14,45 @@ let
 
   toJSON = lib.generators.toJSON { };
 
+  # Each kind maps a per-filetype value to `{ target, value }`: `target` is the
+  # nixvim option it lands in (`files` for managed modules compiled to lua,
+  # `extraFiles` for raw runtime files), `value` its content. The file path is
+  # `prefix + filetype + suffix`.
   fileKinds = {
+    # ftplugin: a string is raw lua sourced verbatim (extraFiles); an attrset is
+    # a managed nixvim `files` submodule -- local options shorthand, or a full
+    # submodule if it already carries `localOpts` (e.g. `{ localOpts; extraConfigLua; }`).
     ftp = {
       prefix = "after/ftplugin/";
       suffix = ".lua";
-      toValue = v: { localOpts = v; };
+      route =
+        v:
+        if lib.isString v then
+          {
+            target = "extraFiles";
+            value.text = v;
+          }
+        else
+          {
+            target = "files";
+            value = if v ? localOpts then v else { localOpts = v; };
+          };
     };
     injections = {
       prefix = "after/queries/";
       suffix = "/injections.scm";
-      toValue = v: { text = v; };
+      route = v: {
+        target = "extraFiles";
+        value.text = v;
+      };
     };
     snippets = {
       prefix = "snippets/";
       suffix = ".json";
-      toValue = v: { text = toJSON v; };
+      route = v: {
+        target = "extraFiles";
+        value.text = toJSON v;
+      };
     };
   };
 in
@@ -47,11 +71,27 @@ in
       cmd
       ;
 
-    files =
+    # Build nixvim file content from a per-filetype spec, returning
+    # `{ files, extraFiles }` partitioned by kind so callers can't misroute a
+    # kind to the wrong nixvim option. Splice both back into the module with
+    # `inherit`, regardless of which one a given spec actually populates:
+    #
+    #   inherit (mkVimFiles { sh = { ftp = {...}; snippets = {...}; }; }) files extraFiles;
+    #
+    # The spec is `{ <filetype> = { <kind> = value; }; }`. Each kind (see
+    # `fileKinds`) fixes the on-disk path (`prefix + filetype + suffix`) and how
+    # its value is interpreted:
+    #   ftp        after/ftplugin/<ft>.lua       string -> raw lua (extraFiles);
+    #                                             attrset -> managed `files` submodule,
+    #                                             bare attrs treated as `localOpts`.
+    #   injections after/queries/<ft>/injections.scm   raw scm query string.
+    #   snippets   snippets/<ft>.json            attrset, encoded to JSON.
+    # Unknown kinds throw. Multiple kinds/filetypes may be combined in one call.
+    mkVimFiles =
       specs:
       let
-        # one { path = value; } per filetype/kind combination, named by its kind
-        fileAttrsList = lib.concatMap (
+        # one { target, name, value } per filetype/kind combination
+        entries = lib.concatMap (
           ft:
           map (
             kind:
@@ -59,11 +99,21 @@ in
               meta = fileKinds.${kind} or (throw "unknown vim file kind ${kind}");
             in
             {
-              ${meta.prefix + ft + meta.suffix} = meta.toValue specs.${ft}.${kind};
+              inherit (meta.route specs.${ft}.${kind}) target value;
+              name = meta.prefix + ft + meta.suffix;
             }
           ) (lib.attrNames specs.${ft})
         ) (lib.attrNames specs);
+        byTarget =
+          target:
+          entries
+          |> lib.filter (e: e.target == target)
+          |> map (e: lib.nameValuePair e.name e.value)
+          |> lib.listToAttrs;
       in
-      lib.mergeAttrsList fileAttrsList;
+      {
+        files = byTarget "files";
+        extraFiles = byTarget "extraFiles";
+      };
   };
 }
