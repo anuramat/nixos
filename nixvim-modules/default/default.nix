@@ -9,7 +9,7 @@
     inputs.self.sharedModules.nixpkgs
     ./basic.nix
     ./completion.nix
-    ./custom
+    ./custom.nix
     ./filemgr.nix
     ./fzf.nix
     ./git.nix

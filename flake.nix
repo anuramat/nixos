@@ -115,6 +115,17 @@
       url = "github:calico32/waybar-niri-windows";
       flake = false;
     };
+
+    # nixvim plugins not packaged in nixpkgs (pinned; tree-climber's postPatch
+    # is rev-sensitive, so update deliberately)
+    wastebin-nvim = {
+      url = "github:matze/wastebin.nvim/7a70a7e5efc2af5025134c395bd27e3ada9b8629";
+      flake = false;
+    };
+    tree-climber-rust-nvim = {
+      url = "github:adaszko/tree_climber_rust.nvim/002358ab6f0b4696b75905804ea7f1dca34a7ccd";
+      flake = false;
+    };
   };
 
   outputs = args: import ./outputs.nix args;

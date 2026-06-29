@@ -2502,9 +2502,11 @@
         "stylix": "stylix",
         "subcat": "subcat",
         "todo": "todo",
+        "tree-climber-rust-nvim": "tree-climber-rust-nvim",
         "treefmt-nix": "treefmt-nix_5",
         "tt-schemes": "tt-schemes",
         "vicode": "vicode",
+        "wastebin-nvim": "wastebin-nvim",
         "waybar-niri-windows": "waybar-niri-windows",
         "zed-editor": "zed-editor"
       }
@@ -3989,6 +3991,23 @@
         "type": "github"
       }
     },
+    "tree-climber-rust-nvim": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1723142945,
+        "narHash": "sha256-HDv8/52RZo/aAzcWxXfbYtPzzLRMwf+uhPRqz4I9Png=",
+        "owner": "adaszko",
+        "repo": "tree_climber_rust.nvim",
+        "rev": "002358ab6f0b4696b75905804ea7f1dca34a7ccd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "adaszko",
+        "repo": "tree_climber_rust.nvim",
+        "rev": "002358ab6f0b4696b75905804ea7f1dca34a7ccd",
+        "type": "github"
+      }
+    },
     "treefmt-nix": {
       "inputs": {
         "nixpkgs": "nixpkgs_7"
@@ -4241,6 +4260,23 @@
         "owner": "vllm-project",
         "ref": "v0.22.0",
         "repo": "vllm",
+        "type": "github"
+      }
+    },
+    "wastebin-nvim": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1746613767,
+        "narHash": "sha256-XtQlYdd2dDNaKN7wxJfGK0TVnPSX7Z4adVZ+MFqFu2Q=",
+        "owner": "matze",
+        "repo": "wastebin.nvim",
+        "rev": "7a70a7e5efc2af5025134c395bd27e3ada9b8629",
+        "type": "github"
+      },
+      "original": {
+        "owner": "matze",
+        "repo": "wastebin.nvim",
+        "rev": "7a70a7e5efc2af5025134c395bd27e3ada9b8629",
         "type": "github"
       }
     },
