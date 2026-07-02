@@ -19,9 +19,13 @@ in
         Order should be such that I can comfortably learn what changed in this
         diff, and incrementally build a mental model of the changes.
 
-        You must omit the changes to tests from the review guide.
 
         After the bullet points, provide a concise summary of the changes.
+
+        You must omit the changes to tests from the review guide. If there are
+        files that only had tests changed/added/removed, you must list them in a
+        separate list after the summary -- it should be a bullet point list of
+        file names, with no explanations.
       '';
     };
     iterate_spec = rec {
