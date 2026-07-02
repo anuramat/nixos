@@ -118,7 +118,7 @@ in
           "pyright-lsp@claude-plugins-official" = false;
         };
         includeCoAuthoredBy = false;
-
+        switchModelsOnFlag = false;
         preferredNotifChannel = "ghostty"; # kitty = osc99, ghostty = osc777
         remoteControlAtStartup = true;
         showClearContextOnPlanAccept = true;
