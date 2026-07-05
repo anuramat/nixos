@@ -77,6 +77,7 @@ in
                   agentDir = "claude";
                   package = pkgs.claude-code;
                   args = [ "--dangerously-skip-permissions" ];
+                  extraRwDirs = [ config.home.sessionVariables.CODEX_HOME ];
                 }
                 // overrides
               );
