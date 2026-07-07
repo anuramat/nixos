@@ -15,6 +15,7 @@
       powerMode = "quiet";
       fans =
         let
+          # 0%, 20%, 40%, 60%, 80%, 100%
           rampupCurve = "35,50,60,85,90";
           rampdownCurve = "0,45,55,70,85";
         in
