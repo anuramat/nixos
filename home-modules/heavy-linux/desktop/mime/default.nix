@@ -10,26 +10,17 @@ let
     attrNames
     concatLists
     listToAttrs
-    mapAttrs
-    typeOf
-    toJSON
+    concatMap
     ;
   inherit (lib)
     splitString
     filter
     filterAttrs
     strings
-    attrsets
     unique
     ;
 
   readLines = v: v |> readFile |> splitString "\n" |> filter (x: x != "");
-  getSchema = attrsets.mapAttrsRecursive (_path: typeOf);
-  getMatches =
-    patterns: x:
-    mapAttrs (
-      _name: schema: if typeOf x == "set" then schema == getSchema x else schema == typeOf x
-    ) patterns;
 
   mimeFromDesktop =
     package:
@@ -62,36 +53,18 @@ let
     })
     |> listToAttrs;
 
-  mimePatterns = {
-    parts = {
-      prefix = "string";
-      suffixes = "list";
-    };
-    exact = "string";
-    exactList = "list";
-    file = "path";
-  };
-  # thingie to actual mime type list
-  generateMimeTypes =
-    things:
-    things
-    |> map (
-      v:
-      let
-        matches = getMatches mimePatterns v;
-      in
-      if matches.parts then
-        map (suffix: "${v.prefix}/${suffix}") v.suffixes
-      else if matches.exact then
-        [ v ]
-      else if matches.exactList then
-        v
-      else if matches.file then
-        v |> readLines
-      else
-        throw "illegal pattern: ${toJSON v}"
-    )
-    |> concatLists;
+  # one thing (path/list/string/{prefix,suffixes}) to a mime type list
+  toMimes =
+    v:
+    if builtins.isPath v then
+      readLines v
+    else if builtins.isList v then
+      v
+    else if builtins.isString v then
+      [ v ]
+    else
+      map (suffix: "${v.prefix}/${suffix}") v.suffixes;
+  generateMimeTypes = concatMap toMimes;
 
   applications = {
     browser = "firefox.desktop";
