@@ -1,10 +1,5 @@
 # TODO try removing tmpdir
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ pkgs, ... }:
 let
   # minimal valid pdf file, base64 encoded
   # TODO maybe put to a file in nix store
@@ -23,7 +18,6 @@ let
         pdf="$(mktemp --tmpdir "$(basename -s .typ "$typ")-XXXXXXXX.pdf")"
         echo '${pdfPlaceholder}' | base64 -d >"$pdf"
         nohup zathura "$pdf" &>/dev/null &
-        # zathura_pid="$!"
         disown
         typst watch "$@" "$typ" "$pdf"
         # TODO close zathura on ctrl-c somehow
@@ -33,8 +27,6 @@ in
 {
   home.packages = [
     pkgs.typst
-  ]
-  ++ lib.optionals config.gui [
     hotdoc
   ];
   xdg.dataFile =
