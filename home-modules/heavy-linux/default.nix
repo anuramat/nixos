@@ -7,7 +7,7 @@
     ./terminals.nix
   ];
 
-  stylix.iconTheme =
+  stylix.icons =
     let
       dark = "Dracula";
     in
