@@ -16,7 +16,6 @@ let
         vicode
         subcat
         nil
-        mods
         todo
         statix
         deadnix

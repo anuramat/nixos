@@ -57,7 +57,6 @@
     vicode.url = "github:anuramat/vicode/dev";
 
     # forks
-    mods.url = "github:anuramat/mods/dev";
     protonmail-bridge = {
       url = "github:anuramat/proton-bridge/dev";
       flake = false;
