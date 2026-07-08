@@ -52,9 +52,12 @@ in
         STACK_ROOT = "${config.xdg.dataHome}/stack";
         STACK_XDG = "1";
 
-        VIRTUAL_ENV_DISABLE_PROMPT = "1"; # hide python venv prompt
+        NODE_REPL_HISTORY = "${XDG_DATA_HOME}/node_repl_history";
+        DOT_SAGE = "${config.xdg.configHome}/sage"; # sage math
+        DVDCSS_CACHE = "${XDG_DATA_HOME}/dvdcss"; # VLC dependency
+        MPLAYER_HOME = "${config.xdg.configHome}/mplayer"; # unused but ends up in $HOME otherwise
 
-        # XDG TODO move stuff here from the shims file
+        VIRTUAL_ENV_DISABLE_PROMPT = "1"; # hide python venv prompt
 
         ESCDELAY = "25";
 

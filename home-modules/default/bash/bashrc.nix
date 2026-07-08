@@ -127,7 +127,6 @@ in
   programs.bash.bashrcExtra =
     # bash
     ''
-      source ${./xdg_shims.sh} # TODO go through, verify, then move to env vars
       [[ $- == *i* ]] || return
       # WARN here order matters for sure
       source ${./git.sh}
