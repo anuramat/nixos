@@ -24,7 +24,6 @@ in
     swayidle = {
       enable = true;
       # idlehint = 300; # TODO implement/beg
-      # BUG duplicate events overwrite previous definitions: <https://github.com/nix-community/home-manager/issues/4432>
       timeouts = [
         {
           timeout = 300;
@@ -36,21 +35,11 @@ in
           resumeCommand = screen.on;
         }
       ];
-      events = [
-        {
-          event = "before-sleep";
-          command = lock;
-        }
-        {
-          event = "lock";
-          command = lock;
-        }
-        {
-          event = "unlock";
-          command = unlock;
-          # TODO also turn on screen
-        }
-      ];
+      events = {
+        before-sleep = lock;
+        lock = lock;
+        unlock = unlock; # TODO also turn on screen
+      };
     };
   };
 }

@@ -47,6 +47,7 @@ in
 
   programs.ssh = {
     enable = true;
+    enableDefaultConfig = false; # NOTE: deprecated, removed in next release
     settings =
       let
         prefix = config.home.username + "-";
