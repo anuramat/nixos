@@ -45,10 +45,6 @@ in
   ];
 
   lib.agents = {
-    varNames = {
-      sandboxWrapperPath = "AGENT_SANDBOX_WRAPPER_PATH";
-    };
-
     prependFrontmatter =
       text: fields:
       let

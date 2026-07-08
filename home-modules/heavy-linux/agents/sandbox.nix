@@ -5,7 +5,6 @@
   ...
 }:
 let
-  inherit (config.lib.agents) varNames;
   inherit (lib)
     escapeShellArgs
     getName
@@ -177,8 +176,6 @@ in
                 workspaceDirs+=("$i")
                 workspaceDirs+=("$i")
               done
-              ${varNames.sandboxWrapperPath}="$0"
-              export ${varNames.sandboxWrapperPath}
 
               [ -v TMPDIR ] || TMPDIR="/tmp"
               uc3sock="''${XDG_RUNTIME_DIR:-/run/user/$UID}/uc3.sock"

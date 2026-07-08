@@ -1,4 +1,4 @@
-{ lib, config, ... }:
+{ lib, ... }:
 let
   topHead = "#";
   sectionHead = "${topHead}#";
@@ -34,10 +34,8 @@ let
           - To explore NixOS options, you SHOULD use `nixos-option $OPTION_NAME`
         '';
 
-        # TODO drop sandboxWrapperPath
         sandbox = ''
-          You are running in a sandbox. The path to sandbox script is stored in
-          environment variable `${config.lib.agents.varNames.sandboxWrapperPath}`.
+          You are running in a sandbox.
 
           Some commands may not work as expected. If you suspect that a command
           is not working because of the sandbox, you MAY ask the user to run the
