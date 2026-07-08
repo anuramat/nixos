@@ -13,6 +13,13 @@ let
   gpgIdPath = "${config.programs.password-store.settings.PASSWORD_STORE_DIR}/.gpg-id";
   gnupgHome = config.programs.gpg.homedir;
 
+  # hm exports GNUPGHOME via sessionVariables for login shells, but not for
+  # the systemd path that runs these scripts, so set it explicitly
+  exportGnupgHome = ''
+    GNUPGHOME=${escapeShellArg gnupgHome}
+    export GNUPGHOME
+  '';
+
   keyring = rec {
 
     list = pkgs.writeShellApplication {
@@ -23,10 +30,7 @@ let
         gawk
         findutils # xargs
       ];
-      text = ''
-        # TODO is this required? should already be set in the environment
-        GNUPGHOME=${escapeShellArg config.programs.gpg.homedir}
-        export GNUPGHOME
+      text = exportGnupgHome + ''
         xargs -r gpg --list-keys --with-colons --with-keygrip < ${escapeShellArg gpgIdPath} \
         	| awk -F: '/^sub/{x=1} x&&/^grp/{print $10;x=0}'
       '';
@@ -40,10 +44,7 @@ let
         findutils # xargs
         list
       ];
-      text = ''
-        # TODO is this required? should already be set in the environment
-        GNUPGHOME=${escapeShellArg config.programs.gpg.homedir}
-        export GNUPGHOME
+      text = exportGnupgHome + ''
         pass-list-keygrips | xargs -I{} gpg-connect-agent "clear_passphrase --mode=normal {}" /bye
       '';
     };
