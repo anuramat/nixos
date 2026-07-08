@@ -7,25 +7,7 @@ let
   mkInstructions =
     args:
     let
-
-      inherit (lib)
-        isList
-        isString
-        isAttrs
-        ;
-      when =
-        cond: val:
-        if cond then
-          val
-        else if isAttrs val then
-          { }
-        else if isString val then
-          ""
-        else if isList val then
-          [ ]
-        else
-          throw "huh";
-      for = agent: when (agent == args.agent);
+      for = agent: str: if args.agent == agent then str else "";
       # TODO make it take a list -- set of agent names
 
       sections = {
@@ -142,12 +124,6 @@ let
 in
 {
   lib.agents.instructions = {
-    generic = mkInstructions {
-      agent = null;
-    };
-    opencode = mkInstructions {
-      agent = "opencode";
-    };
     claude = mkInstructions {
       agent = "claude";
     };
