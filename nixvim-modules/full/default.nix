@@ -1,13 +1,10 @@
 {
   config,
-  inputs,
-  pkgs,
   ...
 }:
 {
   imports = [
-    inputs.self.sharedModules.nixpkgs
-    ./basic.nix
+    ../base
     ./completion.nix
     ./custom.nix
     ./filemgr.nix
@@ -17,16 +14,7 @@
     ./lang
     ./misc.nix
     ./tags.nix
-    ./treesitter.nix
-    ./ui.nix
-    ./editing.nix
-    ./lib.nix
   ];
-
-  extraPlugins = [
-    pkgs.vimPlugins.tinted-nvim
-  ];
-  luaLoader.enable = true;
 
   keymaps =
     let

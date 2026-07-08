@@ -138,7 +138,6 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       # }}}1
 
       overlays = mapModuleDir (_name: module: import module { inherit inputs lib; }) ./overlays; # TODO use mkImportSet as well?
-      # TODO split into default and heavy, then add light version to anuramat-root
       nixvimModules = mkImportSet ./nixvim-modules;
       sharedModules = mkImportSet ./shared-modules;
     };
@@ -178,19 +177,32 @@ flake-parts.lib.mkFlake { inherit inputs; } {
           inherit (pkgs) protonmail-bridge waybar-niri-windows;
         }
         // {
-          # builds packages.neovim and runs it headless to catch startup errors
+          # build each neovim variant and run it headless to catch startup errors
           neovim = nixvim.lib.${system}.check.mkTestDerivationFromNvim {
             name = "neovim";
             nvim = config.packages.neovim;
           };
+          neovim-minimal = nixvim.lib.${system}.check.mkTestDerivationFromNvim {
+            name = "neovim-minimal";
+            nvim = config.packages.neovim-minimal;
+          };
         };
       # }}}1
-      packages.neovim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
-        extraSpecialArgs = {
-          inherit inputs;
+      packages =
+        let
+          mkNvim =
+            module:
+            nixvim.legacyPackages.${system}.makeNixvimWithModule {
+              extraSpecialArgs = {
+                inherit inputs;
+              };
+              inherit module;
+            };
+        in
+        {
+          neovim = mkNvim inputs.self.nixvimModules.full;
+          neovim-minimal = mkNvim inputs.self.nixvimModules.base;
         };
-        module = inputs.self.nixvimModules.default;
-      };
       devShells.default = pkgs.mkShell {
         packages = with pkgs; [
           neovim

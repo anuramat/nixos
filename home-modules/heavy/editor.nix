@@ -9,7 +9,7 @@
     nixvim = {
       enable = true;
       imports = [
-        inputs.self.nixvimModules.default
+        inputs.self.nixvimModules.full
       ];
       defaultEditor = true;
     };
