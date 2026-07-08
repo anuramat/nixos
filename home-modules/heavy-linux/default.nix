@@ -31,7 +31,7 @@
       in
       {
         "keys.viewer" = binds;
-        "keys.galllery" = binds;
+        "keys.gallery" = binds;
       };
   };
 
