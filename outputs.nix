@@ -37,7 +37,6 @@ flake-parts.lib.mkFlake { inherit inputs; } {
   imports = [
     inputs.git-hooks-nix.flakeModule
     inputs.home-manager.flakeModules.home-manager
-    inputs.nix-topology.flakeModule
     inputs.treefmt-nix.flakeModule
   ];
   systems = [
