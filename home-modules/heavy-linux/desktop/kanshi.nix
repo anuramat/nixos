@@ -48,20 +48,22 @@ in
 
             profiles =
               let
+                # NOTE negative/larger y values break xwayland
+                extPos = "0,9999";
                 home = {
                   criteria = "Dell Inc. DELL S2722QC 192SH24";
                   scale = 1.5;
                   adaptiveSync = false;
-                  position = "0,9999";
+                  position = extPos;
                 };
                 generic = {
                   criteria = "*";
-                  position = "0,9999";
+                  position = extPos;
                 };
                 audimax = {
                   criteria = "PNP(LTM) RallyBar Mini 0x88888800";
                   scale = 1.0;
-                  position = "0,9999";
+                  position = extPos;
                 };
                 builtinDisplay = cfg.builtinDisplay // {
                   position = "0,0";
