@@ -1,4 +1,5 @@
 {
+  lib,
   pkgs,
   osConfig ? null,
   ...
@@ -40,6 +41,8 @@
         };
       };
       services.network-manager-applet.enable = osConfig.networking.networkmanager.enable;
+      systemd.user.services.network-manager-applet.Service.Restart =
+        lib.mkIf osConfig.networking.networkmanager.enable "on-failure";
     }
   else
     { }
