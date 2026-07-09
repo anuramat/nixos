@@ -113,6 +113,10 @@
       url = "github:calico32/waybar-niri-windows";
       flake = false;
     };
+    zotero-mcp = {
+      url = "github:54yyyu/zotero-mcp";
+      flake = false;
+    };
 
     # nixvim plugins not packaged in nixpkgs (pinned; tree-climber's postPatch
     # is rev-sensitive, so update deliberately)
