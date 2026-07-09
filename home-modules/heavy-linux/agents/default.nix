@@ -19,7 +19,6 @@ in
     ./instructions.nix
     ./sandbox.nix
     ./uc3
-    ./whisper.nix
   ];
 
   lib.agents = {
