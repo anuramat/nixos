@@ -156,6 +156,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     in
     (mapModuleDir (_name: module: import module argsWithInputs) ./parts)
     // {
+      legacyPackages = pkgs;
       # evaluate every host's toplevel (firing all assertions) without building it
       checks = # {{{1
         (
