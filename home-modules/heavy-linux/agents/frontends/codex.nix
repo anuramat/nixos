@@ -50,7 +50,6 @@ let
           "trusted";
 
         model_verbosity = "low";
-        model = "gpt-5.5";
 
         web_search = "live"; # "disabled" | "cached" | "live"
         service_tier = "fast"; # "fast" | unset
