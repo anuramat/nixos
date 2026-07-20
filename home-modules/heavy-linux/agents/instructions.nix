@@ -128,5 +128,8 @@ in
     codex = mkInstructions {
       agent = "codex";
     };
+    omp = mkInstructions {
+      agent = "omp";
+    };
   };
 }
