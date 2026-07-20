@@ -22,6 +22,13 @@ let
       text = toJSON value;
     };
 
+  yamlFile =
+    value:
+    writeTextFile {
+      name = "value.yaml";
+      text = lib.generators.toYAML { } value;
+    };
+
   diff =
     sourceFile: targetFile:
     trim
@@ -72,6 +79,28 @@ let
     in
     lib.hm.dag.entryAfter [ "writeBoundary" ] script;
 
+  mkYqActivationScript =
+    source: target:
+    let
+      script =
+        # bash
+        ''
+          target=${lib.escapeShellArg target}
+          current=$(mktemp)
+          merged=$(mktemp)
+          mkdir -p "$(dirname "$target")"
+          { [ -s "$target" ] && cat "$target" || echo '{}'; } >"$current"
+          ${getExe pkgs.yq-go} eval-all \
+            'select(fileIndex == 0) * select(fileIndex == 1)' \
+            "$current" ${yamlFile source} >"$merged"
+          rm "$current"
+
+          ${diff "$merged" "$target"}
+          run mv "$merged" "$target"
+        '';
+    in
+    lib.hm.dag.entryAfter [ "writeBoundary" ] script;
+
   secrets =
     if osConfig != null then
       osConfig.age.secrets
@@ -97,5 +126,6 @@ in
   lib.home = {
     inherit mkGenericActivationScript mkAgenixExportScript;
     json.set = mkJqActivationScript;
+    yaml.set = mkYqActivationScript;
   };
 }
