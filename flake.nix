@@ -76,6 +76,10 @@
       url = "github:sadjow/codex-cli-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    oh-my-pi = {
+      url = "github:yuxqiu/omp-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     copilot-cli = {
       url = "github:scarisey/copilot-cli-flake";
       inputs.nixpkgs.follows = "nixpkgs";

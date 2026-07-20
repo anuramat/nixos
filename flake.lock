@@ -2116,6 +2116,26 @@
         "type": "github"
       }
     },
+    "oh-my-pi": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1784427145,
+        "narHash": "sha256-0Omh/pDaaE71gVqyuSGTCWsduj83Uggk72qQzczOO7k=",
+        "owner": "yuxqiu",
+        "repo": "omp-nix",
+        "rev": "f981c7a2b357fac0a1466ba7b9a3d3353c4d2b69",
+        "type": "github"
+      },
+      "original": {
+        "owner": "yuxqiu",
+        "repo": "omp-nix",
+        "type": "github"
+      }
+    },
     "pass-secret-service": {
       "flake": false,
       "locked": {
@@ -2265,6 +2285,7 @@
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nixpkgs-unstable-misc": "nixpkgs-unstable-misc",
         "nixvim": "nixvim",
+        "oh-my-pi": "oh-my-pi",
         "pass-secret-service": "pass-secret-service",
         "protonmail-bridge": "protonmail-bridge",
         "sem": "sem",

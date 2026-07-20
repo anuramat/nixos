@@ -199,6 +199,7 @@ let
     with inputs;
     [
       neovim-nightly-overlay
+      oh-my-pi
     ]
     |> map (v: v.overlays.default);
 
