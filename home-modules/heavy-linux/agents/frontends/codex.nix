@@ -38,8 +38,22 @@ let
         notice = {
           hide_full_access_warning = true;
         };
-        tui.keymap.composer = {
-          queue = "alt-enter";
+        tui = {
+          status_line = [
+            "model-with-reasoning"
+            "current-dir"
+            "branch-changes"
+            "run-state"
+            "context-remaining"
+            "five-hour-limit"
+            "weekly-limit"
+            "total-input-tokens"
+            "total-output-tokens"
+          ];
+          status_line_use_colors = true;
+          keymap.composer = {
+            queue = "alt-enter";
+          };
         };
         model_reasoning_effort = "xhigh";
         plan_mode_reasoning_effort = "xhigh";
