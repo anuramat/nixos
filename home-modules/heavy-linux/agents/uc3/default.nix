@@ -6,15 +6,27 @@
 let
   excludeShellChecks = map (v: "SC" + toString v) config.lib.shellcheck.excludes;
 
+  uc3Client = pkgs.writers.writePython3Bin "uc3-client" { } (
+    builtins.readFile ./uc3-client.py
+  );
+
   broker = pkgs.writeShellApplication {
     name = "uc3-broker";
+    runtimeInputs = with pkgs; [
+      coreutils
+      openssh
+      util-linux
+    ];
     inherit excludeShellChecks;
     text = builtins.readFile ./broker.sh;
   };
 
   uc3ctl = pkgs.writeShellApplication {
     name = "uc3ctl";
-    runtimeInputs = [ pkgs.socat ];
+    runtimeInputs = with pkgs; [
+      coreutils
+      uc3Client
+    ];
     inherit excludeShellChecks;
     text = builtins.readFile ./shim.sh;
   };

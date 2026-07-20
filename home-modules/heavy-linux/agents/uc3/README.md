@@ -10,7 +10,7 @@ only resource backstop.
 ## Usage
 
 ```
-uc3ctl <command> [arg ...]
+uc3ctl [-t SECS] <command> [arg ...]
 ```
 
 Runs `<command>` on uc3 and exits with its status. Semantics mirror
@@ -27,13 +27,24 @@ uc3ctl 'cat ~/agent/logs/<id>.out'
 # upload: stdin is streamed to the remote command
 tar c -C proj . | uc3ctl 'mkdir -p ~/agent/repo && tar x -C ~/agent/repo'
 
-# download: binary stdout is unsupported, so encode
-uc3ctl 'base64 ~/result.bin' | base64 -d > result.bin
+# binary download
+uc3ctl 'cat ~/result.bin' > result.bin
+
+# multiline script: pass a file on stdin, not a heredoc in the command argument
+uc3ctl 'bash -s' < script.sh
 ```
 
 The agent owns its cluster-side layout (repo location, `.sif` image, scratch
 dirs) — nothing is baked in. Long synchronous commands hold a connection slot,
-so `sbatch`/background long work and poll rather than blocking the relay.
+so `sbatch`/background long work and poll rather than blocking the relay. The
+local timeout defaults to 300 seconds; raise it with `-t SECS` for large uploads
+or long synchronous work, or use `-t 0` to rely only on the broker's one-hour
+cap.
+
+The request command must stay on one line. For multiline logic, put the script
+in a file and use `uc3ctl 'bash -s' < script.sh`. Inline heredocs such as
+`uc3ctl 'bash -s' <<'EOF'` and heredocs/newlines embedded in the command argument
+are unsupported: they can leave the remote shell waiting for input.
 
 ## Architecture
 
@@ -42,13 +53,16 @@ uc3/
   default.nix   # uc3ctl package, systemd socket + service, log dir
   broker.sh     # host side, stdio; one instance per connection
   shim.sh       # installed as uc3ctl; agent + human entry point
+  uc3-client.py # socket transport and binary-safe trailer handling
 ```
 
-`uc3ctl` (the shim) has zero authority: it connects to a unix socket at
-`$XDG_RUNTIME_DIR/uc3.sock`, sends the command line followed by its own stdin,
-strips a trailer from the response, and exits with the remote status. systemd
+`uc3ctl` has zero authority: its shell shim validates the invocation and execs
+a Python client, which connects to `$XDG_RUNTIME_DIR/uc3.sock`, sends the
+command line followed by stdin, streams the response while retaining only a
+possible EOF trailer, and exits with the remote status. Response EOF completes
+the transaction even if stdin is still open. systemd
 accepts each connection (`Accept=yes`) and runs one `uc3-broker` per
-connection; the broker logs the command, then runs `ssh uc3 -- <cmd>` with the
+connection; the broker logs the command and outcome, then runs `ssh uc3 <cmd>` with the
 auth plumbing it inherits on the host.
 
 ## Trust model
@@ -77,29 +91,38 @@ auth plumbing it inherits on the host.
 - **Request:** one `\n`-terminated command line, optionally followed by a stdin
   payload streamed after it. The broker reads the first line as the command and
   forwards the rest as that command's stdin (uploads). The command must be
-  **single-line** — use `;` or `bash -c '…'` for multiple statements.
+  **single-line** — use `uc3ctl 'bash -s' < script.sh` for multiline logic.
 - **Response:** remote stdout+stderr (merged) streamed back, then a trailer
-  line `--uc3-exit:<code>--`. The shim strips the trailer and exits with
+  line `--uc3-exit:<code>--`. The client strips the trailer and exits with
   `<code>`; a missing trailer → exit 1. `timeout` kill → 124; ssh rc 255 → a
   distinct "cluster unreachable" message (ambiguous with a remote command that
   itself exits 255 — accepted).
-- **Binary stdout is unsupported:** the trailer is in-band on stdout, so a
-  download whose bytes aren't text-safe (or contain the trailer) will corrupt.
-  Encode downloads (base64 / `tar | base64`). Uploads (stdin) are unaffected.
+- Stdout is binary-safe. A trailer-shaped byte sequence in the middle of output
+  is ordinary payload; only one in the reserved EOF position is interpreted as
+  protocol metadata.
 - Broker errors are one line, `uc3: ERROR: …`, sent over the socket. The broker
-  **always** emits the trailer, including on timeout/unreachable, so the shim
+  **always** emits the trailer, including on timeout/unreachable, so the client
   never hangs.
+- The client bounds the complete local socket operation to 300 seconds by
+  default. A local expiry exits 124 with a distinct diagnostic; `-t 0` disables
+  this bound without changing the broker's 3600-second cap.
 
 ## Logging
 
-- Before running, the broker appends one `timestamp\tcommand` line to
+- The broker appends matching `START` and `END` lines to
   `$STATE_DIRECTORY/commands.log` (`StateDirectory=uc3` →
   `~/.local/state/uc3/commands.log`), outside any sandbox bind. Concurrent
-  connections append under `flock`.
+  connections append under `flock`:
+
+  ```text
+  <timestamp>\tSTART\t<id>\t<command>
+  <timestamp>\tEND\t<id>\trc=<code>\tdur=<seconds>s
+  ```
+
 - Only the command line is logged, not stdin/stdout. **Blind spot:** a remote
-  shell (`uc3ctl 'bash -c …'`, `uc3ctl bash` with a piped script) logs as the
-  top-level invocation, not the lines it runs. Top-level invocations are the
-  audit unit.
+  shell (`uc3ctl 'bash -c …'` or `uc3ctl 'bash -s' < script.sh`) logs as one
+  opaque top-level invocation, not the lines it runs. Top-level invocations are
+  the audit unit.
 - Broker diagnostics go to the journal: `journalctl --user -u 'uc3-broker@*'`.
 
 ## Host dependencies
@@ -126,6 +149,9 @@ These live outside this directory; the relay depends on them:
    `uc3-askpass OTP` fail; no `~/.ssh` and **no ControlMaster socket** are
    visible. The CM-socket check is load-bearing — if it leaked, the agent could
    `ssh uc3` directly and bypass the log.
-4. A nonzero remote command makes `uc3ctl` exit with the same code; a >1 h
-   synchronous command is killed at the `timeout` and reports 124.
+4. A nonzero remote command makes `uc3ctl` exit with the same code; a >300 s
+   call needs an explicit larger `-t`, while a >1 h synchronous command is
+   killed by the broker and reports 124.
 5. Network down: `uc3ctl 'squeue'` → "cluster unreachable", no hang, no prompt.
+6. A binary `cat` download matches the remote file's byte count and SHA-256;
+   `uc3ctl 'echo a; sleep 5; echo b'` prints `a` immediately.
