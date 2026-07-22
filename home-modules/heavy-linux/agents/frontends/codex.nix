@@ -5,10 +5,9 @@
   ...
 }:
 let
-  inherit (lib) mapAttrs' mkEnableOption mkIf;
+  inherit (lib) mapAttrs';
   inherit (config.lib) agents;
 
-  cfg = config.services.codexRemote;
   codexHome = config.xdg.configHome + "/codex";
   codexCfgPath = codexHome + "/config.toml";
 
@@ -101,23 +100,6 @@ let
   env = {
     CODEX_HOME = codexHome;
   };
-  # codex remote-control
-  codex-remote = config.lib.agents.mkPackages {
-    wrapperName = "codex-remote";
-    binName = "codex";
-    package = pkgs.codex;
-    args = [
-      "--dangerously-bypass-approvals-and-sandbox"
-      "remote-control"
-    ];
-    inherit env;
-    agentDir = null;
-    extraRwDirs = [
-      codexHome
-      "${config.home.homeDirectory}/Documents/Codex"
-      "/etc/nixos"
-    ];
-  };
   codex = config.lib.agents.mkPackages {
     binName = "codex";
     package = pkgs.codex;
@@ -130,14 +112,11 @@ let
   };
 in
 {
-  options.services.codexRemote.enable = mkEnableOption "codex remote control service";
-
   config = {
     home.sessionVariables = env;
     home = {
       packages = [
         codex
-        codex-remote
       ];
       activation = {
         codexConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
@@ -149,15 +128,6 @@ in
     xdg.configFile = {
       "codex/AGENTS.md" = {
         text = config.lib.agents.instructions.codex;
-      };
-    };
-    systemd.user.services = mkIf cfg.enable {
-      "codex-remote" = {
-        Unit.Description = "codex remote control service";
-        Service = {
-          ExecStart = "${codex-remote}/bin/codex-remote";
-          WorkingDirectory = "/tmp";
-        };
       };
     };
   };
