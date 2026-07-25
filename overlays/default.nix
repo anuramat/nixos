@@ -26,6 +26,7 @@ let
         zed-editor
         hermes
         copilot-cli
+        devin-cli
         ;
     });
 

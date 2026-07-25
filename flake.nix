@@ -84,6 +84,10 @@
       url = "github:scarisey/copilot-cli-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    devin-cli = {
+      url = "github:charliemeyer2000/devin-cli-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     hermes.url = "github:NousResearch/hermes-agent";
     niri = {
       url = "github:sodiboo/niri-flake";
