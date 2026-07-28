@@ -17,33 +17,27 @@
     ./swaylock.nix
     ./syncthing.nix
   ];
-
-  home.packages = with pkgs; [ shaderbg ];
-}
-// (
-  if osConfig != null then
+  config = lib.mkMerge [
     {
+      home.packages = with pkgs; [ shaderbg ];
+      services.avizo = {
+        enable = true;
+        settings.default.time = 0.5;
+      };
+    }
+    (lib.mkIf (osConfig != null) {
       services = {
         blueman-applet.enable = osConfig.services.blueman.enable;
-        avizo = {
-          enable = true;
-          settings = {
-            default = {
-              time = 0.5;
-            };
-          };
-        };
         udiskie = {
           enable = osConfig.services.udisks2.enable;
           notify = true;
           tray = "auto";
           automount = true;
         };
+        network-manager-applet.enable = osConfig.networking.networkmanager.enable;
       };
-      services.network-manager-applet.enable = osConfig.networking.networkmanager.enable;
       systemd.user.services.network-manager-applet.Service.Restart =
         lib.mkIf osConfig.networking.networkmanager.enable "on-failure";
-    }
-  else
-    { }
-)
+    })
+  ];
+}
