@@ -83,6 +83,10 @@ in
               );
             wrapperOverrides = {
               claude = {
+                env = {
+                  # CLAUDE_CODE_AUTO_COMPACT_WINDOW = 400000;
+                  # CLAUDE_AUTOCOMPACT_PCT_OVERRIDE = 100;
+                };
               };
               claude-oauth = {
                 tokens = t: {
