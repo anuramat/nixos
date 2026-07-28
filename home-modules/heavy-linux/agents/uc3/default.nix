@@ -6,9 +6,7 @@
 let
   excludeShellChecks = map (v: "SC" + toString v) config.lib.shellcheck.excludes;
 
-  uc3Client = pkgs.writers.writePython3Bin "uc3-client" { } (
-    builtins.readFile ./uc3-client.py
-  );
+  uc3Client = pkgs.writers.writePython3Bin "uc3-client" { } (builtins.readFile ./uc3-client.py);
 
   broker = pkgs.writeShellApplication {
     name = "uc3-broker";

@@ -87,10 +87,7 @@ def main():
         pump.start()
         return receive_response(sock)
     except LocalTimeout:
-        report(
-            f"local timeout after {seconds}s "
-            "(remote may still be running)"
-        )
+        report(f"local timeout after {seconds}s " "(remote may still be running)")
         return 124
     except BrokenPipeError:
         return 141
