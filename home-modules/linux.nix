@@ -15,6 +15,11 @@
       bubblewrap # sandboxing
       fuse-overlayfs
 
+      btrfs-progs
+      cryptsetup # luks etc
+      percollate # html to markdown
+      wavemon # wifi signal plot
+
       parted
       geteduroam-cli
       distrobox

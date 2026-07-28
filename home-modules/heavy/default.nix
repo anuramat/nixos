@@ -1,11 +1,9 @@
-{ inputs, config, ... }:
+{ config, ... }:
 {
   imports = [
     ./editor.nix
-    ./gui
     ./lang
     ./typst.nix
-    inputs.spicetify-nix.homeManagerModules.spicetify
     ./packages.nix
   ];
 

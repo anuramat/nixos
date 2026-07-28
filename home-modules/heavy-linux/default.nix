@@ -1,10 +1,17 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 {
   imports = [
     ./agents
     ./desktop
     ./email.nix
+    ./gui
     ./terminals.nix
+    inputs.spicetify-nix.homeManagerModules.spicetify
   ];
 
   stylix.icons =
@@ -36,6 +43,9 @@
   };
 
   home.packages = with pkgs; [
+    cudaPackages.cuda_nvcc
+    fontpreview
+
     # settings
     ddcutil # configure external monitors (eg brightness)
     crosspipe # pipewire graph

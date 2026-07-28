@@ -5,8 +5,10 @@
     typst-preview = {
       enable = true;
       settings = {
-        open_cmd = "${lib.getExe pkgs.chromium} --app=%s";
         invert_colors = "auto";
+      }
+      // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+        open_cmd = "${lib.getExe pkgs.chromium} --app=%s";
       };
     };
     lsp.servers.tinymist.enable = true;

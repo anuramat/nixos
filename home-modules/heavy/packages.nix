@@ -13,7 +13,6 @@
     imagemagickBig # CLI image manipulation
     libwebp # tools for WebP image format
     exiftool # read/write EXIF metadata
-    fontpreview
 
     # terminal image viewers
     chafa

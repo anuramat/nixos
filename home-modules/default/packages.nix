@@ -25,7 +25,6 @@
     # security
     age # file encryption
     ragenix # (r)agenix cli
-    cryptsetup # luks etc
 
     # network/communication
     aircrack-ng
@@ -64,10 +63,8 @@
     # miscellaneous unfiled TODO
     sem
     lspmux
-    wavemon # wifi signal plot
     nix-auth
     html2text # html to plain text
-    percollate # html to markdown
     fx # json viewer
     gron # make json greppable (every value gets its own line)
     csvkit
@@ -133,6 +130,5 @@
     unzip
     wget
     zip
-    btrfs-progs
   ];
 }
