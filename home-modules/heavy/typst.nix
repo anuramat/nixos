@@ -9,6 +9,7 @@ let
     runtimeInputs = with pkgs; [
       typst
       zathura
+      coreutils # mktemp --tmpdir is GNU-only; BSD mktemp would otherwise win on darwin
     ];
     text =
       # bash
