@@ -10,11 +10,13 @@
     ./hardware-configuration.nix
   ];
 
-  # no `local`/`heavy` layer here, so enable the minimal editor directly
-  home-manager.users.anuramat.programs.nixvim = {
-    enable = true;
-    defaultEditor = true;
-    imports = [ inputs.self.nixvimModules.base ];
+  home-manager.users.anuramat = {
+    imports = [ inputs.self.homeModules.nixvim ];
+    programs.nixvim = {
+      enable = true;
+      defaultEditor = true;
+      imports = [ inputs.self.nixvimModules.base ];
+    };
   };
 
   boot.loader.grub.enable = true;

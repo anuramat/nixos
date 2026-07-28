@@ -8,7 +8,6 @@
   imports = [
     inputs.nixvim.homeModules.nixvim
   ];
-  # TODO read the comment and verify; code seems to be fine
   # SLOP
   # Re-declare the option nixvim already defines, solely to extend its submodule's
   # specialArgs: submoduleWith declarations of the same option merge, concatenating

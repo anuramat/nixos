@@ -37,7 +37,6 @@ in
     ./readline.nix
     ./search.nix
     ./yazi.nix
-    ./options.nix
   ];
 
   home.packages = [

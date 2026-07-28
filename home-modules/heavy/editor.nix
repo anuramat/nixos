@@ -4,6 +4,8 @@
   ...
 }:
 {
+  imports = [ inputs.self.homeModules.nixvim ];
+
   stylix.targets.nixvim.plugin = "base16-nvim";
   programs = {
     nixvim = {
