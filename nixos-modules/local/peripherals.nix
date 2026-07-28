@@ -1,11 +1,17 @@
 {
+  config,
   pkgs,
   ...
 }:
+let
+  inherit (config.userConfig) username;
+in
 {
+  users.users.${username}.extraGroups = [ "dialout" ]; # serial ports
   # NOTE 2026-05-29 razer commented out because it breaks with newer kernel
   hardware = {
     # openrazer.enable = true;
+    openrazer.users = [ username ];
   };
   environment.systemPackages = with pkgs; [
     android-tools

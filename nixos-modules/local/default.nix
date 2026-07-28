@@ -34,7 +34,18 @@ in
     };
   };
 
-  services.getty.autologinOnce = true; # TODO only if full disk encryption
+  users.users.${username}.extraGroups = [
+    "video" # screen brightness
+    "audio" # just in case (?)
+    "camera" # gphoto2
+    "scanner"
+    "lp" # printers
+  ];
+
+  services.getty = {
+    autologinUser = username;
+    autologinOnce = true; # TODO only if full disk encryption
+  };
 
   security = {
     soteria.enable = true; # polkit auth agent

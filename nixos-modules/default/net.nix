@@ -6,8 +6,10 @@
 }:
 let
   inherit (config.age) secrets;
+  inherit (config.userConfig) username;
 in
 {
+  users.users.${username}.extraGroups = [ "networkmanager" ]; # wifi
   networking = {
     firewall = {
       enable = true;
