@@ -8,20 +8,19 @@
 let
   inherit (nixpkgs) lib;
   # helper {{{1
-  mapModuleDir =
+  mapDir =
     func: dir:
     builtins.readDir dir
-    |> builtins.attrNames
-    |> map (
-      relativePath:
+    |> lib.filterAttrs (entry: type: type == "directory" || lib.hasSuffix ".nix" entry)
+    |> lib.mapAttrs' (
+      entry: _:
       let
-        name = lib.removeSuffix ".nix" relativePath;
-        module = /${dir}/${relativePath};
+        name = lib.removeSuffix ".nix" entry;
       in
-      lib.nameValuePair name (func name module)
-    )
-    |> lib.listToAttrs;
-  mkImportSet = mapModuleDir (_: import);
+      lib.nameValuePair name (func name (dir + "/${entry}"))
+    );
+
+  mkImportSet = mapDir (_: import);
   # }}}1
 
   pkgsWithOverlay =
@@ -53,7 +52,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     {
       nixosModules = mkImportSet ./nixos-modules;
       homeModules = mkImportSet ./home-modules;
-      nixosConfigurations = mapModuleDir (
+      nixosConfigurations = mapDir (
         name: module:
         inputs.nixpkgs.lib.nixosSystem {
           modules = [
@@ -65,7 +64,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
           };
         }
       ) ./nixos-configurations;
-      homeConfigurations = mapModuleDir (
+      homeConfigurations = mapDir (
         name: module:
         inputs.home-manager.lib.homeManagerConfiguration {
           pkgs = pkgsWithOverlay homeSystems.${name};
@@ -108,12 +107,10 @@ flake-parts.lib.mkFlake { inherit inputs; } {
         let
           cacheFilename = "cache.pem.pub";
         in
-        builtins.readDir ./nixos-configurations
-        |> builtins.attrNames
-        |> map (
-          host:
+        mapDir (
+          host: hostDir:
           let
-            keyDir = ./nixos-configurations + "/${host}/keys";
+            keyDir = hostDir + "/keys";
             clientKeyFiles =
               builtins.readDir keyDir
               |> builtins.attrNames
@@ -122,7 +119,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
           in
           assert lib.assertMsg (builtins.pathExists keyDir)
             "nixos-configurations/${host}/keys/ is missing (expected *.pub, known_hosts, ${cacheFilename})";
-          lib.nameValuePair host {
+          {
             inherit clientKeyFiles;
             clientKeys = clientKeyFiles |> map builtins.readFile |> map lib.trim;
             knownHostsFile = keyDir + /known_hosts;
@@ -133,11 +130,10 @@ flake-parts.lib.mkFlake { inherit inputs; } {
               |> lib.filter (v: v != "")
               |> map (v: v |> lib.splitString " " |> lib.drop 1 |> lib.concatStringsSep " ");
           }
-        )
-        |> lib.listToAttrs;
+        ) ./nixos-configurations;
       # }}}1
 
-      overlays = mapModuleDir (_name: module: import module { inherit inputs lib; }) ./overlays; # TODO use mkImportSet as well?
+      overlays = mapDir (_name: module: import module { inherit inputs lib; }) ./overlays; # TODO use mkImportSet as well?
       nixvimModules = mkImportSet ./nixvim-modules;
       sharedModules = mkImportSet ./shared-modules;
     };
@@ -154,7 +150,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       };
       pkgs = pkgsWithOverlay system;
     in
-    (mapModuleDir (_name: module: import module argsWithInputs) ./parts)
+    (mapDir (_name: module: import module argsWithInputs) ./parts)
     // {
       legacyPackages = pkgs;
       # evaluate every host's toplevel (firing all assertions) without building it
