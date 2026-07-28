@@ -21,6 +21,7 @@ let
   ]
   ++ config.lib.hosts.substituters;
   keyPath = "${config.users.users.${username}.home}/.ssh/id_ed25519";
+  inherit (config.lib.hosts) cachePort;
 in
 {
   programs.nh = {
@@ -45,6 +46,7 @@ in
         "pipe-operators"
       ];
       builders-use-substitutes = true; # (cache -> remote) instead of (cache -> local -> remote)
+      connect-timeout = 5; # peer caches are often asleep
       inherit substituters; # used by default
       trusted-substituters = substituters; # merely allowed
       trusted-public-keys = [
@@ -81,10 +83,12 @@ in
       protocol = "ssh-ng";
     }) config.lib.hosts.builders;
   };
-  # TODO wire in non-builder substituters in hosts.nix
-  # TODO disable on builders
-  services.nix-serve = {
+  services.harmonia.cache = {
     enable = true;
-    secretKeyFile = "/etc/nix/cache.pem";
+    signKeyPaths = [ "/etc/nix/cache.pem" ];
+    settings.bind = "[::]:${toString cachePort}";
   };
+  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
+    cachePort
+  ];
 }

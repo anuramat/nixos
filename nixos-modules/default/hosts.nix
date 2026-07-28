@@ -14,9 +14,10 @@ let
   hosts = lib.filterAttrs (n: _: n != name) registry;
   names = lib.attrNames hosts;
   builders = lib.filterAttrs (n: v: v.builder) hosts;
+  cachePort = 5000;
 
   # lower priority number -> used earlier; cache.nixos.org=40, cachix=41
-  mkSubstituters = map (x: "ssh-ng://${x}?priority=50");
+  mkSubstituters = map (x: "http://${x}:${toString cachePort}?priority=50");
 in
 {
   assertions = [
@@ -34,10 +35,15 @@ in
   ];
 
   lib.hosts = {
-    substituters = mkSubstituters (lib.attrNames builders); # binary cache
+    substituters = mkSubstituters names; # binary cache
     keyFiles = names |> lib.concatMap (h: keys.${h}.clientKeyFiles); # ssh public keys
     knownHostsFiles = names |> map (h: keys.${h}.knownHostsFile); # agenix(?)/ssh host auth
     trusted-public-keys = names |> map (h: keys.${h}.cacheKey); # packages signature
-    inherit hosts builders builderUsername;
+    inherit
+      hosts
+      builders
+      builderUsername
+      cachePort
+      ;
   };
 }
