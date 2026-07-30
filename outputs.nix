@@ -190,9 +190,9 @@ flake-parts.lib.mkFlake { inherit inputs; } {
             )
           )
         )
-        # hand-pinned vendorHash drift only surfaces at build time, so build these
+        # hand-pinned vendorHash drift only surfaces at build time, so build it
         // lib.optionalAttrs (system == "x86_64-linux") {
-          inherit (pkgs) protonmail-bridge waybar-niri-windows;
+          inherit (pkgs) waybar-niri-windows;
         }
         // {
           # build each neovim variant and run it headless to catch startup errors

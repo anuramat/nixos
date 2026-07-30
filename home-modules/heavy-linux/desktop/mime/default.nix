@@ -74,7 +74,6 @@ let
     imageViewer = "swayimg.desktop";
     torrentClient = "transmission-gtk.desktop";
     videoPlayer = "mpv.desktop";
-    emailClient = "neomutt.desktop";
   };
 
   # MIME type definitions organized by category
@@ -112,7 +111,6 @@ let
   special = {
     "x-scheme-handler/magnet" = applications.torrentClient;
     "inode/directory" = applications.fileManager;
-    "x-scheme-handler/mailto" = applications.emailClient;
   };
 
   bulk =

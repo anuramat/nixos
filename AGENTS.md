@@ -163,9 +163,9 @@ experimental feature; run inside the dev shell or pass it explicitly.
   not from a display manager. `wayland.systemd.target` is set to `niri.service`
   because the generic graphical session target starts some services too early.
 - Waybar's niri-windows plugin is built from the `waybar-niri-windows` flake
-  input; bumping it (or `protonmail-bridge`) may also require updating the
-  hand-pinned `vendorHash` in `overlays/default.nix`. Both packages are built
-  by `nix flake check` so a stale hash fails there, not at rebuild time.
+  input; bumping it may also require updating the hand-pinned `vendorHash` in
+  `overlays/default.nix`. The package is built by `nix flake check` so a stale
+  hash fails there, not at rebuild time.
 - The desktop uses keyd home-row `lettermod` remaps plus host-specific keyboard
   IDs. Keyboard behavior is split between shared remaps and per-host IDs.
 - bgm5 uses only selected attributes from the `nix-strix-halo` overlay instead

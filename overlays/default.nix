@@ -159,11 +159,6 @@ let
   freeform = final: prev: {
     llama-cpp-diffusion-vulkan = diffusionGemma final.llama-cpp-vulkan;
     llama-cpp-diffusion-rocm = diffusionGemma final.llama-cpp-rocm;
-    protonmail-bridge = prev.protonmail-bridge.overrideAttrs (_: {
-      version = "unstable";
-      src = inputs.protonmail-bridge;
-      vendorHash = "sha256-aW7N6uacoP99kpvw9E5WrHaQ0fZ4P5WGsNvR/FAZ+cA=";
-    });
     waybar-niri-windows = prev.buildGoModule {
       pname = "waybar-niri-windows";
       version = "unstable";

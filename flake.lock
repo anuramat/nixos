@@ -99,22 +99,6 @@
         "type": "github"
       }
     },
-    "base16-mutt": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1504543890,
-        "narHash": "sha256-NIkZ0+UkyMMJksgZUXGTJ+P2ibdwqRHsT6ghJ/j8bkY=",
-        "owner": "josephholsten",
-        "repo": "base16-mutt",
-        "rev": "f1f7289f350c0fd09de8eea8e8104b07238e55fe",
-        "type": "github"
-      },
-      "original": {
-        "owner": "josephholsten",
-        "repo": "base16-mutt",
-        "type": "github"
-      }
-    },
     "base16-vim": {
       "flake": false,
       "locked": {
@@ -2173,23 +2157,6 @@
         "type": "github"
       }
     },
-    "protonmail-bridge": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1777057017,
-        "narHash": "sha256-jq1tMw7we1SIb2DWT+2xJk+2LHS3m/08bnrffg3d2A4=",
-        "owner": "anuramat",
-        "repo": "proton-bridge",
-        "rev": "86408ce419e75d77a4eaa1c2983a77042c5f420f",
-        "type": "github"
-      },
-      "original": {
-        "owner": "anuramat",
-        "ref": "dev",
-        "repo": "proton-bridge",
-        "type": "github"
-      }
-    },
     "pyproject-build-systems": {
       "inputs": {
         "nixpkgs": [
@@ -2281,7 +2248,6 @@
     "root": {
       "inputs": {
         "agenix": "agenix",
-        "base16-mutt": "base16-mutt",
         "claude-code": "claude-code",
         "codex": "codex",
         "copilot-cli": "copilot-cli",
@@ -2308,7 +2274,6 @@
         "nixvim": "nixvim",
         "oh-my-pi": "oh-my-pi",
         "pass-secret-service": "pass-secret-service",
-        "protonmail-bridge": "protonmail-bridge",
         "sem": "sem",
         "spicetify-nix": "spicetify-nix",
         "statix": "statix",

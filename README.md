@@ -43,7 +43,6 @@ todo:
 # - new step: unfuck the repo (switch to ssh and unshallow)
 # gpg --full-generate-key
 # pass init $EMAIL
-# protonmail-bridge -cli
 # firefox
 ```
 
@@ -55,7 +54,6 @@ nix-cache-keygen # only if this machine is a builder XXX am I sure about this? s
 gh auth login
 # TODO upload ssh key to github; might be doable with gh auth
 sudo tailscale up "--operator=$(whoami)"
-# TODO protonmail bridge
 ```
 
 ## Problems

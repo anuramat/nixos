@@ -57,10 +57,6 @@
     vicode.url = "github:anuramat/vicode/dev";
 
     # forks
-    protonmail-bridge = {
-      url = "github:anuramat/proton-bridge/dev";
-      flake = false;
-    };
     html2text.url = "github:anuramat/html2text/dev";
     # llama.cpp PR 24423: DiffusionGemma support
     llama-cpp-diffusion = {
@@ -107,10 +103,6 @@
 
     tt-schemes = {
       url = "github:tinted-theming/schemes";
-      flake = false;
-    };
-    base16-mutt = {
-      url = "github:josephholsten/base16-mutt";
       flake = false;
     };
     pass-secret-service = {

@@ -8,7 +8,6 @@
   imports = [
     ./agents
     ./desktop
-    ./email.nix
     ./gui
     ./terminals.nix
     inputs.spicetify-nix.homeManagerModules.spicetify
