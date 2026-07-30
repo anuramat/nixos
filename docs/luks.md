@@ -94,5 +94,32 @@ Properties:
 - The Pi (its power and wifi) is the single point of failure for remote
   unlock — same blast radius as losing the home network entirely.
 
+## Option 3: relay-free — initrd wifi + WireGuard to anuramat-root
+
+No extra hardware: the initrd itself brings up wifi and a WireGuard tunnel
+to anuramat-root (stable public endpoint), and the passphrase is entered
+over SSH through the tunnel. WireGuard-in-initrd is documented on the NixOS
+wiki (kernel module + netdev in `boot.initrd.systemd.network`); wifi in
+initrd is achievable with wpa_supplicant under systemd-initrd.
+
+Setup:
+
+- systemd-initrd with wpa_supplicant, the `mt7925e` module and its firmware
+  blobs, and DHCP.
+- WireGuard netdev in the initrd with a dedicated peer key; anuramat-root
+  only routes that peer (never trusts it). Unlock:
+  `ssh -p 2222 root@<bgm5-wg-ip>` through the server.
+- Same initrd sshd setup as option 2 (distinct port, pinned host key).
+
+Properties:
+
+- At-rest exposure on the plaintext ESP grows: wifi PSK + WG private key +
+  initrd host key (option 2 exposes only the host key).
+- Reliability is the weak point: wpa_supplicant handshake, DHCP, and the
+  tunnel must all come up unattended in early boot — exactly when the
+  machine is recovering from something bad. Option 2's static cable has none
+  of these failure modes.
+- Like option 2: remote but not unattended recovery.
+
 Options compose: TPM2 root (option 1) with initrd SSH as fallback for when
 PCR unseal fails is possible, but likely overkill.
