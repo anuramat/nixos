@@ -7,6 +7,7 @@ let
   inherit (lib) mkOption types;
 
   cfg = config.services.kanshi;
+  hasBuiltin = cfg.builtinDisplay != null;
 
   displayType = types.submodule {
     freeformType = types.attrsOf types.anything;
@@ -40,7 +41,7 @@ in
       RestartSec = 10;
     };
     services = {
-      mako.settings.output = out.int;
+      mako.settings.output = lib.mkIf hasBuiltin out.int;
       kanshi = {
         enable = true;
         settings =
@@ -49,7 +50,7 @@ in
             profiles =
               let
                 # NOTE negative/larger y values break xwayland
-                extPos = "0,9999";
+                extPos = if hasBuiltin then "0,9999" else "0,0";
                 home = {
                   criteria = "Dell Inc. DELL S2722QC 192SH24";
                   scale = 1.5;
@@ -65,39 +66,24 @@ in
                   scale = 1.0;
                   position = extPos;
                 };
-                builtinDisplay = cfg.builtinDisplay // {
-                  position = "0,0";
-                };
+                builtin = lib.optional hasBuiltin (cfg.builtinDisplay // { position = "0,0"; });
               in
               {
                 # alphabetic priority
 
-                "p0" = [
-                  builtinDisplay
-                ];
-                "p1-home" = [
-                  builtinDisplay
-                  home
-                ];
-                "p2-audimax" = [
-                  builtinDisplay
-                  audimax
-                ];
-                "p3-generic" = [
-                  builtinDisplay
-                  generic
-                ];
-              };
+                "p1-home" = builtin ++ [ home ];
+                "p2-audimax" = builtin ++ [ audimax ];
+                "p3-generic" = builtin ++ [ generic ];
+              }
+              // lib.optionalAttrs hasBuiltin { "p0" = builtin; };
 
           in
-          lib.optionals (cfg.builtinDisplay != null) (
-            lib.mapAttrsToList (n: v: {
-              profile = {
-                name = n;
-                outputs = v;
-              };
-            }) profiles
-          );
+          lib.mapAttrsToList (n: v: {
+            profile = {
+              name = n;
+              outputs = v;
+            };
+          }) profiles;
       };
     };
   };
