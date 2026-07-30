@@ -56,8 +56,10 @@ uc3/
   uc3-client.py # socket transport and binary-safe trailer handling
 ```
 
-`uc3ctl` has zero authority: its shell shim validates the invocation and execs
-a Python client, which connects to `$XDG_RUNTIME_DIR/uc3.sock`, sends the
+`uc3ctl` has zero authority: its shell shim validates the invocation,
+redirects an interactive tty stdin to `/dev/null` (terminal input is never
+consumed as an upload), and execs a Python client, which connects to
+`$XDG_RUNTIME_DIR/uc3.sock`, sends the
 command line followed by stdin, streams the response while retaining only a
 possible EOF trailer, and exits with the remote status. Response EOF completes
 the transaction even if stdin is still open. systemd
@@ -96,7 +98,8 @@ auth plumbing it inherits on the host.
   line `--uc3-exit:<code>--`. The client strips the trailer and exits with
   `<code>`; a missing trailer → exit 1. `timeout` kill → 124; ssh rc 255 → a
   distinct "cluster unreachable" message (ambiguous with a remote command that
-  itself exits 255 — accepted).
+  itself exits 255 — accepted). Early stdout close on the caller's side
+  (`uc3ctl … | head`) → exit 141 (SIGPIPE convention).
 - Stdout is binary-safe. A trailer-shaped byte sequence in the middle of output
   is ordinary payload; only one in the reserved EOF position is interpreted as
   protocol metadata.
