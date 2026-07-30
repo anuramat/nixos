@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   ...
 }:
 {
@@ -27,6 +28,9 @@
       ];
 
       settings = {
+        user = {
+          inherit (inputs.self.user) name email;
+        };
         alias = {
           sw = "switch";
           ch = "checkout";

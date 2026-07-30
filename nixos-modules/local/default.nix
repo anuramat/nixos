@@ -8,7 +8,7 @@
 }:
 let
   inherit (lib) mkDefault;
-  username = config.userConfig.username;
+  inherit (inputs.self.user) username;
 in
 {
   imports = [

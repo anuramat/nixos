@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  inputs,
+  lib,
+  ...
+}:
 let
   inherit (lib)
     mkOption
@@ -90,7 +95,7 @@ in
     default = [ ];
   };
   config = {
-    users.users.${config.userConfig.username}.extraGroups =
+    users.users.${inputs.self.user.username}.extraGroups =
       optional config.services.nginx.enable "nginx";
     services.nginx.virtualHosts = mkMerge (concatMap vhostsFor config.web.sites);
     security.acme.certs = mkMerge (concatMap acmeCertsFor config.web.sites);

@@ -1,3 +1,4 @@
+{ inputs, ... }:
 let
   immichPort = 2283;
 in
@@ -11,7 +12,7 @@ in
   networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
     immichPort
   ];
-  home-manager.users.anuramat = {
+  home-manager.users.${inputs.self.user.username} = {
     programs.niri.settings.input.touchpad.tap = true;
   };
 }

@@ -1,10 +1,10 @@
 {
-  config,
+  inputs,
   pkgs,
   ...
 }:
 let
-  inherit (config.userConfig) username;
+  inherit (inputs.self.user) username;
 in
 {
   users.users.${username}.extraGroups = [ "dialout" ]; # serial ports

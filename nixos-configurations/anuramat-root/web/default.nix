@@ -1,5 +1,6 @@
+{ inputs, ... }:
 let
-  email = "x@ctrl.sn";
+  inherit (inputs.self.user) email;
 in
 {
   imports = [

@@ -5,7 +5,7 @@
   ...
 }:
 let
-  username = config.userConfig.username;
+  inherit (inputs.self.user) username;
   # TODO add missing keys to trusted-public-keys
   substituters = [
     "https://cache.iog.io"

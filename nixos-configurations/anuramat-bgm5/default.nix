@@ -24,7 +24,6 @@
   imports = [
     inputs.self.nixosModules.default
     inputs.self.nixosModules.local
-    inputs.self.nixosModules.anuramat
     inputs.self.nixosModules.builder
     ./hardware-configuration.nix
     ./llama.nix

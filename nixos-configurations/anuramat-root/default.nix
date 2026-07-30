@@ -5,12 +5,11 @@
 {
   imports = [
     inputs.self.nixosModules.default
-    inputs.self.nixosModules.anuramat
     ./web
     ./hardware-configuration.nix
   ];
 
-  home-manager.users.anuramat = {
+  home-manager.users.${inputs.self.user.username} = {
     imports = [ inputs.self.homeModules.nixvim ];
     programs.nixvim = {
       enable = true;

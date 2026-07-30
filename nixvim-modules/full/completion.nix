@@ -24,7 +24,7 @@ let
       function()
         local bufname = vim.api.nvim_buf_get_name(0)
         if string.match(bufname, "notes") then return false end
-        if string.match(bufname, "/home/anuramat/.local/share/ghq") then return true end
+        if string.match(bufname, "%.local/share/ghq") then return true end
         if string.match(bufname, "/etc/nixos") then return true end
         return false
         end

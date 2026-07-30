@@ -5,9 +5,11 @@
 {
   nix.distributedBuilds = true;
   system.stateVersion = "24.05";
-  home-manager.users.anuramat.home.stateVersion = "24.11";
-  home-manager.users.anuramat.services.kanshi.builtinDisplay = {
-    criteria = "LG Display 0x0521 Unknown";
+  home-manager.users.${inputs.self.user.username} = {
+    home.stateVersion = "24.11";
+    services.kanshi.builtinDisplay = {
+      criteria = "LG Display 0x0521 Unknown";
+    };
   };
   services.keyd.keyboards.main.ids = [
     # same keyboard
@@ -19,7 +21,6 @@
     inputs.self.nixosModules.default
     inputs.self.nixosModules.local
     inputs.self.nixosModules.laptop
-    inputs.self.nixosModules.anuramat
     inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t480
     ./hardware-configuration.nix
   ];

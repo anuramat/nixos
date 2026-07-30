@@ -1,11 +1,11 @@
 {
   lib,
+  inputs,
   config,
   ...
 }:
 let
   isNixOS = config ? system;
-  username = if isNixOS then config.userConfig.username else null;
   secretsRoot = ../secrets;
 in
 {
@@ -19,14 +19,7 @@ in
       value = {
         file = /${secretsRoot}/${x};
       }
-      // (
-        if isNixOS then
-          {
-            owner = username;
-          }
-        else
-          { }
-      );
+      // lib.optionalAttrs isNixOS { owner = inputs.self.user.username; };
     })
     |> builtins.listToAttrs;
 }

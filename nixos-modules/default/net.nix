@@ -1,12 +1,13 @@
 {
   config,
+  inputs,
   pkgs,
   lib,
   ...
 }:
 let
   inherit (config.age) secrets;
-  inherit (config.userConfig) username;
+  inherit (inputs.self.user) username;
 in
 {
   users.users.${username}.extraGroups = [ "networkmanager" ]; # wifi

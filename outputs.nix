@@ -23,6 +23,12 @@ let
   mkImportSet = mapDir (_: import);
   # }}}1
 
+  # system per standalone Home Manager configuration in home-configurations/
+  homeSystems = {
+    anuramat-darwin = "aarch64-darwin";
+    anuramat-linux = "x86_64-linux";
+  };
+
   pkgsWithOverlay =
     system:
     import inputs.nixpkgs (
@@ -42,101 +48,102 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     "x86_64-linux"
     "aarch64-darwin"
   ];
-  flake =
-    let
-      homeSystems = {
-        # "example-config-linux" = "x86_64-linux";
-        # "example-config-darwin" = "aarch64-darwin";
+  flake = {
+    nixosModules = mkImportSet ./nixos-modules;
+    homeModules = mkImportSet ./home-modules;
+    nixosConfigurations = mapDir (
+      name: module:
+      inputs.nixpkgs.lib.nixosSystem {
+        modules = [
+          module
+          { networking.hostName = name; }
+        ];
+        specialArgs = {
+          inherit inputs;
+        };
+      }
+    ) ./nixos-configurations;
+    homeConfigurations = mapDir (
+      name: module:
+      inputs.home-manager.lib.homeManagerConfiguration {
+        pkgs = pkgsWithOverlay homeSystems.${name};
+        modules = [ module ];
+        extraSpecialArgs = {
+          inherit inputs;
+        };
+      }
+    ) ./home-configurations;
+
+    # static host registry; each host asserts its own entry against its
+    # actual config in nixos-modules/default/hosts.nix
+    hosts = {
+      anuramat-bgm5 = {
+        system = "x86_64-linux";
+        builder = true;
       };
-    in
-    {
-      nixosModules = mkImportSet ./nixos-modules;
-      homeModules = mkImportSet ./home-modules;
-      nixosConfigurations = mapDir (
-        name: module:
-        inputs.nixpkgs.lib.nixosSystem {
-          modules = [
-            module
-            { networking.hostName = name; }
-          ];
-          specialArgs = {
-            inherit inputs;
-          };
+      anuramat-f12 = {
+        system = "x86_64-linux";
+        builder = false;
+      };
+      anuramat-root = {
+        system = "x86_64-linux";
+        builder = false;
+      };
+      anuramat-t480 = {
+        system = "x86_64-linux";
+        builder = false;
+      };
+    };
+
+    user = {
+      username = "anuramat";
+      name = "Arsen Nuramatov";
+      email = "x@ctrl.sn";
+      timeZone = "Europe/Berlin";
+      locale = "en_US.UTF-8";
+    };
+
+    # designated LLM inference endpoint
+    llama = {
+      host = "anuramat-bgm5";
+      port = 11343;
+    };
+
+    # per-host key material discovered from nixos-configurations/*/keys/ {{{1
+    keys =
+      let
+        cacheFilename = "cache.pem.pub";
+      in
+      mapDir (
+        host: hostDir:
+        let
+          keyDir = hostDir + "/keys";
+          clientKeyFiles =
+            builtins.readDir keyDir
+            |> builtins.attrNames
+            |> builtins.filter (f: lib.hasSuffix ".pub" f && f != cacheFilename)
+            |> map (f: keyDir + /${f});
+        in
+        assert lib.assertMsg (builtins.pathExists keyDir)
+          "nixos-configurations/${host}/keys/ is missing (expected *.pub, known_hosts, ${cacheFilename})";
+        {
+          inherit clientKeyFiles;
+          clientKeys = clientKeyFiles |> map builtins.readFile |> map lib.trim;
+          knownHostsFile = keyDir + /known_hosts;
+          cacheKey = builtins.readFile (keyDir + /${cacheFilename});
+          knownHostsKeys =
+            builtins.readFile (keyDir + /known_hosts)
+            |> lib.splitString "\n"
+            |> lib.filter (v: v != "")
+            |> map (v: v |> lib.splitString " " |> lib.drop 1 |> lib.concatStringsSep " ");
         }
       ) ./nixos-configurations;
-      homeConfigurations = mapDir (
-        name: module:
-        inputs.home-manager.lib.homeManagerConfiguration {
-          pkgs = pkgsWithOverlay homeSystems.${name};
-          modules = [ module ];
-          extraSpecialArgs = {
-            inherit inputs;
-          };
-        }
-      ) ./home-configurations;
+    # }}}1
 
-      # static host registry; each host asserts its own entry against its
-      # actual config in nixos-modules/default/hosts.nix
-      hosts = {
-        anuramat-bgm5 = {
-          system = "x86_64-linux";
-          builder = true;
-        };
-        anuramat-f12 = {
-          system = "x86_64-linux";
-          builder = false;
-        };
-        anuramat-root = {
-          system = "x86_64-linux";
-          builder = false;
-        };
-        anuramat-t480 = {
-          system = "x86_64-linux";
-          builder = false;
-        };
-      };
-
-      # designated LLM inference endpoint
-      llama = {
-        host = "anuramat-bgm5";
-        port = 11343;
-      };
-
-      # per-host key material discovered from nixos-configurations/*/keys/ {{{1
-      keys =
-        let
-          cacheFilename = "cache.pem.pub";
-        in
-        mapDir (
-          host: hostDir:
-          let
-            keyDir = hostDir + "/keys";
-            clientKeyFiles =
-              builtins.readDir keyDir
-              |> builtins.attrNames
-              |> builtins.filter (f: lib.hasSuffix ".pub" f && f != cacheFilename)
-              |> map (f: keyDir + /${f});
-          in
-          assert lib.assertMsg (builtins.pathExists keyDir)
-            "nixos-configurations/${host}/keys/ is missing (expected *.pub, known_hosts, ${cacheFilename})";
-          {
-            inherit clientKeyFiles;
-            clientKeys = clientKeyFiles |> map builtins.readFile |> map lib.trim;
-            knownHostsFile = keyDir + /known_hosts;
-            cacheKey = builtins.readFile (keyDir + /${cacheFilename});
-            knownHostsKeys =
-              builtins.readFile (keyDir + /known_hosts)
-              |> lib.splitString "\n"
-              |> lib.filter (v: v != "")
-              |> map (v: v |> lib.splitString " " |> lib.drop 1 |> lib.concatStringsSep " ");
-          }
-        ) ./nixos-configurations;
-      # }}}1
-
-      overlays = mapDir (_name: module: import module { inherit inputs lib; }) ./overlays; # TODO use mkImportSet as well?
-      nixvimModules = mkImportSet ./nixvim-modules;
-      sharedModules = mkImportSet ./shared-modules;
-    };
+    overlays = mapDir (_name: module: import module { inherit inputs lib; }) ./overlays; # TODO use mkImportSet as well?
+    nixvimModules = mkImportSet ./nixvim-modules;
+    sharedModules = mkImportSet ./shared-modules;
+  };
 
   perSystem =
     {
@@ -153,7 +160,6 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     (mapDir (_name: module: import module argsWithInputs) ./parts)
     // {
       legacyPackages = pkgs;
-      # evaluate every host's toplevel (firing all assertions) without building it
       checks = # {{{1
         (
           inputs.self.hosts
@@ -165,6 +171,21 @@ flake-parts.lib.mkFlake { inherit inputs; } {
                 drv =
                   builtins.unsafeDiscardOutputDependency
                     inputs.self.nixosConfigurations.${name}.config.system.build.toplevel.drvPath;
+              } "echo $drv >$out"
+            )
+          )
+        )
+        # same, for the standalone Home Manager configurations
+        // (
+          homeSystems
+          |> lib.filterAttrs (_: homeSystem: homeSystem == system)
+          |> lib.mapAttrs' (
+            name: _:
+            lib.nameValuePair "home-${name}" (
+              pkgs.runCommand "home-${name}" {
+                drv =
+                  builtins.unsafeDiscardOutputDependency
+                    inputs.self.homeConfigurations.${name}.activationPackage.drvPath;
               } "echo $drv >$out"
             )
           )

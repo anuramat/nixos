@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   ...
 }:
@@ -45,7 +46,7 @@ in
         inherit XDG_BIN_HOME CARGO_HOME;
 
         # TODO just in case; verify/move
-        LC_ALL = "en_US.UTF-8";
+        LC_ALL = inputs.self.user.locale;
         PAGER = "less";
         MANPAGER = "less";
 
@@ -62,7 +63,7 @@ in
         ESCDELAY = "25";
 
         # TODO move this somewhere
-        TODO_FILE = "/home/anuramat/notes/todo.txt";
+        TODO_FILE = "${config.home.homeDirectory}/notes/todo.txt";
 
         RUSTUP_HOME = "${XDG_DATA_HOME}/rustup";
       };
