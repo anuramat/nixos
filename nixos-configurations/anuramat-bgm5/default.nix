@@ -15,7 +15,10 @@
   };
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
-  boot.kernelParams = [ "ttm.pages_limit=20971520" ]; # VRAM GTT 80G
+  boot.kernelParams = [
+    "ttm.pages_limit=20971520" # VRAM GTT 80G
+    "amdgpu.dcdebugmask=0x600" # disable dynamic display IPS: hard idle freeze on 2026-07-30
+  ];
   hardware.firmware = [
     pkgs.linux-firmware
     pkgs.strix-halo-mes-firmware # from nix-strix-halo tuning module
