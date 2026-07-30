@@ -46,6 +46,11 @@
 
         init.defaultBranch = "main";
 
+        # NOTE workaround for:
+        # (https -> gh credential helper -> pass-secret-service -> pinentry)
+        # where pinentry fails over ssh
+        url."git@github.com:".insteadOf = "https://github.com/";
+
         push.autoSetupRemote = true;
         pull.ff = "only";
         fetch = {
