@@ -19,6 +19,8 @@
     "ttm.pages_limit=20971520" # VRAM GTT 80G
     "amdgpu.dcdebugmask=0x600" # disable dynamic display IPS: hard idle freeze on 2026-07-30
   ];
+  # hard-resets the machine if PID 1 is dead for 2m
+  systemd.watchdog.runtimeTime = "2m";
   hardware.firmware = [
     pkgs.linux-firmware
     pkgs.strix-halo-mes-firmware # from nix-strix-halo tuning module
