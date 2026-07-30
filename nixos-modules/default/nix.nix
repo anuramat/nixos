@@ -46,7 +46,8 @@ in
         "pipe-operators"
       ];
       builders-use-substitutes = true; # (cache -> remote) instead of (cache -> local -> remote)
-      connect-timeout = 5; # peer caches are often asleep
+      connect-timeout = 2;
+      download-attempts = 1;
       inherit substituters; # used by default
       trusted-substituters = substituters; # merely allowed
       trusted-public-keys = [
