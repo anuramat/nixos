@@ -7,7 +7,7 @@
 let
   inherit (inputs.self.user) username;
   # TODO add missing keys to trusted-public-keys
-  substituters = [
+  caches = [
     "https://cache.iog.io"
     "https://cache.nixos.org"
     "https://cuda-maintainers.cachix.org"
@@ -18,8 +18,7 @@ let
     "https://vicode.cachix.org"
     "https://zed.cachix.org"
     "https://cache.garnix.io"
-  ]
-  ++ config.lib.hosts.substituters;
+  ];
   keyPath = "${config.users.users.${username}.home}/.ssh/id_ed25519";
   inherit (config.lib.hosts) cachePort;
 in
@@ -48,8 +47,8 @@ in
       builders-use-substitutes = true; # (cache -> remote) instead of (cache -> local -> remote)
       connect-timeout = 2;
       download-attempts = 1;
-      inherit substituters; # used by default
-      trusted-substituters = substituters; # merely allowed
+      substituters = caches ++ config.lib.hosts.substituters; # used by default
+      trusted-substituters = caches ++ config.lib.hosts.trusted-substituters; # merely allowed
       trusted-public-keys = [
         "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
