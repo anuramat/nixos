@@ -17,7 +17,11 @@
   boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.kernelParams = [
     "ttm.pages_limit=20971520" # VRAM GTT 80G
-    "amdgpu.dcdebugmask=0x600" # disable dynamic display IPS: hard idle freeze on 2026-07-30
+    # prophylactic against the DCN 3.5 IPS hang class:
+    # flag bits: https://www.mail-archive.com/amd-gfx@lists.freedesktop.org/msg111203.html
+    # same silicon: https://community.frame.work/t/amd-drivers-frequently-hanging-and-crashing/79270
+    # https://wiki.archlinux.org/title/AMDGPU
+    "amdgpu.dcdebugmask=0x600" # disable dynamic display IPS
   ];
   # hard-resets the machine if PID 1 is dead for 2m
   systemd.watchdog.runtimeTime = "2m";
