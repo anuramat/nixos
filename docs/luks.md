@@ -19,7 +19,7 @@ This conflicts with remote/unattended operation:
 Note: encryption today is not actually full-disk — `/mnt/storage` (second
 NVMe) is plain ext4 and holds a personal photo backup tar among bulk data.
 
-## Suggested solution: TPM2 root + passphrase vault
+## Option 1: TPM2 root + passphrase vault
 
 Two tiers, same remote-recovery UX as an unencrypted core, without exposing
 the OS at rest:
@@ -53,3 +53,46 @@ Caveats:
 - Keep a fallback passphrase/recovery key enrolled for root; TPM or firmware
   changes otherwise brick the boot.
 - Swap is zram and `/tmp` is tmpfs on this host, so neither leaks to disk.
+
+## Option 2: initrd SSH + Raspberry Pi relay
+
+Keep full passphrase FDE; make the passphrase enterable remotely. A spare
+always-on Pi (wifi + tailscale) sits next to bgm5, connected to `eno1` by a
+direct Ethernet cable — no router involvement, which matters because bgm5
+cannot be wired to the router and wifi in the initrd is effectively
+unsupported.
+
+Setup:
+
+- Point-to-point static subnet on the cable: Pi `192.168.77.1`, bgm5
+  `192.168.77.2` (/30). Any cable works (Auto-MDIX); no DHCP.
+- bgm5 initrd: `boot.initrd.network` + `boot.initrd.network.ssh` on a
+  distinct port (e.g. 2222) with its own host key and authorized keys;
+  `r8169` in `boot.initrd.availableKernelModules`; static
+  `ip=192.168.77.2:::255.255.255.252::eno1:none` kernel param. No gateway
+  needed — connections originate from the Pi, everything is on-link.
+- Unlock from anywhere: `ssh -J pi -p 2222 root@192.168.77.2` (Pi reachable
+  over tailscale). Use ProxyJump, never a nested shell on the Pi: the inner
+  session is end-to-end encrypted, so the Pi only relays ciphertext. Pin the
+  initrd host key in the client config.
+- Give `eno1` the same static IP in the full system, so the link doubles as
+  an out-of-band path into bgm5 when its wifi stack is broken.
+- Monitoring: from the Pi, "port 2222 answering" means "bgm5 awaits unlock";
+  a check piping to `tgfy` closes the watchdog loop (freeze -> watchdog
+  reboot -> notification -> remote unlock).
+
+Properties:
+
+- Stronger at-rest story than option 1: whole-machine theft still yields a
+  brick; no TPM/PCR lifecycle. Evil-maid caveat unchanged from today
+  (tamperable initrd on the plaintext ESP).
+- The initrd sshd host key lives on the unencrypted ESP; impersonation is
+  covered by client-side pinning.
+- Recovery is remote but not unattended: every reboot waits for a human with
+  SSH access. A watchdog reset at night leaves services down until someone
+  unlocks.
+- The Pi (its power and wifi) is the single point of failure for remote
+  unlock — same blast radius as losing the home network entirely.
+
+Options compose: TPM2 root (option 1) with initrd SSH as fallback for when
+PCR unseal fails is possible, but likely overkill.
