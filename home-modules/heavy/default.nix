@@ -5,6 +5,7 @@
     ./lang
     ./typst.nix
     ./packages.nix
+    ./terminals.nix
   ];
 
   home = {
