@@ -50,13 +50,16 @@ adding, removing, or renaming a direct child is an API change for this flake:
 - `nixosConfigurations`: `nixos-configurations/`. Each host directory has a
   `default.nix`, generated `hardware-configuration.nix`, and public keys under
   `keys/`.
-- `homeConfigurations`: `home-configurations/` (standalone Home Manager).
+- `homeConfigurations`: `home-configurations/` (standalone Home Manager). Each
+  entry needs a matching `homeSystems` entry in `outputs.nix`, which also drives
+  the `checks.SYSTEM.home-NAME` outputs.
 - `nixosModules`: `nixos-modules/`.
 - `homeModules`: `home-modules/`.
 - `nixvimModules`: `nixvim-modules/`. The editor is nixvim-based, not a
   hand-written `init.lua`; the real root is `nixvim-modules/default/default.nix`,
-  activated via `inputs.nixvim.homeModules.nixvim ->
-  home-modules/heavy/editor.nix -> self.nixvimModules.default`.
+  activated via `self.homeModules.nixvim (which imports
+  inputs.nixvim.homeModules.nixvim) -> home-modules/heavy/editor.nix ->
+  self.nixvimModules.full`.
 - `sharedModules`: `shared-modules/`, usable from both NixOS and standalone
   Home Manager.
 - `overlays`: `overlays/`.
@@ -71,6 +74,20 @@ adding, removing, or renaming a direct child is an API change for this flake:
   `checks.SYSTEM.host-NAME` outputs evaluate every host's toplevel, so
   `nix flake check` catches drift on all hosts. Host changes can still affect
   secrets, SSH, substituters, and remote-build behavior on every other host.
+- `user`: the primary account's identity (`username`, `name`, `email`,
+  `timeZone`, `locale`). The only place these are written; every consumer reads
+  `inputs.self.user` directly, with no intervening NixOS option. Multiple users
+  are an explicit non-goal, so there is deliberately nothing to override per
+  host. Consumed by
+  `nixos-modules/default/{user,net,nix,web,external_keys,default}.nix`,
+  `nixos-modules/local/{default,peripherals}.nix`, `shared-modules/age.nix`
+  (secret owner), `home-modules/default/git/` (Git identity),
+  `home-configurations/*` (username and home directory), and
+  `nixos-configurations/anuramat-root/web/` (ACME contact). Per-host Home
+  Manager overrides must be keyed
+  `home-manager.users.${inputs.self.user.username}`, never a literal username,
+  or renaming the account silently produces an entry for a user that has no
+  modules imported.
 - `llama`: the designated LLM inference endpoint (host and port), consumed by
   `nixos-modules/default/llama.nix` and `home-modules/default/hosts.nix`.
 - `keys`: per-host key material discovered from `nixos-configurations/*/keys/`
@@ -91,9 +108,15 @@ experimental feature; run inside the dev shell or pass it explicitly.
 - `nixos-modules/default/`: baseline imported by every NixOS host (agenix,
   Home Manager, user/network/nix/web/llama plumbing).
   `nixos-modules/local/`: workstation layer on top of it.
-- `home-modules/` layers: `default` (base CLI environment), `linux`
-  (Linux-only CLI), `heavy` (editor, toolchains, GUI-independent extras),
-  `heavy/gui` (graphical apps), `heavy-linux` (Niri desktop and AI agents).
+- `home-modules/` layers: `default` (base CLI environment, cross-platform),
+  `linux` (Linux-only CLI), `heavy` (editor, toolchains, media/office CLI;
+  cross-platform), `heavy-linux` (Niri desktop, AI agents, and `heavy-linux/gui`
+  graphical apps). `heavy` and `heavy-linux` are always imported together on
+  NixOS, so Linux-only additions belong in `heavy-linux`; keeping `heavy`
+  Darwin-clean is what makes the `anuramat-darwin` home configuration evaluate.
+- `nixvim` is its own home module rather than part of the base layer; import
+  `self.homeModules.nixvim` wherever `programs.nixvim` is configured
+  (`home-modules/heavy/editor.nix` and `anuramat-root`).
 - Hosts: `anuramat-root` (server-like QEMU guest; nginx, ACME, `ctrl.sn`,
   wastebin), `anuramat-t480` (ThinkPad T480 laptop), `anuramat-f12`
   (Framework 12 laptop), `anuramat-bgm5` (AMD Strix Halo workstation; build
