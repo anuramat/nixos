@@ -78,6 +78,7 @@
     ./bar.nix
     ./idle.nix
     ./shortcuts.nix
+    ./zsa-tap.nix
   ];
   wayland.systemd.target = "niri.service"; # NOTE using graphical-session.target breaks services that have ConditionEnvironment=WAYLAND_DISPLAY, because they start too early -- before niri sets variables
   xdg.configFile."systemd/user/niri.service.d/override.conf".text =
