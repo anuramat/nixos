@@ -17,7 +17,6 @@ let
     "https://anuramat.cachix.org"
     "https://vicode.cachix.org"
     "https://zed.cachix.org"
-    "https://cache.garnix.io"
   ];
   keyPath = "${config.users.users.${username}.home}/.ssh/id_ed25519";
   inherit (config.lib.hosts) cachePort;
@@ -59,7 +58,6 @@ in
         "anuramat.cachix.org-1:INBlw2NfR37rCx/M+pSe6VfmZFzki54TjUwieEbJjPU="
         "vicode.cachix.org-1:YypJTdIoHPXonAmAL5iz4eUYriMs9sTxToF0bfmm0BE="
         "zed.cachix.org-1:/pHQ6dpMsAZk2DiP4WCL0p9YDNKWj2Q5FL20bNmw1cU="
-        "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
       ]
       ++ config.lib.hosts.trusted-public-keys;
     };
