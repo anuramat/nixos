@@ -66,6 +66,7 @@ let
         tombi
         typst
         google-chrome
+        waybar
         ;
 
       vimPlugins = prev.vimPlugins // {
