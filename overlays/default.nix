@@ -23,7 +23,6 @@ let
         nix-auth
         claude-code
         codex
-        zed-editor
         hermes
         copilot-cli
         devin-cli
@@ -66,6 +65,7 @@ let
         tombi
         typst
         google-chrome
+        zed-editor
         ;
 
       vimPlugins = prev.vimPlugins // {

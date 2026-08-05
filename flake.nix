@@ -89,7 +89,6 @@
       url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    zed-editor.url = "github:zed-industries/zed";
     nil = {
       url = "github:oxalica/nil/main";
       inputs.nixpkgs.follows = "nixpkgs";
