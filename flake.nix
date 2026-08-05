@@ -89,6 +89,10 @@
       url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    noctalia = {
+      url = "github:noctalia-dev/noctalia";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     nil = {
       url = "github:oxalica/nil/main";
       inputs.nixpkgs.follows = "nixpkgs";

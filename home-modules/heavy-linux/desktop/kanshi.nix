@@ -14,19 +14,6 @@ let
     options.criteria = mkOption { type = types.str; };
   };
 
-  out = {
-    int = "eDP-1";
-    ext = [
-      "DP-1"
-      "DP-2"
-      "DP-3"
-      "DP-4"
-      "HDMI-A-2"
-      "HDMI-A-3"
-      "HEADLESS-1"
-    ];
-  };
-
 in
 
 {
@@ -41,7 +28,6 @@ in
       RestartSec = 10;
     };
     services = {
-      mako.settings.output = lib.mkIf hasBuiltin out.int;
       kanshi = {
         enable = true;
         settings =
