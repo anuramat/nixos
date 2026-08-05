@@ -94,7 +94,6 @@
       url = "github:noctalia-dev/noctalia";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-    zed-editor.url = "github:zed-industries/zed";
     nil = {
       url = "github:oxalica/nil/main";
       inputs.nixpkgs.follows = "nixpkgs";

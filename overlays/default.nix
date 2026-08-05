@@ -23,7 +23,6 @@ let
         nix-auth
         claude-code
         codex
-        zed-editor
         hermes
         copilot-cli
         devin-cli
@@ -67,6 +66,7 @@ let
         typst
         google-chrome
         waybar
+        zed-editor
         ;
 
       vimPlugins = prev.vimPlugins // {
