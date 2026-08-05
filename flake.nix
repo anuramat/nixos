@@ -89,6 +89,11 @@
       url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # waybar replacement candidate; targets unstable upstream
+    noctalia = {
+      url = "github:noctalia-dev/noctalia";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     zed-editor.url = "github:zed-industries/zed";
     nil = {
       url = "github:oxalica/nil/main";

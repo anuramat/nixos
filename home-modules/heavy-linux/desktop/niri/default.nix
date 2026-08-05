@@ -76,6 +76,8 @@
     inputs.niri.homeModules.niri
     ./keys.nix
     ./bar.nix
+    ./ashell.nix
+    ./noctalia.nix
     ./idle.nix
     ./shortcuts.nix
     ./zsa-tap.nix

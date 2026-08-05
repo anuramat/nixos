@@ -2074,6 +2074,26 @@
         "type": "github"
       }
     },
+    "noctalia": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs-unstable"
+        ]
+      },
+      "locked": {
+        "lastModified": 1785934634,
+        "narHash": "sha256-5Sw7ziqfdp/Tvuj/H9xUaR6dx23HuSekfdZGi8bAEjg=",
+        "owner": "noctalia-dev",
+        "repo": "noctalia",
+        "rev": "02316e0c567c410e13989ce04bec10e6b980a643",
+        "type": "github"
+      },
+      "original": {
+        "owner": "noctalia-dev",
+        "repo": "noctalia",
+        "type": "github"
+      }
+    },
     "npm-lockfile-fix": {
       "inputs": {
         "nixpkgs": [
@@ -2272,6 +2292,7 @@
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nixpkgs-unstable-misc": "nixpkgs-unstable-misc",
         "nixvim": "nixvim",
+        "noctalia": "noctalia",
         "oh-my-pi": "oh-my-pi",
         "pass-secret-service": "pass-secret-service",
         "sem": "sem",
