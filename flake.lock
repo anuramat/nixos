@@ -1347,6 +1347,23 @@
         "type": "github"
       }
     },
+    "nirimap": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1785943286,
+        "narHash": "sha256-U1F0IM4LmKBfMYx+qajyUgrN399xnvfa3y4Qdfet2SU=",
+        "owner": "alexandergknoll",
+        "repo": "nirimap",
+        "rev": "5c04ebdd22cf48ea6d4df53679b905b405eb0d4c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "alexandergknoll",
+        "ref": "v0.3.0",
+        "repo": "nirimap",
+        "type": "github"
+      }
+    },
     "nix-ai-tools": {
       "inputs": {
         "blueprint": "blueprint",
@@ -2221,6 +2238,7 @@
         "neovim-nightly-overlay": "neovim-nightly-overlay",
         "nil": "nil",
         "niri": "niri",
+        "nirimap": "nirimap",
         "nix-auth": "nix-auth",
         "nix-strix-halo": "nix-strix-halo",
         "nixos-hardware": "nixos-hardware",
