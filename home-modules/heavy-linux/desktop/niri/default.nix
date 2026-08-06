@@ -135,7 +135,7 @@
           enable = true;
           width = 4;
         };
-        background-color = "#008080";
+        background-color = config.lib.stylix.colors.withHashtag.base00;
         empty-workspace-above-first = false;
         shadow = {
           enable = true;
