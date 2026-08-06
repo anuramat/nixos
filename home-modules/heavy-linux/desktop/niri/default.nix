@@ -116,7 +116,7 @@
         # { argv = [ ]; }
       ];
       overview = {
-        zoom = 0.3;
+        # zoom = 0.2;
         workspace-shadow.enable = true;
       };
       window-rules = [
