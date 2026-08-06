@@ -90,6 +90,8 @@ in
                 config.programs.go.env.GOPATH
                 "${config.home.homeDirectory}/.npm"
                 config.home.sessionVariables.GHQ_ROOT
+                # nix eval/fetcher/git caches; ro would break sqlite locking
+                "${config.xdg.cacheHome}/nix"
               ];
               agentDirs =
                 if agentDir != null then
