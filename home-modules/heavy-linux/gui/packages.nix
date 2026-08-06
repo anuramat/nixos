@@ -27,8 +27,6 @@
     standardnotes # only notes BUT might get proton integration -- soon (tm)
 
     # img
-    # krita # raster graphics, digital art # XXX not in cache, takes ages to build
-    inkscape-with-extensions # vector graphics
     gimp-with-plugins
     darktable
     rawtherapee
