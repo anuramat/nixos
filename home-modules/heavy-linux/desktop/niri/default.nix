@@ -75,9 +75,7 @@
     inputs.niri.homeModules.stylix
     inputs.niri.homeModules.niri
     ./keys.nix
-    ./ashell.nix
     ./noctalia.nix
-    ./idle.nix
     ./shortcuts.nix
     ./zsa-tap.nix
   ];

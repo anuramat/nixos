@@ -10,58 +10,55 @@ let
 
   inherit (lib) escapeShellArg getExe;
 
-  # ashell both applies the change and draws the OSD, so these replace avizo's
-  # volumectl/lightctl wrappers; needs settings.osd.enabled in ./ashell.nix
-  ashellMsg =
+  # noctalia both applies the change and draws the OSD, so these replace
+  # avizo's volumectl/lightctl wrappers and playerctl
+  noctaliaMsg =
     let
-      bin = getExe config.programs.ashell.package;
+      bin = getExe config.programs.noctalia.package;
     in
-    cmd: [
+    cmd:
+    [
       bin
       "msg"
-      cmd
-    ];
+    ]
+    ++ cmd;
 
   ctl = {
     brightness = {
-      up = ashellMsg "brightness-up";
-      down = ashellMsg "brightness-down";
+      up = noctaliaMsg [ "brightness-up" ];
+      down = noctaliaMsg [ "brightness-down" ];
     };
     sound = {
-      up = ashellMsg "volume-up";
-      down = ashellMsg "volume-down";
-      mute = ashellMsg "volume-toggle-mute";
-      muteMic = ashellMsg "microphone-toggle-mute";
+      up = noctaliaMsg [ "volume-up" ];
+      down = noctaliaMsg [ "volume-down" ];
+      mute = noctaliaMsg [ "volume-mute" ];
+      muteMic = noctaliaMsg [ "mic-mute" ];
     };
-    playback =
-      let
-        # `-p spotify` for specific player
-        bin = "${pkgs.playerctl}/bin/playerctl";
-      in
-      {
-        prev = [
-          bin
-          "previous"
-        ];
-        next = [
-          bin
-          "next"
-        ];
-        playPause = [
-          bin
-          "play-pause"
-        ];
-        stop = [
-          bin
-          "stop"
-        ];
-      };
+    playback = {
+      prev = noctaliaMsg [
+        "media"
+        "previous"
+      ];
+      next = noctaliaMsg [
+        "media"
+        "next"
+      ];
+      playPause = noctaliaMsg [
+        "media"
+        "toggle"
+      ];
+      stop = noctaliaMsg [
+        "media"
+        "stop"
+      ];
+    };
     bluetooth = [
       "${pkgs.tlp}/bin/bluetooth"
       "toggle"
     ];
-    lock = [
-      config.lib.lockscreen.lock
+    lock = noctaliaMsg [
+      "session"
+      "lock"
     ];
     sleep = [
       "systemctl"
@@ -101,13 +98,6 @@ let
             book=$(${fd} . "${bookdir}" -at f | ${bemenu} -p read -l 20) || exit
             ${zathura} $book
           '';
-        drun =
-          # bash
-          ''
-            # NOTE: this is so that we have $PATH available
-            selected="$(${getExe pkgs.j4-dmenu-desktop} -d '${bemenu} -p drun' -t '${term}' --no-exec --no-generic)"
-            bash -lc "exec $selected"
-          '';
         todo_add =
           # bash
           ''
@@ -127,8 +117,6 @@ let
     in
     lib.mapAttrs (name: cmd: mkMenu "${name}-dmenu" cmd) commands;
 
-  # NOTE ashell replaced mako, and its IPC has no notification commands --
-  # invoke/dismiss are mouse-only via the Notifications bar module
   mkGlobal = x: {
     allow-when-locked = true;
     action.spawn = x;
@@ -163,7 +151,10 @@ in
       repeat = false;
     };
     "Mod+semicolon".action.spawn = term;
-    "Mod+Space".action.spawn = pickers.drun;
+    "Mod+Space".action.spawn = noctaliaMsg [
+      "panel-toggle"
+      "launcher"
+    ];
     "Mod+Tab".action.focus-monitor-next = { };
     "Mod+Ctrl+Tab".action.move-window-to-monitor-next = { };
     "Mod+Shift+Tab".action.move-column-to-monitor-next = { };
