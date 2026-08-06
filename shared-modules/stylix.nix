@@ -30,25 +30,26 @@
     };
     base16Scheme =
       let
-        # favs: black-metal tarot
+        # https://tinted-theming.github.io/tinted-gallery/
+
+        # minimal: black-metal black-metal-venom heetch
         # mono: grayscale-dark grayscale-light greenscreen
-        # warm: mellow-purple uwunicorn pasque stella
-        # cold: moonlight
-        # retro: onedark-dark pop windows-*
-        # grey: xcode-dusk tokyo-night-dark
-        # TODO purpledream darkviolet isotope cyberpunk black-metal-venom
-        # TODO base24: borland mona-lisa red-alert red-sands unikitty
+        # warm: caroline tarot pandora
+        # purple: darkviolet mellow-purple pasque stella
+        # cold: tokyo-night-dark moonlight xcode-dusk
+        # retro: pop onedark-dark
+
+        # TODO base24:
+        # memes: borland unikitty
+        # red bg: red-alert red-sands
+        # cyberpunk: scarlet-protocol
 
         # paraiso -- purple/burgundy, colorful text -- 3/5?
-        # pandora -- pink/burgundy/red mostly, cyberpunk vibes -- 4/5
-        # caroline -- warm tones, red/brown/bronze; very cozy -- 4/5
-        # tarot -- red, burgundy, purple; cyberpunk vibes  -- 5/5
         # eris -- navy + pastel red; cyber punk vibes but too much blue -- 4/5
         # outrun-dark -- blue/red, mid
-        # heetch -- red + blue, cool but kinda unreadable
         # pinky -- very colorful, but looks mostly red/blue
 
-        name = "tarot";
+        name = "black-metal-venom";
       in
       "${inputs.tt-schemes}/base16/${name}.yaml";
   };
