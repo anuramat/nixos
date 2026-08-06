@@ -22,7 +22,7 @@
     zotero
 
     # notes
-    # xournalpp # pdf markup, handwritten notes # TODO takes a long time to rebuild when changing stylix theme
+    xournalpp # pdf markup, handwritten notes
     rnote
     standardnotes # only notes BUT might get proton integration -- soon (tm)
 

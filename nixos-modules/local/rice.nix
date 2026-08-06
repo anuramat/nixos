@@ -9,6 +9,10 @@
     inputs.self.sharedModules.stylix
   ];
   stylix.autoEnable = true;
+  # the NixOS target is an overlay: every theme change rebuilds all
+  # gtksourceview rdeps from source (inkscape et al); the HM target
+  # themes via xdg.dataFile instead, no rebuilds
+  stylix.targets.gtksourceview.enable = false;
   # loading screen rice
   boot.plymouth.enable = true;
   # tty rice; impossible to start a wm in it
