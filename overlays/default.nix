@@ -158,6 +158,10 @@ let
     });
 
   freeform = final: prev: {
+    # upstream never hides custom modules -> empty island when text is ""
+    ashell = prev.ashell.overrideAttrs (old: {
+      patches = (old.patches or [ ]) ++ [ ./ashell-hide-empty-custom.patch ];
+    });
     llama-cpp-diffusion-vulkan = diffusionGemma final.llama-cpp-vulkan;
     llama-cpp-diffusion-rocm = diffusionGemma final.llama-cpp-rocm;
     waybar-niri-windows = prev.buildGoModule {

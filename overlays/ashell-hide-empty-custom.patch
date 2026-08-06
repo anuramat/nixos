@@ -1,0 +1,27 @@
+diff -ru a/src/modules/custom_module.rs b/src/modules/custom_module.rs
+--- a/src/modules/custom_module.rs	2026-08-06 02:26:06.723513583 +0200
++++ b/src/modules/custom_module.rs	2026-08-06 02:26:13.445908300 +0200
+@@ -82,6 +82,11 @@
+         self.config.r#type
+     }
+ 
++    pub fn is_hidden(&self) -> bool {
++        matches!(self.config.r#type, crate::config::CustomModuleType::Text)
++            && self.data.text.as_ref().is_none_or(|t| t.is_empty())
++    }
++
+     pub fn update(&mut self, msg: Message) {
+         match msg {
+             Message::LaunchCommand => {
+diff -ru a/src/modules/mod.rs b/src/modules/mod.rs
+--- a/src/modules/mod.rs	2026-08-06 02:26:06.723559836 +0200
++++ b/src/modules/mod.rs	2026-08-06 02:26:26.062822705 +0200
+@@ -271,7 +271,7 @@
+         module_name: &'a ModuleName,
+     ) -> Option<(Element<'a, Message>, Option<OnModulePress>)> {
+         match module_name {
+-            ModuleName::Custom(name) => self.custom.get(name).map(|custom| {
++            ModuleName::Custom(name) => self.custom.get(name).filter(|c| !c.is_hidden()).map(|custom| {
+                 let action = match custom.module_type() {
+                     crate::config::CustomModuleType::Text => None,
+                     crate::config::CustomModuleType::Button => {
