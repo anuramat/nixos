@@ -69,6 +69,14 @@ let
         zed-editor
         ;
 
+      # 0.9.0 (stable has 0.8.0, which predates notifications and the OSD);
+      # patched here rather than in `freeform` because this overlay wins the
+      # merge for duplicate names.
+      # upstream never hides custom modules -> empty island when text is ""
+      ashell = unstable-misc.ashell.overrideAttrs (old: {
+        patches = (old.patches or [ ]) ++ [ ./ashell-hide-empty-custom.patch ];
+      });
+
       vimPlugins = prev.vimPlugins // {
         inherit (unstable-misc.vimPlugins)
           tinted-nvim
@@ -158,10 +166,6 @@ let
     });
 
   freeform = final: prev: {
-    # upstream never hides custom modules -> empty island when text is ""
-    ashell = prev.ashell.overrideAttrs (old: {
-      patches = (old.patches or [ ]) ++ [ ./ashell-hide-empty-custom.patch ];
-    });
     llama-cpp-diffusion-vulkan = diffusionGemma final.llama-cpp-vulkan;
     llama-cpp-diffusion-rocm = diffusionGemma final.llama-cpp-rocm;
     waybar-niri-windows = prev.buildGoModule {

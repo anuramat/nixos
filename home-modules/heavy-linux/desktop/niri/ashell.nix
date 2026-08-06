@@ -1,6 +1,5 @@
 {
   config,
-  lib,
   pkgs,
   ...
 }:
@@ -21,9 +20,16 @@ in
     Unit.PartOf = [ config.wayland.systemd.target ]; # module only sets After/WantedBy
   };
 
+  programs.niri.settings.binds."Mod+S".action.spawn = [
+    "${config.programs.ashell.package}/bin/ashell"
+    "msg"
+    "toggle-visibility"
+  ];
+
   programs.ashell = {
     enable = true;
     systemd.enable = true;
+    # 0.9.0 with the hide-empty patch comes from the overlay
 
     settings = {
       position = "Top";
@@ -40,8 +46,9 @@ in
         ];
         right = [
           "Tray"
+          "Notifications"
           "Settings"
-          "Clock"
+          "Tempo"
         ];
       };
 
@@ -53,12 +60,10 @@ in
         }
       ];
 
-      # colors/opacity come from stylix; Islands is the default, Solid is the
-      # flat full-width look waybar had. Icons are hardcoded to Symbols Nerd
-      # Font regardless of font_name -- nerd-fonts.symbols-only covers that.
       appearance = {
+        font_name = config.stylix.fonts.monospace.name;
         style = "Islands";
-        font_name = config.stylix.fonts.${config.stylix.targets.waybar.font}.name;
+        warning_color = config.lib.stylix.colors.withHashtag.base0A;
       };
 
       keyboard_layout.labels = {
@@ -66,11 +71,31 @@ in
         "Russian" = "RU";
       };
 
-      clock.format = "%F %A %T"; # %T is detected as a seconds specifier -> 1s tick
+      window_title = {
+        mode = "Title";
+        truncate_title_after_length = 80;
+      };
+
+      tempo = {
+        clock_format = "%F %A %T"; # %T is a seconds specifier -> 1s tick
+        weather_indicator = "None"; # otherwise it geolocates and polls a weather api
+      };
 
       media_player = {
         indicator_format = "IconAndTitle";
-        # max_title_length = 60;
+        max_title_length = 60;
+      };
+
+      notifications = {
+        grouped = true;
+        toast_position = "top_right";
+        toast_timeout = 10000;
+      };
+
+      osd = {
+        enabled = true;
+        show_volume_percentage = true;
+        show_brightness_percentage = true;
       };
 
       settings = {
@@ -81,11 +106,12 @@ in
         ];
         battery_format = "IconAndPercentage";
         lock_cmd = config.lib.lockscreen.lock;
-        logout_cmd = "${lib.getExe pkgs.niri} msg action quit --skip-confirmation";
+        logout_cmd = "${pkgs.niri}/bin/niri msg action quit --skip-confirmation";
         shutdown_cmd = "${pkgs.systemd}/bin/systemctl poweroff";
         reboot_cmd = "${pkgs.systemd}/bin/systemctl reboot";
         suspend_cmd = "${pkgs.systemd}/bin/systemctl suspend";
         hibernate_cmd = "${pkgs.systemd}/bin/systemctl hibernate";
+        bluetooth_more_cmd = "${pkgs.blueman}/bin/blueman-manager";
       };
     };
   };

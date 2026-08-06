@@ -10,46 +10,29 @@ let
 
   inherit (lib) escapeShellArg getExe;
 
+  # ashell both applies the change and draws the OSD, so these replace avizo's
+  # volumectl/lightctl wrappers; needs settings.osd.enabled in ./ashell.nix
+  ashellMsg =
+    let
+      bin = getExe config.programs.ashell.package;
+    in
+    cmd: [
+      bin
+      "msg"
+      cmd
+    ];
+
   ctl = {
-    brightness =
-      let
-        bin = "${pkgs.avizo}/bin/lightctl";
-      in
-      {
-        up = [
-          bin
-          "up"
-        ];
-        down = [
-          bin
-          "down"
-        ];
-      };
-    sound =
-      let
-        bin = "${pkgs.avizo}/bin/volumectl";
-      in
-      {
-        up = [
-          bin
-          "-u"
-          "up"
-        ];
-        down = [
-          bin
-          "-u"
-          "down"
-        ];
-        mute = [
-          bin
-          "toggle-mute"
-        ];
-        muteMic = [
-          bin
-          "-m"
-          "toggle-mute"
-        ];
-      };
+    brightness = {
+      up = ashellMsg "brightness-up";
+      down = ashellMsg "brightness-down";
+    };
+    sound = {
+      up = ashellMsg "volume-up";
+      down = ashellMsg "volume-down";
+      mute = ashellMsg "volume-toggle-mute";
+      muteMic = ashellMsg "microphone-toggle-mute";
+    };
     playback =
       let
         # `-p spotify` for specific player
@@ -144,26 +127,8 @@ let
     in
     lib.mapAttrs (name: cmd: mkMenu "${name}-dmenu" cmd) commands;
 
-  notifications =
-    let
-      makoctl = "${pkgs.mako}/bin/makoctl";
-    in
-    {
-      invoke = [
-        makoctl
-        "invoke"
-      ];
-      dismiss = [
-        makoctl
-        "dismiss"
-      ];
-      dismiss_all = [
-        makoctl
-        "dismiss"
-        "--all"
-      ];
-    };
-
+  # NOTE ashell replaced mako, and its IPC has no notification commands --
+  # invoke/dismiss are mouse-only via the Notifications bar module
   mkGlobal = x: {
     allow-when-locked = true;
     action.spawn = x;
@@ -213,10 +178,6 @@ in
     "Mod+Ctrl+P".action.screenshot-window = { };
     "Mod+Shift+P".action.screenshot-screen = { };
     "Mod+Alt+P".action.spawn = [ (toString record) ];
-
-    "Mod+N".action.spawn = notifications.invoke;
-    "Mod+Ctrl+N".action.spawn = notifications.dismiss;
-    "Mod+Shift+N".action.spawn = notifications.dismiss_all;
 
     "Mod+Minus".action.set-column-width = "-10%";
     "Mod+Equal".action.set-column-width = "+10%";

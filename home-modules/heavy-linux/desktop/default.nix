@@ -9,7 +9,6 @@
     ./kanshi.nix
     ./autologin.nix
     ./clipboard.nix
-    ./mako.nix
     ./menu.nix
     ./mime
     ./portals.nix
@@ -18,26 +17,16 @@
     ./syncthing.nix
   ];
   config = lib.mkMerge [
-    {
-      home.packages = with pkgs; [ shaderbg ];
-      services.avizo = {
-        enable = true;
-        settings.default.time = 0.5;
-      };
-    }
+    # NOTE ashell subsumes avizo's OSD and the network/bluetooth applets; see
+    # ./niri/ashell.nix
+    { home.packages = with pkgs; [ shaderbg ]; }
     (lib.mkIf (osConfig != null) {
-      services = {
-        blueman-applet.enable = osConfig.services.blueman.enable;
-        udiskie = {
-          enable = osConfig.services.udisks2.enable;
-          notify = true;
-          tray = "auto";
-          automount = true;
-        };
-        network-manager-applet.enable = osConfig.networking.networkmanager.enable;
+      services.udiskie = {
+        enable = osConfig.services.udisks2.enable;
+        notify = true;
+        tray = "auto";
+        automount = true;
       };
-      systemd.user.services.network-manager-applet.Service.Restart =
-        lib.mkIf osConfig.networking.networkmanager.enable "on-failure";
     })
   ];
 }
