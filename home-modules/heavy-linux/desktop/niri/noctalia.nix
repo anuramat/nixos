@@ -93,6 +93,8 @@ in
       desktop_widgets.enabled = false;
     };
 
+    # stylix has no v5 noctalia target on release-26.05 (only on master, which
+    # is incompatible with stable nixpkgs); role mapping mirrors that target
     customPalettes.stylix.dark = {
       primary = c.base0D;
       onPrimary = c.base00;
@@ -106,10 +108,10 @@ in
       onSurface = c.base05;
       surfaceVariant = c.base01;
       onSurfaceVariant = c.base04;
-      outline = c.base02;
+      outline = c.base03;
       shadow = c.base00;
-      hover = c.base02;
-      onHover = c.base05;
+      hover = c.base0C;
+      onHover = c.base00;
       terminal = {
         foreground = c.base05;
         background = c.base00;
