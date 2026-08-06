@@ -178,6 +178,20 @@ let
       buildPhase = "go build -buildmode=c-shared -o waybar-niri-windows.so ./main";
       installPhase = "install -Dm644 waybar-niri-windows.so $out/lib/waybar-niri-windows.so";
     };
+    nirimap = prev.rustPlatform.buildRustPackage {
+      pname = "nirimap";
+      version = "0.3.0";
+      src = inputs.nirimap;
+      cargoLock.lockFile = "${inputs.nirimap}/Cargo.lock";
+      nativeBuildInputs = [
+        prev.pkg-config
+        prev.wrapGAppsHook4
+      ];
+      buildInputs = [
+        prev.gtk4
+        prev.gtk4-layer-shell
+      ];
+    };
     zotero-mcp = prev.python3Packages.buildPythonApplication {
       # basic build without semantic features
       pname = "zotero-mcp";

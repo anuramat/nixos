@@ -117,6 +117,10 @@
       url = "github:calico32/waybar-niri-windows";
       flake = false;
     };
+    nirimap = {
+      url = "github:alexandergknoll/nirimap/v0.3.0";
+      flake = false;
+    };
     zotero-mcp = {
       url = "github:54yyyu/zotero-mcp";
       flake = false;
