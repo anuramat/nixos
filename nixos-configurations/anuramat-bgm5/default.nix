@@ -38,6 +38,7 @@
     ./llama.nix
     ./misc.nix
     ./power.nix
+    ./rustdesk.nix
 
     inputs.nixos-hardware.nixosModules.common-cpu-amd
     inputs.nixos-hardware.nixosModules.common-cpu-amd-pstate

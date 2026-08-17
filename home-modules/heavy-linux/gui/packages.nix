@@ -12,6 +12,7 @@
     xdg-utils # xdg-open etc
     gtk3 # gtk-launch - starts an app by name of the desktop file
     dbeaver-bin # databases
+    rustdesk-flutter # remote desktop client
 
     # documents
     gnumeric # spreadsheets
