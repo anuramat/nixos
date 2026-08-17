@@ -80,6 +80,10 @@
       url = "github:scarisey/copilot-cli-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    chatgpt = {
+      url = "github:poeck/chatgpt-desktop-app-nix-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     devin-cli = {
       url = "github:charliemeyer2000/devin-cli-overlay";
       inputs.nixpkgs.follows = "nixpkgs";

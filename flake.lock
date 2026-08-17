@@ -201,6 +201,26 @@
         "type": "github"
       }
     },
+    "chatgpt": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1786772986,
+        "narHash": "sha256-Ug/kCvr7u5tWlqmOj6fpTBsK5RNaZuJEbA3GaTPaH5U=",
+        "owner": "poeck",
+        "repo": "chatgpt-desktop-app-nix-flake",
+        "rev": "f63a14ab4d1a4ee46c524b004952305a92ee9d2e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "poeck",
+        "repo": "chatgpt-desktop-app-nix-flake",
+        "type": "github"
+      }
+    },
     "cl-nix-lite": {
       "locked": {
         "lastModified": 1728174978,
@@ -2221,6 +2241,7 @@
     "root": {
       "inputs": {
         "agenix": "agenix",
+        "chatgpt": "chatgpt",
         "claude-code": "claude-code",
         "codex": "codex",
         "copilot-cli": "copilot-cli",
