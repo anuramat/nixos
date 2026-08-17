@@ -54,8 +54,11 @@ let
             queue = "alt-enter";
           };
         };
+        model = "gpt-5.6-sol";
         model_reasoning_effort = "xhigh";
         plan_mode_reasoning_effort = "xhigh";
+        model_reasoning_summary = "detailed";
+        personality = "pragmatic";
 
         # meh
         projects."/etc/nixos".trust_level = "trusted";
@@ -67,6 +70,9 @@ let
         web_search = "live"; # "disabled" | "cached" | "live"
         service_tier = "fast"; # "fast" | unset
 
+        sandbox_mode = "workspace-write";
+        sandbox_workspace_write.network_access = true;
+
         features = {
           terminal_resize_reflow = true;
           multi_agent = true;
@@ -77,6 +83,29 @@ let
           unified_exec = false; # background bash
           shell_snapshot = true; # persist shell
           memories = true;
+        };
+
+        desktop = {
+          conversationDetailMode = "STEPS_PROSE";
+          sansFontSize = 14;
+          codeFontSize = 13;
+          ambient-suggestions-enabled = false;
+          localeOverride = "en-US";
+          show-context-window-usage = true;
+          composerEnterBehavior = "enter";
+          followUpQueueMode = "steer";
+          git-pull-request-merge-method = "merge";
+          reviewDelivery = "detached";
+          enabled-reasoning-efforts = [
+            "low"
+            "medium"
+            "high"
+            "xhigh"
+            "ultra"
+            "max"
+          ];
+          usePointerCursors = false;
+          composerPlainTextMode = true;
         };
 
         notify =
