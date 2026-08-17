@@ -16,6 +16,14 @@
     # logind reports the getty-autologin session as "tty"; rustdesk then falls
     # back to this variable, and without it assumes x11
     environment.XDG_SESSION_TYPE = "wayland";
+    # rustdesk shells out: sudo spawns the user-session --server (which is what
+    # registers the ID), plus ps/which/sh for session discovery
+    path = [
+      "/run/wrappers"
+      pkgs.procps
+      pkgs.which
+      pkgs.bash
+    ];
     serviceConfig = {
       ExecStart = "${lib.getExe pkgs.rustdesk-flutter} --service";
       # kill --server and --tray subprocesses too (upstream unit does the same)
