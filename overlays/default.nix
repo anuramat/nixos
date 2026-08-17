@@ -26,6 +26,7 @@ let
         hermes
         copilot-cli
         devin-cli
+        chatgpt
         ;
     });
 

@@ -117,6 +117,7 @@ in
     home = {
       packages = [
         codex
+        pkgs.chatgpt
       ];
       activation = {
         codexConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
