@@ -89,11 +89,11 @@ let
                 libnotify
               ];
               text = ''
-                notify-send -a codex "Codex" "$(jq .last-assistant-message -r)"
+                notify-send -a codex Codex "$(jq -r '."last-assistant-message"' <<<"$1")"
               '';
             };
           in
-          [ notifier ];
+          [ (lib.getExe notifier) ];
       };
     in
     (pkgs.formats.toml { }).generate "codex-config.toml" cfg;
