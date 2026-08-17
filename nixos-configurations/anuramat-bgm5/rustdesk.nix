@@ -33,6 +33,9 @@
     };
   };
 
+  # direct IP access over the tailnet, bypassing the public rendezvous/relay
+  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [ 21118 ];
+
   home-manager.users.${inputs.self.user.username} = {
     # rustdesk can't answer the interactive output chooser; share the first
     # output without prompting (affects all screencasts on this host)
