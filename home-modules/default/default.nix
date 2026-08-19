@@ -56,7 +56,14 @@ in
           else
             builtins.attrNames osConfig.lib.hosts.hosts
             |> lib.filter (lib.hasPrefix prefix)
-            |> map (h: lib.nameValuePair (lib.removePrefix prefix h) { HostName = h; })
+            |> map (
+              h:
+              lib.nameValuePair (lib.removePrefix prefix h) {
+                HostName = h;
+                # expose local pulse socket to the remote host (mic for voice input etc)
+                RemoteForward = "/run/user/%i/pulse-ssh.sock /run/user/%i/pulse/native";
+              }
+            )
             |> builtins.listToAttrs;
       in
       {
