@@ -208,11 +208,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1786772986,
-        "narHash": "sha256-Ug/kCvr7u5tWlqmOj6fpTBsK5RNaZuJEbA3GaTPaH5U=",
+        "lastModified": 1787071735,
+        "narHash": "sha256-sRipzNkMxmHv7V3D6ibERW9gXvmhl8i7oghvYVXZOn8=",
         "owner": "poeck",
         "repo": "chatgpt-desktop-app-nix-flake",
-        "rev": "f63a14ab4d1a4ee46c524b004952305a92ee9d2e",
+        "rev": "d0d7e1c4d134249f50e93e8f6968527686fe31c3",
         "type": "github"
       },
       "original": {
