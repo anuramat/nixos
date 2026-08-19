@@ -10,7 +10,12 @@ let
     ];
     text = ''
       sock="''${XDG_RUNTIME_DIR:-/run/user/$UID}/pulse-ssh.sock"
-      id=$(pactl load-module module-tunnel-source "server=unix:$sock" source_name=ssh-mic)
+      # the socket may be stale (dead listener) until the next ssh connection
+      # replaces it; retry instead of dying and tripping the start limit
+      until id=$(pactl load-module module-tunnel-source "server=unix:$sock" source_name=ssh-mic); do
+        [ -S "$sock" ] || exit 0
+        sleep 2
+      done
       trap 'pactl unload-module "$id"' EXIT
       pactl set-default-source ssh-mic
       # exit (unloading the module) when the socket disappears or is replaced
