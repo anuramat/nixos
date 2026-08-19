@@ -129,6 +129,10 @@ in
         remoteControlAtStartup = true;
         showClearContextOnPlanAccept = true;
         disableAutoMode = "disable";
+        voice = {
+          enabled = true;
+          mode = "tap";
+        };
         inherit
           hooks
           permissions
