@@ -180,7 +180,12 @@ in
               done
 
               [ -v TMPDIR ] || TMPDIR="/tmp"
-              uc3sock="''${XDG_RUNTIME_DIR:-/run/user/$UID}/uc3.sock"
+              runtimeDir="''${XDG_RUNTIME_DIR:-/run/user/$UID}"
+              runtimeBinds=()
+              # uc3: claude-code voice mode; pipewire/pulse: audio (e.g. sox capture)
+              for i in uc3.sock pipewire-0 pulse; do
+                runtimeBinds+=(--bind-try "$runtimeDir/$i" "$runtimeDir/$i")
+              done
               bwrap \
                 --die-with-parent \
                 --proc /proc \
@@ -190,7 +195,7 @@ in
                 --ro-bind-try /sys /sys \
                 --tmpfs /tmp \
                 --tmpfs "$TMPDIR" \
-                --bind-try "$uc3sock" "$uc3sock" \
+                "''${runtimeBinds[@]}" \
                 \
                 ${tmpDirs} \
                 ${roDirs} \
