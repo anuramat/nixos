@@ -108,21 +108,21 @@ let
           composerPlainTextMode = true;
         };
 
-        notify =
-          let
-            notifier = pkgs.writeShellApplication {
-              name = "codex-notifier";
-              runtimeInputs = with pkgs; [
-                jq
-                findutils
-                libnotify
-              ];
-              text = ''
-                notify-send -a codex Codex "$(jq -r '."last-assistant-message"' <<<"$1")"
-              '';
-            };
-          in
-          [ (lib.getExe notifier) ];
+        # notify =
+        #   let
+        #     notifier = pkgs.writeShellApplication {
+        #       name = "codex-notifier";
+        #       runtimeInputs = with pkgs; [
+        #         jq
+        #         findutils
+        #         libnotify
+        #       ];
+        #       text = ''
+        #         notify-send -a codex Codex "$(jq -r '."last-assistant-message"' <<<"$1")"
+        #       '';
+        #     };
+        #   in
+        #   [ (lib.getExe notifier) ];
       };
     in
     (pkgs.formats.toml { }).generate "codex-config.toml" cfg;
