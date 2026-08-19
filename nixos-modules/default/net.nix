@@ -61,6 +61,7 @@ in
         KbdInteractiveAuthentication = false;
         PermitRootLogin = "no";
         PrintLastLog = false;
+        StreamLocalBindUnlink = true;
       };
     };
   };
