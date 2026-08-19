@@ -61,6 +61,8 @@ in
         KbdInteractiveAuthentication = false;
         PermitRootLogin = "no";
         PrintLastLog = false;
+        # unlink stale forwarded sockets (e.g. pulse-ssh.sock) from dead sessions
+        StreamLocalBindUnlink = true;
       };
     };
   };
