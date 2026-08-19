@@ -31,6 +31,10 @@ in
         date_format = "%A, %F";
         telemetry_enabled = false;
         offline_mode = true;
+        keyboard_layout.custom_labels = {
+          "English (US)" = "EN";
+          "Russian" = "RU";
+        };
       };
 
       bar.main = {
@@ -56,11 +60,6 @@ in
           "control-center"
           "session"
         ];
-      };
-
-      widget.keyboard_layout.custom_labels = {
-        "English (US)" = "EN";
-        "Russian" = "RU";
       };
 
       theme = {
