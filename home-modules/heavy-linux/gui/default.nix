@@ -14,6 +14,7 @@ in
     ./viewers.nix
     ./terminals.nix
     ./obs.nix
+    ./rustdesk.nix
     ./theme.nix
   ];
 

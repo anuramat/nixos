@@ -25,6 +25,7 @@ in
   "uc3-totp.age"
   "tgfy-token.age"
   "tgfy-id.age"
+  "rustdesk.age"
 ]
 |> map (x: {
   name = x;

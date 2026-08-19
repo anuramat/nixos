@@ -2,6 +2,7 @@
   pkgs,
   lib,
   inputs,
+  config,
   ...
 }:
 {
@@ -35,6 +36,24 @@
 
   # direct IP access over the tailnet, bypassing the public rendezvous/relay
   networking.firewall.interfaces.tailscale0.allowedTCPPorts = [ 21118 ];
+
+  # the permanent password is stored encrypted by rustdesk itself, so it has to
+  # go through IPC to the live server instead of a config file
+  systemd.services.rustdesk-password = {
+    wantedBy = [ "multi-user.target" ];
+    requires = [ "rustdesk.service" ];
+    after = [ "rustdesk.service" ];
+    path = [ pkgs.rustdesk-flutter ];
+    serviceConfig = {
+      Type = "oneshot";
+      TimeoutStartSec = "2min";
+    };
+    # IPC readback works once the user-session server is up
+    script = ''
+      until [ "$(rustdesk --option direct-server)" = Y ]; do sleep 2; done
+      rustdesk --password "$(cat ${config.age.secrets.rustdesk.path})" | grep -q Done
+    '';
+  };
 
   home-manager.users.${inputs.self.user.username} = {
     # rustdesk can't answer the interactive output chooser; share the first
