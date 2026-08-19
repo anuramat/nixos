@@ -17,7 +17,11 @@ let
         sleep 2
       done
       trap 'pactl unload-module "$id"' EXIT
-      pactl set-default-source ssh-mic
+      # the tunnel source appears asynchronously after the module loads
+      until pactl set-default-source ssh-mic; do
+        [ -S "$sock" ] || exit 0
+        sleep 1
+      done
       # exit (unloading the module) when the socket disappears or is replaced
       # by a new ssh session; the path unit then retriggers against the new one
       ino=$(stat -c %i "$sock")
@@ -28,7 +32,11 @@ in
 {
   systemd.user = {
     services.ssh-mic = {
-      Unit.Description = "Tunnel source backed by the ssh-forwarded pulse socket";
+      Unit = {
+        Description = "Tunnel source backed by the ssh-forwarded pulse socket";
+        # the script paces itself; a failure cascade must not kill the path unit
+        StartLimitIntervalSec = 0;
+      };
       Service.ExecStart = lib.getExe tunnel;
     };
     paths.ssh-mic = {
