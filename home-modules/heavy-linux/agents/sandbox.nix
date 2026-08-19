@@ -65,9 +65,6 @@ in
           unset GIT_EXTERNAL_DIFF
           ${config.lib.home.mkAgenixExportScript tokens}
           ${exportScript env}
-          # prefer the ssh-forwarded pulse socket (mic of the machine we ssh'd from)
-          pulsessh="''${XDG_RUNTIME_DIR:-/run/user/$UID}/pulse-ssh.sock"
-          [ -S "$pulsessh" ] && export PULSE_SERVER="unix:$pulsessh"
         '';
 
       passthrough = pkgs.writeShellApplication {
@@ -185,8 +182,8 @@ in
               [ -v TMPDIR ] || TMPDIR="/tmp"
               runtimeDir="''${XDG_RUNTIME_DIR:-/run/user/$UID}"
               runtimeBinds=()
-              # uc3: claude-code voice mode; pipewire/pulse*: audio (e.g. sox capture)
-              for i in uc3.sock pipewire-0 pulse pulse-ssh.sock; do
+              # uc3: claude-code voice mode; pipewire/pulse: audio (e.g. sox capture)
+              for i in uc3.sock pipewire-0 pulse; do
                 runtimeBinds+=(--bind-try "$runtimeDir/$i" "$runtimeDir/$i")
               done
               bwrap \

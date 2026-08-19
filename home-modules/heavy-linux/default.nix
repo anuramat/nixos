@@ -9,6 +9,7 @@
     ./agents
     ./desktop
     ./gui
+    ./ssh-mic.nix
     ./terminals.nix
     inputs.spicetify-nix.homeManagerModules.spicetify
   ];
