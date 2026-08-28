@@ -68,51 +68,43 @@ in
     };
     packages =
       let
-        wrapped =
-          let
-            mkWrapper =
-              overrides:
-              config.lib.agents.mkPackages (
-                {
-                  agentDir = "claude";
-                  package = pkgs.claude-code;
-                  args = [ "--dangerously-skip-permissions" ];
-                  extraRwDirs = [ config.home.sessionVariables.CODEX_HOME ];
-                }
-                // overrides
-              );
-            wrapperOverrides = {
-              claude = {
-                env = {
-                  # CLAUDE_CODE_AUTO_COMPACT_WINDOW = 400000;
-                  # CLAUDE_AUTOCOMPACT_PCT_OVERRIDE = 100;
-                };
-              };
-              claude-oauth = {
-                tokens = t: {
-                  CLAUDE_CODE_OAUTH_TOKEN = t.claudecode;
-                };
-              };
-              claude-zai = {
-                tokens = t: {
-                  ANTHROPIC_AUTH_TOKEN = t.zai;
-                };
-                env = {
-                  ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
-                  API_TIMEOUT_MS = "3000000";
-                };
-              };
+        mkWrapper =
+          overrides:
+          config.lib.agents.mkPackages (
+            {
+              agentDir = "claude";
+              package = pkgs.claude-code;
+              args = [ "--dangerously-skip-permissions" ];
+              extraRwDirs = [ config.home.sessionVariables.CODEX_HOME ];
+            }
+            // overrides
+          );
+        wrapperOverrides = {
+          claude = {
+            env = {
+              # CLAUDE_CODE_AUTO_COMPACT_WINDOW = 400000;
+              # CLAUDE_AUTOCOMPACT_PCT_OVERRIDE = 100;
             };
-          in
-          lib.mapAttrsToList (
-            wrapperName: overrides: mkWrapper (overrides // { inherit wrapperName; })
-          ) wrapperOverrides;
+          };
+          claude-oauth = {
+            tokens = t: {
+              CLAUDE_CODE_OAUTH_TOKEN = t.claudecode;
+            };
+          };
+          claude-zai = {
+            tokens = t: {
+              ANTHROPIC_AUTH_TOKEN = t.zai;
+            };
+            env = {
+              ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
+              API_TIMEOUT_MS = "3000000";
+            };
+          };
+        };
       in
-      wrapped
-      ++ [
-        pkgs.ccusage
-        pkgs.claude-monitor
-      ];
+      lib.mapAttrsToList (
+        wrapperName: overrides: mkWrapper (overrides // { inherit wrapperName; })
+      ) wrapperOverrides;
     activation = {
       claudeSettings = config.lib.home.json.set {
         showThinkingSummaries = true;

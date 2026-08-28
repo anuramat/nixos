@@ -30,8 +30,8 @@ let
         ;
     });
 
-  unstablePkgs =
-    _: prev:
+  overrides =
+    final: prev:
     let
       unstable-misc = import inputs.nixpkgs-unstable-misc {
         inherit (prev) config;
@@ -67,6 +67,51 @@ let
         google-chrome
         zed-editor
         ;
+
+      waybar-niri-windows = prev.buildGoModule {
+        pname = "waybar-niri-windows";
+        version = "unstable";
+        src = inputs.waybar-niri-windows;
+        vendorHash = "sha256-jK87vZYfUe8znk65SmJ1mN8qP5K3dtt950hKGWTYXs4=";
+        nativeBuildInputs = [ prev.pkg-config ];
+        buildInputs = [ prev.gtk3 ];
+        buildPhase = "go build -buildmode=c-shared -o waybar-niri-windows.so ./main";
+        installPhase = "install -Dm644 waybar-niri-windows.so $out/lib/waybar-niri-windows.so";
+      };
+      nirimap = prev.rustPlatform.buildRustPackage {
+        pname = "nirimap";
+        version = "0.3.0";
+        src = inputs.nirimap;
+        cargoLock.lockFile = "${inputs.nirimap}/Cargo.lock";
+        nativeBuildInputs = [
+          prev.pkg-config
+          prev.wrapGAppsHook4
+        ];
+        buildInputs = [
+          prev.gtk4
+          prev.gtk4-layer-shell
+        ];
+      };
+      zotero-mcp = prev.python3Packages.buildPythonApplication {
+        # basic build without semantic features
+        pname = "zotero-mcp";
+        version = "0.6.1";
+        pyproject = true;
+        src = inputs.zotero-mcp;
+        build-system = [ prev.python3Packages.hatchling ];
+        dependencies = with prev.python3Packages; [
+          pyzotero
+          mcp
+          python-dotenv
+          markitdown
+          pydantic
+          requests
+          fastmcp
+          unidecode
+          bibtexparser
+        ];
+        pythonImportsCheck = [ "zotero_mcp" ];
+      };
 
       vimPlugins = prev.vimPlugins // {
         inherit (unstable-misc.vimPlugins)
@@ -116,108 +161,11 @@ let
       };
     };
 
-  impureWrappers =
-    _: prev:
-    let
-      mkNpx =
-        binName: pkg:
-        let
-          npx = prev.lib.getExe' prev.nodejs "npx";
-        in
-        prev.writeShellScriptBin binName ''
-          exec ${npx} -y ${pkg} "$@"
-        '';
-      mkUv =
-        binName: pkg:
-        let
-          uv = prev.lib.getExe prev.uv;
-        in
-        prev.writeShellScriptBin binName ''
-          exec ${uv} tool run ${pkg} "$@"
-        '';
-    in
-    {
-      qwen-code = mkNpx "qwen-code" "@qwen-code/qwen-code";
-      gemini-cli = mkNpx "gemini" "@google/gemini-cli";
-      inspector = mkNpx "inspector" "@modelcontextprotocol/inspector";
-      ccusage = mkNpx "ccusage" "ccusage";
-      claude-monitor = mkUv "claude-monitor" "claude-monitor";
-    };
-
-  # llama.cpp PR 24423 (DiffusionGemma) on top of a nixpkgs llama-cpp variant
-  diffusionGemma =
-    pkg:
-    pkg.overrideAttrs (old: {
-      version = "24423"; # PR number; must be numeric (becomes LLAMA_BUILD_NUMBER)
-      src = inputs.llama-cpp-diffusion;
-      npmDepsHash = "sha256-pjdbI6NcZRlJVd62xhgbLhWrwFYwgsIwjORqvo1+VD8=";
-      # nixpkgs creates COMMIT in postFetch; diffusion-cli lives in examples/
-      postPatch = "echo ${inputs.llama-cpp-diffusion.shortRev} > COMMIT";
-      cmakeFlags = old.cmakeFlags ++ [ "-DLLAMA_BUILD_EXAMPLES=ON" ];
-    });
-
-  freeform = final: prev: {
-    llama-cpp-diffusion-vulkan = diffusionGemma final.llama-cpp-vulkan;
-    llama-cpp-diffusion-rocm = diffusionGemma final.llama-cpp-rocm;
-    waybar-niri-windows = prev.buildGoModule {
-      pname = "waybar-niri-windows";
-      version = "unstable";
-      src = inputs.waybar-niri-windows;
-      vendorHash = "sha256-jK87vZYfUe8znk65SmJ1mN8qP5K3dtt950hKGWTYXs4=";
-      nativeBuildInputs = [ prev.pkg-config ];
-      buildInputs = [ prev.gtk3 ];
-      buildPhase = "go build -buildmode=c-shared -o waybar-niri-windows.so ./main";
-      installPhase = "install -Dm644 waybar-niri-windows.so $out/lib/waybar-niri-windows.so";
-    };
-    nirimap = prev.rustPlatform.buildRustPackage {
-      pname = "nirimap";
-      version = "0.3.0";
-      src = inputs.nirimap;
-      cargoLock.lockFile = "${inputs.nirimap}/Cargo.lock";
-      nativeBuildInputs = [
-        prev.pkg-config
-        prev.wrapGAppsHook4
-      ];
-      buildInputs = [
-        prev.gtk4
-        prev.gtk4-layer-shell
-      ];
-    };
-    zotero-mcp = prev.python3Packages.buildPythonApplication {
-      # basic build without semantic features
-      pname = "zotero-mcp";
-      version = "0.6.1";
-      pyproject = true;
-      src = inputs.zotero-mcp;
-      build-system = [ prev.python3Packages.hatchling ];
-      dependencies = with prev.python3Packages; [
-        pyzotero
-        mcp
-        python-dotenv
-        markitdown
-        pydantic
-        requests
-        fastmcp
-        unidecode
-        bibtexparser
-      ];
-      pythonImportsCheck = [ "zotero_mcp" ];
-    };
-  };
-
-  inputOverlays =
-    with inputs;
-    [
-      neovim-nightly-overlay
-      oh-my-pi
-    ]
-    |> map (v: v.overlays.default);
-
-  overlays = inputOverlays ++ [
-    freeform
-    impureWrappers
-    unstablePkgs
+  overlays = [
+    overrides
     flakes
+    inputs.neovim-nightly-overlay.overlays.default
+    inputs.oh-my-pi.overlays.default
   ];
 in
 final: prev:
