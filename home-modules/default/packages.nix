@@ -61,6 +61,7 @@
     fortune # random quotes
 
     # miscellaneous unfiled TODO
+    proton-drive-cli
     sem
     lspmux
     nix-auth
