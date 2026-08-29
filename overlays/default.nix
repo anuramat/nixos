@@ -68,6 +68,13 @@ let
         zed-editor
         ;
 
+      darktable = unstable-misc.darktable.override {
+        withAi = true;
+        gmic = unstable-misc.gmic.overrideAttrs (old: {
+          cmakeFlags = (old.cmakeFlags or [ ]) ++ [ (prev.lib.cmakeBool "ENABLE_OPENCV" false) ];
+        });
+      };
+
       waybar-niri-windows = prev.buildGoModule {
         pname = "waybar-niri-windows";
         version = "unstable";
