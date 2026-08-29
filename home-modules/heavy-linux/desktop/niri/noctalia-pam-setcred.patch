@@ -1,0 +1,24 @@
+Run the PAM credential stack after a successful lockscreen auth.
+
+pam_gnupg only stashes the passphrase in pam_sm_authenticate; the preset into
+gpg-agent happens in pam_sm_setcred. Noctalia calls neither pam_setcred nor
+pam_open_session, so the passphrase is discarded when the auth child exits and
+unlocking the screen never unlocks the keyring. swaylock calls pam_setcred for
+exactly this reason.
+
+--- a/src/auth/pam_authenticator.cpp
++++ b/src/auth/pam_authenticator.cpp
+@@ -214,6 +214,13 @@
+         rc = acctRc;
+       }
+     }
++    if (rc == PAM_SUCCESS) {
++      // Give the credential stack a chance to run; pam_gnupg presets the
++      // passphrase it captured during pam_authenticate from pam_sm_setcred.
++      // A failure here is not an authentication failure, so rc is left alone.
++      const int credRc = pam_setcred(pamh.h, PAM_REINITIALIZE_CRED);
++      kLog.debug("pam_setcred rc={} ({})", credRc, pam_strerror(pamh.h, credRc));
++    }
+     const char* err = pam_strerror(pamh.h, rc);
+     const std::string errStr = err != nullptr ? err : i18n::tr("auth.pam.authentication-failed");
+     pamh.lastRc = rc;

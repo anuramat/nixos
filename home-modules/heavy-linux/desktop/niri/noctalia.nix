@@ -1,6 +1,7 @@
 {
   lib,
   config,
+  pkgs,
   inputs,
   ...
 }:
@@ -13,6 +14,12 @@ in
   programs.noctalia = {
     enable = true;
     systemd.enable = true;
+
+    # upstream never runs the credential stack, so pam_gnupg can't preset the
+    # gpg passphrase on unlock; see the patch and nixos-modules/local/default.nix
+    package = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
+      patches = (old.patches or [ ]) ++ [ ./noctalia-pam-setcred.patch ];
+    });
 
     settings = {
       shell = {

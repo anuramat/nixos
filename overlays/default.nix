@@ -61,7 +61,6 @@ let
         opencode
         proton-vpn
         rnote
-        swaylock-plugin
         tombi
         typst
         google-chrome

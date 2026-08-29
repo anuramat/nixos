@@ -50,20 +50,11 @@ in
   security = {
     soteria.enable = true; # polkit auth agent
     rtkit.enable = true; # realtime kit, hands out realtime priority to user processes
-    pam.services =
-      let
-        lockCfg = {
-          nodelay = true;
-          gnupg = {
-            enable = true;
-            noAutostart = true;
-          };
-        };
-      in
-      {
-        swaylock-plugin = lockCfg;
-        swaylock = lockCfg;
-      };
+    pam.services.login.gnupg = {
+      # NOTE noctalia lockscreen also triggers this
+      enable = true;
+      noAutostart = true;
+    };
   };
 
   home-manager = {
