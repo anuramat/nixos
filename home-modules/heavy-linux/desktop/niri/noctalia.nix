@@ -27,12 +27,15 @@ in
         time_format = "{:%F %A %T}";
         date_format = "%A, %F";
         telemetry_enabled = false;
-        offline_mode = true;
+        offline_mode = false;
+        niri_overview_type_to_launch_enabled = true;
         keyboard_layout.custom_labels = {
           "English (US)" = "EN";
           "Russian" = "RU";
         };
       };
+
+      location.address = inputs.self.user.location;
 
       bar.main = {
         position = "top";
@@ -40,7 +43,9 @@ in
         radius = 0;
         margin_ends = 0;
         margin_edge = 0;
-        reserve_space = true;
+        reserve_space = false;
+        auto_hide = true;
+        layer = "overlay";
 
         start = [
           "caffeine"
@@ -83,8 +88,22 @@ in
       lockscreen.enabled = true;
       hooks.session_locked = lib.getExe config.lib.keyring.lock;
 
-      dock.enabled = false;
-      desktop_widgets.enabled = false;
+      dock = {
+        enabled = true;
+        reserve_space = false;
+        smart_auto_hide = true;
+      };
+
+      control_center.width = 1000;
+      nightlight.enabled = true;
+
+      # disable toast on mic/camera/screen capture
+      osd.kinds.privacy = false;
+
+      keybinds.cancel = [
+        "Escape"
+        "Ctrl+c"
+      ];
     };
 
     # NOTE stylix has no noctalia target on release-26.05, drop this once it does

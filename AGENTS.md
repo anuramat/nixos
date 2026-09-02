@@ -75,13 +75,14 @@ adding, removing, or renaming a direct child is an API change for this flake:
   `nix flake check` catches drift on all hosts. Host changes can still affect
   secrets, SSH, substituters, and remote-build behavior on every other host.
 - `user`: the primary account's identity (`username`, `name`, `email`,
-  `timeZone`, `locale`). The only place these are written; every consumer reads
-  `inputs.self.user` directly, with no intervening NixOS option. Multiple users
-  are an explicit non-goal, so there is deliberately nothing to override per
-  host. Consumed by
+  `timeZone`, `locale`, `location`). The only place these are written; every
+  consumer reads `inputs.self.user` directly, with no intervening NixOS option.
+  Multiple users are an explicit non-goal, so there is deliberately nothing to
+  override per host. Consumed by
   `nixos-modules/default/{user,net,nix,web,external_keys,default}.nix`,
   `nixos-modules/local/{default,peripherals}.nix`, `shared-modules/age.nix`
   (secret owner), `home-modules/default/git/` (Git identity),
+  `home-modules/heavy-linux/desktop/niri/noctalia.nix` (weather location),
   `home-configurations/*` (username and home directory), and
   `nixos-configurations/anuramat-root/web/` (ACME contact). Per-host Home
   Manager overrides must be keyed

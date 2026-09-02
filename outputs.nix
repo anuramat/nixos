@@ -101,6 +101,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       email = "x@ctrl.sn";
       timeZone = "Europe/Berlin";
       locale = "en_US.UTF-8";
+      location = "Heidelberg, Germany";
     };
 
     # designated LLM inference endpoint
