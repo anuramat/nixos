@@ -10,75 +10,53 @@ let
 
   inherit (lib) escapeShellArg getExe;
 
+  noctaliaMsg =
+    let
+      bin = getExe config.programs.noctalia.package;
+    in
+    cmd:
+    [
+      bin
+      "msg"
+    ]
+    ++ cmd;
+
   ctl = {
-    brightness =
-      let
-        bin = "${pkgs.avizo}/bin/lightctl";
-      in
-      {
-        up = [
-          bin
-          "up"
-        ];
-        down = [
-          bin
-          "down"
-        ];
-      };
-    sound =
-      let
-        bin = "${pkgs.avizo}/bin/volumectl";
-      in
-      {
-        up = [
-          bin
-          "-u"
-          "up"
-        ];
-        down = [
-          bin
-          "-u"
-          "down"
-        ];
-        mute = [
-          bin
-          "toggle-mute"
-        ];
-        muteMic = [
-          bin
-          "-m"
-          "toggle-mute"
-        ];
-      };
-    playback =
-      let
-        # `-p spotify` for specific player
-        bin = "${pkgs.playerctl}/bin/playerctl";
-      in
-      {
-        prev = [
-          bin
-          "previous"
-        ];
-        next = [
-          bin
-          "next"
-        ];
-        playPause = [
-          bin
-          "play-pause"
-        ];
-        stop = [
-          bin
-          "stop"
-        ];
-      };
+    brightness = {
+      up = noctaliaMsg [ "brightness-up" ];
+      down = noctaliaMsg [ "brightness-down" ];
+    };
+    sound = {
+      up = noctaliaMsg [ "volume-up" ];
+      down = noctaliaMsg [ "volume-down" ];
+      mute = noctaliaMsg [ "volume-mute" ];
+      muteMic = noctaliaMsg [ "mic-mute" ];
+    };
+    playback = {
+      prev = noctaliaMsg [
+        "media"
+        "previous"
+      ];
+      next = noctaliaMsg [
+        "media"
+        "next"
+      ];
+      playPause = noctaliaMsg [
+        "media"
+        "toggle"
+      ];
+      stop = noctaliaMsg [
+        "media"
+        "stop"
+      ];
+    };
     bluetooth = [
       "${pkgs.tlp}/bin/bluetooth"
       "toggle"
     ];
-    lock = [
-      config.lib.lockscreen.lock
+    lock = noctaliaMsg [
+      "session"
+      "lock"
     ];
     sleep = [
       "systemctl"
@@ -118,13 +96,6 @@ let
             book=$(${fd} . "${bookdir}" -at f | ${bemenu} -p read -l 20) || exit
             ${zathura} $book
           '';
-        drun =
-          # bash
-          ''
-            # NOTE: this is so that we have $PATH available
-            selected="$(${getExe pkgs.j4-dmenu-desktop} -d '${bemenu} -p drun' -t '${term}' --no-exec --no-generic)"
-            bash -lc "exec $selected"
-          '';
         todo_add =
           # bash
           ''
@@ -143,26 +114,6 @@ let
       };
     in
     lib.mapAttrs (name: cmd: mkMenu "${name}-dmenu" cmd) commands;
-
-  notifications =
-    let
-      makoctl = "${pkgs.mako}/bin/makoctl";
-    in
-    {
-      invoke = [
-        makoctl
-        "invoke"
-      ];
-      dismiss = [
-        makoctl
-        "dismiss"
-      ];
-      dismiss_all = [
-        makoctl
-        "dismiss"
-        "--all"
-      ];
-    };
 
   mkGlobal = x: {
     allow-when-locked = true;
@@ -186,6 +137,8 @@ in
 
 {
   programs.niri.settings.binds = {
+    "Mod+S".action.spawn = noctaliaMsg [ "bar-toggle" ];
+
     "Mod+A".action.spawn = [ pickers.todo_add ];
     "Mod+Ctrl+A".action.spawn = [ pickers.todo_done ];
     "Mod+B".action.spawn = [ pickers.books ];
@@ -198,7 +151,10 @@ in
       repeat = false;
     };
     "Mod+semicolon".action.spawn = term;
-    "Mod+Space".action.spawn = pickers.drun;
+    "Mod+Space".action.spawn = noctaliaMsg [
+      "panel-toggle"
+      "launcher"
+    ];
     "Mod+Tab".action.focus-monitor-next = { };
     "Mod+Ctrl+Tab".action.move-window-to-monitor-next = { };
     "Mod+Shift+Tab".action.move-column-to-monitor-next = { };
@@ -214,9 +170,9 @@ in
     "Mod+Shift+P".action.screenshot-screen = { };
     "Mod+Alt+P".action.spawn = [ (toString record) ];
 
-    "Mod+N".action.spawn = notifications.invoke;
-    "Mod+Ctrl+N".action.spawn = notifications.dismiss;
-    "Mod+Shift+N".action.spawn = notifications.dismiss_all;
+    "Mod+N".action.spawn = noctaliaMsg [ "notification-invoke-latest" ];
+    "Mod+Shift+N".action.spawn = noctaliaMsg [ "notification-clear-active" ];
+    "Mod+Alt+N".action.spawn = noctaliaMsg [ "notification-dnd-toggle" ];
 
     "Mod+Minus".action.set-column-width = "-10%";
     "Mod+Equal".action.set-column-width = "+10%";
