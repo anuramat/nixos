@@ -41,7 +41,6 @@ in
     knownHostsFiles = names |> map (h: keys.${h}.knownHostsFile); # agenix(?)/ssh host auth
     trusted-public-keys = names |> map (h: keys.${h}.cacheKey); # packages signature
     inherit
-      hosts
       builders
       builderUsername
       cachePort

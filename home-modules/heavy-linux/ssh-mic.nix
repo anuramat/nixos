@@ -1,5 +1,5 @@
 # Exposes the mic of the machine we ssh'd from as the default pipewire source,
-# backed by the pulse socket forwarded via RemoteForward (see default hm module).
+# backed by the pulse socket forwarded via RemoteForward below.
 { pkgs, lib, ... }:
 let
   tunnel = pkgs.writeShellApplication {
@@ -30,6 +30,11 @@ let
   };
 in
 {
+  # expose local pulse socket to bgm5 (mic for voice input etc); `final` so it
+  # also matches when connecting through the `bgm5` alias
+  programs.ssh.settings."Match final host anuramat-bgm5".RemoteForward =
+    "/run/user/%i/pulse-ssh.sock /run/user/%i/pulse/native";
+
   systemd.user = {
     services.ssh-mic = {
       Unit = {
