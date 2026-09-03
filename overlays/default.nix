@@ -27,6 +27,7 @@ let
         copilot-cli
         devin-cli
         chatgpt
+        claude-desktop
         ;
     });
 
