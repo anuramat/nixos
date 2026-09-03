@@ -104,7 +104,8 @@ in
       in
       lib.mapAttrsToList (
         wrapperName: overrides: mkWrapper (overrides // { inherit wrapperName; })
-      ) wrapperOverrides;
+      ) wrapperOverrides
+      ++ [ pkgs.claude-desktop ];
     activation = {
       claudeSettings = config.lib.home.json.set {
         showThinkingSummaries = true;
