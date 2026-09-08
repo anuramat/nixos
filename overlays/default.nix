@@ -63,6 +63,7 @@ let
         opencode
         proton-vpn
         rnote
+        swayimg
         tombi
         typst
         google-chrome
