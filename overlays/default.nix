@@ -58,6 +58,7 @@ let
         ;
 
       inherit (unstable-misc)
+        zellij
         firefox
         ghostty
         opencode
