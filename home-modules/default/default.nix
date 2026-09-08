@@ -1,7 +1,6 @@
 {
   pkgs,
   config,
-  osConfig ? null,
   lib,
   ...
 }:
@@ -47,30 +46,18 @@ in
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false; # NOTE: deprecated, removed in next release
-    settings =
-      let
-        prefix = config.home.username + "-";
-        aliases =
-          if osConfig == null then
-            { }
-          else
-            builtins.attrNames osConfig.lib.hosts.hosts
-            |> lib.filter (lib.hasPrefix prefix)
-            |> map (h: lib.nameValuePair (lib.removePrefix prefix h) { HostName = h; })
-            |> builtins.listToAttrs;
-      in
-      {
-        uc3 = {
-          User = "hd_un330";
-          HostName = "bwunicluster.scc.kit.edu";
-          ControlMaster = "auto";
-          ControlPath = "~/.ssh/cm-%r@%h-%p";
-          ControlPersist = "yes";
-          ServerAliveInterval = 60;
-          WarnWeakCrypto = "no";
-        };
-      }
-      // aliases;
+    settings = {
+      bgm5.HostName = "anuramat-bgm5";
+      uc3 = {
+        User = "hd_un330";
+        HostName = "bwunicluster.scc.kit.edu";
+        ControlMaster = "auto";
+        ControlPath = "~/.ssh/cm-%r@%h-%p";
+        ControlPersist = "yes";
+        ServerAliveInterval = 60;
+        WarnWeakCrypto = "no";
+      };
+    };
   };
 
   xdg.enable = true; # set xdg basedir vars in .profile
