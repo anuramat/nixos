@@ -49,7 +49,7 @@
         # outrun-dark -- blue/red, mid
         # pinky -- very colorful, but looks mostly red/blue
 
-        name = "black-metal-venom";
+        name = "darkviolet";
       in
       "${inputs.tt-schemes}/base16/${name}.yaml";
   };
