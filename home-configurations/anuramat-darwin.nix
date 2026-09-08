@@ -6,7 +6,7 @@ in
   imports = with inputs.self.homeModules; [
     standalone
     darwin
-    default
+    base
     heavy
   ];
 

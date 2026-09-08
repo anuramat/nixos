@@ -24,7 +24,7 @@
   ];
 
   imports = [
-    inputs.self.nixosModules.default
+    inputs.self.nixosModules.base
     inputs.self.nixosModules.local
     inputs.self.nixosModules.laptop
     inputs.nixos-hardware.nixosModules.framework-12-13th-gen-intel

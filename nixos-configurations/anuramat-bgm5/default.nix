@@ -31,7 +31,7 @@
   ];
 
   imports = [
-    inputs.self.nixosModules.default
+    inputs.self.nixosModules.base
     inputs.self.nixosModules.local
     inputs.self.nixosModules.builder
     ./hardware-configuration.nix

@@ -4,7 +4,7 @@
 }:
 {
   imports = [
-    inputs.self.nixosModules.default
+    inputs.self.nixosModules.base
     ./web
     ./hardware-configuration.nix
   ];

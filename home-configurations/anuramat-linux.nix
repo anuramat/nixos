@@ -5,7 +5,7 @@ in
 {
   imports = with inputs.self.homeModules; [
     standalone
-    default
+    base
     linux
     heavy
     heavy-linux

@@ -75,7 +75,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     ) ./home-configurations;
 
     # static host registry; each host asserts its own entry against its
-    # actual config in nixos-modules/default/hosts.nix
+    # actual config in nixos-modules/base/hosts.nix
     hosts = {
       anuramat-bgm5 = {
         system = "x86_64-linux";

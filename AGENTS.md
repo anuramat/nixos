@@ -56,7 +56,7 @@ adding, removing, or renaming a direct child is an API change for this flake:
 - `nixosModules`: `nixos-modules/`.
 - `homeModules`: `home-modules/`.
 - `nixvimModules`: `nixvim-modules/`. The editor is nixvim-based, not a
-  hand-written `init.lua`; the real root is `nixvim-modules/default/default.nix`,
+  hand-written `init.lua`; the real root is `nixvim-modules/full/default.nix`,
   activated via `self.homeModules.nixvim (which imports
   inputs.nixvim.homeModules.nixvim) -> home-modules/heavy/editor.nix ->
   self.nixvimModules.full`.
@@ -69,7 +69,7 @@ adding, removing, or renaming a direct child is an API change for this flake:
 - `hosts`: a hand-written static registry of `{ system, builder }` per host.
   Cross-host facts come from this registry, not from evaluating sibling
   configurations. Adding a host (or changing its system/builder status)
-  requires updating the registry. `nixos-modules/default/hosts.nix` asserts
+  requires updating the registry. `nixos-modules/base/hosts.nix` asserts
   the registry against the host's actual config, and the per-host
   `checks.SYSTEM.host-NAME` outputs evaluate every host's toplevel, so
   `nix flake check` catches drift on all hosts. Host changes can still affect
@@ -79,9 +79,9 @@ adding, removing, or renaming a direct child is an API change for this flake:
   consumer reads `inputs.self.user` directly, with no intervening NixOS option.
   Multiple users are an explicit non-goal, so there is deliberately nothing to
   override per host. Consumed by
-  `nixos-modules/default/{user,net,nix,web,external_keys,default}.nix`,
+  `nixos-modules/base/{user,net,nix,web,external_keys,default}.nix`,
   `nixos-modules/local/{default,peripherals}.nix`, `shared-modules/age.nix`
-  (secret owner), `home-modules/default/git/` (Git identity),
+  (secret owner), `home-modules/base/git/` (Git identity),
   `home-modules/heavy-linux/desktop/niri/noctalia.nix` (weather location),
   `home-configurations/*` (username and home directory), and
   `nixos-configurations/anuramat-root/web/` (ACME contact). Per-host Home
@@ -90,14 +90,14 @@ adding, removing, or renaming a direct child is an API change for this flake:
   or renaming the account silently produces an entry for a user that has no
   modules imported.
 - `llama`: the designated LLM inference endpoint (host and port), consumed by
-  `nixos-modules/default/llama.nix` and `home-modules/default/hosts.nix`.
+  `nixos-configurations/anuramat-bgm5/llama.nix` and `home-modules/base/hosts.nix`.
 - `keys`: per-host key material discovered from `nixos-configurations/*/keys/`
   (client key files and strings, `known_hosts` file path and parsed keys,
   cache key). Single source of truth for key discovery, consumed by
-  `nixos-modules/default/hosts.nix` and `secrets/secrets.nix`.
+  `nixos-modules/base/hosts.nix` and `secrets/secrets.nix`.
 
 Per-system outputs: `packages.neovim` (nixvim-built Neovim from
-`self.nixvimModules.default`), `devShells.default`, and the flake-parts
+`self.nixvimModules.full`), `devShells.default`, and the flake-parts
 modules under `parts/` (treefmt, pre-commit, nix-topology).
 
 The repo uses the experimental Nix pipe operator (`|>`) throughout modules and
@@ -106,10 +106,10 @@ experimental feature; run inside the dev shell or pass it explicitly.
 
 ## Layering
 
-- `nixos-modules/default/`: baseline imported by every NixOS host (agenix,
-  Home Manager, user/network/nix/web/llama plumbing).
+- `nixos-modules/base/`: baseline imported by every NixOS host (agenix,
+  Home Manager, user/network/nix/web plumbing).
   `nixos-modules/local/`: workstation layer on top of it.
-- `home-modules/` layers: `default` (base CLI environment, cross-platform),
+- `home-modules/` layers: `base` (base CLI environment, cross-platform),
   `linux` (Linux-only CLI), `heavy` (editor, toolchains, media/office CLI;
   cross-platform), `heavy-linux` (Niri desktop, AI agents, and `heavy-linux/gui`
   graphical apps). `heavy` and `heavy-linux` are always imported together on
@@ -143,9 +143,9 @@ experimental feature; run inside the dev shell or pass it explicitly.
   host is modeled as a build server, not as a distributed-build client.
 - `overlays/default.nix` mixes stable inputs, unstable package imports,
   personal flake packages, impure `npx`/`uv tool run` wrappers, and a Proton
-  Bridge source override. Since the default NixOS module applies it globally,
+  Bridge source override. Since the base NixOS module applies it globally,
   overlay edits can affect system packages, Home Manager, and nixvim.
-- Home Manager activation helpers in `home-modules/default/lib.nix` mutate JSON
+- Home Manager activation helpers in `home-modules/base/lib.nix` mutate JSON
   and YAML files in place with jq/yq and log diffs under XDG state. Some configs
   are not simple `xdg.configFile` declarations.
 - `services.pss` is a custom Home Manager module replacing the normal

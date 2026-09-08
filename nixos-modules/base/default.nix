@@ -26,7 +26,7 @@
     };
     users.${inputs.self.user.username} = {
       imports = with inputs.self.homeModules; [
-        default
+        base
         linux
       ];
       home.stateVersion = lib.mkDefault config.system.stateVersion;

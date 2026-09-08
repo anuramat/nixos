@@ -135,7 +135,7 @@ These live outside this directory; the relay depends on them:
 - `../sandbox.nix` binds the socket into the sandbox rw:
   `--bind-try "$XDG_RUNTIME_DIR/uc3.sock" "$XDG_RUNTIME_DIR/uc3.sock"` — same
   path inside and out, so the shim is identical everywhere.
-- `home-modules/default/default.nix` provides the `uc3` ssh entry with
+- `home-modules/base/default.nix` provides the `uc3` ssh entry with
   `ControlMaster auto`, `ControlPath ~/.ssh/cm-%r@%h-%p`, `ControlPersist 4h`,
   `ServerAliveInterval 60`, plus the interactive `uc3` script (which cannot
   authenticate from inside the sandbox).
