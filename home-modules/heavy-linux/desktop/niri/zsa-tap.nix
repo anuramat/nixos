@@ -1,3 +1,4 @@
+# SLOP
 # niri has no per-device input settings, but the detachable ZSA touchpad
 # (Voyager "Navigator") has no buttons, so tapping must be enabled while it's
 # attached. config.kdl ends with an include of a state file that a systemd path
@@ -29,7 +30,7 @@ let
     tap="$(cat ${tapOn})"
     grep -q 'ZSA.*Touchpad' /proc/bus/input/devices || tap=""
     mkdir -p '${builtins.dirOf tapFile}'
-    [ "$(cat '${tapFile}' 2>/dev/null)" = "$tap" ] || printf '%s\n' "$tap" > '${tapFile}'
+    [ "$(cat '${tapFile}' 2>/dev/null)" = "$tap" ] || printf '%s\n' "$tap" >'${tapFile}'
   '';
 in
 # pointless on hosts where tap is statically enabled (bgm5)
