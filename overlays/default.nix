@@ -146,6 +146,18 @@ let
           prev.gtk4-layer-shell
         ];
       };
+      caut = prev.rustPlatform.buildRustPackage {
+        pname = "caut";
+        version = "0.1.0";
+        src = inputs.caut;
+        cargoLock.lockFile = "${inputs.caut}/Cargo.lock";
+        # nightly-only `-Z threads` rustflag
+        postPatch = "rm .cargo/config.toml";
+        nativeBuildInputs = [ prev.pkg-config ];
+        buildInputs = [ prev.sqlite ];
+        # 11 LTO'd integration test binaries; upstream `cargo install` skips them too
+        doCheck = false;
+      };
       zotero-mcp = prev.python3Packages.buildPythonApplication {
         # basic build without semantic features
         pname = "zotero-mcp";

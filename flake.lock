@@ -201,6 +201,22 @@
         "type": "github"
       }
     },
+    "caut": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1788496746,
+        "narHash": "sha256-XPwau/JtVFZMKqXVl2h/X0rz2HJ7RD9uTmhgV/MkgaQ=",
+        "owner": "Dicklesworthstone",
+        "repo": "coding_agent_usage_tracker",
+        "rev": "0f45409faa8dd20c46450e0c8d200a09e4d24efd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Dicklesworthstone",
+        "repo": "coding_agent_usage_tracker",
+        "type": "github"
+      }
+    },
     "chatgpt": {
       "inputs": {
         "nixpkgs": [
@@ -2243,6 +2259,7 @@
     "root": {
       "inputs": {
         "agenix": "agenix",
+        "caut": "caut",
         "chatgpt": "chatgpt",
         "claude-code": "claude-code",
         "claude-desktop": "claude-desktop",

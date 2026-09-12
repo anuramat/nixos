@@ -132,6 +132,10 @@
       url = "github:54yyyu/zotero-mcp";
       flake = false;
     };
+    caut = {
+      url = "github:Dicklesworthstone/coding_agent_usage_tracker";
+      flake = false;
+    };
 
     # nixvim plugins not packaged in nixpkgs (pinned; tree-climber's postPatch
     # is rev-sensitive, so update deliberately)
