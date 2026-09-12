@@ -27,10 +27,7 @@ in
       message = "flake output `hosts` is out of sync with nixos-configurations/";
     }
     {
-      assertion =
-        registry ? ${name}
-        && registry.${name}.system == config.nixpkgs.hostPlatform.system
-        && registry.${name}.builder == (config.users.users ? ${builderUsername});
+      assertion = registry ? ${name} && registry.${name}.system == config.nixpkgs.hostPlatform.system;
       message = "flake output `hosts.${name}` is missing or stale";
     }
   ];

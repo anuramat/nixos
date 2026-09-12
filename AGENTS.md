@@ -71,9 +71,9 @@ adding, removing, or renaming a direct child is an API change for this flake:
   instructions by `home-modules/heavy-linux/agents/instructions.nix`).
   Cross-host facts come from this registry, not from evaluating sibling
   configurations. Adding a host (or changing its system/builder/agent status)
-  requires updating the registry. `nixos-modules/base/hosts.nix` asserts
-  the `builder` flag against the host's actual config (`agent` instead drives
-  `nixos-modules/base/agent.nix` directly), and the per-host
+  requires updating the registry. The `builder` and `agent` flags enable
+  `nixos-modules/base/{builder,agent}.nix` on that host; `hosts.nix` asserts
+  the registry's names and systems against the configurations, and the per-host
   `checks.SYSTEM.host-NAME` outputs evaluate every host's toplevel, so
   `nix flake check` catches drift on all hosts. Host changes can still affect
   secrets, SSH, substituters, and remote-build behavior on every other host.
@@ -142,8 +142,9 @@ experimental feature; run inside the dev shell or pass it explicitly.
 
 ## Surprising Or Complex Parts
 
-- `nixos-modules/builder.nix` asserts `!config.nix.distributedBuilds`; a builder
-  host is modeled as a build server, not as a distributed-build client.
+- `nixos-modules/base/builder.nix`, on hosts flagged `builder` in the registry,
+  asserts `!config.nix.distributedBuilds`; a builder host is modeled as a build
+  server, not as a distributed-build client.
 - `nixos-modules/base/agent.nix`, on hosts flagged `agent` in the registry
   (bgm5), accepts ssh from sandboxed agents on other hosts as
   `config.lib.hosts.agentUsername`. The bwrap sandbox binds

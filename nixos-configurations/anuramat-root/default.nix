@@ -20,7 +20,6 @@
 
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "/dev/vda";
-  nix.distributedBuilds = true;
   system.stateVersion = "24.11";
   swapDevices = [
     {

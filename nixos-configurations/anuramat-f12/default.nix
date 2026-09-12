@@ -16,8 +16,6 @@
   boot.initrd.luks.devices."luks-ffc8e21f-2272-442f-8258-30742e29e1f0".device =
     "/dev/disk/by-uuid/ffc8e21f-2272-442f-8258-30742e29e1f0";
 
-  nix.distributedBuilds = true;
-
   services.keyd.keyboards.main.ids = [
     "0001:0001:70533846"
     "0001:0001:09b4e68d"

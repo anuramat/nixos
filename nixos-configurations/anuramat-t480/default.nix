@@ -3,7 +3,6 @@
   ...
 }:
 {
-  nix.distributedBuilds = true;
   system.stateVersion = "24.05";
   home-manager.users.${inputs.self.user.username} = {
     home.stateVersion = "24.11";

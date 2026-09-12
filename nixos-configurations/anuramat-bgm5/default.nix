@@ -4,7 +4,6 @@
   ...
 }:
 {
-  nix.distributedBuilds = false;
   system.stateVersion = "25.11";
   programs.captive-browser.interface = "wlp195s0";
   nixpkgs.config.rocmSupport = true;
@@ -33,7 +32,6 @@
   imports = [
     inputs.self.nixosModules.base
     inputs.self.nixosModules.local
-    inputs.self.nixosModules.builder
     ./hardware-configuration.nix
     ./llama.nix
     ./misc.nix

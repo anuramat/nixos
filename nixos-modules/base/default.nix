@@ -7,6 +7,7 @@
 {
   imports = [
     ./agent.nix
+    ./builder.nix
     ./external_keys.nix
     ./home.nix
     ./hosts.nix

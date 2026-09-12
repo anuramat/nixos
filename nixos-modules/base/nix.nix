@@ -26,6 +26,8 @@ in
   };
 
   nix = with lib.attrsets; {
+    distributedBuilds = !inputs.self.hosts.${config.networking.hostName}.builder;
+
     channel.enable = false;
 
     # add all inputs to registry
