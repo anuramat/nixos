@@ -25,6 +25,7 @@ in
   "uc3-totp.age"
   "tgfy-token.age"
   "tgfy-id.age"
+  "agent.age" # private ssh key for agents
 ]
 |> map (x: {
   name = x;

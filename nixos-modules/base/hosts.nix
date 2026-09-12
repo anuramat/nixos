@@ -9,6 +9,7 @@ let
   inherit (inputs.self) keys;
   registry = inputs.self.hosts;
   builderUsername = "builder";
+  agentUsername = "agent";
 
   name = config.networking.hostName;
   hosts = lib.filterAttrs (n: _: n != name) registry;
@@ -43,6 +44,7 @@ in
     inherit
       builders
       builderUsername
+      agentUsername
       cachePort
       ;
   };

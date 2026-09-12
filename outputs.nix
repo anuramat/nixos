@@ -80,18 +80,23 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       anuramat-bgm5 = {
         system = "x86_64-linux";
         builder = true;
+        agent = true;
+        description = "GPU workstation: AMD Strix Halo, 128GB URAM";
       };
       anuramat-f12 = {
         system = "x86_64-linux";
         builder = false;
+        agent = false;
       };
       anuramat-root = {
         system = "x86_64-linux";
         builder = false;
+        agent = false;
       };
       anuramat-t480 = {
         system = "x86_64-linux";
         builder = false;
+        agent = false;
       };
     };
 

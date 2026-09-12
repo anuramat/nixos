@@ -66,11 +66,14 @@ adding, removing, or renaming a direct child is an API change for this flake:
 
 `outputs.nix` also exposes:
 
-- `hosts`: a hand-written static registry of `{ system, builder }` per host.
+- `hosts`: a hand-written static registry of `{ system, builder, agent }` per
+  host, plus a `description` on agent hosts (rendered into the agents' ssh
+  instructions by `home-modules/heavy-linux/agents/instructions.nix`).
   Cross-host facts come from this registry, not from evaluating sibling
-  configurations. Adding a host (or changing its system/builder status)
+  configurations. Adding a host (or changing its system/builder/agent status)
   requires updating the registry. `nixos-modules/base/hosts.nix` asserts
-  the registry against the host's actual config, and the per-host
+  the `builder` flag against the host's actual config (`agent` instead drives
+  `nixos-modules/base/agent.nix` directly), and the per-host
   `checks.SYSTEM.host-NAME` outputs evaluate every host's toplevel, so
   `nix flake check` catches drift on all hosts. Host changes can still affect
   secrets, SSH, substituters, and remote-build behavior on every other host.
@@ -141,6 +144,18 @@ experimental feature; run inside the dev shell or pass it explicitly.
 
 - `nixos-modules/builder.nix` asserts `!config.nix.distributedBuilds`; a builder
   host is modeled as a build server, not as a distributed-build client.
+- `nixos-modules/base/agent.nix`, on hosts flagged `agent` in the registry
+  (bgm5), accepts ssh from sandboxed agents on other hosts as
+  `config.lib.hosts.agentUsername`. The bwrap sandbox binds
+  `secrets/agent.age` read-only and replaces `/etc/ssh` with its own
+  `ssh_config` (that key only, plus every host's `known_hosts` from the `keys`
+  output). It has to be the top-level system file: inside the sandbox root is
+  unmapped, so store-owned files show as nobody's, and ssh rejects a user
+  config or an `Include` owned like that but not the system file itself. sshd
+  runs every session of that user through a logging
+  `ForceCommand` (`journalctl -t agent-ssh`) with forwarding disabled. The
+  public half lives inline in the module, not under `keys/`, because every
+  `*.pub` there is authorized for the primary user and `builder`.
 - `overlays/default.nix` mixes stable inputs, unstable package imports,
   personal flake packages, impure `npx`/`uv tool run` wrappers, and a Proton
   Bridge source override. Since the base NixOS module applies it globally,

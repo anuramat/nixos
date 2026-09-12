@@ -6,6 +6,7 @@
 }:
 {
   imports = [
+    ./agent.nix
     ./external_keys.nix
     ./home.nix
     ./hosts.nix

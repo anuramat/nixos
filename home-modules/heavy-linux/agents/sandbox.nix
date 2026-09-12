@@ -2,6 +2,7 @@
   pkgs,
   config,
   lib,
+  inputs,
   ...
 }:
 let
@@ -42,6 +43,15 @@ let
         );
     in
     paths |> concatMap argsSingle |> escapeShellArgs;
+
+  sshConfig = pkgs.writeText "ssh_config" ''
+    Host *
+      IdentityFile ${config.lib.secrets.agent.path}
+      IdentitiesOnly yes
+      GlobalKnownHostsFile ${
+        inputs.self.keys |> lib.mapAttrsToList (_: k: k.knownHostsFile) |> lib.concatStringsSep " "
+      }
+  '';
 in
 {
   lib.agents.mkPackages =
@@ -146,6 +156,7 @@ in
 
                 config.lib.secrets.tgfy-token.path
                 config.lib.secrets.tgfy-id.path
+                config.lib.secrets.agent.path
 
                 config.xdg.configHome
                 config.home.sessionVariables.XDG_BIN_HOME
@@ -199,6 +210,8 @@ in
                 \
                 ${tmpDirs} \
                 ${roDirs} \
+                --tmpfs /etc/ssh \
+                --ro-bind ${sshConfig} /etc/ssh/ssh_config \
                 ${rwDirs} \
                 "''${workspaceDirs[@]}" \
                 \

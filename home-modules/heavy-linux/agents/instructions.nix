@@ -1,5 +1,10 @@
-{ lib, ... }:
+{ lib, inputs, ... }:
 let
+  agentHosts =
+    inputs.self.hosts
+    |> lib.filterAttrs (_: v: v.agent)
+    |> lib.mapAttrsToList (n: v: "- `${n}` -- ${v.description}")
+    |> lib.concatStringsSep "\n";
   topHead = "#";
   sectionHead = "${topHead}#";
   head = "${sectionHead}#";
@@ -43,6 +48,16 @@ let
 
           Important: `tmp`, `$TMPDIR`, and XDG cache/data/state home directories are bind mounted to tmpfs, so files created there will not persist after the session is finished.
           Most of the other paths are bind mounted read-only.
+        '';
+
+        ssh = ''
+          You have SSH access to the following machines as the unprivileged `agent` user:
+
+          ${agentHosts}
+
+          It has the same packages as the user, and its home directory persists
+          across sessions. Start long runs with `systemd-run --user` -- they
+          keep running after you disconnect.
         '';
 
         code-ownership = ''
