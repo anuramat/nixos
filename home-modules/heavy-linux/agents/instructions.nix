@@ -33,12 +33,6 @@ let
           - AI-owned code ("SLOP")
         '';
 
-        nix = ''
-          - To find required packages in `nixpkgs`, you SHOULD use `nh search $PACKAGE_NAME`.
-          - You MUST NOT use `nix search`, it's slow and unstable; instead, use `nh search`
-          - To explore NixOS options, you SHOULD use `nixos-option $OPTION_NAME`
-        '';
-
         sandbox = ''
           You are running in a sandbox.
 
@@ -83,6 +77,7 @@ let
           - If you change the types/semantics of existing code, you MUST rename the relevant functions/variables to reflect the changes; e.g. if variable name contains "list" but it is no longer a list, you MUST rename it to avoid confusion.
           - You MUST NOT remove existing comments, unless they're outdated. if you do, you SHOULD inform the user.
           - User is running NixOS, the flake is located in `/etc/nixos`. Whenever user refers to "the NixOS configuration", this path is implied. You MAY read files in this directory for context.
+          - nixpkgs search: `nh search $PACKAGE_NAME`; prefer this over `nix search`, which is slower
           - If user asks you to "notify" them about something, `tgfy` command is implied. It sends a Telegram message to the user. Usage: `echo 'text message' | tgfy file1.txt file2.png`. Attachments are optional.
         ''
         + (for "claude" ''
