@@ -3,7 +3,6 @@
   lib,
   pkgs,
   inputs,
-  config,
   ...
 }:
 let
@@ -12,10 +11,7 @@ let
 in
 {
   imports = [
-    ./cuda.nix
-    ./rocm.nix
     ./peripherals.nix
-    ./remaps.nix
     ./rice.nix
   ];
 
@@ -80,28 +76,15 @@ in
     };
     nix-ld = {
       enable = true;
-      libraries =
-        let
-          cudaLibs =
-            if (config.nixpkgs.config.cudaSupport or false) then
-              [
-                config.hardware.nvidia.package
-                pkgs.cudaPackages.cudatoolkit
-              ]
-            else
-              [ ];
-        in
-        with pkgs;
-        [
-          icu
-          gmp
-          glibc
-          openssl
-          # TODO what is the difference?
-          stdenv.cc.cc
-          stdenv.cc.cc.lib
-        ]
-        ++ cudaLibs;
+      libraries = with pkgs; [
+        icu
+        gmp
+        glibc
+        openssl
+        # TODO what is the difference?
+        stdenv.cc.cc
+        stdenv.cc.cc.lib
+      ];
     };
   };
 
@@ -112,26 +95,11 @@ in
     '';
   };
 
-  # print/scan {{{1
-  # TODO move this to notes?
-  # scanning - `scanimage`
-  # printing - CUPS @ http://localhost:631/ or a desktop entry cups.desktop (Manage Printing)
-  # printer settings and job list - `system-config-printer`
-  # list printers - `lpstat -p`
-  # list printer jobs - `lpstat`
-  # cancel job - `cancel 1`
-
   services = {
-    # FUCK
-    # BUG
-    # doesn't do anything on lid close
     logind.settings.Login = {
       HandlePowerKey = "suspend";
       HandleSuspendKey = "suspend";
       HandleHibernateKey = "suspend";
-      HandleLidSwitch = "suspend";
-      HandleLidSwitchDocked = "ignore";
-      HandleLidSwitchExternalPower = "ignore";
     };
     udisks2 = {
       enable = true;

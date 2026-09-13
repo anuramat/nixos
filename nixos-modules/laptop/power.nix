@@ -8,6 +8,11 @@ in
 {
   services = {
     thermald.enable = true; # cooling
+    logind.settings.Login = {
+      HandleLidSwitch = "suspend";
+      HandleLidSwitchDocked = "ignore";
+      HandleLidSwitchExternalPower = "ignore";
+    };
     tlp = {
       enable = true;
       settings = {

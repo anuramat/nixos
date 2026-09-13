@@ -110,8 +110,11 @@ experimental feature; run inside the dev shell or pass it explicitly.
 ## Layering
 
 - `nixos-modules/base/`: baseline imported by every NixOS host (agenix,
-  Home Manager, user/network/nix/web plumbing).
+  Home Manager, user/network/nix/web plumbing, plus `rocm.nix`/`cuda.nix`,
+  which are gated on `nixpkgs.config.rocmSupport`/`cudaSupport`).
   `nixos-modules/local/`: workstation layer on top of it.
+  `nixos-modules/laptop/`: power management and keyd remaps, imported by
+  t480 and f12 only.
 - `home-modules/` layers: `base` (base CLI environment, cross-platform),
   `linux` (Linux-only CLI), `heavy` (editor, toolchains, media/office CLI;
   cross-platform), `heavy-linux` (Niri desktop, AI agents, and `heavy-linux/gui`
@@ -183,8 +186,10 @@ experimental feature; run inside the dev shell or pass it explicitly.
   input; bumping it may also require updating the hand-pinned `vendorHash` in
   `overlays/default.nix`. The package is built by `nix flake check` so a stale
   hash fails there, not at rebuild time.
-- The desktop uses keyd home-row `lettermod` remaps plus host-specific keyboard
-  IDs. Keyboard behavior is split between shared remaps and per-host IDs.
+- keyd home-row `lettermod` remaps come from `nixos-modules/laptop/keyboard.nix`
+  and apply only to the keyboard IDs each laptop host lists in
+  `services.keyd.keyboards.main.ids`; the `local` layer alone (bgm5) has no
+  keyd, so setting IDs there is dead config.
 - bgm5 uses only selected attributes from the `nix-strix-halo` overlay instead
   of importing the whole upstream default overlay. Its quiet fan/EC behavior is
   in host-local `power.nix`.

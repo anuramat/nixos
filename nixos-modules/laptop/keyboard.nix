@@ -1,18 +1,17 @@
-{ config, ... }:
+{ config, lib, ... }:
 {
-  # TODO enable if it's a laptop
-  # assertions = [
-  #   {
-  #     assertion = (config.services.keyd.keyboards.main.ids != [ ]);
-  #     message = "main keyboard not configured";
-  #   }
-  # ];
+  warnings =
+    if config.services.keyd.keyboards.main.ids == [ ] then
+      [
+        "no keyboard specified for keyd, remaps will not be applied"
+      ]
+    else
+      [ ];
   services.keyd = {
     enable = true;
     keyboards = {
       main = {
-        ids = [
-        ];
+        ids = lib.mkDefault [ ];
         settings =
           let
             interval = toString 64;

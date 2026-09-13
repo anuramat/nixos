@@ -15,6 +15,8 @@
     ./nix.nix
     ./user.nix
     ./web.nix
+    ./rocm.nix
+    ./cuda.nix
 
     inputs.agenix.nixosModules.default
     inputs.self.sharedModules.age
