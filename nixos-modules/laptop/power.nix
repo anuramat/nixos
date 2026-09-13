@@ -10,8 +10,9 @@ in
     thermald.enable = true; # cooling
     logind.settings.Login = {
       HandleLidSwitch = "suspend";
-      HandleLidSwitchDocked = "ignore";
-      HandleLidSwitchExternalPower = "ignore";
+      HandleLidSwitchDocked = "lock";
+      HandleLidSwitchExternalPower = "lock";
+      HoldoffTimeoutSec = 3;
     };
     tlp = {
       enable = true;
