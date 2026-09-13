@@ -24,16 +24,20 @@ let
 in
 {
   config = lib.mkIf inputs.self.hosts.${config.networking.hostName}.agent {
-    users.users.${username} = {
-      isNormalUser = true;
-      group = username;
-      linger = true; # so `systemd-run --user` jobs outlive the ssh session
-      packages = config.home-manager.users.${inputs.self.user.username}.home.packages;
-      openssh.authorizedKeys.keys = [
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINEDuJzoF9hhYfPWeV8wA0QEiFzvtdtqLwFa6gRCh5Vt" # secrets/agent.age
-      ];
+    users = {
+      users.${inputs.self.user.username}.extraGroups = [ username ]; # browse /home/${username} without sudo
+      users.${username} = {
+        isNormalUser = true;
+        group = username;
+        homeMode = "0750";
+        linger = true; # so `systemd-run --user` jobs outlive the ssh session
+        packages = config.home-manager.users.${inputs.self.user.username}.home.packages;
+        openssh.authorizedKeys.keys = [
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINEDuJzoF9hhYfPWeV8wA0QEiFzvtdtqLwFa6gRCh5Vt" # secrets/agent.age
+        ];
+      };
+      groups.${username} = { };
     };
-    users.groups.${username} = { };
     services.openssh = {
       settings.AllowUsers = [ username ];
       extraConfig = ''
