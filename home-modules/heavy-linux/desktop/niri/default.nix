@@ -136,7 +136,7 @@
           width = 4;
         };
         background-color = config.lib.stylix.colors.withHashtag.base00;
-        empty-workspace-above-first = false;
+        empty-workspace-above-first = true;
         shadow = {
           enable = true;
           color = "#000000FF";
