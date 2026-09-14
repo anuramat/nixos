@@ -55,6 +55,9 @@ in
         ControlPath = "~/.ssh/cm-%r@%h-%p";
         ControlPersist = "yes";
         ServerAliveInterval = 60;
+        # the askpass mints the same TOTP for a whole window: a second prompt
+        # can only replay it, which the cluster counts as a failed attempt
+        NumberOfPasswordPrompts = 1;
         WarnWeakCrypto = "no";
       };
     };
