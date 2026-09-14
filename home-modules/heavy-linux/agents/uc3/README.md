@@ -101,8 +101,10 @@ up, then runs `ssh uc3 <cmd>` through it in BatchMode.
 - **Response:** remote stdout+stderr (merged) streamed back, then a trailer
   line `--uc3-exit:<code>--`. The client strips the trailer and exits with
   `<code>`; a missing trailer → exit 1. `timeout` kill → 124; ssh rc 255 → a
-  distinct "cluster unreachable" message (ambiguous with a remote command that
-  itself exits 255 — accepted). Early stdout close on the caller's side
+  distinct "login failed" (the cluster refused the credentials; ssh's own
+  message precedes it) or "cluster unreachable" message (ambiguous with a
+  remote command that itself exits 255 — accepted). Early stdout close on the
+  caller's side
   (`uc3ctl … | head`) → exit 141 (SIGPIPE convention).
 - Stdout is binary-safe. A trailer-shaped byte sequence in the middle of output
   is ordinary payload; only one in the reserved EOF position is interpreted as

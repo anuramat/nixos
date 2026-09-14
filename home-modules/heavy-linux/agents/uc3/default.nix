@@ -63,6 +63,9 @@ in
           "SSH_ASKPASS_REQUIRE=force"
         ];
         ExecStart = "${pkgs.openssh}/bin/ssh -o ConnectTimeout=15 -fN uc3";
+        # the broker reads this to tell a refused login from an unreachable cluster
+        StandardError = "truncate:%S/uc3/login.err";
+        StateDirectory = "uc3";
       };
     };
   };

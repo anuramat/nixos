@@ -33,7 +33,12 @@ trap finish EXIT
 login() {
 	ssh -O check uc3 2>/dev/null && return
 	systemctl --user start uc3-master && return
-	echo "uc3: ERROR: cluster unreachable"
+	cat "$STATE_DIRECTORY/login.err"
+	if grep -q 'Permission denied' "$STATE_DIRECTORY/login.err"; then
+		echo "uc3: ERROR: login failed"
+	else
+		echo "uc3: ERROR: cluster unreachable"
+	fi
 	rc=255
 	exit
 }
