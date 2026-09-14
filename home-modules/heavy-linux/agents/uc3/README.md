@@ -103,7 +103,10 @@ up, then runs `ssh uc3 <cmd>` through it in BatchMode.
   `<code>`; a missing trailer → exit 1. `timeout` kill → 124; ssh rc 255 → a
   distinct "login failed" (the cluster refused the credentials; ssh's own
   message precedes it) or "cluster unreachable" message (ambiguous with a
-  remote command that itself exits 255 — accepted). Early stdout close on the
+  remote command that itself exits 255 — accepted). A refused login also
+  trips a breaker: `~/.local/state/uc3/login-disabled` blocks every further
+  login until a human removes it, so a caller's retry loop cannot lock the
+  TOTP token (an existing master keeps serving). Early stdout close on the
   caller's side
   (`uc3ctl … | head`) → exit 141 (SIGPIPE convention).
 - Stdout is binary-safe. A trailer-shaped byte sequence in the middle of output
@@ -163,5 +166,7 @@ These live outside this directory; the relay depends on them:
    call needs an explicit larger `-t`, while a >1 h synchronous command is
    killed by the broker and reports 124.
 5. Network down: `uc3ctl 'squeue'` → "cluster unreachable", no hang, no prompt.
+   Wrong credentials: "login failed" once, then "logins disabled" without
+   touching the cluster until `login-disabled` is removed.
 6. A binary `cat` download matches the remote file's byte count and SHA-256;
    `uc3ctl 'echo a; sleep 5; echo b'` prints `a` immediately.
