@@ -7,6 +7,7 @@ let
   excludeShellChecks = map (v: "SC" + toString v) config.lib.shellcheck.excludes;
 
   uc3Client = pkgs.writers.writePython3Bin "uc3-client" { } (builtins.readFile ./uc3-client.py);
+  uc3Recv = pkgs.writers.writePython3Bin "uc3-recv" { } (builtins.readFile ./recv.py);
 
   broker = pkgs.writeShellApplication {
     name = "uc3-broker";
@@ -46,7 +47,7 @@ in
     services."uc3-broker@" = {
       Unit.CollectMode = "inactive-or-failed";
       Service = {
-        ExecStart = "${broker}/bin/uc3-broker";
+        ExecStart = "${uc3Recv}/bin/uc3-recv ${broker}/bin/uc3-broker";
         StandardInput = "socket";
         StandardOutput = "socket";
         StandardError = "journal";

@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 # host side of the uc3 relay; one instance per connection (systemd Accept=yes)
 # no policy on what runs -- only auth, host-pinning, and logging
+# stdio is the caller's own (uc3-recv takes it off the socket), and the exit
+# status becomes the caller's
 
 set -euo pipefail
 
-IFS= read -r cmd || exit 0
+cmd=$1
 
 started=$EPOCHSECONDS
 id=$$-$started
@@ -24,8 +26,8 @@ log() {
 finish() {
 	trap - EXIT
 	set +e
-	printf -- '--uc3-exit:%s--\n' "$rc"
 	log END "rc=$rc" "dur=$((EPOCHSECONDS - started))s"
+	exit "$rc"
 }
 trap finish EXIT
 
@@ -36,17 +38,17 @@ trap finish EXIT
 login() {
 	ssh -O check uc3 2>/dev/null && return
 	if [ -e "$breaker" ]; then
-		echo "uc3: ERROR: logins disabled since $(<"$breaker") after a refused login; rm $breaker to re-enable"
+		echo "uc3: ERROR: logins disabled since $(<"$breaker") after a refused login; rm $breaker to re-enable" >&2
 		rc=255
 		exit
 	fi
 	systemctl --user start uc3-master && return
-	cat "$STATE_DIRECTORY/login.err"
+	cat "$STATE_DIRECTORY/login.err" >&2
 	if grep -q 'Permission denied' "$STATE_DIRECTORY/login.err"; then
 		date -Is >"$breaker"
-		echo "uc3: ERROR: login failed; logins disabled until $breaker is removed"
+		echo "uc3: ERROR: login failed; logins disabled until $breaker is removed" >&2
 	else
-		echo "uc3: ERROR: cluster unreachable"
+		echo "uc3: ERROR: cluster unreachable" >&2
 	fi
 	rc=255
 	exit
@@ -57,5 +59,5 @@ log START "$cmd"
 login
 rc=0
 # BatchMode: never answer a prompt here; every login goes through uc3-master
-timeout 3600 ssh -o BatchMode=yes -- uc3 "$cmd" 2>&1 || rc=$?
-[ "$rc" -ne 255 ] || echo "uc3: ERROR: cluster unreachable"
+timeout 3600 ssh -o BatchMode=yes -- uc3 "$cmd" || rc=$?
+[ "$rc" -ne 255 ] || echo "uc3: ERROR: cluster unreachable" >&2
