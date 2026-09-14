@@ -13,6 +13,7 @@ let
     runtimeInputs = with pkgs; [
       coreutils
       openssh
+      systemd
       util-linux
     ];
     inherit excludeShellChecks;
@@ -50,6 +51,18 @@ in
         StandardOutput = "socket";
         StandardError = "journal";
         StateDirectory = "uc3";
+      };
+    };
+    services.uc3-master = {
+      Unit.Description = "shared ssh master for uc3";
+      Service = {
+        # ssh -f returns once logged in, so `systemctl start` blocks on the login
+        Type = "forking";
+        Environment = [
+          "SSH_ASKPASS=${config.home.profileDirectory}/bin/uc3-askpass"
+          "SSH_ASKPASS_REQUIRE=force"
+        ];
+        ExecStart = "${pkgs.openssh}/bin/ssh -o ConnectTimeout=15 -fN uc3";
       };
     };
   };

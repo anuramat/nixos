@@ -50,7 +50,7 @@ are unsupported: they can leave the remote shell waiting for input.
 
 ```
 uc3/
-  default.nix   # uc3ctl package, systemd socket + service, log dir
+  default.nix   # uc3ctl package, systemd socket + broker service, ssh master service, log dir
   broker.sh     # host side, stdio; one instance per connection
   shim.sh       # installed as uc3ctl; agent + human entry point
   uc3-client.py # socket transport and binary-safe trailer handling
@@ -64,8 +64,9 @@ command line followed by stdin, streams the response while retaining only a
 possible EOF trailer, and exits with the remote status. Response EOF completes
 the transaction even if stdin is still open. systemd
 accepts each connection (`Accept=yes`) and runs one `uc3-broker` per
-connection; the broker logs the command and outcome, then runs `ssh uc3 <cmd>` with the
-auth plumbing it inherits on the host.
+connection; the broker logs the command and outcome, makes sure the shared ssh
+master (`uc3-master.service`: started on demand, never restarted by systemd) is
+up, then runs `ssh uc3 <cmd>` through it in BatchMode.
 
 ## Trust model
 
@@ -75,8 +76,11 @@ auth plumbing it inherits on the host.
 - uc3 auth is non-interactive on the host: the service password and TOTP seed
   are agenix secrets (`uc3-pw.age`, `uc3-totp.age`), decrypted to
   `/run/agenix/*` owned by the user; `uc3-askpass` answers password/OTP prompts
-  via `cat` / `oathtool --totp`. A ControlMaster connection amortizes one TOTP
-  over the persist window. None of this is reachable from the sandbox: no
+  via `cat` / `oathtool --totp`, and only inside `uc3-master.service`: one TOTP
+  serves every command until the connection drops, and systemd serializes the
+  service's starts, so parallel cold starts cannot replay a code. The
+  per-command ssh runs in BatchMode and never answers a prompt. None of this is
+  reachable from the sandbox: no
   `~/.ssh`, no readable `/run/agenix`, and no ControlMaster socket bound in.
 - The one unix socket is the only privileged channel, and it always logs before
   it runs — so the log is **complete**. The shared netns lets the agent reach
@@ -136,8 +140,9 @@ These live outside this directory; the relay depends on them:
   `--bind-try "$XDG_RUNTIME_DIR/uc3.sock" "$XDG_RUNTIME_DIR/uc3.sock"` — same
   path inside and out, so the shim is identical everywhere.
 - `home-modules/base/default.nix` provides the `uc3` ssh entry with
-  `ControlMaster auto`, `ControlPath ~/.ssh/cm-%r@%h-%p`, `ControlPersist 4h`,
-  `ServerAliveInterval 60`, plus the interactive `uc3` script (which cannot
+  `ControlMaster auto`, `ControlPath ~/.ssh/cm-%r@%h-%p`, `ControlPersist yes`,
+  `ServerAliveInterval 60`, `NumberOfPasswordPrompts 1`, plus the interactive
+  `uc3` script (which cannot
   authenticate from inside the sandbox).
 - agenix secrets `uc3-pw.age`, `uc3-totp.age` and the `uc3-askpass` helper.
 
@@ -145,8 +150,8 @@ These live outside this directory; the relay depends on them:
 
 1. After `home-manager switch`, `uc3-broker.socket` is active and the socket is
    mode 0600.
-2. Host: `uc3ctl hostname` works (first call mints a TOTP and establishes the
-   ControlMaster; repeat is instant).
+2. Host: `uc3ctl hostname` works (first call mints a TOTP and starts
+   `uc3-master.service`; repeat is instant).
 3. Inside the sandbox: `uc3ctl hostname` works and is logged host-side;
    `ssh uc3` hits a prompt it cannot answer; `cat /run/agenix/uc3-totp` and
    `uc3-askpass OTP` fail; no `~/.ssh` and **no ControlMaster socket** are

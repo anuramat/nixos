@@ -28,9 +28,20 @@ finish() {
 }
 trap finish EXIT
 
+# the ssh master lives in uc3-master.service: it outlives this instance, and
+# systemd serializes its starts, so parallel cold starts share one login
+login() {
+	ssh -O check uc3 2>/dev/null && return
+	systemctl --user start uc3-master && return
+	echo "uc3: ERROR: cluster unreachable"
+	rc=255
+	exit
+}
+
 log START "$cmd"
 
+login
 rc=0
-SSH_ASKPASS=uc3-askpass SSH_ASKPASS_REQUIRE=force \
-	timeout 3600 ssh -o ConnectTimeout=15 -- uc3 "$cmd" 2>&1 || rc=$?
+# BatchMode: never answer a prompt here; every login goes through uc3-master
+timeout 3600 ssh -o BatchMode=yes -- uc3 "$cmd" 2>&1 || rc=$?
 [ "$rc" -ne 255 ] || echo "uc3: ERROR: cluster unreachable"
