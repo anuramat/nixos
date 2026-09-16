@@ -1,6 +1,14 @@
 { pkgs, lib, ... }:
 {
   extraPackages = [ pkgs.typstyle ];
+  autoCmd = [
+    {
+      # NOTE autocmd because after/ftplugin is too early
+      event = "FileType";
+      pattern = "typst";
+      command = "setlocal indentexpr= formatoptions+=n";
+    }
+  ];
   plugins = {
     typst-preview = {
       enable = true;

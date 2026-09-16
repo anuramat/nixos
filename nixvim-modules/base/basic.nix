@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, lib, ... }:
 {
   diagnostic.settings = {
     severity_sort = true;
@@ -31,11 +31,12 @@
       "fzf"
     ];
   };
-  autoCmd = [
+  autoCmd = lib.mkBefore [
     {
       # $VIMRUNTIME ftplugins clobber the global value with their own
       # buffer-local one (e.g. sh.vim does `setlocal fo+=croql`); this fires
-      # after them, since ftplugins are enabled before init is sourced
+      # after them, since ftplugins are enabled before init is sourced, and
+      # before per-filetype FileType autocmds so they can add to it
       # see :h ftplugin-overrule
       event = "FileType";
       command = "setlocal formatoptions=${config.opts.formatoptions}";
