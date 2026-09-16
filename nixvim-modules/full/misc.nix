@@ -27,6 +27,7 @@ in
     grug-far.enable = true;
     schemastore.enable = true;
     dressing.enable = true;
+    conform-nvim.settings.formatters_by_ft.just = [ "just" ];
 
     flash = {
       enable = true;
