@@ -61,6 +61,7 @@
     fortune # random quotes
 
     # miscellaneous unfiled TODO
+    qrrs
     proton-drive-cli
     sem
     lspmux
