@@ -74,6 +74,7 @@
   imports = [
     inputs.niri.homeModules.stylix
     inputs.niri.homeModules.niri
+    ./extra-config.nix
     ./keys.nix
     ./nirimap.nix
     ./noctalia.nix
@@ -101,6 +102,11 @@
   programs.niri = {
     enable = true;
     package = pkgs.niri;
+    extraConfig = ''
+      recent-windows {
+          off
+      }
+    '';
     settings = {
       animations = {
         slowdown = 0.5;

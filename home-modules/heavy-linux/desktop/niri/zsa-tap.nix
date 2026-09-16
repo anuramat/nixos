@@ -36,12 +36,7 @@ in
 # pointless on hosts where tap is statically enabled (bgm5)
 lib.mkIf (!config.programs.niri.settings.input.touchpad.tap) {
   # must come after the input section: merged config is last-wins
-  programs.niri.config = base ++ [
-    (kdl.leaf "include" [
-      { optional = true; }
-      tapFile
-    ])
-  ];
+  programs.niri.extraConfig = lib.mkAfter ''include "${tapFile}" optional=true'';
   systemd.user = {
     services.zsa-tap = {
       Unit.Description = "Sync niri tap-to-click with ZSA touchpad presence";
