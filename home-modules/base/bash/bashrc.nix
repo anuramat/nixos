@@ -1,6 +1,7 @@
 {
   pkgs,
   config,
+  lib,
   ...
 }:
 let
@@ -55,7 +56,8 @@ in
 
       # TODO does this even work/is this required
       PROMPT_COMMAND="''${PROMPT_COMMAND:+$PROMPT_COMMAND;}history -a"
-      source ${./osc.sh}
       ${agenix}
     '';
+  # starship's init is mkOrder 1900; osc.sh hooks around its precmd and PS1
+  programs.bash.initExtra = lib.mkOrder 2000 "source ${./osc.sh}";
 }
