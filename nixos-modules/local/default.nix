@@ -67,7 +67,7 @@ in
     gpu-screen-recorder.enable = true; # NOTE doesn't install the package
     steam.enable = true;
     captive-browser.enable = true;
-    gphoto2.enable = true; # dslr interface
+    gphoto2.enable = true; # camera interface
     obs-studio.enableVirtualCamera = true; # set up the v4l2loopback kernel module, used in home-manager
     gnome-disks.enable = true; # udisks2 frontend
     appimage = {
