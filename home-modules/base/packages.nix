@@ -62,6 +62,7 @@
 
     # miscellaneous unfiled TODO
     qrrs
+    caut # codex/claude usage
     proton-drive-cli
     sem
     lspmux
