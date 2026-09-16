@@ -224,11 +224,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1788649025,
-        "narHash": "sha256-KiN5d9xTxAFdkkhDhzt2Jyu3kbzp7Yw2BEyAdkv/HTU=",
+        "lastModified": 1789419461,
+        "narHash": "sha256-13Wxol0i9QiYVlBvv/h1mJQVVnLHTJCWfMpcZclbKhQ=",
         "owner": "poeck",
         "repo": "chatgpt-desktop-app-nix-flake",
-        "rev": "da465da297e108eb40dacd8039b2ada529d9600b",
+        "rev": "5cb981929a28079e18b862c90406f3e18016a756",
         "type": "github"
       },
       "original": {
@@ -260,11 +260,11 @@
         "systems": "systems_3"
       },
       "locked": {
-        "lastModified": 1788798610,
-        "narHash": "sha256-exCgwjF4Lls46Kj590fPb0HlNcwllX1sOZX0V49qb1s=",
+        "lastModified": 1789506088,
+        "narHash": "sha256-BTpzemdCBYhjBXsl6EirYaWUFxRkCW8JmgAMelDDg6U=",
         "owner": "sadjow",
         "repo": "claude-code-nix",
-        "rev": "806752b6b51c5a3f9362fd60aed838c891b5c58b",
+        "rev": "f5783590a83ea9e2e9c710dc839abf13f59aec37",
         "type": "github"
       },
       "original": {
@@ -301,11 +301,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1788568734,
-        "narHash": "sha256-SzZaOg5XWeTzPTPYpLsSIb47FjC1jXzmfJVjzl8Xd8Q=",
+        "lastModified": 1788995571,
+        "narHash": "sha256-I58IVp7HfT3TTKZJ5kh7/Lttu9DnRZFC0qmvxnIvIj4=",
         "owner": "sadjow",
         "repo": "codex-cli-nix",
-        "rev": "3a0dca3725f6d8b74cfe635a85724d2313731fb4",
+        "rev": "33542c7e7139127a4bac1cbe0fac8c81a570410a",
         "type": "github"
       },
       "original": {
