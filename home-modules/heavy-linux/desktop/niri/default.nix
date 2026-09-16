@@ -116,10 +116,7 @@
       spawn-at-startup = [
         # { argv = [ ]; }
       ];
-      overview = {
-        # zoom = 0.2;
-        workspace-shadow.enable = true;
-      };
+      overview.workspace-shadow.enable = true;
       window-rules = [
         {
           matches = [ { is-active = false; } ];
