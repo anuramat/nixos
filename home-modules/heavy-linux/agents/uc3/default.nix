@@ -30,9 +30,25 @@ let
     inherit excludeShellChecks;
     text = builtins.readFile ./shim.sh;
   };
+
+  uc3pull = pkgs.writeShellApplication {
+    name = "uc3pull";
+    runtimeInputs = with pkgs; [
+      coreutils
+      croc
+      diffutils
+      findutils
+      uc3ctl
+    ];
+    inherit excludeShellChecks;
+    text = builtins.readFile ./uc3pull.sh;
+  };
 in
 {
-  home.packages = [ uc3ctl ];
+  home.packages = [
+    uc3ctl
+    uc3pull
+  ];
 
   systemd.user = {
     sockets.uc3-broker = {

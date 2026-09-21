@@ -41,6 +41,14 @@ local timeout defaults to 300 seconds; raise it with `-t SECS` for large uploads
 or long synchronous work, or use `-t 0` to rely only on the broker's one-hour
 cap.
 
+Downloads through the relay run at about 1 MB/s (the cluster route goes
+through the VPN). For anything big use `uc3pull REMOTE_PATH [LOCAL_DIR]`: it
+starts `croc send` on the cluster through `uc3ctl`, receives locally over
+croc's own relay (VPN bypassed, ~40 MB/s), then diffs every file's md5 against
+the cluster. The remote path is absolute or relative to the cluster home, no
+trailing slash; the object lands inside `LOCAL_DIR` under its own basename.
+The cluster side needs `~/.local/bin/croc`.
+
 The request command must stay on one line. For multiline logic, put the script
 in a file and use `uc3ctl 'bash -s' < script.sh`. Inline heredocs such as
 `uc3ctl 'bash -s' <<'EOF'` and heredocs/newlines embedded in the command argument
@@ -55,6 +63,7 @@ uc3/
   broker.sh     # host side; one instance per connection
   shim.sh       # installed as uc3ctl; agent + human entry point
   uc3-client.py # socket transport: sends the command with its stdio, returns the exit status
+  uc3pull.sh    # installed as uc3pull; croc-based bulk download with md5 verification
 ```
 
 `uc3ctl` has zero authority: its shell shim validates the invocation,
