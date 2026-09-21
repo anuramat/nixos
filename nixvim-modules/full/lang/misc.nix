@@ -75,12 +75,16 @@
     ;
   extraPackages = with pkgs; [
     hadolint
+    checkmake
   ];
   plugins = {
     lint.lintersByFt = {
-      dockerfile = [
-        "hadolint"
-      ];
+      dockerfile = [ "hadolint" ];
+      make = [ "checkmake" ];
+    };
+    conform-nvim = {
+      autoInstall.overrides.bake = pkgs.mbake;
+      settings.formatters_by_ft.make = [ "bake" ];
     };
 
     lsp.servers = {
