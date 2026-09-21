@@ -58,6 +58,6 @@ log START "$cmd"
 
 login
 rc=0
-# BatchMode: never answer a prompt here; every login goes through uc3-master
+# BatchMode: never answer a prompt here; every login goes through uc3-master.
+# ssh's own diagnostics already reach the caller's stderr
 timeout 3600 ssh -o BatchMode=yes -- uc3 "$cmd" || rc=$?
-[ "$rc" -ne 255 ] || echo "uc3: ERROR: cluster unreachable" >&2

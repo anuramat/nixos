@@ -106,15 +106,15 @@ stdio.
   client exits with it, or with 1 if it is missing. Remote stdout and stderr go
   straight to the caller's own descriptors, unmerged and byte-for-byte, so
   nothing is parsed or rewritten and binary downloads are safe by
-  construction. `timeout` kill → 124; ssh rc 255 → a distinct "login failed"
-  (the cluster refused the credentials; ssh's own message precedes it) or
-  "cluster unreachable" message on stderr (ambiguous with a remote command
-  that itself exits 255 — accepted). A refused login also trips a breaker:
+  construction. `timeout` kill → 124. A failed login → 255 with a distinct
+  "login failed" (the cluster refused the credentials; ssh's own message
+  precedes it) or "cluster unreachable" message on stderr; after that, ssh's
+  own diagnostics are the only ones (ambiguous with a remote command that
+  itself exits 255 — accepted). A refused login also trips a breaker:
   `~/.local/state/uc3/login-disabled` blocks every further login until a
   human removes it, so a caller's retry loop cannot lock the TOTP token (an
   existing master keeps serving). Early stdout close on the caller's side
-  (`uc3ctl … | head`) is seen by ssh itself; the remote command's status is
-  returned as usual.
+  (`uc3ctl … | head`) makes ssh exit 255 silently once its stdout is gone.
 - Broker errors are one line, `uc3: ERROR: …`, on the caller's stderr. The
   socket closes when the broker exits, so the client never hangs on a finished
   command.
