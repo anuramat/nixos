@@ -75,7 +75,6 @@
     gpu-screen-recorder # wf-recorder but uses GPU
 
     alsa-utils
-    bemenu # slightly better -- has dynamic height
     cheese # webcam
     j4-dmenu-desktop # .desktop wrapper for dmenus
     libnotify # notify-send etc

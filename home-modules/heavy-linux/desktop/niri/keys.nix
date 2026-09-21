@@ -70,50 +70,40 @@ let
 
   term = "${config.home.sessionVariables.TERMCMD}";
 
-  pickers =
+  # SLOP
+  # launcher dmenu entries, keyed by prefix; keys open the launcher on them
+  menus =
     let
-      pkill = "${pkgs.procps}/bin/pkill";
-      todo = getExe pkgs.todo;
-      todoFile = escapeShellArg config.home.sessionVariables.TODO_FILE;
-      fd = getExe pkgs.fd;
-      zathura = getExe pkgs.zathura;
-      bemenu = getExe pkgs.bemenu;
-
-      mkMenu =
-        name: command:
-        pkgs.writeShellScript name ''
-          if ${pkill} -x bemenu; then
-            exit 0
-          fi
-          ${command}
-        ''
-        |> toString;
-      commands = {
-        books =
-          # bash
-          ''
-            cd ${bookdir}
-            book=$(${fd} . "${bookdir}" -at f | ${bemenu} -p read -l 20) || exit
-            ${zathura} $book
-          '';
-        todo_add =
-          # bash
-          ''
-            export TODO_FILE=${todoFile}
-            task=$(echo "" | ${bemenu} -p todo -l 0) || exit
-            ${todo} add "$task"
-          '';
-        todo_done =
-          # bash
-          ''
-            export TODO_FILE=${todoFile}
-            task=$(${todo} ls | tac | ${bemenu} -p done) || exit
-            task_id=$(echo "$task" | sed 's/^\s*//' | cut -d ' ' -f 1)
-            ${todo} rm "$task_id"
-          '';
-      };
+      # {selection}/{query} are pasted verbatim into a `sh -lc` string, so read
+      # them through a quoted heredoc instead of relying on shell quoting
+      heredoc = tok: "$(cat <<'EOF'\n${tok}\nEOF\n)";
+      todo = "TODO_FILE=${escapeShellArg config.home.sessionVariables.TODO_FILE} ${getExe pkgs.todo}";
     in
-    lib.mapAttrs (name: cmd: mkMenu "${name}-dmenu" cmd) commands;
+    {
+      todo = {
+        label = "Add task";
+        freeform = true;
+        exec = "${todo} add \"${heredoc "{query}"}\"";
+      };
+      done = {
+        label = "Complete task";
+        command = "${todo} ls | tac";
+        exec = "set -- ${heredoc "{selection}"}; ${todo} rm \"$1\"";
+      };
+      book = {
+        label = "Read book";
+        command = "${getExe pkgs.fd} -t f --base-directory ${bookdir}";
+        exec = "cd ${bookdir} && ${getExe pkgs.zathura} \"${heredoc "{selection}"}\"";
+      };
+    };
+
+  openMenu =
+    prefix:
+    noctaliaMsg [
+      "panel-toggle"
+      "launcher"
+      "/${prefix}"
+    ];
 
   mkGlobal = x: {
     allow-when-locked = true;
@@ -136,12 +126,16 @@ let
 in
 
 {
+  programs.noctalia.settings.shell.launcher.dmenu.entry = lib.mapAttrs (
+    prefix: entry: entry // { inherit prefix; }
+  ) menus;
+
   programs.niri.settings.binds = {
     "Mod+S".action.spawn = noctaliaMsg [ "bar-toggle" ];
 
-    "Mod+A".action.spawn = [ pickers.todo_add ];
-    "Mod+Ctrl+A".action.spawn = [ pickers.todo_done ];
-    "Mod+B".action.spawn = [ pickers.books ];
+    "Mod+A".action.spawn = openMenu "todo";
+    "Mod+Ctrl+A".action.spawn = openMenu "done";
+    "Mod+B".action.spawn = openMenu "book";
 
     "Mod+Slash".action.show-hotkey-overlay = { };
 

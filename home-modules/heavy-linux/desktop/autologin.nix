@@ -9,7 +9,7 @@ let
     systemctl --user reset-failed
     # systemctl --user import-environment ...
     # TODO create a new nix var with env vars that we put in the env
-    dbus-update-activation-environment --systemd XDG_VTNR XDG_SESSION_TYPE XDG_SESSION_ID BEMENU_OPTS
+    dbus-update-activation-environment --systemd XDG_VTNR XDG_SESSION_TYPE XDG_SESSION_ID
     systemctl --user --wait start niri.service
     systemctl --user start --job-mode=replace-irreversibly niri-shutdown.target
     # TODO these as a nix var as well

@@ -7,7 +7,6 @@
   imports = [
     ./kanshi.nix
     ./autologin.nix
-    ./menu.nix
     ./mime
     ./portals.nix
     ./niri
