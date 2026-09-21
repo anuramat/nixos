@@ -73,10 +73,6 @@
     files
     extraFiles
     ;
-  extraPackages = with pkgs; [
-    hadolint
-    checkmake
-  ];
   plugins = {
     lint.lintersByFt = {
       dockerfile = [ "hadolint" ];

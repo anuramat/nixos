@@ -45,13 +45,9 @@
     (mdformat.withPlugins (p: [
       p.mdformat-myst
     ]))
-    nixfmt
     cbfmt # mdformat ought to be enough?
-    shfmt # posix/bash/mksh
     shellharden # nazi quotes
-    stylua # lua
     treefmt # aggregator
-    yamlfmt
 
     # debuggers
     delve # Go debugger

@@ -82,7 +82,6 @@
     asciinema
     hyperfine # CLI benchmarking, a-la `time`
     python3
-    just
     wishlist # ssh menu
     vhs # terminal gif generator
     gum # shell library

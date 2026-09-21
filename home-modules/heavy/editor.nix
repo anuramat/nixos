@@ -1,4 +1,5 @@
 {
+  config,
   pkgs,
   inputs,
   ...
@@ -27,7 +28,5 @@
       enable = true;
     };
   };
-  home.packages = with pkgs; [
-    vis
-  ];
+  home.packages = [ pkgs.vis ] ++ config.programs.nixvim.tools;
 }

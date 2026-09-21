@@ -14,6 +14,7 @@
     ./lang
     ./misc.nix
     ./tags.nix
+    ./tools.nix
   ];
 
   keymaps =
@@ -27,6 +28,7 @@
   plugins = {
     lint = {
       enable = true;
+      autoInstall.enable = true;
       autoCmd.event = [
         "BufWritePost"
         "FileType"
