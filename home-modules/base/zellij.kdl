@@ -152,6 +152,9 @@ keybinds clear-defaults=true {
         bind "[" { ScrollToPreviousPrompt; }
         bind "]" { ScrollToNextPrompt; }
     }
+    shared {
+      bind "Ctrl Shift c" { Copy; }
+    }
 }
 
 // NOTE kinda ugly, doesn't show all the hotkeys anyway
