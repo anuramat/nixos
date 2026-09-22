@@ -145,7 +145,7 @@ in
     "Mod+Ctrl+A".action.spawn = openMenu "done";
     "Mod+B".action.spawn = openMenu "book";
 
-    "Alt+Space".action.switch-layout = "next";
+    "Ctrl+Alt+Space".action.switch-layout = "next";
 
     "Mod+Tab".action.focus-monitor-next = { };
     "Mod+Ctrl+Tab".action.move-window-to-monitor-next = { };
