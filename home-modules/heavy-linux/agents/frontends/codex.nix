@@ -54,7 +54,6 @@ let
             queue = "alt-enter";
           };
         };
-        model = "gpt-5.6-sol";
         model_reasoning_effort = "xhigh";
         plan_mode_reasoning_effort = "xhigh";
         model_reasoning_summary = "detailed";
