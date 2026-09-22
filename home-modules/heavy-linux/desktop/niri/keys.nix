@@ -131,24 +131,22 @@ in
   ) menus;
 
   programs.niri.settings.binds = {
-    "Mod+S".action.spawn = noctaliaMsg [ "bar-toggle" ];
-
-    "Mod+A".action.spawn = openMenu "todo";
-    "Mod+Ctrl+A".action.spawn = openMenu "done";
-    "Mod+B".action.spawn = openMenu "book";
-
-    "Mod+Slash".action.show-hotkey-overlay = { };
-
-    "Alt+Space".action.switch-layout = "next";
+    "Mod+semicolon".action.spawn = term;
     "Mod+Q" = {
       action."close-window" = { };
       repeat = false;
     };
-    "Mod+semicolon".action.spawn = term;
+
     "Mod+Space".action.spawn = noctaliaMsg [
       "panel-toggle"
       "launcher"
     ];
+    "Mod+A".action.spawn = openMenu "todo";
+    "Mod+Ctrl+A".action.spawn = openMenu "done";
+    "Mod+B".action.spawn = openMenu "book";
+
+    "Alt+Space".action.switch-layout = "next";
+
     "Mod+Tab".action.focus-monitor-next = { };
     "Mod+Ctrl+Tab".action.move-window-to-monitor-next = { };
     "Mod+Shift+Tab".action.move-column-to-monitor-next = { };
