@@ -9,7 +9,6 @@ in
       keepalive = true;
       port = 9000;
     };
-    "zellij/config.kdl".source = ./zellij.kdl;
   };
 
   programs = {
@@ -27,8 +26,6 @@ in
     };
 
     info.enable = true;
-
-    zellij.enable = true;
 
     direnv = {
       enable = true;
