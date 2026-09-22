@@ -154,11 +154,12 @@ keybinds clear-defaults=true {
     }
 }
 
-plugins {
-    compact-bar location="zellij:compact-bar" {
-        tooltip "" // don't need the hotkey since tooltip appears on ctrl-g
-    }
-}
+// NOTE kinda ugly, doesn't show all the hotkeys anyway
+// plugins {
+//     compact-bar location="zellij:compact-bar" {
+//         tooltip "" // don't need the hotkey since tooltip appears on ctrl-g
+//     }
+// }
 
 show_startup_tips false
 show_release_notes false
