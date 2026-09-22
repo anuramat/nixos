@@ -1,6 +1,6 @@
 keys_dir := `pwd` / "nixos-configurations" / `hostname` / "keys"
 
-all: format lint nixos
+all: lint nixos
 
 [private]
 nixos-pre:
@@ -19,18 +19,6 @@ nixos-pre:
 nixos command="switch" *flags: nixos-pre
     sudo nixos-rebuild {{ command }} --option extra-experimental-features pipe-operators {{ flags }}
 
-[group('build')]
-nixos-nh command="switch" *flags: nixos-pre
-    nh os switch . {{ flags }}
-
-[group('build')]
-nixos-local command="switch" *flags:
-    sudo nixos-rebuild {{ command }} --option extra-experimental-features pipe-operators --builders '' {{ flags }}
-
-[group('build')]
-nixos-no-sub command="switch" *flags:
-    sudo nixos-rebuild {{ command }} --option substituters "" --option extra-experimental-features pipe-operators --builders '' {{ flags }}
-
 [group('code')]
 lint:
     statix check
@@ -40,10 +28,6 @@ lint:
     fd -e sh --print0 | xargs -0 shellcheck --enable=all --color=always
     yamllint .
 
-[group('code')]
-format:
-    nix fmt
-
 [group('util')]
 build pkg:
     nix build ".#nixosConfigurations.$(hostname).pkgs.{{ pkg }}"
@@ -52,14 +36,6 @@ build pkg:
 run pkg *args:
     nix run ".#nixosConfigurations.$(hostname).pkgs.{{ pkg }}" -- {{ args }}
 
-# Check a NixOS configuration
-[group('check')]
-check-nixos host=`hostname`: (check ".#nixosConfigurations." + host + ".config.system.build.toplevel")
-
-# Check a Home Manager configuration
-[group('check')]
-check-hm user: (check ".#homeConfigurations." + user + ".activationPackage")
-
-[group('check')]
-check target="":
-    {{ if target == "" { "nix flake check" } else { "nix build " + target + " --no-link --dry-run" } }}
+[group('util')]
+update-agents:
+    nix flake update claude-code claude-desktop codex chatgpt
