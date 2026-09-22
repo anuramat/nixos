@@ -1,11 +1,11 @@
+export NIX_CONFIG := "extra-experimental-features = nix-command flakes pipe-operators"
+rebuild := "nixos-rebuild --sudo"
 keys_dir := `pwd` / "nixos-configurations" / `hostname` / "keys"
 
 default: nixos
 
 [private]
 nixos-pre:
-    # ask for permission first
-    sudo true
     # store keys in repo:
     mkdir -p "{{ keys_dir }}"
     # set locale to get deterministic ordering
@@ -17,7 +17,16 @@ nixos-pre:
 
 [group('build')]
 nixos command="switch" *flags: nixos-pre
-    sudo nixos-rebuild {{ command }} --option extra-experimental-features pipe-operators {{ flags }}
+    {{ rebuild }} {{ command }} {{ flags }}
+
+[group('build')]
+nixos-local command="switch" *flags: nixos-pre
+    subs=$(nix config show substituters | tr ' ' '\n' | grep -v '^http:' | xargs) && \
+    {{ rebuild }} {{ command }} --builders '' --option substituters "$subs" {{ flags }}
+
+[group('build')]
+nixos-offline command="switch" *flags: nixos-pre
+    {{ rebuild }} {{ command }} --offline --builders '' {{ flags }}
 
 [group('code')]
 lint:
