@@ -1,121 +1,7 @@
 { pkgs, ... }:
 {
-  # TODO euporie (tui jupyter notebooks)
   home.packages = with pkgs; [
-    # tops
-    bottom
-    ctop # containers
-    gotop
-    podman-tui # podman container status
-    nvtopPackages.full # top for GPUs
-
-    # containers
-    dive # look into docker image layers
-    kubectl
-    kubectx
-    podman-compose
-
-    # development
-    bats # bash testing
-    bear # compilation database generator for clangd
-    gomodifytags
-    universal-ctags # maintained ctags
-    ast-grep # structural regex
-
-    # security
-    age # file encryption
-    ragenix # (r)agenix cli
-
-    # network/communication
-    aircrack-ng
-    grpcui
-    grpcurl
-    httpie # curl++
-    aria2 # downloader
-    croc # send/receive files through relay with encryption
-    ddgr # ddg search
-    dig # dns utils
-    gsocket # get shit through nat
-    inetutils # common network stuff
-    mosh # ssh over unstable connections
-    mtr # net diagnostics
-    netcat
-    nmap
-    openconnect_openssl
-    prettyping # ping++
-    qrcp # share files over qr
-    rclone # rsync for cloud
-    socat # socket cat
-    speedtest-cli
-
-    # system utilities
-    pstree # ps tree :)
-    progress # progress status for cp etc
-    pv # pipe viewer
-
-    # fun
-    fastfetch
-    banner
-    figlet # fancy banners
-    cowsay
-    fortune # random quotes
-
-    # miscellaneous unfiled TODO
-    sshfs
-    qrrs # generate/read QR codes
-    caut # codex/claude usage
-    proton-drive-cli
-    sem
-    lspmux
-    nix-auth
-    html2text # html to plain text
-    fx # json viewer
-    gron # make json greppable (every value gets its own line)
-    csvkit
-    firefox-sync-client
-    remarshal # convert between json, toml, yaml, ...
-    nix-bash-completions
-    rename
-    renameutils
-    mitmproxy
-    dotslash
-    xdg-ninja # checks $HOME for junk
-    asciinema
-    hyperfine # CLI benchmarking, a-la `time`
-    python3
-    wishlist # ssh menu
-    vhs # terminal gif generator
-    gum # shell library
-    exercism # cli for exercism.org
-    libqalculate # `qalc` - advanced calculator
-    yt-dlp # download youtube videos
-    cachix
-
-    # dev
-    ansifilter # filter out scary chars
-    makefile2graph
-    mprocs # job runner
-    rsbkb # rust blackbag - encode/decode tools
-    scc # sloc cloc and code: dick measuring tool
-    git-filter-repo # rewrite/analyze repository history
-    entr # file watcher - runs command on change
-    ghq # git repository manager
-    expect # automating tuis
-
-    # manuals
-    man-pages
-    man-pages-posix
-    cht-sh
-
-    # modern replacements
-    dust # du++
-    duf # df++
-    ncdu # du++: interactive
-    eza # ls++
-
     # absolute minimum
-    xxd
-    tshark
     bc # simple calculator
     coreutils-full
     curl
@@ -126,12 +12,74 @@
     less
     lsof
     moreutils # random unixy goodies
-    p7zip
+    python3
     tmux # just in case
     tree
+    wget
+    xxd
+
+    # archives
+    p7zip
     unrar-wrapper
     unzip
-    wget
     zip
+
+    # modern replacements
+    duf # df++
+    dust # du++
+    eza # ls++
+    ncdu # du++: interactive
+
+    # tops
+    bottom
+    gotop
+
+    # processes
+    progress # progress status for cp etc
+    pstree # ps tree :)
+    pv # pipe viewer
+
+    # hardware
+    pciutils
+    procps # info from /proc
+    smartmontools # storage
+    usbutils
+
+    # files
+    rename
+    renameutils
+
+    # data
+    fx # json viewer
+    gron # make json greppable (every value gets its own line)
+    remarshal # convert between json, toml, yaml, ...
+
+    # network
+    aria2 # downloader
+    croc # send/receive files through relay with encryption
+    dig # dns utils
+    gsocket # get shit through nat
+    httpie # curl++
+    inetutils # common network stuff
+    mosh # ssh over unstable connections
+    mtr # net diagnostics
+    netcat
+    prettyping # ping++
+    rclone # rsync for cloud
+    socat # socket cat
+    speedtest-cli
+    sshfs
+
+    # security
+    age # file encryption
+    ragenix # (r)agenix cli
+
+    # manuals
+    cht-sh
+    man-pages
+    man-pages-posix
+
+    # shell
+    nix-bash-completions
   ];
 }

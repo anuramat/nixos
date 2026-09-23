@@ -1,6 +1,7 @@
 {
   config,
   inputs,
+  pkgs,
   ...
 }:
 {
@@ -10,6 +11,11 @@
     ./ignores.nix
     ./jupyter.nix
     ./lazygit.nix
+  ];
+
+  home.packages = with pkgs; [
+    ghq # git repository manager
+    git-filter-repo # rewrite/analyze repository history
   ];
 
   home.sessionVariables.GHQ_ROOT = "${config.xdg.dataHome}/ghq";
