@@ -20,7 +20,7 @@ let
       lib.nameValuePair name (func name (dir + "/${entry}"))
     );
 
-  mkImportSet = mapDir (_: import);
+  mkModuleSet = mapDir (_: path: path);
   # }}}1
 
   # system per standalone Home Manager configuration in home-configurations/
@@ -35,7 +35,7 @@ let
       {
         inherit system;
       }
-      // (inputs.self.sharedModules.nixpkgs { inherit inputs; }).nixpkgs
+      // (import inputs.self.sharedModules.nixpkgs { inherit inputs; }).nixpkgs
     );
 in
 flake-parts.lib.mkFlake { inherit inputs; } {
@@ -49,8 +49,8 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     "aarch64-darwin"
   ];
   flake = {
-    nixosModules = mkImportSet ./nixos-modules;
-    homeModules = mkImportSet ./home-modules;
+    nixosModules = mkModuleSet ./nixos-modules;
+    homeModules = mkModuleSet ./home-modules;
     nixosConfigurations = mapDir (
       name: module:
       inputs.nixpkgs.lib.nixosSystem {
@@ -147,8 +147,8 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     # }}}1
 
     overlays = mapDir (_name: module: import module { inherit inputs lib; }) ./overlays; # TODO use mkImportSet as well?
-    nixvimModules = mkImportSet ./nixvim-modules;
-    sharedModules = mkImportSet ./shared-modules;
+    nixvimModules = mkModuleSet ./nixvim-modules;
+    sharedModules = mkModuleSet ./shared-modules;
   };
 
   perSystem =
