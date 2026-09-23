@@ -5,7 +5,7 @@
     update_in_insert = true;
     signs = false;
   };
-  extraConfigVim = builtins.readFile ./base.vim;
+  extraConfigVim = lib.mkBefore (builtins.readFile ./base.vim); # sets mapleader, must run first
 
   opts = {
     # q -- adds comment leader on format

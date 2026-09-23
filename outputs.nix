@@ -224,7 +224,12 @@ flake-parts.lib.mkFlake { inherit inputs; } {
             };
         in
         {
-          neovim = mkNvim inputs.self.nixvimModules.full;
+          neovim = mkNvim {
+            imports = with inputs.self.nixvimModules; [
+              base
+              heavy
+            ];
+          };
           neovim-minimal = mkNvim inputs.self.nixvimModules.base;
         };
       devShells.default = pkgs.mkShell {

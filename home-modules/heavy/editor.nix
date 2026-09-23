@@ -5,17 +5,9 @@
   ...
 }:
 {
-  imports = [ inputs.self.homeModules.nixvim ];
-
   stylix.targets.nixvim.plugin = "base16-nvim";
   programs = {
-    nixvim = {
-      enable = true;
-      imports = [
-        inputs.self.nixvimModules.full
-      ];
-      defaultEditor = true;
-    };
+    nixvim.imports = [ inputs.self.nixvimModules.heavy ];
     helix = {
       enable = true;
       settings = {

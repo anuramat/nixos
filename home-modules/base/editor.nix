@@ -24,4 +24,9 @@
       // (if osConfig == null then { } else { inherit osConfig; });
     };
   };
+  config.programs.nixvim = {
+    enable = true;
+    defaultEditor = true;
+    imports = [ inputs.self.nixvimModules.base ];
+  };
 }

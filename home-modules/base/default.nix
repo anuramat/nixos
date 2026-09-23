@@ -27,6 +27,7 @@ in
     ./hosts.nix
     ./bash
     ./bin
+    ./editor.nix
     ./git
     ./keyring.nix
     ./lib.nix

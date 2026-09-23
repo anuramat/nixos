@@ -4,7 +4,6 @@
 }:
 {
   imports = [
-    ../base
     ./completion.nix
     ./custom.nix
     ./filemgr.nix
