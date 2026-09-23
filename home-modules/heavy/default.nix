@@ -1,7 +1,6 @@
 { config, ... }:
 {
   imports = [
-    ./containers.nix
     ./editor.nix
     ./gui.nix
     ./fonts.nix

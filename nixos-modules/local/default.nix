@@ -11,6 +11,7 @@ let
 in
 {
   imports = [
+    ./containers.nix
     ./peripherals.nix
     ./rice.nix
   ];
@@ -19,14 +20,6 @@ in
     waydroid = {
       enable = true;
       package = pkgs.waydroid-nftables;
-    };
-    containers.enable = true; # common container config files in /etc/containers
-    podman = {
-      enable = true;
-      dockerCompat = true;
-      # > Required for containers under podman-compose to be able to talk to each other.
-      # TODO is this still needed?
-      defaultNetwork.settings.dns_enabled = true;
     };
   };
 
