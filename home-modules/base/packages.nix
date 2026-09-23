@@ -48,6 +48,24 @@
     fx # json viewer
     gron # make json greppable (every value gets its own line)
     remarshal # convert between json, toml, yaml, ...
+    csvkit
+    html2text # html to plain text
+    tidy-viewer # csv viewer
+
+    # development
+    ansifilter # filter out scary chars
+    dotslash
+    entr # file watcher - runs command on change
+    expect # automating tuis
+    hyperfine # CLI benchmarking, a-la `time`
+    mprocs # job runner
+    rsbkb # rust blackbag - encode/decode tools
+    scc # sloc cloc and code: dick measuring tool
+    universal-ctags # maintained ctags
+
+    # nix
+    cachix
+    nix-auth
 
     # network
     aria2 # downloader
@@ -75,6 +93,8 @@
     man-pages-posix
 
     # shell
+    gum # shell library
     nix-bash-completions
+    wishlist # ssh menu
   ];
 }

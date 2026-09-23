@@ -3,31 +3,17 @@
   # TODO euporie (tui jupyter notebooks)
   home.packages = with pkgs; [
     # development
-    ansifilter # filter out scary chars
+    gcc
+    gomodifytags
     ast-grep # structural regex
     bats # bash testing
     bear # compilation database generator for clangd
-    dotslash
-    entr # file watcher - runs command on change
-    expect # automating tuis
-    gcc
-    gomodifytags
-    hyperfine # CLI benchmarking, a-la `time`
     lspmux
     makefile2graph
-    mprocs # job runner
-    rsbkb # rust blackbag - encode/decode tools
-    scc # sloc cloc and code: dick measuring tool
-    sem
-    universal-ctags # maintained ctags
 
     # kubernetes
     kubectl
     kubectx
-
-    # nix
-    cachix
-    nix-auth
 
     # network
     aircrack-ng
@@ -43,18 +29,9 @@
     firefox-sync-client
     proton-drive-cli
 
-    # data
-    csvkit
-    html2text # html to plain text
-    tidy-viewer # csv viewer
-
     # terminal recording
     asciinema
     vhs # terminal gif generator
-
-    # shell scripting
-    gum # shell library
-    wishlist # ssh menu
 
     # misc
     caut # codex/claude usage
