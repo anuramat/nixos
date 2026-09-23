@@ -28,15 +28,19 @@ Useful repo commands:
 
 - `nix develop`: enter the dev shell with `just`, `nh`, `nixfmt`,
   `shellcheck`, `yamllint`, and Lua checking tools.
-- `just format`: run `nix fmt` through treefmt.
+- `nix fmt`: format through treefmt.
 - `just lint`: run statix, deadnix, Nix parsing, luacheck, shellcheck, and
   yamllint.
-- `just check`: run `nix flake check`; the `checks` output evaluates every
-  host's toplevel (firing all assertions) without building it.
-- `just check-nixos HOST`: dry-run build the NixOS toplevel for a host.
-- `just check-hm USER`: dry-run build a Home Manager activation package.
-- `just nixos-local build --flake .#HOST`: build a host without remote
-  builders when full host validation is wanted.
+- `nix flake check`: the `checks` output evaluates every host's toplevel
+  (firing all assertions) without building it.
+- `just nixos [COMMAND] [FLAGS]`: `nixos-rebuild COMMAND` (default `switch`)
+  on the current host; `just nixos-local ...` does the same without remote
+  builders or `http:` substituters, `just nixos-offline ...` with `--offline`.
+  E.g. `just nixos-local build --flake .#HOST` builds a host locally when full
+  host validation is wanted.
+- `just build PKG` / `just run PKG ARGS`: build/run a package from the current
+  host's `pkgs` (overlays applied).
+- `just update-agents`: bump the AI agent flake inputs.
 
 ## Flake Shape
 
@@ -140,8 +144,9 @@ experimental feature; run inside the dev shell or pass it explicitly.
   client keys plus `known_hosts` keys of every host.
 - Host public keys live under `nixos-configurations/$HOST/keys/`: client
   `*.pub` keys, `known_hosts`, and `cache.pem.pub`.
-- `just nixos-pre` refreshes the current host's `known_hosts`, public client
-  keys, and binary-cache public key before rebuild-oriented commands.
+- The private `nixos-pre` recipe, run before every `just nixos*` rebuild,
+  refreshes the current host's `known_hosts`, public client keys, and
+  binary-cache public key.
 
 ## Surprising Or Complex Parts
 
