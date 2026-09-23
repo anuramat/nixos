@@ -123,12 +123,14 @@ experimental feature; run inside the dev shell or pass it explicitly.
   `nixos-modules/laptop/`: power management and keyd remaps, imported by
   t480 and f12 only.
 - `home-modules/` layers: `base` (base CLI environment, cross-platform),
-  `linux` (Linux-only CLI), `heavy` (editor, toolchains, media/office CLI,
-  and cross-platform graphical apps in `heavy/gui.nix`), `heavy-linux` (Niri
-  desktop, AI agents, and Linux-only graphical apps in `heavy-linux/gui`).
-  `heavy` and `heavy-linux` are always imported together on NixOS, so
-  Linux-only additions belong in `heavy-linux`; keeping `heavy` Darwin-clean
-  is what makes the `anuramat-darwin` home configuration evaluate.
+  `linux` (Linux-only CLI), `local` (physical machines, cross-platform),
+  `local-linux` (Linux hardware tools), `heavy` (editor, toolchains,
+  media/office CLI, and cross-platform graphical apps in `heavy/gui.nix`),
+  `heavy-linux` (Niri desktop, AI agents, and Linux-only graphical apps in
+  `heavy-linux/gui`). `local`, `local-linux`, `heavy` and `heavy-linux` are
+  always imported together on NixOS, so Linux-only additions belong in the
+  `-linux` layers; keeping `local` and `heavy` Darwin-clean is what makes the
+  `anuramat-darwin` home configuration evaluate.
 - Hosts: `anuramat-root` (server-like QEMU guest; nginx, ACME, `ctrl.sn`,
   wastebin), `anuramat-t480` (ThinkPad T480 laptop), `anuramat-f12`
   (Framework 12 laptop), `anuramat-bgm5` (AMD Strix Halo workstation; build

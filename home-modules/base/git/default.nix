@@ -9,7 +9,6 @@
     ./difft.nix
     ./gh.nix
     ./ignores.nix
-    ./jupyter.nix
     ./lazygit.nix
   ];
 

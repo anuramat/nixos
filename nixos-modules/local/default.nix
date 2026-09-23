@@ -49,6 +49,8 @@ in
   home-manager = {
     users.${username} = {
       imports = with inputs.self.homeModules; [
+        local
+        local-linux
         heavy
         heavy-linux
       ];

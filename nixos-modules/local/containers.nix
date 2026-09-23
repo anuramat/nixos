@@ -13,6 +13,7 @@
 
   environment.systemPackages = with pkgs; [
     ctop # top for containers
+    distrobox
     dive # look into docker image layers
     podman-compose
     podman-tui # podman container status

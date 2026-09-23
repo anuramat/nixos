@@ -7,6 +7,7 @@ in
     standalone
     darwin
     base
+    local
     heavy
   ];
 

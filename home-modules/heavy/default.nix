@@ -4,6 +4,7 @@
     ./editor.nix
     ./gui.nix
     ./fonts.nix
+    ./jupyter.nix
     ./lang
     ./typst.nix
     ./packages.nix

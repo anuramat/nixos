@@ -10,6 +10,7 @@
     dotslash
     entr # file watcher - runs command on change
     expect # automating tuis
+    gcc
     gomodifytags
     hyperfine # CLI benchmarking, a-la `time`
     lspmux
@@ -40,7 +41,6 @@
     mitmproxy
     nmap
     openconnect_openssl
-    qrcp # share files over qr
     tshark
 
     # cloud/sync

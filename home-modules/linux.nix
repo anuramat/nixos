@@ -18,26 +18,10 @@
       btrfs-progs
       cryptsetup # luks etc
       percollate # html to markdown
-      wavemon # wifi signal plot
 
       parted
-      geteduroam-cli
-      distrobox
       subcat
       trashy # `trash`
-
-      # hardware
-      acpi # battery status etc
-      dmidecode # read hw info from bios using smbios/dmi
-      efibootmgr # EFI boot manager editor
-      hwinfo
-      libva-utils # vainfo - info on va-api
-      lm_sensors
-      lshw # hw info
-      nvme-cli
-      smem # ram usage
-      v4l-utils # camera stuff
-      wirelesstools # iwconfig etc
 
     ]
     ++ lib.optionals config.gui [

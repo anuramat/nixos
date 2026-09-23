@@ -1,16 +1,4 @@
-{ lib, ... }:
-let
-  toYAML = lib.generators.toYAML { };
-in
 {
-  xdg.configFile = {
-    "qrcp/config.yml".text = toYAML {
-      interface = "any";
-      keepalive = true;
-      port = 9000;
-    };
-  };
-
   programs = {
     tealdeer = {
       enable = true;

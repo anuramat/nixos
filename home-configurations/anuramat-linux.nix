@@ -7,6 +7,8 @@ in
     standalone
     base
     linux
+    local
+    local-linux
     heavy
     heavy-linux
   ];

@@ -76,6 +76,8 @@
 
     alsa-utils
     cheese # webcam
+    libva-utils # vainfo - info on va-api
+    v4l-utils # camera stuff
     j4-dmenu-desktop # .desktop wrapper for dmenus
     libnotify # notify-send etc
     # mesa-demos # some 3d demos, useful for graphics debugging

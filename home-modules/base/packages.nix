@@ -6,7 +6,6 @@
     coreutils-full
     curl
     file
-    gcc
     git
     gnumake
     less
@@ -35,15 +34,10 @@
     gotop
 
     # processes
+    procps # info from /proc
     progress # progress status for cp etc
     pstree # ps tree :)
     pv # pipe viewer
-
-    # hardware
-    pciutils
-    procps # info from /proc
-    smartmontools # storage
-    usbutils
 
     # files
     rename
