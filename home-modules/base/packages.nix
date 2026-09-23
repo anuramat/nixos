@@ -61,6 +61,7 @@
     fortune # random quotes
 
     # miscellaneous unfiled TODO
+    sshfs
     qrrs # generate/read QR codes
     caut # codex/claude usage
     proton-drive-cli
