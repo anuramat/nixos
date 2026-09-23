@@ -16,7 +16,9 @@ let
     |> builtins.readDir
     |> lib.filterAttrs (n: _: strings.hasSuffix ".desktop" n)
     |> builtins.attrNames
-    |> builtins.concatMap (n: dir + "/" + n |> builtins.readFile |> splitString "\n")
+    |> builtins.concatMap (
+      n: dir + "/" + n |> builtins.readFile |> builtins.unsafeDiscardStringContext |> splitString "\n"
+    )
     |> filter (strings.hasPrefix "MimeType=")
     |> builtins.concatMap (l: l |> strings.removePrefix "MimeType=" |> splitString ";")
     |> filter (v: v != "")
@@ -27,6 +29,8 @@ in
 {
   xdg.mimeApps = {
     enable = true;
+    # never fall back to darktable
+    associations.removed = assign "org.darktable.darktable.desktop" (fromDesktop pkgs.darktable);
     defaultApplications =
       assign "nvim.desktop" (
         fromDesktop pkgs.neovim
@@ -45,7 +49,7 @@ in
         fromDesktop pkgs.swayimg
         ++ [
           "image/apng"
-          "image/x-nikon-ref"
+          "image/x-nikon-nef"
         ]
       )
       // assign "mpv.desktop" (fromDesktop pkgs.mpv)
