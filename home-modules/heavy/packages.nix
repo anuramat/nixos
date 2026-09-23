@@ -10,6 +10,7 @@
     bear # compilation database generator for clangd
     lspmux
     makefile2graph
+    sem # NOTE this is from the overlay, not nixpkgs
 
     # kubernetes
     kubectl
