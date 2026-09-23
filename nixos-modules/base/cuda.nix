@@ -13,4 +13,8 @@ lib.mkIf (config.nixpkgs.config.cudaSupport or false) {
     config.hardware.nvidia.package
     pkgs.cudaPackages.cudatoolkit
   ];
+  environment.systemPackages = with pkgs; [
+    nvitop # nvidia gpu
+    zenith-nvidia # top WITH nvidia GPUs
+  ];
 }

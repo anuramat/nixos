@@ -8,10 +8,6 @@
   home.packages =
     with pkgs;
     [
-
-      zenith-nvidia # top WITH nvidia GPUs
-      nvitop # nvidia gpu
-
       bubblewrap # sandboxing
       fuse-overlayfs
 

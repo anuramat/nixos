@@ -25,10 +25,6 @@
     kubectl
     kubectx
 
-    # hardware
-    libusb1 # user-mode USB access lib
-    nvtopPackages.full # top for GPUs
-
     # nix
     cachix
     nix-auth

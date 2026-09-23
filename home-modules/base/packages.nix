@@ -32,6 +32,7 @@
     # tops
     bottom
     gotop
+    nvtopPackages.full # top for GPUs
 
     # processes
     procps # info from /proc
