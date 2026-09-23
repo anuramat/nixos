@@ -60,10 +60,12 @@ adding, removing, or renaming a direct child is an API change for this flake:
 - `nixosModules`: `nixos-modules/`.
 - `homeModules`: `home-modules/`.
 - `nixvimModules`: `nixvim-modules/`. The editor is nixvim-based, not a
-  hand-written `init.lua`; the real root is `nixvim-modules/full/default.nix`,
-  activated via `self.homeModules.nixvim (which imports
-  inputs.nixvim.homeModules.nixvim) -> home-modules/heavy/editor.nix ->
-  self.nixvimModules.full`.
+  hand-written `init.lua`. It mirrors the Home Manager layers: `base` (minimal
+  editor) and `heavy` (everything else), which does not import `base` and is
+  only meaningful on top of it. `home-modules/base/editor.nix` imports
+  `inputs.nixvim.homeModules.nixvim` and enables nixvim with
+  `self.nixvimModules.base` on every configuration;
+  `home-modules/heavy/editor.nix` adds `self.nixvimModules.heavy`.
 - `sharedModules`: `shared-modules/`, usable from both NixOS and standalone
   Home Manager.
 - `overlays`: `overlays/`.
@@ -103,8 +105,9 @@ adding, removing, or renaming a direct child is an API change for this flake:
   cache key). Single source of truth for key discovery, consumed by
   `nixos-modules/base/hosts.nix` and `secrets/secrets.nix`.
 
-Per-system outputs: `packages.neovim` (nixvim-built Neovim from
-`self.nixvimModules.full`), `devShells.default`, and the flake-parts
+Per-system outputs: `packages.neovim` and `packages.neovim-minimal`
+(nixvim-built Neovim from `self.nixvimModules.{base,heavy}` and
+`self.nixvimModules.base`), `devShells.default`, and the flake-parts
 modules under `parts/` (treefmt, pre-commit, nix-topology).
 
 The repo uses the experimental Nix pipe operator (`|>`) throughout modules and
@@ -120,14 +123,12 @@ experimental feature; run inside the dev shell or pass it explicitly.
   `nixos-modules/laptop/`: power management and keyd remaps, imported by
   t480 and f12 only.
 - `home-modules/` layers: `base` (base CLI environment, cross-platform),
-  `linux` (Linux-only CLI), `heavy` (editor, toolchains, media/office CLI;
-  cross-platform), `heavy-linux` (Niri desktop, AI agents, and `heavy-linux/gui`
-  graphical apps). `heavy` and `heavy-linux` are always imported together on
-  NixOS, so Linux-only additions belong in `heavy-linux`; keeping `heavy`
-  Darwin-clean is what makes the `anuramat-darwin` home configuration evaluate.
-- `nixvim` is its own home module rather than part of the base layer; import
-  `self.homeModules.nixvim` wherever `programs.nixvim` is configured
-  (`home-modules/heavy/editor.nix` and `anuramat-root`).
+  `linux` (Linux-only CLI), `heavy` (editor, toolchains, media/office CLI,
+  and cross-platform graphical apps in `heavy/gui.nix`), `heavy-linux` (Niri
+  desktop, AI agents, and Linux-only graphical apps in `heavy-linux/gui`).
+  `heavy` and `heavy-linux` are always imported together on NixOS, so
+  Linux-only additions belong in `heavy-linux`; keeping `heavy` Darwin-clean
+  is what makes the `anuramat-darwin` home configuration evaluate.
 - Hosts: `anuramat-root` (server-like QEMU guest; nginx, ACME, `ctrl.sn`,
   wastebin), `anuramat-t480` (ThinkPad T480 laptop), `anuramat-f12`
   (Framework 12 laptop), `anuramat-bgm5` (AMD Strix Halo workstation; build
