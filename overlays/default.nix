@@ -34,17 +34,17 @@ let
   overrides =
     _final: prev:
     let
-      unstable-misc = import inputs.nixpkgs-unstable-misc {
+      unstable = import inputs.nixpkgs-unstable {
         inherit (prev) config;
         inherit (prev.stdenv.hostPlatform) system;
       };
-      unstable = import inputs.nixpkgs-unstable {
+      unstable-slow = import inputs.nixpkgs-unstable-slow {
         inherit (prev) config;
         inherit (prev.stdenv.hostPlatform) system;
       };
     in
     {
-      inherit (unstable)
+      inherit (unstable-slow)
         linux-firmware
         linuxPackages_latest
         rocmPackages
@@ -57,7 +57,7 @@ let
         llama-cpp-vulkan
         ;
 
-      inherit (unstable-misc)
+      inherit (unstable)
         zellij
         firefox
         tailscale
@@ -72,9 +72,9 @@ let
         zed-editor
         ;
 
-      darktable = unstable-misc.darktable.override {
+      darktable = unstable.darktable.override {
         withAi = true;
-        gmic = unstable-misc.gmic.overrideAttrs (old: {
+        gmic = unstable.gmic.overrideAttrs (old: {
           cmakeFlags = (old.cmakeFlags or [ ]) ++ [ (prev.lib.cmakeBool "ENABLE_OPENCV" false) ];
         });
       };
@@ -181,7 +181,7 @@ let
       };
 
       vimPlugins = prev.vimPlugins // {
-        inherit (unstable-misc.vimPlugins)
+        inherit (unstable.vimPlugins)
           tinted-nvim
           rustaceanvim
           ;

@@ -1730,22 +1730,6 @@
     },
     "nixpkgs-unstable": {
       "locked": {
-        "lastModified": 1779560665,
-        "narHash": "sha256-tpyBcxPpcQb8ukyNF7DoCwfSY3VPsxHoYwj00Cayv5o=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "64c08a7ca051951c8eae34e3e3cb1e202fe36786",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "ref": "nixos-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs-unstable-misc": {
-      "locked": {
         "lastModified": 1787736819,
         "narHash": "sha256-cV5xEJJK3BvhU8rEd4mC9UsmDi5qscv/kzGPhBRC5WA=",
         "owner": "nixos",
@@ -2285,7 +2269,6 @@
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_9",
         "nixpkgs-unstable": "nixpkgs-unstable",
-        "nixpkgs-unstable-misc": "nixpkgs-unstable-misc",
         "nixvim": "nixvim",
         "noctalia": "noctalia",
         "oh-my-pi": "oh-my-pi",
@@ -2302,7 +2285,8 @@
         "vicode": "vicode",
         "wastebin-nvim": "wastebin-nvim",
         "waybar-niri-windows": "waybar-niri-windows",
-        "zotero-mcp": "zotero-mcp"
+        "zotero-mcp": "zotero-mcp",
+        "nixpkgs-unstable-slow": "nixpkgs-unstable-slow"
       }
     },
     "rust-analyzer-src": {
@@ -4120,6 +4104,22 @@
       "original": {
         "owner": "54yyyu",
         "repo": "zotero-mcp",
+        "type": "github"
+      }
+    },
+    "nixpkgs-unstable-slow": {
+      "locked": {
+        "lastModified": 1779560665,
+        "narHash": "sha256-tpyBcxPpcQb8ukyNF7DoCwfSY3VPsxHoYwj00Cayv5o=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "64c08a7ca051951c8eae34e3e3cb1e202fe36786",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
         "type": "github"
       }
     }

@@ -23,7 +23,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs-unstable-misc.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-unstable-slow.url = "github:nixos/nixpkgs/nixos-unstable"; # kernel/firmware/ROCm stack; bump deliberately
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     nixvim.url = "github:nix-community/nixvim/nixos-26.05";
     stylix = {
