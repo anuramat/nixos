@@ -17,6 +17,7 @@
       scrollback.lines = 133337;
       url = {
         osc8-underline = "always";
+        launch = "bash -lc 'exec xdg-open \"$1\"' foot-url \${url}"; # login shell: niri's PATH is minimal
       };
       bell = {
         urgent = "yes";
