@@ -60,6 +60,7 @@ let
       inherit (unstable-misc)
         zellij
         firefox
+        tailscale
         ghostty
         opencode
         proton-vpn
