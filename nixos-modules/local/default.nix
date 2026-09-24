@@ -1,12 +1,10 @@
 # TODO tidy comments
 {
-  lib,
   pkgs,
   inputs,
   ...
 }:
 let
-  inherit (lib) mkDefault;
   inherit (inputs.self.user) username;
 in
 {
