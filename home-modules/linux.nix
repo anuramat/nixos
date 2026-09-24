@@ -1,36 +1,27 @@
 {
   config,
-  lib,
   pkgs,
   ...
 }:
 {
-  home.packages =
-    with pkgs;
-    [
-      bubblewrap # sandboxing
-      fuse-overlayfs
+  home.packages = with pkgs; [
+    bubblewrap # sandboxing
+    fuse-overlayfs
 
-      btrfs-progs
-      cryptsetup # luks etc
-      percollate # html to markdown
+    btrfs-progs
+    cryptsetup # luks etc
+    percollate # html to markdown
 
-      parted
-      subcat
-      trashy # `trash`
-
-    ]
-    ++ lib.optionals config.gui [
-      seahorse
-      wayidle # runs a command on idle (one-off, thus orthogonal to swayidle)
-      wine
-    ];
+    parted
+    subcat
+    trashy # `trash`
+  ];
 
   services.pss.enable = true; # secret service api -- exposes password-store over dbus
-  programs.wayprompt.enable = config.gui;
+  programs.wayprompt.enable = config.gui == "wayland";
   services.gpg-agent = {
     pinentry =
-      if config.gui then
+      if config.gui == "wayland" then
         let
           name = "pinentry-auto";
           package = pkgs.writeShellApplication {

@@ -39,5 +39,8 @@
     wl-mirror # screen mirroring
     wmenu # dmenu 1to1
     dragon-drop # terminal drag and drop
+    seahorse
+    wayidle # runs a command on idle (one-off, thus orthogonal to swayidle)
+    wine
   ];
 }

@@ -91,7 +91,7 @@
           run = "arrow 1";
         }
       ]
-      ++ lib.optionals config.gui [
+      ++ lib.optionals (config.gui == "wayland") [
         {
           on = "y";
           run = [

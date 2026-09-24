@@ -27,7 +27,7 @@
       # package = pkgs.xfce.xfce4-icon-theme;
     };
 
-  gui = true;
+  gui = "wayland";
 
   # https://github.com/artemsen/swayimg/blob/master/CONFIG.md
   xdg.configFile."swayimg/init.lua".text = # lua
