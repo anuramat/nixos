@@ -28,6 +28,7 @@ let
         devin-cli
         chatgpt
         claude-desktop
+        ghostty
         ;
     });
 
@@ -61,7 +62,6 @@ let
         zellij
         firefox
         tailscale
-        ghostty
         opencode
         proton-vpn
         rnote

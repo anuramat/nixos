@@ -93,6 +93,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hermes.url = "github:NousResearch/hermes-agent";
+    ghostty.url = "github:ghostty-org/ghostty"; # no follows: keeps ghostty.cachix.org hits
     niri = {
       url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";

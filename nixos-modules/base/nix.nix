@@ -16,6 +16,7 @@ let
     "https://nixpkgs-python.cachix.org"
     "https://anuramat.cachix.org"
     "https://vicode.cachix.org"
+    "https://ghostty.cachix.org"
   ];
   keyPath = "${config.users.users.${username}.home}/.ssh/id_ed25519";
   inherit (config.lib.hosts) cachePort;
@@ -58,6 +59,7 @@ in
         "nixpkgs-python.cachix.org-1:hxjI7pFxTyuTHn2NkvWCrAUcNZLNS3ZAvfYNuYifcEU="
         "anuramat.cachix.org-1:INBlw2NfR37rCx/M+pSe6VfmZFzki54TjUwieEbJjPU="
         "vicode.cachix.org-1:YypJTdIoHPXonAmAL5iz4eUYriMs9sTxToF0bfmm0BE="
+        "ghostty.cachix.org-1:QB389yTa6gTyneehvqG58y0WnHjQOqgnA+wBnpWWxns="
       ]
       ++ config.lib.hosts.trusted-public-keys;
     };
