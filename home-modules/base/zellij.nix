@@ -57,6 +57,9 @@ in
 {
   programs.zellij = {
     enable = true;
+    # every other unselected tab is painted with emphasis_1; make it match the rest
+    themes.stylix.themes.default.ribbon_unselected.emphasis_1 =
+      lib.mkForce config.lib.stylix.colors.withHashtag.base02;
     settings = {
       default_mode = "locked";
       # NOTE kinda ugly, doesn't show all the hotkeys anyway
