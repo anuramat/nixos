@@ -1,19 +1,12 @@
 {
+  # snacks converts non-png images with imagemagick
+  dependencies.imagemagick.enable = true;
   plugins = {
     img-clip.enable = true;
-    # image = {
-    #   enable = true;
-    #   settings = {
-    #     backend = "kitty";
-    #     integrations = {
-    #       markdown = {
-    #         download_remote_images = false;
-    #       };
-    #       typst = {
-    #         download_remote_images = false;
-    #       };
-    #     };
-    #   };
-    # };
+    # kitty protocol only; also used by fzf-lua previews
+    snacks = {
+      enable = true;
+      settings.image.enabled = true;
+    };
   };
 }
