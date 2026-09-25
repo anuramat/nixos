@@ -19,13 +19,15 @@ in
         ];
         text = builtins.readFile "${chooser}/share/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh";
       };
+      # no single instance: the wrapper blocks until the terminal exits
+      term = "${config.home.sessionVariables.TERMCMD} --gtk-single-instance=false -e";
     in
     # ini
     ''
       [filechooser]
       cmd=${lib.getExe wrapper}
       default_dir=$HOME/Downloads
-      env=TERMCMD=${config.home.sessionVariables.TERMCMD}
+      env=TERMCMD=${term}
     '';
 
   xdg = {

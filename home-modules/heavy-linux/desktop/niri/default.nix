@@ -90,7 +90,7 @@
         pkgs.coreutils
         pkgs.gawk
         pkgs.bash
-        pkgs.foot
+        config.programs.ghostty.package
       ];
     in
     # systemd
