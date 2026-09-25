@@ -106,7 +106,7 @@ let
     noctaliaMsg [
       "panel-toggle"
       "launcher"
-      "/${prefix}"
+      "/${prefix} "
     ];
 
   mkGlobal = x: {
