@@ -198,8 +198,11 @@ in
               for i in uc3.sock pipewire-0 pulse; do
                 runtimeBinds+=(--bind-try "$runtimeDir/$i" "$runtimeDir/$i")
               done
+              # --unshare-pid: when the agent exits, the kernel kills everything
+              # it started, including detached (setsid/nohup) processes
               bwrap \
                 --die-with-parent \
+                --unshare-pid \
                 --proc /proc \
                 --dev /dev \
                 --dev-bind-try /dev/dri /dev/dri \

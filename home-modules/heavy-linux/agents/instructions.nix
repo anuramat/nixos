@@ -50,8 +50,11 @@ let
           ${agentHosts}
 
           It has the same packages as the user, and its home directory persists
-          across sessions. Start long runs with `systemd-run --user` -- they
-          keep running after you disconnect.
+          across sessions. Start long runs with
+          `systemd-run --user --unit=SHORT_DESCRIPTIVE_NAME` -- they keep
+          running after you disconnect, and the user can see them by name.
+          Anything else you start (`cmd &`, `nohup`, `setsid`, tmux) is killed
+          when the ssh command returns.
         '';
 
         code-ownership = ''

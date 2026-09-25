@@ -38,6 +38,12 @@ in
       };
       groups.${username} = { };
     };
+    # anything the agent leaves behind in an ssh session dies with it, so only
+    # `systemd-run --user` jobs outlive a connection
+    services.logind.settings.Login = {
+      KillUserProcesses = true;
+      KillOnlyUsers = username;
+    };
     services.openssh = {
       settings.AllowUsers = [ username ];
       extraConfig = ''
