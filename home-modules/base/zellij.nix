@@ -150,7 +150,7 @@ in
         lock {
           Esc = "ScrollToBottom";
           e = "EditScrollback";
-          y = "CopyLastCommandOutput";
+          "Shift y" = "CopyLastCommandOutput";
         }
         // {
           "/" = "SwitchToMode EnterSearch"; # add `SearchInput 0` to reset
@@ -183,6 +183,9 @@ in
           d = "Detach";
         };
       "shared_except locked" = lib.genAttrs [ "Ctrl g" "Enter" "Esc" ] (_: "SwitchToMode Locked");
+      "shared_among normal scroll" = {
+        "y" = "Copy";
+      };
       "shared_among scroll search" = {
         j = "ScrollDown";
         k = "ScrollUp";
@@ -193,7 +196,6 @@ in
         "[" = "ScrollToPreviousPrompt";
         "]" = "ScrollToNextPrompt";
       };
-      shared."Ctrl Shift c" = "Copy";
     };
   };
 }
