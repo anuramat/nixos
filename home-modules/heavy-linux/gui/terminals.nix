@@ -1,12 +1,14 @@
+{ pkgs, ... }:
 {
   programs = {
     ghostty = {
       # cons: slowest startup
       # pros: supports kitty image protocol; almost zero config; not bloated
       enable = true;
+      # emoji presentation: use the (monochrome) emoji font instead of the embedded color one
+      package = pkgs.ghostty.overrideAttrs { patches = [ ./ghostty-emoji.patch ]; };
       clearDefaultKeybinds = true;
       settings = {
-        # TODO emoji font doesn't work
         cursor-style = "block";
         cursor-style-blink = "false";
         resize-overlay = "never";

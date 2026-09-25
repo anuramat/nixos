@@ -1,0 +1,58 @@
+--- a/src/font/CodepointResolver.zig
++++ b/src/font/CodepointResolver.zig
+@@ -149,12 +149,15 @@
+     // the default presentation. Note there is some inefficiency here because
+     // we'll do this multiple times if we recurse, but this is a cached function
+     // call higher up (GroupCache) so this should be rare.
+-    const p_mode: Collection.PresentationMode = if (p) |v| .{ .explicit = v } else .{
+-        .default = if (uucode.get(.is_emoji_presentation, @intCast(cp)))
+-            .emoji
+-        else
+-            .text,
+-    };
++    //
++    // Emoji presentation must come from an emoji font, even if an
++    // earlier font has a (text) glyph for the codepoint.
++    const p_mode: Collection.PresentationMode = if (p) |v|
++        .{ .explicit = v }
++    else if (uucode.get(.is_emoji_presentation, @intCast(cp)))
++        .{ .explicit = .emoji }
++    else
++        .{ .default = .text };
+ 
+     // If we can find the exact value, then return that.
+     if (self.collection.getIndex(cp, style, p_mode)) |value| return value;
+--- a/src/font/Collection.zig
++++ b/src/font/Collection.zig
+@@ -248,6 +248,12 @@
+                 try face.setSize(opts.faceOptions());
+             }
+ 
++            // Keep fontconfig's emoji tag, loaded faces can't tell
++            // a monochrome emoji font from a text font.
++            if (comptime font.options.backend == .fontconfig_freetype) {
++                if (d.fc) |fc| entry.emoji = fc.langset.hasLang("und-zsye");
++            }
++
+             // Deinit the deferred face now that we have
+             // loaded it and are past any possible errors.
+             errdefer comptime unreachable;
+@@ -764,6 +770,9 @@
+     /// main doc comment on Entry for more info.
+     fallback: bool,
+ 
++    /// Whether this is an emoji font (even without color glyphs).
++    emoji: bool = false,
++
+     /// Factor to multiply the collection size by for this face, or
+     /// else the size adjustment that should be used to calculate
+     /// once the face is loaded.
+@@ -821,7 +830,7 @@
+                     const index = face.glyphIndex(cp) orelse break :explicit false;
+                     break :explicit switch (p) {
+                         .text => !face.isColorGlyph(index),
+-                        .emoji => face.isColorGlyph(index),
++                        .emoji => self.emoji or face.isColorGlyph(index),
+                     };
+                 },
+             },
