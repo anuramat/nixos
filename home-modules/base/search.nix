@@ -55,8 +55,11 @@ let
         # file
         elif [ -f "$1" ]; then
           if [[ ''${1,,} == *.nef ]]; then
-            # embedded jpeg: much faster than decoding raw
-            ${getExe pkgs.exiftool} -b -JpgFromRaw "$1" | img && exit
+            # embedded jpeg: much faster than decoding raw; still slow, so cached by path and mtime;
+            # written via a temp file, since fzf kills the preview mid-extraction on scroll
+            c=''${XDG_CACHE_HOME:-$HOME/.cache}/fzf-preview/$({ realpath "$1"; stat -Lc %Y "$1"; } | md5sum | cut -d' ' -f1).jpg
+            [ -s "$c" ] || { mkdir -p "''${c%/*}" && ${getExe pkgs.exiftool} -b -JpgFromRaw "$1" >"$c.$$" && mv "$c.$$" "$c"; }
+            img <"$c" && exit
           else
             case $(${getExe pkgs.file} -bL --mime-type "$1") in
               image/*) img <"$1" ;;
