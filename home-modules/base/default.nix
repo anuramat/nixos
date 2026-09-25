@@ -1,6 +1,7 @@
 {
   pkgs,
   config,
+  inputs,
   lib,
   ...
 }:
@@ -20,6 +21,11 @@ let
     name = "uc3";
     text = "SSH_ASKPASS=${lib.getExe uc3-askpass} SSH_ASKPASS_REQUIRE=force ssh uc3";
   };
+  # NOTE hosts without an alias are explicitly listed for `wishlist`
+  sshHosts = lib.mapAttrs' (
+    name: h:
+    if h ? alias then lib.nameValuePair h.alias { HostName = name; } else lib.nameValuePair name { }
+  ) inputs.self.hosts;
 in
 {
   imports = [
@@ -48,8 +54,7 @@ in
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false; # NOTE: deprecated, removed in next release
-    settings = {
-      bgm5.HostName = "anuramat-bgm5";
+    settings = sshHosts // {
       uc3 = {
         User = "hd_un330";
         HostName = "bwunicluster.scc.kit.edu";

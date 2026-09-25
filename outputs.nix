@@ -82,6 +82,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
         builder = true;
         agent = true;
         description = "GPU workstation: AMD Strix Halo, 128GB URAM";
+        alias = "bgm5";
       };
       anuramat-f12 = {
         system = "x86_64-linux";

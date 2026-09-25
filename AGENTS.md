@@ -74,7 +74,9 @@ adding, removing, or renaming a direct child is an API change for this flake:
 
 - `hosts`: a hand-written static registry of `{ system, builder, agent }` per
   host, plus a `description` on agent hosts (rendered into the agents' ssh
-  instructions by `home-modules/heavy-linux/agents/instructions.nix`).
+  instructions by `home-modules/heavy-linux/agents/instructions.nix`) and an
+  optional ssh `alias` (every host gets an ssh config entry in
+  `home-modules/base/default.nix`, under its alias if it has one).
   Cross-host facts come from this registry, not from evaluating sibling
   configurations. Adding a host (or changing its system/builder/agent status)
   requires updating the registry. The `builder` and `agent` flags enable
