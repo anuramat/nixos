@@ -75,34 +75,35 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     ) ./home-configurations;
 
     # static host registry; each host asserts its own entry against its
-    # actual config in nixos-modules/base/hosts.nix
-    hosts = {
-      anuramat-bgm5 = {
-        system = "x86_64-linux";
-        builder = true;
-        agent = true;
-        description = "GPU workstation: AMD Strix Halo, 128GB URAM";
-        alias = "bgm5";
+    # actual config in nixos-modules/base/hosts.nix; entries override the
+    # defaults, `description` is required
+    hosts =
+      let
+        defaults = {
+          system = "x86_64-linux";
+          builder = false;
+          agent = false;
+          alias = null; # ssh alias
+          deprecated = false;
+        };
+      in
+      lib.mapAttrs (_: host: defaults // host) {
+        anuramat-bgm5 = {
+          description = "GPU workstation: AMD Strix Halo, 128GB URAM";
+          builder = true;
+          agent = true;
+          alias = "bgm5";
+        };
+        anuramat-f12 = {
+          description = "edc laptop: framework 12, 48GB RAM, i5-1334U";
+          agent = true;
+        };
+        anuramat-root.description = "server: 4GB ram, 4 vCPU; personal website";
+        anuramat-t480 = {
+          description = "old thinkpad, not actively used";
+          deprecated = true;
+        };
       };
-      anuramat-f12 = {
-        system = "x86_64-linux";
-        builder = false;
-        description = "edc laptop: framework 12, 48GB RAM, i5-1334U";
-        agent = true;
-      };
-      anuramat-root = {
-        system = "x86_64-linux";
-        builder = false;
-        description = "server: 4GB ram, 4 vCPU; personal website";
-        agent = false;
-      };
-      anuramat-t480 = {
-        system = "x86_64-linux";
-        builder = false;
-        description = "old thinkpad, not actively used";
-        agent = false;
-      };
-    };
 
     user = {
       username = "anuramat";
@@ -173,7 +174,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       checks = # {{{1
         (
           inputs.self.hosts
-          |> lib.filterAttrs (_: host: host.system == system)
+          |> lib.filterAttrs (_: host: !host.deprecated && host.system == system)
           |> lib.mapAttrs' (
             name: _:
             lib.nameValuePair "host-${name}" (

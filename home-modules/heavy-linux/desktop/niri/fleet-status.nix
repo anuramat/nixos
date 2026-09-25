@@ -13,7 +13,7 @@
   inputs,
 }:
 let
-  hosts = lib.attrNames inputs.self.hosts;
+  hosts = inputs.self.hosts |> lib.filterAttrs (_: h: !h.deprecated) |> lib.attrNames;
   remote = pkgs.writeText "fleet-status-remote" ''
     # jobs exist only on agent hosts, the only ones with an agent user
     if u=$(id -u agent 2>/dev/null); then

@@ -2,7 +2,7 @@
 let
   agentHosts =
     inputs.self.hosts
-    |> lib.filterAttrs (_: v: v.agent)
+    |> lib.filterAttrs (_: v: !v.deprecated && v.agent)
     |> lib.mapAttrsToList (n: v: "- `${n}` -- ${v.description}")
     |> lib.concatStringsSep "\n";
   topHead = "#";
