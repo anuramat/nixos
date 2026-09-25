@@ -10,21 +10,43 @@ let
   fd = "${getExe config.programs.fd.package} -HL"; # still respects the ignore files
   bat = getExe config.programs.bat.package;
 
+  # zellij hides which terminal is attached, so the one it was last started from records it here
+  zellijHost = "$XDG_RUNTIME_DIR/zellij-host-image-protocol";
+
   preview =
     pkgs.writeShellScript "preview"
       # bash
       ''
+        fmt=''${IMAGE_PROTOCOL:-symbols} cell=$IMAGE_CELL zellij=
+        if [[ $fmt == zellij ]]; then
+          zellij=1 fmt=symbols
+          read -r fmt cell 2>/dev/null <"${zellijHost}"
+        fi
+
         # shows image from stdin; adapted from fzf's bin/fzf-preview.sh
         img() {
-          local dim=''${FZF_PREVIEW_COLUMNS}x$FZF_PREVIEW_LINES
-          if [[ -n $KITTY_WINDOW_ID || -n $GHOSTTY_RESOURCES_DIR ]] && command -v kitten >/dev/null; then
+          local cols=$FZF_PREVIEW_COLUMNS rows=$FZF_PREVIEW_LINES mode=memory
+          if [[ $fmt == kitty && -z $zellij ]]; then
+            # memory transfer is local only
+            [[ -n $SSH_CONNECTION ]] && mode=stream
             # unicode placeholders get cleared/redrawn by fzf like text; trailing reset line confuses fzf
-            kitten icat --clear --transfer-mode=memory --unicode-placeholder --stdin=yes --place="$dim@0x0" | sed '$d' | sed $'$s/$/\e[m/'
-          else
-            # forced, since chafa can't detect sixel support in tmux without probing
-            ${getExe pkgs.chafa} -f sixels -s "$dim" -
+            ${lib.getExe' pkgs.kitty.kitten "kitten"} icat --clear --scale-up --transfer-mode="$mode" --unicode-placeholder \
+              --stdin=yes --place="''${cols}x$rows@0x0" | sed '$d' | sed $'$s/$/\e[m/'
+            return
           fi
+          if [[ $fmt == sixels ]]; then
+            # sixel touching the bottom of the screen scrolls it: https://github.com/junegunn/fzf/issues/2544
+            ((FZF_PREVIEW_TOP + rows == $(stty size </dev/tty | cut -d' ' -f1))) && rows=$((rows - 1))
+            # chafa can't query the cell size in a pipe and assumes 10x20px, so the size is converted;
+            # one column less, since it overshoots by a few pixels
+            [[ $cell =~ ^([0-9]+)x([0-9]+)$ ]] && cols=$((cols * BASH_REMATCH[1] / 10 - 1)) rows=$((rows * BASH_REMATCH[2] / 20))
+          fi
+          ${getExe pkgs.chafa} -f "$fmt" --scale max -s "''${cols}x$rows" -
         }
+
+        # zellij has no unicode placeholders, so images are placed directly and have to be deleted by hand;
+        # the rest get cleared when fzf's zellij popup pane closes
+        [[ -n $zellij && $fmt == kitty ]] && printf '\e_Ga=d,d=A\e\\'
 
         # directory
         if [ -d "$1" ]; then
@@ -73,6 +95,36 @@ let
 in
 {
   home.packages = [ fzsort ];
+  # probed on shell startup, since fzf owns the tty while previewing
+  programs.bash.initExtra = # bash
+    ''
+      IMAGE_PROTOCOL=symbols IMAGE_CELL=
+      # kitty graphics query, XTVERSION, cell size in pixels, then DA1:
+      # every terminal answers DA1, so it marks the end of the replies
+      if __s=$(stty -g 2>/dev/null) && stty -echo -icanon; then
+        printf '\e_Gi=31,s=1,v=1,a=q,t=d,f=24;AAAA\e\\\e[>q\e[16t\e[c'
+        __r=
+        until [[ $__r =~ $'\e'\[\?([0-9\;]*)c$ ]]; do IFS= read -rN1 -t 0.5 __c || break; __r+=$__c; done
+        stty "$__s"
+        if [[ -z ''${BASH_REMATCH[0]} ]]; then
+          echo "terminal didn't answer the image protocol query; fzf previews will use text blocks" >&2
+        elif [[ $__r == *'>|Zellij('* ]]; then
+          IMAGE_PROTOCOL=zellij
+        elif [[ $__r == *'_Gi=31;OK'* ]]; then
+          IMAGE_PROTOCOL=kitty
+        elif [[ ";''${BASH_REMATCH[1]};" == *';4;'* ]]; then
+          IMAGE_PROTOCOL=sixels
+        fi
+        [[ $__r =~ $'\e'\[6\;([0-9]+)\;([0-9]+)t ]] && IMAGE_CELL=''${BASH_REMATCH[2]}x''${BASH_REMATCH[1]}
+      fi
+      export IMAGE_PROTOCOL IMAGE_CELL
+      unset __s __r __c
+
+      zellij() {
+        [[ -z $ZELLIJ ]] && echo "$IMAGE_PROTOCOL $IMAGE_CELL" >"${zellijHost}"
+        command zellij "$@"
+      }
+    '';
 
   home.sessionVariables = {
     _ZO_FZF_OPTS = lib.strings.concatStringsSep " " [
