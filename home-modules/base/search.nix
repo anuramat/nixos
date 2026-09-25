@@ -9,6 +9,7 @@ let
   eza = getExe config.programs.eza.package;
   fd = "${getExe config.programs.fd.package} -HL"; # still respects the ignore files
   bat = getExe config.programs.bat.package;
+  timg = ''${getExe pkgs.timg} -p s "-g''${FZF_PREVIEW_COLUMNS}x$FZF_PREVIEW_LINES"'';
 
   preview =
     pkgs.writeShellScript "preview"
@@ -20,7 +21,9 @@ let
           exit
         # file
         elif [ -f "$1" ]; then
-        	${getExe pkgs.timg} -p s "-g''${FZF_PREVIEW_COLUMNS}x$FZF_PREVIEW_LINES" "$1" && exit
+          # embedded jpeg, since graphicsmagick needs dcraw for raw files
+          [[ ''${1,,} == *.nef ]] && ${getExe pkgs.exiftool} -b -JpgFromRaw "$1" | ${timg} - && exit
+        	${timg} "$1" && exit
           ${bat} --style=numbers --color=always "$1" && exit
         fi
       '';
