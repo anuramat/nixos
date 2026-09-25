@@ -29,7 +29,7 @@ end
 
 -- fleet-status lines; sessions are grouped by project dir basename
 local function parseHost(h, out)
-  h.jobs, h.sessions = {}, {}
+  h.jobs, h.sessions, h.power = {}, {}, nil
   local projects, total, detached = {}, 0, 0
   for line in out:gmatch("[^\n]+") do
     local kind, rest = line:match("^.-\t(.-)\t(.*)$")
@@ -41,6 +41,8 @@ local function parseHost(h, out)
       local project = dir:match("([^/]*)/*$")
       local p = projects[project]
       if p then p.n += 1 else projects[project] = { n = 1, name = name } end
+    elseif kind == "power" then
+      h.power = rest
     elseif kind == "zellij" then
       total += 1
       if rest:match("\t0$") then detached += 1 end
@@ -126,6 +128,7 @@ end
 
 local function section(h)
   local header = { label(h.name, "primary", { fontWeight = "semibold" }) }
+  if h.power == "quiet" then table.insert(header, label("(quiet)", "outline")) end
   if h.err then table.insert(header, label(h.err, "error", { maxWidth = 400, maxLines = 1 })) end
   if h.zellij then table.insert(header, label(h.zellij, "on_surface_variant")) end
   local onClick

@@ -3,8 +3,9 @@
 # agent sessions and live zellij sessions on the given hosts (default: all
 # hosts), as
 # `HOST<TAB>job<TAB>UNIT<TAB>ELAPSED<TAB>COMMAND`,
-# `HOST<TAB>session<TAB>WRAPPER<TAB>CWD` and
-# `HOST<TAB>zellij<TAB>SESSION<TAB>CLIENTS`; units are read from the
+# `HOST<TAB>session<TAB>WRAPPER<TAB>CWD`,
+# `HOST<TAB>zellij<TAB>SESSION<TAB>CLIENTS`, plus the bgm5powerctl
+# profile (bgm5 only) as `HOST<TAB>power<TAB>MODE`; units are read from the
 # world-readable cgroupfs, so it needs neither the agent's user bus nor its ssh
 # key; the current host is queried directly instead of over ssh
 {
@@ -26,6 +27,8 @@ let
         printf 'job\t%s\t%s\t%s\n' "''${d##*/}" "$t" "$cmd"
       done
     fi
+    # fan/tctl profile, see bgm5's power.nix
+    ! command -v bgm5powerctl >/dev/null || printf 'power\t%s\n' "$(bgm5powerctl status)"
     # zellij sessions, minus the exited (resurrectable) ones
     zellij list-sessions -n 2>/dev/null | grep -v EXITED | while read -r s _; do
       printf 'zellij\t%s\t%s\n' "$s" "$(zellij -s "$s" action list-clients | tail -n +2 | wc -l)"

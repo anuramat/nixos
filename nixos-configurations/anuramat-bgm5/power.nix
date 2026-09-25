@@ -18,7 +18,7 @@ let
     };
   };
 
-  # runtime toggle for the profiles above; run with sudo
+  # runtime toggle for the profiles above; run with sudo, except for `status`
   bgm5powerctl = pkgs.writeShellScriptBin "bgm5powerctl" ''
     set -euo pipefail
 
@@ -65,6 +65,15 @@ let
     }
 
     case "''${1:-}" in
+    status)
+      # matched by the fan curves, which are world-readable, unlike the tctl limit
+      case $(<${ecBase}/fan1/rampup_curve) in
+      "${profiles.default.rampupCurve}") echo default ;;
+      "${profiles.quiet.rampupCurve}") echo quiet ;;
+      *) echo custom ;;
+      esac
+      exit
+      ;;
     default)
       require_fans
       apply_fans "${profiles.default.rampupCurve}" "${profiles.default.rampdownCurve}"
@@ -76,7 +85,7 @@ let
       apply_fans "${profiles.quiet.rampupCurve}" "${profiles.quiet.rampdownCurve}"
       ;;
     *)
-      echo "usage: bgm5powerctl default|quiet" >&2
+      echo "usage: bgm5powerctl default|quiet|status" >&2
       exit 1
       ;;
     esac
