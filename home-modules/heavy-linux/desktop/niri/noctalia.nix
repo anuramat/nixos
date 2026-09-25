@@ -7,9 +7,34 @@
 }:
 let
   c = config.lib.stylix.colors.withHashtag;
+  fleetStatus = pkgs.callPackage ./fleet-status.nix { inherit inputs; };
 in
 {
   imports = [ inputs.noctalia.homeModules.default ];
+
+  home.packages = [ fleetStatus ];
+
+  # local plugins are scanned from here and activated by `plugins.enabled`
+  xdg.dataFile = {
+    "noctalia/plugins/fleet-monitor/plugin.toml".source =
+      (pkgs.formats.toml { }).generate "plugin.toml"
+        {
+          id = "anuramat/fleet-monitor";
+          name = "Fleet monitor";
+          plugin_api = 23;
+          desktop_widget = [
+            {
+              id = "jobs";
+              entry = "widget.luau";
+            }
+          ];
+        };
+    "noctalia/plugins/fleet-monitor/widget.luau".source = pkgs.replaceVars ./fleet-monitor.luau {
+      exe = lib.getExe fleetStatus;
+      hosts = lib.generators.toLua { } fleetStatus.hosts;
+      uc3ctl = lib.getExe config.lib.uc3.ctl;
+    };
+  };
 
   programs.noctalia = {
     enable = true;
@@ -36,6 +61,8 @@ in
       };
 
       location.address = inputs.self.user.location;
+
+      plugins.enabled = [ "anuramat/fleet-monitor" ];
 
       bar.main = {
         position = "top";
@@ -134,7 +161,6 @@ in
         normal = {
           black = c.base00;
           red = c.base08;
-          green = c.base0B;
           yellow = c.base0A;
           blue = c.base0D;
           magenta = c.base0E;
@@ -144,7 +170,6 @@ in
         bright = {
           black = c.base03;
           red = c.base08;
-          green = c.base0B;
           yellow = c.base0A;
           blue = c.base0D;
           magenta = c.base0E;

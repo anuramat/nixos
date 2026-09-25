@@ -45,6 +45,9 @@ let
   };
 in
 {
+  # for the noctalia widget
+  lib.uc3.ctl = uc3ctl;
+
   home.packages = [
     uc3ctl
     uc3pull

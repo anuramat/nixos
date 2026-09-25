@@ -199,8 +199,9 @@ in
                 runtimeBinds+=(--bind-try "$runtimeDir/$i" "$runtimeDir/$i")
               done
               # --unshare-pid: when the agent exits, the kernel kills everything
-              # it started, including detached (setsid/nohup) processes
-              bwrap \
+              # it started, including detached (setsid/nohup) processes;
+              # argv0 marks the session for fleet-status
+              exec -a agent-sandbox:${wrapperName} bwrap \
                 --die-with-parent \
                 --unshare-pid \
                 --proc /proc \
