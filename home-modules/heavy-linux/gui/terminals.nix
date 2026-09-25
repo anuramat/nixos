@@ -1,5 +1,8 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
+  # start the background instance with the session, so the first window opens fast too
+  xdg.configFile."systemd/user/${config.wayland.systemd.target}.wants/app-com.mitchellh.ghostty.service".source =
+    "${config.programs.ghostty.package}/share/systemd/user/app-com.mitchellh.ghostty.service";
   programs = {
     ghostty = {
       # cons: slowest startup

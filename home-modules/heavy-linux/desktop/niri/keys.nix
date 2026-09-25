@@ -68,7 +68,11 @@ let
     ];
   };
 
-  term = "${config.home.sessionVariables.TERMCMD}";
+  # +new-window asks the background instance over D-Bus instead of starting a full ghostty process
+  term = [
+    config.home.sessionVariables.TERMCMD
+    "+new-window"
+  ];
 
   # SLOP
   # launcher dmenu entries, keyed by prefix; keys open the launcher on them
