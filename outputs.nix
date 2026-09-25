@@ -87,16 +87,19 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       anuramat-f12 = {
         system = "x86_64-linux";
         builder = false;
-        agent = false;
+        description = "edc laptop: framework 12, 48GB RAM, i5-1334U";
+        agent = true;
       };
       anuramat-root = {
         system = "x86_64-linux";
         builder = false;
+        description = "server: 4GB ram, 4 vCPU; personal website";
         agent = false;
       };
       anuramat-t480 = {
         system = "x86_64-linux";
         builder = false;
+        description = "old thinkpad, not actively used";
         agent = false;
       };
     };
