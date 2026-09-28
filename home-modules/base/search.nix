@@ -17,10 +17,10 @@ let
     pkgs.writeShellScript "preview"
       # bash
       ''
-        fmt=''${IMAGE_PROTOCOL:-symbols} cell=$IMAGE_CELL zellij=
+        fmt=''${IMAGE_PROTOCOL:-symbols} zellij=
         if [[ $fmt == zellij ]]; then
           zellij=1 fmt=symbols
-          read -r fmt cell 2>/dev/null <"${zellijHost}"
+          read -r fmt 2>/dev/null <"${zellijHost}"
         fi
 
         # shows image from stdin; adapted from fzf's bin/fzf-preview.sh
@@ -29,18 +29,14 @@ let
           if [[ $fmt == kitty && -z $zellij ]]; then
             # memory transfer is local only
             [[ -n $SSH_CONNECTION ]] && mode=stream
-            # unicode placeholders get cleared/redrawn by fzf like text; trailing reset line confuses fzf
+            # unicode placeholders get cleared/redrawn by fzf like text
             ${lib.getExe' pkgs.kitty.kitten "kitten"} icat --clear --scale-up --transfer-mode="$mode" --unicode-placeholder \
-              --stdin=yes --place="''${cols}x$rows@0x0" | sed '$d' | sed $'$s/$/\e[m/'
+              --stdin=yes --place="''${cols}x$rows@0x0"
             return
           fi
-          if [[ $fmt == sixels ]]; then
-            # sixel touching the bottom of the screen scrolls it: https://github.com/junegunn/fzf/issues/2544
-            ((FZF_PREVIEW_TOP + rows == $(stty size </dev/tty | cut -d' ' -f1))) && rows=$((rows - 1))
-            # chafa can't query the cell size in a pipe and assumes 10x20px, so the size is converted;
-            # one column less, since it overshoots by a few pixels
-            [[ $cell =~ ^([0-9]+)x([0-9]+)$ ]] && cols=$((cols * BASH_REMATCH[1] / 10 - 1)) rows=$((rows * BASH_REMATCH[2] / 20))
-          fi
+          # sixel touching the bottom of the screen scrolls it: https://github.com/junegunn/fzf/issues/2544
+          [[ $fmt == sixels ]] && ((FZF_PREVIEW_TOP + rows == $(stty size </dev/tty | cut -d' ' -f1))) && rows=$((rows - 1))
+          # chafa reads the cell size in pixels from the controlling tty
           ${getExe pkgs.chafa} -f "$fmt" --scale max -s "''${cols}x$rows" -
         }
 
@@ -101,11 +97,11 @@ in
   # probed on shell startup, since fzf owns the tty while previewing
   programs.bash.initExtra = # bash
     ''
-      IMAGE_PROTOCOL=symbols IMAGE_CELL=
-      # kitty graphics query, XTVERSION, cell size in pixels, then DA1:
+      IMAGE_PROTOCOL=symbols
+      # kitty graphics query, XTVERSION, then DA1:
       # every terminal answers DA1, so it marks the end of the replies
       if __s=$(stty -g 2>/dev/null) && stty -echo -icanon; then
-        printf '\e_Gi=31,s=1,v=1,a=q,t=d,f=24;AAAA\e\\\e[>q\e[16t\e[c'
+        printf '\e_Gi=31,s=1,v=1,a=q,t=d,f=24;AAAA\e\\\e[>q\e[c'
         __r=
         until [[ $__r =~ $'\e'\[\?([0-9\;]*)c$ ]]; do IFS= read -rN1 -t 0.5 __c || break; __r+=$__c; done
         stty "$__s"
@@ -118,13 +114,12 @@ in
         elif [[ ";''${BASH_REMATCH[1]};" == *';4;'* ]]; then
           IMAGE_PROTOCOL=sixels
         fi
-        [[ $__r =~ $'\e'\[6\;([0-9]+)\;([0-9]+)t ]] && IMAGE_CELL=''${BASH_REMATCH[2]}x''${BASH_REMATCH[1]}
       fi
-      export IMAGE_PROTOCOL IMAGE_CELL
+      export IMAGE_PROTOCOL
       unset __s __r __c
 
       zellij() {
-        [[ -z $ZELLIJ ]] && echo "$IMAGE_PROTOCOL $IMAGE_CELL" >"${zellijHost}"
+        [[ -z $ZELLIJ ]] && echo "$IMAGE_PROTOCOL" >"${zellijHost}"
         command zellij "$@"
       }
     '';

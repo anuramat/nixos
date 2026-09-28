@@ -72,6 +72,21 @@ let
         zed-editor
         ;
 
+      # 0.49.1: kitten names shm objects with a leading slash, which ghostty requires
+      kitty = unstable.kitty.overridePythonAttrs (old: rec {
+        version = "0.49.1";
+        src = old.src.override {
+          tag = "v${version}";
+          hash = "sha256-YVjTfJnsNEBjcHWQCq2nJBFPvLg7RqQcyWjgR4ijUqc=";
+        };
+        goModules =
+          (unstable.buildGo126Module {
+            pname = "kitty-go-modules";
+            inherit src version;
+            vendorHash = "sha256-urQMf5lGYPgS65VjGw0pi/ZM6CETtGWfi/kvVDAkIoc=";
+          }).goModules;
+      });
+
       darktable = unstable.darktable.override {
         withAi = true;
         gmic = unstable.gmic.overrideAttrs (old: {
