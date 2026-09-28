@@ -55,7 +55,60 @@ let
   '';
 in
 {
-  lib.agents.mkPackages =
+  options.agents.sandbox = {
+    rwDirs = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      description = "paths bound read-write into every agent sandbox, if they exist";
+    };
+    roDirs = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      description = "paths bound read-only into every agent sandbox, if they exist";
+    };
+  };
+
+  config.agents.sandbox = {
+    # TODO use overlayfs instead?
+    rwDirs = [
+      config.home.sessionVariables.RUSTUP_HOME
+      config.home.sessionVariables.CARGO_HOME
+      config.programs.go.env.GOPATH
+      "${config.home.homeDirectory}/.npm"
+      config.home.sessionVariables.GHQ_ROOT
+      # nix eval/fetcher/git caches; ro would break sqlite locking
+      "${config.xdg.cacheHome}/nix"
+    ];
+    roDirs =
+      let
+        homePaths =
+          [
+            ".bashrc"
+            ".bash_profile"
+            ".profile"
+          ]
+          |> map (p: "${config.home.homeDirectory}/${p}");
+      in
+      [
+        "/nix"
+        "/bin"
+        "/usr"
+        "/etc"
+        "/lib"
+        "/lib64"
+
+        "/run/current-system"
+        "/run/systemd/resolve/stub-resolv.conf"
+
+        config.lib.secrets.tgfy-token.path
+        config.lib.secrets.tgfy-id.path
+        config.lib.secrets.agent.path
+
+        config.xdg.configHome
+        config.home.sessionVariables.XDG_BIN_HOME
+      ]
+      ++ homePaths;
+  };
+
+  config.lib.agents.mkPackages =
     {
       package,
       binName ? package.meta.mainProgram,
@@ -94,16 +147,6 @@ in
 
           rwDirs =
             let
-              # TODO use overlayfs instead?
-              baseRwDirs = [
-                config.home.sessionVariables.RUSTUP_HOME
-                config.home.sessionVariables.CARGO_HOME
-                config.programs.go.env.GOPATH
-                "${config.home.homeDirectory}/.npm"
-                config.home.sessionVariables.GHQ_ROOT
-                # nix eval/fetcher/git caches; ro would break sqlite locking
-                "${config.xdg.cacheHome}/nix"
-              ];
               agentDirs =
                 if agentDir != null then
                   (map (v: "${v}/${agentDir}") [
@@ -118,7 +161,7 @@ in
             mkArgs {
               flag = "--bind-try";
               doublePath = true;
-              paths = baseRwDirs ++ agentDirs ++ extraRwDirs;
+              paths = config.agents.sandbox.rwDirs ++ agentDirs ++ extraRwDirs;
             };
 
           tmpDirs = mkArgs {
@@ -131,39 +174,11 @@ in
             ];
           };
 
-          roDirs =
-            let
-              homePaths =
-                [
-                  ".bashrc"
-                  ".bash_profile"
-                  ".profile"
-                ]
-                |> map (p: "${config.home.homeDirectory}/${p}");
-            in
-            mkArgs {
-              flag = "--ro-bind-try";
-              doublePath = true;
-              paths = [
-                "/nix"
-                "/bin"
-                "/usr"
-                "/etc"
-                "/lib"
-                "/lib64"
-
-                "/run/current-system"
-                "/run/systemd/resolve/stub-resolv.conf"
-
-                config.lib.secrets.tgfy-token.path
-                config.lib.secrets.tgfy-id.path
-                config.lib.secrets.agent.path
-
-                config.xdg.configHome
-                config.home.sessionVariables.XDG_BIN_HOME
-              ]
-              ++ homePaths;
-            };
+          roDirs = mkArgs {
+            flag = "--ro-bind-try";
+            doublePath = true;
+            paths = config.agents.sandbox.roDirs;
+          };
 
         in
         pkgs.writeShellApplication {

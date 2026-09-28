@@ -8,6 +8,7 @@
 }:
 let
   username = config.lib.hosts.agentUsername;
+  sharedDir = "${config.users.users.${username}.home}/shared";
   shell = pkgs.writeShellApplication {
     name = "agent-shell";
     runtimeInputs = with pkgs; [
@@ -44,6 +45,10 @@ in
       KillUserProcesses = true;
       KillOnlyUsers = username;
     };
+    # dir the user's sandboxed agents can read but only write through ssh (e.g.
+    # `rsync ... HOST:DIR`), so everything in it is owned by the agent user
+    systemd.tmpfiles.rules = [ "d ${sharedDir} 0750 ${username} ${username} -" ];
+    home-manager.users.${inputs.self.user.username}.agents.sandbox.roDirs = [ sharedDir ];
     services.openssh = {
       settings.AllowUsers = [ username ];
       extraConfig = ''

@@ -17,6 +17,7 @@ in
     ./commands.nix
     ./frontends
     ./instructions.nix
+    ./job.nix
     ./sandbox.nix
     ./uc3
   ];

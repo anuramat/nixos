@@ -171,13 +171,46 @@ let
 
             ${agentHosts}
 
-            Each host has the same packages as the user, and its home directory persists
-            across sessions. Start long runs with
-            `systemd-run --user --unit=SHORT_DESCRIPTIVE_NAME` -- they keep
-            running after you disconnect, and the user can see them by name.
-            Anything else you start (`cmd &`, `nohup`, `setsid`, tmux) is killed
-            when the ssh command returns.
-          '';
+            Each host has the same packages as the user, and its home directory
+            persists across sessions. Anything you start over ssh (`cmd &`,
+            `nohup`, `setsid`, tmux) is killed when the ssh command returns.
+
+            Anything that should outlive your session, or runs longer than ~10
+            minutes, MUST be run as a job, which also shows up in the user's
+            fleet monitor:
+
+            - `job run HOST:NAME -- CMD...` runs CMD as `agent` on HOST, in
+              `D=/home/agent/shared/jobs/NAME` on HOST; output goes to `D/log`.
+              NAME is `[a-z0-9-]+` and can't be reused.
+            - `job wait [-f] HOST:NAME` blocks until the job ends and prints
+              `job NAME: RESULT`. Exit 0 = success, 1 = failed or cancelled,
+              2 = no such job, 3 = lost (e.g. reboot), 4 = ssh failed (retry).
+              `-f` also streams new log lines.
+            - `job stop HOST:NAME` cancels it.
+
+            `agent` can't read the user's home, so you MUST stage everything the
+            job needs in D first. The sandbox can read `/home/agent/shared` but
+            not write it: write to D only through ssh, using `HOST:` paths even
+            for this host (`$HOSTNAME`). Example, from the root of a flake repo:
+
+            ```sh
+            H=$HOSTNAME # or another host from the list above
+            D=/home/agent/shared/jobs/NAME
+            # just the flake files, so that nix doesn't copy the repo into the store
+            rsync -t --mkpath flake.nix flake.lock "$H:$D/flake/"
+            git ls-files -z -co --exclude-standard |
+              rsync -rlpt --from0 --files-from=- --mkpath ./ "$H:$D/src/"
+            job run "$H:NAME" -- sh -c "cd src && nix develop path:$D/flake -c python train.py"
+            ```
+
+            - If the flake reads other repo files (e.g. `src = ./.`), copy those to `D/flake` too.
+            - Big data (datasets, caches) SHOULD live in `/home/agent/shared/data/PROJECT` on the host, symlinked into D: `ssh $H ln -s /home/agent/shared/data/PROJECT/cache $D/src/cache`.
+            - Results: read D directly on this host; on another host, use `ssh $H tail $D/log` or `rsync -a "$H:$D/src/out/" out/`.
+            - Record `HOST:NAME` wherever the run is documented, so a later session can re-attach with `job wait`.
+          ''
+          + (for [ "claude" ] ''
+            - Right after launching, run `job wait HOST:NAME` with Bash `run_in_background` -- you get notified when it ends. For progress, run `job wait -f HOST:NAME | grep --line-buffered -E 'PATTERN|^job '` in the Monitor tool, filtered to lines you'd act on. You MUST NOT poll with foreground `sleep`.
+          '');
         }
       ];
     in
