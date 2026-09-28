@@ -79,12 +79,14 @@ let
           tag = "v${version}";
           hash = "sha256-YVjTfJnsNEBjcHWQCq2nJBFPvLg7RqQcyWjgR4ijUqc=";
         };
-        goModules =
+        inherit
           (unstable.buildGo126Module {
             pname = "kitty-go-modules";
             inherit src version;
             vendorHash = "sha256-urQMf5lGYPgS65VjGw0pi/ZM6CETtGWfi/kvVDAkIoc=";
-          }).goModules;
+          })
+          goModules
+          ;
       });
 
       darktable = unstable.darktable.override {

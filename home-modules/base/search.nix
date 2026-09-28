@@ -93,7 +93,6 @@ let
   rgIgnores = [ "*.lock" ]; # non human readable, but visible
 in
 {
-  home.packages = [ fzsort ];
   # probed on shell startup, since fzf owns the tty while previewing
   programs.bash.initExtra = # bash
     ''
@@ -124,16 +123,22 @@ in
       }
     '';
 
-  home.sessionVariables = {
-    _ZO_FZF_OPTS = lib.strings.concatStringsSep " " [
-      "--no-sort"
-      "--exit-0"
-      "--select-1"
-      "--preview='${preview} {2..}'"
-    ];
-    _ZO_RESOLVE_SYMLINKS = 1;
-    _ZO_ECHO = 1;
-    _ZO_EXCLUDE_DIRS = "${config.xdg.cacheHome}/*:${config.xdg.stateHome}:/nix/store/*";
+  home = {
+    packages = [ fzsort ];
+    sessionVariables = {
+      _ZO_FZF_OPTS = lib.strings.concatStringsSep " " [
+        "--no-sort"
+        "--exit-0"
+        "--select-1"
+        "--preview='${preview} {2..}'"
+      ];
+      _ZO_RESOLVE_SYMLINKS = 1;
+      _ZO_ECHO = 1;
+      _ZO_EXCLUDE_DIRS = "${config.xdg.cacheHome}/*:${config.xdg.stateHome}:/nix/store/*";
+    };
+    shellAliases = {
+      wget = "wget '--hsts-file=${config.xdg.dataHome}/wget-hsts'";
+    };
   };
   programs = {
     ripgrep = {
@@ -200,9 +205,5 @@ in
       enable = true;
       inherit ignores;
     };
-  };
-
-  home.shellAliases = {
-    wget = "wget '--hsts-file=${config.xdg.dataHome}/wget-hsts'";
   };
 }
