@@ -147,7 +147,7 @@ local function section(h)
   end
   return ui.column({ gap = 4, key = h.name, onClick = onClick }, {
     ui.row({ gap = 8 }, header),
-    ui.row({}, { ui.box({ width = 16 }), ui.column({ gap = 4 }, h.rows(h)) }),
+    ui.row({ align = "start" }, { ui.box({ width = 16 }), ui.column({ gap = 4 }, h.rows(h)) }),
   })
 end
 
