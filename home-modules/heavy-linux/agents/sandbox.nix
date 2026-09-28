@@ -67,14 +67,14 @@ in
   };
 
   config.agents.sandbox = {
-    # TODO use overlayfs instead?
     rwDirs = [
       config.home.sessionVariables.RUSTUP_HOME
       config.home.sessionVariables.CARGO_HOME
       config.programs.go.env.GOPATH
       "${config.home.homeDirectory}/.npm"
       config.home.sessionVariables.GHQ_ROOT
-      # nix eval/fetcher/git caches; ro would break sqlite locking
+      # nix eval/fetcher/git caches;
+      # NOTE read-only would break sqlite locking
       "${config.xdg.cacheHome}/nix"
     ];
     roDirs =
