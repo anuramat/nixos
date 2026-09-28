@@ -165,6 +165,31 @@ let
           '';
         }
         {
+          name = "Environment feedback";
+          body = ''
+            Your environment is defined in `/etc/nixos`, which you can't edit.
+            When it doesn't match your instructions -- an instruction is stale,
+            wrong, or ambiguous enough that you had to guess; a documented tool is
+            missing or behaves differently; a sandbox limitation needs a
+            workaround -- you SHOULD report it once you've figured out what's
+            actually true, so that the user can fix it later:
+
+            ```sh
+            agent-feedback <<'EOF'
+            Instructions say X, but actually Y (/etc/nixos/path/to/file.nix:42);
+            the "Section" section should say Y.
+            EOF
+            ```
+
+            Say what you expected, what turned out to be true, how you found out,
+            and what should change. The time, host, current directory, and
+            configuration revision are recorded automatically. This is only for
+            problems with your environment, not with the project you're working
+            on, and it doesn't replace telling the user what matters for the
+            current task.
+          '';
+        }
+        {
           name = "SSH and long-running jobs";
           body = ''
             You have SSH access to the following machines as the unprivileged `agent` user:

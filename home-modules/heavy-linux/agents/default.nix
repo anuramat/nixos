@@ -15,6 +15,7 @@ in
 
   imports = [
     ./commands.nix
+    ./feedback.nix
     ./frontends
     ./instructions.nix
     ./job.nix
