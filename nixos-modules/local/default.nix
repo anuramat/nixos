@@ -109,7 +109,6 @@ in
         enable = true;
       };
     };
-    blueman.enable = true; # bluetooth gui
     # Enable CUPS to print documents, available @ http://localhost:631/
     printing = {
       enable = true;
