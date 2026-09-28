@@ -22,6 +22,7 @@ let
             - If user refers to "spec" without specifying, ./SPEC.md is usually implied
             - If you change the types/semantics of existing code, you MUST rename the relevant functions/variables to reflect the changes; e.g. if variable name contains "list" but it is no longer a list, you MUST rename it to avoid confusion.
             - You MUST NOT remove existing comments, unless they're outdated. if you do, you SHOULD inform the user.
+            - You MUST use plain ASCII whenever possible, e.g. `--` instead of an em dash, `->` instead of an arrow. In markup, you MUST use the markup's own syntax instead of Unicode symbols: `\lambda` in LaTeX and Markdown math, `lambda` in Typst math.
           ''
           + (for [ "claude" ] ''
             - You SHOULD use the `AskUserQuestion` tool whenever you have questions for the user -- it lets them pick options instead of typing, and consolidates scattered questions into one place. Exceptions:
