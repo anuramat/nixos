@@ -7,7 +7,6 @@
     # settings
     ddcutil # configure external monitors (eg brightness)
     crosspipe # pipewire graph
-    networkmanagerapplet # networking
     pavucontrol # audio
     pulseaudio
     system-config-printer # printer
