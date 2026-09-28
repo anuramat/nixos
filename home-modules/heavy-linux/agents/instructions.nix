@@ -13,26 +13,51 @@ let
 
       sections = [
         {
-          name = "general";
+          name = "General";
           body = ''
-            - The key words "MUST", "MUST NOT", "SHOULD", "SHOULD NOT", "MAY" are to be interpreted as described in RFC 2119.
-            - You MUST NOT do "band-aid" fixes -- ALWAYS fix the root cause of the problem.
-            - When writing a commit message, the subject MUST be of the form `$SCOPE: $SHORT_DESCRIPTION`. Note that it's NOT `$TYPE($SCOPE): $SHORT_DESCRIPTION` as in conventional commits -- you MUST omit the type. WIP commits get an additional "WIP: " prefix.
-            - Backward compatibility is not a goal, unless explicitly specified. You MUST NOT add fallbacks, shims, wrappers, aliases, or dual behavior for old codepaths.
-            - If user refers to "spec" without specifying, ./SPEC.md is usually implied
-            - If you change the types/semantics of existing code, you MUST rename the relevant functions/variables to reflect the changes; e.g. if variable name contains "list" but it is no longer a list, you MUST rename it to avoid confusion.
-            - You MUST NOT remove existing comments, unless they're outdated. if you do, you SHOULD inform the user.
-            - You MUST use plain ASCII whenever possible, e.g. `--` instead of an em dash, `->` instead of an arrow. In markup, you MUST use the markup's own syntax instead of Unicode symbols: `\lambda` in LaTeX and Markdown math, `lambda` in Typst math.
+            The key words "MUST", "MUST NOT", "SHOULD", "SHOULD NOT", "MAY" are
+            to be interpreted as described in RFC 2119.
+
+            You MUST NOT do "band-aid" fixes -- ALWAYS fix the root cause of the
+            problem.
+
+            When writing a commit message, the subject MUST be of the form
+            `$SCOPE: $SHORT_DESCRIPTION`. Note that it's NOT `$TYPE($SCOPE):
+            $SHORT_DESCRIPTION` as in conventional commits -- you MUST omit the
+            type. WIP commits get an additional "WIP: " prefix.
+
+            Backward compatibility is not a goal, unless explicitly specified.
+            You MUST NOT add fallbacks, shims, wrappers, aliases, or dual
+            behavior for old codepaths.
+
+            If user refers to "spec" without specifying, ./SPEC.md is usually
+            implied
+
+            If you change the types/semantics of existing code, you MUST rename
+            the relevant functions/variables to reflect the changes; e.g. if
+            variable name contains "list" but it is no longer a list, you MUST
+            rename it to avoid confusion.
+
+            You MUST NOT remove existing comments, unless they're outdated. if
+            you do, you SHOULD inform the user.
+
+            You MUST use plain ASCII whenever possible, e.g. `--` instead of an
+            em dash, `->` instead of an arrow. In markup, you MUST use the
+            markup's own syntax instead of Unicode symbols: `\lambda` in LaTeX
+            and Markdown math, `lambda` in Typst math.
           ''
           + (for [ "claude" ] ''
-            - You SHOULD use the `AskUserQuestion` tool whenever you have questions for the user -- it lets them pick options instead of typing, and consolidates scattered questions into one place. Exceptions:
-              - The answer requires freeform input (names, paths, values, snippets, open-ended feedback).
-              - You can't come up with 2+ genuinely distinct options.
-              - Plan approval -- use `ExitPlanMode`.
+            You SHOULD use the `AskUserQuestion` tool whenever you have
+            questions for the user -- it lets them pick options instead of
+            typing, and consolidates scattered questions into one place.
+            Exceptions:
+            - The answer requires freeform input (names, paths, values, snippets, open-ended feedback).
+            - You can't come up with 2+ genuinely distinct options.
+            - Plan approval -- use `ExitPlanMode`.
           '');
         }
         {
-          name = "codestyle";
+          name = "Code style";
           body = ''
             Background:
             The user works on a solo project and wants it to be easy to maintain.
@@ -51,7 +76,7 @@ let
           '';
         }
         {
-          name = "code-ownership";
+          name = "Code ownership";
           body = ''
             Code marked by user as "SLOP" is "AI-owned": it was "vibecoded" --
             written by an agent with little to no supervision/review from the
@@ -65,7 +90,7 @@ let
           '';
         }
         {
-          name = "workflow";
+          name = "Workflow";
           body = ''
             ### Acceptance criteria identification
 
@@ -106,17 +131,26 @@ let
           '';
         }
         {
-          name = "environment";
+          name = "Environment";
           body = ''
+            User is running NixOS, configured by the flake in `/etc/nixos`;
+            whenever user refers to "the NixOS configuration", this path is
+            implied. Everything is defined there, including your own
+            environment: the sandbox, your SSH access, and the `uc3ctl` relay
+            (`home-modules/heavy-linux/agents/` and
+            `nixos-modules/base/agent.nix`). You MAY read it for context; if you
+            hit a limitation of your environment, you SHOULD read the relevant
+            code to understand exactly what is allowed and how to work around
+            it, before asking the user.
+
             - If you need tools that are not available on the system, you SHOULD use `nix run nixpkgs#package_name -- arg1 ...`.
             - Don't run `find` and similar commands on paths like `/` or `/nix/store` -- those are huge.
-            - User is running NixOS, the flake is located in `/etc/nixos`. Whenever user refers to "the NixOS configuration", this path is implied. You MAY read files in this directory for context.
             - nixpkgs search: `nh search $PACKAGE_NAME`; prefer this over `nix search`, which is slower
             - If user asks you to "notify" them about something, `tgfy` command is implied. It sends a Telegram message to the user. Usage: `echo 'text message' | tgfy file1.txt file2.png`. Attachments are optional.
           '';
         }
         {
-          name = "sandbox";
+          name = "Sandbox";
           body = ''
             You are running in a sandbox.
 
@@ -131,7 +165,7 @@ let
           '';
         }
         {
-          name = "ssh";
+          name = "SSH and long-running jobs";
           body = ''
             You have SSH access to the following machines as the unprivileged `agent` user:
 
