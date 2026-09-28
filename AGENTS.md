@@ -192,6 +192,12 @@ experimental feature; run inside the dev shell or pass it explicitly.
 - Niri starts from a bash profile autostart script and a user systemd service,
   not from a display manager. `wayland.systemd.target` is set to `niri.service`
   because the generic graphical session target starts some services too early.
+- Noctalia GUI changes are written as overrides to
+  `$XDG_STATE_HOME/noctalia/settings.toml`, on top of the declarative
+  `programs.noctalia.settings`. When asked to save these overrides to the
+  config, ignore the `[wallpaper.*]` entries (`wallpaper.default`,
+  `wallpaper.last`): noctalia writes them on its own, so they are noise, not
+  user choices.
 - Waybar's niri-windows plugin is built from the `waybar-niri-windows` flake
   input; bumping it may also require updating the hand-pinned `vendorHash` in
   `overlays/default.nix`. The package is built by `nix flake check` so a stale

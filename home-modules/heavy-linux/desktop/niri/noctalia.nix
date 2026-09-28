@@ -58,6 +58,10 @@ in
           "English (US)" = "EN";
           "Russian" = "RU";
         };
+        launcher = {
+          categories = false;
+          compact = true;
+        };
       };
 
       location.address = inputs.self.user.location;
@@ -66,29 +70,31 @@ in
 
       bar.main = {
         position = "top";
-        thickness = 34;
+        thickness = 40;
+        scale = 1.15;
+        widget_spacing = 16;
         radius = 0;
         margin_ends = 0;
         margin_edge = 0;
         reserve_space = false;
-        auto_hide = true;
+        auto_hide = false;
+        smart_auto_hide = true;
         layer = "overlay";
 
-        start = [
-          "caffeine"
-          "keyboard_layout"
-          "media"
-        ];
-        center = [ "active_window" ];
+        start = [ "active_window" ];
+        center = [ ];
         end = [
           "tray"
-          "notifications"
-          "volume"
+          "network"
           "battery"
           "clock"
-          "control-center"
-          "session"
         ];
+      };
+
+      widget = {
+        clock.format = "{:%Y-%m-%d %H:%M:%S}";
+        notifications.hide_when_no_unread = true;
+        tray.drawer = true;
       };
 
       theme = {
@@ -112,7 +118,10 @@ in
         };
       };
 
-      lockscreen.enabled = true;
+      lockscreen = {
+        enabled = true;
+        blurred_desktop = true;
+      };
       hooks.session_locked = lib.getExe config.lib.keyring.lock;
 
       dock = {
@@ -121,7 +130,18 @@ in
         smart_auto_hide = true;
       };
 
-      control_center.width = 1000;
+      control_center = {
+        width = 1000;
+        shortcuts = map (type: { inherit type; }) [
+          "notification"
+          "caffeine"
+          "nightlight"
+          "clipboard"
+          "bluetooth"
+          "wifi"
+        ];
+      };
+      notification.history_retention_hours = 24;
       nightlight.enabled = true;
 
       # disable toast on mic/camera/screen capture
