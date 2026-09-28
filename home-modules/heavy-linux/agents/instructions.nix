@@ -171,13 +171,11 @@ let
 
             ${agentHosts}
 
-            Each host has the same packages as the user, and its home directory
-            persists across sessions. Anything you start over ssh (`cmd &`,
-            `nohup`, `setsid`, tmux) is killed when the ssh command returns.
+            Its home directory persists across sessions. Anything you start over
+            ssh is killed when the ssh command returns.
 
             Anything that should outlive your session, or runs longer than ~10
-            minutes, MUST be run as a job, which also shows up in the user's
-            fleet monitor:
+            minutes, MUST be run as a job:
 
             - `job run HOST:NAME -- CMD...` runs CMD as `agent` on HOST, in
               `D=/home/agent/shared/jobs/NAME` on HOST; output goes to `D/log`.
