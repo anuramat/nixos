@@ -66,6 +66,6 @@ pkgs.writeShellApplication {
     done
     exit $rc
   '';
-  # for the noctalia widget
+  # for the noctalia fleet monitor plugin
   passthru = { inherit hosts; };
 }

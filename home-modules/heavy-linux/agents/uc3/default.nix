@@ -45,7 +45,7 @@ let
   };
 in
 {
-  # for the noctalia widget
+  # for the noctalia fleet monitor plugin
   lib.uc3.ctl = uc3ctl;
 
   home.packages = [

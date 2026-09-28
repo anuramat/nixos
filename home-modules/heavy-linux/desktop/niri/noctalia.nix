@@ -28,12 +28,22 @@ in
               entry = "widget.luau";
             }
           ];
+          # polls once for every widget instance (desktop and lockscreen)
+          service = [
+            {
+              id = "poller";
+              entry = "service.luau";
+            }
+          ];
         };
-    "noctalia/plugins/fleet-monitor/widget.luau".source = pkgs.replaceVars ./fleet-monitor.luau {
-      exe = lib.getExe fleetStatus;
-      hosts = lib.generators.toLua { } fleetStatus.hosts;
-      uc3ctl = lib.getExe config.lib.uc3.ctl;
-    };
+    "noctalia/plugins/fleet-monitor/widget.luau".source = ./fleet-monitor/widget.luau;
+    "noctalia/plugins/fleet-monitor/service.luau".source =
+      pkgs.replaceVars ./fleet-monitor/service.luau
+        {
+          exe = lib.getExe fleetStatus;
+          hosts = lib.generators.toLua { } fleetStatus.hosts;
+          uc3ctl = lib.getExe config.lib.uc3.ctl;
+        };
   };
 
   programs.noctalia = {
