@@ -39,6 +39,8 @@
 
   i18n.defaultLocale = inputs.self.user.locale;
   time.timeZone = inputs.self.user.timeZone;
+  # `nixos-version --configuration-revision`
+  system.configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
   hardware = {
     enableAllFirmware = true; # as in "regardless of license"; implies redistributable
     enableAllHardware = true;
