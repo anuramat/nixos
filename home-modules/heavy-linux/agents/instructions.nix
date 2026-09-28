@@ -17,22 +17,17 @@ let
           body = ''
             - The key words "MUST", "MUST NOT", "SHOULD", "SHOULD NOT", "MAY" are to be interpreted as described in RFC 2119.
             - You MUST NOT do "band-aid" fixes -- ALWAYS fix the root cause of the problem.
-            - If you need tools that are not available on the system, you SHOULD use `nix run nixpkgs#package_name -- arg1 ...`.
             - When writing a commit message, the subject MUST be of the form `$SCOPE: $SHORT_DESCRIPTION`. Note that it's NOT `$TYPE($SCOPE): $SHORT_DESCRIPTION` as in conventional commits -- you MUST omit the type. WIP commits get an additional "WIP: " prefix.
-            - Backward compatibility is not a goal, unless explicitly specified. You MUST NOT not add fallbacks, shims, wrappers, aliases, or dual behavior for old codepaths.
+            - Backward compatibility is not a goal, unless explicitly specified. You MUST NOT add fallbacks, shims, wrappers, aliases, or dual behavior for old codepaths.
             - If user refers to "spec" without specifying, ./SPEC.md is usually implied
-            - Don't run `find` and similar commands on paths like `/` or `/nix/store` -- those are huge.
             - If you change the types/semantics of existing code, you MUST rename the relevant functions/variables to reflect the changes; e.g. if variable name contains "list" but it is no longer a list, you MUST rename it to avoid confusion.
             - You MUST NOT remove existing comments, unless they're outdated. if you do, you SHOULD inform the user.
-            - User is running NixOS, the flake is located in `/etc/nixos`. Whenever user refers to "the NixOS configuration", this path is implied. You MAY read files in this directory for context.
-            - nixpkgs search: `nh search $PACKAGE_NAME`; prefer this over `nix search`, which is slower
-            - If user asks you to "notify" them about something, `tgfy` command is implied. It sends a Telegram message to the user. Usage: `echo 'text message' | tgfy file1.txt file2.png`. Attachments are optional.
           ''
           + (for [ "claude" ] ''
-            - You SHOULD use the `AskUserQuestion` tool whenever you have questions for the user — it lets them pick options instead of typing, and consolidates scattered questions into one place. Exceptions:
+            - You SHOULD use the `AskUserQuestion` tool whenever you have questions for the user -- it lets them pick options instead of typing, and consolidates scattered questions into one place. Exceptions:
               - The answer requires freeform input (names, paths, values, snippets, open-ended feedback).
               - You can't come up with 2+ genuinely distinct options.
-              - Plan approval — use `ExitPlanMode`.
+              - Plan approval -- use `ExitPlanMode`.
           '');
         }
         {
@@ -45,12 +40,12 @@ let
 
             - You MUST write concise code that prioritizes brevity and elegance over verbosity and caution.
             - You MUST NOT implement features that are neither explicitly requested by the user nor indirectly required.
-            - You MUST avoid exhaustive error handling and edge case checks;
+            - You MUST avoid exhaustive error handling and edge case checks.
 
             Exceptions:
             - Temporary files (e.g. debugging/test scripts) -- you MAY write as much code as you need in temporary files.
             - Helper functions -- you SHOULD decompose complex logic into helper functions when appropriate.
-            - Tests
+            - Tests -- coverage takes priority over brevity.
             - AI-owned code ("SLOP")
           '';
         }
@@ -79,7 +74,7 @@ let
 
             After finishing the task, you MUST verify that the solution meets the acceptance criteria.
             If some criteria are NOT met, you MUST continue iterating on the problem, until ALL the acceptance criteria are met.
-            The task CAN NOT be considered complete until ALL the acceptance criteria are met.
+            The task MUST NOT be considered complete until ALL the acceptance criteria are met.
 
             If the user asks you to fix a failing command, successful execution of this command MUST be added as a criterion.
 
@@ -110,6 +105,16 @@ let
           '';
         }
         {
+          name = "environment";
+          body = ''
+            - If you need tools that are not available on the system, you SHOULD use `nix run nixpkgs#package_name -- arg1 ...`.
+            - Don't run `find` and similar commands on paths like `/` or `/nix/store` -- those are huge.
+            - User is running NixOS, the flake is located in `/etc/nixos`. Whenever user refers to "the NixOS configuration", this path is implied. You MAY read files in this directory for context.
+            - nixpkgs search: `nh search $PACKAGE_NAME`; prefer this over `nix search`, which is slower
+            - If user asks you to "notify" them about something, `tgfy` command is implied. It sends a Telegram message to the user. Usage: `echo 'text message' | tgfy file1.txt file2.png`. Attachments are optional.
+          '';
+        }
+        {
           name = "sandbox";
           body = ''
             You are running in a sandbox.
@@ -118,7 +123,7 @@ let
             is not working because of the sandbox, you MAY ask the user to run the
             command manually.
 
-            Important: `tmp`, `$TMPDIR`, and XDG cache/data/state home directories
+            Important: `/tmp`, `$TMPDIR`, and XDG cache/data/state home directories
             are bind mounted to tmpfs, so files created there will not persist
             after the session is finished. Most of the other paths are bind
             mounted read-only.
@@ -131,7 +136,7 @@ let
 
             ${agentHosts}
 
-            It has the same packages as the user, and its home directory persists
+            Each host has the same packages as the user, and its home directory persists
             across sessions. Start long runs with
             `systemd-run --user --unit=SHORT_DESCRIPTIVE_NAME` -- they keep
             running after you disconnect, and the user can see them by name.
