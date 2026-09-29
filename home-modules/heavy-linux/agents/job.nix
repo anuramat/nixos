@@ -5,6 +5,12 @@
 # HOST:DIR`), then used as the working dir and for `log` and `result`
 { pkgs, ... }:
 let
+  # the ExecStopPost; a script, since systemd saves a transient unit with every
+  # `$` doubled, so an inline `$$` comes back as `$$$$` after a reload (e.g. a
+  # rebuild), and the job's result as the shell's PID
+  writeResult = pkgs.writeShellScript "job-result" ''
+    echo "$SERVICE_RESULT $EXIT_CODE $EXIT_STATUS" >result.tmp && mv result.tmp result
+  '';
   job = pkgs.writeShellApplication {
     name = "job";
     runtimeInputs = with pkgs; [
@@ -54,13 +60,11 @@ let
         (($#)) || die "$usage"
         [ -d "$D" ] || die "stage the job in $D first"
         [ ! -e "$D/result" ] || die "$D/result exists, the job already ran"
-        # systemd unit syntax: $$ is a literal $; without --expand-environment=no,
-        # systemd would expand $VARs in CMD too; append, since ExecStopPost
-        # reopens the log
-        # shellcheck disable=SC2016
+        # without --expand-environment=no, systemd would expand $VARs in CMD;
+        # append, since ExecStopPost reopens the log
         exec systemd-run --user --unit="$unit" --collect --expand-environment=no \
           --working-directory="$D" -p StandardOutput="append:$D/log" \
-          -p 'ExecStopPost=/bin/sh -c "echo $${SERVICE_RESULT} $${EXIT_CODE} $${EXIT_STATUS} >result.tmp && mv result.tmp result"' \
+          -p ExecStopPost=${writeResult} \
           "$@"
         ;;
       stop)
