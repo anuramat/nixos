@@ -82,6 +82,7 @@ let
           unified_exec = false; # background bash
           shell_snapshot = true; # persist shell
           memories = true;
+          daemon_auto_start = false; # multiple instances share a single backend; NOTE causes problems because the sandbox wrapper is configured for a specific project
         };
 
         desktop = {
