@@ -1,10 +1,11 @@
 # lets sandboxed agents ask to run a command outside the sandbox: the request
 # pops up as a notification on every physical machine, whose [Review] opens a
-# terminal with the full request; the first answer counts and withdraws the
-# other prompts; once approved, the command runs as the user on the agent's
-# host, in the agent's cwd, straight on the agent's stdout and stderr, and its
-# exit status is passed back; requests and outcomes are logged on the agent's
-# host: `journalctl --user -u 'hostrun@*'`
+# terminal with the full request; hosts that can't show one yet (asleep,
+# offline) get retried; the first answer counts and withdraws the other
+# prompts; once approved, the command runs as the user on the agent's host,
+# in the agent's cwd, straight on the agent's stdout and stderr, and its exit
+# status is passed back; requests and outcomes are logged on the agent's host:
+# `journalctl --user -u 'hostrun@*'`
 {
   config,
   inputs,
@@ -35,7 +36,7 @@ let
   };
 
   # reads the request on stdin, prints allow or deny; withdraws the prompt
-  # once stdin ends
+  # once stdin ends or goes quiet
   prompt = pkgs.writeShellApplication {
     name = "hostrun-prompt";
     runtimeInputs = with pkgs; [
@@ -63,14 +64,18 @@ let
         --action=review=Review --action=deny=Deny \
         "hostrun: $(head -1 "$dir/request")" "''${body//\\/\\\\}" >"$dir/action" &
       notify=$!
-      # withdraw: notify-send closes its notification on SIGINT; the explicit
-      # stdin, since background jobs get /dev/null otherwise
+      # withdraw once the broker hangs up or misses 3 heartbeats (one every 30s);
+      # notify-send closes its notification on SIGINT; the explicit stdin, since
+      # background jobs get /dev/null otherwise
       {
         set +e
-        cat >/dev/null
+        while read -r -t 90; do :; done
         kill -INT "$notify"
         systemctl --user stop "$unit"
       } <&0 >/dev/null 2>&1 &
+      watcher=$!
+      # needed only while this runs, and mustn't signal a stale pid later
+      trap 'rm -rf "$dir"; kill "$watcher" 2>/dev/null' EXIT
       wait "$notify"
       if [ "$(<"$dir/action")" = review ]; then
         # systemd-run: the graphical session's environment, which ssh sessions

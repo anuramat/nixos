@@ -1,5 +1,6 @@
 # host side of hostrun; one instance per connection (systemd Accept=yes)
 import atexit
+import contextlib
 import os
 import select
 import shlex
@@ -7,11 +8,12 @@ import socket
 import struct
 import subprocess
 import sys
+import time
 
 prompt, *prompt_hosts = sys.argv[1:]
 host = socket.gethostname()
 sock = socket.socket(fileno=0)
-prompts = {}
+prompts = []  # every one started, to withdraw them at the end
 
 
 def sandbox(pid):
@@ -27,8 +29,9 @@ def sandbox(pid):
 
 
 def ask(h, request):
-    # like fleet-status: this host directly, the others over ssh; the request
-    # ends with a NUL, and closing stdin afterwards withdraws the prompt
+    # like fleet-status: this host directly, the others over ssh, which drops a
+    # host after 90s of silence; the request ends with a NUL, then stdin carries
+    # heartbeats, and closing it withdraws the prompt
     cmd = [prompt]
     if h != host:
         cmd = [
@@ -37,39 +40,53 @@ def ask(h, request):
             "BatchMode=yes",
             "-o",
             "ConnectTimeout=5",
+            "-o",
+            "ServerAliveInterval=30",
+            "-o",
+            "ServerAliveCountMax=3",
             h,
             "hostrun-prompt",
         ]
-    p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-    p.stdin.write(request + b"\0")
-    p.stdin.flush()
+    # unbuffered, so that a write to a dead prompt leaves nothing to flush
+    p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, bufsize=0)
+    with contextlib.suppress(BrokenPipeError):
+        p.stdin.write(request + b"\0")
+    prompts.append(p)
     return p
 
 
-def first_answer():
-    # the first line from any prompt (hosts that can't show one close stdout
-    # without a line), or None once the requester is gone
+def first_answer(request):
+    # the first line from any prompt, or None once the requester is gone; every
+    # 30s, the prompts get a heartbeat, and hosts without one (asleep, offline,
+    # logged out, dropped) get another try
     poll = select.poll()
     poll.register(sock, 0)  # a hangup is reported even though it's not asked for
-    for fd in prompts:
-        poll.register(fd, select.POLLIN)
-    live = set(prompts)
-    while live:
-        for fd, _ in poll.poll():
+    live = {}  # stdout fd -> (host, prompt)
+    tick = 0
+    while True:
+        if time.monotonic() >= tick:
+            tick = time.monotonic() + 30
+            for _, p in live.values():
+                with contextlib.suppress(BrokenPipeError):
+                    p.stdin.write(b"\n")
+            for h in set(prompt_hosts) - {h for h, _ in live.values()}:
+                p = ask(h, request)
+                live[p.stdout.fileno()] = h, p
+                poll.register(p.stdout, select.POLLIN)
+        for fd, _ in poll.poll(max(0, tick - time.monotonic()) * 1000):
             if fd == sock.fileno():
                 return None
-            poll.unregister(fd)
-            live.discard(fd)
-            if answer := prompts[fd].stdout.readline().strip():
+            if answer := live[fd][1].stdout.readline().strip():
                 return answer
-    return b""
+            poll.unregister(fd)
+            del live[fd]
 
 
 @atexit.register
 def settle():
     # let the withdrawn prompts close their notifications before systemd stops
     # the unit and kills them
-    for p in prompts.values():
+    for p in prompts:
         p.wait()
 
 
@@ -91,17 +108,15 @@ print(who, repr(cwd), repr(cmd), file=sys.stderr)
 if not os.path.isdir(cwd):
     finish(1, f"{cwd} doesn't exist outside the sandbox")
 
-request = f"{who}\ncwd: {shlex.quote(cwd)}\n$ {cmd}\n".encode()
-prompts = {p.stdout.fileno(): p for p in (ask(h, request) for h in prompt_hosts)}
-answer = first_answer()
-for p in prompts.values():
+answer = first_answer(f"{who}\ncwd: {shlex.quote(cwd)}\n$ {cmd}\n".encode())
+for p in prompts:
     p.stdin.close()  # withdraws the prompts that are still up
 if answer is None:
     sys.exit("requester gone, not running")
 if answer == b"deny":
     finish(77, "denied by the user")
 if answer != b"allow":
-    finish(255, f"no prompt could be shown, see the journal on {host}")
+    finish(255, f"unexpected answer {answer!r}, see the journal on {host}")
 rc = subprocess.run(
     ["bash", "-c", cmd], cwd=cwd, stdin=subprocess.DEVNULL, stdout=out, stderr=err
 ).returncode
