@@ -1,0 +1,12 @@
+--- a/tools/notify-send.c
++++ b/tools/notify-send.c
+@@ -558,7 +558,8 @@
+                 fsync (id_fd);
+         }
+ 
+-        if (wait) {
++        /* a notification that failed to show never closes */
++        if (wait && !show_error) {
+                 g_unix_signal_add (SIGINT, on_sigint, notify);
+                 loop = g_main_loop_new (NULL, FALSE);
+                 g_main_loop_run (loop);

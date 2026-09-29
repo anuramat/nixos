@@ -209,8 +209,9 @@ in
               [ -v TMPDIR ] || TMPDIR="/tmp"
               runtimeDir="''${XDG_RUNTIME_DIR:-/run/user/$UID}"
               runtimeBinds=()
-              # uc3: claude-code voice mode; pipewire/pulse: audio (e.g. sox capture)
-              for i in uc3.sock pipewire-0 pulse; do
+              # uc3: claude-code voice mode; pipewire/pulse: audio (e.g. sox capture);
+              # hostrun: approved commands outside the sandbox
+              for i in uc3.sock hostrun.sock pipewire-0 pulse; do
                 runtimeBinds+=(--bind-try "$runtimeDir/$i" "$runtimeDir/$i")
               done
               # --unshare-pid: when the agent exits, the kernel kills everything

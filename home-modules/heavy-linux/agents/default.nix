@@ -17,6 +17,7 @@ in
     ./commands.nix
     ./feedback.nix
     ./frontends
+    ./hostrun
     ./instructions.nix
     ./job.nix
     ./sandbox.nix
