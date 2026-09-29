@@ -120,6 +120,7 @@ in
         remoteControlAtStartup = true;
         showClearContextOnPlanAccept = true;
         disableAutoMode = "disable";
+        disableAgentView = true;
         voice = {
           enabled = true;
           mode = "tap";
