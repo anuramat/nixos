@@ -29,9 +29,10 @@ let
     fi
     # fan/tctl profile, see bgm5's power.nix
     ! command -v bgm5powerctl >/dev/null || printf 'power\t%s\n' "$(bgm5powerctl status)"
-    # zellij sessions, minus the exited (resurrectable) ones
-    zellij list-sessions -n 2>/dev/null | grep -v EXITED | while read -r s _; do
-      printf 'zellij\t%s\t%s\n' "$s" "$(zellij -s "$s" action list-clients | tail -n +2 | wc -l)"
+    # zellij sessions, minus the exited (resurrectable) ones; a hung session
+    # would block the script, and over ssh nothing kills it once the poll gives up
+    timeout 5 zellij list-sessions -n 2>/dev/null | grep -v EXITED | while read -r s _; do
+      printf 'zellij\t%s\t%s\n' "$s" "$(timeout 5 zellij -s "$s" action list-clients | tail -n +2 | wc -l)"
     done
     # agents started through the sandbox wrapper, see sandbox.nix; with
     # --unshare-pid, bwrap forks a copy of itself as pid 1 of the new namespace,

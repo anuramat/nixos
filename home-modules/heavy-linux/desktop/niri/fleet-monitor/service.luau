@@ -5,7 +5,8 @@ local LOCAL_INTERVAL, REMOTE_INTERVAL = 5000, 30000
 -- uc3 is polled hourly, failures included, so a flaky login can't hammer the
 -- cluster; the broker behind uc3ctl additionally stops logging in after a refused login
 local UC3_INTERVAL = 3600000
-local UC3_CMD = [[@uc3ctl@ -t 60 'sinfo_t_idle && echo --- && squeue --me -h -o "%i|%P|%T|%M|%l|%R|%j"']]
+-- noctalia caps command timeouts at 60s; uc3ctl gets less, so its own timeout message gets through
+local UC3_CMD = [[@uc3ctl@ -t 50 'sinfo_t_idle && echo --- && squeue --me -h -o "%i|%P|%T|%M|%l|%R|%j"']]
 local localHost = (noctalia.readFile("/proc/sys/kernel/hostname") or ""):match("%S+")
 
 -- ps etime, [[dd-]hh:]mm:ss -> seconds
@@ -45,16 +46,18 @@ local function parseHost(h, out)
   table.sort(h.sessions)
 end
 
--- `Partition cpu_il   :   3 nodes idle` lines, then `---`, then squeue lines
+-- `Partition cpu_il   :   3 nodes idle` lines, then a `---` line, then squeue lines; other lines are skipped
 local function parseUc3(h, out)
   h.idle, h.jobs = {}, {}
-  local head, tail = out:match("^(.-)\n%-%-%-\n?(.*)$")
+  local head, tail = ("\n" .. out .. "\n"):match("^(.-)\n%-%-%-\n(.*)$")
   for part, n in head:gmatch("Partition%s+(%S+)%s*:%s*(%d+) nodes idle") do
     if n ~= "0" and part:find("gpu", 1, true) then table.insert(h.idle, part .. "(" .. n .. ")") end
   end
   for line in tail:gmatch("[^\n]+") do
     local id, part, st, t, limit, reason, name = line:match("^(.-)|(.-)|(.-)|(.-)|(.-)|(.-)|(.*)$")
-    table.insert(h.jobs, { id = id, part = part, state = st, t = t .. "/" .. limit, reason = reason, name = name })
+    if id then
+      table.insert(h.jobs, { id = id, part = part, state = st, t = t .. "/" .. limit, reason = reason, name = name })
+    end
   end
 end
 
@@ -69,23 +72,29 @@ for _, name in @hosts@ do
     cmd = "@exe@ " .. name, timeout = REMOTE_INTERVAL, jobs = {}, sessions = {}, due = 0 })
 end
 -- no fetch on startup: noctalia restarts would each cost a cluster login
-table.insert(sections, { name = "uc3", kind = "uc3", interval = UC3_INTERVAL, cmd = UC3_CMD, timeout = 90000,
+table.insert(sections, { name = "uc3", kind = "uc3", interval = UC3_INTERVAL, cmd = UC3_CMD, timeout = 60000,
   stderr = true, jobs = {}, idle = {}, due = noctalia.nowMs() + UC3_INTERVAL })
 
 local function publish()
   noctalia.state.set("sections", sections)
 end
 
+-- parses the command result into h, returning an error message on failure; errors raised in the callback
+-- would count towards noctalia auto-disabling the service, so none may escape
+local function ingest(h, r)
+  -- state.set rejects invalid UTF-8, so a section holding it would fail every later publish
+  if not (utf8.len(r.stdout) and utf8.len(r.stderr)) then return "invalid UTF-8 output" end
+  if r.exitCode ~= 0 then return h.stderr and r.stderr:match("([^\n]+)\n*$") or "unreachable" end
+  local ok, err = pcall(parse[h.kind], h, r.stdout)
+  return not ok and tostring(err) or nil
+end
+
 local function refresh(h)
   h.due = noctalia.nowMs() + h.interval
   h.busy = noctalia.runAsync(h.cmd, function(r)
-    h.busy, h.clicked, h.err = false, false, nil
-    if r.exitCode ~= 0 then
-      h.err = h.stderr and r.stderr:match("([^\n]+)\n*$") or "unreachable"
-    else
-      h.at = noctalia.nowMs()
-      parse[h.kind](h, r.stdout)
-    end
+    h.busy, h.clicked = false, false
+    h.err = ingest(h, r)
+    if not h.err then h.at = noctalia.nowMs() end
     publish()
   end, h.timeout)
 end
