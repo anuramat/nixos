@@ -1,18 +1,20 @@
 # lets sandboxed agents ask to run a command outside the sandbox: the request
-# pops up as a notification on the prompt host, whose [Review] opens a terminal
-# with the full request; once approved there, the command runs as the user on
-# the agent's host, in the agent's cwd, straight on the agent's stdout and
-# stderr, and its exit status is passed back; requests and outcomes are logged
-# on the agent's host: `journalctl --user -u 'hostrun@*'`
+# pops up as a notification on every physical machine, whose [Review] opens a
+# terminal with the full request; the first answer counts and withdraws the
+# other prompts; once approved, the command runs as the user on the agent's
+# host, in the agent's cwd, straight on the agent's stdout and stderr, and its
+# exit status is passed back; requests and outcomes are logged on the agent's
+# host: `journalctl --user -u 'hostrun@*'`
 {
   config,
+  inputs,
   lib,
   pkgs,
   ...
 }:
 let
-  # PoC: every host asks on f12
-  promptHost = "anuramat-f12";
+  promptHosts =
+    inputs.self.hosts |> lib.filterAttrs (_: h: h.local && !h.deprecated) |> lib.attrNames;
   appId = "sn.ctrl.hostrun";
 
   client = pkgs.writers.writePython3Bin "hostrun" { } (builtins.readFile ./client.py);
@@ -32,7 +34,8 @@ let
     '';
   };
 
-  # reads the request on stdin, prints allow or deny
+  # reads the request on stdin, prints allow or deny; withdraws the prompt
+  # once stdin ends
   prompt = pkgs.writeShellApplication {
     name = "hostrun-prompt";
     runtimeInputs = with pkgs; [
@@ -47,16 +50,32 @@ let
     text = ''
       dir=$(mktemp -d)
       trap 'rm -rf "$dir"' EXIT
-      cat >"$dir/request"
+      # the request ends with a NUL; stdin then stays open until any host has an
+      # answer, or the requester is gone
+      IFS= read -r -d "" request
+      printf '%s' "$request" >"$dir/request"
+      unit=hostrun-review-''${dir##*.}
       # ssh sessions don't get the address, but the session bus is still there
       export DBUS_SESSION_BUS_ADDRESS=''${DBUS_SESSION_BUS_ADDRESS:-unix:path=$XDG_RUNTIME_DIR/bus}
-      action=$(notify-send --wait --urgency=critical --expire-time=0 --app-name=hostrun \
+      body=$(tail -n +2 "$dir/request")
+      # notify-send expands backslash escapes in the body
+      notify-send --wait --urgency=critical --expire-time=0 --app-name=hostrun \
         --action=review=Review --action=deny=Deny \
-        "hostrun: $(head -1 "$dir/request")" "$(tail -n +2 "$dir/request")")
-      if [ "$action" = review ]; then
+        "hostrun: $(head -1 "$dir/request")" "''${body//\\/\\\\}" >"$dir/action" &
+      notify=$!
+      # withdraw: notify-send closes its notification on SIGINT; the explicit
+      # stdin, since background jobs get /dev/null otherwise
+      {
+        set +e
+        cat >/dev/null
+        kill -INT "$notify"
+        systemctl --user stop "$unit"
+      } <&0 >/dev/null 2>&1 &
+      wait "$notify"
+      if [ "$(<"$dir/action")" = review ]; then
         # systemd-run: the graphical session's environment, which ssh sessions
         # lack; a separate instance, so that --wait waits for this very window
-        systemd-run --user --wait --collect --quiet -- \
+        systemd-run --user --wait --collect --quiet --unit="$unit" -- \
           ${lib.getExe config.programs.ghostty.package} --class=${appId} \
           --gtk-single-instance=false --title=hostrun -e ${lib.getExe review} "$dir"
       fi
@@ -89,7 +108,7 @@ in
     services."hostrun@" = {
       Unit.CollectMode = "inactive-or-failed";
       Service = {
-        ExecStart = "${lib.getExe broker} ${promptHost} ${lib.getExe prompt}";
+        ExecStart = "${lib.getExe broker} ${lib.getExe prompt} ${toString promptHosts}";
         Environment = "BASH_ENV=${bashEnv}";
         StandardInput = "socket";
         StandardOutput = "journal";
