@@ -8,6 +8,10 @@
 let
   c = config.lib.stylix.colors.withHashtag;
   fleetStatus = pkgs.callPackage ./fleet-status.nix { inherit inputs; };
+  fleetWidget = {
+    type = "anuramat/fleet-monitor:jobs";
+    settings.font_size = 56;
+  };
 in
 {
   imports = [ inputs.noctalia.homeModules.default ];
@@ -26,6 +30,22 @@ in
             {
               id = "jobs";
               entry = "widget.luau";
+              # minimum card size in logical px, and the font size, which the
+              # rest of the layout scales with (14 is noctalia's default);
+              # unlike the widget box (`box_width`, `box_height`), which scales
+              # the content to fit it, these keep the font size fixed
+              setting =
+                lib.mapAttrsToList
+                  (key: default: {
+                    inherit key default;
+                    type = "int";
+                    label_key = key;
+                  })
+                  {
+                    width = 0;
+                    height = 0;
+                    font_size = 14;
+                  };
             }
           ];
           # polls once for every widget instance (desktop and lockscreen)
@@ -135,10 +155,10 @@ in
 
       # geometry is set per host (logical px of its display); without `output`,
       # noctalia uses the first output instead of a host-specific connector
-      desktop_widgets.widget.fleet.type = "anuramat/fleet-monitor:jobs";
+      desktop_widgets.widget.fleet = fleetWidget;
       lockscreen_widgets = {
         enabled = true;
-        widget.fleet.type = "anuramat/fleet-monitor:jobs";
+        widget.fleet = fleetWidget;
       };
       hooks.session_locked = lib.getExe config.lib.keyring.lock;
 

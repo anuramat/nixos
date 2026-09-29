@@ -199,11 +199,13 @@ experimental feature; run inside the dev shell or pass it explicitly.
   `wallpaper.last`): noctalia writes them on its own, so they are noise, not
   user choices. Desktop and lockscreen widgets are the exception to "save to
   `noctalia.nix`": the widget types live there, but their geometry (`cx`, `cy`,
-  `box_width`, `box_height`, in the host display's logical px) goes to the
-  host's `nixos-configurations/$HOST/default.nix`, without `output` and
+  in the host display's logical px) goes to the host's
+  `nixos-configurations/$HOST/default.nix`, without `output` and
   without the auto-created `lockscreen-login-box@CONNECTOR` entries, under the
   stable ids declared in Nix rather than noctalia's generated
-  `desktop-widget-N` ids. Any edit in noctalia's widget editor writes every
+  `desktop-widget-N` ids. The fleet monitor must not get `box_width` or
+  `box_height`: a box scales the content to fit it, so its size goes to
+  `settings.width` and `settings.height` instead. Any edit in noctalia's widget editor writes every
   widget's placement to the state file, shadowing the Nix values, so once they
   are saved to the config, the `[desktop_widgets]` and `[lockscreen_widgets]`
   sections have to be deleted from the state file.

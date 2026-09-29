@@ -14,10 +14,12 @@
       let
         # 1920x1200 builtin panel
         fleet = {
-          cx = 480;
+          cx = 960;
           cy = 600;
-          box_width = 864;
-          box_height = 1067;
+          settings = {
+            width = 1824;
+            height = 1067;
+          };
         };
       in
       {

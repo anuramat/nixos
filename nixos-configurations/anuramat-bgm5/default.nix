@@ -11,10 +11,12 @@
     let
       # 2560x1440 (4K at 1.5)
       fleet = {
-        cx = 640;
+        cx = 1280;
         cy = 720;
-        box_width = 1152;
-        box_height = 1280;
+        settings = {
+          width = 2432;
+          height = 1280;
+        };
       };
     in
     {
