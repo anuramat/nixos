@@ -64,6 +64,7 @@ uc3/
   shim.sh       # installed as uc3ctl; agent + human entry point
   uc3-client.py # socket transport: sends the command with its stdio, returns the exit status
   uc3pull.sh    # installed as uc3pull; croc-based bulk download with md5 verification
+  status.sh     # run by uc3-status.service; hourly partition/job snapshot
 ```
 
 `uc3ctl` has zero authority: its shell shim validates the invocation,
@@ -77,6 +78,16 @@ broker logs the command and outcome, makes sure the shared ssh master
 (`uc3-master.service`: started on demand, never restarted by systemd) is up,
 then runs `ssh uc3 <cmd>` through it in BatchMode, straight on the caller's
 stdio.
+
+## Status snapshot
+
+`uc3-status.timer` runs `uc3-status.service` hourly (and on boot if the last
+full hour was missed), which fetches `sinfo_t_idle`, a `---` line, and
+`squeue --me` through `uc3ctl` into `~/.local/state/uc3/status`. The file is
+replaced only on success; the last run's stderr is in `status.err`, empty after
+a success. The noctalia fleet monitor follows both files and starts the service
+on click; from a terminal, `cat` the file, or `systemctl --user start
+uc3-status` to refresh it first.
 
 ## Trust model
 

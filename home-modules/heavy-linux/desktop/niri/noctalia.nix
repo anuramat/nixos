@@ -62,7 +62,8 @@ in
         {
           exe = lib.getExe fleetStatus;
           hosts = lib.generators.toLua { } fleetStatus.hosts;
-          uc3ctl = lib.getExe config.lib.uc3.ctl;
+          uc3state = config.lib.uc3.stateDir;
+          systemctl = lib.getExe' pkgs.systemd "systemctl";
         };
   };
 
