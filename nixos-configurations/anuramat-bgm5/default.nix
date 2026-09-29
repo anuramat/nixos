@@ -21,7 +21,16 @@
     in
     {
       desktop_widgets.widget = { inherit fleet; };
-      lockscreen_widgets.widget = { inherit fleet; };
+      lockscreen_widgets.widget = {
+        inherit fleet;
+        # noctalia's default spot for the compact layout: centered, bottom
+        # edge 84px above the screen's
+        login = {
+          output = "DP-3";
+          cx = 1280;
+          cy = 1321;
+        };
+      };
     };
   nixpkgs.config.rocmSupport = true;
 

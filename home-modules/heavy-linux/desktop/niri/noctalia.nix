@@ -158,7 +158,19 @@ in
       desktop_widgets.widget.fleet = fleetWidget;
       lockscreen_widgets = {
         enabled = true;
-        widget.fleet = fleetWidget;
+        widget = {
+          fleet = fleetWidget;
+          # noctalia replaces a login box without `output` with a default one,
+          # so its output is set per host too
+          login = {
+            type = "login_box";
+            settings = {
+              layout = "compact";
+              show_login_button = false;
+              show_unlock_hint = false;
+            };
+          };
+        };
       };
       hooks.session_locked = lib.getExe config.lib.keyring.lock;
 
