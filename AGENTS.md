@@ -72,19 +72,21 @@ adding, removing, or renaming a direct child is an API change for this flake:
 
 `outputs.nix` also exposes:
 
-- `hosts`: a hand-written static registry of `{ system, builder, agent }` per
-  host, plus a `description` on agent hosts (rendered into the agents' ssh
+- `hosts`: a hand-written static registry of `{ system, builder, agent, local }`
+  per host, plus a `description` on agent hosts (rendered into the agents' ssh
   instructions by `home-modules/heavy-linux/agents/instructions.nix`) and an
   optional ssh `alias` (every host gets an ssh config entry in
   `home-modules/base/default.nix`, under its alias if it has one).
   Cross-host facts come from this registry, not from evaluating sibling
   configurations. Adding a host (or changing its system/builder/agent status)
   requires updating the registry. The `builder` and `agent` flags enable
-  `nixos-modules/base/{builder,agent}.nix` on that host; `hosts.nix` asserts
-  the registry's names and systems against the configurations, and the per-host
-  `checks.SYSTEM.host-NAME` outputs evaluate every host's toplevel, so
-  `nix flake check` catches drift on all hosts. Host changes can still affect
-  secrets, SSH, substituters, and remote-build behavior on every other host.
+  `nixos-modules/base/{builder,agent}.nix` on that host, and `local` (physical
+  machines) imports `nixos-modules/local/` in `outputs.nix`, not in the host's
+  `default.nix`; `hosts.nix` asserts the registry's names and systems against
+  the configurations, and the per-host `checks.SYSTEM.host-NAME` outputs
+  evaluate every host's toplevel, so `nix flake check` catches drift on all
+  hosts. Host changes can still affect secrets, SSH, substituters, and
+  remote-build behavior on every other host.
 - `user`: the primary account's identity (`username`, `name`, `email`,
   `timeZone`, `locale`, `location`). The only place these are written; every
   consumer reads `inputs.self.user` directly, with no intervening NixOS option.
@@ -121,7 +123,8 @@ experimental feature; run inside the dev shell or pass it explicitly.
 - `nixos-modules/base/`: baseline imported by every NixOS host (agenix,
   Home Manager, user/network/nix/web plumbing, plus `rocm.nix`/`cuda.nix`,
   which are gated on `nixpkgs.config.rocmSupport`/`cudaSupport`).
-  `nixos-modules/local/`: workstation layer on top of it.
+  `nixos-modules/local/`: workstation layer on top of it, on hosts flagged
+  `local` in the registry.
   `nixos-modules/laptop/`: power management and keyd remaps, imported by
   t480 and f12 only.
 - `home-modules/` layers: `base` (base CLI environment, cross-platform),

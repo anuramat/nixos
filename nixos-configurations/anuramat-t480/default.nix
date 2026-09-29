@@ -18,7 +18,6 @@
 
   imports = [
     inputs.self.nixosModules.base
-    inputs.self.nixosModules.local
     inputs.self.nixosModules.laptop
     inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t480
     ./hardware-configuration.nix

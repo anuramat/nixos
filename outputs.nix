@@ -57,7 +57,8 @@ flake-parts.lib.mkFlake { inherit inputs; } {
         modules = [
           module
           { networking.hostName = name; }
-        ];
+        ]
+        ++ lib.optional inputs.self.hosts.${name}.local inputs.self.nixosModules.local;
         specialArgs = {
           inherit inputs;
         };
@@ -83,6 +84,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
           system = "x86_64-linux";
           builder = false;
           agent = false;
+          local = false; # physical machine: gets nixosModules.local
           alias = null; # ssh alias
           deprecated = false;
         };
@@ -92,15 +94,18 @@ flake-parts.lib.mkFlake { inherit inputs; } {
           description = "GPU workstation: AMD Strix Halo, 128GB URAM";
           builder = true;
           agent = true;
+          local = true;
           alias = "bgm5";
         };
         anuramat-f12 = {
           description = "edc laptop: framework 12, 48GB RAM, i5-1334U";
           agent = true;
+          local = true;
         };
         anuramat-root.description = "server: 4GB ram, 4 vCPU; personal website";
         anuramat-t480 = {
           description = "old thinkpad, not actively used";
+          local = true;
           deprecated = true;
         };
       };

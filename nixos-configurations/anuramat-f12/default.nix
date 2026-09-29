@@ -48,7 +48,6 @@
 
   imports = [
     inputs.self.nixosModules.base
-    inputs.self.nixosModules.local
     inputs.self.nixosModules.laptop
     inputs.nixos-hardware.nixosModules.framework-12-13th-gen-intel
     ./hardware-configuration.nix

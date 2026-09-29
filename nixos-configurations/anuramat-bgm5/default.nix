@@ -57,7 +57,6 @@
 
   imports = [
     inputs.self.nixosModules.base
-    inputs.self.nixosModules.local
     ./hardware-configuration.nix
     ./llama.nix
     ./misc.nix
