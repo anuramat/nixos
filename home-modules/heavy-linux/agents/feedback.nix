@@ -1,6 +1,8 @@
 # out-of-band channel for agents to report problems with their environment
 # (stale or unclear instructions, sandbox limitations, ...), to be fixed later
-# in this repo; read with `journalctl -t agent-feedback`
+# in this repo; read with `journalctl -t agent-feedback`; each report starts
+# with a random ID; to mark one resolved, report `resolved ID: ...`, then
+# `journalctl -t agent-feedback -g ID` shows both
 { pkgs, ... }:
 let
   feedback =
@@ -10,6 +12,7 @@ let
       }
       ''
         import os
+        import secrets
         import subprocess
         import sys
         from systemd import journal
@@ -21,7 +24,8 @@ let
             text=True,
         ).stdout.strip()
         journal.send(
-            f"[{os.getcwd()} @ {rev}] {sys.stdin.read().strip()}",
+            f"[{secrets.token_hex(4)}] [{os.getcwd()} @ {rev}] "
+            f"{sys.stdin.read().strip()}",
             SYSLOG_IDENTIFIER="agent-feedback",
         )
       '';
