@@ -197,7 +197,16 @@ experimental feature; run inside the dev shell or pass it explicitly.
   `programs.noctalia.settings`. When asked to save these overrides to the
   config, ignore the `[wallpaper.*]` entries (`wallpaper.default`,
   `wallpaper.last`): noctalia writes them on its own, so they are noise, not
-  user choices.
+  user choices. Desktop and lockscreen widgets are the exception to "save to
+  `noctalia.nix`": the widget types live there, but their geometry (`cx`, `cy`,
+  `box_width`, `box_height`, in the host display's logical px) goes to the
+  host's `nixos-configurations/$HOST/default.nix`, without `output` and
+  without the auto-created `lockscreen-login-box@CONNECTOR` entries, under the
+  stable ids declared in Nix rather than noctalia's generated
+  `desktop-widget-N` ids. Any edit in noctalia's widget editor writes every
+  widget's placement to the state file, shadowing the Nix values, so once they
+  are saved to the config, the `[desktop_widgets]` and `[lockscreen_widgets]`
+  sections have to be deleted from the state file.
 - Waybar's niri-windows plugin is built from the `waybar-niri-windows` flake
   input; bumping it may also require updating the hand-pinned `vendorHash` in
   `overlays/default.nix`. The package is built by `nix flake check` so a stale

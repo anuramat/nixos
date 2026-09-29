@@ -6,6 +6,21 @@
 {
   system.stateVersion = "25.11";
   programs.captive-browser.interface = "wlp195s0";
+
+  home-manager.users.${inputs.self.user.username}.programs.noctalia.settings =
+    let
+      # 2560x1440 (4K at 1.5)
+      fleet = {
+        cx = 640;
+        cy = 720;
+        box_width = 1152;
+        box_height = 1280;
+      };
+    in
+    {
+      desktop_widgets.widget = { inherit fleet; };
+      lockscreen_widgets.widget = { inherit fleet; };
+    };
   nixpkgs.config.rocmSupport = true;
 
   fileSystems."/mnt/storage" = {

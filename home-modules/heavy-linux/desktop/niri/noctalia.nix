@@ -132,6 +132,14 @@ in
         enabled = true;
         blurred_desktop = true;
       };
+
+      # geometry is set per host (logical px of its display); without `output`,
+      # noctalia uses the first output instead of a host-specific connector
+      desktop_widgets.widget.fleet.type = "anuramat/fleet-monitor:jobs";
+      lockscreen_widgets = {
+        enabled = true;
+        widget.fleet.type = "anuramat/fleet-monitor:jobs";
+      };
       hooks.session_locked = lib.getExe config.lib.keyring.lock;
 
       dock = {

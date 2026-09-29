@@ -10,6 +10,20 @@
       criteria = "BOE NV122WUM-N42 Unknown";
       scale = 1.0;
     };
+    programs.noctalia.settings =
+      let
+        # 1920x1200 builtin panel
+        fleet = {
+          cx = 480;
+          cy = 600;
+          box_width = 864;
+          box_height = 1067;
+        };
+      in
+      {
+        desktop_widgets.widget = { inherit fleet; };
+        lockscreen_widgets.widget = { inherit fleet; };
+      };
   };
 
   # swap partition
