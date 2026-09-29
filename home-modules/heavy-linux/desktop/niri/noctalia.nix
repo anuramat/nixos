@@ -10,7 +10,7 @@ let
   fleetStatus = pkgs.callPackage ./fleet-status.nix { inherit inputs; };
   fleetWidget = {
     type = "anuramat/fleet-monitor:jobs";
-    settings.font_size = 56;
+    settings.font_size = 32;
   };
 in
 {
