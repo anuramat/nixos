@@ -83,7 +83,12 @@ local function ingest(h, out, err)
   -- state.set rejects invalid UTF-8, so a section holding it would fail every later publish
   if not (utf8.len(out) and utf8.len(err)) then return "invalid UTF-8 output" end
   local ok, e = pcall(parse[h.kind], h, out)
-  return not ok and tostring(e) or err:match("([^\n]+)\n*$")
+  if not ok then return tostring(e) end
+  -- not err:match("([^\n]+)\n*$"): it backtracks quadratically, and noctalia checks the CPU budget, a syscall, on
+  -- every step of a match
+  local last
+  for line in err:gmatch("[^\n]+") do last = line end
+  return last
 end
 
 -- reloads the uc3 section whenever uc3-status.service rewrites the snapshot or its stderr; there is nothing to show
