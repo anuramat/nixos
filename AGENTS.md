@@ -102,6 +102,14 @@ adding, removing, or renaming a direct child is an API change for this flake:
   `home-manager.users.${inputs.self.user.username}`, never a literal username,
   or renaming the account silently produces an entry for a user that has no
   modules imported.
+- `accounts`: the unprivileged accounts other hosts ssh into, on hosts flagged
+  the same in the registry, read directly as `inputs.self.accounts` like
+  `user`. `agent` (`username`, `sharedDir`), for sandboxed agents: created by
+  `nixos-modules/base/agent.nix`, used by
+  `home-modules/heavy-linux/agents/{sandbox,job,instructions}.nix` and
+  `home-modules/heavy-linux/desktop/niri/fleet-status.nix`. `builder`
+  (`username`), for remote builds: created by `nixos-modules/base/builder.nix`,
+  used by `nixos-modules/base/nix.nix`.
 - `llama`: the designated LLM inference endpoint (host and port), consumed by
   `nixos-configurations/anuramat-bgm5/llama.nix` and `home-modules/base/hosts.nix`.
 - `keys`: per-host key material discovered from `nixos-configurations/*/keys/`
@@ -162,8 +170,8 @@ experimental feature; run inside the dev shell or pass it explicitly.
   asserts `!config.nix.distributedBuilds`; a builder host is modeled as a build
   server, not as a distributed-build client.
 - `nixos-modules/base/agent.nix`, on hosts flagged `agent` in the registry
-  (bgm5), accepts ssh from sandboxed agents on other hosts as
-  `config.lib.hosts.agentUsername`. The bwrap sandbox binds
+  (bgm5, f12), accepts ssh from sandboxed agents on other hosts as
+  `inputs.self.accounts.agent.username`. The bwrap sandbox binds
   `secrets/agent.age` read-only and replaces `/etc/ssh` with its own
   `ssh_config` (that key only, plus every host's `known_hosts` from the `keys`
   output). It has to be the top-level system file: inside the sandbox root is

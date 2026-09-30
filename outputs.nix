@@ -119,6 +119,17 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       location = "Heidelberg, Germany";
     };
 
+    # the unprivileged accounts that other hosts ssh into, on hosts flagged the
+    # same in `hosts`: sandboxed agents (nixos-modules/base/agent.nix) and
+    # remote builds (nixos-modules/base/builder.nix)
+    accounts = {
+      agent = rec {
+        username = "agent";
+        sharedDir = "/home/${username}/shared";
+      };
+      builder.username = "builder";
+    };
+
     # designated LLM inference endpoint
     llama = {
       host = "anuramat-bgm5";

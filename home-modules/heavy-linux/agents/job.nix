@@ -3,8 +3,9 @@
 # the job's host over ssh, even when it's this one; the job's dir
 # /home/agent/shared/jobs/NAME on HOST is staged by the caller (e.g. `rsync ...
 # HOST:DIR`), then used as the working dir and for `log` and `result`
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 let
+  inherit (inputs.self.accounts.agent) username sharedDir;
   # the ExecStopPost; a script, since systemd saves a transient unit with every
   # `$` doubled, so an inline `$$` comes back as `$$$$` after a reload (e.g. a
   # rebuild), and the job's result as the shell's PID
@@ -35,7 +36,7 @@ let
 
       # everything runs as the agent user on the job's host; get there first,
       # passing just NAME
-      if [[ $(id -un) != agent ]]; then
+      if [[ $(id -un) != ${username} ]]; then
         [[ ''${1-} == *:* ]] || die "$usage"
         # shellcheck disable=SC2029 # expanded locally on purpose, then %q-quoted
         ssh "''${1%%:*}" "$(printf '%q ' job "$sub" "''${opts[@]}" "''${1#*:}" "''${@:2}")" || {
@@ -50,7 +51,7 @@ let
       name=$1
       shift
       [[ $name =~ ^[a-z0-9][a-z0-9-]*$ ]] || die "bad name: $name"
-      D=/home/agent/shared/jobs/$name
+      D=${sharedDir}/jobs/$name
       unit=job-$name
 
       case $sub in

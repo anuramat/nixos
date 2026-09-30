@@ -1,5 +1,6 @@
 { lib, inputs, ... }:
 let
+  inherit (inputs.self.accounts.agent) username sharedDir;
   agentHosts =
     inputs.self.hosts
     |> lib.filterAttrs (_: v: !v.deprecated && v.agent)
@@ -204,7 +205,7 @@ let
         {
           name = "SSH and long-running jobs";
           body = ''
-            You have SSH access to the following machines as the unprivileged `agent` user:
+            You have SSH access to the following machines as the unprivileged `${username}` user:
 
             ${agentHosts}
 
@@ -214,8 +215,8 @@ let
             Anything that should outlive your session, or runs longer than ~10
             minutes, MUST be run as a job:
 
-            - `job run HOST:NAME -- CMD...` runs CMD as `agent` on HOST, in
-              `D=/home/agent/shared/jobs/NAME` on HOST; output goes to `D/log`.
+            - `job run HOST:NAME -- CMD...` runs CMD as `${username}` on HOST, in
+              `D=${sharedDir}/jobs/NAME` on HOST; output goes to `D/log`.
               NAME is `[a-z0-9-]+` and can't be reused.
             - `job wait [-f] HOST:NAME` blocks until the job ends and prints
               `job NAME: RESULT`. Exit 0 = success, 1 = failed or cancelled,
@@ -223,14 +224,14 @@ let
               `-f` also streams new log lines.
             - `job stop HOST:NAME` cancels it.
 
-            `agent` can't read the user's home, so you MUST stage everything the
-            job needs in D first. The sandbox can read `/home/agent/shared` but
+            `${username}` can't read the user's home, so you MUST stage everything the
+            job needs in D first. The sandbox can read `${sharedDir}` but
             not write it: write to D only through ssh, using `HOST:` paths even
             for this host (`$HOSTNAME`). Example, from the root of a flake repo:
 
             ```sh
             H=$HOSTNAME # or another host from the list above
-            D=/home/agent/shared/jobs/NAME
+            D=${sharedDir}/jobs/NAME
             # just the flake files, so that nix doesn't copy the repo into the store
             rsync -t --mkpath flake.nix flake.lock "$H:$D/flake/"
             git ls-files -z -co --exclude-standard |
@@ -239,7 +240,7 @@ let
             ```
 
             - If the flake reads other repo files (e.g. `src = ./.`), copy those to `D/flake` too.
-            - Big data (datasets, caches) SHOULD live in `/home/agent/shared/data/PROJECT` on the host, symlinked into D: `ssh $H ln -s /home/agent/shared/data/PROJECT/cache $D/src/cache`.
+            - Big data (datasets, caches) SHOULD live in `${sharedDir}/data/PROJECT` on the host, symlinked into D: `ssh $H ln -s ${sharedDir}/data/PROJECT/cache $D/src/cache`.
             - Results: read D directly on this host; on another host, use `ssh $H tail $D/log` or `rsync -a "$H:$D/src/out/" out/`.
             - Record `HOST:NAME` wherever the run is documented, so a later session can re-attach with `job wait`.
           ''

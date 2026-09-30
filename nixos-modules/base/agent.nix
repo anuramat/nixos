@@ -7,8 +7,7 @@
   ...
 }:
 let
-  username = config.lib.hosts.agentUsername;
-  sharedDir = "${config.users.users.${username}.home}/shared";
+  inherit (inputs.self.accounts.agent) username sharedDir;
   shell = pkgs.writeShellApplication {
     name = "agent-shell";
     runtimeInputs = with pkgs; [

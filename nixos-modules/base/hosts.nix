@@ -8,8 +8,6 @@
 let
   inherit (inputs.self) keys;
   registry = inputs.self.hosts;
-  builderUsername = "builder";
-  agentUsername = "agent";
 
   name = config.networking.hostName;
   hosts = lib.filterAttrs (n: _: n != name) registry;
@@ -40,8 +38,6 @@ in
     trusted-public-keys = names |> map (h: keys.${h}.cacheKey); # packages signature
     inherit
       builders
-      builderUsername
-      agentUsername
       cachePort
       ;
   };

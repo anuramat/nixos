@@ -17,7 +17,7 @@ let
   hosts = inputs.self.hosts |> lib.filterAttrs (_: h: !h.deprecated) |> lib.attrNames;
   remote = pkgs.writeText "fleet-status-remote" ''
     # jobs exist only on agent hosts, the only ones with an agent user
-    if u=$(id -u agent 2>/dev/null); then
+    if u=$(id -u ${inputs.self.accounts.agent.username} 2>/dev/null); then
       # every cgroup with processes, minus the manager itself and its dbus
       find /sys/fs/cgroup/user.slice/user-$u.slice/user@$u.service -name cgroup.procs \
         -not -path '*/init.scope/*' -not -path '*/session.slice/*' | while read -r f; do

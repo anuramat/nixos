@@ -5,22 +5,23 @@
   ...
 }:
 let
-  inherit (config.lib.hosts) builderUsername keyFiles;
+  inherit (config.lib.hosts) keyFiles;
+  inherit (inputs.self.accounts.builder) username;
 in
 {
   config = lib.mkIf inputs.self.hosts.${config.networking.hostName}.builder {
-    users.users.${builderUsername} = {
+    users.users.${username} = {
       isNormalUser = true;
       createHome = false;
       home = "/var/empty";
-      group = builderUsername;
+      group = username;
       openssh.authorizedKeys = {
         inherit keyFiles;
       };
     };
-    users.groups.${builderUsername} = { };
+    users.groups.${username} = { };
     services.openssh.settings.AllowUsers = [
-      builderUsername
+      username
     ];
   };
 }
