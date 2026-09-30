@@ -15,6 +15,7 @@
     "tags"
     "venv/"
     "/.claude/settings.local.json"
+    "/.claude/worktrees/"
     ".crush/"
     ".pytest_cache"
     ".goose/"
