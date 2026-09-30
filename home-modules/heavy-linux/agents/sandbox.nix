@@ -97,6 +97,7 @@ in
 
         "/run/current-system"
         "/run/systemd/resolve/stub-resolv.conf"
+        "/var/log"
 
         config.lib.secrets.tgfy-token.path
         config.lib.secrets.tgfy-id.path

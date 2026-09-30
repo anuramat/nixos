@@ -30,6 +30,7 @@ in
       users.${username} = {
         isNormalUser = true;
         group = username;
+        extraGroups = [ "systemd-journal" ];
         homeMode = "0750";
         linger = true; # so `systemd-run --user` jobs outlive the ssh session
         packages = config.home-manager.users.${inputs.self.user.username}.home.packages;
