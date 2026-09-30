@@ -44,6 +44,8 @@ let
     in
     paths |> concatMap argsSingle |> escapeShellArgs;
 
+  relaySockets = config.agents.relays |> lib.attrNames |> map (n: "${n}.sock") |> escapeShellArgs;
+
   sshConfig = pkgs.writeText "ssh_config" ''
     Host *
       User ${inputs.self.accounts.agent.username}
@@ -210,9 +212,9 @@ in
               [ -v TMPDIR ] || TMPDIR="/tmp"
               runtimeDir="''${XDG_RUNTIME_DIR:-/run/user/$UID}"
               runtimeBinds=()
-              # uc3: claude-code voice mode; pipewire/pulse: audio (e.g. sox capture);
-              # hostrun: approved commands outside the sandbox
-              for i in uc3.sock hostrun.sock pipewire-0 pulse; do
+              # relays, see relay/; pipewire/pulse: audio, e.g. claude-code voice
+              # mode (sox capture)
+              for i in ${relaySockets} pipewire-0 pulse; do
                 runtimeBinds+=(--bind-try "$runtimeDir/$i" "$runtimeDir/$i")
               done
               # --unshare-pid: when the agent exits, the kernel kills everything

@@ -20,6 +20,7 @@ in
     ./hostrun
     ./instructions.nix
     ./job.nix
+    ./relay
     ./sandbox.nix
     ./uc3
   ];

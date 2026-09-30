@@ -194,6 +194,13 @@ experimental feature; run inside the dev shell or pass it explicitly.
 - Agent commands are generated from Nix. `home-modules/heavy-linux/agents`
   builds Codex/Claude instruction files, skill/prompt files, TOML/JSON configs,
   and bubblewrap wrappers.
+- Commands that reach out of the agent sandbox through the host (`hostrun`,
+  `uc3ctl`) are relays: `agents.relays.NAME = HANDLER` in
+  `home-modules/heavy-linux/agents/relay/` creates a socket-activated
+  `$XDG_RUNTIME_DIR/NAME.sock`, binds it into every sandbox, and runs the
+  handler per call on the caller's stdio, logging each call to
+  `journalctl --user -u 'NAME@*'`. A relay module only writes its handler, and
+  a thin client that calls `relay-client NAME`.
 - The Codex wrappers intentionally pass dangerous approval/sandbox flags to the
   wrapped tool, while the wrapper itself uses bubblewrap with selected read-only
   and read-write binds. Distinguish Codex's own sandbox from this outer wrapper.

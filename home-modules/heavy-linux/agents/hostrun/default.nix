@@ -1,11 +1,12 @@
-# lets sandboxed agents ask to run a command outside the sandbox: the request
-# pops up as a notification on every physical machine, whose [Review] opens a
-# terminal with the full request; hosts that can't show one yet (asleep,
-# offline) get retried; the first answer counts and withdraws the other
-# prompts; once approved, the command runs as the user on the agent's host,
-# in the agent's cwd, straight on the agent's stdout and stderr, and its exit
-# status is passed back; requests and outcomes are logged on the agent's host:
-# `journalctl --user -u 'hostrun@*'`
+# a relay (see ../relay) that lets sandboxed agents ask to run a command
+# outside the sandbox: the request pops up as a notification on every
+# physical machine, whose [Review] opens a terminal with the full request;
+# hosts that can't show one yet (asleep, offline) get retried; the first
+# answer counts and withdraws the other prompts; once approved, the command
+# runs as the user on the agent's host, in the agent's cwd, straight on the
+# agent's stdout and stderr, and its exit status is passed back; an agent
+# that hangs up withdraws the prompts, or stops the command; requests and
+# outcomes are logged on the agent's host: `journalctl --user -u 'hostrun@*'`
 {
   config,
   inputs,
@@ -18,10 +19,15 @@ let
     inputs.self.hosts |> lib.filterAttrs (_: h: h.local && !h.deprecated) |> lib.attrNames;
   appId = "sn.ctrl.hostrun";
 
-  client = pkgs.writers.writePython3Bin "hostrun" { } (builtins.readFile ./client.py);
-  broker = pkgs.writers.writePython3Bin "hostrun-broker" { flakeIgnore = [ "E501" ]; } (
-    builtins.readFile ./broker.py
-  );
+  client = pkgs.writeShellApplication {
+    name = "hostrun";
+    runtimeInputs = [ config.lib.agents.relayClient ];
+    text = ''exec relay-client hostrun 0 "$@"'';
+  };
+  handler = pkgs.writers.writePython3Bin "hostrun-handler" {
+    libraries = [ pkgs.python3Packages.systemd-python ];
+    flakeIgnore = [ "E501" ];
+  } (builtins.readFile ./handler.py);
 
   review = pkgs.writeShellApplication {
     name = "hostrun-review";
@@ -101,26 +107,8 @@ in
     prompt # found in PATH over ssh
   ];
 
-  systemd.user = {
-    sockets.hostrun = {
-      Socket = {
-        ListenStream = "%t/hostrun.sock";
-        SocketMode = "0600";
-        Accept = true;
-      };
-      Install.WantedBy = [ "sockets.target" ];
-    };
-    services."hostrun@" = {
-      Unit.CollectMode = "inactive-or-failed";
-      Service = {
-        ExecStart = "${lib.getExe broker} ${lib.getExe prompt} ${toString promptHosts}";
-        Environment = "BASH_ENV=${bashEnv}";
-        StandardInput = "socket";
-        StandardOutput = "journal";
-        StandardError = "journal";
-      };
-    };
-  };
+  agents.relays.hostrun = "${lib.getExe handler} ${lib.getExe prompt} ${toString promptHosts}";
+  systemd.user.services."hostrun@".Service.Environment = "BASH_ENV=${bashEnv}";
 
   programs.niri.settings.window-rules = [
     {

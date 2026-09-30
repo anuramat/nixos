@@ -1,31 +1,24 @@
-# host side of hostrun; one instance per connection (systemd Accept=yes)
+# the hostrun relay's handler, see ../relay
 import atexit
 import contextlib
 import os
 import select
 import shlex
+import signal
 import socket
-import struct
 import subprocess
 import sys
 import time
 
-prompt, *prompt_hosts = sys.argv[1:]
+from systemd import journal
+
+prompt, *prompt_hosts, cmd = sys.argv[1:]
 host = socket.gethostname()
-sock = socket.socket(fileno=0)
+cwd = os.environ["RELAY_CWD"]
+who = f"{os.environ['RELAY_CALLER']} @ {host}"
+# stderr is the requester's, so the prompts report to the journal instead
+log = journal.stream("hostrun")
 prompts = []  # every one started, to withdraw them at the end
-
-
-def sandbox(pid):
-    # the argv0 that sandbox.nix gives bwrap, see fleet-status
-    while pid:
-        with open(f"/proc/{pid}/cmdline", "rb") as f:
-            argv0 = f.read().split(b"\0")[0].decode()
-        if argv0.startswith("agent-sandbox:"):
-            return argv0.removeprefix("agent-sandbox:")
-        with open(f"/proc/{pid}/stat") as f:
-            pid = int(f.read().rsplit(")", 1)[1].split()[1])
-    return "unsandboxed"
 
 
 def ask(h, request):
@@ -48,7 +41,9 @@ def ask(h, request):
             "hostrun-prompt",
         ]
     # unbuffered, so that a write to a dead prompt leaves nothing to flush
-    p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, bufsize=0)
+    p = subprocess.Popen(
+        cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=log, bufsize=0
+    )
     with contextlib.suppress(BrokenPipeError):
         p.stdin.write(request + b"\0")
     prompts.append(p)
@@ -56,11 +51,10 @@ def ask(h, request):
 
 
 def first_answer(request):
-    # the first line from any prompt, or None once the requester is gone; every
-    # 30s, the prompts get a heartbeat, and hosts without one (asleep, offline,
-    # logged out, dropped) get another try
+    # the first line from any prompt; every 30s, the prompts get a heartbeat,
+    # and hosts without one (asleep, offline, logged out, dropped) get another
+    # try
     poll = select.poll()
-    poll.register(sock, 0)  # a hangup is reported even though it's not asked for
     live = {}  # stdout fd -> (host, prompt)
     tick = 0
     while True:
@@ -74,50 +68,42 @@ def first_answer(request):
                 live[p.stdout.fileno()] = h, p
                 poll.register(p.stdout, select.POLLIN)
         for fd, _ in poll.poll(max(0, tick - time.monotonic()) * 1000):
-            if fd == sock.fileno():
-                return None
             if answer := live[fd][1].stdout.readline().strip():
                 return answer
             poll.unregister(fd)
             del live[fd]
 
 
+def withdraw():
+    for p in prompts:
+        p.stdin.close()  # withdraws the prompt, if it's still up
+
+
 @atexit.register
 def settle():
     # let the withdrawn prompts close their notifications before systemd stops
     # the unit and kills them
+    withdraw()
     for p in prompts:
         p.wait()
 
 
-def finish(rc, message=None):
-    if message:
-        os.write(err, f"hostrun: {message}\n".encode())
-    print(f"rc={rc}", file=sys.stderr)
-    sock.sendall(b"%d\n" % rc)
-    sys.exit()
+def fail(rc, message):
+    print(f"hostrun: {message}", file=sys.stderr)
+    sys.exit(rc)
 
 
-creds = sock.getsockopt(socket.SOL_SOCKET, socket.SO_PEERCRED, 12)
-who = f"{sandbox(struct.unpack('3i', creds)[0])} @ {host}"
-data, (out, err), _, _ = socket.recv_fds(sock, 65536, 2)
-while chunk := sock.recv(65536):
-    data += chunk
-cwd, cmd = os.fsdecode(data).split("\0", 1)
-print(who, repr(cwd), repr(cmd), file=sys.stderr)
+# the relay's signal that the requester is gone; exits through settle()
+signal.signal(signal.SIGTERM, lambda *_: sys.exit())
 if not os.path.isdir(cwd):
-    finish(1, f"{cwd} doesn't exist outside the sandbox")
+    fail(1, f"{cwd} doesn't exist outside the sandbox")
 
 answer = first_answer(f"{who}\ncwd: {shlex.quote(cwd)}\n$ {cmd}\n".encode())
-for p in prompts:
-    p.stdin.close()  # withdraws the prompts that are still up
-if answer is None:
-    sys.exit("requester gone, not running")
+withdraw()
 if answer == b"deny":
-    finish(77, "denied by the user")
+    fail(77, "denied by the user")
 if answer != b"allow":
-    finish(255, f"unexpected answer {answer!r}, see the journal on {host}")
-rc = subprocess.run(
-    ["bash", "-c", cmd], cwd=cwd, stdin=subprocess.DEVNULL, stdout=out, stderr=err
-).returncode
-finish(rc)
+    fail(255, f"unexpected answer {answer!r}, see the journal on {host}")
+sys.exit(
+    subprocess.run(["bash", "-c", cmd], cwd=cwd, stdin=subprocess.DEVNULL).returncode
+)

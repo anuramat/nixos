@@ -33,12 +33,6 @@ if [ "${1:-}" = -t ]; then
 	fi
 fi
 
-sock="${XDG_RUNTIME_DIR:-/run/user/$UID}/uc3.sock"
-if [ ! -S "$sock" ]; then
-	echo "uc3ctl: broker socket missing: $sock" >&2
-	exit 1
-fi
-
 # Do not consume interactive terminal input as an upload.
 [ ! -t 0 ] || exec </dev/null
-exec uc3-client "$sock" "$seconds" "$@"
+exec relay-client uc3 "$seconds" "$@"

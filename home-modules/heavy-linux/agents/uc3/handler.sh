@@ -1,35 +1,10 @@
 #!/usr/bin/env bash
-# host side of the uc3 relay; one instance per connection (systemd Accept=yes)
-# no policy on what runs -- only auth, host-pinning, and logging
-# stdio is the caller's own (uc3-recv takes it off the socket), and the exit
-# status becomes the caller's
+# the uc3 relay's handler, see ../relay: runs the command on uc3
+# no policy on what runs -- only auth and host-pinning
 
 set -euo pipefail
 
-cmd=$1
-
-started=$EPOCHSECONDS
-id=$$-$started
-rc=1
 breaker=$STATE_DIRECTORY/login-disabled
-log() {
-	local event=$1
-	shift
-	{
-		# command lines are unbounded and may exceed PIPE_BUF
-		flock 9
-		printf '%s\t%s\t%s' "$(date -Is)" "$event" "$id" >&9
-		printf '\t%s' "$@" >&9
-		printf '\n' >&9
-	} 9>>"$STATE_DIRECTORY/commands.log"
-}
-finish() {
-	trap - EXIT
-	set +e
-	log END "rc=$rc" "dur=$((EPOCHSECONDS - started))s"
-	exit "$rc"
-}
-trap finish EXIT
 
 # the ssh master lives in uc3-master.service: it outlives this instance, and
 # systemd serializes its starts, so parallel cold starts share one login.
@@ -39,8 +14,7 @@ login() {
 	ssh -O check uc3 2>/dev/null && return
 	if [ -e "$breaker" ]; then
 		echo "uc3: ERROR: logins disabled since $(<"$breaker") after a refused login; rm $breaker to re-enable" >&2
-		rc=255
-		exit
+		exit 255
 	fi
 	systemctl --user start uc3-master && return
 	cat "$STATE_DIRECTORY/login.err" >&2
@@ -50,14 +24,10 @@ login() {
 	else
 		echo "uc3: ERROR: cluster unreachable" >&2
 	fi
-	rc=255
-	exit
+	exit 255
 }
 
-log START "$cmd"
-
 login
-rc=0
 # BatchMode: never answer a prompt here; every login goes through uc3-master.
 # ssh's own diagnostics already reach the caller's stderr
-timeout 3600 ssh -o BatchMode=yes -- uc3 "$cmd" || rc=$?
+exec timeout 3600 ssh -o BatchMode=yes -- uc3 "$1"

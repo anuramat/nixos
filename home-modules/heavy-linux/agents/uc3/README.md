@@ -38,7 +38,7 @@ The agent owns its cluster-side layout (repo location, `.sif` image, scratch
 dirs) — nothing is baked in. Long synchronous commands hold a connection slot,
 so `sbatch`/background long work and poll rather than blocking the relay. The
 local timeout defaults to 300 seconds; raise it with `-t SECS` for large uploads
-or long synchronous work, or use `-t 0` to rely only on the broker's one-hour
+or long synchronous work, or use `-t 0` to rely only on the handler's one-hour
 cap.
 
 Downloads through the relay run at about 1 MB/s (the cluster route goes
@@ -58,26 +58,26 @@ are unsupported: they can leave the remote shell waiting for input.
 
 ```
 uc3/
-  default.nix   # uc3ctl package, systemd socket + broker service, ssh master service, log dir
-  recv.py       # host side entry: takes the caller's stdio off the socket, runs the broker
-  broker.sh     # host side; one instance per connection
+  default.nix   # uc3ctl package, the relay's handler, ssh master service, state dir
+  handler.sh    # host side; one instance per connection
   shim.sh       # installed as uc3ctl; agent + human entry point
-  uc3-client.py # socket transport: sends the command with its stdio, returns the exit status
   uc3pull.sh    # installed as uc3pull; croc-based bulk download with md5 verification
   status.sh     # run by uc3-status.service; hourly partition/job snapshot
 ```
 
-`uc3ctl` has zero authority: its shell shim validates the invocation,
-redirects an interactive tty stdin to `/dev/null` (terminal input is never
-consumed as an upload), and execs a Python client, which connects to
+This is one of the agents' relays, `agents.relays.uc3` (see `../relay`), which
+provides the socket, the systemd units, the transport and the log. `uc3ctl`
+has zero authority: its shell shim validates the invocation, redirects an
+interactive tty stdin to `/dev/null` (terminal input is never consumed as an
+upload), and execs the relay's client, which connects to
 `$XDG_RUNTIME_DIR/uc3.sock`, sends the command line with its own
 stdin/stdout/stderr attached (`SCM_RIGHTS`), and exits with the status it gets
-back. systemd accepts each connection (`Accept=yes`) and runs one `uc3-recv`
-per connection, which puts the caller's stdio in front of `uc3-broker`; the
-broker logs the command and outcome, makes sure the shared ssh master
-(`uc3-master.service`: started on demand, never restarted by systemd) is up,
-then runs `ssh uc3 <cmd>` through it in BatchMode, straight on the caller's
-stdio.
+back. systemd accepts each connection (`Accept=yes`) and runs one relay
+receiver per connection, which logs the command and outcome, and runs
+`uc3-handler` on the caller's stdio; the handler makes sure the shared ssh
+master (`uc3-master.service`: started on demand, never restarted by systemd)
+is up, then runs `ssh uc3 <cmd>` through it in BatchMode, straight on the
+caller's stdio.
 
 ## Status snapshot
 
@@ -109,7 +109,7 @@ uc3-status` to refresh it first.
   no second, unlogged path to uc3.
 - The destination is hardcoded to `uc3`: the agent supplies a command, never a
   host. The credential is cluster-only and cannot be extracted.
-- The caller's stdio descriptors are its own: the broker only reads and writes
+- The caller's stdio descriptors are its own: the handler only reads and writes
   them, so handing them over grants the sandbox nothing new.
 - Full compromise of the sandbox yields a full uc3 shell — anything the cluster
   account can do, all logged — but never the host credential and never non-uc3
@@ -117,9 +117,9 @@ uc3-status` to refresh it first.
 
 ## Protocol
 
-- **Request:** the command line, with the caller's stdin, stdout and stderr
-  descriptors attached as ancillary data; the client then half-closes and the
-  broker reads to EOF (the command may be up to the 128 KiB argv limit). The
+- **Request:** the caller's cwd (unused here) and the command line, with the
+  caller's stdin, stdout and stderr descriptors attached as ancillary data; the
+  client then half-closes and the receiver reads to EOF (the command may be up to the 128 KiB argv limit). The
   command must be **single-line** — use `uc3ctl 'bash -s' < script.sh` for
   multiline logic. Stdin is the upload channel: ssh reads it directly.
 - **Response:** nothing but the exit status, as a decimal line at EOF; the
@@ -135,38 +135,39 @@ uc3-status` to refresh it first.
   human removes it, so a caller's retry loop cannot lock the TOTP token (an
   existing master keeps serving). Early stdout close on the caller's side
   (`uc3ctl … | head`) makes ssh exit 255 silently once its stdout is gone.
-- Broker errors are one line, `uc3: ERROR: …`, on the caller's stderr. The
-  socket closes when the broker exits, so the client never hangs on a finished
-  command.
+- Handler errors are one line, `uc3: ERROR: …`, on the caller's stderr. The
+  socket closes when the receiver exits, so the client never hangs on a
+  finished command.
 - The client bounds its wait for the exit status to 300 seconds by default. A
   local expiry exits 124 with a distinct diagnostic; `-t 0` disables this bound
-  without changing the broker's 3600-second cap.
+  without changing the handler's 3600-second cap. A client that hangs up (a
+  local expiry, or a killed caller) makes the receiver stop the handler, and
+  with it the local ssh; the remote command may keep running.
 
 ## Logging
 
-- The broker appends matching `START` and `END` lines to
-  `$STATE_DIRECTORY/commands.log` (`StateDirectory=uc3` →
-  `~/.local/state/uc3/commands.log`), outside any sandbox bind. Concurrent
-  connections append under `flock`:
+- The relay's receiver logs each call to the journal, outside any sandbox
+  bind, as two lines of its `uc3@*` unit instance: the calling sandbox, cwd
+  and command, then the outcome, `journalctl --user -u 'uc3@*'`:
 
   ```text
-  <timestamp>\tSTART\t<id>\t<command>
-  <timestamp>\tEND\t<id>\trc=<code>\tdur=<seconds>s
+  <sandbox> '<cwd>' '<command>'
+  rc=<code> dur=<seconds>s
   ```
 
 - Only the command line is logged, not stdin/stdout. **Blind spot:** a remote
   shell (`uc3ctl 'bash -c …'` or `uc3ctl 'bash -s' < script.sh`) logs as one
   opaque top-level invocation, not the lines it runs. Top-level invocations are
   the audit unit.
-- Broker diagnostics go to the caller's stderr; only `uc3-recv`'s own failures,
-  before the stdio handoff, reach the journal: `journalctl --user -u
-  'uc3-broker@*'`.
+- Handler diagnostics go to the caller's stderr; only the receiver's own
+  failures, before the stdio handoff, reach the journal.
 
 ## Host dependencies
 
 These live outside this directory; the relay depends on them:
 
-- `../sandbox.nix` binds the socket into the sandbox rw:
+- `../relay` provides the socket, the units, the client and the log;
+  `../sandbox.nix` binds every relay's socket into the sandbox rw:
   `--bind-try "$XDG_RUNTIME_DIR/uc3.sock" "$XDG_RUNTIME_DIR/uc3.sock"` — same
   path inside and out, so the shim is identical everywhere.
 - `home-modules/base/default.nix` provides the `uc3` ssh entry with
@@ -178,7 +179,7 @@ These live outside this directory; the relay depends on them:
 
 ## Verifying
 
-1. After `home-manager switch`, `uc3-broker.socket` is active and the socket is
+1. After `home-manager switch`, `uc3.socket` is active and the socket is
    mode 0600.
 2. Host: `uc3ctl hostname` works (first call mints a TOTP and starts
    `uc3-master.service`; repeat is instant).
@@ -189,7 +190,7 @@ These live outside this directory; the relay depends on them:
    `ssh uc3` directly and bypass the log.
 4. A nonzero remote command makes `uc3ctl` exit with the same code; a >300 s
    call needs an explicit larger `-t`, while a >1 h synchronous command is
-   killed by the broker and reports 124.
+   killed by the handler and reports 124.
 5. Network down: `uc3ctl 'squeue'` → "cluster unreachable", no hang, no prompt.
    Wrong credentials: "login failed" once, then "logins disabled" without
    touching the cluster until `login-disabled` is removed.

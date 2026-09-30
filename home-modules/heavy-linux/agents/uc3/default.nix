@@ -1,31 +1,28 @@
 {
   pkgs,
   config,
+  lib,
   ...
 }:
 let
   excludeShellChecks = map (v: "SC" + toString v) config.lib.shellcheck.excludes;
 
-  uc3Client = pkgs.writers.writePython3Bin "uc3-client" { } (builtins.readFile ./uc3-client.py);
-  uc3Recv = pkgs.writers.writePython3Bin "uc3-recv" { } (builtins.readFile ./recv.py);
-
-  broker = pkgs.writeShellApplication {
-    name = "uc3-broker";
+  handler = pkgs.writeShellApplication {
+    name = "uc3-handler";
     runtimeInputs = with pkgs; [
       coreutils
       openssh
       systemd
-      util-linux
     ];
     inherit excludeShellChecks;
-    text = builtins.readFile ./broker.sh;
+    text = builtins.readFile ./handler.sh;
   };
 
   uc3ctl = pkgs.writeShellApplication {
     name = "uc3ctl";
     runtimeInputs = with pkgs; [
       coreutils
-      uc3Client
+      config.lib.agents.relayClient
     ];
     inherit excludeShellChecks;
     text = builtins.readFile ./shim.sh;
@@ -64,27 +61,12 @@ in
     uc3pull
   ];
 
+  agents.relays.uc3 = lib.getExe handler;
+
   systemd.user = {
-    sockets.uc3-broker = {
-      Socket = {
-        ListenStream = "%t/uc3.sock";
-        SocketMode = "0600";
-        Accept = true;
-        MaxConnections = 8;
-      };
-      Install.WantedBy = [ "sockets.target" ];
-    };
+    sockets.uc3.Socket.MaxConnections = 8;
     services = {
-      "uc3-broker@" = {
-        Unit.CollectMode = "inactive-or-failed";
-        Service = {
-          ExecStart = "${uc3Recv}/bin/uc3-recv ${broker}/bin/uc3-broker";
-          StandardInput = "socket";
-          StandardOutput = "socket";
-          StandardError = "journal";
-          StateDirectory = "uc3";
-        };
-      };
+      "uc3@".Service.StateDirectory = "uc3";
       uc3-master = {
         Unit.Description = "shared ssh master for uc3";
         Service = {
