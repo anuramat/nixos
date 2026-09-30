@@ -48,7 +48,7 @@ local rows = { host = hostRows, uc3 = uc3Rows }
 
 local function section(h)
   local header = { label(h.name, "primary", { fontWeight = "semibold" }) }
-  if h.power == "quiet" then table.insert(header, label("(quiet)", "outline")) end
+  if h.power == "quiet" then table.insert(header, label("quiet", "outline")) end
   if h.err then table.insert(header, label(h.err, "error", { maxWidth = 400 * SCALE, maxLines = 1 })) end
   if h.zellij then table.insert(header, label(h.zellij, "on_surface_variant")) end
   local onClick
