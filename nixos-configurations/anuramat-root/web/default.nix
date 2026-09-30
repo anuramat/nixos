@@ -1,6 +1,6 @@
 { inputs, ... }:
 let
-  inherit (inputs.self.user) email;
+  inherit (inputs.self.consts.user) email;
 in
 {
   imports = [

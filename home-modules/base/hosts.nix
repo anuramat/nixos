@@ -2,6 +2,6 @@
 { inputs, ... }:
 {
   home.sessionVariables = {
-    LLAMA_HOST = "http://${inputs.self.llama.host}:${toString inputs.self.llama.port}";
+    LLAMA_HOST = "http://${inputs.self.consts.llama.host}:${toString inputs.self.consts.llama.port}";
   };
 }

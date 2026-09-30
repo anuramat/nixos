@@ -19,7 +19,7 @@ in
       value = {
         file = /${secretsRoot}/${x};
       }
-      // lib.optionalAttrs isNixOS { owner = inputs.self.user.username; };
+      // lib.optionalAttrs isNixOS { owner = inputs.self.consts.user.username; };
     })
     |> builtins.listToAttrs;
 }

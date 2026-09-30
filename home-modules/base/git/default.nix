@@ -34,7 +34,7 @@
 
       settings = {
         user = {
-          inherit (inputs.self.user) name email;
+          inherit (inputs.self.consts.user) name email;
         };
         alias = {
           sw = "switch";

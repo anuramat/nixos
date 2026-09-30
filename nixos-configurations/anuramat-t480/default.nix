@@ -4,7 +4,7 @@
 }:
 {
   system.stateVersion = "24.05";
-  home-manager.users.${inputs.self.user.username} = {
+  home-manager.users.${inputs.self.consts.user.username} = {
     home.stateVersion = "24.11";
     services.kanshi.builtinDisplay = {
       criteria = "LG Display 0x0521 Unknown";

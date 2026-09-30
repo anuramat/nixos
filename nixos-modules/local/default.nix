@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (inputs.self.user) username;
+  inherit (inputs.self.consts.user) username;
 in
 {
   imports = [

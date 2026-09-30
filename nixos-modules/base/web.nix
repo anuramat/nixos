@@ -95,7 +95,7 @@ in
     default = [ ];
   };
   config = {
-    users.users.${inputs.self.user.username}.extraGroups =
+    users.users.${inputs.self.consts.user.username}.extraGroups =
       optional config.services.nginx.enable "nginx";
     services.nginx.virtualHosts = mkMerge (concatMap vhostsFor config.web.sites);
     security.acme.certs = mkMerge (concatMap acmeCertsFor config.web.sites);

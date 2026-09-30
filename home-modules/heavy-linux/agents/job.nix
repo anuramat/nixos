@@ -5,7 +5,7 @@
 # HOST:DIR`), then used as the working dir and for `log` and `result`
 { pkgs, inputs, ... }:
 let
-  inherit (inputs.self.accounts.agent) username sharedDir;
+  inherit (inputs.self.consts.agent) username sharedDir;
   # the ExecStopPost; a script, since systemd saves a transient unit with every
   # `$` doubled, so an inline `$$` comes back as `$$$$` after a reload (e.g. a
   # rebuild), and the job's result as the shell's PID

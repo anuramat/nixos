@@ -4,7 +4,7 @@
   ...
 }:
 let
-  inherit (inputs.self.user) username;
+  inherit (inputs.self.consts.user) username;
 in
 {
   users.users.${username}.extraGroups = [ "dialout" ]; # serial ports

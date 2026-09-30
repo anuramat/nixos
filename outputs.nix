@@ -110,30 +110,33 @@ flake-parts.lib.mkFlake { inherit inputs; } {
         };
       };
 
-    user = {
-      username = "anuramat";
-      name = "Arsen Nuramatov";
-      email = "x@ctrl.sn";
-      timeZone = "Europe/Berlin";
-      locale = "en_US.UTF-8";
-      location = "Heidelberg, Germany";
-    };
+    # constants shared by NixOS, Home Manager and nixvim modules, read directly
+    # as `inputs.self.consts`
+    consts = {
+      # the primary account's identity
+      user = {
+        username = "anuramat";
+        name = "Arsen Nuramatov";
+        email = "x@ctrl.sn";
+        timeZone = "Europe/Berlin";
+        locale = "en_US.UTF-8";
+        location = "Heidelberg, Germany";
+      };
 
-    # the unprivileged accounts that other hosts ssh into, on hosts flagged the
-    # same in `hosts`: sandboxed agents (nixos-modules/base/agent.nix) and
-    # remote builds (nixos-modules/base/builder.nix)
-    accounts = {
+      # the unprivileged accounts that other hosts ssh into, on hosts flagged the
+      # same in `hosts`: sandboxed agents (nixos-modules/base/agent.nix) and
+      # remote builds (nixos-modules/base/builder.nix)
       agent = rec {
         username = "agent";
         sharedDir = "/home/${username}/shared";
       };
       builder.username = "builder";
-    };
 
-    # designated LLM inference endpoint
-    llama = {
-      host = "anuramat-bgm5";
-      port = 11343;
+      # designated LLM inference endpoint
+      llama = {
+        host = "anuramat-bgm5";
+        port = 11343;
+      };
     };
 
     # per-host key material discovered from nixos-configurations/*/keys/ {{{1

@@ -4,7 +4,7 @@
   ...
 }:
 let
-  inherit (inputs.self.user) username name;
+  inherit (inputs.self.consts.user) username name;
 in
 {
   services.openssh.settings.AllowUsers = [ username ];

@@ -12,7 +12,7 @@ in
   networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
     immichPort
   ];
-  home-manager.users.${inputs.self.user.username} = {
+  home-manager.users.${inputs.self.consts.user.username} = {
     programs.niri.settings.input.touchpad.tap = true;
   };
 }

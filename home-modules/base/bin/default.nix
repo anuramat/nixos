@@ -2,6 +2,7 @@
   pkgs,
   lib,
   config,
+  inputs,
   osConfig ? null,
   ...
 }:
@@ -27,11 +28,11 @@ let
 
   nix-cache-keygen =
     let
-      # TODO read builders, move and read public
+      # TODO move and read public
       private = osConfig.nix.settings.secret-key-files;
       public = "/etc/nix/cache.pem.pub";
-      builderName = "builder";
-      builderGroup = "builder";
+      # its own group too, see nixos-modules/base/builder.nix
+      builder = inputs.self.consts.builder.username;
     in
     writeShellApplication {
       name = "nix-cache-keygen";
@@ -40,7 +41,7 @@ let
         if [ ! -e '${private}' ] && [ ! -e '${public}' ]; then
           sudo nix-store --generate-binary-cache-key "$(hostname)" '${private}' '${public}'
         fi
-        sudo chown '${builderName}:${builderGroup}' '${private}' '${public}'
+        sudo chown '${builder}:${builder}' '${private}' '${public}'
         [ ! -e "$HOME/.ssh" ] && yes "" | ssh-keygen -N ""
       '';
     };

@@ -7,7 +7,7 @@
 }:
 let
   inherit (config.age) secrets;
-  inherit (inputs.self.user) username;
+  inherit (inputs.self.consts.user) username;
 in
 {
   users.users.${username}.extraGroups = [ "networkmanager" ]; # wifi

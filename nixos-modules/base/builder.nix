@@ -6,7 +6,7 @@
 }:
 let
   inherit (config.lib.hosts) keyFiles;
-  inherit (inputs.self.accounts.builder) username;
+  inherit (inputs.self.consts.builder) username;
 in
 {
   config = lib.mkIf inputs.self.hosts.${config.networking.hostName}.builder {

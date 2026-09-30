@@ -5,7 +5,7 @@
 {
   system.stateVersion = "25.05";
 
-  home-manager.users.${inputs.self.user.username} = {
+  home-manager.users.${inputs.self.consts.user.username} = {
     services.kanshi.builtinDisplay = {
       criteria = "BOE NV122WUM-N42 Unknown";
       scale = 1.0;

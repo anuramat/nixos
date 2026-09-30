@@ -48,7 +48,7 @@ let
 
   sshConfig = pkgs.writeText "ssh_config" ''
     Host *
-      User ${inputs.self.accounts.agent.username}
+      User ${inputs.self.consts.agent.username}
       IdentityFile ${config.lib.secrets.agent.path}
       IdentitiesOnly yes
       GlobalKnownHostsFile ${

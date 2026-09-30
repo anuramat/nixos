@@ -100,7 +100,7 @@ in
         };
       };
 
-      location.address = inputs.self.user.location;
+      location.address = inputs.self.consts.user.location;
 
       plugins.enabled = [ "anuramat/fleet-monitor" ];
 

@@ -28,7 +28,7 @@
     extraSpecialArgs = {
       inherit inputs;
     };
-    users.${inputs.self.user.username} = {
+    users.${inputs.self.consts.user.username} = {
       imports = with inputs.self.homeModules; [
         base
         linux
@@ -37,8 +37,8 @@
     };
   };
 
-  i18n.defaultLocale = inputs.self.user.locale;
-  time.timeZone = inputs.self.user.timeZone;
+  i18n.defaultLocale = inputs.self.consts.user.locale;
+  time.timeZone = inputs.self.consts.user.timeZone;
   # `nixos-version --configuration-revision`
   system.configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
   hardware = {

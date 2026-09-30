@@ -1,6 +1,6 @@
 { lib, inputs, ... }:
 let
-  inherit (inputs.self.accounts.agent) username sharedDir;
+  inherit (inputs.self.consts.agent) username sharedDir;
   agentHosts =
     inputs.self.hosts
     |> lib.filterAttrs (_: v: !v.deprecated && v.agent)

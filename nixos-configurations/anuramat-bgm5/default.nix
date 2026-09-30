@@ -7,7 +7,7 @@
   system.stateVersion = "25.11";
   programs.captive-browser.interface = "wlp195s0";
 
-  home-manager.users.${inputs.self.user.username}.programs.noctalia.settings =
+  home-manager.users.${inputs.self.consts.user.username}.programs.noctalia.settings =
     let
       # 2560x1440 (4K at 1.5)
       fleet = {

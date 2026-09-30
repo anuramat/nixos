@@ -9,7 +9,7 @@ let
   cfg = config.services.llama-cpp;
   llamaPkg = pkgs.llama-cpp-vulkan;
   modelDir = "/mnt/storage/llama-cpp";
-  inherit (inputs.self.llama) port;
+  inherit (inputs.self.consts.llama) port;
 
   models = {
     qwen35 = {

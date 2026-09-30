@@ -45,7 +45,7 @@ in
         inherit XDG_BIN_HOME CARGO_HOME;
 
         # TODO just in case; verify/move
-        LC_ALL = inputs.self.user.locale;
+        LC_ALL = inputs.self.consts.user.locale;
         PAGER = "less";
         MANPAGER = "less";
 

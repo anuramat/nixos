@@ -87,31 +87,34 @@ adding, removing, or renaming a direct child is an API change for this flake:
   evaluate every host's toplevel, so `nix flake check` catches drift on all
   hosts. Host changes can still affect secrets, SSH, substituters, and
   remote-build behavior on every other host.
-- `user`: the primary account's identity (`username`, `name`, `email`,
-  `timeZone`, `locale`, `location`). The only place these are written; every
-  consumer reads `inputs.self.user` directly, with no intervening NixOS option.
-  Multiple users are an explicit non-goal, so there is deliberately nothing to
-  override per host. Consumed by
-  `nixos-modules/base/{user,net,nix,web,external_keys,default}.nix`,
-  `nixos-modules/local/{default,peripherals}.nix`, `shared-modules/age.nix`
-  (secret owner), `home-modules/base/git/` (Git identity),
-  `home-modules/heavy-linux/desktop/niri/noctalia.nix` (weather location),
-  `home-configurations/*` (username and home directory), and
-  `nixos-configurations/anuramat-root/web/` (ACME contact). Per-host Home
-  Manager overrides must be keyed
-  `home-manager.users.${inputs.self.user.username}`, never a literal username,
-  or renaming the account silently produces an entry for a user that has no
-  modules imported.
-- `accounts`: the unprivileged accounts other hosts ssh into, on hosts flagged
-  the same in the registry, read directly as `inputs.self.accounts` like
-  `user`. `agent` (`username`, `sharedDir`), for sandboxed agents: created by
-  `nixos-modules/base/agent.nix`, used by
-  `home-modules/heavy-linux/agents/{sandbox,job,instructions}.nix` and
-  `home-modules/heavy-linux/desktop/niri/fleet-status.nix`. `builder`
-  (`username`), for remote builds: created by `nixos-modules/base/builder.nix`,
-  used by `nixos-modules/base/nix.nix`.
-- `llama`: the designated LLM inference endpoint (host and port), consumed by
-  `nixos-configurations/anuramat-bgm5/llama.nix` and `home-modules/base/hosts.nix`.
+- `consts`: constants shared by NixOS, Home Manager and nixvim modules. The
+  only place these are written; every consumer reads `inputs.self.consts`
+  directly, with no intervening NixOS option.
+  - `user`: the primary account's identity (`username`, `name`, `email`,
+    `timeZone`, `locale`, `location`). Multiple users are an explicit
+    non-goal, so there is deliberately nothing to override per host. Consumed
+    by `nixos-modules/base/{user,net,nix,web,external_keys,default}.nix`,
+    `nixos-modules/local/{default,peripherals}.nix`, `shared-modules/age.nix`
+    (secret owner), `home-modules/base/git/` (Git identity),
+    `home-modules/heavy-linux/desktop/niri/noctalia.nix` (weather location),
+    `home-configurations/*` (username and home directory), and
+    `nixos-configurations/anuramat-root/web/` (ACME contact). Per-host Home
+    Manager overrides must be keyed
+    `home-manager.users.${inputs.self.consts.user.username}`, never a literal
+    username, or renaming the account silently produces an entry for a user
+    that has no modules imported.
+  - `agent` and `builder`: the unprivileged accounts other hosts ssh into, on
+    hosts flagged the same in the registry. `agent` (`username`,
+    `sharedDir`), for sandboxed agents: created by
+    `nixos-modules/base/agent.nix`, used by
+    `home-modules/heavy-linux/agents/{sandbox,job,instructions}.nix` and
+    `home-modules/heavy-linux/desktop/niri/fleet-status.nix`. `builder`
+    (`username`), for remote builds: created by
+    `nixos-modules/base/builder.nix`, used by `nixos-modules/base/nix.nix` and
+    `home-modules/base/bin/` (`nix-cache-keygen`).
+  - `llama`: the designated LLM inference endpoint (host and port), consumed
+    by `nixos-configurations/anuramat-bgm5/llama.nix` and
+    `home-modules/base/hosts.nix`.
 - `keys`: per-host key material discovered from `nixos-configurations/*/keys/`
   (client key files and strings, `known_hosts` file path and parsed keys,
   cache key). Single source of truth for key discovery, consumed by
@@ -171,7 +174,7 @@ experimental feature; run inside the dev shell or pass it explicitly.
   server, not as a distributed-build client.
 - `nixos-modules/base/agent.nix`, on hosts flagged `agent` in the registry
   (bgm5, f12), accepts ssh from sandboxed agents on other hosts as
-  `inputs.self.accounts.agent.username`. The bwrap sandbox binds
+  `inputs.self.consts.agent.username`. The bwrap sandbox binds
   `secrets/agent.age` read-only and replaces `/etc/ssh` with its own
   `ssh_config` (that key only, plus every host's `known_hosts` from the `keys`
   output). It has to be the top-level system file: inside the sandbox root is
