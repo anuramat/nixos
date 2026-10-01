@@ -96,7 +96,7 @@ adding, removing, or renaming a direct child is an API change for this flake:
     by `nixos-modules/base/{user,net,nix,web,external_keys,default}.nix`,
     `nixos-modules/local/{default,peripherals}.nix`, `shared-modules/age.nix`
     (secret owner), `home-modules/base/git/` (Git identity),
-    `home-modules/heavy-linux/desktop/niri/noctalia.nix` (weather location),
+    `home-modules/heavy-linux/desktop/noctalia/` (weather location),
     `home-configurations/*` (username and home directory), and
     `nixos-configurations/anuramat-root/web/` (ACME contact). Per-host Home
     Manager overrides must be keyed
@@ -108,8 +108,8 @@ adding, removing, or renaming a direct child is an API change for this flake:
     `sharedDir`), for sandboxed agents: created by
     `nixos-modules/base/agent.nix`, used by
     `home-modules/heavy-linux/agents/{sandbox,job,instructions}.nix` and
-    `home-modules/heavy-linux/desktop/niri/fleet-status.nix`. `builder`
-    (`username`), for remote builds: created by
+    `home-modules/heavy-linux/desktop/noctalia/fleet-monitor/fleet-status.nix`.
+    `builder` (`username`), for remote builds: created by
     `nixos-modules/base/builder.nix`, used by `nixos-modules/base/nix.nix` and
     `home-modules/base/bin/` (`nix-cache-keygen`).
   - `llama`: the designated LLM inference endpoint (host and port), consumed
@@ -219,7 +219,8 @@ experimental feature; run inside the dev shell or pass it explicitly.
   config, ignore the `[wallpaper.*]` entries (`wallpaper.default`,
   `wallpaper.last`): noctalia writes them on its own, so they are noise, not
   user choices. Desktop and lockscreen widgets are the exception to "save to
-  `noctalia.nix`": the widget types and settings live there, but their
+  `home-modules/heavy-linux/desktop/noctalia/`": the widget types and
+  settings live there (the fleet monitor's in `fleet-monitor/`), but their
   geometry (`cx`, `cy`, in the host display's logical px) goes to the host's
   `nixos-configurations/$HOST/default.nix`, without `output`, under the stable
   ids declared in Nix rather than noctalia's generated `desktop-widget-N` and

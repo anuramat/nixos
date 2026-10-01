@@ -6,10 +6,10 @@
 {
   imports = [
     ./kanshi.nix
-    ./autologin.nix
     ./mime.nix
     ./portals.nix
     ./niri
+    ./noctalia
     ./syncthing.nix
   ];
   config = lib.mkIf (osConfig != null) {
