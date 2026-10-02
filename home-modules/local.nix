@@ -5,6 +5,7 @@
     libusb1 # user-mode USB access lib
     qrcp # share files over qr
     smartmontools # storage
+    todo # todo.txt CLI
   ];
 
   xdg.configFile."qrcp/config.yml".text = lib.generators.toYAML { } {
