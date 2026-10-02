@@ -1,6 +1,7 @@
 {
   config,
   inputs,
+  lib,
   pkgs,
   ...
 }:
@@ -73,8 +74,7 @@
         mergetool.prompt = false;
 
         # todo.txt
-        # TODO move todo.py to a package
-        merge.todo.driver = "todo merge %A %O %B";
+        merge.todo.driver = "${lib.getExe pkgs.todo} merge %A %O %B";
       };
     };
   };
