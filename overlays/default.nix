@@ -16,7 +16,6 @@ let
         vicode
         subcat
         nil
-        todo
         statix
         deadnix
         html2text
@@ -176,6 +175,13 @@ let
         # 11 LTO'd integration test binaries; upstream `cargo install` skips them too
         doCheck = false;
       };
+      todo = prev.writers.writePython3Bin "todo" {
+        # black-formatted: long lines, line breaks before binary operators
+        flakeIgnore = [
+          "E501"
+          "W503"
+        ];
+      } (builtins.readFile ./todo.py);
       zotero-mcp = prev.python3Packages.buildPythonApplication {
         # basic build without semantic features
         pname = "zotero-mcp";

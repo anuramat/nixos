@@ -50,10 +50,6 @@
       url = "github:anuramat/subcat";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    todo = {
-      url = "github:anuramat/todo";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     vicode.url = "github:anuramat/vicode/dev";
 
     # forks
