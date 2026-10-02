@@ -88,6 +88,20 @@ let
           ;
       });
 
+      # inside zellij, yazi trusts the environment, which names the terminal zellij was first
+      # started from, and only tries sixel; zellij 0.45 answers the image queries for the
+      # attached terminals, and has kitty graphics, but no unicode placeholders
+      yazi-unwrapped = prev.yazi-unwrapped.overrideAttrs {
+        postPatch = ''
+          substituteInPlace yazi-emulator/src/emulator.rs --replace-fail \
+            'let resort = Brand::from_env();' \
+            'let resort = if yazi_shared::env_exists("ZELLIJ_SESSION_NAME") { None } else { Brand::from_env() };'
+          substituteInPlace yazi-adapter/src/adapter.rs --replace-fail \
+            'adapters.retain(|p| *p == Self::Sixel);' \
+            'adapters.retain(|p| *p != Self::Kgp);'
+        '';
+      };
+
       darktable = unstable.darktable.override {
         withAi = true;
         gmic = unstable.gmic.overrideAttrs (old: {
