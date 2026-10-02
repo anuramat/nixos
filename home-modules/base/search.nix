@@ -10,23 +10,40 @@ let
   fd = "${getExe config.programs.fd.package} -HL"; # still respects the ignore files
   bat = getExe config.programs.bat.package;
 
-  # zellij hides which terminal is attached, so the one it was last started from records it here
-  zellijHost = "$XDG_RUNTIME_DIR/zellij-host-image-protocol";
+  # prints the image protocol of the terminal: kitty, kitty-direct (no unicode placeholders) or sixels;
+  # nothing for text blocks, or without a controlling tty (e.g. spawned by nvim)
+  imageProtocol =
+    pkgs.writeShellScript "image-protocol"
+      # bash
+      ''
+        s=$(stty -g 2>/dev/null </dev/tty) || exit
+        exec <>/dev/tty
+        stty -echo -icanon
+        # kitty graphics query, XTVERSION, then DA1:
+        # every terminal answers DA1, so it marks the end of the replies
+        printf '\e_Gi=31,s=1,v=1,a=q,t=d,f=24;AAAA\e\\\e[>q\e[c' >&0
+        until [[ $r =~ $'\e'\[\?([0-9\;]*)c$ ]]; do IFS= read -rN1 -t 0.5 c || break; r+=$c; done
+        stty "$s"
+        if [[ -z ''${BASH_REMATCH[0]} ]]; then
+          echo "terminal didn't answer the image protocol query; previews will use text blocks" >&2
+        elif [[ $r == *'_Gi=31;OK'* ]]; then
+          # zellij answers for the terminals attached to it, and has no unicode placeholders
+          [[ $r == *'>|Zellij('* ]] && echo kitty-direct || echo kitty
+        elif [[ ";''${BASH_REMATCH[1]};" == *';4;'* ]]; then
+          echo sixels
+        fi
+      '';
 
   preview =
     pkgs.writeShellScript "preview"
       # bash
       ''
-        fmt=''${IMAGE_PROTOCOL:-symbols} zellij=
-        if [[ $fmt == zellij ]]; then
-          zellij=1 fmt=symbols
-          read -r fmt 2>/dev/null <"${zellijHost}"
-        fi
+        fmt=''${IMAGE_PROTOCOL:-symbols}
 
         # shows image from stdin; adapted from fzf's bin/fzf-preview.sh
         img() {
           local cols=$FZF_PREVIEW_COLUMNS rows=$FZF_PREVIEW_LINES mode=memory
-          if [[ $fmt == kitty && -z $zellij ]]; then
+          if [[ $fmt == kitty ]]; then
             # memory transfer is local only
             [[ -n $SSH_CONNECTION ]] && mode=stream
             # unicode placeholders get cleared/redrawn by fzf like text
@@ -37,12 +54,12 @@ let
           # sixel touching the bottom of the screen scrolls it: https://github.com/junegunn/fzf/issues/2544
           [[ $fmt == sixels ]] && ((FZF_PREVIEW_TOP + rows == $(stty size </dev/tty | cut -d' ' -f1))) && rows=$((rows - 1))
           # chafa reads the cell size in pixels from the controlling tty
-          ${getExe pkgs.chafa} -f "$fmt" --scale max -s "''${cols}x$rows" -
+          ${getExe pkgs.chafa} -f "''${fmt%-direct}" --scale max -s "''${cols}x$rows" -
         }
 
         # zellij has no unicode placeholders, so images are placed directly and have to be deleted by hand;
         # the rest get cleared when fzf's zellij popup pane closes
-        [[ -n $zellij && $fmt == kitty ]] && printf '\e_Ga=d,d=A\e\\'
+        [[ $fmt == kitty-direct ]] && printf '\e_Ga=d,d=A\e\\'
 
         # directory
         if [ -d "$1" ]; then
@@ -93,36 +110,6 @@ let
   rgIgnores = [ "*.lock" ]; # non human readable, but visible
 in
 {
-  # probed on shell startup, since fzf owns the tty while previewing
-  programs.bash.initExtra = # bash
-    ''
-      IMAGE_PROTOCOL=symbols
-      # kitty graphics query, XTVERSION, then DA1:
-      # every terminal answers DA1, so it marks the end of the replies
-      if __s=$(stty -g 2>/dev/null) && stty -echo -icanon; then
-        printf '\e_Gi=31,s=1,v=1,a=q,t=d,f=24;AAAA\e\\\e[>q\e[c'
-        __r=
-        until [[ $__r =~ $'\e'\[\?([0-9\;]*)c$ ]]; do IFS= read -rN1 -t 0.5 __c || break; __r+=$__c; done
-        stty "$__s"
-        if [[ -z ''${BASH_REMATCH[0]} ]]; then
-          echo "terminal didn't answer the image protocol query; fzf previews will use text blocks" >&2
-        elif [[ $__r == *'>|Zellij('* ]]; then
-          IMAGE_PROTOCOL=zellij
-        elif [[ $__r == *'_Gi=31;OK'* ]]; then
-          IMAGE_PROTOCOL=kitty
-        elif [[ ";''${BASH_REMATCH[1]};" == *';4;'* ]]; then
-          IMAGE_PROTOCOL=sixels
-        fi
-      fi
-      export IMAGE_PROTOCOL
-      unset __s __r __c
-
-      zellij() {
-        [[ -z $ZELLIJ ]] && echo "$IMAGE_PROTOCOL" >"${zellijHost}"
-        command zellij "$@"
-      }
-    '';
-
   home = {
     packages = [ fzsort ];
     sessionVariables = {
@@ -161,6 +148,17 @@ in
 
     fzf = {
       enable = true;
+      # the image protocol is queried at launch, since fzf owns the tty while previewing
+      package = pkgs.symlinkJoin {
+        inherit (pkgs.fzf) name version;
+        meta.mainProgram = "fzf";
+        paths = [
+          pkgs.fzf
+          pkgs.fzf.man
+        ];
+        nativeBuildInputs = [ pkgs.makeWrapper ];
+        postBuild = "wrapProgram $out/bin/fzf --run 'export IMAGE_PROTOCOL=$(${imageProtocol})'";
+      };
       defaultCommand = fd;
 
       changeDirWidgetCommand = "${fd} -t d";
