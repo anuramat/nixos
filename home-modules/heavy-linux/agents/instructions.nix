@@ -241,7 +241,7 @@ let
 
             - If the flake reads other repo files (e.g. `src = ./.`), copy those to `D/flake` too.
             - Big data (datasets, caches) SHOULD live in `${sharedDir}/data/PROJECT` on the host, symlinked into D: `ssh $H ln -s ${sharedDir}/data/PROJECT/cache $D/src/cache`.
-            - Results: read D directly on this host; on another host, use `ssh $H tail $D/log` or `rsync -a "$H:$D/src/out/" out/`.
+            - Results: read D directly on this host; on another host, use `ssh $H tail $D/log` or `rsync -rlpt "$H:$D/src/out/" out/`.
             - Record `HOST:NAME` wherever the run is documented, so a later session can re-attach with `job wait`.
           ''
           + (for [ "claude" ] ''
