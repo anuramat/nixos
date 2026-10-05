@@ -175,6 +175,11 @@ let
             are bind mounted to tmpfs, so files created there will not persist
             after the session is finished. Most of the other paths are bind
             mounted read-only.
+
+            A process can only trace its own descendants (`kernel.yama.ptrace_scope=1`,
+            in and outside the sandbox), so attaching to a running process
+            (`py-spy dump --pid`, `gdb -p`, `strace -p`) fails: start it under
+            the tool instead, e.g. `py-spy record -- python ...`.
           '';
         }
         {
