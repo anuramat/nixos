@@ -204,11 +204,11 @@
     "caut": {
       "flake": false,
       "locked": {
-        "lastModified": 1788496746,
-        "narHash": "sha256-XPwau/JtVFZMKqXVl2h/X0rz2HJ7RD9uTmhgV/MkgaQ=",
+        "lastModified": 1791348042,
+        "narHash": "sha256-BV0F99QYXrlr042SNDdbK4v4Ef3NmCb0fo9R5nlwrLw=",
         "owner": "Dicklesworthstone",
         "repo": "coding_agent_usage_tracker",
-        "rev": "0f45409faa8dd20c46450e0c8d200a09e4d24efd",
+        "rev": "9678b661d2adc2605bec8d65ca7ca206c5ef0185",
         "type": "github"
       },
       "original": {
