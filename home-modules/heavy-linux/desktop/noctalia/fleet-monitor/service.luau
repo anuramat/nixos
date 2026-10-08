@@ -9,8 +9,8 @@ local UC3_OUT, UC3_ERR = "@uc3state@/status", "@uc3state@/status.err"
 local UC3_CMD = "@systemctl@ --user start uc3-status.service"
 -- `caut usage` reads no cache: every run queries the providers' APIs, so it is polled no more often than caut's own
 -- freshness threshold; noctalia runs as a user service, without the session variables that locate the credentials
-local USAGE_INTERVAL = 300000
-local USAGE_CMD = ". @sessionVars@ && @caut@ usage --json"
+local TOKENS_INTERVAL = 300000
+local TOKENS_CMD = ". @sessionVars@ && @caut@ usage --json"
 local localHost = (noctalia.readFile("/proc/sys/kernel/hostname") or ""):match("%S+")
 
 -- ps etime, [[dd-]hh:]mm:ss -> seconds
@@ -80,21 +80,21 @@ end
 
 -- `caut usage --json`: the windows of each provider, then the scoped (per model) ones under their labels; a failed
 -- provider is missing from `data`, and reported in `errors`
-local function parseUsage(h, out)
+local function parseTokens(h, out)
   local res = assert(noctalia.json.decode(out))
   h.providers = {}
   for _, p in res.data do
     local u, windows = p.usage, {}
     if u.primary then table.insert(windows, window(u.primary)) end
     if u.secondary then table.insert(windows, window(u.secondary)) end
-    for _, s in u.scoped or {} do table.insert(windows, window(s.window, s.label)) end
+    for _, s in u.scoped or {} do table.insert(windows, window(s.window, s.label:lower())) end
     table.insert(h.providers, { name = p.provider, windows = windows })
   end
   -- after the rest is parsed, so that it is still shown
   if res.errors[1] then error(res.errors[1], 0) end
 end
 
-local parse = { host = parseHost, uc3 = parseUc3, usage = parseUsage }
+local parse = { host = parseHost, uc3 = parseUc3, tokens = parseTokens }
 
 local sections = {}
 for _, name in @hosts@ do
@@ -106,8 +106,8 @@ for _, name in @hosts@ do
 end
 -- no due time: uc3-status.timer schedules the fetch, a refresh only starts it early
 table.insert(sections, { name = "uc3", kind = "uc3", cmd = UC3_CMD, timeout = 60000, jobs = {}, idle = {} })
-table.insert(sections, { name = "usage", kind = "usage", interval = USAGE_INTERVAL, cmd = USAGE_CMD, timeout = 60000,
-  providers = {}, due = 0 })
+table.insert(sections, { name = "tokens", kind = "tokens", interval = TOKENS_INTERVAL, cmd = TOKENS_CMD,
+  timeout = 60000, providers = {}, due = 0 })
 
 local function publish()
   noctalia.state.set("sections", sections)
@@ -145,7 +145,7 @@ local function refresh(h)
     h.busy, h.clicked = false, false
     if h.kind == "host" then
       h.err = r.exitCode ~= 0 and "unreachable" or ingest(h, r.stdout, "")
-    elseif h.kind == "usage" then
+    elseif h.kind == "tokens" then
       -- caut prints nothing when it fails as a whole; when only some providers fail, it exits non-zero too, but prints
       -- the rest along with the errors
       h.err = r.stdout == "" and "failed" or ingest(h, r.stdout, "")

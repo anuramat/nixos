@@ -22,6 +22,11 @@ local function label(text, color, props)
   return ui.label(props)
 end
 
+-- a column, indented
+local function indented(children)
+  return ui.row({ align = "start" }, { ui.box({ width = 16 * SCALE }), ui.column({ gap = 4 * SCALE }, children) })
+end
+
 local function hostRows(h)
   local rows = {}
   for _, job in h.jobs do
@@ -51,23 +56,27 @@ local function uc3Rows(h)
   return rows
 end
 
--- a row per provider: each window's used percentage, and the time left until it resets
-local function usageRows(h)
+-- a rate limit window's used percentage, and the time left until it resets
+local function limit(w, now)
+  return ui.row({ gap = 8 * SCALE }, {
+    label(`{w.name}: {w.used}%`, "on_surface_variant"),
+    w.resets and label(eta(w.resets - now), "outline") or nil,
+  })
+end
+
+-- a row per provider, followed by its limits, or with several of them, by an indented line for each
+local function tokenRows(h)
   local rows, now = {}, noctalia.nowMs() // 1000
   for _, p in h.providers do
-    local row = { label(p.name, "on_surface") }
-    for _, w in p.windows do
-      table.insert(row, ui.row({ gap = 4 * SCALE }, {
-        label(`{w.name} {w.used}%`, "on_surface_variant"),
-        w.resets and label(eta(w.resets - now), "outline") or nil,
-      }))
-    end
-    table.insert(rows, ui.row({ gap = 12 * SCALE, key = p.name }, row))
+    local name, limits = label(p.name, "on_surface"), {}
+    for _, w in p.windows do table.insert(limits, limit(w, now)) end
+    table.insert(rows, #limits > 1 and ui.column({ gap = 4 * SCALE, key = p.name }, { name, indented(limits) })
+      or ui.row({ gap = 8 * SCALE, key = p.name }, { name, limits[1] }))
   end
   return rows
 end
 
-local rows = { host = hostRows, uc3 = uc3Rows, usage = usageRows }
+local rows = { host = hostRows, uc3 = uc3Rows, tokens = tokenRows }
 
 local function section(h)
   local header = { label(h.name, "primary", { fontWeight = "semibold" }) }
@@ -89,7 +98,7 @@ local function section(h)
   end
   return ui.column({ gap = 4 * SCALE, key = h.name, onClick = onClick }, {
     ui.row({ gap = 8 * SCALE }, header),
-    ui.row({ align = "start" }, { ui.box({ width = 16 * SCALE }), ui.column({ gap = 4 * SCALE }, rows[h.kind](h)) }),
+    indented(rows[h.kind](h)),
   })
 end
 
