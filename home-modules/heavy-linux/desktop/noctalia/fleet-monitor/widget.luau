@@ -9,6 +9,13 @@ local function duration(s)
   return (h > 0 and h .. "h" or "") .. ((h > 0 or m > 0) and m .. "m" or "") .. s % 60 .. "s"
 end
 
+-- seconds -> the two largest units: 1d2h, 1h2m, 2m
+local function eta(s)
+  s = math.max(s, 0)
+  local d, h, m = s // 86400, s % 86400 // 3600, s % 3600 // 60
+  return d > 0 and `{d}d{h}h` or h > 0 and `{h}h{m}m` or `{m}m`
+end
+
 local function label(text, color, props)
   props = props or {}
   props.text, props.color, props.fontSize = text, color, FONT_SIZE
@@ -44,7 +51,23 @@ local function uc3Rows(h)
   return rows
 end
 
-local rows = { host = hostRows, uc3 = uc3Rows }
+-- a row per provider: each window's used percentage, and the time left until it resets
+local function usageRows(h)
+  local rows, now = {}, noctalia.nowMs() // 1000
+  for _, p in h.providers do
+    local row = { label(p.name, "on_surface") }
+    for _, w in p.windows do
+      table.insert(row, ui.row({ gap = 4 * SCALE }, {
+        label(`{w.name} {w.used}%`, "on_surface_variant"),
+        w.resets and label(eta(w.resets - now), "outline") or nil,
+      }))
+    end
+    table.insert(rows, ui.row({ gap = 12 * SCALE, key = p.name }, row))
+  end
+  return rows
+end
+
+local rows = { host = hostRows, uc3 = uc3Rows, usage = usageRows }
 
 local function section(h)
   local header = { label(h.name, "primary", { fontWeight = "semibold" }) }

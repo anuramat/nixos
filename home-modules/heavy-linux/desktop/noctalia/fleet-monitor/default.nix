@@ -59,6 +59,8 @@ in
       hosts = lib.generators.toLua { } fleetStatus.hosts;
       uc3state = config.lib.uc3.stateDir;
       systemctl = lib.getExe' pkgs.systemd "systemctl";
+      caut = lib.getExe' pkgs.caut "caut";
+      sessionVars = "${config.home.sessionVariablesPackage}/etc/profile.d/hm-session-vars.sh";
     };
   };
 
