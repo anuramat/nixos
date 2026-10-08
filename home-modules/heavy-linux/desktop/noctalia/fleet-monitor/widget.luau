@@ -56,10 +56,10 @@ local function uc3Rows(h)
   return rows
 end
 
--- a rate limit window's used percentage, and the time left until it resets
+-- a rate limit window's remaining percentage, and the time left until it resets
 local function limit(w, now)
   return ui.row({ gap = 8 * SCALE }, {
-    label(`{w.name}: {w.used}%`, "on_surface_variant"),
+    label(`{w.name}: {w.left}%`, "on_surface_variant"),
     w.resets and label(eta(w.resets - now), "outline") or nil,
   })
 end

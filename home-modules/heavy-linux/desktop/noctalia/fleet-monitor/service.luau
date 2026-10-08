@@ -74,7 +74,7 @@ end
 -- caut's rate limit window, named by its length (5h, 7d) unless given a name
 local function window(w, name)
   local m = w.windowMinutes
-  return { name = name or (m % 1440 == 0 and `{m // 1440}d` or `{m // 60}h`), used = math.round(w.usedPercent),
+  return { name = name or (m % 1440 == 0 and `{m // 1440}d` or `{m // 60}h`), left = math.round(100 - w.usedPercent),
     resets = w.resetsAt and epoch(w.resetsAt) }
 end
 
