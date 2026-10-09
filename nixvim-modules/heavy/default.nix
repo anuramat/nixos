@@ -57,7 +57,6 @@
     none-ls.enable = true;
     lsp = {
       enable = true;
-      inlayHints = false;
       # TODO enable for typst?
       onAttach = # lua
         ''
@@ -68,9 +67,6 @@
       # lsp for codeblocks in markdown
       # TODO make sure it doesn't format twice (conform + otter)
       enable = true;
-      settings = {
-        handle_leading_whitespace = true;
-      };
       autoActivate = false; # TODO
     };
   };

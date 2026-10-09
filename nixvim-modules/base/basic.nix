@@ -21,12 +21,8 @@
       "NeogitStatus"
       "NeogitPopup"
       "oil"
-      "lazy"
-      "lspinfo"
       "null-ls-info"
-      "NvimTree"
       "neo-tree"
-      "alpha"
       "help"
       "fzf"
     ];

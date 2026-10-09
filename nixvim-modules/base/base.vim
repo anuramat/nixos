@@ -27,10 +27,10 @@ se notimeout " no timeout on key sequences
 se keymap=russian-jcukenwin imi=0 " cyrillic on i_^6
 se completeopt=menu,menuone,noselect,preview " ins completion
 se wildoptions=fuzzy,pum " cmd completion
-se fen fdm=indent foldlevelstart=99 " overriden by fdl in modelines
+se fdm=indent foldlevelstart=99 " overriden by fdl in modelines
 se fdo=block,hor,insert,jump,mark,percent,quickfix,search,tag,undo
 " se fcl=all
-se incsearch ignorecase smartcase " search
+se ignorecase smartcase " search
 se updatetime=100 " period in ms for swap writes and CursorHold autocmd
 se undofile " persistent undo
 se backupdir-=. " don't write backups to CWD
@@ -44,17 +44,15 @@ se mouse= " disable mouse
 se nowrap
 " se mopt=wait:0,history:10000
 se nomore
-se cmdheight=1
-se cole=0
 se fcs=fold:\─,foldopen:,foldsep:\ ,foldclose:
 se foldtext=
 se laststatus=3 " show only one statusline
 se sbr=↪ list lcs=tab:│\ ,extends:❯,precedes:❮,trail:·
 au TextYankPost * lua vim.hl.hl_op()
 se number relativenumber
-se scrolloff=0 sidescrolloff=30
+se sidescrolloff=30
 se report=0 shortmess=CFTWacqst " notification settings
-se cursorline cursorlineopt=both
+se cursorline
 se matchtime=1 showmatch " highlight matching bracket (deciseconds)
 se signcolumn=yes " gutter
 se winborder=double

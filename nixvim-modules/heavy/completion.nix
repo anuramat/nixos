@@ -33,19 +33,7 @@ in
 {
   plugins = {
     friendly-snippets.enable = true;
-    blink-cmp = {
-      enable = true;
-      settings = {
-        sources = {
-          default = [
-            "lsp"
-            "path"
-            "snippets"
-            "buffer"
-          ];
-        };
-      };
-    };
+    blink-cmp.enable = true;
     copilot-lua = {
       enable = true;
       settings = {
@@ -59,7 +47,6 @@ in
           enabled = false;
         };
         suggestion = {
-          enabled = true;
           auto_trigger = true;
           hide_during_completion = false;
           debounce = 150;

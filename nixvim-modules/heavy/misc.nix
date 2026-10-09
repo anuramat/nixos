@@ -1,6 +1,5 @@
 {
   config,
-  pkgs,
   ...
 }:
 let
@@ -22,7 +21,6 @@ in
     ;
 
   plugins = {
-    web-devicons.enable = true;
     sniprun.enable = true;
     grug-far.enable = true;
     schemastore.enable = true;
@@ -41,7 +39,6 @@ in
             enabled = false;
           };
           treesitter = {
-            grammars = [ pkgs.vimPlugins.nvim-treesitter-parsers.todotxt ];
             label = {
               rainbow = {
                 enabled = true;

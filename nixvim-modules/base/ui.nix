@@ -16,7 +16,6 @@
       settings = {
         user_default_options = {
           css = true;
-          yaml = true;
         };
       };
     };

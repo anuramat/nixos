@@ -16,7 +16,6 @@
       statix.enable = true;
     };
     lsp.servers = {
-      statix.enable = true;
       nil_ls.enable = true;
     };
   };

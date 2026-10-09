@@ -24,7 +24,6 @@
     conform-nvim.settings = {
       formatters = {
         shfmt = {
-          "inherit" = true;
           prepend_args = [
             "--binary-next-line"
             "--case-indent"
@@ -36,13 +35,6 @@
         "shfmt"
       ];
     };
-    lsp.servers.bashls = {
-      enable = true;
-      settings.bashIde.shfmt = {
-        binaryNextLine = true;
-        caseIndent = true;
-        simplifyCode = true;
-      };
-    };
+    lsp.servers.bashls.enable = true;
   };
 }
