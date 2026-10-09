@@ -1,27 +1,8 @@
 # standalone home manager
 
-write to `home-configurations/$CONFIG_NAME.nix` or
-`home-configurations/$CONFIG_NAME/default.nix`, then add an entry to the builder
-in `outputs.nix`
-
-```nix
-{ inputs, ... }:
-{
-  imports = with inputs.self.homeModules; [
-    default
-    heavy
-    anuramat
-    standalone
-    darwin
-  ];
-  home =
-    let
-      username = "anuramat";
-    in
-    {
-      inherit username;
-      stateVersion = "25.05";
-      homeDirectory = "/Users/${username}";
-    };
-}
-```
+Write `home-configurations/$NAME.nix` (or
+`home-configurations/$NAME/default.nix`), modeled on
+`home-configurations/anuramat-linux.nix` / `anuramat-darwin.nix`: import
+`standalone` plus the layers for that platform, and take `username` from
+`inputs.self.consts.user`. Then add `$NAME = "$SYSTEM";` to `homeSystems` in
+`outputs.nix`; that entry also creates `checks.$SYSTEM.home-$NAME`.
