@@ -220,10 +220,6 @@ flake-parts.lib.mkFlake { inherit inputs; } {
             )
           )
         )
-        # hand-pinned vendorHash drift only surfaces at build time, so build it
-        // lib.optionalAttrs (system == "x86_64-linux") {
-          inherit (pkgs) waybar-niri-windows;
-        }
         // {
           # build each neovim variant and run it headless to catch startup errors
           neovim = nixvim.lib.${system}.check.mkTestDerivationFromNvim {

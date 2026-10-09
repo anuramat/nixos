@@ -54,11 +54,6 @@
 
     # forks
     html2text.url = "github:anuramat/html2text/dev";
-    # llama.cpp PR 24423: DiffusionGemma support
-    llama-cpp-diffusion = {
-      url = "github:danielhanchen/llama.cpp/diffusion-visual-updates";
-      flake = false;
-    };
 
     claude-code = {
       url = "github:sadjow/claude-code-nix";
@@ -115,10 +110,6 @@
     };
     pass-secret-service = {
       url = "github:grimsteel/pass-secret-service/v0.7.0";
-      flake = false;
-    };
-    waybar-niri-windows = {
-      url = "github:calico32/waybar-niri-windows";
       flake = false;
     };
     nirimap = {
