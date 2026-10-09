@@ -25,9 +25,6 @@
   ];
 
   home-manager = {
-    extraSpecialArgs = {
-      inherit inputs;
-    };
     users.${inputs.self.consts.user.username} = {
       imports = with inputs.self.homeModules; [
         base
