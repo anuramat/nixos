@@ -1,6 +1,5 @@
 { pkgs, lib, ... }:
 {
-  extraPackages = [ pkgs.typstyle ];
   autoCmd = [
     {
       # NOTE autocmd because after/ftplugin is too early

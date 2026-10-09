@@ -48,8 +48,8 @@
       (setAction "<leader>gR" "reset_buffer")
 
       # navigation
-      (setAction "]h" "next_hunk")
-      (setAction "[h" "prev_hunk")
+      (setAction "]h" "nav_hunk next")
+      (setAction "[h" "nav_hunk prev")
 
       # text objects
       (keymap [

@@ -6,7 +6,6 @@
     oil = {
       enable = true;
       settings = {
-        default_file_explorer = true;
         columns = [
           "icon"
           "permissions"
@@ -15,21 +14,10 @@
         ];
         delete_to_trash = true;
         skip_confirm_for_simple_edits = true;
-        constrain_cursor = "editable";
-        experimental_watch_for_changes = true;
+        watch_for_changes = true;
         view_options = {
           show_hidden = true;
           natural_order = true;
-          sort = [
-            [
-              "type"
-              "asc"
-            ]
-            [
-              "name"
-              "asc"
-            ]
-          ];
         };
       };
     };

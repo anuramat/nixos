@@ -6,9 +6,7 @@
   plugins = {
     treesitter = {
       enable = true;
-      settings = {
-        highlight.enable = true;
-      };
+      highlight.enable = true;
     };
 
     treesitter-textobjects.enable = true;
@@ -18,13 +16,9 @@
     treesitter-context = {
       enable = true;
       settings = {
-        enable = true;
         max_lines = 1;
         min_window_height = 20;
-        line_numbers = true;
         multiline_threshold = 1;
-        trim_scope = "outer";
-        mode = "cursor";
       };
     };
 

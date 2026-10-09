@@ -42,26 +42,19 @@ in
 
   plugins.fzf-lua = {
     enable = true;
-    settings =
-      let
-        fd_opts = "-c never -t f -t l -HL";
-      in
-      {
-        grep = {
-          RIPGREP_CONFIG_PATH = lua "vim.env.RIPGREP_CONFIG_PATH";
-          inherit fd_opts;
-          multiline = 2;
-        };
-        files = {
-          inherit fd_opts;
-        };
-        actions.files = {
-          __unkeyed-1 = true; # merge with defaults
-          "ctrl-q" = {
-            fn.__raw = "require('fzf-lua').actions.file_sel_to_qf";
-            prefix = "select-all";
-          };
+    settings = {
+      grep = {
+        RIPGREP_CONFIG_PATH = lua "vim.env.RIPGREP_CONFIG_PATH";
+        multiline = 2;
+      };
+      files.fd_opts = "-c never -t f -t l -HL";
+      actions.files = {
+        __unkeyed-1 = true; # merge with defaults
+        "ctrl-q" = {
+          fn.__raw = "require('fzf-lua').actions.file_sel_to_qf";
+          prefix = "select-all";
         };
       };
+    };
   };
 }
