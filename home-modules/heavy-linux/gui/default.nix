@@ -33,7 +33,6 @@ in
 
     firefox = {
       enable = true;
-      package = pkgs.firefox;
       configPath = "${config.xdg.configHome}/mozilla/firefox"; # NOTE: to hide deprecation warning from the build, set the new default explicitly
       profiles.default = {
         settings = {

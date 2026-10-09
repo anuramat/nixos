@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 {
   programs.obs-studio = {
     enable = true;
@@ -9,19 +9,4 @@
       wlrobs # screen capture for wlroots
     ];
   };
-
-  xdg.configFile =
-    let
-      tunaCfg = [
-        {
-          format = "{title} - {first_artist}";
-          last_output = "";
-          log_mode = false;
-          output = "/tmp/tuna_output.txt";
-        }
-      ];
-    in
-    {
-      "obs-studio/plugin_config/tuna/outputs.json".text = lib.generators.toJSON { } tunaCfg;
-    };
 }

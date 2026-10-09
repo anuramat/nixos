@@ -112,17 +112,10 @@
         slowdown = 0.5;
       };
       screenshot-path = "${config.home.sessionVariables.XDG_PICTURES_DIR}/screen/shot_%F_%T.png";
-      xwayland-satellite = {
-        path = lib.getExe pkgs.xwayland-satellite;
-        enable = true;
-      };
+      xwayland-satellite.path = lib.getExe pkgs.xwayland-satellite;
       prefer-no-csd = true;
       hotkey-overlay.skip-at-startup = true;
 
-      spawn-at-startup = [
-        # { argv = [ ]; }
-      ];
-      overview.workspace-shadow.enable = true;
       window-rules = [
         {
           matches = [ { is-active = false; } ];
@@ -136,7 +129,6 @@
         focus-ring = {
           # active.color = "#008080";
           enable = true;
-          width = 4;
         };
         background-color = config.lib.stylix.colors.withHashtag.base00;
         empty-workspace-above-first = true;

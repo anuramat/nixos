@@ -285,7 +285,6 @@ def _setup_parser():
     # Simple commands without arguments
     subparsers.add_parser("ls", help="List all tasks")
     subparsers.add_parser("norm", help="Normalize the file")
-    subparsers.add_parser("unfiled", help="List unfiled tasks")
     subparsers.add_parser("edit", help="Edit tasks file")
 
     return parser

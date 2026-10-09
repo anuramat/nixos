@@ -4,10 +4,6 @@ let
 in
 {
   xdg.configFile = {
-    # YAML formatter configuration
-    "yamlfmt/yamlfmt.yaml".text = toYAML {
-    };
-
     # YAML linter configuration
     "yamllint/config".text = toYAML {
       yaml-files = [

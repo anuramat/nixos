@@ -6,7 +6,7 @@
 }:
 let
   inherit (lib) getExe;
-  eza = getExe config.programs.eza.package;
+  eza = getExe pkgs.eza;
   fd = "${getExe config.programs.fd.package} -HL"; # still respects the ignore files
   bat = getExe config.programs.bat.package;
 
@@ -63,7 +63,7 @@ let
 
         # directory
         if [ -d "$1" ]; then
-          ${eza} ${lib.strings.concatStringsSep " " config.programs.eza.extraOptions} --grid "$1"
+          ${eza} --grid "$1"
           exit
         # file
         elif [ -f "$1" ]; then
