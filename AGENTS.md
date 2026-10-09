@@ -232,10 +232,6 @@ experimental feature; run inside the dev shell or pass it explicitly.
   widget's placement to the state file, shadowing the Nix values, so once they
   are saved to the config, the `[desktop_widgets]` and `[lockscreen_widgets]`
   sections have to be deleted from the state file.
-- Waybar's niri-windows plugin is built from the `waybar-niri-windows` flake
-  input; bumping it may also require updating the hand-pinned `vendorHash` in
-  `overlays/default.nix`. The package is built by `nix flake check` so a stale
-  hash fails there, not at rebuild time.
 - keyd home-row `lettermod` remaps come from `nixos-modules/laptop/keyboard.nix`
   and apply only to the keyboard IDs each laptop host lists in
   `services.keyd.keyboards.main.ids`; the `local` layer alone (bgm5) has no
