@@ -1,14 +1,11 @@
 # TODO
 
-Refactoring opportunities and straightforward TODOs, from an audit of the repo at commit 9d347469 (2026-10-09). Each item was reported by an auditor and then checked against the code by an independent verifier; line numbers refer to that commit.
+Refactoring opportunities and straightforward TODOs, from an audit of the repo at commit 9d347469 (2026-10-09). Each item was reported by an auditor and then checked against the code by an independent verifier; line numbers refer to that commit, and some have shifted since, so apply fixes by content.
 
-Items are numbered per section (A1, B3, ...). Sections A-G are confirmed and need no decision from you; section H collects everything that does; section I lists proposals that were rejected.
+Items are numbered per section (A1, D3, ...). Sections A, D, F and G are confirmed and need no decision from you; section H collects everything that does; section I lists proposals that were rejected. Sections B (dead code), C (defaults and deprecated options) and E (stale docs) are done and were removed.
 
 - A. Bugs and broken tooling
-- B. Dead code and leftovers
-- C. Options set to their defaults, duplicated or deprecated
 - D. TODOs that can be resolved now
-- E. Stale docs
 - F. Refactors: flake, NixOS, Home Manager
 - G. Refactors: nixvim
 - H. Needs your decision
@@ -243,497 +240,16 @@ mkShortcut =
 
 **Verify:** `nix develop --ignore-env -c sh -c 'command -v statix deadnix'` prints both paths; `nix develop -c just lint` passes.
 
-## B. Dead code and leftovers
+### A16. lua_ls: the settings are nested under `Lua` twice, so all of them are ignored
 
-### B1. Remove the waybar-niri-windows leftovers (input, overlay package, flake check, AGENTS.md bullet)
-
-**Where:** `flake.nix:120`, `overlays/default.nix:156`, `outputs.nix:223`, `AGENTS.md:235`
-**Effort:** small -- **Risk:** none
-
-**Problem:** Waybar went away in 027da08a (`noctalia: init`, 2026-09-02), which deleted `home-modules/heavy-linux/desktop/niri/bar.nix`, the only consumer of `module_path = "${pkgs.waybar-niri-windows}/lib/waybar-niri-windows.so"`. `git grep waybar` (excluding flake.lock) now hits only four leftovers: the `waybar-niri-windows = { url = "github:calico32/waybar-niri-windows"; flake = false; };` input (flake.nix:120-123); the `waybar-niri-windows = prev.buildGoModule { ... vendorHash = "sha256-jK87..."; ... };` overlay attr (overlays/default.nix:156-165); the flake check `# hand-pinned vendorHash drift only surfaces at build time, so build it` / `// lib.optionalAttrs (system == "x86_64-linux") { inherit (pkgs) waybar-niri-windows; }` (outputs.nix:223-226); and the AGENTS.md bullet "Waybar's niri-windows plugin is built from the `waybar-niri-windows` flake input..." (AGENTS.md:235-238), which still describes it as live. So every `nix flake check` on x86_64-linux compiles a Go c-shared .so that nothing loads. The check block was added in 7388a617 to catch vendorHash drift, and this package is the only thing left in it. The other hand-pinned vendorHash, kitty's `kitty-go-modules` (overlays/default.nix:85), does not need a replacement check: its src is pinned to tag `v0.49.1` with a fixed hash, so it cannot drift on an input bump.
-
-**Fix:**
-- flake.nix: delete the `waybar-niri-windows` input block (lines 120-123).
-- overlays/default.nix: delete the `waybar-niri-windows = prev.buildGoModule { ... };` attr (lines 156-165).
-- outputs.nix: delete the comment and the `// lib.optionalAttrs (system == "x86_64-linux") { ... }` block (lines 223-226), so the home-check attrset is followed directly by the neovim `// { ... }`. `lib` and `system` are still used elsewhere in the file.
-- AGENTS.md: delete the "Waybar's niri-windows plugin ..." bullet (lines 235-238).
-- Run `nix flake lock` to prune the node from flake.lock (one run can also cover B2).
-
-**Verify:** `git grep -n waybar -- ':!flake.lock'` is empty; `nix eval .#checks.x86_64-linux --apply builtins.attrNames` no longer lists `waybar-niri-windows`; `nix flake metadata` no longer lists the input; `nix flake check` passes.
-
-### B2. Drop the orphaned llama-cpp-diffusion flake input
-
-**Where:** `flake.nix:57`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** flake.nix:57-61 still declares `# llama.cpp PR 24423: DiffusionGemma support` / `llama-cpp-diffusion = { url = "github:danielhanchen/llama.cpp/diffusion-visual-updates"; flake = false; };`. It was added in 08d43f15; its only consumers (`diffusionGemma` and `llama-cpp-diffusion-{vulkan,rocm}` in the overlay) were removed in cd84ff69 (`overlays: refactor, drop rarely used packages`, 2026-08-28). `git grep llama-cpp-diffusion` (excluding flake.lock) matches only flake.nix. Nothing reads `inputs.llama-cpp-diffusion`; the nix.nix registry/nixPath mapping of all inputs only turns it into an unused registry entry.
-
-**Fix:** Delete flake.nix:57-61 (the comment and the input block), then run `nix flake lock` to prune it from flake.lock. This can share the `nix flake lock` run with B1.
-
-**Verify:** `git grep -n llama-cpp-diffusion -- ':!flake.lock'` is empty; `nix flake lock` succeeds; `nix flake check` passes.
-
-### B3. todo.py: drop the stale `unfiled` subcommand
-
-**Where:** `overlays/todo.py:288`, `overlays/todo.py:315`, `overlays/todo.py:33`
+**Where:** `nixvim-modules/heavy/lang/lua.nix:7-16`
 **Effort:** trivial -- **Risk:** low
 
-**Problem:** `subparsers.add_parser("unfiled", help="List unfiled tasks")` (line 288) is still registered, but `_dispatch_command`'s `command_handlers` (lines 315-322) has no `"unfiled"` key, so `todo unfiled` falls into `else: tag_overview()` and prints the tag grid instead of the unfiled list. The missing handler is deliberate: fd4a4ed1 removed `"unfiled": lambda: ls_tag("unfiled")` from `command_handlers` in the same change that introduced `todo ls TAG`, which handles `unfiled` through `_get_tag_dict`. The parser entry is the leftover, so the fix is to finish that removal, not to re-add the handler. Separately, `def get_date(line: str) -> str:` (lines 33-37) is never called today, but D10 makes it the sort key in `merge()` (`result.sort(key=get_date)`).
+**Problem:** nixvim already wraps lua_ls settings as `{ Lua = cfg; }` (`plugins/lsp/language-servers/default.nix:41-42` in the nixvim input), and lua.nix wraps them in `Lua = { ... }` again. The generated config is `vim.lsp.config("lua_ls", __wrapConfig({ settings = { Lua = { Lua = { format = { enable = false }, runtime = { version = "LuaJIT" } } } } }))`, so lua_ls never sees `runtime.version = "LuaJIT"` or `format.enable = false`. Found while removing the dead `telemetry` setting (B19).
 
-**Fix:**
-- Delete line 288 (`subparsers.add_parser("unfiled", ...)`). `todo ls unfiled` stays the way to list unfiled tasks, and `todo unfiled` becomes an argparse "invalid choice" error instead of silently printing the tag grid.
-- Keep `get_date` if D10 lands; delete lines 33-37 only if that fix is skipped.
+**Fix:** drop the inner `Lua = { ... }` level, so the block reads `settings = { format.enable = false; runtime.version = "LuaJIT"; };`. This changes behavior on purpose: lua_ls starts using the LuaJIT runtime (no more undefined-global noise for `jit`, `bit`, ...) and stops offering formatting, which stays with stylua via conform.
 
-**Verify:** `just build todo` succeeds (`writePython3Bin` runs flake8); with `TODO_FILE` pointing at a sample file, `todo unfiled` exits with `invalid choice: 'unfiled'` and `todo ls unfiled` still lists only the untagged tasks.
-
-### B4. bgm5: drop the explicit `pkgs.linux-firmware` from `hardware.firmware`
-
-**Where:** `nixos-configurations/anuramat-bgm5/default.nix:54`
-**Effort:** trivial -- **Risk:** low
-
-**Problem:** `hardware.firmware = [ pkgs.linux-firmware pkgs.strix-halo-mes-firmware ];`. Base sets `hardware.enableAllFirmware = true`, and all-firmware.nix already adds the same package: `definitionsWithLocations` shows the same `linux-firmware-20260519` outPath coming from both bgm5/default.nix and all-firmware.nix (the overlay pins `linux-firmware` globally, so both refer to one derivation). List order does not decide the MES override either: `compressFirmware` keeps meta, and the `buildEnv` behind `hardware.firmware` honours `meta.priority` (linux-firmware 6, the MES package the default 5), so the MES files win on collisions. The explicit entry was added without rationale in d19cdea7. Built the bgm5 firmware env with and without the entry: all 8081 resolved files are identical, and `amdgpu/gc_11_5_1_mes_2.bin.zst` still comes from `strix-halo-mes-firmware`.
-
-**Fix:** Delete line 54 (`pkgs.linux-firmware`), leaving `hardware.firmware = [ pkgs.strix-halo-mes-firmware # from nix-strix-halo tuning module ];`.
-
-**Verify:** `nix build .#nixosConfigurations.anuramat-bgm5.config.hardware.firmware -o fw-old` before and `-o fw-new` after the change; `diff <(cd fw-old && find -L lib/firmware -type f -printf '%P\n' | sort) <(cd fw-new && find -L lib/firmware -type f -printf '%P\n' | sort)` is empty, and `readlink -f fw-new/lib/firmware/amdgpu/gc_11_5_1_mes_2.bin.zst` points into `strix-halo-mes-firmware`.
-
-### B5. rocm.nix: drop `services.ollama.package`, ollama is never enabled
-
-**Where:** `nixos-modules/base/rocm.nix:15`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** `services.ollama.package = pkgs.ollama-rocm;`. Nothing in the repo enables `services.ollama` (grep finds only this line, the overlay and the `ollama.age` secret name), and git history shows only `acceleration`/`package` were ever set. On bgm5, the only rocmSupport host, eval gives `services.ollama.enable = false`. The line would be redundant even if ollama were enabled: with `nixpkgs.config.rocmSupport = true`, the ollama package sets `rocmRequested` from `config.rocmSupport`, and eval shows `pkgs.ollama.outPath == pkgs.ollama-rocm.outPath`.
-
-**Fix:** Delete line 15 and the blank line before it. `pkgs` is still used in the file.
-
-**Verify:** `nix eval --raw .#nixosConfigurations.anuramat-bgm5.config.system.build.toplevel.drvPath` is unchanged.
-
-### B6. bash: drop `STACK_XDG`, it is ignored because `STACK_ROOT` is set
-
-**Where:** `home-modules/base/bash/default.nix:52`, `home-modules/base/bash/default.nix:53`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** `STACK_ROOT = "${config.xdg.dataHome}/stack"; STACK_XDG = "1";`. In stack 3.9.3, `determineStackRootAndOwnership` (src/Stack/Config.hs:1095-1115) consults `STACK_XDG` only when `STACK_ROOT` is unset, and that is its only use; the Stack docs (topics/stack_root) say the same: "Stack will ignore that configuration if ... the STACK_ROOT environment variable exists." So `STACK_XDG` is dead. Line 52 also uses `config.xdg.dataHome` while the surrounding lines use the local `XDG_DATA_HOME` binding (same value).
-
-**Fix:** Delete line 53 (`STACK_XDG = "1";`); behavior is unchanged. Optionally write line 52 as `STACK_ROOT = "${XDG_DATA_HOME}/stack";` for consistency. (Dropping `STACK_ROOT` instead would move the global config.yaml to ~/.config/stack, which is a behavior change and out of scope.)
-
-**Verify:** `nix eval .#nixosConfigurations.anuramat-f12.config.home-manager.users.anuramat.home.sessionVariables --apply 'v: v ? STACK_XDG'` is false and `STACK_ROOT` evaluates to the same path; `stack path --stack-root` is unchanged.
-
-### B7. search.nix: stop reading `programs.eza`, which is never enabled
-
-**Where:** `home-modules/base/search.nix:9`, `home-modules/base/search.nix:66`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** `eza = getExe config.programs.eza.package;` and `${eza} ${lib.strings.concatStringsSep " " config.programs.eza.extraOptions} --grid "$1"`. No module enables `programs.eza` (grep; evaluates false on f12, root and darwin), so `extraOptions` is always `[]` and the interpolation produces an empty string. eza is installed from base/packages.nix, and `config.programs.eza.package` and `pkgs.eza` evaluate to the same outPath. This is a dead coupling to a disabled module.
-
-**Fix:** Line 9 -> `eza = getExe pkgs.eza;`; line 66 -> `${eza} --grid "$1"`.
-
-**Verify:** The generated preview script contains `.../eza --grid "$1"` (the only difference is one collapsed space); fzf's directory preview still renders.
-
-### B8. Remove the empty home-configurations/.gitignore placeholder
-
-**Where:** `home-configurations/.gitignore:1`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** The file is 0 bytes and was added in e1b9be89 ("added gitignore to keep the dir"). The directory now tracks `anuramat-darwin.nix` and `anuramat-linux.nix`, so it no longer needs a placeholder, and `mapDir` in outputs.nix (lines 11-21) keeps only directories and `*.nix` entries, so outputs are unaffected.
-
-**Fix:** `git rm home-configurations/.gitignore`.
-
-**Verify:** `nix eval .#homeConfigurations --apply builtins.attrNames` is unchanged.
-
-### B9. lib.nix: remove the unreachable `{ }` secrets fallback
-
-**Where:** `home-modules/base/lib.nix:104`, `home-modules/base/lib.nix:109`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** `secrets = if osConfig != null then osConfig.age.secrets else if config ? age then config.age.secrets else { };`. home-modules/base is imported only by nixos-modules/base/default.nix:32 (where `osConfig` is set) and by the two home-configurations, both of which import `standalone`, which imports `inputs.agenix.homeManagerModules.default` (standalone.nix:4). So `config ? age` is always true there and the `{ }` branch is unreachable. It would not even work as a fallback: base/default.nix:14-15 dereferences `config.lib.secrets.uc3-totp.path` / `uc3-pw.path`, which would throw on `{ }`. It is a silent fallback, which the global instructions forbid.
-
-**Fix:** Replace lines 104-110 with `secrets = if osConfig != null then osConfig.age.secrets else config.age.secrets;`.
-
-**Verify:** `nix flake check` (host-* and home-* checks) evaluates; the f12 and anuramat-linux activation package drvPaths are unchanged.
-
-### B10. Drop wl-clip-persist: it is never started and noctalia already keeps the clipboard
-
-**Where:** `home-modules/heavy-linux/packages.nix:36`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** `wl-clip-persist # otherwise clipboard contents disappear on exit` only helps while running as a daemon. Its systemd service lived in desktop/clipboard.nix, which 027da08a (`noctalia: init`) deleted, and nothing else starts it (this line is the only reference in the repo). In the pinned noctalia source, `clipboardKeepFromClosedApps` defaults to true (src/config/config_types.h:1080), application_services.cpp:395-397 applies it regardless of whether history is enabled, and `adoptOrphanedSelection` in clipboard_service.cpp re-offers the selection after its owner exits. Noctalia runs on every heavy-linux host, so the comment is false and the package is dead.
-
-**Fix:** Delete line 36.
-
-**Verify:** `grep -rn wl-clip-persist home-modules` is empty; after a rebuild, copy text from an app, close the app and paste elsewhere: the contents are still there.
-
-### B11. obs.nix: drop the tuna plugin config, the plugin was removed
-
-**Where:** `home-modules/heavy-linux/gui/obs.nix:13`, `home-modules/heavy-linux/gui/obs.nix:1`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** `"obs-studio/plugin_config/tuna/outputs.json".text = lib.generators.toJSON { } tunaCfg;` (inside the `xdg.configFile` block, lines 13-26) configures the obs-tuna plugin. Commit 96fbb203 removed `obs-tuna # song info, not really using since waybar shows the song` from `plugins`, and the current list (lines 5-10) has no tuna, so nothing reads the file. `lib` is used only in that block.
-
-**Fix:** Delete the whole `xdg.configFile = let tunaCfg = ...; in { ... };` block (lines 13-26) and change line 1 to `{ pkgs, ... }:`.
-
-**Verify:** `just lint` (deadnix/statix) is clean for obs.nix; `nix eval .#nixosConfigurations.anuramat-f12.config.home-manager.users.anuramat.xdg.configFile --apply 'f: f ? "obs-studio/plugin_config/tuna/outputs.json"'` is false.
-
-### B12. Python/YAML: drop no-op config (empty files, default-valued options, a stray version pin)
-
-**Where:** `home-modules/heavy/lang/python.nix:10`, `home-modules/heavy/lang/python.nix:15`, `home-modules/heavy/lang/python.nix:17`, `home-modules/heavy/lang/python.nix:23`, `home-modules/heavy/lang/python.nix:28`, `home-modules/heavy/lang/yaml.nix:7`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** Each of these does nothing:
-- `PYTHONSTARTUP = "${config.xdg.configHome}/python/pythonrc";` points at `"python/pythonrc".text = "";`. `git show 3bede892` shows the file used to hold a readline-history XDG shim; it was emptied when `PYTHON_HISTORY` (python3 is 3.13) took over, and nothing else references it.
-- `"ipython/profile_default/startup/00-default.py".text = "";` is an empty startup script; IPython creates `profile_default` itself.
-- `matplotlib.config = { };` is the Home Manager default.
-- `"yamlfmt/yamlfmt.yaml".text = toYAML { };` renders `{}`, which equals yamlfmt's defaults, and no tool passes `-conf` pointing at it (nixvim misc.nix:63 just runs `yamlfmt`).
-- `python313Packages.ptpython` pins a version, unlike every other `python3Packages.*` use (lang/packages.nix:46,56, jupyter.nix:4); with python3 at 3.13 it is the same derivation as `python3Packages.ptpython`.
-
-**Fix:**
-- python.nix: delete line 10 (`PYTHONSTARTUP = ...`) and the whole `xdg.configFile = { ... };` block (lines 14-19).
-- python.nix: replace the matplotlib block with `matplotlib.enable = true;`.
-- python.nix: change line 28 to `python3Packages.ptpython`.
-- yaml.nix: delete lines 7-10 (the `# YAML formatter configuration` comment, the `"yamlfmt/yamlfmt.yaml".text = toYAML { };` entry and the blank line). Keep `toYAML`, which the yamllint config still uses.
-
-**Verify:** `nix eval .#nixosConfigurations.anuramat-f12.config.home-manager.users.anuramat.home.sessionVariables --apply 'v: v ? PYTHONSTARTUP'` is false; `python3` and `ipython` start without errors; `yamlfmt -lint` on a YAML file behaves the same.
-
-### B13. agents: drop the never-exercised null filter in `prependFrontmatter`
-
-**Where:** `home-modules/heavy-linux/agents/default.nix:34`, `home-modules/heavy-linux/agents/default.nix:10`, `home-modules/heavy-linux/agents/frontends/codex.nix:21`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** `fields |> filterAttrs (n: v: v != null)` never filters anything. The only callers pass `{ inherit (v) description; }` (claude.nix:56, omp.nix:14) or `{ name = n; inherit (v) description; }` (codex.nix:21-24), and both commands in commands.nix define string descriptions; a missing description is an eval error, not null. `filterAttrs` is used only on line 34. In a scratch copy without the filter, the HM activationPackage drvPaths were unchanged on all hosts.
-
-**Fix:** Delete line 34 and remove `filterAttrs` from the `inherit (lib)` list on line 10.
-
-**Verify:** The anuramat-bgm5 HM `home.activationPackage.drvPath` is unchanged; `just lint` passes.
-
-### B14. Drop duplicate enables (web-devicons, programs.less) and flash's bogus `grammars` key
-
-**Where:** `nixvim-modules/heavy/misc.nix:25`, `nixvim-modules/base/ui.nix:4`, `home-modules/base/bash/default.nix:124`, `home-modules/base/git/difft.nix:31`, `nixvim-modules/heavy/misc.nix:44`, `nixvim-modules/heavy/misc.nix:3`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:**
-- `web-devicons.enable = true;` at nixvim-modules/heavy/misc.nix:25 repeats nixvim-modules/base/ui.nix:4, which carries the explanatory comment (`# diffview pulls this in anyway; nixvim deprecated the implicit enable`) and is needed by base's diffview (base/editing.nix:22). heavy is only ever used on top of base (`packages.neovim` in outputs.nix, home-modules/heavy/editor.nix).
-- `less = { enable = true; };` at home-modules/base/bash/default.nix:124-126 repeats home-modules/base/git/difft.nix:31-37, which is in the same always-imported base layer and both enables less and sets its `config`.
-- In the same misc.nix, `flash.settings.modes.treesitter.grammars = [ pkgs.vimPlugins.nvim-treesitter-parsers.todotxt ];` (line 44) is not a flash option: `grammars` appears nowhere in flash.nvim's Lua or README, so it only embeds a store path into flash's setup table (the generated flash config contains it today). It came from b994cc55, which mis-nested other options the same way. The todotxt grammar is already installed through the default `plugins.treesitter.grammarPackages` (eval: `tree-sitter-todotxt-0.0.0+rev=3937c5c`). With it gone, the `pkgs` argument (line 3) is unused.
-
-This item covers only the duplicated enables. The duplicated `home.packages` entries (`git`, `less`, `tmux` in base, `statix`/`deadnix` in heavy) are a separate, disputed change, see H8; its fix also deletes the same bash/default.nix less block, so whichever lands first takes it.
-
-**Fix:**
-- nixvim-modules/heavy/misc.nix: delete line 25 (`web-devicons.enable = true;`), line 44 (`grammars = [ ... ];`) and `pkgs,` from the module arguments (line 3).
-- home-modules/base/bash/default.nix: delete the `less = { enable = true; };` block (lines 124-126) inside `programs`.
-
-**Verify:** `nix eval .#nixosConfigurations.anuramat-f12.config.home-manager.users.anuramat.programs.less.enable` is still true; `nix eval --raw .#packages.x86_64-linux.neovim.config.plugins.flash.luaConfig.content | grep -c grammars` returns 0; `nix eval --json .#packages.x86_64-linux.neovim.config.plugins.treesitter.grammarPackages --apply 'ps: builtins.any (p: builtins.match ".*todotxt.*" p.name != null) ps'` is true; `just lint` (deadnix) passes; `nix flake check` passes, including the neovim and neovim-minimal checks.
-
-### B15. nix.nix: drop `lsp.servers.statix`, statix has no LSP mode
-
-**Where:** `nixvim-modules/heavy/lang/nix.nix:19`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** `lsp.servers = { statix.enable = true; ... }`. lspconfig 2.9.0's lsp/statix.lua sets `cmd = { 'statix', 'check', '--stdin' }`, and statix 0.5.8 has no LSP subcommand (`statix --help`: check/dump/explain/fix/list). Fed an LSP initialize message, it prints Nix syntax errors and exits 1. Headless test on a .nix buffer: `vim.lsp.is_enabled('statix')` is true and lsp.log shows `Starting RPC client { cmd = { "statix", "check", "--stdin" } }`, yet only null-ls, nil_ls and copilot attach. statix is already covered by nvim-lint (nix.nix:7-10, diagnostics) and none-ls (nix.nix:15-17, code actions), which keep it in extraPackages, so `config.tools` is unchanged.
-
-**Fix:** Delete `statix.enable = true;` from `plugins.lsp.servers` (line 19). Keep the `lintersByFt` and none-ls `code_actions` statix entries.
-
-**Verify:** `nix eval --raw .#packages.x86_64-linux.neovim.config.content | grep -n statix` shows only the null-ls and lint entries, with no `vim.lsp.enable("statix")`; `nix build .#checks.x86_64-linux.neovim`.
-
-### B16. fzf.nix: `fd_opts` under the `grep` picker is never read
-
-**Where:** `nixvim-modules/heavy/fzf.nix:45-57`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** `let fd_opts = "-c never -t f -t l -HL"; in { grep = { ...; inherit fd_opts; ... }; files = { inherit fd_opts; }; ... }`. In fzf-lua 0.0.2648 only the files provider reads `fd_opts` (providers/files.lua:36,39). config.lua:732 only rewrites it when `render_crlf` is set, which defaults to true only for the command/search history pickers (defaults.lua:1936,1955), not grep; the grep defaults (defaults.lua:957-978) use `rg_opts`/`grep_opts`. So `grep.fd_opts` does nothing.
-
-**Fix:** Drop the `let fd_opts = ...; in` wrapper and the `inherit fd_opts;` under `grep`, and set `files.fd_opts = "-c never -t f -t l -HL";` directly in `settings`. Can be combined with the line-61 change in G6.
-
-**Verify:** `nix eval --raw .#packages.x86_64-linux.neovim.config.content | grep -n fd_opts` shows a single occurrence, under `files`.
-
-### B17. go.nix: drop gopls settings that are defaults or no longer exist
-
-**Where:** `nixvim-modules/heavy/lang/go.nix:6`, `nixvim-modules/heavy/lang/go.nix:17-40`
-**Effort:** trivial -- **Risk:** low
-
-**Problem:** Checked against `gopls api-json` from the pinned gopls 0.22.0:
-- All seven `hints.* = false` entries are defaults (`hints` defaults to `{}`, every key `default=false`).
-- In `codelenses`, `gc_details` no longer exists (valid lenses: generate, regenerate_cgo, test, run_govulncheck, tidy, upgrade_dependency, vendor, vulncheck), and the other five (generate, regenerate_cgo, tidy, upgrade_dependency, vendor) default to true.
-- In `analyses`, `unusedvariable` and `unusedwrite` default to true and `useany` is no longer an analyzer; only `shadow = true` (default false) does anything.
-- `go.ftp.et = false` repeats the runtime ftplugin, which already does `setlocal noexpandtab` under the default `g:go_recommended_style` (runtime/ftplugin/go.vim:32-33; headless `verbose setlocal et?` reports it as last set there). `g:go_recommended_style` is not set anywhere in the repo.
-
-**Fix:**
-- Change `go.ftp = { et = false; ts = 4; };` to `go.ftp.ts = 4;`.
-- In `settings.gopls`, replace the `analyses` block with `analyses.shadow = true;` and delete the whole `codelenses` and `hints` blocks. Keep `gofumpt`, `semanticTokens`, `staticcheck` and `usePlaceholders`.
-
-**Verify:** `$(nix eval --raw .#packages.x86_64-linux.neovim.config.plugins.lsp.servers.gopls.package.outPath)/bin/gopls api-json | jq` confirms the defaults; `nix build .#checks.x86_64-linux.neovim`; in a .go buffer, `:set et? ts?` shows `noexpandtab tabstop=4`.
-
-### B18. basic.nix: drop `g:nonfiles` entries that match no installed plugin
-
-**Where:** `nixvim-modules/base/basic.nix:24-25`, `nixvim-modules/base/basic.nix:27`, `nixvim-modules/base/basic.nix:29`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** `nonfiles` (read only by `LM_STL` in base.vim:77) includes `"lazy"`, `"NvimTree"` and `"alpha"`, but no lazy.nvim, nvim-tree or alpha-nvim is enabled anywhere in nixvim-modules (filemgr.nix uses neo-tree and oil). `"lspinfo"` no longer exists either: nvim-lspconfig 2.9.0 defines `:LspInfo` as an alias for `:checkhealth vim.lsp` (plugin/lspconfig.lua:76). Grepping the installed vim-pack-dir finds no plugin that sets any of these four filetypes. The rest are live (`NeogitStatus` and `NeogitPopup` are set by neogit, `null-ls-info` by none-ls info.lua:203).
-
-**Fix:** Remove `"lazy"`, `"lspinfo"`, `"NvimTree"` and `"alpha"` from `nonfiles` (basic.nix:20-32).
-
-**Verify:** `nix eval --json .#packages.x86_64-linux.neovim-minimal.config.globals.nonfiles` no longer lists them; `nix build .#checks.x86_64-linux.neovim-minimal`.
-
-### B19. lua.nix: drop `telemetry`, lua-language-server removed it
-
-**Where:** `nixvim-modules/heavy/lang/lua.nix:15-17`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** `telemetry = { enable = false; };`. The pinned lua-language-server 3.18.1 has no telemetry setting: changelog.md:670 records "`CHG` remove telemetry" (2023-1-16), and `telemetry` has 0 matches in script/config/template.lua and anywhere under script/. While checking this, a separate bug showed up: nixvim already wraps lua_ls settings as `{ Lua = cfg; }` (plugins/lsp/language-servers/default.nix:41-42 in the nixvim input), so the generated config is `settings = { Lua = { Lua = { format..., runtime..., telemetry... } } }` and the whole block, including `runtime.version = "LuaJIT"` and `format.enable = false`, is ignored today.
-
-**Fix:**
-- Delete the `telemetry = { enable = false; };` block (lines 15-17).
-- Follow-up that changes behavior, so it needs a separate OK: drop the extra `Lua = { ... }` level so it reads `settings = { format.enable = false; runtime.version = "LuaJIT"; };`, which makes lua_ls actually use the LuaJIT runtime and stop formatting.
-
-**Verify:** `grep -c telemetry $(nix eval --raw .#packages.x86_64-linux.neovim.config.plugins.lsp.servers.lua_ls.package.outPath)/share/lua-language-server/script/config/template.lua` returns 0; `nix build .#checks.x86_64-linux.neovim`.
-
-### B20. typst.nix: drop `extraPackages = [ pkgs.typstyle ]`, conform auto-install already adds it
-
-**Where:** `nixvim-modules/heavy/lang/typst.nix:3`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** `extraPackages = [ pkgs.typstyle ];`. conform `autoInstall` is on (heavy/default.nix:39) and resolves formatter names via `pkgs.${name}` (nixvim conform auto-install), so the `typst = [ "typstyle" "injected" ]` entry already adds typstyle to extraPackages (conform default.nix:265). Eval shows `typstyle-0.14.4` twice in extraPackages; without line 3 it appears once, and `config.tools` (consumed by home-modules/heavy/editor.nix) is unchanged.
-
-**Fix:** Delete line 3. `pkgs` stays, since it is still used for chromium.
-
-**Verify:** `nix eval --json .#packages.x86_64-linux.neovim.config.tools --apply 'ps: map (p: p.pname or p.name) (builtins.filter (p: p != null) ps)'` still lists typstyle; `just lint` (deadnix) passes.
-
-### B21. ui.nix: colorizer's `user_default_options.yaml` is not an option
-
-**Where:** `nixvim-modules/base/ui.nix:19`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** `user_default_options = { css = true; yaml = true; };`. The pinned nvim-colorizer.lua (2026-04-07) has no `yaml` option: it is absent from `plugin_user_default_options` (lua/colorizer/config.lua:78-111) and from the alias table (:1158-1162), and no Lua file in the plugin mentions yaml. nixvim passes `user_default_options` through unchanged, and the default `filetypes = { "*" }` (config.lua:370) already covers yaml buffers.
-
-**Fix:** Delete `yaml = true;` (line 19).
-
-**Verify:** `grep -rn yaml $(nix eval --raw .#packages.x86_64-linux.neovim.config.plugins.colorizer.package.outPath)/lua` returns nothing; colors still highlight in a .yaml buffer.
-
-### B22. sh.nix: bashls shfmt settings are unreachable
-
-**Where:** `nixvim-modules/heavy/lang/sh.nix:39-46`
-**Effort:** trivial -- **Risk:** low
-
-**Problem:** `bashls = { enable = true; settings.bashIde.shfmt = { binaryNextLine = true; caseIndent = true; simplifyCode = true; }; };` repeats the conform shfmt `prepend_args` on lines 28-32, but bashls never formats:
-- Filetype detection gives `ft=sh` for .sh and .bash files and for both bash and sh shebangs (checked headless), so the auto-installed conform shfmt formatter always applies, and conform's `lsp_format = "fallback"` (heavy/default.nix:52) uses LSP only when no conform formatter is available.
-- bash-language-server 5.6.0 advertises only `documentFormattingProvider` (server.js:107), and Neovim sets the LSP `formatexpr` only for `rangeFormatting` (runtime lua/vim/lsp.lua:857-861), so `gq` cannot reach bashls either.
-- Neovim has no default LSP-format keymap and the repo has no `vim.lsp.buf.format` call; the only remaining paths are a manual `:lua vim.lsp.buf.format()` and otter's explicit export command.
-
-**Fix:** Reduce the block to `lsp.servers.bashls.enable = true;`. The conform shfmt `prepend_args` stay the single source of the shfmt flags.
-
-**Verify:** `grep -rn 'buf.format' nixvim-modules` is empty; `nix build .#checks.x86_64-linux.neovim`; format-on-save of a .sh file is unchanged (shfmt through conform).
-
-## C. Options set to their defaults, duplicated or deprecated
-
-### C1. bgm5: `systemd.watchdog.runtimeTime` was renamed
-
-**Where:** `nixos-configurations/anuramat-bgm5/default.nix:52`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** `systemd.watchdog.runtimeTime = "2m";` produces the only NixOS evaluation warning across all four hosts: "The option `systemd.watchdog.runtimeTime' ... has been renamed to `systemd.settings.Manager.RuntimeWatchdogSec'." nixpkgs `nixos/modules/system/boot/systemd.nix:930-931` has `mkRenamedOptionModule [ "systemd" "watchdog" "runtimeTime" ] [ "systemd" "settings" "Manager" "RuntimeWatchdogSec" ]`, so the old name only works through the rename shim. Checked in a scratch copy: with the new name, the warnings list is empty and the bgm5 toplevel drvPath is identical.
-
-**Fix:** replace line 52 with `systemd.settings.Manager.RuntimeWatchdogSec = "2m";`. Keep the comment on line 51 (`# hard-resets the machine if PID 1 is dead for 2m`).
-
-**Verify:**
-- `nix eval --json .#nixosConfigurations.anuramat-bgm5.config.warnings` returns `[]`.
-- The bgm5 toplevel drvPath is unchanged. A plain drvPath comparison does not work for any edit, because the flake's own source path ends up in `nix.registry`/`nix.nixPath` (`nixos-modules/base/nix.nix:35-37`) and the git revision in `system.configurationRevision`. Neutralize those (checked: an edit that changes nothing else keeps the drvPath identical), run before and after the change, and compare:
-
-```sh
-drv() { nix eval --raw --impure --expr "let f = builtins.getFlake \"git+file://$PWD\"; lib = f.inputs.nixpkgs.lib; in (f.nixosConfigurations.$1.extendModules { modules = [ { nix.registry = lib.mkForce { }; nix.nixPath = lib.mkForce [ ]; system.configurationRevision = lib.mkForce null; } ]; }).config.system.build.toplevel.drvPath"; }
-for h in anuramat-bgm5 anuramat-f12 anuramat-root anuramat-t480; do echo "$h $(drv $h)"; done
-```
-
-### C2. gitsigns: replace the deprecated `next_hunk`/`prev_hunk` with `nav_hunk`
-
-**Where:** `nixvim-modules/heavy/git.nix:51-52`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** `(setAction "]h" "next_hunk")` and `(setAction "[h" "prev_hunk")` generate `<cmd>Gitsigns next_hunk<cr>` and `<cmd>Gitsigns prev_hunk<cr>`. gitsigns 2.1.0 marks both `@deprecated use [[gitsigns.nav_hunk()]]` (`actions.lua:513,533`; the help marks them DEPRECATED); they survive only as thin wrappers around `nav_hunk`. The command form `Gitsigns nav_hunk next` is supported: `C.nav_hunk(args)` calls `M.nav_hunk(args[1], args)`.
-
-**Fix:** change the two lines to `(setAction "]h" "nav_hunk next")` and `(setAction "[h" "nav_hunk prev")`. In the generated keymap table only the action and desc strings change.
-
-**Verify:** `nix eval --raw .#packages.x86_64-linux.neovim.config.content | grep -o 'Gitsigns nav_hunk [a-z]*'` shows `next` and `prev`; `nix build .#checks.x86_64-linux.neovim`; `]h`/`[h` still jump between hunks in a modified file.
-
-### C3. treesitter: use nixvim's top-level `highlight.enable` instead of the legacy `settings.highlight.enable`
-
-**Where:** `nixvim-modules/base/treesitter.nix:9-11`
-**Effort:** trivial -- **Risk:** low
-
-**Problem:** the module sets `treesitter = { enable = true; settings = { highlight.enable = true; }; };`. The pinned nvim-treesitter is the main branch: it has no `nvim-treesitter.configs` module, and its `setup()` only reads `install_dir`. nixvim's treesitter module targets main and has a top-level `plugins.treesitter.highlight.enable` (it currently evaluates to `false`); `settings.highlight.enable` is honored only through a transitional fallback (`plugins/by-name/treesitter/default.nix:272-276`: "TODO: Added 2025-12-18 Check both legacy and new api options", "Add warning after transition period"). The fallback also forwards the key into the generated `require'nvim-treesitter'.setup({ highlight = { enable = true } })`, which main ignores.
-
-**Fix:** replace `settings = { highlight.enable = true; };` with `highlight.enable = true;`. Checked in a scratch copy: the FileType highlight autocmd is unchanged, no warnings appear, and the only diff in the generated Lua is `setup({ highlight = { enable = true } })` -> `setup({ })`. A `setup({ })` call remains because treesitter-textobjects adds an empty `textobjects` key; it is harmless. Otter's treesitter check (`treesitter.highlight.enable || ...`) still passes.
-
-**Verify:** `nix eval .#packages.x86_64-linux.neovim.config.plugins.treesitter.highlight.enable` returns `true`; `nix eval --raw .#packages.x86_64-linux.neovim.config.plugins.treesitter.luaConfig.content | grep setup` no longer shows `highlight`; `nix build .#checks.x86_64-linux.neovim-minimal`; in a `.nix` buffer, `:lua print(vim.treesitter.highlighter.active[vim.api.nvim_get_current_buf()] ~= nil)` prints `true`.
-
-### C4. oil: rename `experimental_watch_for_changes` and drop options at their defaults
-
-**Where:** `nixvim-modules/heavy/filemgr.nix:9`, `nixvim-modules/heavy/filemgr.nix:18-19`, `nixvim-modules/heavy/filemgr.nix:23-32`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** `experimental_watch_for_changes = true;` only works through oil's compatibility shim (oil 2.15.0 `config.lua:433-436`: "This option was renamed because it is no longer experimental"); the current name is `watch_for_changes`. Three more settings repeat oil 2.15.0's defaults: `default_file_explorer = true` (`config.lua:4`), `constrain_cursor = "editable"` (`:51`) and `view_options.sort = [ [ "type" "asc" ] [ "name" "asc" ] ]` (`:97-101`). nixvim's oil module has no special handling for any of these keys.
-
-**Fix:** in the oil `settings`:
-- delete `default_file_explorer = true;` (line 9) and `constrain_cursor = "editable";` (line 18);
-- rename line 19 to `watch_for_changes = true;`;
-- delete the whole `sort = [ ... ];` list (lines 23-32).
-
-Keep `columns`, `delete_to_trash`, `skip_confirm_for_simple_edits`, `show_hidden` and `natural_order`. Checked headless after the change: `watch_for_changes = true`, `default_file_explorer = true`, `constrain_cursor = "editable"` and the sort order are unchanged at runtime.
-
-**Verify:** `nix eval --raw .#packages.x86_64-linux.neovim.config.content | grep -o 'require(.oil.).setup.*'` shows `watch_for_changes = true` and none of the removed keys; `nix build .#checks.x86_64-linux.neovim`; `:lua print(vim.inspect(require("oil.config").view_options.sort))` still prints `{ { "type", "asc" }, { "name", "asc" } }`.
-
-### C5. NixOS options set to their defaults or implied by another module
-
-**Where:** `nixos-modules/local/rice.nix:12`, `nixos-modules/local/default.nix:108-110`, `nixos-modules/local/containers.nix:4`, `nixos-modules/base/net.nix:16`, `nixos-modules/base/net.nix:69`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** each of these restates a default or a value another module already sets (checked against the evaluated option defaults and the nixpkgs/stylix sources):
-- `stylix.autoEnable = true;` -- default `true` (stylix `target.nix`).
-- `wireplumber = { enable = true; };` -- default is `config.services.pipewire.enable`, which the same `pipewire` block sets to `true` (line 102).
-- `containers.enable = true; # common container config files in /etc/containers` -- the podman module sets `virtualisation.containers.enable = true` under `mkIf cfg.enable`, and the `podman` block right below sets `enable = true` (line 6).
-- `enable = true;` inside `networking.firewall` -- default `true`.
-- `ports = [ 22 ];` in `services.openssh` -- default `[ 22 ]`.
-
-Deleting all five in a scratch copy keeps the toplevel drvPath of all four hosts identical.
-
-Not included: `openFirewall = false;` at `nixos-configurations/anuramat-bgm5/llama.nix:57` is also the llama-cpp default, but it sits next to `host = "0.0.0.0"` and the tailscale-only port opening at `llama.nix:66`, so it documents a deliberate security choice. Keep it.
-
-**Fix:** delete:
-- `nixos-modules/local/rice.nix:12` (`stylix.autoEnable = true;`) and the blank line after it;
-- the `wireplumber = { enable = true; };` block at `nixos-modules/local/default.nix:108-110`;
-- `nixos-modules/local/containers.nix:4`. Note: this removes its trailing comment `# common container config files in /etc/containers` along with it;
-- `enable = true;` inside `firewall` at `nixos-modules/base/net.nix:16`;
-- `ports = [ 22 ];` at `nixos-modules/base/net.nix:69`.
-
-**Verify:** the neutralized toplevel drvPath from C1 is unchanged for all four hosts. Spot-check on f12: `nix eval --json .#nixosConfigurations.anuramat-f12.config --apply 'c: [ c.stylix.autoEnable c.services.pipewire.wireplumber.enable c.virtualisation.containers.enable c.networking.firewall.enable c.services.openssh.ports ]'` still gives `[true,true,true,true,[22]]`.
-
-### C6. cache.nixos.org substituter and key duplicate the NixOS defaults
-
-**Where:** `nixos-modules/base/nix.nix:12`, `nixos-modules/base/nix.nix:55`
-**Effort:** trivial -- **Risk:** low
-
-**Problem:** the `caches` list has `"https://cache.nixos.org"` and `trusted-public-keys` has `"cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="`, but nixpkgs `nixos/modules/config/nix.nix:371,373` already adds the key and `substituters = mkAfter [ "https://cache.nixos.org/" ]`. As a result, the evaluated f12 `nix.settings.substituters` contains both `https://cache.nixos.org` and `https://cache.nixos.org/`, and `trusted-public-keys` has the cache.nixos.org key twice. List order does not matter: priority comes from each cache's `nix-cache-info`, as the comment at `nixos-modules/base/hosts.nix:18` already notes (`cache.nixos.org=40, cachix=41`). cache.iog.io and cache.nixos.org are both priority 40, and iog still sorts first after the change. The URL also drops out of `trusted-substituters`, but Nix treats `substituters` entries as trusted, so access is unaffected.
-
-**Fix:** in `nixos-modules/base/nix.nix`, delete `"https://cache.nixos.org"` from `caches` (line 12) and `"cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="` from `trusted-public-keys` (line 55). Keep the `# TODO add missing keys to trusted-public-keys` comment.
-
-**Verify:** `nix eval --json .#nixosConfigurations.anuramat-f12.config.nix.settings --apply 's: { inherit (s) substituters trusted-public-keys; }'` lists cache.nixos.org exactly once in each list (as `https://cache.nixos.org/` and the `cache.nixos.org-1:` key).
-
-### C7. `home-manager.extraSpecialArgs` is set twice in the base layer
-
-**Where:** `nixos-modules/base/default.nix:28-30`, `nixos-modules/base/home.nix:10-12`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** both files set `home-manager.extraSpecialArgs = { inherit inputs; };`, and `default.nix` imports `./home.nix`. `home.nix` holds the global Home Manager plumbing (`backupFileExtension`, `useGlobalPkgs`, `useUserPackages`), so the copy in `default.nix` is the redundant one. The option is attrs-typed, so both definitions merge to the same value. Checked in a scratch copy: with the `default.nix` copy removed, the toplevel drvPaths of all four hosts are identical. `inputs` is still used elsewhere in `default.nix`, so its argument list stays.
-
-**Fix:** delete the `extraSpecialArgs = { inherit inputs; };` attribute (lines 28-30) from the `home-manager` block in `nixos-modules/base/default.nix`; keep the one in `home.nix`.
-
-**Verify:** `nix eval .#nixosConfigurations.anuramat-bgm5.config.home-manager.extraSpecialArgs --apply builtins.attrNames` still gives `[ "inputs" "nixosConfig" ]` (`nixosConfig` is added by Home Manager itself); the neutralized toplevel drvPath from C1 is unchanged for all four hosts; `nix flake check` passes.
-
-### C8. Home Manager options at their defaults (firefox, gtk2, niri)
-
-**Where:** `home-modules/heavy-linux/gui/default.nix:36`, `home-modules/heavy-linux/gui/theme.nix:5`, `home-modules/heavy-linux/desktop/niri/default.nix:117`, `home-modules/heavy-linux/desktop/niri/default.nix:122-124`, `home-modules/heavy-linux/desktop/niri/default.nix:125`, `home-modules/heavy-linux/desktop/niri/default.nix:139`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** each of these restates the default:
-- `programs.firefox.package = pkgs.firefox;` -- HM's default is `pkgs.${defaultPackageName}`, which is `firefox` for stateVersion >= 19.09 (`mkFirefoxModule.nix:44-46,221`); the option default has the same drvPath as `pkgs.firefox`.
-- `gtk.gtk2.configLocation = "${config.xdg.configHome}/gtk-2.0/gtkrc";` -- HM's gtk2 module uses the XDG path when `home.preferXdgDirectories` is set, which base sets (`home-modules/base/default.nix:84`); the default evaluates to `/home/anuramat/.config/gtk-2.0/gtkrc`.
-- niri-flake `settings.nix` defaults: `xwayland-satellite.enable` is `optional types.bool true` (the `path` next to it is still needed, because niri's PATH override lacks xwayland-satellite); `spawn-at-startup = [ # { argv = [ ]; } ];` is `optional (listOf type) [ ]`; `overview.workspace-shadow.enable` is `optional types.bool true`; `focus-ring.width = 4` matches the borderish `optional float-or-int 4`. Nothing else in the repo sets these.
-
-Must stay: `focus-ring.enable = true` (niri-flake's `stylix.nix` sets it to `mkDefault false`), firefox `configPath` (its NOTE comment: it silences a stateVersion deprecation warning) and `gtk4.theme` (its default depends on `home.stateVersion`).
-
-**Fix:** delete:
-- `home-modules/heavy-linux/gui/default.nix:36` (`package = pkgs.firefox;`);
-- `home-modules/heavy-linux/gui/theme.nix:5` (`gtk2.configLocation = ...`); `config` stays in the arguments, since `gtk4.theme` uses it;
-- in `home-modules/heavy-linux/desktop/niri/default.nix`: line 117 (`enable = true;` inside `xwayland-satellite`, leaving `xwayland-satellite.path = lib.getExe pkgs.xwayland-satellite;`), lines 122-124 (`spawn-at-startup = [ # { argv = [ ]; } ];`), line 125 (`overview.workspace-shadow.enable = true;`) and line 139 (`width = 4;` in `focus-ring`). Keep `focus-ring`'s `enable = true;` and its `# active.color` comment.
-
-Note: deleting `spawn-at-startup` also removes its placeholder comment `# { argv = [ ]; }`; it is unused scaffolding.
-
-**Verify:** with `H=.#nixosConfigurations.anuramat-f12.config.home-manager.users.anuramat`, the outputs of `nix eval --raw $H.programs.niri.finalConfig`, `nix eval $H.gtk.gtk2.configLocation` and `nix eval --raw $H.programs.firefox.finalPackage.drvPath` are identical before and after the change.
-
-### C9. pinentry-auto: unused `runtimeInputs` and a `program` equal to the default
-
-**Where:** `home-modules/linux.nix:26`, `home-modules/linux.nix:29-32`, `home-modules/linux.nix:36`, `home-modules/linux.nix:38`, `home-modules/linux.nix:45`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** the wayland branch of `services.gpg-agent.pinentry` builds `pinentry-auto` with `runtimeInputs = [ pkgs.wayprompt pkgs.pinentry-tty ]`, but the script execs `${pkgs.wayprompt}/bin/pinentry-wayprompt` and `${pkgs.pinentry-tty}/bin/pinentry-tty` by absolute path, so the extra PATH entries are never used (neither pinentry spawns helpers). It then sets `program = name;`, but HM's `gpg-agent.nix:348` already defaults `pinentry.program` to `mkOptionDefault (package.meta.mainProgram or "pinentry")`, and `writeShellApplication` sets `meta.mainProgram` to `name` (evaluated on f12: `"pinentry-auto"`). With both gone, the `let name = ...; package = ...; in` wrapper has no purpose. The tty branch's explicit `program = "pinentry-tty"` is needed, because `pkgs.pinentry-tty.meta.mainProgram` is `"pinentry"`.
-
-**Fix:** replace the wayland branch with the following; keep the DISPLAY comment and the absolute exec paths, and leave the tty branch unchanged:
-
-```nix
-if config.gui == "wayland" then
-  {
-    package = pkgs.writeShellApplication {
-      name = "pinentry-auto";
-      # DISPLAY check so that it still works over ssh
-      text = ''
-        if [ -v DISPLAY ]; then
-          exec ${pkgs.wayprompt}/bin/pinentry-wayprompt "$@"
-        else
-          exec ${pkgs.pinentry-tty}/bin/pinentry-tty "$@"
-        fi
-      '';
-    };
-  }
-```
-
-**Verify:** `nix eval .#nixosConfigurations.anuramat-f12.config.home-manager.users.anuramat.services.gpg-agent.pinentry.program` is still `"pinentry-auto"`; the generated `gpg-agent.conf` `pinentry-program` line still points at `.../bin/pinentry-auto`; `nix build .#nixosConfigurations.anuramat-f12.config.home-manager.users.anuramat.services.gpg-agent.pinentry.package` succeeds (shellcheck runs as part of `writeShellApplication`).
-
-### C10. completion: blink-cmp sources and copilot `suggestion.enabled` at their defaults
-
-**Where:** `nixvim-modules/heavy/completion.nix:38-47`, `nixvim-modules/heavy/completion.nix:62`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** `blink-cmp.settings.sources.default = [ "lsp" "path" "snippets" "buffer" ];` is blink.cmp 1.10.2's default (`lua/blink/cmp/config/sources.lua:48`), and nixvim's blink module adds no sources of its own. `copilot-lua.settings.suggestion.enabled = true;` is copilot.lua's default (`config/suggestion.lua:23`). Checked headless after the change: blink's `sources.default` is unchanged and copilot's `suggestion.enabled` is `true`.
-
-**Fix:** reduce the blink-cmp block to `blink-cmp.enable = true;` (dropping `settings`, lines 38-47) and delete `enabled = true;` from `copilot-lua.settings.suggestion` (line 62).
-
-**Verify:** `nix build .#checks.x86_64-linux.neovim`; `:lua print(vim.inspect(require("blink.cmp.config").sources.default))` still prints `{ "lsp", "path", "snippets", "buffer" }`; Copilot still auto-suggests in insert mode.
-
-### C11. lsp `inlayHints = false` and otter `handle_leading_whitespace = true` at their defaults
-
-**Where:** `nixvim-modules/heavy/default.nix:60`, `nixvim-modules/heavy/default.nix:71-73`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** `plugins.lsp.inlayHints = false;` is the default: nixvim aliases it to `lsp.inlayHints.enable` (`plugins/lsp/default.nix:96-98,206`), an `mkEnableOption`, and both defaults evaluate to `false`. `otter.settings.handle_leading_whitespace = true;` is otter 2.14.5's default (`lua/otter/config.lua:65`). The only change in the generated Lua is `require('otter').setup({ handle_leading_whitespace = true })` -> `require('otter').setup({ })`.
-
-**Fix:** delete `inlayHints = false;` (line 60) and otter's `settings = { handle_leading_whitespace = true; };` (lines 71-73). Keep the `# TODO enable for typst?` comment and `autoActivate = false; # TODO`.
-
-**Verify:** `nix eval .#packages.x86_64-linux.neovim.config.plugins.lsp.inlayHints` is still `false`; `nix eval --raw .#packages.x86_64-linux.neovim.config.content | grep -n "require('otter').setup"` shows `setup({ })`; `nix build .#checks.x86_64-linux.neovim`.
-
-### C12. treesitter-context: four settings at the plugin defaults
-
-**Where:** `nixvim-modules/base/treesitter.nix:21`, `nixvim-modules/base/treesitter.nix:24`, `nixvim-modules/base/treesitter.nix:26-27`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** `enable = true; line_numbers = true; trim_scope = "outer"; mode = "cursor";` match nvim-treesitter-context's `default_config` exactly (`lua/treesitter-context/config.lua:50-60`), which is merged with `tbl_deep_extend('force')`. Only `max_lines`, `min_window_height` and `multiline_threshold` differ from the defaults. Checked headless after the change: `enable`, `line_numbers`, `trim_scope`, `mode`, `max_lines` and `multiline_threshold` are identical (`true true outer cursor 1 1`).
-
-**Fix:** reduce the treesitter-context `settings` (lines 20-28) to `max_lines = 1; min_window_height = 20; multiline_threshold = 1;`.
-
-**Verify:** `nix build .#checks.x86_64-linux.neovim-minimal`; the context line still shows, with a line number, in cursor mode.
-
-### C13. base.vim: options set to Neovim defaults
-
-**Where:** `nixvim-modules/base/base.vim:30`, `nixvim-modules/base/base.vim:33`, `nixvim-modules/base/base.vim:47-48`, `nixvim-modules/base/base.vim:55`, `nixvim-modules/base/base.vim:57`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** `nvim --clean` on the pinned Neovim (e728c10) reports these as defaults: `foldenable=true` (`se fen ...`), `incsearch=true` (`se incsearch ...`), `cmdheight=1` (`se cmdheight=1`), `conceallevel=0` (`se cole=0`), `scrolloff=0` (`se scrolloff=0 ...`) and `cursorlineopt=both` (`se cursorline cursorlineopt=both`). base.vim runs first (`mkBefore`), and nothing earlier in init.lua sets these options (only `formatoptions`/`termguicolors`). Checked headless after the change: all six values and `sidescrolloff=30` are identical.
-
-**Fix:** in `nixvim-modules/base/base.vim`:
-- line 30 -> `se fdm=indent foldlevelstart=99 " overriden by fdl in modelines`;
-- line 33 -> `se ignorecase smartcase " search`;
-- delete lines 47 (`se cmdheight=1`) and 48 (`se cole=0`);
-- line 55 -> `se sidescrolloff=30`;
-- line 57 -> `se cursorline`.
-
-**Verify:** `nix build .#checks.x86_64-linux.neovim-minimal`; in the built Neovim, `:lua for _, o in ipairs({ "cmdheight", "incsearch", "foldenable", "cursorlineopt", "scrolloff", "conceallevel", "sidescrolloff" }) do print(o, vim.inspect(vim.o[o])) end` prints `1 true true "both" 0 0 30`.
-
-### C14. sh.nix: shfmt `"inherit" = true` is conform's default
-
-**Where:** `nixvim-modules/heavy/lang/sh.nix:27`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** `shfmt = { "inherit" = true; prepend_args = [ ... ]; };`. conform treats a nil `inherit` as true (`init.lua:707-710`: `if inherit == nil then inherit = true end`), so the override still extends the built-in shfmt formatter without it. Checked headless: `get_formatter_config('shfmt')` still works after the change, and the generated config only drops `inherit = true`.
-
-**Fix:** delete `"inherit" = true;` at `nixvim-modules/heavy/lang/sh.nix:27`.
-
-**Verify:** `nix build .#checks.x86_64-linux.neovim`; `:ConformInfo` in a `.sh` buffer still lists shfmt, and formatting still applies the prepended args (`--binary-next-line --case-indent --simplify`).
+**Verify:** `nix eval --raw .#packages.x86_64-linux.neovim.config.content | grep 'vim.lsp.config("lua_ls"'` shows a single `Lua = {` level; `nix build .#checks.x86_64-linux.neovim`.
 
 ## D. TODOs that can be resolved now
 
@@ -788,7 +304,7 @@ if config.gui == "wayland" then
 
 **Problem:** Three TODOs describe work that has already happened, and one comment is wrong:
 - `hosts.nix:1` `# TODO move` was added in 53a4dae9 (2025-08-14), when the file was a NixOS module at the repo root (`hosts.nix`). 2d2f5f74 moved it (R100) into `nixos-modules/default/` the same day; that directory is now `nixos-modules/base/`.
-- `nix.nix:9` `# TODO add missing keys to trusted-public-keys` comes from 25e850fd, when nixpkgs-python had no key. Today all 9 entries of `caches` have a key at `nix.nix:54-62` (cache.iog.io uses the `hydra.iohk.io` key). C6 removes the cache.nixos.org pair from both lists; the TODO is resolved either way.
+- `nix.nix:9` `# TODO add missing keys to trusted-public-keys` comes from 25e850fd, when nixpkgs-python had no key. Today every entry of `caches` has a key in `trusted-public-keys` (cache.iog.io uses the `hydra.iohk.io` key; cache.nixos.org and its key come from the NixOS defaults), so the TODO is resolved.
 - `root/web/default.nix:11` `# TODO: if this works, unboilerplate with a function` (3f56eccf, 2025-04-29) predates the `web.sites` option: `nixos-modules/base/web.nix` now builds vhosts, ACME certs and services through `vhostsFor`/`acmeCertsFor`/`systemdServicesFor` (d8da3fba).
 - `hosts.nix:37` `knownHostsFiles = ...; # agenix(?)/ssh host auth`: the only consumer is `net.nix:62` (`programs.ssh.knownHostsFiles`). agenix recipients come from `keys.*.knownHostsKeys` in `secrets/secrets.nix`, not from `config.lib.hosts`, so the `agenix(?)` part is wrong.
 
@@ -878,7 +394,7 @@ if config.gui == "wayland" then
 **Where:** `overlays/todo.py:256` -- `# TODO sort by date`, `overlays/todo.py:33`
 **Effort:** trivial -- **Risk:** low
 
-**Problem:** `merge()` is the git merge driver (`merge.todo.driver = "${lib.getExe pkgs.todo} merge %A %O %B"`, `home-modules/base/git/default.nix:77`). After computing `keep`, it walks `left_lines + right_lines` and appends each kept line once, so lines added only on the right land after all left lines regardless of their dates. Every line starts with an ISO `YYYY-MM-DD ` date (`date_wrap`, `DATE_PATTERN`). `get_date` (lines 33-37) extracts exactly that and has been unused since 74e50a1d (flagged as dead in B3, which keeps it if this fix lands). `result = sorted(keep)` would also work but reorders same-date tasks alphabetically, discarding an order set by hand through `todo edit` (which does not normalize); a stable sort by `get_date` keeps the merge order within a date.
+**Problem:** `merge()` is the git merge driver (`merge.todo.driver = "${lib.getExe pkgs.todo} merge %A %O %B"`, `home-modules/base/git/default.nix:77`). After computing `keep`, it walks `left_lines + right_lines` and appends each kept line once, so lines added only on the right land after all left lines regardless of their dates. Every line starts with an ISO `YYYY-MM-DD ` date (`date_wrap`, `DATE_PATTERN`). `get_date` (lines 33-37) extracts exactly that and has been unused since 74e50a1d (it was kept for this fix). `result = sorted(keep)` would also work but reorders same-date tasks alphabetically, discarding an order set by hand through `todo edit` (which does not normalize); a stable sort by `get_date` keeps the merge order within a date.
 
 **Fix:** Delete line 256 (`# TODO sort by date`) and add a stable sort after the loop:
 
@@ -1009,7 +525,7 @@ Inlining `mkPrompts` would duplicate the `mapAttrs'` at both call sites; the rea
 - `frontends/claude.nix`: delete the `commands` let binding (lines 54-58) and `inherit (lib) mapAttrs;` (line 8, its only use), and write `xdg.configFile = { "claude/CLAUDE.md".text = agents.instructions.claude; } // agents.mkCommandFiles "claude/commands";`.
 - `frontends/omp.nix`: delete the `commands` let binding (lines 12-15), use `// agents.mkCommandFiles "omp/commands"` in `xdg.configFile`, and drop the now-unused `lib` arg (line 3).
 
-B13 edits `agents/default.nix` (lines 10 and 34) and F16 edits `omp.nix` (lines 17 and 21); the edits are independent, but line numbers shift.
+F16 edits `omp.nix` (lines 17 and 21); the edits are independent, but line numbers shift.
 
 **Verify:** `nix eval --raw .#nixosConfigurations.anuramat-bgm5.config.home-manager.users.anuramat.home.activationPackage.drvPath` is the same before and after (the generated `claude/commands/*.md` and `omp/commands/*.md` are unchanged); `deadnix -l` is clean; `nix flake check` passes.
 
@@ -1032,141 +548,11 @@ B13 edits `agents/default.nix` (lines 10 and 34) and F16 edits `omp.nix` (lines 
 **Where:** `nixvim-modules/heavy/default.nix:69` -- `# TODO make sure it doesn't format twice (conform + otter)`
 **Effort:** trivial -- **Risk:** none
 
-**Problem:** otter-ls 2.14.5 advertises no formatting capability: its initialize result (`lua/otter/lsp/init.lua:54-67`) lists only hover, definition, implementation, declaration, signatureHelp, typeDefinition, rename, references, documentSymbol and completion, and it registers nothing dynamically. So conform's `lsp_format = "fallback"` (line 52) can never pick otter. Otter's only `vim.lsp.buf.format` calls are inside its explicit export commands (`keeper.lua:629,651`), on hidden otter buffers, and markdown has no `formatters_by_ft` entry. Answer to the TODO: it cannot format twice. C11 edits the same `otter` block (lines 71-73); the edits are independent.
+**Problem:** otter-ls 2.14.5 advertises no formatting capability: its initialize result (`lua/otter/lsp/init.lua:54-67`) lists only hover, definition, implementation, declaration, signatureHelp, typeDefinition, rename, references, documentSymbol and completion, and it registers nothing dynamically. So conform's `lsp_format = "fallback"` (line 52) can never pick otter. Otter's only `vim.lsp.buf.format` calls are inside its explicit export commands (`keeper.lua:629,651`), on hidden otter buffers, and markdown has no `formatters_by_ft` entry. Answer to the TODO: it cannot format twice.
 
 **Fix:** Delete line 69. Keep `# lsp for codeblocks in markdown` on line 68.
 
 **Verify:** `sed -n 54,67p "$(nix eval --raw .#packages.x86_64-linux.neovim.config.plugins.otter.package.outPath)/lua/otter/lsp/init.lua"` shows no `documentFormattingProvider` or `documentRangeFormattingProvider`.
-
-## E. Stale docs
-
-### E1. AGENTS.md describes removed features, ignores the `deprecated` host flag, and has incomplete consumer lists
-
-**Where:** `AGENTS.md:34`, `AGENTS.md:75`, `AGENTS.md:86`, `AGENTS.md:96`, `AGENTS.md:118`, `AGENTS.md:123`, `AGENTS.md:150`, `AGENTS.md:172`, `AGENTS.md:187`, `AGENTS.md:210`, `outputs.nix:89`, `outputs.nix:196`
-**Effort:** small -- **Risk:** none
-
-**Problem:** AGENTS.md (the file CLAUDE.md symlinks to, so it is loaded into every agent session) contradicts the code in several passages. Background for the "every host" claims: the registry has a `deprecated` field (default `deprecated = false;` at outputs.nix:89, `deprecated = true;` for anuramat-t480 at outputs.nix:109) that six consumers filter on: `checks` (outputs.nix:196, `!host.deprecated && host.system == system`), builders and, through them, the default substituters (nixos-modules/base/hosts.nix:15), ssh config entries (home-modules/base/default.nix:28), hostrun prompt hosts (home-modules/heavy-linux/agents/hostrun/default.nix:19), agent instructions (home-modules/heavy-linux/agents/instructions.nix:6) and the fleet monitor (home-modules/heavy-linux/desktop/noctalia/fleet-monitor/fleet-status.nix:17). Deprecated hosts keep their trust: `names` in nixos-modules/base/hosts.nix is unfiltered, so their client keys, known_hosts, cache keys and trusted-substituters stay, and secrets/secrets.nix still encrypts to them. Per passage:
-
-- `AGENTS.md:34-35`: "the `checks` output evaluates every host's toplevel" is false for t480 (outputs.nix:196).
-- `AGENTS.md:75-79`: the registry is described as `{ system, builder, agent, local }` "plus a `description` on agent hosts" and an optional `alias` ("every host gets an ssh config entry"). `deprecated` is never mentioned; the outputs.nix:78-80 comment says "`description` is required" and every entry has one (it is only rendered for agent hosts, instructions.nix:7); home-modules/base/default.nix:28 drops deprecated hosts from the ssh config.
-- `AGENTS.md:85-88`: "the per-host `checks.SYSTEM.host-NAME` outputs evaluate every host's toplevel, so `nix flake check` catches drift on all hosts" is false: t480 gets no check.
-- `AGENTS.md:96-98`: the `consts.user` consumer list `nixos-modules/base/{user,net,nix,web,external_keys,default}.nix` misses nixos-modules/base/agent.nix:28,35,51 (`inputs.self.consts.user.username`), and the Home Manager side misses home-modules/base/bash/default.nix:48 (`LC_ALL = inputs.self.consts.user.locale;`). The per-host `home-manager.users.${...}` uses are already covered by the "Per-host Home Manager overrides" sentence.
-- `AGENTS.md:118-121`: `keys` is "consumed by `nixos-modules/base/hosts.nix` and `secrets/secrets.nix`", but home-modules/heavy-linux/agents/sandbox.nix:55 reads it too (`inputs.self.keys |> lib.mapAttrsToList (_: k: k.knownHostsFile)`, the sandbox ssh_config's `GlobalKnownHostsFile`); only the separate agent.nix paragraph at :179 hints at it.
-- `AGENTS.md:123-126`: "the flake-parts modules under `parts/` (treefmt, pre-commit, nix-topology)": parts/topology.nix was deleted in 941c9782 ("flake: drop topology"), and `parts/` now holds only pre-commit.nix and treefmt.nix. The sentence also omits `legacyPackages = pkgs;` (outputs.nix:192).
-- `AGENTS.md:150-151`: t480 is listed as a plain "ThinkPad T480 laptop"; its registry description is "old thinkpad, not actively used" and it is deprecated.
-- `AGENTS.md:172-174`: "`nixos-modules/base/builder.nix` ... asserts `!config.nix.distributedBuilds`". builder.nix has no assertions and only creates the `builder` account; since 6d077587 ("builder: refactor: enable via self.hosts") the invariant holds by construction at nixos-modules/base/nix.nix:30 (`distributedBuilds = !inputs.self.hosts.${config.networking.hostName}.builder;`).
-- `AGENTS.md:187-190`: overlays/default.nix supposedly has "impure `npx`/`uv tool run` wrappers, and a Proton Bridge source override". The wrappers were dropped in cd84ff69 and protonmail-bridge in a6c12efa. The overlay now composes `overrides` (unstable/unstable-slow pins plus local definitions and overrides such as kitty, yazi-unwrapped, darktable, proton-drive-cli and vim plugins), `flakes` (packages from flake inputs), and the neovim-nightly and oh-my-pi overlays (overlays/default.nix:268-273).
-- `AGENTS.md:210-212`: "`codex-remote` has a gated systemd user service ...". It was removed in 3ac6f7c5 ("codex: drop remote-control"); `git grep codex-remote` only hits AGENTS.md.
-
-**Fix:** edit AGENTS.md, keeping its 80-column wrapping:
-
-- `AGENTS.md:34`: "evaluates every non-deprecated host's toplevel".
-- `AGENTS.md:75-79`: "`hosts`: a hand-written static registry of `{ system, builder, agent, local, alias, deprecated }` per host plus a required `description` (rendered into the agents' ssh instructions for agent hosts by `home-modules/heavy-linux/agents/instructions.nix`); `alias` is an optional ssh alias (every non-deprecated host gets an ssh config entry in `home-modules/base/default.nix`, under its alias if it has one). `deprecated` hosts (t480) are left out of the `checks.SYSTEM.host-NAME` outputs, remote builders and default substituters, ssh config entries, agent instructions, hostrun and the fleet monitor, but keep their keys and trust (`names` in `nixos-modules/base/hosts.nix` is unfiltered)."
-- `AGENTS.md:86-88`: "evaluate every non-deprecated host's toplevel, so `nix flake check` catches drift on those hosts".
-- `AGENTS.md:96`: `nixos-modules/base/{agent,user,net,nix,web,external_keys,default}.nix`; `AGENTS.md:98`: after "`home-modules/base/git/` (Git identity)," add "`home-modules/base/bash/` (`LC_ALL` locale),".
-- `AGENTS.md:120-121`: "consumed by `nixos-modules/base/hosts.nix`, `home-modules/heavy-linux/agents/sandbox.nix` (the sandbox ssh_config's `GlobalKnownHostsFile`) and `secrets/secrets.nix`".
-- `AGENTS.md:125-126`: "`devShells.default`, `legacyPackages` (the overlaid nixpkgs), and the flake-parts modules under `parts/` (treefmt, pre-commit)."
-- `AGENTS.md:151`: "`anuramat-t480` (ThinkPad T480 laptop, deprecated)".
-- `AGENTS.md:172-174`: "- `nixos-modules/base/nix.nix` sets `nix.distributedBuilds = !hosts.${hostName}.builder`, so a host flagged `builder` is a build server, never a distributed-build client; `nixos-modules/base/builder.nix` only creates the `builder` account there."
-- `AGENTS.md:187-190`: "- `overlays/default.nix` mixes unstable and unstable-slow package pins, packages from flake inputs, local package definitions and overrides (kitty, yazi, darktable, proton-drive-cli, vim plugins, ...), and the neovim-nightly and oh-my-pi overlays. Since the base NixOS module applies it globally, overlay edits can affect system packages, Home Manager, and nixvim."
-- `AGENTS.md:210-212`: delete the `codex-remote` bullet.
-- Not here, fixed together with their code changes: `AGENTS.md:29-33` (dev shell tools and `just lint`) in A15 and A14; `AGENTS.md:112-114` (`consts.builder` consumers) in H1; `AGENTS.md:235-238` (the waybar paragraph) in B1.
-
-**Verify:**
-
-- `git grep -nE 'nix-topology|npx|uv tool run|Proton Bridge|codex-remote|asserts .!config' AGENTS.md` prints nothing; `ls parts/` matches the per-system sentence.
-- Every match of `git grep -n '\.deprecated' -- '*.nix'` is named in the new registry text.
-- Every file from `git grep -ln 'consts\.user' -- nixos-modules home-modules shared-modules` and `git grep -ln 'self\.keys' -- '*.nix'` appears in the updated consumer lists.
-- `nix eval .#checks.x86_64-linux --apply builtins.attrNames` has no `host-anuramat-t480`, as the doc now says.
-
-### E2. README: answer the nix-cache-keygen XXX and the gh ssh-key TODO
-
-**Where:** `README.md:52`, `README.md:54`, `README.md:55`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** README.md:52 reads `nix-cache-keygen # only if this machine is a builder XXX am I sure about this? seems like we need it regardless`. The code answers it: every host needs the key. nixos-modules/base/nix.nix:41 sets `secret-key-files = "/etc/nix/cache.pem"` and nix.nix:86-90 enables harmonia with `signKeyPaths = [ "/etc/nix/cache.pem" ]`, both unconditionally; outputs.nix:163 reads `keys/cache.pem.pub` for every host (all four hosts have one), and nixos-modules/base/hosts.nix:38 puts every other host's cache key into `trusted-public-keys`. The script also creates the `~/.ssh` key (home-modules/base/bin/default.nix:45), which every host needs as well. Caveat: its `sudo chown '${builder}:${builder}' '${private}' '${public}'` (home-modules/base/bin/default.nix:44) aborts under `set -e` on hosts without the `builder` account (created only on `builder = true` hosts, nixos-modules/base/builder.nix:12), i.e. f12, root and t480, before the ssh-keygen step, so the corrected README step fails there until the chown is settled in H1. README.md:55 reads `# TODO upload ssh key to github; might be doable with gh auth`. It is: `gh auth login --help` says "Specifying `ssh` for the git protocol will detect existing SSH keys to upload" (`-p, --git-protocol {ssh|https}`; opt out with `--skip-ssh-key`).
-
-**Fix:**
-
-- README.md:52 -> `nix-cache-keygen # every host: nix and harmonia sign with /etc/nix/cache.pem, outputs.nix reads each host's keys/cache.pem.pub; also creates ~/.ssh keys`.
-- README.md:54-55 -> one line, `gh auth login -p ssh # offers to upload the ~/.ssh public key`. This removes the `# TODO upload ssh key ...` comment, since it is answered.
-- Changing the script's chown is a separate decision, tracked in H1.
-
-**Verify:** re-read README.md against nixos-modules/base/nix.nix:41,86-90 and outputs.nix:163; `gh auth login --help | grep -i ssh` shows the upload behavior; `git grep -n 'XXX am I sure' README.md` prints nothing.
-
-### E3. README: the new-host step misses the `hosts` registry; the buildMachines workaround names the removed anuramat-ll7 and is duplicated in nix.nix
-
-**Where:** `README.md:9`, `README.md:61`, `README.md:64`, `nixos-modules/base/nix.nix:68`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:**
-
-- Install step 0 (README.md:9) says only "prepare a minimal config in `nixos-configurations/$HOSTNAME/default.nix`". Every directory there is evaluated with `lib.optional inputs.self.hosts.${name}.local ...` (outputs.nix:61), and nixos-modules/base/hosts.nix:24 asserts that the registry and `nixosConfigurations` have the same names, so a new host without an entry in `hosts` in outputs.nix fails to evaluate.
-- README.md:59-69 ("Problems") and the comment at nixos-modules/base/nix.nix:68-77 carry the same /root/.ssh/config workaround for NixOS/nix#3423 (`sshKey`/`sshUser` ignored), with `Host anuramat-ll7`. anuramat-ll7 no longer exists (the registry has bgm5, f12, root and t480), and the only `builder = true` host is anuramat-bgm5 (outputs.nix:95); `git grep ll7` hits only these two places. The rest of the snippet matches the module: `User builder` is `consts.builder.username` and `IdentityFile /home/anuramat/.ssh/id_ed25519` is `keyPath` (nix.nix:21,79-80).
-
-**Fix:**
-
-- README.md:9 -> "0. prepare a minimal config in `nixos-configurations/$HOSTNAME/default.nix` and add `$HOSTNAME` to `hosts` in `outputs.nix`".
-- README.md:61-64: say the block is needed for each `builder = true` host in `hosts` (outputs.nix), and change `Host anuramat-ll7` to `Host anuramat-bgm5`.
-- nixos-modules/base/nix.nix:68-77: replace the comment block (from `# sshKey and sshUser are ignored for some reason BUG` through the closing fence) with `# sshKey/sshUser are ignored (NixOS/nix#3423); see README.md "Problems"`, and keep `# TODO speedFactor, maxJobs`. This removes the nix.nix copy of the snippet, which is outdated (it names a host that no longer exists); the README keeps the only copy.
-
-**Verify:** `git grep -n ll7` prints nothing; `nix flake check` still passes (comment-only change in nix.nix).
-
-### E4. docs/standalone-hm.md imports modules that don't exist and names the wrong registration step
-
-**Where:** `docs/standalone-hm.md:4`, `docs/standalone-hm.md:11`, `docs/standalone-hm.md:13`, `docs/standalone-hm.md:19`, `outputs.nix:27`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** docs/standalone-hm.md:3-5 says to "add an entry to the builder in `outputs.nix`", but the step is a `homeSystems` entry (outputs.nix:26-30): outputs.nix:70 looks up `homeSystems.${name}` for every config, and outputs.nix:208-222 turns each entry into `checks.SYSTEM.home-NAME`. The example (lines 7-27) imports `default` and `anuramat` from `inputs.self.homeModules`, neither of which exists (home-modules/ has base, darwin, heavy, heavy-linux, linux, local, local-linux and standalone). It hardcodes `username = "anuramat";` (line 19), where AGENTS.md requires `inputs.self.consts.user`, and uses `stateVersion = "25.05"`, while both real configs use 25.11. The doc was moved here in e1b9be89 ("hm: move hm example to docs") when home-configurations/ was empty; home-configurations/anuramat-darwin.nix and anuramat-linux.nix now evaluate and serve as templates. No other file links to the doc.
-
-**Fix:** replace the body (lines 3-27) with prose pointing at the real files and drop the snippet, so it cannot drift again: "Write `home-configurations/$NAME.nix` (or `home-configurations/$NAME/default.nix`), modeled on `home-configurations/anuramat-linux.nix` / `anuramat-darwin.nix`: import `standalone` plus the layers for that platform, and take `username` from `inputs.self.consts.user`. Then add `$NAME = "$SYSTEM";` to `homeSystems` in `outputs.nix`; that entry also creates `checks.$SYSTEM.home-$NAME`."
-
-**Verify:** every module the doc names exists in `nix eval .#homeModules --apply builtins.attrNames`; the steps match outputs.nix:26-30 and :208-222; `nix eval .#checks.x86_64-linux --apply builtins.attrNames` lists `home-anuramat-linux`.
-
-### E5. docs/luks.md says /tmp is tmpfs on bgm5; it isn't (plus non-ASCII dashes)
-
-**Where:** `docs/luks.md:55`, `docs/luks.md:14`, `nixos-configurations/anuramat-bgm5/default.nix:96`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** The Option 1 caveat at docs/luks.md:55 says "Swap is zram and `/tmp` is tmpfs on this host, so neither leaks to disk." For bgm5, `nix eval .#nixosConfigurations.anuramat-bgm5.config.boot.tmp.useTmpfs` is `false` (nothing in the repo sets it), its fileSystems are only `/`, `/boot` and `/mnt/storage`, and nixos-configurations/anuramat-bgm5/default.nix:96 still has `# TODO tmpfs` above `zramSwap.enable = true;`. Only the swap half holds (`zramSwap.enable` is true, `swapDevices` is empty): /tmp lives on the LUKS root, so under option 1 it is only as protected as the TPM-unlocked root. The file also uses em dashes on lines 14, 19, 44, 47, 61, 73, 95, 97 and 119, against the plain-ASCII rule.
-
-**Fix:**
-
-- docs/luks.md:55 -> "- Swap is zram, so it never leaks to disk; `/tmp` is not tmpfs on bgm5 yet (`# TODO tmpfs` in nixos-configurations/anuramat-bgm5/default.nix), so it lives on the root fs and is only as protected as root."
-- Replace every em dash in docs/luks.md (lines 14, 19, 44, 47, 61, 73, 95, 97, 119) with `--`.
-- Enabling `boot.tmp.useTmpfs` on bgm5 (which would make the original sentence true) is a separate decision for the user.
-
-**Verify:** `grep -nP '[^\x00-\x7F]' docs/luks.md` prints nothing; the line 55 claim agrees with `nix eval .#nixosConfigurations.anuramat-bgm5.config.boot.tmp.useTmpfs`.
-
-### E6. uc3/README.md overstates the /run/agenix isolation, has an incomplete Architecture entry, and uses non-ASCII punctuation
-
-**Where:** `home-modules/heavy-linux/agents/uc3/README.md:104`, `home-modules/heavy-linux/agents/uc3/README.md:61`, `home-modules/heavy-linux/agents/uc3/README.md:1`, `home-modules/heavy-linux/agents/sandbox.nix:104`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:**
-
-- Lines 104-105 say "None of this is reachable from the sandbox: no `~/.ssh`, no readable `/run/agenix`, and no ControlMaster socket bound in." But sandbox.nix:104-106 binds `config.lib.secrets.tgfy-token.path`, `tgfy-id.path` and `agent.path` read-only; evaluating `agents.sandbox.roDirs` for bgm5 gives /run/agenix/tgfy-token, /run/agenix/tgfy-id and /run/agenix/agent. Only the uc3 secrets are unreachable (the test at line 187, `cat /run/agenix/uc3-totp` fails, is still correct).
-- Line 61, `default.nix   # uc3ctl package, the relay's handler, ssh master service, state dir`, omits the `uc3pull` package (uc3/default.nix:31) and the `uc3-status` service and timer (uc3/default.nix:85,97), although the same tree lists uc3pull.sh and status.sh.
-- It is the only non-ASCII file under home-modules/heavy-linux/agents/: em dashes on lines 1, 6, 38, 107, 114, 115, 123, 133, 171 and 189, arrows on 129 and 194, and ellipses on 137, 138 and 159, against the plain-ASCII rule.
-
-**Fix:** in home-modules/heavy-linux/agents/uc3/README.md:
-
-- Lines 104-105 -> "None of this is reachable from the sandbox: no `~/.ssh`, no readable uc3 secret under `/run/agenix` (the sandbox binds only `tgfy-*` and `agent` there), and no ControlMaster socket bound in."
-- Line 61 -> `default.nix   # uc3ctl and uc3pull packages, the relay's handler, ssh master and uc3-status units, state dir`.
-- Replace each em dash with `--`, each arrow (lines 129, 194) with `->` and each ellipsis (137, 138, 159) with `...`.
-
-**Verify:** `grep -nP '[^\x00-\x7F]' home-modules/heavy-linux/agents/uc3/README.md` prints nothing; the line 104-105 wording matches the `config.lib.secrets.*` entries in sandbox.nix's `roDirs`.
-
-### E7. Non-ASCII ellipsis in the fleet-monitor widget
-
-**Where:** `home-modules/heavy-linux/desktop/noctalia/fleet-monitor/widget.luau:89`, `home-modules/heavy-linux/desktop/noctalia/fleet-monitor/widget.luau:91`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** The comment at widget.luau:89 (`-- only clicks get "updating<U+2026>", so frequent polling doesn't flicker`) and the label at :91 (`table.insert(header, label("updating<U+2026>", "outline"))`) use U+2026 (horizontal ellipsis). They are the only non-ASCII characters in home-modules/heavy and home-modules/heavy-linux outside agents/ (the uc3 README is E6), and the user's rules require plain ASCII where possible; `...` is a direct substitute.
-
-**Fix:** replace U+2026 with `...` on widget.luau:89 and :91.
-
-**Verify:** `grep -rnP '[^\x00-\x7F]' home-modules/heavy home-modules/heavy-linux --exclude-dir=agents` prints nothing; clicking a remote section in the fleet monitor shows "updating...".
 
 ## F. Refactors: flake, NixOS, Home Manager
 
@@ -1288,7 +674,7 @@ grep -ao '/nix/store/[^ "]*treefmt.toml' "$(nix build --no-link --print-out-path
 **Where:** `home-modules/heavy-linux/agents/uc3/default.nix:79`, `home-modules/heavy-linux/agents/uc3/default.nix:89`, `home-modules/heavy-linux/desktop/niri/keys.nix:11`, `home-modules/heavy-linux/desktop/niri/keys.nix:54`, `home-modules/heavy-linux/desktop/niri/keys.nix:66`, `home-modules/heavy-linux/desktop/niri/keys.nix:121`, `nixos-configurations/anuramat-bgm5/power.nix:3`, `nixos-configurations/anuramat-bgm5/power.nix:4`, `nixos-modules/base/net.nix:37`
 **Effort:** small -- **Risk:** none
 
-**Problem:** About 60 lines in the repo use `getExe`/`getExe'`, but `git grep -nE '\}/bin/[a-zA-Z]'` still finds hand-built paths: `"${pkgs.openssh}/bin/ssh -o ConnectTimeout=15 -fN uc3"` (uc3:79) and `"${status}/bin/uc3-status"` (uc3:89), in a file whose line 64 already uses `lib.getExe handler`; `"${pkgs.tlp}/bin/bluetooth"` and `"${pkgs.tlp}/bin/wifi"` (keys.nix:54, :66) and `pkill = "${pkgs.procps}/bin/pkill";` (keys.nix:121), in a file that otherwise uses `getExe`; `ryzenadj = "${pkgs.ryzenadj}/bin/ryzenadj";` and `awk = "${pkgs.gawk}/bin/awk";` (power.nix:3-4); and `script = "${pkgs.vpn-slice}/bin/vpn-slice ..."` (net.nix:37). Evaluated `meta.mainProgram` values: openssh = ssh, ryzenadj = ryzenadj, vpn-slice = vpn-slice; gawk = gawk, tlp = tlp and procps = null, so those three need `getExe'`; writeShellApplication sets `mainProgram` to its `name`, so `status` gives uc3-status. Every replacement yields the same string. The remaining hits are handled elsewhere: index.nix:13 by F3; home-modules/linux.nix:36/38 (the pinentry wrapper) by C9, which removes the same redundancy from the other side (it drops `runtimeInputs` and keeps the absolute paths), so don't also rewrite those lines here; uc3:76 is a profile path (`${config.home.profileDirectory}/bin/uc3-askpass`), not a package, and stays.
+**Problem:** About 60 lines in the repo use `getExe`/`getExe'`, but `git grep -nE '\}/bin/[a-zA-Z]'` still finds hand-built paths: `"${pkgs.openssh}/bin/ssh -o ConnectTimeout=15 -fN uc3"` (uc3:79) and `"${status}/bin/uc3-status"` (uc3:89), in a file whose line 64 already uses `lib.getExe handler`; `"${pkgs.tlp}/bin/bluetooth"` and `"${pkgs.tlp}/bin/wifi"` (keys.nix:54, :66) and `pkill = "${pkgs.procps}/bin/pkill";` (keys.nix:121), in a file that otherwise uses `getExe`; `ryzenadj = "${pkgs.ryzenadj}/bin/ryzenadj";` and `awk = "${pkgs.gawk}/bin/awk";` (power.nix:3-4); and `script = "${pkgs.vpn-slice}/bin/vpn-slice ..."` (net.nix:37). Evaluated `meta.mainProgram` values: openssh = ssh, ryzenadj = ryzenadj, vpn-slice = vpn-slice; gawk = gawk, tlp = tlp and procps = null, so those three need `getExe'`; writeShellApplication sets `mainProgram` to its `name`, so `status` gives uc3-status. Every replacement yields the same string. The remaining hits are handled elsewhere: index.nix:13 by F3; home-modules/linux.nix (the pinentry wrapper) keeps its absolute paths on purpose (C9, done, dropped the redundant `runtimeInputs` instead), so don't rewrite those lines here; uc3:76 is a profile path (`${config.home.profileDirectory}/bin/uc3-askpass`), not a package, and stays.
 
 **Fix:**
 - home-modules/heavy-linux/agents/uc3/default.nix:79: `ExecStart = "${lib.getExe pkgs.openssh} -o ConnectTimeout=15 -fN uc3";`
@@ -1571,7 +957,7 @@ The grep prints `export CODEX_HOME="/home/anuramat/.config/codex"`.
       };
   ```
 - In `nixvim-modules/heavy/misc.nix`, delete lines 16-22 (the `mkVimFiles` inherit) and line 30 (`conform-nvim.settings.formatters_by_ft.just`). `config` stays in use there (`inherit (config.lib) luaf keymap;`).
-- B14 and G3 also edit `heavy/misc.nix`; apply them by content, since line numbers shift.
+- G3 also edits `heavy/misc.nix`, and B14 (done) already removed lines from it; apply by content, since line numbers shifted.
 
 **Verify:**
 - Checked in a scratch copy: the `files`/`extraFiles` names and contents and the generated conform `just = { "just" }` are identical after the move.
@@ -1598,7 +984,7 @@ The grep prints `export CODEX_HOME="/home/anuramat/.config/codex"`.
       end
     '';
 ```
-On line 72, use `should_attach = lua shouldAttach;`. C10 edits the same file.
+On line 72, use `should_attach = lua shouldAttach;`.
 
 **Verify:**
 - `nix build .#checks.x86_64-linux.neovim`.
@@ -1649,10 +1035,10 @@ On line 72, use `should_attach = lua shouldAttach;`. C10 edits the same file.
 **Problem:** Raw Lua otherwise always goes through `config.lib.lua` (`lib.nix:3`: `lua = action: { __raw = action; };`). These are the only two `__raw` uses in `nixvim-modules/`: `fzf.nix` already inherits `lua` but writes `fn.__raw = "require('fzf-lua').actions.file_sel_to_qf";`, and `rust.nix` writes `on_attach.__raw = ''...''`.
 
 **Fix:**
-- In `nixvim-modules/heavy/fzf.nix:61`, use `fn = lua "require('fzf-lua').actions.file_sel_to_qf";`. B16 edits the lines just above and can be done together.
+- In `nixvim-modules/heavy/fzf.nix:61`, use `fn = lua "require('fzf-lua').actions.file_sel_to_qf";`.
 - In `nixvim-modules/heavy/lang/rust.nix:16`, use `on_attach = config.lib.lua ''` with the same body (`config` is already a module argument). G7 edits the next two lines of the same string and can be done together.
 
-**Verify:** Before and after, `nix eval --raw .#packages.x86_64-linux.neovim.config.content` is byte-identical (`diff` the outputs); if done together with G7 or B16, the diff contains only their changes.
+**Verify:** Before and after, `nix eval --raw .#packages.x86_64-linux.neovim.config.content` is byte-identical (`diff` the outputs); if done together with G7, the diff contains only their changes.
 
 ### G7. rust `on_attach`: drop the unsupported `noremap` key and the unused `client` parameter
 
@@ -1671,12 +1057,12 @@ On line 72, use `should_attach = lua shouldAttach;`. C10 edits the same file.
 
 ### H1. nix-cache-keygen: `chown builder` breaks it on non-builder hosts, it exits 1 when ~/.ssh exists, and it lives in Home Manager
 
-**Where:** `home-modules/base/bin/default.nix:29-47`, `home-modules/base/bin/default.nix:52`, `nixos-modules/base/nix.nix:41`, `nixos-modules/base/nix.nix:86-90`, `nixos-modules/base/builder.nix:12`, `README.md:52`, `AGENTS.md:112-114`, `justfile:16`
+**Where:** `home-modules/base/bin/default.nix:29-47`, `home-modules/base/bin/default.nix:52`, `nixos-modules/base/nix.nix:41`, `nixos-modules/base/nix.nix:86-90`, `nixos-modules/base/builder.nix:12`, `AGENTS.md:112-114`, `justfile:16`
 
 **Context:**
 
 - What the script does: if both `/etc/nix/cache.pem` and `/etc/nix/cache.pem.pub` are missing, it runs `sudo nix-store --generate-binary-cache-key "$(hostname)" ...`. Then it runs `sudo chown '${builder}:${builder}' '${private}' '${public}'` (with `builder = inputs.self.consts.builder.username`) and finally `[ ! -e "$HOME/.ssh" ] && yes "" | ssh-keygen -N ""`. It is installed through HM `home.packages`, but only `if osConfig != null`.
-- Every host needs the key, which answers README.md:52 (`nix-cache-keygen # only if this machine is a builder XXX am I sure about this? seems like we need it regardless`). The base NixOS module sets `secret-key-files = "/etc/nix/cache.pem"` (nix.nix:41) and enables harmonia with `signKeyPaths = [ "/etc/nix/cache.pem" ]` (nix.nix:86-90) on every host. The `keys` output in outputs.nix reads every host's `keys/cache.pem.pub`, and hosts.nix adds those keys to the other hosts' `trusted-public-keys`.
+- Every host needs the key (the README's bootstrap step now says so). The base NixOS module sets `secret-key-files = "/etc/nix/cache.pem"` (nix.nix:41) and enables harmonia with `signKeyPaths = [ "/etc/nix/cache.pem" ]` (nix.nix:86-90) on every host. The `keys` output in outputs.nix reads every host's `keys/cache.pem.pub`, and hosts.nix adds those keys to the other hosts' `trusted-public-keys`.
 - The chown breaks the script on 3 of 4 hosts. The `builder` account is created only under `lib.mkIf inputs.self.hosts.${...}.builder` (builder.nix:12), and only anuramat-bgm5 has `builder = true` in the registry. On f12, root and t480, `chown builder:builder` fails under writeShellApplication's errexit, so the script aborts before the ssh-keygen step.
 - Nothing in the code needs `builder` to own the key. nix-daemon signs as root: a remote `nix-daemon --stdio` running as `builder` over ssh-ng forwards to the root daemon. Harmonia runs with `DynamicUser = true` and gets the key through `LoadCredential` (nixpkgs `nixos/modules/services/networking/harmonia.nix:152,160`). History: the original README step was `sudo chown nix-serve cache-priv-key.pem` (e60d38a7), which was for the old nix-serve cache server, and 17ad32a7 still had `sudo chown builder:builder "$private" "$public" # TODO hide somewhere in nix`. The reason for builder ownership is not recorded anywhere.
 - Separate bug, to fix under every option: `[ ! -e "$HOME/.ssh" ] && yes "" | ssh-keygen -N ""` is the script's last command. When `~/.ssh` exists, which is the usual case, the test fails and the script exits 1 even though nothing went wrong. Replace it with `if [ ! -e "$HOME/.ssh" ]; then yes "" | ssh-keygen -N ""; fi`.
@@ -1684,7 +1070,7 @@ On line 72, use `should_attach = lua shouldAttach;`. C10 edits the same file.
 - The `# TODO move and read public` at bin/default.nix:31 asks for the move, but "read public" is ambiguous. It could mean taking the public key path from config, or reading the key from the `keys` output.
 - The script also mixes a system step (`sudo nix-store`, `chown`) with a per-user bootstrap step (`ssh-keygen` into `$HOME`), so moving it also means deciding where the ssh-keygen step goes.
 
-**Options:** these are two independent choices, one about the chown and one about placement. Under all of them, also fix the trailing `&&` line as above and change README.md:52 to `nix-cache-keygen # every host: each signs its builds with /etc/nix/cache.pem and serves them via harmonia`.
+**Options:** these are two independent choices, one about the chown and one about placement. Under all of them, also fix the trailing `&&` line as above.
 
 - **(a)** Chown: drop it. Delete line 44, the `builder` binding and its `# its own group too, see nixos-modules/base/builder.nix` comment (lines 34-35), and the `inputs` arg, which is then unused. In AGENTS.md:112-114, remove `home-modules/base/bin/ (nix-cache-keygen)` from the consumers of `consts.builder`. -- The script then works on every host, and the key stays `root:root` as `nix-store` creates it. If anything outside the repo depends on `builder` owning the key on bgm5, it breaks; nothing in the repo does.
 - **(b)** Chown: keep it only on builder hosts, gated on `inputs.self.hosts.${hostName}.builder`. -- Behaviour on bgm5 stays as it is. In HM this needs the hostname from `osConfig`; in a NixOS module the flag is available directly.
@@ -1835,7 +1221,7 @@ To verify any option: the sorted list of names in `home.packages` is the same be
 **Context:**
 
 - The evaluated HM `home.packages` (f12 and bgm5) lists git, less, tmux, statix and deadnix twice each, and each pair has the same outPath (for example git-2.54.0, less-692, tmux-3.6a). buildEnv dedupes identical paths, so the profile is the same either way.
-- git/less/tmux: base/packages.nix lists `git`, `less` and `tmux # just in case` under `# absolute minimum`. The same base layer also enables `programs.git` (git/default.nix:28), `programs.less` (git/difft.nix:31) and `programs.tmux` (misc.nix:31), and each of those adds its default package to `home.packages`. The duplicate `programs.less.enable` in bash/default.nix:124 is covered separately in B14.
+- git/less/tmux: base/packages.nix lists `git`, `less` and `tmux # just in case` under `# absolute minimum`. The same base layer also enables `programs.git` (git/default.nix:28), `programs.less` (git/difft.nix:31) and `programs.tmux` (misc.nix:31), and each of those adds its default package to `home.packages`. The duplicate `programs.less.enable` in bash/default.nix was already removed (B14, done).
 - statix/deadnix: heavy/lang/packages.nix lists `deadnix # nix dead code` and `statix # nix` under `# linters`. Meanwhile heavy/editor.nix:23 adds `config.programs.nixvim.tools`, which evaluates to [hadolint, checkmake, statix, deadnix, biome, just, stylua, mbake, nixfmt, ruff, shfmt, typstyle, yamlfmt].
 - For removal (one auditor, confirmed by one verifier): each package would be declared once, and the profile does not change. nixvim-modules/heavy/tools.nix says that this list exists to put these tools on PATH.
 - For keeping (refuted by another verifier): the redundancy looks deliberate.
@@ -1850,7 +1236,7 @@ To verify any option: the sorted list of names in `home.packages` is the same be
 
 ### Open TODO markers that need a decision or are nontrivial
 
-None of these markers is fully covered by an H item above. The TODOs that H items resolve (bin/default.nix:31, containers.nix:9, lang/packages.nix:48, and the README.md:52 XXX) are not repeated here.
+None of these markers is fully covered by an H item above. The TODOs that H items resolve (bin/default.nix:31, containers.nix:9, lang/packages.nix:48) are not repeated here.
 
 Needs a decision:
 
