@@ -33,7 +33,6 @@
     remmina # vnc client
     wayvnc # vnc server
     wev # wayland event viewer, useful for debugging
-    wl-clip-persist # otherwise clipboard contents disappear on exit
     wl-clipboard # wl-copy/wl-paste: copy from stdin/paste to stdout
     wl-mirror # screen mirroring
     wmenu # dmenu 1to1

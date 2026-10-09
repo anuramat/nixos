@@ -49,8 +49,7 @@ in
         PAGER = "less";
         MANPAGER = "less";
 
-        STACK_ROOT = "${config.xdg.dataHome}/stack";
-        STACK_XDG = "1";
+        STACK_ROOT = "${XDG_DATA_HOME}/stack";
 
         NODE_REPL_HISTORY = "${XDG_DATA_HOME}/node_repl_history";
         DOT_SAGE = "${config.xdg.configHome}/sage"; # sage math
@@ -120,9 +119,6 @@ in
         "ignoreboth"
         "erasedups"
       ];
-    };
-    less = {
-      enable = true;
     };
     starship = {
       enable = true;

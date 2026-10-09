@@ -7,7 +7,6 @@ let
   inherit (lib)
     concatStringsSep
     mapAttrsToList
-    filterAttrs
     ;
 in
 
@@ -29,11 +28,7 @@ in
     prependFrontmatter =
       text: fields:
       let
-        fm =
-          fields
-          |> filterAttrs (n: v: v != null)
-          |> mapAttrsToList (n: v: n + ": " + v)
-          |> concatStringsSep "\n";
+        fm = fields |> mapAttrsToList (n: v: n + ": " + v) |> concatStringsSep "\n";
       in
       [
         "---"

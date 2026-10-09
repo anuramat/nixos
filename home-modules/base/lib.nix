@@ -101,13 +101,7 @@ let
     in
     lib.hm.dag.entryAfter [ "writeBoundary" ] script;
 
-  secrets =
-    if osConfig != null then
-      osConfig.age.secrets
-    else if config ? age then
-      config.age.secrets
-    else
-      { };
+  secrets = if osConfig != null then osConfig.age.secrets else config.age.secrets;
 
   mkAgenixExportScript =
     vars:

@@ -22,14 +22,9 @@
   services.gpg-agent = {
     pinentry =
       if config.gui == "wayland" then
-        let
-          name = "pinentry-auto";
+        {
           package = pkgs.writeShellApplication {
-            inherit name;
-            runtimeInputs = [
-              pkgs.wayprompt
-              pkgs.pinentry-tty
-            ];
+            name = "pinentry-auto";
             # DISPLAY check so that it still works over ssh
             text = ''
               if [ -v DISPLAY ]; then
@@ -39,10 +34,6 @@
               fi
             '';
           };
-        in
-        {
-          inherit package;
-          program = name;
         }
       else
         {
