@@ -31,8 +31,8 @@ Useful repo commands:
 - `nix fmt`: format through treefmt.
 - `just lint`: run statix, deadnix, Nix parsing, luacheck, shellcheck, and
   yamllint.
-- `nix flake check`: the `checks` output evaluates every host's toplevel
-  (firing all assertions) without building it.
+- `nix flake check`: the `checks` output evaluates every non-deprecated host's
+  toplevel (firing all assertions) without building it.
 - `just nixos [COMMAND] [FLAGS]`: `nixos-rebuild COMMAND` (default `switch`)
   on the current host; `just nixos-local ...` does the same without remote
   builders or `http:` substituters, `just nixos-offline ...` with `--offline`.
@@ -72,11 +72,16 @@ adding, removing, or renaming a direct child is an API change for this flake:
 
 `outputs.nix` also exposes:
 
-- `hosts`: a hand-written static registry of `{ system, builder, agent, local }`
-  per host, plus a `description` on agent hosts (rendered into the agents' ssh
-  instructions by `home-modules/heavy-linux/agents/instructions.nix`) and an
-  optional ssh `alias` (every host gets an ssh config entry in
+- `hosts`: a hand-written static registry of
+  `{ system, builder, agent, local, alias, deprecated }` per host plus a
+  required `description` (rendered into the agents' ssh instructions for agent
+  hosts by `home-modules/heavy-linux/agents/instructions.nix`); `alias` is an
+  optional ssh alias (every non-deprecated host gets an ssh config entry in
   `home-modules/base/default.nix`, under its alias if it has one).
+  `deprecated` hosts (t480) are left out of the `checks.SYSTEM.host-NAME`
+  outputs, remote builders and default substituters, ssh config entries, agent
+  instructions, hostrun prompts and the fleet monitor, but keep their keys and
+  trust (`names` in `nixos-modules/base/hosts.nix` is unfiltered).
   Cross-host facts come from this registry, not from evaluating sibling
   configurations. Adding a host (or changing its system/builder/agent status)
   requires updating the registry. The `builder` and `agent` flags enable
@@ -84,18 +89,19 @@ adding, removing, or renaming a direct child is an API change for this flake:
   machines) imports `nixos-modules/local/` in `outputs.nix`, not in the host's
   `default.nix`; `hosts.nix` asserts the registry's names and systems against
   the configurations, and the per-host `checks.SYSTEM.host-NAME` outputs
-  evaluate every host's toplevel, so `nix flake check` catches drift on all
-  hosts. Host changes can still affect secrets, SSH, substituters, and
-  remote-build behavior on every other host.
+  evaluate every non-deprecated host's toplevel, so `nix flake check` catches
+  drift on those hosts. Host changes can still affect secrets, SSH,
+  substituters, and remote-build behavior on every other host.
 - `consts`: constants shared by NixOS, Home Manager and nixvim modules. The
   only place these are written; every consumer reads `inputs.self.consts`
   directly, with no intervening NixOS option.
   - `user`: the primary account's identity (`username`, `name`, `email`,
     `timeZone`, `locale`, `location`). Multiple users are an explicit
     non-goal, so there is deliberately nothing to override per host. Consumed
-    by `nixos-modules/base/{user,net,nix,web,external_keys,default}.nix`,
+    by `nixos-modules/base/{agent,user,net,nix,web,external_keys,default}.nix`,
     `nixos-modules/local/{default,peripherals}.nix`, `shared-modules/age.nix`
     (secret owner), `home-modules/base/git/` (Git identity),
+    `home-modules/base/bash/` (`LC_ALL` locale),
     `home-modules/heavy-linux/desktop/noctalia/` (weather location),
     `home-configurations/*` (username and home directory), and
     `nixos-configurations/anuramat-root/web/` (ACME contact). Per-host Home
@@ -118,12 +124,14 @@ adding, removing, or renaming a direct child is an API change for this flake:
 - `keys`: per-host key material discovered from `nixos-configurations/*/keys/`
   (client key files and strings, `known_hosts` file path and parsed keys,
   cache key). Single source of truth for key discovery, consumed by
-  `nixos-modules/base/hosts.nix` and `secrets/secrets.nix`.
+  `nixos-modules/base/hosts.nix`, `home-modules/heavy-linux/agents/sandbox.nix`
+  (the sandbox ssh_config's `GlobalKnownHostsFile`) and `secrets/secrets.nix`.
 
 Per-system outputs: `packages.neovim` and `packages.neovim-minimal`
 (nixvim-built Neovim from `self.nixvimModules.{base,heavy}` and
-`self.nixvimModules.base`), `devShells.default`, and the flake-parts
-modules under `parts/` (treefmt, pre-commit, nix-topology).
+`self.nixvimModules.base`), `devShells.default`, `legacyPackages` (the
+overlaid nixpkgs), and the flake-parts modules under `parts/` (treefmt,
+pre-commit).
 
 The repo uses the experimental Nix pipe operator (`|>`) throughout modules and
 helper code. Raw parse/eval commands may need the `pipe-operators`
@@ -148,7 +156,7 @@ experimental feature; run inside the dev shell or pass it explicitly.
   `-linux` layers; keeping `local` and `heavy` Darwin-clean is what makes the
   `anuramat-darwin` home configuration evaluate.
 - Hosts: `anuramat-root` (server-like QEMU guest; nginx, ACME, `ctrl.sn`,
-  wastebin), `anuramat-t480` (ThinkPad T480 laptop), `anuramat-f12`
+  wastebin), `anuramat-t480` (ThinkPad T480 laptop, deprecated), `anuramat-f12`
   (Framework 12 laptop), `anuramat-bgm5` (AMD Strix Halo workstation; build
   server, ROCm, llama, Immich). Per-host details live in
   `nixos-configurations/*/default.nix`.
@@ -169,9 +177,11 @@ experimental feature; run inside the dev shell or pass it explicitly.
 
 ## Surprising Or Complex Parts
 
-- `nixos-modules/base/builder.nix`, on hosts flagged `builder` in the registry,
-  asserts `!config.nix.distributedBuilds`; a builder host is modeled as a build
-  server, not as a distributed-build client.
+- `nixos-modules/base/nix.nix` sets
+  `nix.distributedBuilds = !hosts.${hostName}.builder`, so a host flagged
+  `builder` in the registry is a build server, never a distributed-build
+  client; `nixos-modules/base/builder.nix` only creates the `builder` account
+  there.
 - `nixos-modules/base/agent.nix`, on hosts flagged `agent` in the registry
   (bgm5, f12), accepts ssh from sandboxed agents on other hosts as
   `inputs.self.consts.agent.username`. The bwrap sandbox binds
@@ -184,9 +194,10 @@ experimental feature; run inside the dev shell or pass it explicitly.
   `ForceCommand` (`journalctl -t agent-ssh`) with forwarding disabled. The
   public half lives inline in the module, not under `keys/`, because every
   `*.pub` there is authorized for the primary user and `builder`.
-- `overlays/default.nix` mixes stable inputs, unstable package imports,
-  personal flake packages, impure `npx`/`uv tool run` wrappers, and a Proton
-  Bridge source override. Since the base NixOS module applies it globally,
+- `overlays/default.nix` mixes unstable and unstable-slow package pins,
+  packages from flake inputs, local package definitions and overrides (kitty,
+  yazi, darktable, proton-drive-cli, vim plugins, ...), and the neovim-nightly
+  and oh-my-pi overlays. Since the base NixOS module applies it globally,
   overlay edits can affect system packages, Home Manager, and nixvim.
 - Home Manager activation helpers in `home-modules/base/lib.nix` mutate JSON
   and YAML files in place with jq/yq and log diffs under XDG state. Some configs
@@ -207,9 +218,6 @@ experimental feature; run inside the dev shell or pass it explicitly.
 - The Codex wrappers intentionally pass dangerous approval/sandbox flags to the
   wrapped tool, while the wrapper itself uses bubblewrap with selected read-only
   and read-write binds. Distinguish Codex's own sandbox from this outer wrapper.
-- `codex-remote` has a gated systemd user service, but the package is installed
-  by the Codex frontend module. Service enablement and package exposure are not
-  the same thing here.
 - Niri starts from a bash profile autostart script and a user systemd service,
   not from a display manager. `wayland.systemd.target` is set to `niri.service`
   because the generic graphical session target starts some services too early.

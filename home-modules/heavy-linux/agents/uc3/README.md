@@ -1,9 +1,9 @@
-# uc3 relay — logged, keyless cluster shell for sandboxed agents
+# uc3 relay -- logged, keyless cluster shell for sandboxed agents
 
 Gives the bwrap-sandboxed coding agents one command, `uc3ctl`, that runs
 arbitrary commands on bwUniCluster 3.0. The cluster credential stays entirely
 outside the sandbox and every command is logged on the host. There is no policy
-on *what* runs — the relay only does auth, host-pinning, and logging. The agent
+on *what* runs -- the relay only does auth, host-pinning, and logging. The agent
 has a full cluster account; the cluster's own QOS/association limits are the
 only resource backstop.
 
@@ -35,7 +35,7 @@ uc3ctl 'bash -s' < script.sh
 ```
 
 The agent owns its cluster-side layout (repo location, `.sif` image, scratch
-dirs) — nothing is baked in. Long synchronous commands hold a connection slot,
+dirs) -- nothing is baked in. Long synchronous commands hold a connection slot,
 so `sbatch`/background long work and poll rather than blocking the relay. The
 local timeout defaults to 300 seconds; raise it with `-t SECS` for large uploads
 or long synchronous work, or use `-t 0` to rely only on the handler's one-hour
@@ -58,7 +58,7 @@ are unsupported: they can leave the remote shell waiting for input.
 
 ```
 uc3/
-  default.nix   # uc3ctl package, the relay's handler, ssh master service, state dir
+  default.nix   # uc3ctl and uc3pull packages, the relay's handler, ssh master and uc3-status units, state dir
   handler.sh    # host side; one instance per connection
   shim.sh       # installed as uc3ctl; agent + human entry point
   uc3pull.sh    # installed as uc3pull; croc-based bulk download with md5 verification
@@ -101,18 +101,19 @@ uc3-status` to refresh it first.
   serves every command until the connection drops, and systemd serializes the
   service's starts, so parallel cold starts cannot replay a code. The
   per-command ssh runs in BatchMode and never answers a prompt. None of this is
-  reachable from the sandbox: no
-  `~/.ssh`, no readable `/run/agenix`, and no ControlMaster socket bound in.
+  reachable from the sandbox: no `~/.ssh`, no readable uc3 secret under
+  `/run/agenix` (the sandbox binds only `tgfy-*` and `agent` there), and no
+  ControlMaster socket bound in.
 - The one unix socket is the only privileged channel, and it always logs before
-  it runs — so the log is **complete**. The shared netns lets the agent reach
+  it runs -- so the log is **complete**. The shared netns lets the agent reach
   the ssh port, but with no credential it cannot open its own session; there is
   no second, unlogged path to uc3.
 - The destination is hardcoded to `uc3`: the agent supplies a command, never a
   host. The credential is cluster-only and cannot be extracted.
 - The caller's stdio descriptors are its own: the handler only reads and writes
   them, so handing them over grants the sandbox nothing new.
-- Full compromise of the sandbox yields a full uc3 shell — anything the cluster
-  account can do, all logged — but never the host credential and never non-uc3
+- Full compromise of the sandbox yields a full uc3 shell -- anything the cluster
+  account can do, all logged -- but never the host credential and never non-uc3
   access.
 
 ## Protocol
@@ -120,22 +121,22 @@ uc3-status` to refresh it first.
 - **Request:** the caller's cwd (unused here) and the command line, with the
   caller's stdin, stdout and stderr descriptors attached as ancillary data; the
   client then half-closes and the receiver reads to EOF (the command may be up to the 128 KiB argv limit). The
-  command must be **single-line** — use `uc3ctl 'bash -s' < script.sh` for
+  command must be **single-line** -- use `uc3ctl 'bash -s' < script.sh` for
   multiline logic. Stdin is the upload channel: ssh reads it directly.
 - **Response:** nothing but the exit status, as a decimal line at EOF; the
   client exits with it, or with 1 if it is missing. Remote stdout and stderr go
   straight to the caller's own descriptors, unmerged and byte-for-byte, so
   nothing is parsed or rewritten and binary downloads are safe by
-  construction. `timeout` kill → 124. A failed login → 255 with a distinct
+  construction. `timeout` kill -> 124. A failed login -> 255 with a distinct
   "login failed" (the cluster refused the credentials; ssh's own message
   precedes it) or "cluster unreachable" message on stderr; after that, ssh's
   own diagnostics are the only ones (ambiguous with a remote command that
-  itself exits 255 — accepted). A refused login also trips a breaker:
+  itself exits 255 -- accepted). A refused login also trips a breaker:
   `~/.local/state/uc3/login-disabled` blocks every further login until a
   human removes it, so a caller's retry loop cannot lock the TOTP token (an
   existing master keeps serving). Early stdout close on the caller's side
-  (`uc3ctl … | head`) makes ssh exit 255 silently once its stdout is gone.
-- Handler errors are one line, `uc3: ERROR: …`, on the caller's stderr. The
+  (`uc3ctl ... | head`) makes ssh exit 255 silently once its stdout is gone.
+- Handler errors are one line, `uc3: ERROR: ...`, on the caller's stderr. The
   socket closes when the receiver exits, so the client never hangs on a
   finished command.
 - The client bounds its wait for the exit status to 300 seconds by default. A
@@ -156,7 +157,7 @@ uc3-status` to refresh it first.
   ```
 
 - Only the command line is logged, not stdin/stdout. **Blind spot:** a remote
-  shell (`uc3ctl 'bash -c …'` or `uc3ctl 'bash -s' < script.sh`) logs as one
+  shell (`uc3ctl 'bash -c ...'` or `uc3ctl 'bash -s' < script.sh`) logs as one
   opaque top-level invocation, not the lines it runs. Top-level invocations are
   the audit unit.
 - Handler diagnostics go to the caller's stderr; only the receiver's own
@@ -168,7 +169,7 @@ These live outside this directory; the relay depends on them:
 
 - `../relay` provides the socket, the units, the client and the log;
   `../sandbox.nix` binds every relay's socket into the sandbox rw:
-  `--bind-try "$XDG_RUNTIME_DIR/uc3.sock" "$XDG_RUNTIME_DIR/uc3.sock"` — same
+  `--bind-try "$XDG_RUNTIME_DIR/uc3.sock" "$XDG_RUNTIME_DIR/uc3.sock"` -- same
   path inside and out, so the shim is identical everywhere.
 - `home-modules/base/default.nix` provides the `uc3` ssh entry with
   `ControlMaster auto`, `ControlPath ~/.ssh/cm-%r@%h-%p`, `ControlPersist yes`,
@@ -186,12 +187,12 @@ These live outside this directory; the relay depends on them:
 3. Inside the sandbox: `uc3ctl hostname` works and is logged host-side;
    `ssh uc3` hits a prompt it cannot answer; `cat /run/agenix/uc3-totp` and
    `uc3-askpass OTP` fail; no `~/.ssh` and **no ControlMaster socket** are
-   visible. The CM-socket check is load-bearing — if it leaked, the agent could
+   visible. The CM-socket check is load-bearing -- if it leaked, the agent could
    `ssh uc3` directly and bypass the log.
 4. A nonzero remote command makes `uc3ctl` exit with the same code; a >300 s
    call needs an explicit larger `-t`, while a >1 h synchronous command is
    killed by the handler and reports 124.
-5. Network down: `uc3ctl 'squeue'` → "cluster unreachable", no hang, no prompt.
+5. Network down: `uc3ctl 'squeue'` -> "cluster unreachable", no hang, no prompt.
    Wrong credentials: "login failed" once, then "logins disabled" without
    touching the cluster until `login-disabled` is removed.
 6. A binary `cat` download matches the remote file's byte count and SHA-256;

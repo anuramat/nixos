@@ -6,7 +6,7 @@
 
 ## Install
 
-0. prepare a minimal config in `nixos-configurations/$HOSTNAME/default.nix`
+0. prepare a minimal config in `nixos-configurations/$HOSTNAME/default.nix` and add `$HOSTNAME` to `hosts` in `outputs.nix`
 1. install the base (reminder: swap and luks)
 2. rebuild with the right hostname, connect to wifi with `nmtui`
 3. install the config:
@@ -49,19 +49,18 @@ todo:
 some extras:
 
 ```bash
-nix-cache-keygen # only if this machine is a builder XXX am I sure about this? seems like we need it regardless
+nix-cache-keygen # every host: nix and harmonia sign with /etc/nix/cache.pem; also creates ~/.ssh keys
 # misc
-gh auth login
-# TODO upload ssh key to github; might be doable with gh auth
+gh auth login -p ssh # offers to upload the ~/.ssh public key
 sudo tailscale up "--operator=$(whoami)"
 ```
 
 ## Problems
 
 - sshKey and sshUser in nix.buildMachines are ignored: <https://github.com/NixOS/nix/issues/3423>;
-  for now add this to /root/.ssh/config:
+  for now add this to /root/.ssh/config, for each `builder = true` host in `hosts` (`outputs.nix`):
   ```ssh_config
-  Host anuramat-ll7
+  Host anuramat-bgm5
           IdentitiesOnly yes
           IdentityFile /home/anuramat/.ssh/id_ed25519
           User builder

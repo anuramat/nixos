@@ -86,9 +86,9 @@ local function section(h)
   local onClick
   -- the local host is polled often, so it needs neither a refresh time nor clicks
   if not h.isLocal then
-    -- only clicks get "updating…", so frequent polling doesn't flicker
+    -- only clicks get "updating...", so frequent polling doesn't flicker
     if h.busy and h.clicked then
-      table.insert(header, label("updating…", "outline"))
+      table.insert(header, label("updating...", "outline"))
     elseif h.at then
       table.insert(header, label(duration((noctalia.nowMs() - h.at) // 1000), "outline"))
     end

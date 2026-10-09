@@ -63,16 +63,7 @@ in
     };
 
     buildMachines = lib.mapAttrsToList (n: v: {
-      # sshKey and sshUser are ignored for some reason BUG
-      # <https://github.com/NixOS/nix/issues/3423>
-      # for now add those to /root/.ssh/config
-      # ```
-      # Host anuramat-ll7
-      #         IdentitiesOnly yes
-      #         IdentityFile /home/anuramat/.ssh/id_ed25519
-      #         User builder
-      #         ConnectTimeout 3
-      # ```
+      # sshKey/sshUser are ignored (NixOS/nix#3423); see README.md "Problems"
       # TODO speedFactor, maxJobs
       sshUser = inputs.self.consts.builder.username;
       sshKey = keyPath;
