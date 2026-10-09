@@ -12,5 +12,4 @@ lib.mkIf (config.nixpkgs.config.rocmSupport or false) {
   ];
 
   hardware.amdgpu.opencl.enable = true;
-  services.ollama.package = pkgs.ollama-rocm;
 }

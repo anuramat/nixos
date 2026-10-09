@@ -105,9 +105,6 @@ in
       };
       jack.enable = true;
       pulse.enable = true;
-      wireplumber = {
-        enable = true;
-      };
     };
     # Enable CUPS to print documents, available @ http://localhost:631/
     printing = {

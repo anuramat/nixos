@@ -49,9 +49,8 @@
     "amdgpu.dcdebugmask=0x600" # disable dynamic display IPS
   ];
   # hard-resets the machine if PID 1 is dead for 2m
-  systemd.watchdog.runtimeTime = "2m";
+  systemd.settings.Manager.RuntimeWatchdogSec = "2m";
   hardware.firmware = [
-    pkgs.linux-firmware
     pkgs.strix-halo-mes-firmware # from nix-strix-halo tuning module
   ];
 

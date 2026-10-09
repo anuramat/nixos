@@ -9,8 +9,6 @@
     inputs.self.sharedModules.stylix
   ];
 
-  stylix.autoEnable = true;
-
   # makes nix rebuild the world
   stylix.targets.gtksourceview.enable = false;
 

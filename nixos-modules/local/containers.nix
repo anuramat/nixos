@@ -1,7 +1,6 @@
 { pkgs, ... }:
 {
   virtualisation = {
-    containers.enable = true; # common container config files in /etc/containers
     podman = {
       enable = true;
       dockerCompat = true;

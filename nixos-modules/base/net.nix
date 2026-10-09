@@ -13,7 +13,6 @@ in
   users.users.${username}.extraGroups = [ "networkmanager" ]; # wifi
   networking = {
     firewall = {
-      enable = true;
       allowedTCPPorts = [
         12345
       ];
@@ -66,7 +65,6 @@ in
     tailscale.enable = true;
     openssh = {
       enable = true;
-      ports = [ 22 ];
       settings = {
         PasswordAuthentication = false;
         KbdInteractiveAuthentication = false;

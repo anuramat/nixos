@@ -9,7 +9,6 @@ let
   # TODO add missing keys to trusted-public-keys
   caches = [
     "https://cache.iog.io"
-    "https://cache.nixos.org"
     "https://cache.nixos-cuda.org"
     "https://devenv.cachix.org"
     "https://nix-community.cachix.org"
@@ -52,7 +51,6 @@ in
       trusted-substituters = caches ++ config.lib.hosts.trusted-substituters; # merely allowed
       trusted-public-keys = [
         "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
-        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
         "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
         "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
