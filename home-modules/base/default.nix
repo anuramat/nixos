@@ -79,8 +79,6 @@ in
 
   xdg.enable = true; # set xdg basedir vars in .profile
 
-  programs.home-manager.enable = true; # TODO huh? what does this do
-
   home.preferXdgDirectories = true;
 
   xdg.configFile."nixpkgs/config.nix".text = # nix

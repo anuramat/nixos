@@ -253,12 +253,12 @@ def merge(left_name: str, root_name: str, right_name: str):
     new = diff - root
     keep = unchanged | new
 
-    # TODO sort by date
     result = []
     for line in left_lines + right_lines:
         if line in keep:
             result.append(line)
             keep.remove(line)
+    result.sort(key=get_date)
 
     write(result, left_name)
 

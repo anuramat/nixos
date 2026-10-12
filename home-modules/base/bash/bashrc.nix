@@ -51,10 +51,9 @@ in
 
       source ${./bashrc.sh}
 
-      shopt -s globstar # enables **
       set +H            # turn off ! history bullshit
 
-      # TODO does this even work/is this required
+      # flush each command to $HISTFILE immediately (histappend alone writes on exit); starship evals it via STARSHIP_PROMPT_COMMAND
       PROMPT_COMMAND="''${PROMPT_COMMAND:+$PROMPT_COMMAND;}history -a"
       ${agenix}
     '';

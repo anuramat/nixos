@@ -46,6 +46,4 @@
     # setcap wrapper to use rootless
     enable = true;
   };
-
-  boot.initrd.systemd.enable = true; # TODO idk why I have this
 }

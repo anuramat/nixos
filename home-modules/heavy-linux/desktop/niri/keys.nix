@@ -203,7 +203,7 @@ in
 
     "Mod+T".action."toggle-column-tabbed-display" = { };
 
-    # TODO Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+    "Mod+Escape".action."toggle-keyboard-shortcuts-inhibit" = { };
 
     "Mod+I".action."consume-window-into-column" = { };
     "Mod+O".action."expel-window-from-column" = { };

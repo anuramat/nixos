@@ -1,6 +1,5 @@
 {
   config,
-  lib,
   pkgs,
   ...
 }:
@@ -9,10 +8,6 @@ let
 
   ompHome = config.xdg.configHome + "/omp";
   env.PI_CODING_AGENT_DIR = ompHome;
-  commands =
-    agents.commands
-    |> lib.mapAttrs (_: v: v.withFM { inherit (v) description; })
-    |> agents.mkPrompts "omp/commands";
   omp = agents.mkPackages {
     binName = "omp";
     package = pkgs.oh-my-pi;
@@ -26,7 +21,7 @@ in
   xdg.configFile = {
     "omp/AGENTS.md".text = agents.instructions.omp;
   }
-  // commands;
+  // agents.mkCommandFiles "omp/commands";
 
   home = {
     sessionVariables = env;

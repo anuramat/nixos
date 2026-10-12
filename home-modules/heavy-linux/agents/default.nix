@@ -1,4 +1,5 @@
 {
+  config,
   pkgs,
   lib,
   ...
@@ -38,15 +39,12 @@ in
       ]
       |> concatStringsSep "\n";
 
-    # TODO inline?
-    mkPrompts =
-      dir: prompts:
-      lib.mapAttrs' (promptName: prompt: {
-        name = "${dir}/${promptName}.md";
-        value = {
-          text = prompt;
-        };
-      }) prompts;
+    mkCommandFiles =
+      dir:
+      config.lib.agents.commands
+      |> lib.mapAttrs' (
+        n: v: lib.nameValuePair "${dir}/${n}.md" { text = v.withFM { inherit (v) description; }; }
+      );
   };
 
   home = {

@@ -6,7 +6,6 @@
 }:
 let
   inherit (inputs.self.consts.user) username;
-  # TODO add missing keys to trusted-public-keys
   caches = [
     "https://cache.iog.io"
     "https://cache.nixos-cuda.org"

@@ -8,7 +8,6 @@ in
     ./pastebin.nix
   ];
 
-  # TODO: if this works, unboilerplate with a function
   networking.firewall.allowedTCPPorts = [
     80
     443

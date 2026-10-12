@@ -1,4 +1,3 @@
-# TODO move
 {
   config,
   inputs,
@@ -34,7 +33,7 @@ in
     substituters = mkSubstituters (lib.attrNames builders);
     trusted-substituters = mkSubstituters names;
     keyFiles = names |> lib.concatMap (h: keys.${h}.clientKeyFiles); # ssh public keys
-    knownHostsFiles = names |> map (h: keys.${h}.knownHostsFile); # agenix(?)/ssh host auth
+    knownHostsFiles = names |> map (h: keys.${h}.knownHostsFile); # ssh host auth
     trusted-public-keys = names |> map (h: keys.${h}.cacheKey); # packages signature
     inherit
       builders

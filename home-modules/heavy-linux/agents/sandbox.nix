@@ -125,8 +125,7 @@ in
     let
       passthroughName = "${wrapperName}-unboxed";
       cmd = "${getExe package} ${escapeShellArgs args}";
-      # TODO rename -- reflect that it's a preamble
-      scriptCommon =
+      preamble =
         # bash
         ''
           unset GIT_EXTERNAL_DIFF
@@ -137,7 +136,7 @@ in
       passthrough = pkgs.writeShellApplication {
         name = passthroughName;
         text =
-          scriptCommon
+          preamble
           +
           # bash
           ''
@@ -190,7 +189,7 @@ in
             bubblewrap
           ];
           text =
-            scriptCommon
+            preamble
             +
             # bash
             ''

@@ -60,9 +60,6 @@ in
 
         ESCDELAY = "25";
 
-        # TODO move this somewhere
-        TODO_FILE = "${config.home.homeDirectory}/notes/todo.txt";
-
         RUSTUP_HOME = "${XDG_DATA_HOME}/rustup";
       };
       sessionPath = [

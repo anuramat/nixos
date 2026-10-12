@@ -1,5 +1,7 @@
 # TODO tidy comments
 {
+  config,
+  lib,
   pkgs,
   inputs,
   ...
@@ -29,9 +31,9 @@ in
     "lp" # printers
   ];
 
-  services.getty = {
+  services.getty = lib.mkIf (config.boot.initrd.luks.devices != { }) {
     autologinUser = username;
-    autologinOnce = true; # TODO only if full disk encryption
+    autologinOnce = true;
   };
 
   security = {
@@ -73,10 +75,6 @@ in
         icu
         gmp
         glibc
-        openssl
-        # TODO what is the difference?
-        stdenv.cc.cc
-        stdenv.cc.cc.lib
       ];
     };
   };

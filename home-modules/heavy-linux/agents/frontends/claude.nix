@@ -5,7 +5,6 @@
   ...
 }:
 let
-  inherit (lib) mapAttrs;
   inherit (config.lib) agents;
 
   cfgDir = config.xdg.configHome + "/claude";
@@ -50,18 +49,12 @@ let
     allow = [ ];
     deny = [ ];
   };
-
-  commands =
-    let
-      adaptedCommands = agents.commands |> mapAttrs (_: v: v.withFM { inherit (v) description; });
-    in
-    agents.mkPrompts "claude/commands" adaptedCommands;
 in
 {
   xdg.configFile = {
     "claude/CLAUDE.md".text = agents.instructions.claude;
   }
-  // commands;
+  // agents.mkCommandFiles "claude/commands";
   home = {
     sessionVariables = {
       CLAUDE_CONFIG_DIR = cfgDir;
