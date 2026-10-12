@@ -10,6 +10,7 @@ Items are numbered per section (A1, D3, ...). Sections A, D, F and G are confirm
 - G. Refactors: nixvim
 - H. Needs your decision
 - I. Considered and rejected
+- Verifiability: which confirmed items an agent can check on its own afterwards
 
 ## A. Bugs and broken tooling
 
@@ -1278,3 +1279,41 @@ Recorded so they don't get re-proposed.
 
 **Why rejected:** the dependency is not silent -- `home-modules/heavy-linux/agents/uc3/README.md` ("Host dependencies") documents it, and base is always imported with heavy-linux. The proposal adds coupling from a cross-platform base module to a heavy-linux service, and with a store path in `Environment`, any uc3-askpass rebuild would change the unit, so activation would restart the ssh master and spend a TOTP. The profile path avoids that.
 
+
+## Verifiability
+
+Which of the 57 confirmed items (A, D, F, G) an agent can check on its own after applying them, using an eval, a build or a headless nvim run, without a switch, a GUI or interactive use. Post-switch checks listed in an item's **Verify** (e.g. `gh f --help` in A1) are extra; the checks named here cover the fix itself. Update this section when items are done and removed.
+
+### Fully verifiable: output stays the same (28)
+
+Pure refactors and comment-only edits: drvPaths, rendered configs or the generated nvim config are compared before and after.
+
+- D1 (initrd.systemd), D2 (nix-ld libs), D6 (home-manager.enable), D9 (mkImportSet), D15 (preamble rename), D16 (mkCommandFiles); D4, D5, D14, D18 (comment-only)
+- F1-F3, F5-F12, F14-F16
+- G1 (just settings), G3 (`cmd` helper), G4 (surround global), G5 (toJSON)
+
+### Fully verifiable: behavior changes and the new behavior can be tested (23)
+
+- Eval: A1 (gh-f in `programs.gh.extensions`), A6 and A7 (activation script text), A11 (uc3 handler PATH), D3 (autologinUser per host), D8 (`TODO_FILE` on f12 and root).
+- Build and run: A2 (`collect`/`parent`/`rs`), A3 (`gcreate` with a stubbed `ghq`), A10 (mpv with the generated config), A12 (`fleet-status` under `env -i`), D7 (the built `.bashrc` in an interactive bash), D10 (`todo merge` in a temp dir), D11 (`niri validate` in the build), F17 (grep the built wrappers' exports).
+- Headless nvim: A8 (conform `injected` options), A9 (gitsigns `ih`/`ah` on linematch hunks in a scratch repo), A16 (lua_ls settings), D17 (`:copen` then `:ls`), G2 (`should_attach` true for an `/etc/nixos` buffer), G7 (the config diff is only the two `on_attach` lines).
+- Tooling: A14 and A15 (`nix develop -c just lint`, `nix fmt`), F4 (treefmt.toml flags, `nix fmt` gives no diff).
+
+### Only partly verifiable (6)
+
+The build or eval side can be checked, but the real effect needs the user.
+
+- A4 (`gwt`), A5 (`gclone`): testable only with fzf, gum and gh stubbed; real picker use is not.
+- A13 (niri shortcuts): the scripts build and open-link's PATH has coreutils; opening a link in the niri session is not testable.
+- D12 (hotdoc): it builds, and a stubbed zathura gets killed on SIGINT; the real zathura window is not testable.
+- D13 (Firefox engines): eval shows the engines hidden; whether Firefox hides them shows only after a restart.
+- F13 (autologin profile): eval shows the new block; niri starting on tty1 needs a login.
+
+### Unambiguous parts of H
+
+Two pieces of H items have one fix whatever is decided for the rest:
+
+- H1: the trailing `[ ! -e "$HOME/.ssh" ] && ... ssh-keygen` makes nix-cache-keygen exit 1 whenever `~/.ssh` exists. Testable only with `sudo` stubbed.
+- H5: moving `orphans` to `home-modules/linux.nix`, checkable by eval.
+
+The rest of H and the open TODO markers need a decision or runtime testing.
