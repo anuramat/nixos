@@ -4,7 +4,6 @@
   lib,
   ...
 }:
-# BUG GNUPGHOME is unset when activating without local nixos module
 # WARN getty autologin means no passphrase is captured at boot and keyring is not unlocked
 let
   inherit (lib) escapeShellArg getExe;
@@ -75,7 +74,7 @@ in
 
     # compat
     activation.linkGpgHome = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      ln -sfn "$GNUPGHOME" "$HOME/.gnupg"
+      run ln -sfn ${escapeShellArg gnupgHome} "$HOME/.gnupg"
     '';
   };
 

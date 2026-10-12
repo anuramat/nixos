@@ -48,6 +48,8 @@ pkgs.writeShellApplication {
     bash
     coreutils
     findutils
+    gnugrep
+    gnused
     openssh
     procps
   ];

@@ -133,9 +133,7 @@ in
         pkgs.chatgpt
       ];
       activation = {
-        codexConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-          run cat ${codexTomlCfg} > "${codexCfgPath}";
-        '';
+        codexConfig = config.lib.home.mkGenericActivationScript codexTomlCfg codexCfgPath;
       }
       // skillFiles;
     };

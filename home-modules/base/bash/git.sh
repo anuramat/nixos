@@ -161,10 +161,9 @@ gcreate() {
 	# creates and clones a repo with minimum amount of gh features turned on
 	# $1 - name
 	# $2? - public|private
-	name=$1
-	visibility=private
-	[ "$2" != "" ] && visibility=$2
-	case "$2" in
+	local -r name="$1" visibility="${2:-private}"
+	local path
+	case "$visibility" in
 		private | public) ;;
 		*) return 1 ;;
 	esac

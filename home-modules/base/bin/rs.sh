@@ -3,6 +3,10 @@
 usage="usage: $0 <host> { up | down } <options> <path>"
 
 rs() {
+	[ $# -ge 3 ] || {
+		echo "$usage"
+		return 1
+	}
 	local host direction path
 	host=$1 && shift
 	direction=$1 && shift

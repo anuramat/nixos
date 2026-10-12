@@ -11,6 +11,7 @@ let
     name = "uc3-handler";
     runtimeInputs = with pkgs; [
       coreutils
+      gnugrep
       openssh
       systemd
     ];
