@@ -3,29 +3,20 @@
   ...
 }:
 let
-  inherit (config.lib) keymap;
+  inherit (config.lib) keymap cmd;
 in
 {
   keymaps = [
-    (keymap "n" "<leader>u" "<cmd>packadd nvim.undotree | Undotree<cr>" "Undotree")
+    (cmd "n" "<leader>u" "packadd nvim.undotree | Undotree" "Undotree")
     (keymap "n" "<leader>r" { __raw = ''function() require("flash").jump() end''; } "Jump")
     (keymap "o" "r" { __raw = ''function() require("flash").treesitter() end''; } "Treesitter node")
   ];
-
-  inherit
-    (config.lib.mkVimFiles {
-      just.ftp.ts = 4;
-    })
-    files
-    extraFiles
-    ;
 
   plugins = {
     sniprun.enable = true;
     grug-far.enable = true;
     schemastore.enable = true;
     dressing.enable = true;
-    conform-nvim.settings.formatters_by_ft.just = [ "just" ];
 
     flash = {
       enable = true;

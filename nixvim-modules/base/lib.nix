@@ -9,8 +9,6 @@ let
     mode: key: excmd: desc:
     keymap mode key "<cmd>${excmd}<cr>" desc;
 
-  toJSON = lib.generators.toJSON { };
-
   # Each kind maps a per-filetype value to `{ target, value }`: `target` is the
   # nixvim option it lands in (`files` for managed modules compiled to lua,
   # `extraFiles` for raw runtime files), `value` its content. The file path is
@@ -48,7 +46,7 @@ let
       suffix = ".json";
       route = v: {
         target = "extraFiles";
-        value.text = toJSON v;
+        value.text = builtins.toJSON v;
       };
     };
   };

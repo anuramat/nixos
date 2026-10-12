@@ -5,14 +5,8 @@
     lsp.servers.lua_ls = {
       enable = true;
       settings = {
-        Lua = {
-          format = {
-            enable = false;
-          };
-          runtime = {
-            version = "LuaJIT";
-          };
-        };
+        format.enable = false;
+        runtime.version = "LuaJIT";
       };
     };
   };

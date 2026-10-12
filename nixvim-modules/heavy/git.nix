@@ -50,19 +50,19 @@
       (setAction "[h" "nav_hunk prev")
 
       # text objects
-      (keymap [
-        "o"
-        "x"
-      ] "ih" { __raw = ''function() require("gitsigns").select_hunk() end''; } "gitsigns: inside hunk")
       (keymap
         [
           "o"
           "x"
         ]
-        "ah"
-        { __raw = ''function() require("gitsigns").select_hunk({ greedy = true }) end''; }
-        "gitsigns: around hunk"
+        "ih"
+        { __raw = ''function() require("gitsigns").select_hunk({ greedy = false }) end''; }
+        "gitsigns: inside hunk"
       )
+      (keymap [
+        "o"
+        "x"
+      ] "ah" { __raw = ''function() require("gitsigns").select_hunk() end''; } "gitsigns: around hunk")
 
       # misc
       (setAction "<leader>gb" "blame_line")

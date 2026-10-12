@@ -1,12 +1,11 @@
 " vim: fdm=marker fdl=0
-" TODO: maybe remove bangs where not necessary?
 
 " mappings {{{1
 let mapleader = " "
 let maplocalleader = mapleader . ";"
 tno <esc> <c-\><c-n>
 nn <silent> <c-c> <c-c>
-function! ToggleQuickFix()
+function ToggleQuickFix()
     if empty(filter(getwininfo(), 'v:val.quickfix'))
         copen
     else
@@ -61,15 +60,12 @@ se tgc
 
 " misc {{{1
 " hide qf buffers:
-augroup qf
-  autocmd!
-  autocmd FileType qf set nobuflisted
-augroup END
+au FileType qf setl nobuflisted
 " use ripgrep, but respect ignore files unlike the default -uu
 se grepprg=rg\ --vimgrep
 
 " left and center parts of the status line
-function! LM_STL()
+function LM_STL()
   " disentangled
   let left = printf('%s/', substitute(getcwd(), '^' . getenv('HOME'), '~', ''))
   if index(g:nonfiles, &filetype) != -1

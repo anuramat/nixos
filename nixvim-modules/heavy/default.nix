@@ -38,11 +38,7 @@
       enable = true;
       autoInstall.enable = true;
       settings = {
-        formatters = {
-          injected = {
-            ignore_errors = true;
-          };
-        };
+        formatters.injected.options.ignore_errors = true;
         format_on_save = {
           timeout_ms = 300;
         };
@@ -65,7 +61,6 @@
     };
     otter = {
       # lsp for codeblocks in markdown
-      # TODO make sure it doesn't format twice (conform + otter)
       enable = true;
       autoActivate = false; # TODO
     };

@@ -14,15 +14,14 @@ let
     "grug-far-history"
   ];
   # NOTE: calls back home even when disabled
-  shouldEnableFunc = # lua
+  shouldAttach = # lua
     ''
-      function()
-        local bufname = vim.api.nvim_buf_get_name(0)
+      function(_, bufname)
         if string.match(bufname, "notes") then return false end
         if string.match(bufname, "%.local/share/ghq") then return true end
         if string.match(bufname, "/etc/nixos") then return true end
         return false
-        end
+      end
     '';
 in
 {
@@ -51,7 +50,7 @@ in
           };
         };
         filetypes = genAttrs disabledFiletypes (_ft: false);
-        should_attach.__raw = shouldEnableFunc;
+        should_attach.__raw = shouldAttach;
       };
     };
   };

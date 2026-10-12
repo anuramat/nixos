@@ -7,6 +7,7 @@
 {
   inherit
     (config.lib.mkVimFiles {
+      just.ftp.ts = 4;
       toml.snippets =
         let
           fmt = x: x |> lib.trim |> lib.splitString "\n";
@@ -80,7 +81,10 @@
     };
     conform-nvim = {
       autoInstall.overrides.bake = pkgs.mbake;
-      settings.formatters_by_ft.make = [ "bake" ];
+      settings.formatters_by_ft = {
+        make = [ "bake" ];
+        just = [ "just" ];
+      };
     };
 
     lsp.servers = {

@@ -24,11 +24,7 @@
     harpoon.enable = true;
   };
 
-  globals = {
-    nvim_surround_no_normal_mappings = true;
-    nvim_surround_no_insert_mappings = true;
-    nvim_surround_no_visual_mappings = true;
-  };
+  globals.nvim_surround_no_mappings = true;
   keymaps =
     let
       inherit (config.lib) keymap;

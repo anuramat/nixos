@@ -14,8 +14,8 @@
           };
         };
         on_attach.__raw = ''
-          function(client, bufnr)
-            local opts = { noremap = true, silent = true, buffer = bufnr }
+          function(_, bufnr)
+            local opts = { silent = true, buffer = bufnr }
             vim.keymap.set('n', '<c-space>', function() require('tree_climber_rust').init_selection() end, opts)
             vim.keymap.set('x', '<c-space>', function() require('tree_climber_rust').select_incremental() end, opts)
             vim.keymap.set('x', '<c-bs>', function() require('tree_climber_rust').select_previous() end, opts)
