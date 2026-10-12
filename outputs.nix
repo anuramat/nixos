@@ -21,6 +21,7 @@ let
     );
 
   mkModuleSet = mapDir (_: path: path);
+  mkImportSet = args: mapDir (_: path: import path args);
   # }}}1
 
   # system per standalone Home Manager configuration in home-configurations/
@@ -170,7 +171,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       ) ./nixos-configurations;
     # }}}1
 
-    overlays = mapDir (_name: module: import module { inherit inputs lib; }) ./overlays; # TODO use mkImportSet as well?
+    overlays = mkImportSet { inherit inputs lib; } ./overlays;
     nixvimModules = mkModuleSet ./nixvim-modules;
     sharedModules = mkModuleSet ./shared-modules;
   };
@@ -187,7 +188,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       };
       pkgs = pkgsWithOverlay system;
     in
-    (mapDir (_name: module: import module argsWithInputs) ./parts)
+    (mkImportSet argsWithInputs ./parts)
     // {
       legacyPackages = pkgs;
       checks = # {{{1
@@ -262,9 +263,10 @@ flake-parts.lib.mkFlake { inherit inputs; } {
           fd
 
           nixfmt
+          statix
+          deadnix
           shellcheck
           yamllint
-          luaPackages.luacheck
         ];
         shellHook = ''
           ${config.pre-commit.installationScript}

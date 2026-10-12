@@ -2,8 +2,6 @@
 {
   settings.formatter = {
     shfmt.options = [
-      "--write"
-      "--simplify"
       "--case-indent"
       "--binary-next-line"
     ];
@@ -15,7 +13,6 @@
   };
   programs = {
     nixfmt.enable = true;
-    stylua.enable = true;
     shfmt = {
       enable = true;
       indent_size = 0;

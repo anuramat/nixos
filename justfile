@@ -33,7 +33,6 @@ lint:
     statix check
     fd -F hardware-configuration.nix | xargs deadnix -l --exclude
     fd -e nix | xargs nix-instantiate --parse --quiet >/dev/null
-    fd -e lua | luacheck - --codes --globals=vim -q
     fd -e sh --print0 | xargs -0 shellcheck --enable=all --color=always
     yamllint .
 

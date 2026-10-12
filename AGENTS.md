@@ -26,11 +26,10 @@ secrets, desktop services, AI-agent wrappers, and some server/web services.
 
 Useful repo commands:
 
-- `nix develop`: enter the dev shell with `just`, `nh`, `nixfmt`,
-  `shellcheck`, `yamllint`, and Lua checking tools.
+- `nix develop`: enter the dev shell with `just`, `nh`, `nixfmt`, `statix`,
+  `deadnix`, `shellcheck`, and `yamllint`.
 - `nix fmt`: format through treefmt.
-- `just lint`: run statix, deadnix, Nix parsing, luacheck, shellcheck, and
-  yamllint.
+- `just lint`: run statix, deadnix, Nix parsing, shellcheck, and yamllint.
 - `nix flake check`: the `checks` output evaluates every non-deprecated host's
   toplevel (firing all assertions) without building it.
 - `just nixos [COMMAND] [FLAGS]`: `nixos-rebuild COMMAND` (default `switch`)
