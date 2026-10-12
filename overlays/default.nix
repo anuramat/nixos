@@ -69,6 +69,7 @@ let
         typst
         google-chrome
         zed-editor
+        yt-dlp
         ;
 
       # 0.49.1: kitten names shm objects with a leading slash, which ghostty requires
