@@ -6,11 +6,9 @@
   ...
 }:
 let
-  diffFile = config.xdg.stateHome + "/hm-activation-diffs.txt";
   inherit (lib)
     getExe
     concatStringsSep
-    trim
     ;
   inherit (pkgs) writeTextFile;
   toJSON = lib.generators.toJSON { };
@@ -29,17 +27,6 @@ let
       text = lib.generators.toYAML { } value;
     };
 
-  diff =
-    sourceFile: targetFile:
-    trim
-      # bash
-      ''
-        mkdir -p "$(dirname "${diffFile}")"
-        if [[ -s ${targetFile} ]]; then
-          diff "${sourceFile}" "${targetFile}" || echo "*** ${targetFile} diff above ***"
-        fi | tee -a "${diffFile}" >&2
-      '';
-
   mkGenericActivationScript =
     sourceFile: targetFile:
     let
@@ -50,7 +37,6 @@ let
           target=${lib.escapeShellArg targetFile}
           mkdir -p "$(dirname "$target")"
 
-          ${diff "$source" "$target"}
           run cp --no-preserve=mode "$source" "$target"
         '';
     in
@@ -73,7 +59,6 @@ let
           { [ -s "$target" ] && cat "$target" || echo '{}'; } \
             | ${getExe pkgs.jq} --slurpfile arg ${jsonFile source} '. + $arg[0]' >"$source"
 
-          ${diff "$source" "$target"}
           run mv "$source" "$target"
         '';
     in
@@ -95,7 +80,6 @@ let
             "$current" ${yamlFile source} >"$merged"
           rm "$current"
 
-          ${diff "$merged" "$target"}
           run mv "$merged" "$target"
         '';
     in

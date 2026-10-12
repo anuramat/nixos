@@ -199,7 +199,7 @@ experimental feature; run inside the dev shell or pass it explicitly.
   and oh-my-pi overlays. Since the base NixOS module applies it globally,
   overlay edits can affect system packages, Home Manager, and nixvim.
 - Home Manager activation helpers in `home-modules/base/lib.nix` mutate JSON
-  and YAML files in place with jq/yq and log diffs under XDG state. Some configs
+  and YAML files in place with jq/yq, or copy a file into place. Some configs
   are not simple `xdg.configFile` declarations.
 - `services.pss` is a custom Home Manager module replacing the normal
   pass-secret-service module with a Rust package built from the flake input. It
