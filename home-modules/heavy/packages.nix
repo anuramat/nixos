@@ -41,7 +41,6 @@
     qrrs # generate/read QR codes
     xdg-ninja # checks $HOME for junk
     yt-dlp # download youtube videos
-    songrec # cli shazam, `songrec recognize file.mp3`
 
     # img
     exiftool # read/write EXIF metadata

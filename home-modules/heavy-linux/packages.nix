@@ -40,5 +40,6 @@
     seahorse
     wayidle # runs a command on idle (one-off, thus orthogonal to swayidle)
     wine
+    songrec # cli shazam, `songrec recognize file.mp3`
   ];
 }
