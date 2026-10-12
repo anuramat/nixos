@@ -1,8 +1,4 @@
 {
-  config,
-  ...
-}:
-{
   plugins = {
     lint.lintersByFt.nix = [
       "statix"
@@ -19,26 +15,4 @@
       nil_ls.enable = true;
     };
   };
-  inherit
-    (config.lib.mkVimFiles {
-      nix.injections = # query
-        ''
-          ;; extends
-
-          (apply_expression
-            function: (_) @_func
-            argument: [
-              (string_expression
-                ((string_fragment) @injection.content
-                  (#set! injection.language "lua")))
-              (indented_string_expression
-                ((string_fragment) @injection.content
-                  (#set! injection.language "lua")))
-            ]
-            (#match? @_func "(^|\\.)luaf?$"))
-        '';
-    })
-    files
-    extraFiles
-    ;
 }

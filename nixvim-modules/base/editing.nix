@@ -8,7 +8,7 @@
       # through mini.ai (f/a override the pattern-based builtins)
       settings.custom_textobjects =
         let
-          spec = captures: config.lib.lua "require('mini.ai').gen_spec.treesitter(${captures})";
+          spec = captures: { __raw = "require('mini.ai').gen_spec.treesitter(${captures})"; };
         in
         {
           F = spec "{ a = '@function.outer', i = '@function.inner' }";
@@ -31,16 +31,17 @@
   };
   keymaps =
     let
-      inherit (config.lib) luaf keymap;
+      inherit (config.lib) keymap;
     in
     [
-      (keymap "n" "<leader>ha" (luaf ''require("harpoon"):list():add()'') "Add")
-      (keymap "n" "<leader>hl"
-        (luaf ''require("harpoon").ui:toggle_quick_menu(require("harpoon"):list())'')
-        "List"
-      )
-      (keymap "n" "<leader>hn" (luaf ''require("harpoon"):list():next()'') "Next")
-      (keymap "n" "<leader>hp" (luaf ''require("harpoon"):list():prev()'') "Previous")
+      (keymap "n" "<leader>ha" { __raw = ''function() require("harpoon"):list():add() end''; } "Add")
+      (keymap "n" "<leader>hl" {
+        __raw = ''function() require("harpoon").ui:toggle_quick_menu(require("harpoon"):list()) end'';
+      } "List")
+      (keymap "n" "<leader>hn" { __raw = ''function() require("harpoon"):list():next() end''; } "Next")
+      (keymap "n" "<leader>hp" {
+        __raw = ''function() require("harpoon"):list():prev() end'';
+      } "Previous")
 
       (keymap "i" "<C-g>s" "<Plug>(nvim-surround-insert)" null)
       (keymap "i" "<C-g>S" "<Plug>(nvim-surround-insert-line)" null)

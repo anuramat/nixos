@@ -3,13 +3,13 @@
   ...
 }:
 let
-  inherit (config.lib) luaf keymap;
+  inherit (config.lib) keymap;
 in
 {
   keymaps = [
     (keymap "n" "<leader>u" "<cmd>packadd nvim.undotree | Undotree<cr>" "Undotree")
-    (keymap "n" "<leader>r" (luaf ''require("flash").jump()'') "Jump")
-    (keymap "o" "r" (luaf ''require("flash").treesitter()'') "Treesitter node")
+    (keymap "n" "<leader>r" { __raw = ''function() require("flash").jump() end''; } "Jump")
+    (keymap "o" "r" { __raw = ''function() require("flash").treesitter() end''; } "Treesitter node")
   ];
 
   inherit

@@ -1,10 +1,5 @@
-{
-  config,
-  lib,
-  ...
-}:
+{ lib, ... }:
 let
-  inherit (config.lib) lua;
   inherit (lib) genAttrs;
 
   disabledFiletypes = [
@@ -56,7 +51,7 @@ in
           };
         };
         filetypes = genAttrs disabledFiletypes (_ft: false);
-        should_attach = lua shouldEnableFunc;
+        should_attach.__raw = shouldEnableFunc;
       };
     };
   };

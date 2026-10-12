@@ -27,22 +27,24 @@
 
   keymaps =
     let
-      inherit (config.lib) keymap luaf;
+      inherit (config.lib) keymap;
       # same as builtin v_an/v_in, which are shadowed by mini.ai
-      select =
-        kind: sign:
-        luaf ''
-          if vim.treesitter.get_parser(nil, nil, { error = false }) then
-            vim.treesitter.select("${kind}", vim.v.count1)
-          else
-            vim.lsp.buf.selection_range(${sign}vim.v.count1)
+      select = kind: sign: {
+        __raw = ''
+          function()
+            if vim.treesitter.get_parser(nil, nil, { error = false }) then
+              vim.treesitter.select("${kind}", vim.v.count1)
+            else
+              vim.lsp.buf.selection_range(${sign}vim.v.count1)
+            end
           end
         '';
+      };
     in
     [
-      (keymap "n" "<leader>j" (luaf ''require("treesj").toggle()'')
-        "TreeSJ: Split/Join a Treesitter node"
-      )
+      (keymap "n" "<leader>j" {
+        __raw = ''function() require("treesj").toggle() end'';
+      } "TreeSJ: Split/Join a Treesitter node")
       (keymap [ "n" "x" ] "<c-space>" (select "parent" "") "Select parent node")
       (keymap "x" "<c-bs>" (select "child" "-") "Select child node")
     ];

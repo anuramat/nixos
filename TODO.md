@@ -956,7 +956,7 @@ The grep prints `export CODEX_HOME="/home/anuramat/.config/codex"`.
         };
       };
   ```
-- In `nixvim-modules/heavy/misc.nix`, delete lines 16-22 (the `mkVimFiles` inherit) and line 30 (`conform-nvim.settings.formatters_by_ft.just`). `config` stays in use there (`inherit (config.lib) luaf keymap;`).
+- In `nixvim-modules/heavy/misc.nix`, delete lines 16-22 (the `mkVimFiles` inherit) and line 30 (`conform-nvim.settings.formatters_by_ft.just`). `config` stays in use there (`inherit (config.lib) keymap;`).
 - G3 also edits `heavy/misc.nix`, and B14 (done) already removed lines from it; apply by content, since line numbers shifted.
 
 **Verify:**
@@ -966,7 +966,7 @@ The grep prints `export CODEX_HOME="/home/anuramat/.config/codex"`.
 
 ### G2. copilot `should_attach`: use the `bufname` argument instead of re-reading buffer 0
 
-**Where:** `nixvim-modules/heavy/completion.nix:22-31`, `nixvim-modules/heavy/completion.nix:72`
+**Where:** `nixvim-modules/heavy/completion.nix:16-25`, `nixvim-modules/heavy/completion.nix:54`
 **Effort:** trivial -- **Risk:** low
 
 **Problem:** The callback is `shouldEnableFunc = ''function() local bufname = vim.api.nvim_buf_get_name(0) ... end'';`. copilot.lua 2.0.4 calls it as `config.should_attach(bufnr, bufname)` for an explicit buffer (`lua/copilot/util.lua:46-64`, reached from `client/init.lua:82` and `command.lua:38`). The callback ignores both arguments and reads the current buffer instead, which is extra code and gives the wrong answer whenever `bufnr` is not the current buffer. Reproduced with the built `neovim`: `nvim --headless -c 'badd /etc/nixos/flake.nix' -c 'lua io.stdout:write(tostring(require("copilot.util").should_attach(vim.fn.bufnr("/etc/nixos/flake.nix"))), "\n")' -c 'qa!'` prints `false`, although `/etc/nixos` paths are meant to attach. The closing `end` is also misindented, and the binding name does not match the option it feeds (`should_attach`).
@@ -984,7 +984,7 @@ The grep prints `export CODEX_HOME="/home/anuramat/.config/codex"`.
       end
     '';
 ```
-On line 72, use `should_attach = lua shouldAttach;`.
+Then use `should_attach.__raw = shouldAttach;`.
 
 **Verify:**
 - `nix build .#checks.x86_64-linux.neovim`.
@@ -999,7 +999,7 @@ On line 72, use `should_attach = lua shouldAttach;`.
 
 **Fix:**
 - In `nixvim-modules/base/basic.nix:52-56`, use `inherit (config.lib) cmd;`, `(cmd "n" "<c-j>" "cnext" "next qf item")` and `(cmd "n" "<c-k>" "cprev" "prev qf item")`.
-- In `nixvim-modules/heavy/misc.nix`, change line 7 to `inherit (config.lib) luaf keymap cmd;` and line 11 to `(cmd "n" "<leader>u" "packadd nvim.undotree | Undotree" "Undotree")`.
+- In `nixvim-modules/heavy/misc.nix`, change line 6 to `inherit (config.lib) keymap cmd;` and line 11 to `(cmd "n" "<leader>u" "packadd nvim.undotree | Undotree" "Undotree")`.
 
 **Verify:** Checked in a scratch copy: the generated keymap tables are byte-identical for both variants. Before and after, `nix eval --raw .#packages.x86_64-linux.neovim.config.content` and `nix eval --raw .#packages.x86_64-linux.neovim-minimal.config.content` are byte-identical (`diff` the outputs).
 
@@ -1027,19 +1027,6 @@ On line 72, use `should_attach = lua shouldAttach;`.
 
 **Verify:** Checked in a scratch copy: all `extraFiles` are byte-identical. Before and after, `nix eval --raw '.#packages.x86_64-linux.neovim.config.extraFiles."snippets/sh.json".text'` and the same for `"snippets/toml.json"` print the same JSON; `just lint` (deadnix) passes.
 
-### G6. Use the `lua` helper instead of hand-written `__raw` attrs
-
-**Where:** `nixvim-modules/heavy/fzf.nix:61`, `nixvim-modules/heavy/lang/rust.nix:16`, `nixvim-modules/base/lib.nix:3`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** Raw Lua otherwise always goes through `config.lib.lua` (`lib.nix:3`: `lua = action: { __raw = action; };`). These are the only two `__raw` uses in `nixvim-modules/`: `fzf.nix` already inherits `lua` but writes `fn.__raw = "require('fzf-lua').actions.file_sel_to_qf";`, and `rust.nix` writes `on_attach.__raw = ''...''`.
-
-**Fix:**
-- In `nixvim-modules/heavy/fzf.nix:61`, use `fn = lua "require('fzf-lua').actions.file_sel_to_qf";`.
-- In `nixvim-modules/heavy/lang/rust.nix:16`, use `on_attach = config.lib.lua ''` with the same body (`config` is already a module argument). G7 edits the next two lines of the same string and can be done together.
-
-**Verify:** Before and after, `nix eval --raw .#packages.x86_64-linux.neovim.config.content` is byte-identical (`diff` the outputs); if done together with G7, the diff contains only their changes.
-
 ### G7. rust `on_attach`: drop the unsupported `noremap` key and the unused `client` parameter
 
 **Where:** `nixvim-modules/heavy/lang/rust.nix:17-18`
@@ -1047,7 +1034,7 @@ On line 72, use `should_attach = lua shouldAttach;`.
 
 **Problem:** The callback is `function(client, bufnr) local opts = { noremap = true, silent = true, buffer = bufnr }`. Neovim's `vim.keymap.set` documents "{noremap} is not supported; use {remap} instead" and forces `opts.noremap = true` when `remap` is nil (runtime `lua/vim/keymap.lua:6,74-76`), so the key has no effect. rustaceanvim calls `on_attach(client, bufnr)`, but `client` is never used in the body.
 
-**Fix:** In `nixvim-modules/heavy/lang/rust.nix:17-18`, change to `function(_, bufnr)` and `local opts = { silent = true, buffer = bufnr }`. Can be done together with the G6 edit on line 16.
+**Fix:** In `nixvim-modules/heavy/lang/rust.nix:17-18`, change to `function(_, bufnr)` and `local opts = { silent = true, buffer = bufnr }`.
 
 **Verify:**
 - `nix build .#checks.x86_64-linux.neovim`; the `config.content` diff shows only these two lines of the rustaceanvim `on_attach`.

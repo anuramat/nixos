@@ -27,23 +27,21 @@
 
   keymaps =
     let
-      inherit (config.lib) keymap luaf cmd;
+      inherit (config.lib) keymap cmd;
       setAction = key: action: cmd "n" key "Gitsigns ${action}" "gitsigns: ${action}";
     in
     [
       # stage
-      (keymap "v" "<leader>gs"
-        (luaf ''require("gitsigns").stage_hunk({ vim.fn.line("."), vim.fn.line("v") })'')
-        "gitsigns: stage selection"
-      )
+      (keymap "v" "<leader>gs" {
+        __raw = ''function() require("gitsigns").stage_hunk({ vim.fn.line("."), vim.fn.line("v") }) end'';
+      } "gitsigns: stage selection")
       (setAction "<leader>gs" "stage_hunk")
       (setAction "<leader>gS" "stage_buffer")
 
       # reset
-      (keymap "v" "<leader>gr"
-        (luaf ''require("gitsigns").reset_hunk({ vim.fn.line("."), vim.fn.line("v") })'')
-        "gitsigns: reset selection"
-      )
+      (keymap "v" "<leader>gr" {
+        __raw = ''function() require("gitsigns").reset_hunk({ vim.fn.line("."), vim.fn.line("v") }) end'';
+      } "gitsigns: reset selection")
       (setAction "<leader>gr" "reset_hunk")
       (setAction "<leader>gR" "reset_buffer")
 
@@ -55,11 +53,16 @@
       (keymap [
         "o"
         "x"
-      ] "ih" (luaf ''require("gitsigns").select_hunk()'') "gitsigns: inside hunk")
-      (keymap [
-        "o"
-        "x"
-      ] "ah" (luaf ''require("gitsigns").select_hunk({ greedy = true })'') "gitsigns: around hunk")
+      ] "ih" { __raw = ''function() require("gitsigns").select_hunk() end''; } "gitsigns: inside hunk")
+      (keymap
+        [
+          "o"
+          "x"
+        ]
+        "ah"
+        { __raw = ''function() require("gitsigns").select_hunk({ greedy = true }) end''; }
+        "gitsigns: around hunk"
+      )
 
       # misc
       (setAction "<leader>gb" "blame_line")

@@ -1,8 +1,5 @@
 { lib, ... }:
 let
-  lua = action: { __raw = action; };
-  luaf = action: lua "function() ${action} end";
-
   keymap = mode: key: action: desc: {
     inherit mode key action;
     options = { inherit desc; };
@@ -65,8 +62,6 @@ in
 
   config.lib = {
     inherit
-      lua
-      luaf
       keymap
       cmd
       ;

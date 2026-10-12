@@ -1,8 +1,6 @@
 { config, ... }:
 let
   inherit (config.lib)
-    lua
-    luaf
     keymap
     cmd
     ;
@@ -34,17 +32,16 @@ in
       (mapAction "h" "helptags")
       (mapAction "k" "keymaps")
       (mapAction "p" "builtin")
-      (keymap "i" "<C-x><C-f>"
-        (luaf ''require("fzf-lua").complete_file({ cmd = "fd -t f -HL", winopts = { preview = { hidden = "nohidden" } } })'')
-        "path completion"
-      )
+      (keymap "i" "<C-x><C-f>" {
+        __raw = ''function() require("fzf-lua").complete_file({ cmd = "fd -t f -HL", winopts = { preview = { hidden = "nohidden" } } }) end'';
+      } "path completion")
     ];
 
   plugins.fzf-lua = {
     enable = true;
     settings = {
       grep = {
-        RIPGREP_CONFIG_PATH = lua "vim.env.RIPGREP_CONFIG_PATH";
+        RIPGREP_CONFIG_PATH.__raw = "vim.env.RIPGREP_CONFIG_PATH";
         multiline = 2;
       };
       files.fd_opts = "-c never -t f -t l -HL";

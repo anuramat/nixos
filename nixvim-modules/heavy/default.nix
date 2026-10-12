@@ -18,11 +18,11 @@
 
   keymaps =
     let
-      inherit (config.lib) lua keymap;
+      inherit (config.lib) keymap;
     in
     [
-      (keymap "n" "grd" (lua "vim.lsp.buf.declaration") "Goto Declaration")
-      (keymap "n" "grq" (lua "vim.diagnostic.setqflist") "Diagnostic QF List")
+      (keymap "n" "grd" { __raw = "vim.lsp.buf.declaration"; } "Goto Declaration")
+      (keymap "n" "grq" { __raw = "vim.diagnostic.setqflist"; } "Diagnostic QF List")
     ];
   plugins = {
     lint = {
