@@ -12,6 +12,7 @@
     ./packages.nix
     ./ssh-mic.nix
     ./terminals.nix
+    ./vnc.nix
     inputs.spicetify-nix.homeManagerModules.spicetify
   ];
 
