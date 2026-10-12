@@ -16,9 +16,9 @@
   boot.plymouth.enable = true;
 
   # tty prompt
-  services.getty = with lib; {
-    greetingLine = mkForce ''\l'';
-    helpLine = mkForce "";
+  services.getty = {
+    greetingLine = lib.mkForce ''\l'';
+    helpLine = lib.mkForce "";
   };
 
   # silent boot, taken from `boot.initrd.verbose` description:

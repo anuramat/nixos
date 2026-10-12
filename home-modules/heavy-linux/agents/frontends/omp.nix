@@ -9,11 +9,9 @@ let
   ompHome = config.xdg.configHome + "/omp";
   env.PI_CODING_AGENT_DIR = ompHome;
   omp = agents.mkPackages {
-    binName = "omp";
     package = pkgs.oh-my-pi;
     args = [ "--yolo" ];
     inherit env;
-    agentDir = null;
     extraRwDirs = [ ompHome ];
   };
 in

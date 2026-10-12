@@ -33,25 +33,19 @@ let
   };
   vhostsFor =
     w:
+    let
+      isRoot = w.root == w.domain;
+    in
     [
-      { ${w.domain}.locations."/".proxyPass = "http://localhost:${w.port}"; }
-      (
-        if w.root == w.domain then
-          {
-            ${w.domain} = {
-              enableACME = true;
-              forceSSL = true;
-              default = true;
-            };
-          }
-        else
-          {
-            ${w.domain} = {
-              useACMEHost = w.root;
-              forceSSL = true;
-            };
-          }
-      )
+      {
+        ${w.domain} = {
+          locations."/".proxyPass = "http://localhost:${w.port}";
+          forceSSL = true;
+          enableACME = isRoot;
+          default = isRoot;
+          useACMEHost = if isRoot then null else w.root;
+        };
+      }
     ]
     ++ optional w.noRobots {
       ${w.domain}.locations."/robots.txt".extraConfig = # nginx
@@ -59,21 +53,16 @@ let
           return 200 "User-agent: *\nDisallow: /";
         '';
     }
-    ++ optional (w.root == w.domain) {
+    ++ optional isRoot {
       "www.${w.domain}" = {
         globalRedirect = w.domain;
         useACMEHost = w.root;
         forceSSL = true;
       };
     };
-  acmeCertsFor =
-    w:
-    optional (w.root != w.domain) {
-      ${w.root}.extraDomainNames = [ w.domain ];
-    }
-    ++ optional (w.root == w.domain) {
-      ${w.root}.extraDomainNames = [ "www.${w.domain}" ];
-    };
+  acmeCertFor = w: {
+    ${w.root}.extraDomainNames = [ (if w.root == w.domain then "www.${w.domain}" else w.domain) ];
+  };
   systemdServicesFor =
     w:
     optional (w.binary != null) {
@@ -98,7 +87,7 @@ in
     users.users.${inputs.self.consts.user.username}.extraGroups =
       optional config.services.nginx.enable "nginx";
     services.nginx.virtualHosts = mkMerge (concatMap vhostsFor config.web.sites);
-    security.acme.certs = mkMerge (concatMap acmeCertsFor config.web.sites);
+    security.acme.certs = mkMerge (map acmeCertFor config.web.sites);
     systemd.services = mkMerge (concatMap systemdServicesFor config.web.sites);
   };
 }

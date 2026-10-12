@@ -5,52 +5,42 @@
   ...
 }:
 let
-  excludeShellChecks = map (v: "SC" + toString v) config.lib.shellcheck.excludes;
+  inherit (config.lib.shellcheck) excludeShellChecks;
 
-  handler = pkgs.writeShellApplication {
-    name = "uc3-handler";
-    runtimeInputs = with pkgs; [
+  mkScript =
+    name: file: runtimeInputs:
+    pkgs.writeShellApplication {
+      inherit name runtimeInputs excludeShellChecks;
+      text = builtins.readFile file;
+    };
+
+  handler = mkScript "uc3-handler" ./handler.sh (
+    with pkgs;
+    [
       coreutils
       gnugrep
       openssh
       systemd
-    ];
-    inherit excludeShellChecks;
-    text = builtins.readFile ./handler.sh;
-  };
-
-  uc3ctl = pkgs.writeShellApplication {
-    name = "uc3ctl";
-    runtimeInputs = with pkgs; [
-      coreutils
-      config.lib.agents.relayClient
-    ];
-    inherit excludeShellChecks;
-    text = builtins.readFile ./shim.sh;
-  };
-
-  uc3pull = pkgs.writeShellApplication {
-    name = "uc3pull";
-    runtimeInputs = with pkgs; [
+    ]
+  );
+  uc3ctl = mkScript "uc3ctl" ./shim.sh [
+    pkgs.coreutils
+    config.lib.agents.relayClient
+  ];
+  uc3pull = mkScript "uc3pull" ./uc3pull.sh (
+    with pkgs;
+    [
       coreutils
       croc
       diffutils
       findutils
       uc3ctl
-    ];
-    inherit excludeShellChecks;
-    text = builtins.readFile ./uc3pull.sh;
-  };
-
-  status = pkgs.writeShellApplication {
-    name = "uc3-status";
-    runtimeInputs = with pkgs; [
-      coreutils
-      uc3ctl
-    ];
-    inherit excludeShellChecks;
-    text = builtins.readFile ./status.sh;
-  };
+    ]
+  );
+  status = mkScript "uc3-status" ./status.sh [
+    pkgs.coreutils
+    uc3ctl
+  ];
 in
 {
   # for the noctalia fleet monitor plugin, which follows uc3-status.service's
@@ -77,7 +67,7 @@ in
             "SSH_ASKPASS=${config.home.profileDirectory}/bin/uc3-askpass"
             "SSH_ASKPASS_REQUIRE=force"
           ];
-          ExecStart = "${pkgs.openssh}/bin/ssh -o ConnectTimeout=15 -fN uc3";
+          ExecStart = "${lib.getExe pkgs.openssh} -o ConnectTimeout=15 -fN uc3";
           # the broker reads this to tell a refused login from an unreachable cluster
           StandardError = "truncate:%S/uc3/login.err";
           StateDirectory = "uc3";
@@ -87,7 +77,7 @@ in
         Unit.Description = "uc3 partition and job snapshot";
         Service = {
           Type = "oneshot";
-          ExecStart = "${status}/bin/uc3-status";
+          ExecStart = lib.getExe status;
           # the fleet monitor shows its last line; empty after a successful fetch
           StandardError = "truncate:%S/uc3/status.err";
           StateDirectory = "uc3";

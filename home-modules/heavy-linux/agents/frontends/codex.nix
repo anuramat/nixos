@@ -114,11 +114,9 @@ let
     CODEX_HOME = codexHome;
   };
   codex = config.lib.agents.mkPackages {
-    binName = "codex";
     package = pkgs.codex;
     args = [ "--dangerously-bypass-approvals-and-sandbox" ];
     inherit env;
-    agentDir = null;
     extraRwDirs = [
       codexHome
     ];

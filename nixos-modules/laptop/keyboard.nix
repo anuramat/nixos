@@ -1,12 +1,8 @@
 { config, lib, ... }:
 {
-  warnings =
-    if config.services.keyd.keyboards.main.ids == [ ] then
-      [
-        "no keyboard specified for keyd, remaps will not be applied"
-      ]
-    else
-      [ ];
+  warnings = lib.optional (
+    config.services.keyd.keyboards.main.ids == [ ]
+  ) "no keyboard specified for keyd, remaps will not be applied";
   services.keyd = {
     enable = true;
     keyboards = {

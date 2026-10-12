@@ -39,18 +39,12 @@ in
         pkgs.xdg-desktop-portal-gtk
         # TODO read and verify that all needs are covered with no overlap <https://wiki.archlinux.org/title/XDG_Desktop_Portal>
       ];
-      config =
-        let
-          portalConfig = {
-            "org.freedesktop.impl.portal.FileChooser" = "termfilechooser";
-            "org.freedesktop.impl.portal.ScreenCast" = "wlr";
-            "org.freedesktop.impl.portal.Screenshot" = "wlr";
-            "default" = "gtk";
-          };
-        in
-        {
-          common = portalConfig;
-        };
+      config.common = {
+        "org.freedesktop.impl.portal.FileChooser" = "termfilechooser";
+        "org.freedesktop.impl.portal.ScreenCast" = "wlr";
+        "org.freedesktop.impl.portal.Screenshot" = "wlr";
+        default = "gtk";
+      };
     };
   };
 }

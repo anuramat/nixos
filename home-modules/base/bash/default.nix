@@ -6,15 +6,15 @@
 }:
 let
   inherit (lib) attrValues escapeShellArgs;
-  shellcheckExcludes = [
-    2016 # expansion in '' won't work
-    2059 # don't use variables in printf format string
-    2292 # prefer [[]] over []
-    2139 # unintended? expansion in an alias (alias a="$test" instead of '$test')
-    2250 # use braces even if not necessary
-    1003 # trying to escape a single quote?
-    2312 # return value is masked by $()
-    2154 # referenced but not assigned, e.g. $XDG_CONFIG_HOME
+  excludeShellChecks = [
+    "SC2016" # expansion in '' won't work
+    "SC2059" # don't use variables in printf format string
+    "SC2292" # prefer [[]] over []
+    "SC2139" # unintended? expansion in an alias (alias a="$test" instead of '$test')
+    "SC2250" # use braces even if not necessary
+    "SC1003" # trying to escape a single quote?
+    "SC2312" # return value is masked by $()
+    "SC2154" # referenced but not assigned, e.g. $XDG_CONFIG_HOME
   ];
 in
 {
@@ -166,11 +166,11 @@ in
       };
     };
   };
-  lib.shellcheck.excludes = shellcheckExcludes;
+  lib.shellcheck.excludeShellChecks = excludeShellChecks;
   # Shellcheck configuration
   xdg.configFile."shellcheckrc".text = ''
     enable=all
     external-sources=true
   ''
-  + lib.strings.concatMapStrings (v: "disable=SC${toString v}\n") shellcheckExcludes;
+  + lib.strings.concatMapStrings (v: "disable=${v}\n") excludeShellChecks;
 }

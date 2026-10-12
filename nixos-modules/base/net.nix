@@ -33,7 +33,7 @@ in
       # give up on a dead backend after one retry: a fresh session goes through
       # the load balancer, a reconnect clings to the same server
       reconnect-timeout = "30";
-      script = "${pkgs.vpn-slice}/bin/vpn-slice --no-host-names --no-ns-hosts bwunicluster.scc.kit.edu 129.206.0.0/16 147.142.0.0/16";
+      script = "${lib.getExe pkgs.vpn-slice} --no-host-names --no-ns-hosts bwunicluster.scc.kit.edu 129.206.0.0/16 147.142.0.0/16";
     };
   };
   # every start spends a TOTP: never replay a code, back off, and stop well

@@ -1,4 +1,9 @@
-{ config, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   # start the background instance with the session, so the first window opens fast too
   xdg.configFile."systemd/user/${config.wayland.systemd.target}.wants/app-com.mitchellh.ghostty.service".source =
@@ -18,6 +23,8 @@
         title = "ghostty";
         gtk-single-instance = true;
         confirm-close-surface = false;
+        command = "bash -l";
+        window-decoration = "false";
 
         keybind = [
 
@@ -36,4 +43,6 @@
       };
     };
   };
+  home.sessionVariables.TERMCMD = lib.getExe config.programs.ghostty.package;
+  # TERMCMD = "${lib.getExe pkgs.kitty} -1";
 }

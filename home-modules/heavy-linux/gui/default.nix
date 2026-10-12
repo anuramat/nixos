@@ -10,12 +10,15 @@ let
 in
 {
   imports = [
+    inputs.spicetify-nix.homeManagerModules.spicetify
     ./packages.nix
     ./viewers.nix
     ./terminals.nix
     ./obs.nix
     ./theme.nix
   ];
+
+  home.sessionVariables.NIXOS_OZONE_WL = "1"; # wayland chromium/electron
 
   programs = {
     spicetify = {
@@ -92,7 +95,7 @@ in
         show_panel = true;
         line_size = 5;
         text_size = 20;
-        text_font = "${config.stylix.fonts.serif.name}";
+        text_font = config.stylix.fonts.serif.name;
         paint_mode = "brush";
         early_exit = false;
         fill_shape = false;

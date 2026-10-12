@@ -10,20 +10,8 @@ let
     escapeShellArgs
     getName
     getExe
-    mapAttrsToList
     concatMap
     ;
-
-  exportScript =
-    env:
-    env
-    |> mapAttrsToList (
-      n: v: ''
-        ${n}=${v}
-        export ${n}
-      ''
-    )
-    |> builtins.concatStringsSep "\n";
 
   mkArgs =
     {
@@ -39,7 +27,7 @@ let
             flag
             x
           ]
-          ++ (if doublePath then [ x ] else [ ])
+          ++ lib.optional doublePath x
         );
     in
     paths |> concatMap argsSingle |> escapeShellArgs;
@@ -114,11 +102,10 @@ in
   config.lib.agents.mkPackages =
     {
       package,
-      binName ? package.meta.mainProgram,
-      wrapperName ? binName,
+      wrapperName ? package.meta.mainProgram,
       args ? [ ],
       extraRwDirs ? [ ],
-      agentDir, # name of subdir in xdg dirs
+      agentDir ? null, # name of subdir in xdg dirs
       env ? { },
       tokens ? (_: { }),
     }:
@@ -130,7 +117,7 @@ in
         ''
           unset GIT_EXTERNAL_DIFF
           ${config.lib.home.mkAgenixExportScript tokens}
-          ${exportScript env}
+          ${config.lib.shell.exportAll env}
         '';
 
       passthrough = pkgs.writeShellApplication {
@@ -149,16 +136,14 @@ in
 
           rwDirs =
             let
-              agentDirs =
-                if agentDir != null then
-                  (map (v: "${v}/${agentDir}") [
-                    config.xdg.cacheHome
-                    config.xdg.configHome
-                    config.xdg.dataHome
-                    config.xdg.stateHome
-                  ])
-                else
-                  [ ];
+              agentDirs = lib.optionals (agentDir != null) (
+                map (v: "${v}/${agentDir}") [
+                  config.xdg.cacheHome
+                  config.xdg.configHome
+                  config.xdg.dataHome
+                  config.xdg.stateHome
+                ]
+              );
             in
             mkArgs {
               flag = "--bind-try";
@@ -249,7 +234,7 @@ in
         package
       ];
       postBuild = ''
-        rm -f "$out/bin/${binName}"
+        rm -f "$out/bin/${package.meta.mainProgram}"
         ln -s ${getExe passthrough} "$out/bin/${passthroughName}"
         ln -s ${getExe sandboxed} "$out/bin/${sandboxed.name}"
       '';

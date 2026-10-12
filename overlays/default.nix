@@ -4,13 +4,9 @@
   ...
 }:
 let
-  inherit (builtins)
-    mapAttrs
-    ;
-
   flakes =
     _: prev:
-    (mapAttrs (_: v: v.packages.${prev.stdenv.hostPlatform.system}.default) {
+    (lib.mapAttrs (_: v: v.packages.${prev.stdenv.hostPlatform.system}.default) {
       inherit (inputs)
         sem
         vicode
@@ -28,6 +24,8 @@ let
         chatgpt
         claude-desktop
         ghostty
+        noctalia
+        ctrlsn
         ;
     });
 
@@ -106,7 +104,7 @@ let
       darktable = unstable.darktable.override {
         withAi = true;
         gmic = unstable.gmic.overrideAttrs (old: {
-          cmakeFlags = (old.cmakeFlags or [ ]) ++ [ (prev.lib.cmakeBool "ENABLE_OPENCV" false) ];
+          cmakeFlags = (old.cmakeFlags or [ ]) ++ [ (lib.cmakeBool "ENABLE_OPENCV" false) ];
         });
       };
 
@@ -255,17 +253,10 @@ let
         };
       };
     };
-
-  overlays = [
-    overrides
-    flakes
-    inputs.neovim-nightly-overlay.overlays.default
-    inputs.oh-my-pi.overlays.default
-  ];
 in
-final: prev:
-let
-  unwrapped = map (x: x final prev) overlays;
-  merge = lib.foldr (a: b: a // b) { };
-in
-merge unwrapped
+lib.composeManyExtensions [
+  overrides
+  flakes
+  inputs.neovim-nightly-overlay.overlays.default
+  inputs.oh-my-pi.overlays.default
+]

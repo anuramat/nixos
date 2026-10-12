@@ -21,7 +21,7 @@
       specialArgs = {
         inherit inputs;
       }
-      // (if osConfig == null then { } else { inherit osConfig; });
+      // lib.optionalAttrs (osConfig != null) { inherit osConfig; };
     };
   };
   config.programs.nixvim = {

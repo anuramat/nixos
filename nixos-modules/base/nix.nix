@@ -24,15 +24,15 @@ in
     enable = true;
   };
 
-  nix = with lib.attrsets; {
+  nix = {
     distributedBuilds = !inputs.self.hosts.${config.networking.hostName}.builder;
 
     channel.enable = false;
 
     # add all inputs to registry
-    registry = mapAttrs (n: v: { flake = v; }) inputs;
+    registry = lib.mapAttrs (_: flake: { inherit flake; }) inputs;
     # and then to nixpath (required by haskell stack)
-    nixPath = mapAttrsToList (n: v: "${n}=${v.outPath}") inputs;
+    nixPath = lib.mapAttrsToList (n: v: "${n}=${v.outPath}") inputs;
     # note that input names matter now
 
     settings = {
@@ -73,7 +73,7 @@ in
   };
   services.harmonia.cache = {
     enable = true;
-    signKeyPaths = [ "/etc/nix/cache.pem" ];
+    signKeyPaths = [ config.nix.settings.secret-key-files ];
     settings.bind = "[::]:${toString cachePort}";
   };
   networking.firewall.interfaces.tailscale0.allowedTCPPorts = [

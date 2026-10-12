@@ -1,7 +1,7 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 let
-  ryzenadj = "${pkgs.ryzenadj}/bin/ryzenadj";
-  awk = "${pkgs.gawk}/bin/awk";
+  ryzenadj = lib.getExe pkgs.ryzenadj;
+  awk = lib.getExe' pkgs.gawk "awk";
   ecBase = "/sys/class/ec_su_axb35";
 
   # five temps for 20% fan speed increments

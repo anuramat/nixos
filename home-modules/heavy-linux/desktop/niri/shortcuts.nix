@@ -2,7 +2,7 @@
 # helper scripts for iOS shortcuts
 let
   inherit (pkgs) writeShellApplication;
-  excludeShellChecks = map (v: "SC" + toString v) config.lib.shellcheck.excludes;
+  inherit (config.lib.shellcheck) excludeShellChecks;
 
   niriEnv = # bash
     ''

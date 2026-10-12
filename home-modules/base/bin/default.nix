@@ -10,7 +10,7 @@ let
   inherit (pkgs) writeShellApplication;
   inherit (builtins) readFile readDir;
 
-  excludeShellChecks = map (v: "SC" + toString v) config.lib.shellcheck.excludes;
+  inherit (config.lib.shellcheck) excludeShellChecks;
 
   packages =
     with lib;
@@ -30,7 +30,7 @@ let
     let
       # TODO move and read public
       private = osConfig.nix.settings.secret-key-files;
-      public = "/etc/nix/cache.pem.pub";
+      public = "${private}.pub";
       # its own group too, see nixos-modules/base/builder.nix
       builder = inputs.self.consts.builder.username;
     in
@@ -49,5 +49,5 @@ let
   # TODO root ssh config from nix.nix?
 in
 {
-  home.packages = packages ++ (if osConfig != null then [ nix-cache-keygen ] else [ ]);
+  home.packages = packages ++ lib.optional (osConfig != null) nix-cache-keygen;
 }
