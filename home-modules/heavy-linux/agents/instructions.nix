@@ -32,7 +32,10 @@ let
             behavior for old codepaths.
 
             If user refers to "spec" without specifying, ./SPEC.md is usually
-            implied
+            implied; ./SPEC.md is typically a temporary document that is dropped
+            or consolidated into project documentation once the spec is
+            implemented, so it shouldn't be mentioned in code, comments, or
+            commit messages.
 
             If you change the types/semantics of existing code, you MUST rename
             the relevant functions/variables to reflect the changes; e.g. if
