@@ -1,4 +1,5 @@
 {
+  lib,
   pkgs,
   inputs,
   ...
@@ -39,17 +40,29 @@
     fsType = "ext4";
   };
 
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-  boot.kernelParams = [
-    "ttm.pages_limit=20971520" # VRAM GTT 80G
-    # prophylactic against the DCN 3.5 IPS hang class:
-    # flag bits: https://www.mail-archive.com/amd-gfx@lists.freedesktop.org/msg111203.html
-    # same silicon: https://community.frame.work/t/amd-drivers-frequently-hanging-and-crashing/79270
-    # https://wiki.archlinux.org/title/AMDGPU
-    "amdgpu.dcdebugmask=0x600" # disable dynamic display IPS
-  ];
+  boot = {
+    kernelPackages = pkgs.linuxPackages_latest;
+    kernelParams = [
+      "ttm.pages_limit=20971520" # VRAM GTT 80G
+      # prophylactic against the DCN 3.5 IPS hang class:
+      # flag bits: https://www.mail-archive.com/amd-gfx@lists.freedesktop.org/msg111203.html
+      # same silicon: https://community.frame.work/t/amd-drivers-frequently-hanging-and-crashing/79270
+      # https://wiki.archlinux.org/title/AMDGPU
+      "amdgpu.dcdebugmask=0x600" # disable dynamic display IPS
+    ];
+    # panic on a hard lockup and reboot 10s later, instead of staying frozen;
+    # the panic log goes to EFI pstore, systemd-pstore saves it on the next boot
+    kernel.sysctl = {
+      "kernel.hardlockup_panic" = 1;
+      "kernel.panic" = 10;
+    };
+  };
   # hard-resets the machine if PID 1 is dead for 2m
   systemd.settings.Manager.RuntimeWatchdogSec = "2m";
+  # corefreqk reads SMN registers from interrupt context on every thread, every
+  # second; one such read stalled and hard-locked the machine; upstream says to
+  # run no other SMU driver alongside it, and ryzenadj needs ryzen_smu
+  programs.corefreq.enable = lib.mkForce false;
   hardware.firmware = [
     pkgs.strix-halo-mes-firmware # from nix-strix-halo tuning module
   ];
