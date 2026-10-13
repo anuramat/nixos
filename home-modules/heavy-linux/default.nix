@@ -5,7 +5,6 @@
     ./desktop
     ./gui
     ./packages.nix
-    ./ssh-mic.nix
     ./vnc.nix
   ];
 
