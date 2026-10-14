@@ -13,7 +13,7 @@ let
     name: text:
     pkgs.writeShellApplication {
       inherit name text;
-      # 64-bit, unlike pkgs.wine; Full embeds Gecko, so wineboot doesn't prompt to download it
+      # 64-bit, unlike pkgs.wine; Full embeds Mono and Gecko, so wineboot doesn't prompt to download them
       runtimeInputs = [ pkgs.wineWow64Packages.stagingFull ];
       runtimeEnv = {
         WINEPREFIX = prefix;
@@ -36,13 +36,6 @@ in
       wine ${webview2} /silent /install
     '')
   ];
-
-  # wine 11.8 wants Mono 11.1.0, but nixpkgs embeds 11.0.0; wine checks its
-  # download cache before prompting; drop once nixpkgs bumps unstable.mono
-  xdg.cacheFile."wine/wine-mono-11.1.0-x86.msi".source = pkgs.fetchurl {
-    url = "https://dl.winehq.org/wine/wine-mono/11.1.0/wine-mono-11.1.0-x86.msi";
-    hash = "sha256-3rA0FDH4Jgsgn/9rx53cxUFLl/jpI2q5+9ykzlngqbk=";
-  };
 
   xdg.desktopEntries.nx-studio = {
     name = "NX Studio";

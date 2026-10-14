@@ -68,6 +68,7 @@ let
         google-chrome
         zed-editor
         yt-dlp
+        wineWow64Packages # 26.05 embeds a Mono older than its wine wants
         ;
 
       # 0.49.1: kitten names shm objects with a leading slash, which ghostty requires
