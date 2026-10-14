@@ -13,7 +13,8 @@ let
     name: text:
     pkgs.writeShellApplication {
       inherit name text;
-      # 64-bit, unlike pkgs.wine; Full embeds Mono and Gecko, so wineboot doesn't prompt to download them
+      # 64-bit, unlike pkgs.wine; Full embeds Mono and Gecko, so wineboot doesn't prompt to download them;
+      # >= 11.17: earlier SymCrypt rsaenh mangles exponent-of-one RSA keys, breaking the Nikon ID sign-in
       runtimeInputs = [ pkgs.wineWow64Packages.stagingFull ];
       runtimeEnv = {
         WINEPREFIX = prefix;
