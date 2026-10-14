@@ -29,7 +29,6 @@ in
     (script "nx-studio-wine" ''exec "$@"'') # e.g. `nx-studio-wine winecfg` to set the DPI
     (script "nx-studio-install" ''
       mkdir -p "$WINEPREFIX"
-      wineboot -u
       winecfg -v win11
       wine "$1"
       # keep the prefix on win11, but WebView2 needs win7
