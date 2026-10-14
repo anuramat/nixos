@@ -13,12 +13,13 @@ let
     name: text:
     pkgs.writeShellApplication {
       inherit name text;
-      # 64-bit, unlike pkgs.wine; Full embeds Mono and Gecko, so wineboot doesn't prompt to download them;
+      # 64-bit, unlike pkgs.wine; Full has GStreamer for video, and embeds Mono and Gecko (NX Studio seems
+      # to draw some dialogs with MSHTML), so wineboot doesn't prompt to download them;
       # >= 11.17: earlier SymCrypt rsaenh mangles exponent-of-one RSA keys, breaking the Nikon ID sign-in
       runtimeInputs = [ pkgs.wineWow64Packages.stagingFull ];
       runtimeEnv = {
         WINEPREFIX = prefix;
-        # its menu entries and file associations would call the wine from PATH
+        # the installer's Start Menu shortcuts would become menu entries calling the 32-bit wine from PATH
         WINEDLLOVERRIDES = "winemenubuilder.exe=d";
       };
     };
@@ -28,10 +29,13 @@ in
     (script "nx-studio" ''exec wine "${prefix}/drive_c/Program Files/Nikon/NXStudio/NXStudio.exe" "$@"'')
     (script "nx-studio-wine" ''exec "$@"'') # e.g. `nx-studio-wine winecfg` to set the DPI
     (script "nx-studio-install" ''
+      # wine doesn't create missing parent directories
       mkdir -p "$WINEPREFIX"
+      # from upstream, untested: wine defaults to win10, which NX Studio supports
       winecfg -v win11
       wine "$1"
-      # keep the prefix on win11, but WebView2 needs win7
+      # keep the prefix on win11, but WebView2 needs win7;
+      # from upstream, untested, but the usual fix for WebView2 under wine
       wine reg add 'HKCU\Software\Wine\AppDefaults\msedgewebview2.exe' /v Version /t REG_SZ /d win7 /f
       wine ${webview2} /silent /install
     '')
