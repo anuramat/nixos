@@ -14,6 +14,7 @@ in
     ./packages.nix
     ./viewers.nix
     ./terminals.nix
+    ./nx-studio.nix
     ./obs.nix
     ./theme.nix
   ];
