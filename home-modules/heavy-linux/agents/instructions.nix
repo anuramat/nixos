@@ -174,6 +174,12 @@ let
           '')
           + ''
 
+            The user reviews every `hostrun` command before approving it, so
+            you SHOULD write it for readability: e.g. with `ssh HOST ...`,
+            prefer a quoted heredoc (`<<'EOF'`) over layers of backslash
+            escapes, and organize long commands as scripts with comments and
+            descriptive names instead of huge one-liners.
+
             Important: `/tmp`, `$TMPDIR`, and XDG cache/data/state home directories
             are bind mounted to tmpfs, so files created there will not persist
             after the session is finished. Most of the other paths are bind
