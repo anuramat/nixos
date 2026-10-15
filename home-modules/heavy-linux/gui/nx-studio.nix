@@ -38,6 +38,7 @@ let
             return 1
           }
           mkdir -p "$WINEPREFIX"
+          # under the default win10, the wrapper hangs in its first InstallScript action
           winecfg -v win11
           wine ${installer} /silent &
           w=$(win '^Language Selection$')
@@ -93,8 +94,7 @@ in
     (script "nx-studio-install" ''
       # wine doesn't create missing parent directories
       mkdir -p "$WINEPREFIX"
-      # from upstream, untested: wine defaults to win10, which NX Studio supports
-      winecfg -v win11
+      wineboot -i
       # the InstallScript setups write their logs next to themselves
       cd "$(mktemp -d)"
       cp -r --no-preserve=mode ${packages}/. .
@@ -107,9 +107,6 @@ in
       setup profiles/setup.exe /l1033 /s WOW64
       setup opc/ApLaunch.exe /l1033 /s /vREGION=EUR
       setup transfer2/setup.exe /l1033 /s /v/qn /vREGION=EUR '/vDELIVERYROOT="NXST_DL"'
-      # keep the prefix on win11, but WebView2 needs win7;
-      # from upstream, untested, but the usual fix for WebView2 under wine
-      wine reg add 'HKCU\Software\Wine\AppDefaults\msedgewebview2.exe' /v Version /t REG_SZ /d win7 /f
       wine ${webview2} /silent /install
     '')
   ];
