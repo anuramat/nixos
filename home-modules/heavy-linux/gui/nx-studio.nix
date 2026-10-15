@@ -1,24 +1,73 @@
-{ config, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 # adapted from https://github.com/nephilus/nx-studio-wine
 # install: nx-studio-install
 let
   prefix = "${config.xdg.dataHome}/nx-studio/prefix";
-  # Nikon's S-NXSTDO-*.exe is an InstallShield Suite wrapper whose welcome dialog can't run unattended,
-  # so these are the packages it unpacks, each installed silently with the arguments from its setup.xml
-  packages = pkgs.requireFile {
-    name = "nx-studio-1.10.1";
-    hashMode = "recursive";
-    hash = "sha256-7YwoG5yFKsQ8twPvAsVipUguHoUH+av/YoM3/SO4MAc=";
-    message = ''
-      Run Nikon's NX Studio installer in a scratch wine prefix, and once the NX Studio setup
-      starts, copy these from drive_c/users/$USER/AppData/Local/Downloaded Installations/{GUID}/:
-        vcredist/: VC_redist.x64.exe, VC_redist.x86.exe
-        nxstudio/: NX Studio.msi, 1033.MST
-        profiles/, opc/, transfer2/: the colour profile, Picture Control (ApLaunch.exe)
-          and Nikon Transfer 2 packages, whole
-      then: nix-store --add-fixed --recursive sha256 nx-studio-1.10.1
-    '';
-  };
+  # 64-bit, unlike pkgs.wine; Full has GStreamer for video, and embeds Mono and Gecko (NX Studio seems
+  # to draw some dialogs with MSHTML), so wineboot doesn't prompt to download them;
+  # >= 11.17: earlier SymCrypt rsaenh mangles exponent-of-one RSA keys, breaking the Nikon ID sign-in
+  wine = pkgs.wineWow64Packages.stagingFull;
+  # Nikon's installer is an InstallShield Suite wrapper that can't run unattended, so click through its
+  # language and Read Me screens on a virtual display, and keep the packages it then unpacks, to install
+  # each silently with the arguments from the wrapper's setup.xml
+  packages =
+    let
+      installer = pkgs.fetchurl {
+        url = "https://download.nikonimglib.com/archive8/kJ1us006seib07wgA0S52dlxyQ23/S-NXSTDO-011001WF-ALLIN-ALL___.exe";
+        hash = "sha256-7VT4kJfTJ3rIlmQI/x8dIAAco+IePtzH6xjXB9T84ls=";
+      };
+      unpack = pkgs.writeShellApplication {
+        name = "unpack";
+        runtimeInputs = [
+          wine
+          pkgs.xdotool
+        ];
+        text = ''
+          dst=$1
+          win() {
+            for _ in $(seq 300); do
+              w=$(xdotool search --onlyvisible --name "$1" | head -1) && [ -n "$w" ] && echo "$w" && return
+              sleep 1
+            done
+            echo "timed out waiting for window: $1" >&2
+            return 1
+          }
+          mkdir -p "$WINEPREFIX"
+          winecfg -v win11
+          wine ${installer} /silent &
+          w=$(win '^Language Selection$')
+          sleep 2
+          xdotool mousemove --window "$w" 300 294 sleep 0.3 click 1 # the custom-drawn Install button
+          w=$(win '^Read Me$')
+          sleep 1
+          xdotool windowfocus "$w" key Return
+          # NX Studio's own setup asking for a language: everything is unpacked by now
+          win 'InstallShield Wizard' >/dev/null
+          cd "$WINEPREFIX"/drive_c/users/*/AppData/Local/Downloaded\ Installations
+          mkdir -p "$dst/vcredist"
+          cp '{237BF186-A2AF-48C2-BFC9-0AA2DA3829DD}/VC_redist.x64.exe' '{72AAD3AB-420C-41F0-9BE5-D854C4037DEF}/VC_redist.x86.exe' "$dst/vcredist"
+          cp -r '{CCF5B9BF-F16D-4FAA-8B46-E932EA008361}' "$dst/nxstudio"
+          cp -r '{327FA429-2B8C-4508-8538-037ECB4A9158}' "$dst/profiles"
+          cp -r '{83D48551-3FF2-437E-B931-BF45011C6F87}' "$dst/opc"
+          cp -r '{10D48481-31AC-42B0-91AC-25241A5E51E2}' "$dst/transfer2"
+          wineserver -k
+        '';
+      };
+    in
+    pkgs.runCommand "nx-studio-1.10.1"
+      {
+        nativeBuildInputs = [ pkgs.xvfb-run ];
+        outputHashMode = "recursive";
+        outputHash = "sha256-HJ+nI5rpyPzC1vAqGarsgLIGM2SxbclFeV9qSoTPtJI=";
+      }
+      ''
+        HOME=$TMPDIR WINEPREFIX=$TMPDIR/prefix WINEDEBUG=-all xvfb-run -s '-screen 0 1280x1024x24' ${lib.getExe unpack} "$out"
+      '';
   # runtime for the Nikon ID login window; to update, follow
   # https://go.microsoft.com/fwlink/?linkid=2124701 (x64 standalone installer)
   webview2 = pkgs.fetchurl {
@@ -29,10 +78,7 @@ let
     name: text:
     pkgs.writeShellApplication {
       inherit name text;
-      # 64-bit, unlike pkgs.wine; Full has GStreamer for video, and embeds Mono and Gecko (NX Studio seems
-      # to draw some dialogs with MSHTML), so wineboot doesn't prompt to download them;
-      # >= 11.17: earlier SymCrypt rsaenh mangles exponent-of-one RSA keys, breaking the Nikon ID sign-in
-      runtimeInputs = [ pkgs.wineWow64Packages.stagingFull ];
+      runtimeInputs = [ wine ];
       runtimeEnv = {
         WINEPREFIX = prefix;
         # the installer's Start Menu shortcuts would become menu entries calling the 32-bit wine from PATH
@@ -57,7 +103,7 @@ in
       setup vcredist/VC_redist.x64.exe /q /norestart
       setup vcredist/VC_redist.x86.exe /q /norestart
       # REGION: one of JPN, NSA, EUR, CND, INT
-      (cd nxstudio && setup msiexec /i 'NX Studio.msi' TRANSFORMS=1033.MST /qn INSTTYPE=DL REGION=EUR ONLINE=online ENVCHECK=true)
+      setup nxstudio/setup.exe /l1033 /s /v/qn /vINSTTYPE=DL /vREGION=EUR /vONLINE=online /vENVCHECK=true
       setup profiles/setup.exe /l1033 /s WOW64
       setup opc/ApLaunch.exe /l1033 /s /vREGION=EUR
       setup transfer2/setup.exe /l1033 /s /v/qn /vREGION=EUR '/vDELIVERYROOT="NXST_DL"'
