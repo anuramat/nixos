@@ -82,8 +82,13 @@ let
 in
 {
   home.packages = [
-    (script "nx-studio" ''exec wine "${prefix}/drive_c/Program Files/Nikon/NXStudio/NXStudio.exe" "$@"'')
-    (script "nx-studio-wine" ''exec "$@"'') # e.g. `nx-studio-wine winecfg` to set the DPI
+    (script "nx-studio" ''
+      # wine ignores the scale that xwayland-satellite publishes in XSETTINGS
+      dpi=$(${pkgs.xsettingsd}/bin/dump_xsettings | awk '$1 == "Xft/DPI" { print int($2 / 1024) }')
+      wine reg add 'HKCU\Control Panel\Desktop' /v LogPixels /t REG_DWORD /d "$dpi" /f >/dev/null
+      exec wine "${prefix}/drive_c/Program Files/Nikon/NXStudio/NXStudio.exe" "$@"
+    '')
+    (script "nx-studio-wine" ''exec "$@"'') # e.g. `nx-studio-wine winecfg`
     (script "nx-studio-install" ''
       # start over instead of relying on the setups' upgrade paths; resets the sign-in and settings
       rm -rf "$WINEPREFIX"
