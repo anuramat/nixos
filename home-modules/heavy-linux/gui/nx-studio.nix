@@ -1,6 +1,5 @@
 {
   config,
-  lib,
   pkgs,
   ...
 }:
@@ -12,63 +11,57 @@ let
   # to draw some dialogs with MSHTML), so wineboot doesn't prompt to download them;
   # >= 11.17: earlier SymCrypt rsaenh mangles exponent-of-one RSA keys, breaking the Nikon ID sign-in
   wine = pkgs.wineWow64Packages.stagingFull;
-  # Nikon's installer is an InstallShield Suite wrapper that can't run unattended, so click through its
-  # language and Read Me screens on a virtual display, and keep the packages it then unpacks, to install
-  # each silently with the arguments from the wrapper's setup.xml
+  # Nikon's installer is an InstallShield Suite wrapper that can't run unattended, so unpack the packages
+  # it bundles, to install each silently with the arguments from the wrapper's setup.xml
   packages =
     let
       installer = pkgs.fetchurl {
         url = "https://download.nikonimglib.com/archive8/kJ1us006seib07wgA0S52dlxyQ23/S-NXSTDO-011001WF-ALLIN-ALL___.exe";
         hash = "sha256-7VT4kJfTJ3rIlmQI/x8dIAAco+IePtzH6xjXB9T84ls=";
       };
-      unpack = pkgs.writeShellApplication {
-        name = "unpack";
-        runtimeInputs = [
-          wine
-          pkgs.xdotool
-        ];
-        text = ''
-          dst=$1
-          win() {
-            for _ in $(seq 300); do
-              w=$(xdotool search --onlyvisible --name "$1" | head -1) && [ -n "$w" ] && echo "$w" && return
-              sleep 1
-            done
-            echo "timed out waiting for window: $1" >&2
-            return 1
-          }
-          mkdir -p "$WINEPREFIX"
-          # under the default win10, the wrapper hangs in its first InstallScript action
-          winecfg -v win11
-          wine ${installer} /silent &
-          w=$(win '^Language Selection$')
-          sleep 2
-          xdotool mousemove --window "$w" 300 294 sleep 0.3 click 1 # the custom-drawn Install button
-          w=$(win '^Read Me$')
-          sleep 1
-          xdotool windowfocus "$w" key Return
-          # NX Studio's own setup asking for a language: everything is unpacked by now
-          win 'InstallShield Wizard' >/dev/null
-          cd "$WINEPREFIX"/drive_c/users/*/AppData/Local/Downloaded\ Installations
-          mkdir -p "$dst/vcredist"
-          cp '{237BF186-A2AF-48C2-BFC9-0AA2DA3829DD}/VC_redist.x64.exe' '{72AAD3AB-420C-41F0-9BE5-D854C4037DEF}/VC_redist.x86.exe' "$dst/vcredist"
-          cp -r '{CCF5B9BF-F16D-4FAA-8B46-E932EA008361}' "$dst/nxstudio"
-          cp -r '{327FA429-2B8C-4508-8538-037ECB4A9158}' "$dst/profiles"
-          cp -r '{83D48551-3FF2-437E-B931-BF45011C6F87}' "$dst/opc"
-          cp -r '{10D48481-31AC-42B0-91AC-25241A5E51E2}' "$dst/transfer2"
-          wineserver -k
-        '';
-      };
-    in
-    pkgs.runCommand "nx-studio-1.10.1"
-      {
-        nativeBuildInputs = [ pkgs.xvfb-run ];
-        outputHashMode = "recursive";
-        outputHash = "sha256-HJ+nI5rpyPzC1vAqGarsgLIGM2SxbclFeV9qSoTPtJI=";
-      }
-      ''
-        HOME=$TMPDIR WINEPREFIX=$TMPDIR/prefix WINEDEBUG=-all xvfb-run -s '-screen 0 1280x1024x24' ${lib.getExe unpack} "$out"
+      # decodes the ISSetupStream appended to the wrapper, as https://github.com/lifenjoiner/ISx does
+      unpack = pkgs.writers.writePython3 "unpack" { } ''
+        import itertools
+        import os
+        import struct
+        import sys
+        import zlib
+
+        data = open(sys.argv[1], "rb").read()
+        # the last match: the engine's code has the signature too
+        pos = data.rindex(b"ISSetupStream\0")
+        (count,) = struct.unpack_from("<H", data, pos + 14)
+        pos += 46
+        swap = bytes((b << 4 | b >> 4) & 0xFF for b in range(256))
+        for _ in range(count):
+            # 48 bytes: name length, flags, size, zlib flag, timestamps; UTF-16 name
+            name_len, size, deflated = struct.unpack_from("<I6xI8xH", data, pos)
+            pos += 48
+            name = data[pos:pos + name_len].decode("utf-16-le")
+            pos += name_len
+            # nibble-swapped, then XORed with the salted name, restarting every KiB
+            salt = itertools.cycle(b"\x13\x35\x86\x07")
+            key = [c ^ s ^ 0xFF for c, s in zip(name.encode(), salt)]
+            mask = bytes(itertools.islice(itertools.cycle(key), 1024))
+            mask *= size // 1024 + 1
+            blob = data[pos:pos + size].translate(swap)
+            pos += size
+            blob = int.from_bytes(blob) ^ int.from_bytes(mask[:size])
+            blob = blob.to_bytes(size)
+            path = name.replace("\\", "/")
+            os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+            open(path, "wb").write(zlib.decompress(blob) if deflated else blob)
       '';
+    in
+    pkgs.runCommand "nx-studio-1.10.1" { } ''
+      ${unpack} ${installer}
+      mkdir -p $out/vcredist
+      mv '{237BF186-A2AF-48C2-BFC9-0AA2DA3829DD}/VC_redist.x64.exe' '{72AAD3AB-420C-41F0-9BE5-D854C4037DEF}/VC_redist.x86.exe' $out/vcredist
+      mv '{CCF5B9BF-F16D-4FAA-8B46-E932EA008361}' $out/nxstudio
+      mv '{327FA429-2B8C-4508-8538-037ECB4A9158}' $out/profiles
+      mv '{83D48551-3FF2-437E-B931-BF45011C6F87}' $out/opc
+      mv '{10D48481-31AC-42B0-91AC-25241A5E51E2}' $out/transfer2
+    '';
   # runtime for the Nikon ID login window; to update, follow
   # https://go.microsoft.com/fwlink/?linkid=2124701 (x64 standalone installer)
   webview2 = pkgs.fetchurl {
