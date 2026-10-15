@@ -196,9 +196,8 @@ in
               [ -v TMPDIR ] || TMPDIR="/tmp"
               runtimeDir="''${XDG_RUNTIME_DIR:-/run/user/$UID}"
               runtimeBinds=()
-              # relays, see relay/; pipewire/pulse: audio, e.g. claude-code voice
-              # mode (sox capture)
-              for i in ${relaySockets} pipewire-0 pulse; do
+              # relays, see relay/
+              for i in ${relaySockets}; do
                 runtimeBinds+=(--bind-try "$runtimeDir/$i" "$runtimeDir/$i")
               done
               # --unshare-pid: when the agent exits, the kernel kills everything
