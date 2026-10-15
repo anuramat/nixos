@@ -16,8 +16,8 @@ let
   packages =
     let
       installer = pkgs.fetchurl {
-        url = "https://download.nikonimglib.com/archive8/kJ1us006seib07wgA0S52dlxyQ23/S-NXSTDO-011001WF-ALLIN-ALL___.exe";
-        hash = "sha256-7VT4kJfTJ3rIlmQI/x8dIAAco+IePtzH6xjXB9T84ls=";
+        url = "https://download.nikonimglib.com/archive8/Aibnt00VXE9I07ccQd268b5a0w12/S-NXSTDO-011100WF-ALLIN-ALL___.exe";
+        hash = "sha256-PlC0zTzgy9Rn8uWdhk3PajTBpM4o3TgTSNS6KbVdAHU=";
       };
       # decodes the ISSetupStream appended to the wrapper, as https://github.com/lifenjoiner/ISx does
       unpack = pkgs.writers.writePython3 "unpack" { } ''
@@ -53,7 +53,7 @@ let
             open(path, "wb").write(zlib.decompress(blob) if deflated else blob)
       '';
     in
-    pkgs.runCommand "nx-studio-1.10.1" { } ''
+    pkgs.runCommand "nx-studio-1.11.0" { } ''
       ${unpack} ${installer}
       mkdir -p $out/vcredist
       mv '{237BF186-A2AF-48C2-BFC9-0AA2DA3829DD}/VC_redist.x64.exe' '{72AAD3AB-420C-41F0-9BE5-D854C4037DEF}/VC_redist.x86.exe' $out/vcredist
@@ -85,6 +85,8 @@ in
     (script "nx-studio" ''exec wine "${prefix}/drive_c/Program Files/Nikon/NXStudio/NXStudio.exe" "$@"'')
     (script "nx-studio-wine" ''exec "$@"'') # e.g. `nx-studio-wine winecfg` to set the DPI
     (script "nx-studio-install" ''
+      # start over instead of relying on the setups' upgrade paths; resets the sign-in and settings
+      rm -rf "$WINEPREFIX"
       # wine doesn't create missing parent directories
       mkdir -p "$WINEPREFIX"
       wineboot -i
