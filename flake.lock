@@ -2302,6 +2302,7 @@
         "statix": "statix",
         "stylix": "stylix",
         "subcat": "subcat",
+        "tamron-lens-control": "tamron-lens-control",
         "tree-climber-rust-nvim": "tree-climber-rust-nvim",
         "treefmt-nix": "treefmt-nix_3",
         "tt-schemes": "tt-schemes",
@@ -2724,6 +2725,22 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "tamron-lens-control": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1789196846,
+        "narHash": "sha256-JZm0vzDWkZzLRYowAUsym2O8sxFEjkz4i5ix7ku0apc=",
+        "owner": "yikerman",
+        "repo": "tamron-lens-control",
+        "rev": "6c05347d16d9ef66859ece9575edb7d01ddd3da1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "yikerman",
+        "repo": "tamron-lens-control",
         "type": "github"
       }
     },

@@ -179,6 +179,15 @@ let
         # 11 LTO'd integration test binaries; upstream `cargo install` skips them too
         doCheck = false;
       };
+      tamron-lens-control = prev.rustPlatform.buildRustPackage {
+        pname = "tamron-lens-control";
+        version = "0.1.1-dev";
+        src = inputs.tamron-lens-control;
+        cargoLock.lockFile = "${inputs.tamron-lens-control}/Cargo.lock";
+        nativeBuildInputs = [ prev.pkg-config ];
+        buildInputs = [ prev.udev ]; # serialport enumeration
+        meta.mainProgram = "tlc";
+      };
       todo = prev.writers.writePython3Bin "todo" {
         # black-formatted: long lines, line breaks before binary operators
         flakeIgnore = [

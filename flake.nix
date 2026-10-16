@@ -124,6 +124,10 @@
       url = "github:Dicklesworthstone/coding_agent_usage_tracker";
       flake = false;
     };
+    tamron-lens-control = {
+      url = "github:yikerman/tamron-lens-control";
+      flake = false;
+    };
 
     # nixvim plugins not packaged in nixpkgs (pinned; tree-climber's postPatch
     # is rev-sensitive, so update deliberately)
