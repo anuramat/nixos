@@ -1,5 +1,6 @@
 {
   inputs,
+  lib,
   pkgs,
   ...
 }:
@@ -22,8 +23,19 @@ in
     keymapp # ZSA keyboard thing
     # polychromatic # openrazer frontend
     rpi-imager # raspbery pi
+    tamron-lens-control # `tlc`; tty access via dialout
   ];
   services = {
     hardware.openrgb.enable = true;
+    # bind cp210x to Tamron lenses, which it doesn't claim by default
+    udev.extraRules =
+      [
+        "0002"
+        "0005"
+      ]
+      |> map (pid: ''
+        ACTION=="add", SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_interface", DRIVER=="", ATTRS{idVendor}=="2cd1", ATTRS{idProduct}=="${pid}", RUN+="${pkgs.runtimeShell} -c '${pkgs.kmod}/bin/modprobe cp210x && echo 2cd1 ${pid} > /sys/bus/usb-serial/drivers/cp210x/new_id'"
+      '')
+      |> lib.concatStrings;
   };
 }
