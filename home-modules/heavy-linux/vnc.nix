@@ -7,7 +7,7 @@
       runtimeInputs = [ pkgs.wlvncc ];
       text = ''
         # forced pty: killing ssh hangs up the remote wayvnc
-        ssh -tt -o ExitOnForwardFailure=yes -L 5900:127.0.0.1:5900 "$1" \
+        ssh -tt -o ExitOnForwardFailure=yes -L 5900:127.0.0.1:5900 "''${1:?usage: vnc HOST}" \
           WAYLAND_DISPLAY=/run/user/1000/wayland-1 wayvnc 127.0.0.1 5900 &
         ssh=$!
         trap 'kill $ssh 2>/dev/null' EXIT
