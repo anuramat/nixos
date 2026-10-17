@@ -90,8 +90,12 @@ in
     '')
     (script "nx-studio-wine" ''exec "$@"'') # e.g. `nx-studio-wine winecfg`
     (script "nx-studio-install" ''
-      # start over instead of relying on the setups' upgrade paths; resets the sign-in and settings
-      rm -rf "$WINEPREFIX"
+      # start over instead of relying on the setups' upgrade paths
+      if [[ -e $WINEPREFIX ]]; then
+        read -rp "Replace $WINEPREFIX, resetting the sign-in and settings? [y/N] " answer
+        [[ $answer == y ]] || exit 1
+        rm -rf "$WINEPREFIX"
+      fi
       # wine doesn't create missing parent directories
       mkdir -p "$WINEPREFIX"
       wineboot -i
