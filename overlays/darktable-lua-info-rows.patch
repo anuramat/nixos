@@ -1,0 +1,15 @@
+Lua register_info inserts its row at the top of the grid and relies on
+_apply_preferences to re-sync the rows, which it skipped when the field
+preferences were never customized, shifting labels against values.
+
+--- a/src/libs/metadata_view.c
++++ b/src/libs/metadata_view.c
+@@ -1385,7 +1385,7 @@
+ static void _apply_preferences(const char *prefs_list,
+                                dt_lib_module_t *self)
+ {
+-  if(!prefs_list || !prefs_list[0]) return;
++  if(!prefs_list) return;
+   dt_lib_metadata_view_t *d = self->data;
+ 
+   GList *prefs = dt_util_str_to_glist(",", prefs_list);

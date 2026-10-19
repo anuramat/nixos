@@ -122,12 +122,16 @@ let
         });
       zellij = unstable.zellij.override { inherit (final) zellij-unwrapped; };
 
-      darktable = unstable.darktable.override {
-        withAi = true;
-        gmic = unstable.gmic.overrideAttrs (old: {
-          cmakeFlags = (old.cmakeFlags or [ ]) ++ [ (lib.cmakeBool "ENABLE_OPENCV" false) ];
-        });
-      };
+      darktable =
+        (unstable.darktable.override {
+          withAi = true;
+          gmic = unstable.gmic.overrideAttrs (old: {
+            cmakeFlags = (old.cmakeFlags or [ ]) ++ [ (lib.cmakeBool "ENABLE_OPENCV" false) ];
+          });
+        }).overrideAttrs
+          (old: {
+            patches = (old.patches or [ ]) ++ [ ./darktable-lua-info-rows.patch ];
+          });
 
       nirimap = prev.rustPlatform.buildRustPackage {
         pname = "nirimap";
