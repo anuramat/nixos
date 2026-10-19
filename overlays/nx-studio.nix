@@ -1,6 +1,8 @@
 { inputs, ... }:
 # adapted from https://github.com/nephilus/nx-studio-wine
 # install: nx-studio-install
+# replace the Custom Picture Controls with Nikon's recipes (the install does it too):
+# nx-studio-import-recipes
 _final: prev:
 let
   version = "1.11.0";
@@ -70,6 +72,26 @@ let
     url = "https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/7c7c0e6f-8cb5-406a-8e51-df0c62011e55/MicrosoftEdgeWebView2RuntimeInstallerX64.exe";
     hash = "sha256-KmrddsN7+ocuuMKyLUWzIWuOKh8ZPgd0AGNA/2KsX6A=";
   };
+  # Nikon's own recipes, 142 of the at most 150 Custom Picture Controls NX Studio holds, as a
+  # .reg file that replaces the ones it has: it keeps each as the .NP3 file's bytes, in a value
+  # named after its slot, 0x03000000 + n from 1
+  recipes =
+    let
+      toReg = prev.writers.writePython3 "to-reg" { } ''
+        import sys
+
+        key = r"HKEY_CURRENT_USER\Software\Nikon\Common\PictureControl"
+        key += r"\NP3\CustomCurves"
+        print(f"Windows Registry Editor Version 5.00\n\n[-{key}]\n\n[{key}]")
+        for n, path in enumerate(sys.argv[1:], 0x03000001):
+            data = open(path, "rb").read()
+            print(f'"{n}"=hex:' + ",".join(f"{b:02x}" for b in data))
+      '';
+    in
+    prev.runCommand "nx-studio-recipes.reg" { } ''
+      cd ${inputs.nikon-recipes}
+      find 'Color Grading' 'Nikon Creators' -name '*.NP3' -print0 | sort -z | xargs -0 ${toReg} >$out
+    '';
   script =
     name: text:
     prev.writeShellApplication {
@@ -118,7 +140,9 @@ in
         setup opc/ApLaunch.exe /l1033 /s /vREGION=EUR
         setup transfer2/setup.exe /l1033 /s /v/qn /vREGION=EUR '/vDELIVERYROOT="NXST_DL"'
         wine ${webview2} /silent /install
+        wine reg import ${recipes}
       '')
+      (script "nx-studio-import-recipes" "exec wine reg import ${recipes}")
       (prev.makeDesktopItem {
         name = "nx-studio";
         desktopName = "NX Studio";

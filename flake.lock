@@ -1331,6 +1331,22 @@
         "type": "github"
       }
     },
+    "nikon-recipes": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1787194896,
+        "narHash": "sha256-MB1e6MzIT01cX9JstWU5wGPLwaGyOHpmeXsD1/aZ4h8=",
+        "owner": "shouryan01",
+        "repo": "Nikon-Recipes",
+        "rev": "2458e53bd07538749d3a30b5a6360f8ae18996e2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "shouryan01",
+        "repo": "Nikon-Recipes",
+        "type": "github"
+      }
+    },
     "nil": {
       "inputs": {
         "nixpkgs": [
@@ -2284,6 +2300,7 @@
         "html2text": "html2text",
         "mac-app-util": "mac-app-util",
         "neovim-nightly-overlay": "neovim-nightly-overlay",
+        "nikon-recipes": "nikon-recipes",
         "nil": "nil",
         "niri": "niri",
         "nirimap": "nirimap",

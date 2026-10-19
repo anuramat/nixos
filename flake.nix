@@ -124,6 +124,10 @@
       url = "github:yikerman/tamron-lens-control";
       flake = false;
     };
+    nikon-recipes = {
+      url = "github:shouryan01/Nikon-Recipes";
+      flake = false;
+    };
 
     # nixvim plugins not packaged in nixpkgs (pinned; tree-climber's patch
     # is rev-sensitive, so update deliberately)
