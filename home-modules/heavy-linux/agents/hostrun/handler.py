@@ -13,7 +13,7 @@ import time
 from systemd import journal
 
 # the prompt hosts are comma-separated; target is the -h host, or empty
-prompt, prompt_hosts, target, cmd = sys.argv[1:]
+prompt, prompt_hosts, desc, target, cmd = sys.argv[1:]
 prompt_hosts = prompt_hosts.split(",")
 host = socket.gethostname()
 cwd = os.environ["RELAY_CWD"]
@@ -25,7 +25,8 @@ prompts = []  # every one started, to withdraw them at the end
 
 def ask(h, request):
     # like fleet-status: this host directly, the others over ssh, which drops a
-    # host after 90s of silence; the request ends with a NUL, then stdin carries
+    # host after 90s of silence; the description, for the notification, and the
+    # request, for the review, each end with a NUL, then stdin carries
     # heartbeats, and closing it withdraws the prompt
     cmd = [prompt]
     if h != host:
@@ -47,7 +48,7 @@ def ask(h, request):
         cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=log, bufsize=0
     )
     with contextlib.suppress(BrokenPipeError):
-        p.stdin.write(request + b"\0")
+        p.stdin.write(desc.encode() + b"\0" + request + b"\0")
     prompts.append(p)
     return p
 
@@ -107,7 +108,7 @@ if target:
 elif not os.path.isdir(cwd):
     fail(1, f"{cwd} doesn't exist outside the sandbox")
 
-answer = first_answer(f"{who}\n{where}\n$ {cmd}\n".encode())
+answer = first_answer(f"{who}\ndescription: {desc}\n{where}\n$ {cmd}\n".encode())
 withdraw()
 if answer == b"deny":
     fail(77, "denied by the user")

@@ -1,6 +1,7 @@
 # a relay (see ../relay) that lets sandboxed agents ask to run a command
-# outside the sandbox: the request pops up as a notification on every
-# physical machine, whose [Review] opens a terminal with the full request;
+# outside the sandbox: the request's description pops up as a notification
+# on every physical machine, whose [Review] opens a terminal with the full
+# request;
 # hosts that can't show one yet (asleep, offline) get retried; the first
 # answer counts and withdraws the other prompts; once approved, the command
 # runs as the user on the agent's host, in the agent's cwd, or with -h, over
@@ -27,20 +28,22 @@ let
     # and the host runs what was approved, even if FILE changes or exists only
     # in the sandbox
     text = ''
-      host= # this one
-      if [ "$#" = 4 ] && [ "$1" = -h ]; then
-        host=$2
-        shift 2
-      fi
-      case "$#:''${1-}" in
-        2:-c) cmd=$2 ;;
-        2:-f) cmd=$(<"$2") ;;
-        *)
-          echo 'usage: hostrun [-h HOST] {-c CMD | -f FILE}' >&2
-          exit 2
-          ;;
-      esac
-      exec relay-client hostrun 0 "$host" "$cmd"
+      usage() {
+        echo 'usage: hostrun -d DESCRIPTION [-h HOST] {-c CMD | -f FILE}' >&2
+        exit 2
+      }
+      desc="" host="" cmd="" # host: this one
+      while getopts d:h:c:f: opt; do
+        case $opt in
+          d) desc=$OPTARG ;;
+          h) host=$OPTARG ;;
+          c) cmd=$OPTARG ;;
+          f) cmd=$(<"$OPTARG") ;;
+          *) usage ;;
+        esac
+      done
+      if [ -z "$desc" ] || [ -z "$cmd" ] || [ "$OPTIND" -le "$#" ]; then usage; fi
+      exec relay-client hostrun 0 "$desc" "$host" "$cmd"
     '';
   };
   handler = pkgs.writers.writePython3Bin "hostrun-handler" {
@@ -60,8 +63,8 @@ let
     '';
   };
 
-  # reads the request on stdin, prints allow or deny; withdraws the prompt
-  # once stdin ends or goes quiet
+  # reads the description and the request on stdin, prints allow or deny;
+  # withdraws the prompt once stdin ends or goes quiet
   prompt = pkgs.writeShellApplication {
     name = "hostrun-prompt";
     runtimeInputs = with pkgs; [
@@ -76,18 +79,19 @@ let
     text = ''
       dir=$(mktemp -d)
       trap 'rm -rf "$dir"' EXIT
-      # the request ends with a NUL; stdin then stays open until any host has an
-      # answer, or the requester is gone
+      # the description and the request each end with a NUL; stdin then stays
+      # open until any host has an answer, or the requester is gone
+      IFS= read -r -d "" desc
       IFS= read -r -d "" request
       printf '%s' "$request" >"$dir/request"
       unit=hostrun-review-''${dir##*.}
       # ssh sessions don't get the address, but the session bus is still there
       export DBUS_SESSION_BUS_ADDRESS=''${DBUS_SESSION_BUS_ADDRESS:-unix:path=$XDG_RUNTIME_DIR/bus}
-      body=$(tail -n +2 "$dir/request")
-      # notify-send expands backslash escapes in the body
+      # just the description: the whole request can push the buttons out of a
+      # long notification; notify-send expands backslash escapes in the body
       notify-send --wait --urgency=critical --expire-time=0 --app-name=hostrun \
         --action=review=Review --action=deny=Deny \
-        "hostrun: $(head -1 "$dir/request")" "''${body//\\/\\\\}" >"$dir/action" &
+        "hostrun: $(head -1 "$dir/request")" "''${desc//\\/\\\\}" >"$dir/action" &
       notify=$!
       # withdraw once the broker hangs up or misses 3 heartbeats (one every 30s);
       # notify-send closes its notification on SIGINT; the explicit stdin, since

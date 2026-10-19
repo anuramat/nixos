@@ -161,18 +161,21 @@ let
             Some commands may not work as expected. If a command can't work in
             the sandbox (e.g. it needs the user's SSH keys or user services, or
             writes outside the bound paths), you MAY ask the user to approve
-            running it outside the sandbox with `hostrun -c CMD`, where CMD is
-            a single argument, run with `bash -c`, or `hostrun -f FILE`, which
-            runs FILE's content the same way; FILE is read inside the sandbox,
-            so it can be in your scratchpad, or `/dev/stdin` with a heredoc.
-            hostrun blocks until the user answers, then runs the command as the
-            user on this host, in the current directory, or with `-h HOST`
-            before `-c`/`-f`, over ssh as the user on HOST, in the user's home
-            there (unlike your own `ssh HOST`, which logs in as `agent`).
-            stdout, stderr and the exit status are passed through, stdin is
-            `/dev/null`, and exit status 77 means the user denied it. Paths
-            that only exist in the sandbox, such as anything under `/tmp`,
-            don't exist outside it.
+            running it outside the sandbox with `hostrun -d DESC -c CMD`, where
+            CMD is a single argument, run with `bash -c`, or `hostrun -d DESC
+            -f FILE`, which runs FILE's content the same way; FILE is read
+            inside the sandbox, so it can be in your scratchpad, or
+            `/dev/stdin` with a heredoc. DESC is a short one-line description
+            of what the command does, e.g. `list the files in X's wine prefix`:
+            the user's notification shows only DESC, and the review shows it
+            next to the command. hostrun blocks until the user answers, then
+            runs the command as the user on this host, in the current
+            directory, or, with `-h HOST`, over ssh as the user on HOST, in the
+            user's home there (unlike your own `ssh HOST`, which logs in as
+            `agent`). stdout, stderr and the exit status are passed through,
+            stdin is `/dev/null`, and exit status 77 means the user denied it.
+            Paths that only exist in the sandbox, such as anything under
+            `/tmp`, don't exist outside it.
           ''
           + (for [ "claude" ] ''
             Approval can take minutes: run `hostrun` with Bash `run_in_background`.
