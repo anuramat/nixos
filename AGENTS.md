@@ -195,8 +195,8 @@ experimental feature; run inside the dev shell or pass it explicitly.
   `*.pub` there is authorized for the primary user and `builder`.
 - `overlays/default.nix` mixes unstable and unstable-slow package pins,
   packages from flake inputs, local package definitions and overrides (kitty,
-  yazi, darktable, vim plugins, ...), the per-package overlays next to it
-  (nx-studio, proton-drive-cli, pass-secret-service-rs, tamron-lens-control),
+  yazi, darktable, ...), the per-package overlays next to it (nx-studio,
+  proton-drive-cli, pass-secret-service-rs, tamron-lens-control, vim plugins),
   and the neovim-nightly and oh-my-pi overlays. Since the base NixOS module
   applies it globally, overlay edits can affect system packages, Home Manager,
   and nixvim.

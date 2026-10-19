@@ -1,0 +1,82 @@
+--- a/lua/tree_climber_rust.lua
++++ b/lua/tree_climber_rust.lua
+@@ -12,8 +12,28 @@
+ 
+ local M = {}
+ local ts = require('vim.treesitter')
+-local ts_utils = require("nvim-treesitter.ts_utils")
+-local parsers = require("nvim-treesitter.parsers")
++
++local function get_vim_range(range, buf)
++    local srow, scol, erow, ecol = unpack(range)
++    srow = srow + 1
++    scol = scol + 1
++    erow = erow + 1
++    if ecol == 0 then
++        erow = erow - 1
++        if buf and buf ~= 0 then
++            ecol = #vim.api.nvim_buf_get_lines(buf, erow - 1, erow, false)[1]
++        else
++            ecol = vim.fn.col { erow, "$" } - 1
++        end
++        ecol = math.max(ecol, 1)
++    end
++    return srow, scol, erow, ecol
++end
++
++local function get_node_at_cursor()
++    return ts.get_node({ ignore_injections = false })
++end
++
+ 
+ 
+ ---@type boolean
+@@ -30,7 +50,7 @@
+ ---@param end_col number
+ ---@return Selection
+ local function make_subnode_selection(node, start_row, start_col, end_row, end_col)
+-    local sr, sc, er, ec = ts_utils.get_vim_range { start_row, start_col, end_row, end_col }
++    local sr, sc, er, ec = get_vim_range { start_row, start_col, end_row, end_col }
+     return {
+         variant = "subnode",
+         payload = {
+@@ -84,8 +104,8 @@
+ 	local nodes = selection.payload.nodes
+         local leftmost_node = nodes[1]
+         local rightmost_node = nodes[#nodes]
+-        local start_row, start_col, _, _ = ts_utils.get_vim_range { leftmost_node:range() }
+-        local _, _, end_row, end_col = ts_utils.get_vim_range { rightmost_node:range() }
++        local start_row, start_col, _, _ = get_vim_range { leftmost_node:range() }
++        local _, _, end_row, end_col = get_vim_range { rightmost_node:range() }
+         vim.api.nvim_win_set_cursor(0, { start_row, start_col - 1 })
+         vim.cmd "normal! o"
+         vim.api.nvim_win_set_cursor(0, { end_row, end_col - 1 })
+@@ -125,7 +145,7 @@
+ 
+ M.init_selection = function()
+     local buf = vim.api.nvim_get_current_buf()
+-    local node = ts_utils.get_node_at_cursor()
++    local node = get_node_at_cursor()
+     if node == nil then
+         vim.api.nvim_err_writeln("No node at cursor!")
+         return
+@@ -340,8 +360,8 @@
+ 
+ 
+ local function get_selection(leftmost_node, rightmost_node)
+-    local start_row, start_col, _, _ = ts_utils.get_vim_range { leftmost_node:range() }
+-    local _, _, end_row, end_col = ts_utils.get_vim_range { rightmost_node:range() }
++    local start_row, start_col, _, _ = get_vim_range { leftmost_node:range() }
++    local _, _, end_row, end_col = get_vim_range { rightmost_node:range() }
+     return start_row, start_col, end_row, end_col
+ end
+ 
+@@ -370,7 +390,7 @@
+ 	return ts.get_node_text(node, 0)
+     end
+ 
+-    local buffer_root_node = parsers.get_parser(buf):parse()[1]:root()
++    local buffer_root_node = assert(ts.get_parser(buf)):parse()[1]:root()
+     assert(buffer_root_node:parent() == nil)
+ 
+     local remaining_iterations = 1000

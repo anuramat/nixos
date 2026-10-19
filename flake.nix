@@ -129,7 +129,7 @@
       flake = false;
     };
 
-    # nixvim plugins not packaged in nixpkgs (pinned; tree-climber's postPatch
+    # nixvim plugins not packaged in nixpkgs (pinned; tree-climber's patch
     # is rev-sensitive, so update deliberately)
     wastebin-nvim = {
       url = "github:matze/wastebin.nvim/7a70a7e5efc2af5025134c395bd27e3ada9b8629";
