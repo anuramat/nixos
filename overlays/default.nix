@@ -141,26 +141,6 @@ let
           "W503"
         ];
       } (builtins.readFile ./todo.py);
-      zotero-mcp = prev.python3Packages.buildPythonApplication {
-        # basic build without semantic features
-        pname = "zotero-mcp";
-        version = "0.6.1";
-        pyproject = true;
-        src = inputs.zotero-mcp;
-        build-system = [ prev.python3Packages.hatchling ];
-        dependencies = with prev.python3Packages; [
-          pyzotero
-          mcp
-          python-dotenv
-          markitdown
-          pydantic
-          requests
-          fastmcp
-          unidecode
-          bibtexparser
-        ];
-        pythonImportsCheck = [ "zotero_mcp" ];
-      };
 
       vimPlugins = prev.vimPlugins // {
         inherit (unstable.vimPlugins)

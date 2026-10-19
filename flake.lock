@@ -2307,8 +2307,7 @@
         "treefmt-nix": "treefmt-nix_3",
         "tt-schemes": "tt-schemes",
         "vicode": "vicode",
-        "wastebin-nvim": "wastebin-nvim",
-        "zotero-mcp": "zotero-mcp"
+        "wastebin-nvim": "wastebin-nvim"
       }
     },
     "rust-analyzer-src": {
@@ -4137,22 +4136,6 @@
         "owner": "jcollie",
         "ref": "main",
         "repo": "zon2nix",
-        "type": "github"
-      }
-    },
-    "zotero-mcp": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1783218755,
-        "narHash": "sha256-NsWosDY3c1AFXtA66/ivrGCMJ/Hjc6UJBiMnvnjm0f8=",
-        "owner": "54yyyu",
-        "repo": "zotero-mcp",
-        "rev": "f4eb88a2ee463cbddd4b83c9f38cc12d1263968a",
-        "type": "github"
-      },
-      "original": {
-        "owner": "54yyyu",
-        "repo": "zotero-mcp",
         "type": "github"
       }
     }

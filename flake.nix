@@ -116,10 +116,6 @@
       url = "github:alexandergknoll/nirimap/v0.3.0";
       flake = false;
     };
-    zotero-mcp = {
-      url = "github:54yyyu/zotero-mcp";
-      flake = false;
-    };
     caut = {
       url = "github:Dicklesworthstone/coding_agent_usage_tracker";
       flake = false;

@@ -367,7 +367,7 @@ Nontrivial:
 - `nixos-modules/base/net.nix:58` -- `# dnssec = "true"; # TODO breaks sometimes, try again with captive` -- This needs a runtime test on captive-portal networks. If you revisit it, note that the commented-out option has been renamed to `services.resolved.settings.Resolve.DNSSEC` (mkRenamedOptionModule in resolved.nix).
 - `home-modules/base/bash/git.sh:4` -- `# TODO more local/readonly` -- Vague and applies to the whole file. The concrete leaking globals in `gcreate` are fixed; the rest belongs to the rewrite.
 - `home-modules/base/bash/git.sh:5` -- `# TODO total rehaul, then move` -- A large rewrite with no defined target. The concrete bugs are split out as A4 and A5 (the `gcreate` one is fixed).
-- `home-modules/heavy/packages.nix:3` -- `# TODO euporie (tui jupyter notebooks)` -- `pkgs.euporie` does not exist in the pinned nixpkgs, so it needs packaging, for example as a `buildPythonApplication` in overlays/default.nix like zotero-mcp.
+- `home-modules/heavy/packages.nix:3` -- `# TODO euporie (tui jupyter notebooks)` -- `pkgs.euporie` does not exist in the pinned nixpkgs, so it needs packaging, for example as a `buildPythonApplication` in its own overlay under overlays/.
 
 ## I. Considered and rejected
 
