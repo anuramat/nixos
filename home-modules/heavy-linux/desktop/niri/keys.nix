@@ -81,7 +81,7 @@ let
       # {selection}/{query} are pasted verbatim into a `sh -lc` string, so read
       # them through a quoted heredoc instead of relying on shell quoting
       heredoc = tok: "$(cat <<'EOF'\n${tok}\nEOF\n)";
-      todo = "TODO_FILE=${escapeShellArg config.home.sessionVariables.TODO_FILE} ${getExe pkgs.todo}";
+      todo = "TODO_FILE=${escapeShellArg config.programs.todo.file} ${getExe pkgs.todo}";
     in
     {
       todo = {

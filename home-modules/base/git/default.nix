@@ -1,7 +1,6 @@
 {
   config,
   inputs,
-  lib,
   pkgs,
   ...
 }:
@@ -72,9 +71,6 @@
 
         difftool.prompt = false;
         mergetool.prompt = false;
-
-        # todo.txt
-        merge.todo.driver = "${lib.getExe pkgs.todo} merge %A %O %B";
       };
     };
   };

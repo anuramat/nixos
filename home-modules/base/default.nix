@@ -49,6 +49,7 @@ in
     ./pss.nix
     ./readline.nix
     ./search.nix
+    ./todo.nix
     ./yazi.nix
     ./zellij.nix
   ];
