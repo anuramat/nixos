@@ -1,6 +1,5 @@
 {
   config,
-  inputs,
   lib,
   pkgs,
   ...
@@ -17,19 +16,6 @@ let
     ;
 
   busName = "org.freedesktop.secrets";
-  cargo = lib.importTOML "${inputs.pass-secret-service}/Cargo.toml";
-  package = pkgs.rustPlatform.buildRustPackage {
-    pname = cargo.package.name;
-    version = cargo.package.version;
-    src = inputs.pass-secret-service;
-    cargoLock.lockFile = "${inputs.pass-secret-service}/Cargo.lock";
-    nativeBuildInputs = [ pkgs.makeWrapper ];
-    postInstall = ''
-      wrapProgram $out/bin/pass-secret-service \
-        --prefix PATH : ${lib.makeBinPath [ pkgs.gnupg ]}
-    '';
-    meta.mainProgram = "pass-secret-service";
-  };
 
   cfg = config.services.pss;
   python = pkgs.python3.withPackages (ps: [ ps.dbus-next ]);
@@ -56,7 +42,7 @@ in
     enable = mkEnableOption "Rust pass-secret-service";
     package = mkOption {
       type = types.package;
-      default = package;
+      default = pkgs.pass-secret-service-rs;
     };
     storePath = mkOption {
       type = types.nullOr types.str;

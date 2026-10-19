@@ -196,15 +196,16 @@ experimental feature; run inside the dev shell or pass it explicitly.
 - `overlays/default.nix` mixes unstable and unstable-slow package pins,
   packages from flake inputs, local package definitions and overrides (kitty,
   yazi, darktable, vim plugins, ...), the per-package overlays next to it
-  (nx-studio, proton-drive-cli), and the neovim-nightly and oh-my-pi overlays.
-  Since the base NixOS module applies it globally, overlay edits can affect
-  system packages, Home Manager, and nixvim.
+  (nx-studio, proton-drive-cli, pass-secret-service-rs), and the neovim-nightly
+  and oh-my-pi overlays. Since the base NixOS module applies it globally,
+  overlay edits can affect system packages, Home Manager, and nixvim.
 - Home Manager activation helpers in `home-modules/base/lib.nix` mutate JSON
   and YAML files in place with jq/yq, or copy a file into place. Some configs
   are not simple `xdg.configFile` declarations.
 - `services.pss` is a custom Home Manager module replacing the normal
-  pass-secret-service module with a Rust package built from the flake input. It
-  also ships `pss-migrate` for migration.
+  pass-secret-service module with the Rust `pass-secret-service-rs` package
+  from `overlays/pass-secret-service-rs.nix`. It also ships `pss-migrate` for
+  migration.
 - Agent commands are generated from Nix. `home-modules/heavy-linux/agents`
   builds Codex/Claude instruction files, skill/prompt files, TOML/JSON configs,
   and bubblewrap wrappers.

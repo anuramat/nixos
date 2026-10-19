@@ -223,6 +223,7 @@ lib.composeManyExtensions [
   overrides
   flakes
   inputs.self.overlays.nx-studio
+  inputs.self.overlays.pass-secret-service-rs
   inputs.self.overlays.proton-drive-cli
   inputs.neovim-nightly-overlay.overlays.default
   inputs.oh-my-pi.overlays.default
