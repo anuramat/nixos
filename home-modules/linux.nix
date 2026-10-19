@@ -1,9 +1,12 @@
 {
   config,
+  inputs,
   pkgs,
   ...
 }:
 {
+  imports = [ inputs.self.homeModules.pss ];
+
   home.packages = with pkgs; [
     bubblewrap # sandboxing
     fuse-overlayfs

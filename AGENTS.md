@@ -153,7 +153,9 @@ experimental feature; run inside the dev shell or pass it explicitly.
   `heavy-linux/gui`). `local`, `local-linux`, `heavy` and `heavy-linux` are
   always imported together on NixOS, so Linux-only additions belong in the
   `-linux` layers; keeping `local` and `heavy` Darwin-clean is what makes the
-  `anuramat-darwin` home configuration evaluate.
+  `anuramat-darwin` home configuration evaluate. Next to the layers sit opt-in
+  feature modules (`pss`, `todo`), imported by the layer that enables them
+  (`linux` and `local`).
 - Hosts: `anuramat-root` (server-like QEMU guest; nginx, ACME, `ctrl.sn`,
   wastebin), `anuramat-t480` (ThinkPad T480 laptop, deprecated), `anuramat-f12`
   (Framework 12 laptop), `anuramat-bgm5` (AMD Strix Halo workstation; build
@@ -203,10 +205,10 @@ experimental feature; run inside the dev shell or pass it explicitly.
 - Home Manager activation helpers in `home-modules/base/lib.nix` mutate JSON
   and YAML files in place with jq/yq, or copy a file into place. Some configs
   are not simple `xdg.configFile` declarations.
-- `services.pss` is a custom Home Manager module replacing the normal
-  pass-secret-service module with the Rust `pass-secret-service-rs` package
-  from `overlays/pass-secret-service-rs.nix`. It also ships `pss-migrate` for
-  migration.
+- `services.pss` (`home-modules/pss/`) is a custom Home Manager module
+  replacing the normal pass-secret-service module with the Rust
+  `pass-secret-service-rs` package from `overlays/pass-secret-service-rs.nix`.
+  It also ships `pss-migrate` for migration.
 - Agent commands are generated from Nix. `home-modules/heavy-linux/agents`
   builds Codex/Claude instruction files, skill/prompt files, TOML/JSON configs,
   and bubblewrap wrappers.

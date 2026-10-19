@@ -46,10 +46,8 @@ in
     ./lib.nix
     ./misc.nix
     ./packages.nix
-    ./pss.nix
     ./readline.nix
     ./search.nix
-    ./todo.nix
     ./yazi.nix
     ./zellij.nix
   ];
