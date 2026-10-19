@@ -134,15 +134,6 @@ let
         # 11 LTO'd integration test binaries; upstream `cargo install` skips them too
         doCheck = false;
       };
-      tamron-lens-control = prev.rustPlatform.buildRustPackage {
-        pname = "tamron-lens-control";
-        version = "0.1.1-dev";
-        src = inputs.tamron-lens-control;
-        cargoLock.lockFile = "${inputs.tamron-lens-control}/Cargo.lock";
-        nativeBuildInputs = [ prev.pkg-config ];
-        buildInputs = [ prev.udev ]; # serialport enumeration
-        meta.mainProgram = "tlc";
-      };
       todo = prev.writers.writePython3Bin "todo" {
         # black-formatted: long lines, line breaks before binary operators
         flakeIgnore = [
@@ -225,6 +216,7 @@ lib.composeManyExtensions [
   inputs.self.overlays.nx-studio
   inputs.self.overlays.pass-secret-service-rs
   inputs.self.overlays.proton-drive-cli
+  inputs.self.overlays.tamron-lens-control
   inputs.neovim-nightly-overlay.overlays.default
   inputs.oh-my-pi.overlays.default
 ]
