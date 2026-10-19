@@ -99,13 +99,6 @@
       ]
       ++ lib.optionals (config.gui == "wayland") [
         {
-          on = "y";
-          run = [
-            ''shell -- for path in "$@"; do echo "file://$path"; done | wl-copy -t text/uri-list''
-            "yank"
-          ];
-        }
-        {
           on = "<C-n>";
           run = ''shell -- ${lib.getExe pkgs.dragon-drop} -x -T "$@"'';
         }
