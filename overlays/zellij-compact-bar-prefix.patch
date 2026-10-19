@@ -1,0 +1,94 @@
+diff --git a/default-plugins/compact-bar/src/line.rs b/default-plugins/compact-bar/src/line.rs
+index aae8aec..40b2714 100644
+--- a/default-plugins/compact-bar/src/line.rs
++++ b/default-plugins/compact-bar/src/line.rs
+@@ -16,6 +16,7 @@ pub fn tab_line(
+     cols: usize,
+     toggle_tooltip_key: Option<String>,
+     tooltip_is_active: bool,
++    prefix: &str,
+ ) -> TabLineOutput {
+     let dimmed = mode_info.session_ascended == Some(true) || mode_info.session_dimmed == Some(true);
+     let breadcrumb_ancestry = if mode_info.host_fullscreen == Some(true) {
+@@ -35,6 +36,7 @@ pub fn tab_line(
+         dimmed,
+         breadcrumb_ancestry,
+         nested_hint,
++        prefix: prefix.to_owned(),
+     };
+ 
+     let builder = TabLineBuilder::new(config, mode_info.style.colors, mode_info.capabilities, cols);
+@@ -76,6 +78,7 @@ pub struct TabLineConfig {
+     pub dimmed: bool,
+     pub breadcrumb_ancestry: Vec<String>,
+     pub nested_hint: NestedSessionHint,
++    pub prefix: String,
+ }
+ 
+ fn calculate_total_length(parts: &[LinePart]) -> usize {
+@@ -327,6 +330,7 @@ struct TabLinePrefixBuilder<'a> {
+     cols: usize,
+     dimmed: bool,
+     breadcrumb_ancestry: &'a [String],
++    prefix: &'a str,
+ }
+ 
+ struct TabLinePrefix {
+@@ -335,12 +339,19 @@ struct TabLinePrefix {
+ }
+ 
+ impl<'a> TabLinePrefixBuilder<'a> {
+-    fn new(palette: Styling, cols: usize, dimmed: bool, breadcrumb_ancestry: &'a [String]) -> Self {
++    fn new(
++        palette: Styling,
++        cols: usize,
++        dimmed: bool,
++        breadcrumb_ancestry: &'a [String],
++        prefix: &'a str,
++    ) -> Self {
+         Self {
+             palette,
+             cols,
+             dimmed,
+             breadcrumb_ancestry,
++            prefix,
+         }
+     }
+ 
+@@ -433,7 +444,7 @@ impl<'a> TabLinePrefixBuilder<'a> {
+     }
+ 
+     fn create_zellij_part(&self) -> LinePart {
+-        let prefix_text = " Zellij ";
++        let prefix_text = &format!(" {} ", self.prefix);
+         let colors = self.get_text_colors();
+         let text_style = if self.dimmed {
+             style!(colors.text, colors.background).italic()
+@@ -766,6 +777,7 @@ impl TabLineBuilder {
+             self.cols,
+             self.config.dimmed,
+             breadcrumb_ancestry,
++            &self.config.prefix,
+         );
+ 
+         let prefix_result = prefix_builder.build(session_name, self.config.mode);
+diff --git a/default-plugins/compact-bar/src/main.rs b/default-plugins/compact-bar/src/main.rs
+index 29975d9..fca03c8 100644
+--- a/default-plugins/compact-bar/src/main.rs
++++ b/default-plugins/compact-bar/src/main.rs
+@@ -21,6 +21,7 @@ static ARROW_SEPARATOR: &str = "";
+ 
+ const CONFIG_IS_TOOLTIP: &str = "is_tooltip";
+ const CONFIG_TOGGLE_TOOLTIP_KEY: &str = "tooltip";
++const CONFIG_PREFIX: &str = "prefix";
+ const MSG_TOGGLE_TOOLTIP: &str = "toggle_tooltip";
+ const MSG_TOGGLE_PERSISTED_TOOLTIP: &str = "toggle_persisted_tooltip";
+ const MSG_LAUNCH_TOOLTIP: &str = "launch_tooltip_if_not_launched";
+@@ -531,6 +532,7 @@ impl State {
+             cols,
+             self.toggle_tooltip_key.clone(),
+             self.tooltip_is_active,
++            self.config.get(CONFIG_PREFIX).map_or("Zellij", |p| p),
+         );
+         self.tab_line = tab_line_output.parts;
+         self.breadcrumb_range = tab_line_output.breadcrumb_range;

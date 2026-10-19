@@ -30,7 +30,7 @@ let
     });
 
   overrides =
-    _final: prev:
+    final: prev:
     let
       unstable = import inputs.nixpkgs-unstable {
         inherit (prev) config;
@@ -56,7 +56,6 @@ let
         ;
 
       inherit (unstable)
-        zellij
         firefox
         tailscale
         opencode
@@ -100,6 +99,28 @@ let
             'adapters.retain(|p| *p != Self::Kgp);'
         '';
       };
+
+      # compact-bar takes the "Zellij" text before the session name from a `prefix` config key;
+      # zellij embeds its default plugins prebuilt, and only trusts embedded ones
+      zellij-unwrapped =
+        let
+          compactBar = prev.pkgsCross.wasi32.rustPlatform.buildRustPackage {
+            pname = "zellij-compact-bar";
+            inherit (unstable.zellij-unwrapped) version src cargoDeps;
+            patches = [ ./zellij-compact-bar-prefix.patch ];
+            cargoBuildFlags = [ "-p compact-bar" ];
+            # rustc passes wasm-ld flags, but nixpkgs makes the cc wrapper the linker
+            env.RUSTFLAGS = "-Clinker=${lib.getExe' prev.lld "wasm-ld"}";
+            doCheck = false;
+            installPhase = "install -Dt $out target/*/release/compact-bar.wasm";
+          };
+        in
+        unstable.zellij-unwrapped.overrideAttrs (old: {
+          postPatch = old.postPatch + ''
+            cp ${compactBar}/compact-bar.wasm zellij-utils/assets/plugins/
+          '';
+        });
+      zellij = unstable.zellij.override { inherit (final) zellij-unwrapped; };
 
       darktable = unstable.darktable.override {
         withAi = true;

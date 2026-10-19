@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  osConfig ? null,
+  ...
+}:
 let
   inherit (lib)
     concatStringsSep
@@ -69,6 +74,12 @@ in
       #   _props.location = "zellij:compact-bar";
       #   tooltip = ""; # don't need the hotkey since tooltip appears on ctrl-g
       # };
+      plugins = lib.mkIf (osConfig != null) {
+        compact-bar = {
+          _props.location = "zellij:compact-bar";
+          prefix = osConfig.networking.hostName;
+        };
+      };
       show_startup_tips = false;
       show_release_notes = false;
       default_layout = "compact";
