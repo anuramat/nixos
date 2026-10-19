@@ -6,7 +6,8 @@
 # `job run`, see agents/job.nix; empty for other units and jobs without them),
 # `HOST<TAB>session<TAB>WRAPPER<TAB>CWD`,
 # `HOST<TAB>zellij<TAB>SESSION<TAB>CLIENTS`, plus the bgm5powerctl
-# profile (bgm5 only) as `HOST<TAB>power<TAB>MODE`; units are read from the
+# profile (bgm5 only) as `HOST<TAB>power<TAB>MODE` and the battery charge
+# (laptops only) as `HOST<TAB>battery<TAB>PERCENT`; units are read from the
 # world-readable cgroupfs, so it needs neither the agent's user bus nor its ssh
 # key; the current host is queried directly instead of over ssh
 {
@@ -35,6 +36,10 @@ let
     fi
     # fan/tctl profile, see bgm5's power.nix
     ! command -v bgm5powerctl >/dev/null || printf 'power\t%s\n' "$(bgm5powerctl status)"
+    # the system battery; peripherals' batteries are named after their device
+    for b in /sys/class/power_supply/BAT*/capacity; do
+      [ ! -e "$b" ] || printf 'battery\t%s\n' "$(<"$b")"
+    done
     # zellij sessions, minus the exited (resurrectable) ones; a hung session
     # would block the script, and over ssh nothing kills it once the poll gives up
     timeout 5 zellij list-sessions -n 2>/dev/null | grep -v EXITED | while read -r s _; do

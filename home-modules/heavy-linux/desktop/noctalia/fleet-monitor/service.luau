@@ -23,7 +23,7 @@ end
 
 -- fleet-status lines; sessions are grouped by project dir basename
 local function parseHost(h, out)
-  h.jobs, h.sessions, h.power = {}, {}, nil
+  h.jobs, h.sessions, h.power, h.battery = {}, {}, nil, nil
   local projects, total, detached = {}, 0, 0
   for line in out:gmatch("[^\n]+") do
     local kind, rest = line:match("^.-\t(.-)\t(.*)$")
@@ -39,6 +39,8 @@ local function parseHost(h, out)
       if p then p.n += 1 else projects[project] = { n = 1, name = name } end
     elseif kind == "power" then
       h.power = rest
+    elseif kind == "battery" then
+      h.battery = rest
     elseif kind == "zellij" then
       total += 1
       if rest:match("\t0$") then detached += 1 end
