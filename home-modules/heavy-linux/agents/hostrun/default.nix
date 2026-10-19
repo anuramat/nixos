@@ -22,7 +22,20 @@ let
   client = pkgs.writeShellApplication {
     name = "hostrun";
     runtimeInputs = [ config.lib.agents.relayClient ];
-    text = ''exec relay-client hostrun 0 "$@"'';
+    # -f sends FILE's content, read here, so that the prompt shows all of it,
+    # and the host runs what was approved, even if FILE changes or exists only
+    # in the sandbox
+    text = ''
+      case "$#:''${1-}" in
+        2:-c) cmd=$2 ;;
+        2:-f) cmd=$(<"$2") ;;
+        *)
+          echo 'usage: hostrun -c CMD | hostrun -f FILE' >&2
+          exit 2
+          ;;
+      esac
+      exec relay-client hostrun 0 "$cmd"
+    '';
   };
   handler = pkgs.writers.writePython3Bin "hostrun-handler" {
     libraries = [ pkgs.python3Packages.systemd-python ];
