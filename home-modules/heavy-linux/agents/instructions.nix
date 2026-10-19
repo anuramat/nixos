@@ -229,9 +229,19 @@ let
             Anything that should outlive your session, or runs longer than ~10
             minutes, MUST be run as a job:
 
-            - `job run HOST:NAME -- CMD...` runs CMD as `${username}` on HOST, in
-              `D=${sharedDir}/jobs/NAME` on HOST; output goes to `D/log`.
-              NAME is `[a-z0-9-]+` and can't be reused.
+            - `job run HOST:NAME -d DESC [-e WHEN] -- CMD...` runs CMD as
+              `${username}` on HOST, in `D=${sharedDir}/jobs/NAME` on HOST; output
+              goes to `D/log`. NAME is `[a-z0-9-]+` and can't be reused.
+            - DESC and the ETA are shown to the user next to the job. DESC is
+              required: about 40 characters, what is run on what, e.g.
+              `smoke test of A on B` or `full training run of C with D`.
+            - `-e WHEN` sets the ETA, in `date -d` syntax: `'90 min'`, `'2 hours'`,
+              `'1 hour 30 min'`. You SHOULD always set it, estimated from a smoke
+              test's throughput times the total work, or a previous run's duration.
+            - `job eta HOST:NAME WHEN` updates the ETA; like `-e`, WHEN is the time
+              left from now, not the total duration since the job started. When
+              the job's progress shows that the estimate is off by more than ~20%,
+              you SHOULD update it.
             - `job wait [-f] HOST:NAME` blocks until the job ends and prints
               `job NAME: RESULT`. Exit 0 = success, 1 = failed or cancelled,
               2 = no such job, 3 = lost (e.g. reboot), 4 = ssh failed (retry).
@@ -250,7 +260,8 @@ let
             rsync -t --mkpath flake.nix flake.lock "$H:$D/flake/"
             git ls-files -z -co --exclude-standard |
               rsync -rlpt --from0 --files-from=- --mkpath ./ "$H:$D/src/"
-            job run "$H:NAME" -- sh -c "cd src && nix develop path:$D/flake -c python train.py"
+            job run "$H:NAME" -d 'full training run of C with D' -e '2 hours' -- \
+              sh -c "cd src && nix develop path:$D/flake -c python train.py"
             ```
 
             - If the flake reads other repo files (e.g. `src = ./.`), copy those to `D/flake` too.
@@ -259,7 +270,7 @@ let
             - Record `HOST:NAME` wherever the run is documented, so a later session can re-attach with `job wait`.
           ''
           + (for [ "claude" ] ''
-            - Right after launching, run `job wait HOST:NAME` with Bash `run_in_background` -- you get notified when it ends. For progress, run `job wait -f HOST:NAME | grep --line-buffered -E 'PATTERN|^job '` in the Monitor tool, filtered to lines you'd act on. You MUST NOT poll with foreground `sleep`.
+            - Right after launching, run `job wait HOST:NAME` with Bash `run_in_background` -- you get notified when it ends. For progress, run `job wait -f HOST:NAME | grep --line-buffered -E 'PATTERN|^job '` in the Monitor tool, filtered to lines you'd act on, e.g. errors and progress (to update the ETA). You MUST NOT poll with foreground `sleep`.
           '');
         }
       ];

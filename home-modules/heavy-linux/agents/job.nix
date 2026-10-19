@@ -2,7 +2,8 @@
 # outlive sandboxed sessions and show up in fleet-status; every command runs on
 # the job's host over ssh, even when it's this one; the job's dir
 # /home/agent/shared/jobs/NAME on HOST is staged by the caller (e.g. `rsync ...
-# HOST:DIR`), then used as the working dir and for `log` and `result`
+# HOST:DIR`), then used as the working dir and for `log` and `result`, plus
+# `desc` and `eta` (seconds since the epoch), shown by fleet-status
 { pkgs, inputs, ... }:
 let
   inherit (inputs.self.consts.agent) username sharedDir;
@@ -19,7 +20,7 @@ let
       openssh
     ];
     text = ''
-      usage="usage: job run HOST:NAME -- CMD... | job wait [-f] HOST:NAME | job stop HOST:NAME"
+      usage="usage: job run HOST:NAME -d DESC [-e WHEN] -- CMD... | job eta HOST:NAME WHEN | job wait [-f] HOST:NAME | job stop HOST:NAME"
       die() {
         echo "job: $*" >&2
         exit 1
@@ -56,17 +57,33 @@ let
 
       case $sub in
       run)
-        [[ ''${1-} == -- ]] || die "$usage"
-        shift
+        desc="" eta=""
+        # stops after `--`
+        while getopts d:e: opt; do
+          case $opt in
+          d) desc=$OPTARG ;;
+          e) eta=$(date -d "$OPTARG" +%s) ;;
+          *) die "$usage" ;;
+          esac
+        done
+        shift $((OPTIND - 1))
+        [ -n "$desc" ] || die "-d DESC is required: a short description of the job for the fleet monitor, e.g. -d 'smoke test of A on B'"
         (($#)) || die "$usage"
         [ -d "$D" ] || die "stage the job in $D first"
         [ ! -e "$D/result" ] || die "$D/result exists, the job already ran"
+        printf '%s\n' "$desc" >"$D/desc"
+        [ -z "$eta" ] || echo "$eta" >"$D/eta"
         # without --expand-environment=no, systemd would expand $VARs in CMD;
         # append, since ExecStopPost reopens the log
         exec systemd-run --user --unit="$unit" --collect --expand-environment=no \
           --working-directory="$D" -p StandardOutput="append:$D/log" \
           -p ExecStopPost=${writeResult} \
           "$@"
+        ;;
+      eta)
+        (($# == 1)) || die "$usage"
+        eta=$(date -d "$1" +%s)
+        echo "$eta" >"$D/eta"
         ;;
       stop)
         exec systemctl --user stop "$unit"

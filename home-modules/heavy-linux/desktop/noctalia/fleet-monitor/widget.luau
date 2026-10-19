@@ -27,15 +27,20 @@ local function indented(children)
   return ui.row({ align = "start" }, { ui.box({ width = 16 * SCALE }), ui.column({ gap = 4 * SCALE }, children) })
 end
 
-local function hostRows(h)
-  local rows = {}
-  for _, job in h.jobs do
-    table.insert(rows, ui.row({ gap = 8 * SCALE, key = job.unit }, {
-      label(job.unit, "on_surface"),
-      label(duration(job.t), "outline"),
-      label(job.cmd, "on_surface_variant", { maxWidth = 400 * SCALE, maxLines = 1 }),
-    }))
+-- name, elapsed time, the time left until the ETA or how long it's overdue, if set, and the description
+local function jobRow(job, now)
+  local cells = { label(job.unit, "on_surface"), label(duration(job.t), "outline") }
+  if job.eta then
+    local left = job.eta - now
+    table.insert(cells, left >= 0 and label("~" .. eta(left), "outline") or label("+" .. eta(-left), "error"))
   end
+  table.insert(cells, label(job.desc, "on_surface_variant", { maxWidth = 400 * SCALE, maxLines = 1 }))
+  return ui.row({ gap = 8 * SCALE, key = job.unit }, cells)
+end
+
+local function hostRows(h)
+  local rows, now = {}, noctalia.nowMs() // 1000
+  for _, job in h.jobs do table.insert(rows, jobRow(job, now)) end
   for _, line in h.sessions do table.insert(rows, label(line, "outline")) end
   return rows
 end

@@ -2,7 +2,8 @@
 # jobs, scopes, custom slices; agent hosts only), the current user's sandboxed
 # agent sessions and live zellij sessions on the given hosts (default: all
 # hosts), as
-# `HOST<TAB>job<TAB>UNIT<TAB>ELAPSED<TAB>COMMAND`,
+# `HOST<TAB>job<TAB>UNIT<TAB>ELAPSED<TAB>ETA<TAB>DESC` (ETA and DESC are set by
+# `job run`, see agents/job.nix; empty for other units and jobs without them),
 # `HOST<TAB>session<TAB>WRAPPER<TAB>CWD`,
 # `HOST<TAB>zellij<TAB>SESSION<TAB>CLIENTS`, plus the bgm5powerctl
 # profile (bgm5 only) as `HOST<TAB>power<TAB>MODE`; units are read from the
@@ -23,8 +24,13 @@ let
         -not -path '*/init.scope/*' -not -path '*/session.slice/*' | while read -r f; do
         d=''${f%/cgroup.procs}
         pid=$(head -1 "$f" 2>/dev/null) && [ -n "$pid" ] || continue
-        read -r t cmd < <(ps -o etime= -o args= -p "$pid") || continue
-        printf 'job\t%s\t%s\t%s\n' "''${d##*/}" "$t" "$cmd"
+        read -r t < <(ps -o etime= -p "$pid") || continue
+        unit=''${d##*/} eta="" desc=""
+        if [[ $unit =~ ^job-(.*)\.service$ ]]; then
+          j=${inputs.self.consts.agent.sharedDir}/jobs/''${BASH_REMATCH[1]}
+          eta=$(head -1 "$j/eta" 2>/dev/null) desc=$(head -1 "$j/desc" 2>/dev/null)
+        fi
+        printf 'job\t%s\t%s\t%s\t%s\n' "$unit" "$t" "$eta" "$desc"
       done
     fi
     # fan/tctl profile, see bgm5's power.nix

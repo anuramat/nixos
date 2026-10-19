@@ -28,8 +28,10 @@ local function parseHost(h, out)
   for line in out:gmatch("[^\n]+") do
     local kind, rest = line:match("^.-\t(.-)\t(.*)$")
     if kind == "job" then
-      local unit, t, cmd = rest:match("^(.-)\t(.-)\t(.*)$")
-      table.insert(h.jobs, { unit = unit:gsub("%.service$", ""), t = etimeSeconds(t), cmd = cmd })
+      -- a `job run` job goes by its name; eta is nil if unset
+      local unit, t, eta, desc = rest:match("^(.-)\t(.-)\t(.-)\t(.*)$")
+      table.insert(h.jobs, { unit = unit:gsub("%.service$", ""):gsub("^job%-", ""), t = etimeSeconds(t),
+        eta = tonumber(eta), desc = desc })
     elseif kind == "session" then
       local name, dir = rest:match("^(.-)\t(.*)$")
       local project = dir:match("([^/]*)/*$")
