@@ -2,6 +2,7 @@
 {
   imports = [
     ./editor.nix
+    ./darktable
     ./gui.nix
     ./fonts.nix
     ./jupyter.nix

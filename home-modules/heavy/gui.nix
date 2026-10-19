@@ -17,9 +17,6 @@
     rnote
     xournalpp # pdf markup, handwritten notes
 
-    # img
-    darktable
-
     # video
     losslesscut-bin
 
