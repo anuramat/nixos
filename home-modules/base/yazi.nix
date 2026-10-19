@@ -8,6 +8,7 @@
   programs.yazi = {
     enable = true;
     shellWrapperName = "y";
+    plugins.toggle-pane = pkgs.yaziPlugins.toggle-pane;
     # SLOP: show embedded jpeg in preview
     plugins.nef =
       pkgs.writeTextDir "main.lua" # lua
@@ -89,6 +90,11 @@
         {
           on = "<Down>";
           run = "arrow 1";
+        }
+        {
+          on = "T";
+          run = "plugin toggle-pane min-preview";
+          desc = "Show or hide the preview pane";
         }
       ]
       ++ lib.optionals (config.gui == "wayland") [
