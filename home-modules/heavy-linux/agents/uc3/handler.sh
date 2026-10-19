@@ -30,4 +30,5 @@ login() {
 login
 # BatchMode: never answer a prompt here; every login goes through uc3-master.
 # ssh's own diagnostics already reach the caller's stderr
-exec timeout 3600 ssh -o BatchMode=yes -- uc3 "$1"
+# ssh joins the arguments with spaces, as with a plain `ssh uc3 CMD...`
+exec timeout 3600 ssh -o BatchMode=yes -- uc3 "$@"

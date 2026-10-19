@@ -70,13 +70,13 @@ provides the socket, the systemd units, the transport and the log. `uc3ctl`
 has zero authority: its shell shim validates the invocation, redirects an
 interactive tty stdin to `/dev/null` (terminal input is never consumed as an
 upload), and execs the relay's client, which connects to
-`$XDG_RUNTIME_DIR/uc3.sock`, sends the command line with its own
+`$XDG_RUNTIME_DIR/uc3.sock`, sends the command's arguments with its own
 stdin/stdout/stderr attached (`SCM_RIGHTS`), and exits with the status it gets
 back. systemd accepts each connection (`Accept=yes`) and runs one relay
 receiver per connection, which logs the command and outcome, and runs
 `uc3-handler` on the caller's stdio; the handler makes sure the shared ssh
 master (`uc3-master.service`: started on demand, never restarted by systemd)
-is up, then runs `ssh uc3 <cmd>` through it in BatchMode, straight on the
+is up, then runs `ssh uc3 <args>` through it in BatchMode, straight on the
 caller's stdio.
 
 ## Status snapshot
@@ -118,7 +118,8 @@ uc3-status` to refresh it first.
 
 ## Protocol
 
-- **Request:** the caller's cwd (unused here) and the command line, with the
+- **Request:** the caller's cwd (unused here) and the command's arguments,
+  NUL-separated (ssh joins them with spaces), with the
   caller's stdin, stdout and stderr descriptors attached as ancillary data; the
   client then half-closes and the receiver reads to EOF (the command may be up to the 128 KiB argv limit). The
   command must be **single-line** -- use `uc3ctl 'bash -s' < script.sh` for
@@ -152,7 +153,7 @@ uc3-status` to refresh it first.
   and command, then the outcome, `journalctl --user -u 'uc3@*'`:
 
   ```text
-  <sandbox> '<cwd>' '<command>'
+  <sandbox> '<cwd>' ['<arg>', ...]
   rc=<code> dur=<seconds>s
   ```
 

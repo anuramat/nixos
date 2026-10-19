@@ -30,11 +30,11 @@ who = caller(struct.unpack("3i", creds)[0])
 data, fds, _, _ = socket.recv_fds(sock, 65536, 3)
 while chunk := sock.recv(65536):
     data += chunk
-cwd, cmd = os.fsdecode(data).split("\0", 1)
-print(who, repr(cwd), repr(cmd), file=sys.stderr)
+cwd, *args = os.fsdecode(data).split("\0")
+print(who, repr(cwd), repr(args), file=sys.stderr)
 started = time.monotonic()
 handler = subprocess.Popen(
-    [*sys.argv[1:], cmd],
+    [*sys.argv[1:], *args],
     stdin=fds[0],
     stdout=fds[1],
     stderr=fds[2],
