@@ -166,10 +166,13 @@ let
             runs FILE's content the same way; FILE is read inside the sandbox,
             so it can be in your scratchpad, or `/dev/stdin` with a heredoc.
             hostrun blocks until the user answers, then runs the command as the
-            user on this host, in the current directory. stdout, stderr and the
-            exit status are passed through, stdin is `/dev/null`, and exit
-            status 77 means the user denied it. Paths that only exist in the
-            sandbox, such as anything under `/tmp`, don't exist outside it.
+            user on this host, in the current directory, or with `-h HOST`
+            before `-c`/`-f`, over ssh as the user on HOST, in the user's home
+            there (unlike your own `ssh HOST`, which logs in as `agent`).
+            stdout, stderr and the exit status are passed through, stdin is
+            `/dev/null`, and exit status 77 means the user denied it. Paths
+            that only exist in the sandbox, such as anything under `/tmp`,
+            don't exist outside it.
           ''
           + (for [ "claude" ] ''
             Approval can take minutes: run `hostrun` with Bash `run_in_background`.
@@ -179,10 +182,10 @@ let
             The user reviews every `hostrun` command (with `-f`, the file's
             content) before approving it, and sees nothing else, so you MUST
             NOT make it run files you wrote (e.g. `hostrun -c 'bash x.sh'`),
-            and you SHOULD write it for readability: e.g. with `ssh HOST ...`,
-            prefer a quoted heredoc (`<<'EOF'`) over layers of backslash
-            escapes, and organize long commands as `-f` scripts with comments
-            and descriptive names instead of huge one-liners.
+            and you SHOULD write it for readability: e.g. use `-h HOST` instead
+            of `ssh HOST` in the command, and organize long commands as `-f`
+            scripts with comments and descriptive names instead of huge
+            one-liners or layers of quoting.
 
             Important: `/tmp`, `$TMPDIR`, and XDG cache/data/state home directories
             are bind mounted to tmpfs, so files created there will not persist

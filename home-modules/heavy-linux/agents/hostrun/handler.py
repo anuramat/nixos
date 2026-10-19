@@ -12,7 +12,9 @@ import time
 
 from systemd import journal
 
-prompt, *prompt_hosts, cmd = sys.argv[1:]
+# the prompt hosts are comma-separated; target is the -h host, or empty
+prompt, prompt_hosts, target, cmd = sys.argv[1:]
+prompt_hosts = prompt_hosts.split(",")
 host = socket.gethostname()
 cwd = os.environ["RELAY_CWD"]
 who = f"{os.environ['RELAY_CALLER']} @ {host}"
@@ -95,15 +97,20 @@ def fail(rc, message):
 
 # the relay's signal that the requester is gone; exits through settle()
 signal.signal(signal.SIGTERM, lambda *_: sys.exit())
-if not os.path.isdir(cwd):
+run = ["bash", "-c", cmd]
+where = f"cwd: {shlex.quote(cwd)}"
+if target:
+    # in the user's home there, as with a plain ssh
+    run = ["ssh", "-o", "BatchMode=yes", "--", target, shlex.join(run)]
+    where = f"ssh: {shlex.quote(target)}"
+    cwd = None
+elif not os.path.isdir(cwd):
     fail(1, f"{cwd} doesn't exist outside the sandbox")
 
-answer = first_answer(f"{who}\ncwd: {shlex.quote(cwd)}\n$ {cmd}\n".encode())
+answer = first_answer(f"{who}\n{where}\n$ {cmd}\n".encode())
 withdraw()
 if answer == b"deny":
     fail(77, "denied by the user")
 if answer != b"allow":
     fail(255, f"unexpected answer {answer!r}, see the journal on {host}")
-sys.exit(
-    subprocess.run(["bash", "-c", cmd], cwd=cwd, stdin=subprocess.DEVNULL).returncode
-)
+sys.exit(subprocess.run(run, cwd=cwd, stdin=subprocess.DEVNULL).returncode)

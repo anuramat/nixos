@@ -3,8 +3,9 @@
 # physical machine, whose [Review] opens a terminal with the full request;
 # hosts that can't show one yet (asleep, offline) get retried; the first
 # answer counts and withdraws the other prompts; once approved, the command
-# runs as the user on the agent's host, in the agent's cwd, straight on the
-# agent's stdout and stderr, and its exit status is passed back; an agent
+# runs as the user on the agent's host, in the agent's cwd, or with -h, over
+# ssh on another host, in the user's home there, straight on the agent's
+# stdout and stderr, and its exit status is passed back; an agent
 # that hangs up withdraws the prompts, or stops the command; requests and
 # outcomes are logged on the agent's host: `journalctl --user -u 'hostrun@*'`
 {
@@ -26,15 +27,20 @@ let
     # and the host runs what was approved, even if FILE changes or exists only
     # in the sandbox
     text = ''
+      host= # this one
+      if [ "$#" = 4 ] && [ "$1" = -h ]; then
+        host=$2
+        shift 2
+      fi
       case "$#:''${1-}" in
         2:-c) cmd=$2 ;;
         2:-f) cmd=$(<"$2") ;;
         *)
-          echo 'usage: hostrun -c CMD | hostrun -f FILE' >&2
+          echo 'usage: hostrun [-h HOST] {-c CMD | -f FILE}' >&2
           exit 2
           ;;
       esac
-      exec relay-client hostrun 0 "$cmd"
+      exec relay-client hostrun 0 "$host" "$cmd"
     '';
   };
   handler = pkgs.writers.writePython3Bin "hostrun-handler" {
@@ -120,7 +126,7 @@ in
     prompt # found in PATH over ssh
   ];
 
-  agents.relays.hostrun = "${lib.getExe handler} ${lib.getExe prompt} ${toString promptHosts}";
+  agents.relays.hostrun = "${lib.getExe handler} ${lib.getExe prompt} ${lib.concatStringsSep "," promptHosts}";
   systemd.user.services."hostrun@".Service.Environment = "BASH_ENV=${bashEnv}";
 
   programs.niri.settings.window-rules = [
