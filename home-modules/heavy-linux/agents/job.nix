@@ -75,9 +75,11 @@ let
         printf '%s\n' "$desc" >"$D/desc"
         [ -z "$eta" ] || echo "$eta" >"$D/eta"
         # without --expand-environment=no, systemd would expand $VARs in CMD;
-        # append, since ExecStopPost reopens the log
+        # append, since ExecStopPost reopens the log;
+        # Type=exec: return once CMD runs, not right after the fork, so that
+        # `job wait` finds the log, which tells it the job exists
         exec systemd-run --user --unit="$unit" --collect --expand-environment=no \
-          --working-directory="$D" -p StandardOutput="append:$D/log" \
+          --working-directory="$D" -p Type=exec -p StandardOutput="append:$D/log" \
           -p ExecStopPost=${writeResult} \
           "$@"
         ;;
