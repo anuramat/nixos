@@ -224,11 +224,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789743680,
-        "narHash": "sha256-QENrrD6t5kBq0Njle8qercoA06IKhnK1cW8R5bmIu3U=",
+        "lastModified": 1792193758,
+        "narHash": "sha256-ExBHeqwjYv2a8fmqi9+oR6WhsPInosMKmVLpAKGmj6c=",
         "owner": "poeck",
         "repo": "chatgpt-desktop-app-nix-flake",
-        "rev": "e392d48ddce02fa7dead72b3c2a6428e84f1eae7",
+        "rev": "5ea0635f1142f03c821d4de289a9ce516f08c44e",
         "type": "github"
       },
       "original": {
@@ -280,11 +280,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1783426229,
-        "narHash": "sha256-VySKDRnS8KlOCBpIH2LLS8f1FkD3NjB5lQGAg9rrYww=",
+        "lastModified": 1790632875,
+        "narHash": "sha256-ovY0ssXI4mfcLMa/bS5azndpke3qa0QOOxJgmj7sAXw=",
         "owner": "poeck",
         "repo": "claude-desktop-nix-flake",
-        "rev": "6a5669b709e7273ea14e24998ea4169e729e87c1",
+        "rev": "55ba585546fe222bf18f391a98c1ee60f79684d2",
         "type": "github"
       },
       "original": {
