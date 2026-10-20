@@ -8,6 +8,8 @@
 let
   inherit (config.age) secrets;
   inherit (inputs.self.consts.user) username;
+  vpn = config.networking.openconnect.interfaces.uhd;
+  ip = lib.getExe' pkgs.iproute2 "ip";
 in
 {
   users.users.${username}.extraGroups = [ "networkmanager" ]; # wifi
@@ -33,7 +35,15 @@ in
       # give up on a dead backend after one retry: a fresh session goes through
       # the load balancer, a reconnect clings to the same server
       reconnect-timeout = "30";
-      script = "${lib.getExe pkgs.vpn-slice} --no-host-names --no-ns-hosts bwunicluster.scc.kit.edu 129.206.0.0/16 147.142.0.0/16";
+      # vpn-slice ignores attempt-reconnect: after a link change the route to
+      # the gateway is gone, so the reconnect would go into the tunnel itself
+      script = "${pkgs.writeShellScript "vpn-slice-uhd" ''
+        if [ "$reason" = attempt-reconnect ]; then
+          read -r _ _ gw _ dev _ < <(${ip} route show default)
+          exec ${ip} route replace "$VPNGATEWAY" via "$gw" dev "$dev"
+        fi
+        exec ${lib.getExe pkgs.vpn-slice} --no-host-names --no-ns-hosts bwunicluster.scc.kit.edu 129.206.0.0/16 147.142.0.0/16
+      ''}";
     };
   };
   # every start spends a TOTP: never replay a code, back off, and stop well
@@ -48,6 +58,21 @@ in
       RestartMaxDelaySec = "10min";
     };
   };
+  # on campus the university ranges are reachable directly; elsewhere, reconnect
+  # right away instead of waiting for dead peer detection
+  networking.networkmanager.dispatcherScripts = lib.mkIf vpn.autoStart [
+    {
+      source = pkgs.writeShellScript "uhd-campus" ''
+        [ "$2" = up ] || exit 0
+        read -r _ _ gw _ < <(${ip} route show default dev "$1") || exit 0
+        systemctl=${lib.getExe' config.systemd.package "systemctl"}
+        case $gw in
+        147.142.*) $systemctl stop openconnect-uhd ;;
+        *) $systemctl kill -s USR2 --kill-whom=main openconnect-uhd || $systemctl start openconnect-uhd ;;
+        esac
+      '';
+    }
+  ];
   environment.systemPackages = with pkgs; [
     networkmanager-openconnect
   ];

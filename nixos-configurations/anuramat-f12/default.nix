@@ -4,6 +4,7 @@
 }:
 {
   system.stateVersion = "25.05";
+  networking.openconnect.interfaces.uhd.autoStart = true;
 
   home-manager.users.${inputs.self.consts.user.username} = {
     services.kanshi.builtinDisplay = {
