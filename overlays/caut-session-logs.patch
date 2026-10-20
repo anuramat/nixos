@@ -1,0 +1,309 @@
+diff --git a/src/core/session_logs.rs b/src/core/session_logs.rs
+index d0942b3..a611451 100644
+--- a/src/core/session_logs.rs
++++ b/src/core/session_logs.rs
+@@ -102,12 +102,7 @@ impl SessionLogFinder {
+                     continue;
+                 }
+ 
+-                let conversations_dir = project_path.join("conversations");
+-                if !conversations_dir.exists() {
+-                    continue;
+-                }
+-
+-                if let Ok(files) = fs::read_dir(&conversations_dir) {
++                if let Ok(files) = fs::read_dir(&project_path) {
+                     for file_entry in files.flatten() {
+                         let path = file_entry.path();
+                         if !is_jsonl_file(&path) {
+@@ -178,14 +173,24 @@ impl SessionUsage {
+ pub struct ClaudeSessionParser;
+ 
+ impl ClaudeSessionParser {
+-    /// Parse a Claude session log JSONL file.
++    /// Parse a Claude session log JSONL file, along with the logs of its
++    /// subagents (`<session>/subagents/*.jsonl`).
+     ///
+     /// # Errors
+     /// Returns an error if the file cannot be opened or read.
+     pub fn parse(&self, path: &Path) -> Result<SessionUsage> {
+-        let mut usage = parse_session_log(path)?;
++        let subagents: Vec<PathBuf> = fs::read_dir(path.with_extension("").join("subagents"))
++            .map(|files| {
++                files
++                    .flatten()
++                    .map(|f| f.path())
++                    .filter(|p| is_jsonl_file(p))
++                    .collect()
++            })
++            .unwrap_or_default();
++        let mut usage = parse_session_log(path, &subagents)?;
+         if usage.project_path.is_none() {
+-            usage.project_path = extract_claude_project_path(path);
++            usage.project_path = path.parent().map(Path::to_path_buf);
+         }
+         Ok(usage)
+     }
+@@ -200,15 +205,12 @@ impl CodexSessionParser {
+     /// # Errors
+     /// Returns an error if the file cannot be opened or read.
+     pub fn parse(&self, path: &Path) -> Result<SessionUsage> {
+-        parse_session_log(path)
++        parse_session_log(path, &[])
+     }
+ }
+ 
+-fn parse_session_log(path: &Path) -> Result<SessionUsage> {
+-    let file = File::open(path)
+-        .map_err(|e| CautError::Config(format!("Failed to open session log: {e}")))?;
+-    let reader = BufReader::new(file);
+-
++/// Parse a session log, adding the usage from `extra_paths` (a Claude session's subagent logs).
++fn parse_session_log(path: &Path, extra_paths: &[PathBuf]) -> Result<SessionUsage> {
+     let mut usage = SessionUsage {
+         session_id: session_id_from_path(path),
+         project_path: None,
+@@ -222,35 +224,57 @@ fn parse_session_log(path: &Path) -> Result<SessionUsage> {
+         message_count: 0,
+     };
+ 
+-    for line in reader.lines() {
+-        let Ok(line) = line else { continue };
+-        if line.trim().is_empty() {
+-            continue;
+-        }
++    // Claude Code logs each content block of a response as its own line, repeating its usage
++    let mut seen_messages = HashSet::new();
++    let mut last_codex_total = None;
++
++    for path in std::iter::once(path).chain(extra_paths.iter().map(PathBuf::as_path)) {
++        let file = File::open(path)
++            .map_err(|e| CautError::Config(format!("Failed to open session log: {e}")))?;
++        for line in BufReader::new(file).lines() {
++            let Ok(line) = line else { continue };
++            if line.trim().is_empty() {
++                continue;
++            }
+ 
+-        let value: Value = match serde_json::from_str(&line) {
+-            Ok(v) => v,
+-            Err(_) => continue,
+-        };
++            let value: Value = match serde_json::from_str(&line) {
++                Ok(v) => v,
++                Err(_) => continue,
++            };
+ 
+-        usage.message_count += 1;
++            if let Some(id) = value.pointer("/message/id").and_then(Value::as_str)
++                && !seen_messages.insert(id.to_string())
++            {
++                continue;
++            }
+ 
+-        if let Some(ts) = extract_timestamp(&value) {
+-            usage.record_timestamp(ts);
+-        }
++            usage.message_count += 1;
+ 
+-        if let Some(model) = extract_model(&value)
+-            && !model.is_empty()
+-        {
+-            usage.models_used.insert(model.to_string());
+-        }
++            if let Some(ts) = extract_timestamp(&value) {
++                usage.record_timestamp(ts);
++            }
++
++            if let Some(model) = extract_model(&value)
++                && !model.is_empty()
++            {
++                usage.models_used.insert(model.to_string());
++            }
+ 
+-        for usage_value in extract_usage_candidates(&value) {
+-            if let Some(counts) = extract_token_counts(usage_value) {
+-                usage.input_tokens += counts.input;
+-                usage.output_tokens += counts.output;
+-                usage.cache_read_tokens += counts.cache_read;
+-                usage.cache_creation_tokens += counts.cache_creation;
++            let candidates = match value.get("type").and_then(Value::as_str) {
++                Some("event_msg") => codex_token_count(&value, &mut last_codex_total)
++                    .into_iter()
++                    .collect(),
++                // Codex: the same per-response usage as its `token_count` event
++                Some("token_usage_record") => Vec::new(),
++                _ => extract_usage_candidates(&value),
++            };
++            for usage_value in candidates {
++                if let Some(counts) = extract_token_counts(usage_value) {
++                    usage.input_tokens += counts.input;
++                    usage.output_tokens += counts.output;
++                    usage.cache_read_tokens += counts.cache_read;
++                    usage.cache_creation_tokens += counts.cache_creation;
++                }
+             }
+         }
+     }
+@@ -271,10 +295,12 @@ fn extract_token_counts(value: &Value) -> Option<TokenCounts> {
+         return None;
+     }
+ 
+-    let input = first_i64(value, &["input_tokens", "prompt_tokens"]).unwrap_or(0);
++    // Codex's `input_tokens` include its `cached_input_tokens`
++    let cached = first_i64(value, &["cached_input_tokens"]).unwrap_or(0);
++    let input = first_i64(value, &["input_tokens", "prompt_tokens"]).unwrap_or(0) - cached;
+     let output = first_i64(value, &["output_tokens", "completion_tokens"]).unwrap_or(0);
+     let cache_read =
+-        first_i64(value, &["cache_read_input_tokens", "cache_read_tokens"]).unwrap_or(0);
++        first_i64(value, &["cache_read_input_tokens", "cache_read_tokens"]).unwrap_or(0) + cached;
+     let cache_creation = first_i64(
+         value,
+         &["cache_creation_input_tokens", "cache_creation_tokens"],
+@@ -289,6 +315,18 @@ fn extract_token_counts(value: &Value) -> Option<TokenCounts> {
+     })
+ }
+ 
++/// The per-response usage of a Codex `token_count` event, unless it repeats the
++/// previous event's running total, as it does on rate limit updates.
++fn codex_token_count<'a>(value: &'a Value, last_total: &mut Option<Value>) -> Option<&'a Value> {
++    let info = value.pointer("/payload/info")?;
++    let total = info.get("total_token_usage")?;
++    if last_total.as_ref() == Some(total) {
++        return None;
++    }
++    *last_total = Some(total.clone());
++    info.get("last_token_usage")
++}
++
+ fn extract_usage_candidates(value: &Value) -> Vec<&Value> {
+     let mut candidates = Vec::new();
+ 
+@@ -419,14 +457,6 @@ fn session_id_from_path(path: &Path) -> String {
+         .map_or_else(|| "unknown".to_string(), str::to_string)
+ }
+ 
+-fn extract_claude_project_path(path: &Path) -> Option<PathBuf> {
+-    let conversations_dir = path.parent()?;
+-    if conversations_dir.file_name()?.to_str()? != "conversations" {
+-        return None;
+-    }
+-    conversations_dir.parent().map(std::path::Path::to_path_buf)
+-}
+-
+ fn file_modified_at(path: &Path) -> Option<DateTime<Utc>> {
+     let metadata = fs::metadata(path).ok()?;
+     let modified = metadata.modified().ok()?;
+@@ -474,14 +504,14 @@ mod tests {
+     use tempfile::TempDir;
+ 
+     #[test]
+-    fn find_claude_sessions_discovers_conversations() {
++    fn find_claude_sessions_discovers_project_logs() {
+         let temp = TempDir::new().unwrap();
+         let claude_base = temp.path().join(".claude");
+         let project = claude_base.join("projects").join("proj1");
+-        let conversations = project.join("conversations");
+-        std::fs::create_dir_all(&conversations).unwrap();
+-        let log_path = conversations.join("session_abc.jsonl");
+-        std::fs::write(&log_path, "{}\n").unwrap();
++        let subagents = project.join("session_abc").join("subagents");
++        std::fs::create_dir_all(&subagents).unwrap();
++        std::fs::write(project.join("session_abc.jsonl"), "{}\n").unwrap();
++        std::fs::write(subagents.join("agent-1.jsonl"), "{}\n").unwrap();
+ 
+         let finder = SessionLogFinder::with_paths(claude_base, temp.path().join(".codex"));
+         let logs = finder.find_sessions(Provider::Claude, None, None);
+@@ -538,6 +568,92 @@ malformed-line
+         assert!(usage.ended_at.is_some());
+     }
+ 
++    #[test]
++    fn parse_claude_session_log_counts_each_message_once() {
++        let temp = TempDir::new().unwrap();
++        let log_path = temp.path().join("session.jsonl");
++        let line = |id, block| {
++            format!(
++                r#"{{"type":"assistant","message":{{"id":"{id}","model":"claude-opus-5-5","content":[{{"type":"{block}"}}],"usage":{{"input_tokens":2,"output_tokens":10,"cache_read_input_tokens":100,"cache_creation_input_tokens":20}}}}}}"#
++            )
++        };
++        let content = [
++            line("msg_1", "thinking"),
++            line("msg_1", "tool_use"),
++            line("msg_2", "text"),
++        ]
++        .join("\n");
++        std::fs::write(&log_path, content).unwrap();
++
++        let usage = ClaudeSessionParser.parse(&log_path).unwrap();
++
++        assert_eq!(usage.input_tokens, 4);
++        assert_eq!(usage.output_tokens, 20);
++        assert_eq!(usage.cache_read_tokens, 200);
++        assert_eq!(usage.cache_creation_tokens, 40);
++        assert_eq!(usage.message_count, 2);
++        assert_eq!(usage.project_path.as_deref(), Some(temp.path()));
++    }
++
++    #[test]
++    fn parse_claude_session_log_includes_subagents() {
++        let temp = TempDir::new().unwrap();
++        let log_path = temp.path().join("session.jsonl");
++        let subagents = temp.path().join("session").join("subagents");
++        std::fs::create_dir_all(&subagents).unwrap();
++        std::fs::write(
++            &log_path,
++            r#"{"message":{"id":"msg_1","model":"claude-opus-5-5","usage":{"input_tokens":10,"output_tokens":5}},"timestamp":"2026-01-18T12:00:00Z"}"#,
++        )
++        .unwrap();
++        std::fs::write(
++            subagents.join("agent-a.jsonl"),
++            r#"{"message":{"id":"msg_2","model":"claude-haiku-4-5","usage":{"input_tokens":7,"output_tokens":3}},"timestamp":"2026-01-18T12:30:00Z"}"#,
++        )
++        .unwrap();
++        std::fs::write(subagents.join("agent-a.meta.json"), "{}").unwrap();
++
++        let usage = ClaudeSessionParser.parse(&log_path).unwrap();
++
++        assert_eq!(usage.session_id, "session");
++        assert_eq!(usage.input_tokens, 17);
++        assert_eq!(usage.output_tokens, 8);
++        assert!(usage.models_used.contains("claude-haiku-4-5"));
++        assert_eq!(
++            usage.ended_at.unwrap() - usage.started_at.unwrap(),
++            chrono::Duration::minutes(30)
++        );
++    }
++
++    #[test]
++    fn parse_codex_session_log_reads_token_count_events() {
++        let temp = TempDir::new().unwrap();
++        let log_path = temp.path().join("rollout.jsonl");
++        let token_count = |total, input, cached, output| {
++            format!(
++                r#"{{"timestamp":"2026-01-18T10:30:00Z","type":"event_msg","payload":{{"type":"token_count","info":{{"total_token_usage":{{"total_tokens":{total}}},"last_token_usage":{{"input_tokens":{input},"cached_input_tokens":{cached},"output_tokens":{output}}}}}}}}}"#
++            )
++        };
++        let content = [
++            r#"{"type":"turn_context","payload":{"model":"gpt-5-codex"}}"#.to_string(),
++            token_count(110, 100, 0, 10),
++            // a rate limit update repeats the running total
++            token_count(110, 100, 0, 10),
++            r#"{"type":"event_msg","payload":{"type":"token_count","info":null}}"#.to_string(),
++            r#"{"type":"token_usage_record","payload":{"usage":{"input_tokens":200,"cached_input_tokens":150,"output_tokens":20}}}"#.to_string(),
++            token_count(330, 200, 150, 20),
++        ]
++        .join("\n");
++        std::fs::write(&log_path, content).unwrap();
++
++        let usage = CodexSessionParser.parse(&log_path).unwrap();
++
++        assert_eq!(usage.input_tokens, 150);
++        assert_eq!(usage.cache_read_tokens, 150);
++        assert_eq!(usage.output_tokens, 30);
++        assert!(usage.models_used.contains("gpt-5-codex"));
++    }
++
+     #[test]
+     fn parse_codex_session_log_extracts_tokens() {
+         let temp = TempDir::new().unwrap();

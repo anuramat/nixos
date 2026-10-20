@@ -59,6 +59,198 @@ index bb33f9c..15ccf9c 100644
  #[cfg(test)]
  mod tests {
      use super::*;
+diff --git a/src/core/credential_health.rs b/src/core/credential_health.rs
+index 0a8f97a..6513f5b 100644
+--- a/src/core/credential_health.rs
++++ b/src/core/credential_health.rs
+@@ -870,17 +870,14 @@ impl AuthHealthAggregator {
+         let mut sources = Vec::new();
+ 
+         // Check the primary credentials file if it exists
+-        if let Some(cred_path) = provider.credentials_path()
+-            && let Some(home) = dirs::home_dir()
++        if let Some(path) = provider.credentials_path()
++            && path.exists()
+         {
+-            let full_path = home.join(cred_path);
+-            if full_path.exists() {
+-                let health = check_oauth_file(&full_path);
+-                sources.push(SourceHealth {
+-                    source_type: "oauth".to_string(),
+-                    health,
+-                });
+-            }
++            let health = check_oauth_file(&path);
++            sources.push(SourceHealth {
++                source_type: "oauth".to_string(),
++                health,
++            });
+         }
+ 
+         // If no credentials found, mark as missing
+@@ -938,16 +935,6 @@ pub fn get_reauth_instructions(provider: &Provider, source: &str) -> String {
+     }
+ }
+ 
+-/// Helper to get home directory (wrapper for dirs crate).
+-mod dirs {
+-    use std::path::PathBuf;
+-
+-    pub fn home_dir() -> Option<PathBuf> {
+-        // Use directories crate which is already a dependency
+-        directories::BaseDirs::new().map(|d| d.home_dir().to_path_buf())
+-    }
+-}
+-
+ // =============================================================================
+ // Tests
+ // =============================================================================
+diff --git a/src/core/credential_watcher.rs b/src/core/credential_watcher.rs
+index 59aee03..8399b69 100644
+--- a/src/core/credential_watcher.rs
++++ b/src/core/credential_watcher.rs
+@@ -176,15 +176,11 @@ impl CredentialWatcher {
+     ///
+     /// Returns an error if registering the path with the filesystem watcher fails.
+     pub fn watch_provider(&mut self, provider: Provider) -> Result<Option<PathBuf>> {
+-        let Some(cred_path) = provider.credentials_path() else {
++        let Some(path) = provider.credentials_path() else {
+             return Ok(None);
+         };
+-        let Some(home) = dirs::home_dir() else {
+-            return Ok(None);
+-        };
+-        let full_path = home.join(cred_path);
+-        self.watch_path(&full_path, provider)?;
+-        Ok(Some(full_path))
++        self.watch_path(&path, provider)?;
++        Ok(Some(path))
+     }
+ 
+     /// Watch a specific credential file path.
+@@ -523,15 +519,6 @@ fn collect_paths_from_event(
+     }
+ }
+ 
+-/// Helper to get home directory.
+-mod dirs {
+-    use std::path::PathBuf;
+-
+-    pub fn home_dir() -> Option<PathBuf> {
+-        directories::BaseDirs::new().map(|d| d.home_dir().to_path_buf())
+-    }
+-}
+-
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+diff --git a/src/core/doctor/checks.rs b/src/core/doctor/checks.rs
+index c628789..954c5c2 100644
+--- a/src/core/doctor/checks.rs
++++ b/src/core/doctor/checks.rs
+@@ -219,15 +219,13 @@ fn claude_auth_status_from_payload(
+ 
+ /// Check Codex authentication.
+ async fn check_codex_auth() -> CheckStatus {
+-    let Some(home) = dirs::home_dir() else {
++    let Some(auth_path) = Provider::Codex.credentials_path() else {
+         return CheckStatus::Fail {
+             reason: "Cannot determine home directory".to_string(),
+             suggestion: None,
+         };
+     };
+ 
+-    let auth_path = home.join(".codex").join("auth.json");
+-
+     if !auth_path.exists() {
+         return CheckStatus::Fail {
+             reason: "No auth file found".to_string(),
+@@ -344,15 +342,10 @@ async fn check_cursor_auth() -> CheckStatus {
+ #[allow(clippy::unused_async)]
+ async fn check_generic_auth(provider: Provider) -> CheckStatus {
+     // Check if there's a known credentials path
+-    if let Some(creds_path) = provider.credentials_path()
+-        && let Some(home) = dirs::home_dir()
+-    {
+-        let full_path = home.join(creds_path);
+-        if full_path.exists() {
+-            return CheckStatus::Pass {
+-                details: Some("Credentials file found".to_string()),
+-            };
+-        }
++    if provider.credentials_path().is_some_and(|p| p.exists()) {
++        return CheckStatus::Pass {
++            details: Some("Credentials file found".to_string()),
++        };
+     }
+ 
+     // Skip check for providers without known auth mechanism
+diff --git a/src/core/provider.rs b/src/core/provider.rs
+index fddeb52..0272e08 100644
+--- a/src/core/provider.rs
++++ b/src/core/provider.rs
+@@ -5,9 +5,11 @@
+ 
+ use serde::{Deserialize, Serialize};
+ use std::collections::HashMap;
++use std::path::PathBuf;
+ use std::time::Duration;
+ 
+ use crate::error::{CautError, Result};
++use crate::providers::common;
+ 
+ // =============================================================================
+ // Provider Enum
+@@ -331,14 +333,19 @@ impl Provider {
+         }
+     }
+ 
+-    /// Get the credentials file path for this provider (relative to home).
++    /// Get the credentials file path for this provider, honoring
++    /// `CLAUDE_CONFIG_DIR` and `CODEX_HOME`.
+     #[must_use]
+-    pub const fn credentials_path(self) -> Option<&'static str> {
++    pub fn credentials_path(self) -> Option<PathBuf> {
++        let home = |rel: &str| common::home_dir().map(|h| h.join(rel));
+         match self {
+-            Self::Claude => Some(".claude/.credentials.json"),
+-            Self::Codex => Some(".codex/auth.json"),
+-            Self::Gemini => Some(".config/gemini/credentials.json"),
+-            Self::Cursor => Some(".cursor/auth.json"),
++            Self::Claude => common::dir_from_env_or_home("CLAUDE_CONFIG_DIR", ".claude")
++                .map(|d| d.join(".credentials.json")),
++            Self::Codex => {
++                common::dir_from_env_or_home("CODEX_HOME", ".codex").map(|d| d.join("auth.json"))
++            }
++            Self::Gemini => home(".config/gemini/credentials.json"),
++            Self::Cursor => home(".cursor/auth.json"),
+             _ => None,
+         }
+     }
+@@ -516,6 +523,23 @@ impl Default for ProviderRegistry {
+ mod tests {
+     use super::*;
+ 
++    #[test]
++    #[allow(unsafe_code)]
++    fn credentials_path_honors_codex_home() {
++        let _env = crate::test_utils::lock_env();
++        let original = std::env::var("CODEX_HOME").ok();
++        // SAFETY: the process-wide env lock is held for the whole test.
++        unsafe { std::env::set_var("CODEX_HOME", "/tmp/codex-alt") };
++        let path = Provider::Codex.credentials_path();
++        unsafe {
++            match original {
++                Some(v) => std::env::set_var("CODEX_HOME", v),
++                None => std::env::remove_var("CODEX_HOME"),
++            }
++        }
++        assert_eq!(path, Some(PathBuf::from("/tmp/codex-alt/auth.json")));
++    }
++
+     #[test]
+     fn provider_from_cli_name() {
+         assert_eq!(Provider::from_cli_name("codex").unwrap(), Provider::Codex);
 diff --git a/src/core/session_logs.rs b/src/core/session_logs.rs
 index 1088d71..d0942b3 100644
 --- a/src/core/session_logs.rs

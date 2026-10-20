@@ -152,10 +152,20 @@ let
         version = "0.1.0";
         src = inputs.caut;
         cargoLock.lockFile = "${inputs.caut}/Cargo.lock";
-        # `cost` and `session` read ~/.claude and ~/.codex, ignoring CLAUDE_CONFIG_DIR and CODEX_HOME
-        patches = [ ./caut-env-dirs.patch ];
+        patches = [
+          # `cost`, `session` and `doctor` read ~/.claude and ~/.codex, ignoring CLAUDE_CONFIG_DIR and CODEX_HOME
+          ./caut-env-dirs.patch
+          # `session` looks for Claude logs in a `conversations/` dir, counts a Claude response's
+          # usage once per content block, and misses most Codex usage
+          ./caut-session-logs.patch
+          # `doctor` and `usage` decode opaque OAuth tokens as JWTs, and flag a renewable access token
+          ./caut-credential-health.patch
+        ];
         # nightly-only `-Z threads` rustflag
         postPatch = "rm .cargo/config.toml";
+        # vergen falls back to a `VERGEN_IDEMPOTENT_OUTPUT` placeholder without a git checkout
+        env.VERGEN_GIT_SHA = inputs.caut.rev;
+        env.VERGEN_GIT_DIRTY = "false";
         nativeBuildInputs = [
           prev.pkg-config
           prev.makeWrapper
