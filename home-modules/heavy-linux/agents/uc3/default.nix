@@ -34,6 +34,7 @@ let
       croc
       diffutils
       findutils
+      gnused
       uc3ctl
     ]
   );

@@ -10,13 +10,17 @@ src=$1 dst=${2:-.}
 # to be random, or concurrent pulls end up in the same room
 code=$(head -c 10 /dev/urandom | base32 | tr '[:upper:]' '[:lower:]')
 sums=$(mktemp) && trap 'rm -f "$sums"' EXIT
-# --no-local: the receiver is never on the cluster's network, and concurrent
-# senders on one login node would share the first one's local relay
-uc3ctl -t 0 "CROC_SECRET=$code nohup ~/.local/bin/croc --yes send --no-local $src </dev/null >/tmp/croc-$code.log 2>&1 & echo \$! >/tmp/croc-$code.pid
-  cd \$(dirname $src) && find \$(basename $src) -type f -exec md5sum {} + | sort -k2" >"$sums"
+# the code goes in over stdin, since the login node shows every user's command
+# lines, and the sender's output, which repeats it, is dropped; --no-local: the
+# receiver is never on the cluster's network, and concurrent senders on one
+# login node would share the first one's local relay; prints the sender's PID,
+# then the remote md5 sums
+uc3ctl -t 0 "read -r CROC_SECRET || exit; export CROC_SECRET; nohup ~/.local/bin/croc --yes send --no-local $src </dev/null >/dev/null 2>&1 & echo \$!
+  cd \$(dirname $src) && find \$(basename $src) -type f -exec md5sum {} + | sort -k2" <<<"$code" >"$sums"
+read -r pid <"$sums" && sed -i 1d "$sums"
 mkdir -p "$dst"
 CROC_SECRET=$code croc --yes --out "$dst" || {
-	uc3ctl "kill \$(cat /tmp/croc-$code.pid)"
+	uc3ctl "kill $pid"
 	exit 1
 }
 (cd "$dst" && find "$(basename "$src")" -type f -exec md5sum {} + | sort -k2) | diff - "$sums" \
