@@ -17,6 +17,8 @@ final: prev: {
       # session logs; `session` prices a session at one model's rates, and takes a Claude
       # response's usage from its first line, before the output is complete
       ./cost.patch
+      # Claude's fast mode and Codex's Fast tier (`service_tier = "fast"`) cost more
+      ./fast-mode.patch
     ];
     # nightly-only `-Z threads` rustflag
     postPatch = "rm .cargo/config.toml";

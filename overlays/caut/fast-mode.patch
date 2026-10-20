@@ -1,0 +1,374 @@
+diff --git a/src/cli/session.rs b/src/cli/session.rs
+index 8d1bac8..3f5a45e 100644
+--- a/src/cli/session.rs
++++ b/src/cli/session.rs
+@@ -530,6 +530,7 @@ mod tests {
+                     cache_creation: 5_000,
+                     cache_creation_1h: 0,
+                 },
++                fast: false,
+             }],
+         }
+     }
+diff --git a/src/core/cost_scanner.rs b/src/core/cost_scanner.rs
+index 80fc427..4626d4a 100644
+--- a/src/core/cost_scanner.rs
++++ b/src/core/cost_scanner.rs
+@@ -95,18 +95,23 @@ impl CostScanner {
+                 if !(first_day..=today).contains(&date)
+                     || record
+                         .message_id
+-                        .is_some_and(|id| !seen_messages.insert(id))
++                        .as_ref()
++                        .is_some_and(|id| !seen_messages.insert(id.clone()))
+                 {
+                     continue;
+                 }
++                let (cost, known) = self.pricing.record_cost(&record);
+                 let model = record.model.unwrap_or_else(|| "unknown".to_string());
+-                let (pricing, known) = self.pricing.get_or_estimate(&model);
+-                let day = days.entry(date).or_default();
+-                day.tokens.add(&record.tokens);
+-                day.cost += pricing.calculate_cost(&record.tokens).total_cost_usd;
+                 if !known {
+-                    unpriced.insert(model.clone());
++                    unpriced.insert(if record.fast {
++                        format!("{model} (fast)")
++                    } else {
++                        model.clone()
++                    });
+                 }
++                let day = days.entry(date).or_default();
++                day.tokens.add(&record.tokens);
++                day.cost += cost.total_cost_usd;
+                 day.models.insert(model);
+             }
+         }
+@@ -234,28 +239,37 @@ mod tests {
+         assert_eq!(payload.totals.unwrap().input_tokens, Some(2_000_000));
+     }
+ 
+-    #[test]
+-    fn scan_prices_codex_usage() {
++    /// Today's cost of one Codex response of `gpt-6-astra`, after `settings` lines.
++    fn codex_cost_today(settings: &[&str]) -> f64 {
+         let temp = TempDir::new().unwrap();
+         let codex = temp.path().join("codex");
+         let ts = Utc::now().to_rfc3339();
+-        write(
+-            &codex.join("sessions/2026/10/20/rollout.jsonl"),
+-            &[
+-                r#"{"type":"turn_context","payload":{"model":"gpt-6-astra"}}"#.to_string(),
+-                format!(
+-                    r#"{{"timestamp":"{ts}","type":"event_msg","payload":{{"type":"token_count","info":{{"total_token_usage":{{"total_tokens":1}},"last_token_usage":{{"input_tokens":1000000,"cached_input_tokens":800000,"output_tokens":100000}}}}}}}}"#
+-                ),
+-            ],
+-        );
++        let mut lines =
++            vec![r#"{"type":"turn_context","payload":{"model":"gpt-6-astra"}}"#.to_string()];
++        lines.extend(settings.iter().map(|tier| {
++            format!(
++                r#"{{"type":"event_msg","payload":{{"type":"thread_settings_applied","thread_settings":{{"service_tier":"{tier}"}}}}}}"#
++            )
++        }));
++        lines.push(format!(
++            r#"{{"timestamp":"{ts}","type":"event_msg","payload":{{"type":"token_count","info":{{"total_token_usage":{{"total_tokens":1}},"last_token_usage":{{"input_tokens":1000000,"cached_input_tokens":800000,"output_tokens":100000}}}}}}}}"#
++        ));
++        write(&codex.join("sessions/2026/10/20/rollout.jsonl"), &lines);
+ 
+         let finder = SessionLogFinder::with_paths(temp.path().join("claude"), codex);
+         let payload = CostScanner::new().scan_logs(Provider::Codex, &finder, Local::now());
+-
+-        // 200K input @ $10/M + 800K cached @ $1/M + 100K output @ $50/M
+-        assert!((payload.session_cost_usd.unwrap() - 7.8).abs() < 1e-9);
+         assert_eq!(payload.session_tokens, Some(1_100_000));
+         assert!(payload.unpriced_models.is_empty());
++        payload.session_cost_usd.unwrap()
++    }
++
++    #[test]
++    fn scan_prices_codex_usage() {
++        // 200K input @ $10/M + 800K cached @ $1/M + 100K output @ $50/M
++        assert!((codex_cost_today(&[]) - 7.8).abs() < 1e-9);
++        assert!((codex_cost_today(&["priority", "default"]) - 7.8).abs() < 1e-9);
++        // the Fast tier: 2x
++        assert!((codex_cost_today(&["priority"]) - 15.6).abs() < 1e-9);
+     }
+ 
+     #[test]
+diff --git a/src/core/pricing.rs b/src/core/pricing.rs
+index a124d18..270da55 100644
+--- a/src/core/pricing.rs
++++ b/src/core/pricing.rs
+@@ -3,7 +3,7 @@
+ //! This module provides model pricing information and calculates costs from
+ //! session token usage data parsed by the `session_logs` module.
+ 
+-use crate::core::session_logs::{SessionUsage, TokenCounts};
++use crate::core::session_logs::{SessionUsage, TokenCounts, UsageRecord};
+ use chrono::{DateTime, Utc};
+ use std::collections::HashMap;
+ 
+@@ -106,6 +106,8 @@ impl TokenCostBreakdown {
+ pub struct PricingTable {
+     /// Model name to pricing mapping (normalized lowercase).
+     models: HashMap<String, ModelPricing>,
++    /// The same for fast mode (Claude) or the Fast tier (`OpenAI`), for the models that have it.
++    fast_models: HashMap<String, ModelPricing>,
+     /// When this pricing data became effective.
+     pub effective_date: DateTime<Utc>,
+ }
+@@ -210,6 +212,20 @@ impl PricingTable {
+         Self::add_model(&mut models, "gpt-5.4-mini", 0.75, 4.5, 0.075, 0.75);
+         Self::add_model(&mut models, "gpt-5.3-codex", 1.75, 14.0, 0.175, 1.75);
+ 
++        // Claude's fast mode: 2x, with the same cache multipliers; OpenAI's Fast tier, whose
++        // cache writes aren't listed: the standard tier's ratio to input
++        let mut fast_models = HashMap::new();
++        Self::add_model(&mut fast_models, "claude-opus-5-5", 8.0, 40.0, 0.4, 10.0);
++        for model in ["claude-opus-5", "claude-opus-4-8"] {
++            Self::add_model(&mut fast_models, model, 10.0, 50.0, 1.0, 12.5);
++        }
++        Self::add_model(&mut fast_models, "gpt-6-astra", 20.0, 100.0, 2.0, 25.0);
++        Self::add_model(&mut fast_models, "gpt-5.6-sol", 8.0, 40.0, 0.8, 10.0);
++        Self::add_model(&mut fast_models, "gpt-5.5", 12.5, 75.0, 1.25, 12.5);
++        Self::add_model(&mut fast_models, "gpt-5.4", 5.0, 30.0, 0.5, 5.0);
++        Self::add_model(&mut fast_models, "gpt-5.4-mini", 1.5, 9.0, 0.15, 1.5);
++        Self::add_model(&mut fast_models, "gpt-5.3-codex", 3.5, 28.0, 0.35, 3.5);
++
+         // OpenAI GPT models (as of Jan 2026)
+         // GPT-4o: $2.50/$10 per million
+         Self::add_model(&mut models, "gpt-4o", 2.5, 10.0, 1.25, 2.5);
+@@ -256,6 +272,7 @@ impl PricingTable {
+ 
+         Self {
+             models,
++            fast_models,
+             effective_date: Utc::now(),
+         }
+     }
+@@ -279,11 +296,24 @@ impl PricingTable {
+     /// Returns None if the model is not in the pricing table.
+     #[must_use]
+     pub fn get(&self, model: &str) -> Option<&ModelPricing> {
++        Self::lookup(&self.models, model)
++    }
++
++    /// Look up a model's fast mode (or Fast tier) pricing, as [`Self::get`] does.
++    #[must_use]
++    pub fn get_fast(&self, model: &str) -> Option<&ModelPricing> {
++        Self::lookup(&self.fast_models, model)
++    }
++
++    fn lookup<'a>(
++        models: &'a HashMap<String, ModelPricing>,
++        model: &str,
++    ) -> Option<&'a ModelPricing> {
+         let model = model.to_lowercase();
+-        self.models.get(&model).or_else(|| {
++        models.get(&model).or_else(|| {
+             let (base, date) = model.rsplit_once('-')?;
+             if date.len() == 8 && date.bytes().all(|b| b.is_ascii_digit()) {
+-                self.models.get(base)
++                models.get(base)
+             } else {
+                 None
+             }
+@@ -296,20 +326,37 @@ impl PricingTable {
+     #[must_use]
+     pub fn get_or_estimate(&self, model: &str) -> (ModelPricing, bool) {
+         self.get(model).map_or_else(
+-            || {
+-                // Conservative mid-tier estimate for unknown models
+-                let estimated = ModelPricing::from_static(
+-                    model, 3.0,  // input: assume Sonnet-tier
+-                    15.0, // output: assume Sonnet-tier
+-                    0.3,  // cache read
+-                    3.75, // cache creation
+-                );
+-                (estimated, false)
+-            },
++            || (Self::estimate(model), false),
+             |pricing| (pricing.clone(), true),
+         )
+     }
+ 
++    /// Conservative mid-tier estimate for unknown models.
++    fn estimate(model: &str) -> ModelPricing {
++        ModelPricing::from_static(
++            model, 3.0,  // input: assume Sonnet-tier
++            15.0, // output: assume Sonnet-tier
++            0.3,  // cache read
++            3.75, // cache creation
++        )
++    }
++
++    /// Calculate the cost of a response at its model's rates for its speed,
++    /// falling back to a conservative estimate; returns whether the rates were known.
++    #[must_use]
++    pub fn record_cost(&self, record: &UsageRecord) -> (TokenCostBreakdown, bool) {
++        let model = record.model.as_deref().unwrap_or("unknown");
++        let pricing = if record.fast {
++            self.get_fast(model)
++        } else {
++            self.get(model)
++        };
++        pricing.map_or_else(
++            || (Self::estimate(model).calculate_cost(&record.tokens), false),
++            |pricing| (pricing.calculate_cost(&record.tokens), true),
++        )
++    }
++
+     /// Get all known model names.
+     #[must_use]
+     pub fn known_models(&self) -> Vec<&str> {
+@@ -394,10 +441,8 @@ impl SessionCostCalculator {
+         let mut breakdown = TokenCostBreakdown::default();
+         let mut model_known = true;
+         for record in &usage.records {
+-            let (pricing, known) = self
+-                .pricing
+-                .get_or_estimate(record.model.as_deref().unwrap_or("unknown"));
+-            breakdown.add(&pricing.calculate_cost(&record.tokens));
++            let (cost, known) = self.pricing.record_cost(record);
++            breakdown.add(&cost);
+             model_known &= known;
+         }
+ 
+@@ -493,9 +538,35 @@ mod tests {
+             timestamp: Some(Utc::now()),
+             model: model.map(str::to_string),
+             tokens,
++            fast: false,
+         }
+     }
+ 
++    #[test]
++    fn record_cost_uses_fast_rates() {
++        let table = PricingTable::current();
++        let tokens = TokenCounts {
++            input: 1_000_000,
++            output: 1_000_000,
++            cache_read: 1_000_000,
++            cache_creation: 1_000_000,
++            cache_creation_1h: 0,
++        };
++        let mut fast = record(Some("claude-opus-5-5"), tokens);
++        fast.fast = true;
++        let (cost, known) = table.record_cost(&fast);
++        // $8 + $40 + $0.40 + $10, 2x the standard rates
++        assert!((cost.total_cost_usd - 58.4).abs() < 1e-9);
++        assert!(known);
++
++        let (cost, _) = table.record_cost(&record(Some("claude-opus-5-5"), tokens));
++        assert!((cost.total_cost_usd - 29.2).abs() < 1e-9);
++
++        // no fast mode for Sonnet: estimated
++        fast.model = Some("claude-sonnet-5".to_string());
++        assert!(!table.record_cost(&fast).1);
++    }
++
+     /// A session whose usage is all in one response of its first model.
+     fn make_usage(input: i64, output: i64, models: &[&str]) -> SessionUsage {
+         let tokens = TokenCounts {
+diff --git a/src/core/session_logs.rs b/src/core/session_logs.rs
+index 688665c..ee56bea 100644
+--- a/src/core/session_logs.rs
++++ b/src/core/session_logs.rs
+@@ -187,6 +187,8 @@ pub struct UsageRecord {
+     pub timestamp: Option<DateTime<Utc>>,
+     pub model: Option<String>,
+     pub tokens: TokenCounts,
++    /// Whether the response was served in fast mode (Claude) or the Fast tier (Codex).
++    pub fast: bool,
+ }
+ 
+ impl SessionUsage {
+@@ -252,8 +254,10 @@ fn parse_session_log(path: &Path, extra_paths: &[PathBuf]) -> Result<SessionUsag
+     for path in std::iter::once(path).chain(extra_paths.iter().map(PathBuf::as_path)) {
+         let file = File::open(path)
+             .map_err(|e| CautError::Config(format!("Failed to open session log: {e}")))?;
+-        // Codex logs the model in `turn_context` lines, apart from the usage
++        // Codex logs the model in `turn_context` lines, and the service tier in
++        // `thread_settings_applied` events, apart from the usage
+         let mut model = None;
++        let mut fast_tier = false;
+         for line in BufReader::new(file).lines() {
+             let Ok(line) = line else { continue };
+             if line.trim().is_empty() {
+@@ -283,6 +287,13 @@ fn parse_session_log(path: &Path, extra_paths: &[PathBuf]) -> Result<SessionUsag
+                 model = Some(name.to_string());
+             }
+ 
++            if let Some(tier) = value
++                .pointer("/payload/thread_settings/service_tier")
++                .and_then(Value::as_str)
++            {
++                fast_tier = matches!(tier, "priority" | "fast");
++            }
++
+             let candidates = match value.get("type").and_then(Value::as_str) {
+                 Some("event_msg") => codex_token_count(&value, &mut last_codex_total)
+                     .into_iter()
+@@ -309,6 +320,8 @@ fn parse_session_log(path: &Path, extra_paths: &[PathBuf]) -> Result<SessionUsag
+                     timestamp,
+                     model: model.clone(),
+                     tokens: counts,
++                    fast: fast_tier
++                        || usage_value.get("speed").and_then(Value::as_str) == Some("fast"),
+                 });
+             }
+         }
+@@ -727,6 +740,52 @@ malformed-line
+         assert!(usage.models_used.contains("gpt-5-codex"));
+     }
+ 
++    #[test]
++    fn parse_session_logs_mark_fast_responses() {
++        let temp = TempDir::new().unwrap();
++        let claude = temp.path().join("claude.jsonl");
++        let message = |id, speed| {
++            format!(
++                r#"{{"message":{{"id":"{id}","model":"claude-opus-5-5","usage":{{"input_tokens":1,"speed":"{speed}"}}}}}}"#
++            )
++        };
++        std::fs::write(
++            &claude,
++            [message("msg_1", "fast"), message("msg_2", "standard")].join("\n"),
++        )
++        .unwrap();
++        let usage = ClaudeSessionParser.parse(&claude).unwrap();
++        let fast: Vec<bool> = usage.records.iter().map(|r| r.fast).collect();
++        assert_eq!(fast, [true, false]);
++
++        let codex = temp.path().join("rollout.jsonl");
++        let token_count = |total| {
++            format!(
++                r#"{{"type":"event_msg","payload":{{"type":"token_count","info":{{"total_token_usage":{{"total_tokens":{total}}},"last_token_usage":{{"input_tokens":1}}}}}}}}"#
++            )
++        };
++        let settings = |tier| {
++            format!(
++                r#"{{"type":"event_msg","payload":{{"type":"thread_settings_applied","thread_settings":{{"service_tier":"{tier}"}}}}}}"#
++            )
++        };
++        std::fs::write(
++            &codex,
++            [
++                token_count(1),
++                settings("priority"),
++                token_count(2),
++                settings("default"),
++                token_count(3),
++            ]
++            .join("\n"),
++        )
++        .unwrap();
++        let usage = CodexSessionParser.parse(&codex).unwrap();
++        let fast: Vec<bool> = usage.records.iter().map(|r| r.fast).collect();
++        assert_eq!(fast, [false, true, false]);
++    }
++
+     #[test]
+     fn parse_codex_session_log_extracts_tokens() {
+         let temp = TempDir::new().unwrap();
