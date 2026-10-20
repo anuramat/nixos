@@ -1,4 +1,5 @@
--- desktop widget: renders the `sections` state published by service.luau; click a section to refresh it
+-- desktop widget: renders the `sections` state published by service.luau; click a section to refresh it, right-click
+-- it to hide or show its rows
 local FONT_SIZE = noctalia.getConfig("font_size")
 -- sizes below are given for noctalia's default 14px font and scale with FONT_SIZE
 local SCALE = FONT_SIZE / 14
@@ -83,6 +84,9 @@ end
 
 local rows = { host = hostRows, uc3 = uc3Rows, tokens = tokenRows }
 
+-- names of the sections whose rows are hidden, as a set shared by every widget instance
+local hidden = noctalia.state.get("hidden") or {}
+
 local function section(h)
   local header = { label(h.name, "primary", { fontWeight = "semibold" }) }
   if h.power == "quiet" then table.insert(header, label("quiet", "outline")) end
@@ -102,9 +106,14 @@ local function section(h)
       noctalia.state.set("refresh", h.name)
     end
   end
-  return ui.column({ gap = 4 * SCALE, key = h.name, onClick = onClick }, {
+  local function onRightClick()
+    local t = table.clone(hidden)
+    t[h.name] = not t[h.name] or nil
+    noctalia.state.set("hidden", t)
+  end
+  return ui.column({ gap = 4 * SCALE, key = h.name, onClick = onClick, onRightClick = onRightClick }, {
     ui.row({ gap = 8 * SCALE }, header),
-    indented(rows[h.kind](h)),
+    not hidden[h.name] and indented(rows[h.kind](h)) or nil,
   })
 end
 
@@ -122,5 +131,9 @@ end
 
 noctalia.state.watch("sections", function(s)
   sections = s
+  update()
+end)
+noctalia.state.watch("hidden", function(s)
+  hidden = s
   update()
 end)
