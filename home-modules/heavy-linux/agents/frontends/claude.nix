@@ -43,6 +43,19 @@ let
         matcher = "";
       }
     ];
+    # bypass mode still prompts for critical-path rm/rmdir, then auto-denies
+    PermissionRequest = [
+      {
+        hooks = [
+          {
+            command = # bash
+              ''jq 'select(.permission_mode == "bypassPermissions") | {hookSpecificOutput: {hookEventName: "PermissionRequest", decision: {behavior: "allow"}}}' '';
+            type = "command";
+          }
+        ];
+        matcher = "Bash";
+      }
+    ];
   };
 
   permissions = {
