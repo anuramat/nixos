@@ -1,0 +1,113 @@
+diff --git a/src/core/cost_scanner.rs b/src/core/cost_scanner.rs
+index bb33f9c..15ccf9c 100644
+--- a/src/core/cost_scanner.rs
++++ b/src/core/cost_scanner.rs
+@@ -6,6 +6,7 @@
+ use crate::core::models::{CostDailyEntry, CostPayload, CostTotals};
+ use crate::core::provider::Provider;
+ use crate::error::{CautError, Result};
++use crate::providers::common::dir_from_env_or_home;
+ use crate::storage::paths::AppPaths;
+ use chrono::{DateTime, Duration, Utc};
+ use serde::Deserialize;
+@@ -14,7 +15,7 @@ use std::fs::File;
+ use std::io::{BufRead, BufReader};
+ use std::path::PathBuf;
+ 
+-/// Claude stats cache format (from ~/.claude/stats-cache.json).
++/// Claude stats cache format (from <claude_dir>/stats-cache.json).
+ #[derive(Debug, Deserialize)]
+ #[serde(rename_all = "camelCase")]
+ struct ClaudeStatsCache {
+@@ -80,9 +81,8 @@ impl CostScanner {
+ 
+     /// Scan Claude's local stats cache.
+     async fn scan_claude(&self) -> Result<CostPayload> {
+-        let claude_dir = dirs::home_dir()
+-            .ok_or_else(|| CautError::Config("Cannot determine home directory".to_string()))?
+-            .join(".claude");
++        let claude_dir = dir_from_env_or_home("CLAUDE_CONFIG_DIR", ".claude")
++            .ok_or_else(|| CautError::Config("Cannot determine home directory".to_string()))?;
+ 
+         let stats_path = claude_dir.join("stats-cache.json");
+ 
+@@ -160,9 +160,8 @@ impl CostScanner {
+ 
+     /// Scan Codex's local session files.
+     async fn scan_codex(&self) -> Result<CostPayload> {
+-        let codex_dir = dirs::home_dir()
+-            .ok_or_else(|| CautError::Config("Cannot determine home directory".to_string()))?
+-            .join(".codex");
++        let codex_dir = dir_from_env_or_home("CODEX_HOME", ".codex")
++            .ok_or_else(|| CautError::Config("Cannot determine home directory".to_string()))?;
+ 
+         let sessions_dir = codex_dir.join("sessions");
+ 
+@@ -391,15 +390,6 @@ struct DailyCount {
+     events: i64,
+ }
+ 
+-/// Module-level access to dirs crate.
+-mod dirs {
+-    use std::path::PathBuf;
+-
+-    pub fn home_dir() -> Option<PathBuf> {
+-        directories::BaseDirs::new().map(|d| d.home_dir().to_path_buf())
+-    }
+-}
+-
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+diff --git a/src/core/session_logs.rs b/src/core/session_logs.rs
+index 1088d71..d0942b3 100644
+--- a/src/core/session_logs.rs
++++ b/src/core/session_logs.rs
+@@ -5,6 +5,7 @@
+ 
+ use crate::core::provider::Provider;
+ use crate::error::{CautError, Result};
++use crate::providers::common::dir_from_env_or_home;
+ use chrono::{DateTime, Utc};
+ use serde_json::Value;
+ use std::collections::HashSet;
+@@ -44,16 +45,18 @@ pub struct SessionLogFinder {
+ }
+ 
+ impl SessionLogFinder {
+-    /// Create a new finder using default home-based paths.
++    /// Create a new finder using `CLAUDE_CONFIG_DIR`/`CODEX_HOME`, else home-based paths.
+     ///
+     /// # Errors
+     /// Returns an error if the home directory cannot be determined.
+     pub fn new() -> Result<Self> {
+-        let home = dirs::home_dir()
+-            .ok_or_else(|| CautError::Config("Cannot determine home directory".to_string()))?;
++        let dir = |var, rel| {
++            dir_from_env_or_home(var, rel)
++                .ok_or_else(|| CautError::Config("Cannot determine home directory".to_string()))
++        };
+         Ok(Self {
+-            claude_base: home.join(".claude"),
+-            codex_base: home.join(".codex"),
++            claude_base: dir("CLAUDE_CONFIG_DIR", ".claude")?,
++            codex_base: dir("CODEX_HOME", ".codex")?,
+         })
+     }
+ 
+@@ -465,15 +468,6 @@ fn sort_logs_by_mtime(entries: &mut [SessionLogPath]) {
+     });
+ }
+ 
+-/// Module-level access to dirs crate.
+-mod dirs {
+-    use std::path::PathBuf;
+-
+-    pub fn home_dir() -> Option<PathBuf> {
+-        directories::BaseDirs::new().map(|d| d.home_dir().to_path_buf())
+-    }
+-}
+-
+ #[cfg(test)]
+ mod tests {
+     use super::*;

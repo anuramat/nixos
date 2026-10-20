@@ -152,12 +152,21 @@ let
         version = "0.1.0";
         src = inputs.caut;
         cargoLock.lockFile = "${inputs.caut}/Cargo.lock";
+        # `cost` and `session` read ~/.claude and ~/.codex, ignoring CLAUDE_CONFIG_DIR and CODEX_HOME
+        patches = [ ./caut-env-dirs.patch ];
         # nightly-only `-Z threads` rustflag
         postPatch = "rm .cargo/config.toml";
-        nativeBuildInputs = [ prev.pkg-config ];
+        nativeBuildInputs = [
+          prev.pkg-config
+          prev.makeWrapper
+        ];
         buildInputs = [ prev.sqlite ];
         # 11 LTO'd integration test binaries; upstream `cargo install` skips them too
         doCheck = false;
+        # the codex on PATH is the agent sandbox wrapper, whose forced
+        # --dangerously-bypass-approvals-and-sandbox conflicts with the `-s read-only -a never` of
+        # caut's `codex app-server` fallback for an expired auth.json
+        postFixup = "wrapProgram $out/bin/caut --prefix PATH : ${lib.makeBinPath [ final.codex ]}";
       };
       todo = prev.writers.writePython3Bin "todo" {
         # black-formatted: long lines, line breaks before binary operators
