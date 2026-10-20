@@ -114,8 +114,10 @@ local sections = noctalia.state.get("sections") or {}
 function update()
   local children = {}
   for _, h in sections do table.insert(children, section(h)) end
-  desktopWidget.render(ui.column({ gap = 12 * SCALE, padding = 12 * SCALE, radius = 12 * SCALE, fill = "surface/0.8",
-    minWidth = noctalia.getConfig("width"), minHeight = noctalia.getConfig("height") }, children))
+  -- a scroll view only sizes right when its parent hands it an exact size, so the card has a fixed one, filled by it
+  desktopWidget.render(ui.column({ padding = 12 * SCALE, radius = 12 * SCALE, fill = "surface/0.8",
+    width = noctalia.getConfig("width"), height = noctalia.getConfig("height") },
+    { ui.scroll({ gap = 12 * SCALE, flexGrow = 1 }, children) }))
 end
 
 noctalia.state.watch("sections", function(s)

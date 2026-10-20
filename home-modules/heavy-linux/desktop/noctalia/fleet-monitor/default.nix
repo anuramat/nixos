@@ -27,10 +27,11 @@ in
             {
               id = "jobs";
               entry = "widget.luau";
-              # minimum card size in logical px, and the font size, which the
-              # rest of the layout scales with (14 is noctalia's default);
-              # unlike the widget box (`box_width`, `box_height`), which scales
-              # the content to fit it, these keep the font size fixed
+              # card size in logical px, and the font size, which the rest of
+              # the layout scales with (14 is noctalia's default); unlike the
+              # widget box (`box_width`, `box_height`), which scales the
+              # content to fit it, these keep the font size fixed, and the
+              # content scrolls when it doesn't fit
               setting =
                 lib.mapAttrsToList
                   (key: default: {
@@ -39,8 +40,8 @@ in
                     label_key = key;
                   })
                   {
-                    width = 0;
-                    height = 0;
+                    width = 800;
+                    height = 600;
                     font_size = 14;
                   };
             }
