@@ -25,11 +25,14 @@ in
     # upstream's secret agent leaves NM's background requests for a new wifi
     # key to an unseen prompt, so NM gives up on the network until a manual
     # reconnect
+    # upstream never advances lockscreen widgets' animations, so the mouse
+    # wheel can't scroll the fleet monitor there
     package = pkgs.noctalia.overrideAttrs (old: {
       patches = (old.patches or [ ]) ++ [
         ./pam-setcred.patch
         ./fileinfo-mtime.patch
         ./secret-agent-saved-psk.patch
+        ./lockscreen-widget-animations.patch
       ];
     });
 

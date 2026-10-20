@@ -1,0 +1,59 @@
+Animate lockscreen widgets with their lock surface's animation manager.
+
+Each lockscreen widget had an animation manager of its own, which the lock
+surface's frame loop never looks at: it only ran frame ticks for the
+surface's own animations, so a widget animation never advanced unless the
+widget also asked for continuous frame ticks. A scroll view's wheel scroll,
+which animates to the new offset, did nothing. Like the desktop widgets
+editor, which also hosts several widgets on one surface, the widgets now share
+the surface's manager. Instances are torn down while their surface still
+exists, so the manager outlives them.
+
+--- a/src/shell/lockscreen/lockscreen_widgets_host.h
++++ b/src/shell/lockscreen/lockscreen_widgets_host.h
+@@ -36,7 +36,6 @@
+   struct WidgetInstance {
+     DesktopWidgetState state;
+     LockSurface* surface = nullptr;
+-    AnimationManager animations;
+     Node* transformNode = nullptr;
+     std::unique_ptr<DesktopWidget> widget;
+     float intrinsicWidth = 0.0F;
+--- a/src/shell/lockscreen/lockscreen_widgets_host.cpp
++++ b/src/shell/lockscreen/lockscreen_widgets_host.cpp
+@@ -247,7 +247,8 @@
+   instance->intrinsicHeight = intrinsicHeight;
+ 
+   auto* rawInstance = instance.get();
+-  instance->widget->setAnimationManager(&instance->animations);
++  // The lock surface's own manager, the one its frame loop ticks, as in the desktop widgets editor.
++  instance->widget->setAnimationManager(surface.widgetLayer()->animationManager());
+   instance->widget->setUpdateCallback([rawInstance]() {
+     if (rawInstance->surface != nullptr) {
+       rawInstance->surface->requestUpdateOnly();
+@@ -286,7 +287,6 @@
+   }
+ 
+   auto transformNode = ui::node({});
+-  transformNode->setAnimationManager(&instance.animations);
+   instance.transformNode = layer->addChild(std::move(transformNode));
+   instance.transformNode->addChild(instance.widget->releaseRoot());
+ 
+@@ -314,16 +314,7 @@
+     }
+     host->m_renderContext->makeCurrent(surfacePtr->renderTarget());
+ 
+-    bool needsRedraw = false;
+-    for (auto& instance : host->m_instances) {
+-      if (instance->surface != surfacePtr) {
+-        continue;
+-      }
+-      instance->animations.tick(deltaMs);
+-      needsRedraw = needsRedraw || instance->animations.hasActive();
+-    }
+-
+-    bool needsContinuousRedraw = needsRedraw;
++    bool needsContinuousRedraw = false;
+     for (auto& instance : host->m_instances) {
+       if (instance->surface != surfacePtr || instance->widget == nullptr || !instance->widget->needsFrameTick()) {
+         continue;
