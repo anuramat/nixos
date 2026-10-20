@@ -111,9 +111,13 @@ local function section(h)
     t[h.name] = not t[h.name] or nil
     noctalia.state.set("hidden", t)
   end
-  return ui.column({ gap = 4 * SCALE, key = h.name, onClick = onClick, onRightClick = onRightClick }, {
-    ui.row({ gap = 8 * SCALE }, header),
-    not hidden[h.name] and indented(rows[h.kind](h)) or nil,
+  -- a gutter marks hidden rows with a `+`, transparent otherwise, so that hiding them doesn't shift the section
+  return ui.row({ gap = 8 * SCALE, align = "start", key = h.name, onClick = onClick, onRightClick = onRightClick }, {
+    label("+", "outline", { opacity = hidden[h.name] and 1 or 0 }),
+    ui.column({ gap = 4 * SCALE }, {
+      ui.row({ gap = 8 * SCALE }, header),
+      not hidden[h.name] and indented(rows[h.kind](h)) or nil,
+    }),
   })
 end
 
