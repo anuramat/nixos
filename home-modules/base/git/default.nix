@@ -1,6 +1,7 @@
 {
   config,
   inputs,
+  lib,
   pkgs,
   ...
 }:
@@ -18,6 +19,16 @@
   ];
 
   home.sessionVariables.GHQ_ROOT = "${config.xdg.dataHome}/ghq";
+
+  # NOTE workaround for:
+  # (https -> gh credential helper -> pass-secret-service -> pinentry)
+  # where pinentry fails over ssh;
+  # in its own file, so that the agent sandboxes, which can't ssh to GitHub,
+  # can hide it
+  xdg.configFile."git/github-ssh".text = lib.generators.toGitINI {
+    url."git@github.com:".insteadOf = "https://github.com/";
+  };
+
   programs = {
     delta = {
       enable = true;
@@ -26,6 +37,8 @@
 
     git = {
       enable = true;
+
+      includes = [ { path = "${config.xdg.configHome}/git/github-ssh"; } ];
 
       attributes = [
         "flake.lock -diff"
@@ -50,11 +63,6 @@
         };
 
         init.defaultBranch = "main";
-
-        # NOTE workaround for:
-        # (https -> gh credential helper -> pass-secret-service -> pinentry)
-        # where pinentry fails over ssh
-        url."git@github.com:".insteadOf = "https://github.com/";
 
         push.autoSetupRemote = true;
         pull.ff = "only";
