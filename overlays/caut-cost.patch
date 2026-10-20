@@ -1,0 +1,1898 @@
+diff --git a/schemas/caut-v1.schema.json b/schemas/caut-v1.schema.json
+index 46792b5..2b3329b 100644
+--- a/schemas/caut-v1.schema.json
++++ b/schemas/caut-v1.schema.json
+@@ -446,6 +446,12 @@
+         },
+         "totals": {
+           "$ref": "#/$defs/CostTotals"
++        },
++        "unpricedModels": {
++          "type": "array",
++          "items": {
++            "type": "string"
++          }
+         }
+       }
+     }
+diff --git a/src/cli/session.rs b/src/cli/session.rs
+index f0ac3aa..8d1bac8 100644
+--- a/src/cli/session.rs
++++ b/src/cli/session.rs
+@@ -6,10 +6,8 @@
+ use crate::cli::args::{OutputFormat, SessionArgs};
+ use crate::core::pricing::SessionCostCalculator;
+ use crate::core::provider::Provider;
+-use crate::core::session_logs::{
+-    ClaudeSessionParser, CodexSessionParser, SessionLogFinder, SessionLogPath, SessionUsage,
+-};
+-use crate::error::{CautError, Result};
++use crate::core::session_logs::{SessionLogFinder, SessionUsage};
++use crate::error::Result;
+ use chrono::{DateTime, Duration, Local, Utc};
+ use serde::Serialize;
+ 
+@@ -134,7 +132,7 @@ pub fn build_session_output(args: &SessionArgs) -> Result<SessionOutput> {
+         let logs = finder.find_sessions(provider, since, until);
+ 
+         for log in logs {
+-            match parse_log(&log) {
++            match log.parse() {
+                 Ok(usage) => {
+                     // Filter by session ID if specified
+                     if let Some(ref id) = args.id
+@@ -210,18 +208,6 @@ pub async fn execute(
+     Ok(())
+ }
+ 
+-/// Parse a session log file.
+-fn parse_log(log: &SessionLogPath) -> Result<SessionUsage> {
+-    match log.provider {
+-        Provider::Claude => ClaudeSessionParser.parse(&log.path),
+-        Provider::Codex => CodexSessionParser.parse(&log.path),
+-        _ => Err(CautError::Config(format!(
+-            "Session logs not supported for provider: {}",
+-            log.provider.cli_name()
+-        ))),
+-    }
+-}
+-
+ /// Calculate aggregate totals.
+ fn calculate_totals(sessions: &[SessionSummary]) -> SessionTotals {
+     let total_cost_usd: f64 = sessions.iter().map(|s| s.total_cost_usd).sum();
+@@ -514,6 +500,7 @@ fn render_markdown(output: &SessionOutput) -> String {
+ #[cfg(test)]
+ mod tests {
+     use super::*;
++    use crate::core::session_logs::{TokenCounts, UsageRecord};
+     use std::collections::HashSet;
+ 
+     fn make_test_usage() -> SessionUsage {
+@@ -532,6 +519,18 @@ mod tests {
+                 set
+             },
+             message_count: 10,
++            records: vec![UsageRecord {
++                message_id: None,
++                timestamp: Some(Utc::now()),
++                model: Some("claude-3-opus".to_string()),
++                tokens: TokenCounts {
++                    input: 100_000,
++                    output: 50_000,
++                    cache_read: 10_000,
++                    cache_creation: 5_000,
++                    cache_creation_1h: 0,
++                },
++            }],
+         }
+     }
+ 
+diff --git a/src/core/cost_scanner.rs b/src/core/cost_scanner.rs
+index 15ccf9c..80fc427 100644
+--- a/src/core/cost_scanner.rs
++++ b/src/core/cost_scanner.rs
+@@ -1,57 +1,36 @@
+ //! Local cost scanning for Claude and Codex.
+ //!
+-//! Scans local JSONL history files and stats caches to compute
+-//! usage statistics for the cost command.
++//! Prices the usage recorded in the providers' session logs over the last 30
++//! days, by local day.
+ 
+ use crate::core::models::{CostDailyEntry, CostPayload, CostTotals};
++use crate::core::pricing::PricingTable;
+ use crate::core::provider::Provider;
++use crate::core::session_logs::{SessionLogFinder, TokenCounts};
+ use crate::error::{CautError, Result};
+-use crate::providers::common::dir_from_env_or_home;
+-use crate::storage::paths::AppPaths;
+-use chrono::{DateTime, Duration, Utc};
+-use serde::Deserialize;
+-use std::collections::{HashMap, VecDeque};
+-use std::fs::File;
+-use std::io::{BufRead, BufReader};
+-use std::path::PathBuf;
++use chrono::{DateTime, Days, Local, NaiveDate, NaiveTime, TimeZone, Utc};
++use std::collections::{BTreeMap, BTreeSet, HashSet};
+ 
+-/// Claude stats cache format (from <claude_dir>/stats-cache.json).
+-#[derive(Debug, Deserialize)]
+-#[serde(rename_all = "camelCase")]
+-struct ClaudeStatsCache {
+-    #[allow(dead_code)]
+-    version: i32,
+-    #[allow(dead_code)]
+-    last_computed_date: String,
+-    daily_activity: Vec<ClaudeDailyActivity>,
+-}
++/// Days covered by a scan, today included.
++const SCAN_DAYS: u64 = 30;
+ 
+-/// Daily activity entry from Claude stats cache.
+-#[derive(Debug, Deserialize)]
+-#[serde(rename_all = "camelCase")]
+-struct ClaudeDailyActivity {
+-    date: String,
+-    message_count: i64,
+-    session_count: i64,
+-    tool_call_count: i64,
++/// Cost scanner for local usage data.
++pub struct CostScanner {
++    pricing: PricingTable,
+ }
+ 
+-/// Codex session event from JSONL files.
+-#[derive(Debug, Deserialize)]
+-struct CodexEvent {
+-    timestamp: String,
+-    #[serde(rename = "type")]
+-    #[allow(dead_code)]
+-    event_type: String,
+-    #[serde(default)]
+-    #[allow(dead_code)]
+-    payload: Option<serde_json::Value>,
++impl Default for CostScanner {
++    fn default() -> Self {
++        Self::new()
++    }
+ }
+ 
+-/// Cost scanner for local usage data.
+-pub struct CostScanner {
+-    #[allow(dead_code)] // reserved for future path-based scanning
+-    paths: AppPaths,
++/// Usage of one day.
++#[derive(Default)]
++struct DayUsage {
++    tokens: TokenCounts,
++    cost: f64,
++    models: BTreeSet<String>,
+ }
+ 
+ impl CostScanner {
+@@ -59,7 +38,7 @@ impl CostScanner {
+     #[must_use]
+     pub fn new() -> Self {
+         Self {
+-            paths: AppPaths::new(),
++            pricing: PricingTable::current(),
+         }
+     }
+ 
+@@ -67,789 +46,229 @@ impl CostScanner {
+     ///
+     /// # Errors
+     /// Returns an error if the provider does not support local cost scanning
+-    /// or if the stats cache or session files cannot be read.
++    /// or if the home directory cannot be determined.
+     pub async fn scan(&self, provider: Provider, _refresh: bool) -> Result<CostPayload> {
+-        match provider {
+-            Provider::Claude => self.scan_claude().await,
+-            Provider::Codex => self.scan_codex().await,
+-            _ => Err(CautError::Config(format!(
++        if !provider.supports_cost_scan() {
++            return Err(CautError::Config(format!(
+                 "Provider {} does not support local cost scanning",
+                 provider.cli_name()
+-            ))),
++            )));
+         }
++        Ok(self.scan_logs(provider, &SessionLogFinder::new()?, Local::now()))
+     }
+ 
+-    /// Scan Claude's local stats cache.
+-    async fn scan_claude(&self) -> Result<CostPayload> {
+-        let claude_dir = dir_from_env_or_home("CLAUDE_CONFIG_DIR", ".claude")
+-            .ok_or_else(|| CautError::Config("Cannot determine home directory".to_string()))?;
+-
+-        let stats_path = claude_dir.join("stats-cache.json");
+-
+-        if !stats_path.exists() {
+-            tracing::debug!(?stats_path, "Claude stats cache not found");
+-            return Ok(self.empty_cost_payload("claude"));
+-        }
+-
+-        tracing::debug!(?stats_path, "Reading Claude stats cache");
+-
+-        let file = File::open(&stats_path)
+-            .map_err(|e| CautError::Config(format!("Failed to open Claude stats cache: {e}")))?;
+-
+-        let stats: ClaudeStatsCache = serde_json::from_reader(file).map_err(|e| {
+-            CautError::ParseResponse(format!("Failed to parse Claude stats cache: {e}"))
+-        })?;
+-
+-        // Filter to last 30 days
+-        let cutoff = Utc::now() - Duration::days(30);
+-        let cutoff_date = cutoff.format("%Y-%m-%d").to_string();
+-
+-        let mut daily_entries: Vec<CostDailyEntry> = Vec::new();
+-        let mut total_messages: i64 = 0;
+-        let mut _total_sessions: i64 = 0;
+-        let mut _total_tool_calls: i64 = 0;
+-        let mut today_messages: i64 = 0;
+-
+-        let today = Utc::now().format("%Y-%m-%d").to_string();
+-
+-        for activity in &stats.daily_activity {
+-            if activity.date >= cutoff_date {
+-                daily_entries.push(CostDailyEntry {
+-                    date: activity.date.clone(),
+-                    input_tokens: None,
+-                    output_tokens: None,
+-                    cache_read_tokens: None,
+-                    cache_creation_tokens: None,
+-                    total_tokens: Some(activity.message_count), // Use message count as proxy
+-                    total_cost: None, // Cannot determine cost without token data
+-                    models_used: None,
+-                });
+-
+-                total_messages += activity.message_count;
+-                _total_sessions += activity.session_count;
+-                _total_tool_calls += activity.tool_call_count;
+-
+-                if activity.date == today {
+-                    today_messages = activity.message_count;
++    /// Price the usage in `provider`'s session logs from the last
++    /// [`SCAN_DAYS`] days through `now`.
++    fn scan_logs(
++        &self,
++        provider: Provider,
++        finder: &SessionLogFinder,
++        now: DateTime<Local>,
++    ) -> CostPayload {
++        let today = now.date_naive();
++        let first_day = today - Days::new(SCAN_DAYS - 1);
++        // a log last written before the first day has nothing in it
++        let since = Local
++            .from_local_datetime(&first_day.and_time(NaiveTime::MIN))
++            .earliest()
++            .map(|t| t.with_timezone(&Utc));
++
++        let mut days: BTreeMap<NaiveDate, DayUsage> = BTreeMap::new();
++        let mut unpriced = BTreeSet::new();
++        // a resumed Claude session starts with a copy of the earlier one's messages
++        let mut seen_messages = HashSet::new();
++        for log in finder.find_sessions(provider, since, None) {
++            let usage = match log.parse() {
++                Ok(usage) => usage,
++                Err(e) => {
++                    tracing::warn!(path = %log.path.display(), error = %e, "Skipping session log");
++                    continue;
+                 }
+-            }
+-        }
+-
+-        // Sort by date descending (most recent first)
+-        daily_entries.sort_by(|a, b| b.date.cmp(&a.date));
+-
+-        Ok(CostPayload {
+-            provider: "claude".to_string(),
+-            source: "local".to_string(),
+-            updated_at: Utc::now(),
+-            session_tokens: Some(today_messages),
+-            session_cost_usd: None, // Cannot determine without pricing data
+-            last_30_days_tokens: Some(total_messages),
+-            last_30_days_cost_usd: None, // Cannot determine without pricing data
+-            daily: daily_entries,
+-            totals: Some(CostTotals {
+-                input_tokens: None,
+-                output_tokens: None,
+-                cache_read_tokens: None,
+-                cache_creation_tokens: None,
+-                total_tokens: Some(total_messages),
+-                total_cost: None,
+-            }),
+-        })
+-    }
+-
+-    /// Scan Codex's local session files.
+-    async fn scan_codex(&self) -> Result<CostPayload> {
+-        let codex_dir = dir_from_env_or_home("CODEX_HOME", ".codex")
+-            .ok_or_else(|| CautError::Config("Cannot determine home directory".to_string()))?;
+-
+-        let sessions_dir = codex_dir.join("sessions");
+-
+-        if !sessions_dir.exists() {
+-            tracing::debug!(?sessions_dir, "Codex sessions directory not found");
+-            return Ok(self.empty_cost_payload("codex"));
+-        }
+-
+-        tracing::debug!(?sessions_dir, "Scanning Codex sessions directory");
+-
+-        // Collect all JSONL files from the sessions directory
+-        let cutoff = Utc::now() - Duration::days(30);
+-        let cutoff_date = cutoff.format("%Y-%m-%d").to_string();
+-
+-        let mut daily_counts: HashMap<String, DailyCount> = HashMap::new();
+-        let today = Utc::now().format("%Y-%m-%d").to_string();
+-
+-        // Walk through year/month/day directories
+-        if let Ok(years) = std::fs::read_dir(&sessions_dir) {
+-            for year_entry in years.flatten() {
+-                if !year_entry.path().is_dir() {
++            };
++            for record in usage.records {
++                let Some(date) = record
++                    .timestamp
++                    .map(|t| t.with_timezone(&Local).date_naive())
++                else {
++                    continue;
++                };
++                if !(first_day..=today).contains(&date)
++                    || record
++                        .message_id
++                        .is_some_and(|id| !seen_messages.insert(id))
++                {
+                     continue;
+                 }
+-                if let Ok(months) = std::fs::read_dir(year_entry.path()) {
+-                    for month_entry in months.flatten() {
+-                        if !month_entry.path().is_dir() {
+-                            continue;
+-                        }
+-                        if let Ok(days) = std::fs::read_dir(month_entry.path()) {
+-                            for day_entry in days.flatten() {
+-                                let day_path = day_entry.path();
+-                                if !day_path.is_dir() {
+-                                    continue;
+-                                }
+-
+-                                // Read JSONL files in this day's directory
+-                                if let Ok(files) = std::fs::read_dir(&day_path) {
+-                                    for file_entry in files.flatten() {
+-                                        let file_path = file_entry.path();
+-                                        if file_path.extension().is_some_and(|ext| ext == "jsonl") {
+-                                            self.scan_codex_jsonl(
+-                                                &file_path,
+-                                                &cutoff_date,
+-                                                &mut daily_counts,
+-                                            );
+-                                        }
+-                                    }
+-                                }
+-                            }
+-                        }
+-                    }
++                let model = record.model.unwrap_or_else(|| "unknown".to_string());
++                let (pricing, known) = self.pricing.get_or_estimate(&model);
++                let day = days.entry(date).or_default();
++                day.tokens.add(&record.tokens);
++                day.cost += pricing.calculate_cost(&record.tokens).total_cost_usd;
++                if !known {
++                    unpriced.insert(model.clone());
+                 }
++                day.models.insert(model);
+             }
+         }
+ 
+-        // Also check history.jsonl in codex root
+-        let history_path = codex_dir.join("history.jsonl");
+-        if history_path.exists() {
+-            self.scan_codex_history(&history_path, &cutoff_date, &mut daily_counts);
+-        }
+-
+-        // Convert to daily entries
+-        let mut daily_entries: Vec<CostDailyEntry> = daily_counts
+-            .into_iter()
+-            .map(|(date, count)| CostDailyEntry {
+-                date,
+-                input_tokens: None,
+-                output_tokens: None,
+-                cache_read_tokens: None,
+-                cache_creation_tokens: None,
+-                total_tokens: Some(count.events),
+-                total_cost: None,
+-                models_used: None,
+-            })
+-            .collect();
+-
+-        daily_entries.sort_by(|a, b| b.date.cmp(&a.date));
+-
+-        let total_events: i64 = daily_entries.iter().filter_map(|e| e.total_tokens).sum();
+-
+-        let today_events = daily_entries
+-            .iter()
+-            .find(|e| e.date == today)
+-            .and_then(|e| e.total_tokens)
+-            .unwrap_or(0);
+-
+-        Ok(CostPayload {
+-            provider: "codex".to_string(),
+-            source: "local".to_string(),
+-            updated_at: Utc::now(),
+-            session_tokens: Some(today_events),
+-            session_cost_usd: None,
+-            last_30_days_tokens: Some(total_events),
+-            last_30_days_cost_usd: None,
+-            daily: daily_entries,
+-            totals: Some(CostTotals {
+-                input_tokens: None,
+-                output_tokens: None,
+-                cache_read_tokens: None,
+-                cache_creation_tokens: None,
+-                total_tokens: Some(total_events),
+-                total_cost: None,
+-            }),
+-        })
+-    }
+-
+-    /// Scan a Codex JSONL session file.
+-    #[allow(clippy::unused_self)]
+-    fn scan_codex_jsonl(
+-        &self,
+-        path: &PathBuf,
+-        cutoff_date: &str,
+-        daily_counts: &mut HashMap<String, DailyCount>,
+-    ) {
+-        let file = match File::open(path) {
+-            Ok(f) => f,
+-            Err(e) => {
+-                tracing::debug!(?path, error = %e, "Failed to open Codex session file");
+-                return;
+-            }
+-        };
+-
+-        let reader = BufReader::new(file);
+-        let mut recent_lines: VecDeque<String> = VecDeque::with_capacity(100);
+-
+-        for line in reader.lines() {
+-            let Ok(line) = line else { continue };
+-
+-            if line.is_empty() {
+-                continue;
+-            }
+-
+-            if recent_lines.len() == 100 {
+-                recent_lines.pop_front();
+-            }
+-            recent_lines.push_back(line);
+-        }
+-
+-        for line in recent_lines {
+-            let event: CodexEvent = match serde_json::from_str(&line) {
+-                Ok(e) => e,
+-                Err(_) => continue,
+-            };
+-
+-            // Extract date from timestamp
+-            if let Some(date) = event.timestamp.get(..10)
+-                && date >= cutoff_date
+-            {
+-                daily_counts.entry(date.to_string()).or_default().events += 1;
+-            }
+-        }
+-    }
+-
+-    /// Scan Codex history.jsonl for session counts.
+-    #[allow(clippy::unused_self)]
+-    fn scan_codex_history(
+-        &self,
+-        path: &PathBuf,
+-        cutoff_date: &str,
+-        daily_counts: &mut HashMap<String, DailyCount>,
+-    ) {
+-        #[derive(Deserialize)]
+-        struct HistoryEntry {
+-            ts: i64,
++        let mut total = DayUsage::default();
++        for day in days.values() {
++            total.tokens.add(&day.tokens);
++            total.cost += day.cost;
+         }
+-
+-        let file = match File::open(path) {
+-            Ok(f) => f,
+-            Err(e) => {
+-                tracing::debug!(?path, error = %e, "Failed to open Codex history file");
+-                return;
+-            }
+-        };
+-
+-        let reader = BufReader::new(file);
+-
+-        for line in reader.lines() {
+-            let Ok(line) = line else { continue };
+-
+-            if line.is_empty() {
+-                continue;
+-            }
+-
+-            // History format: {"session_id": "...", "ts": 1234567890, "text": "..."}
+-            let entry: HistoryEntry = match serde_json::from_str(&line) {
+-                Ok(e) => e,
+-                Err(_) => continue,
+-            };
+-
+-            // Convert timestamp to date
+-            if let Some(dt) = DateTime::from_timestamp(entry.ts, 0) {
+-                let date = dt.format("%Y-%m-%d").to_string();
+-                if date.as_str() >= cutoff_date {
+-                    daily_counts.entry(date).or_default().events += 1;
+-                }
+-            }
+-        }
+-    }
+-
+-    /// Create an empty cost payload for a provider.
+-    #[allow(clippy::unused_self)]
+-    fn empty_cost_payload(&self, provider: &str) -> CostPayload {
++        let today_usage = days.get(&today);
++        let any = !days.is_empty();
+         CostPayload {
+-            provider: provider.to_string(),
++            provider: provider.cli_name().to_string(),
+             source: "local".to_string(),
+             updated_at: Utc::now(),
+-            session_tokens: None,
+-            session_cost_usd: None,
+-            last_30_days_tokens: None,
+-            last_30_days_cost_usd: None,
+-            daily: Vec::new(),
+-            totals: None,
++            session_tokens: today_usage.map(|d| d.tokens.total()),
++            session_cost_usd: today_usage.map(|d| d.cost),
++            last_30_days_tokens: any.then(|| total.tokens.total()),
++            last_30_days_cost_usd: any.then_some(total.cost),
++            // most recent first
++            daily: days
++                .iter()
++                .rev()
++                .map(|(date, day)| CostDailyEntry {
++                    date: date.to_string(),
++                    input_tokens: Some(day.tokens.input),
++                    output_tokens: Some(day.tokens.output),
++                    cache_read_tokens: Some(day.tokens.cache_read),
++                    cache_creation_tokens: Some(day.tokens.cache_creation),
++                    total_tokens: Some(day.tokens.total()),
++                    total_cost: Some(day.cost),
++                    models_used: Some(day.models.iter().cloned().collect()),
++                })
++                .collect(),
++            totals: any.then(|| CostTotals {
++                input_tokens: Some(total.tokens.input),
++                output_tokens: Some(total.tokens.output),
++                cache_read_tokens: Some(total.tokens.cache_read),
++                cache_creation_tokens: Some(total.tokens.cache_creation),
++                total_tokens: Some(total.tokens.total()),
++                total_cost: Some(total.cost),
++            }),
++            unpriced_models: unpriced.into_iter().collect(),
+         }
+     }
+ }
+ 
+-impl Default for CostScanner {
+-    fn default() -> Self {
+-        Self::new()
+-    }
+-}
+-
+-/// Helper for counting daily events.
+-#[derive(Default)]
+-struct DailyCount {
+-    events: i64,
+-}
+-
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+-    use std::fmt::Write;
+     use tempfile::TempDir;
+ 
+-    // =========================================================================
+-    // CostScanner Creation Tests
+-    // =========================================================================
+-
+-    #[test]
+-    fn test_cost_scanner_new() {
+-        let scanner = CostScanner::new();
+-        // Just verify it creates without panic
+-        // Using scanner to avoid warning
+-        let _ = scanner.paths;
++    fn claude_line(id: &str, model: &str, ts: DateTime<Utc>, input: i64, output: i64) -> String {
++        format!(
++            r#"{{"type":"assistant","timestamp":"{}","message":{{"id":"{id}","model":"{model}","usage":{{"input_tokens":{input},"output_tokens":{output}}}}}}}"#,
++            ts.to_rfc3339()
++        )
+     }
+ 
+-    #[test]
+-    fn test_cost_scanner_default() {
+-        let scanner = CostScanner::default();
+-        // Default implementation works
+-        let _ = scanner.paths;
++    fn write(path: &std::path::Path, lines: &[String]) {
++        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
++        std::fs::write(path, lines.join("\n")).unwrap();
+     }
+ 
+-    // =========================================================================
+-    // Empty Cost Payload Tests
+-    // =========================================================================
+-
+-    #[test]
+-    fn test_empty_cost_payload() {
+-        let scanner = CostScanner::new();
+-        let payload = scanner.empty_cost_payload("test");
+-        assert_eq!(payload.provider, "test");
+-        assert_eq!(payload.source, "local");
+-        assert!(payload.daily.is_empty());
+-    }
+-
+-    #[test]
+-    fn test_empty_cost_payload_claude() {
+-        let scanner = CostScanner::new();
+-        let payload = scanner.empty_cost_payload("claude");
+-        assert_eq!(payload.provider, "claude");
+-        assert_eq!(payload.source, "local");
+-        assert!(payload.session_tokens.is_none());
+-        assert!(payload.session_cost_usd.is_none());
+-        assert!(payload.last_30_days_tokens.is_none());
+-        assert!(payload.last_30_days_cost_usd.is_none());
+-        assert!(payload.daily.is_empty());
+-        assert!(payload.totals.is_none());
+-    }
+-
+-    #[test]
+-    fn test_empty_cost_payload_codex() {
++    #[tokio::test]
++    async fn test_scan_unsupported_provider() {
+         let scanner = CostScanner::new();
+-        let payload = scanner.empty_cost_payload("codex");
+-        assert_eq!(payload.provider, "codex");
+-        assert_eq!(payload.source, "local");
+-    }
+ 
+-    // =========================================================================
+-    // ClaudeStatsCache Parsing Tests
+-    // =========================================================================
+-
+-    #[test]
+-    fn test_claude_stats_cache_parse_full() {
+-        let json = r#"{
+-            "version": 1,
+-            "lastComputedDate": "2026-01-18",
+-            "dailyActivity": [
+-                {"date": "2026-01-18", "messageCount": 42, "sessionCount": 3, "toolCallCount": 15},
+-                {"date": "2026-01-17", "messageCount": 35, "sessionCount": 2, "toolCallCount": 12}
+-            ]
+-        }"#;
+-
+-        let stats: ClaudeStatsCache = serde_json::from_str(json).unwrap();
+-        assert_eq!(stats.version, 1);
+-        assert_eq!(stats.last_computed_date, "2026-01-18");
+-        assert_eq!(stats.daily_activity.len(), 2);
+-
+-        let first = &stats.daily_activity[0];
+-        assert_eq!(first.date, "2026-01-18");
+-        assert_eq!(first.message_count, 42);
+-        assert_eq!(first.session_count, 3);
+-        assert_eq!(first.tool_call_count, 15);
+-    }
+-
+-    #[test]
+-    fn test_claude_stats_cache_parse_empty_activity() {
+-        let json = r#"{
+-            "version": 1,
+-            "lastComputedDate": "2026-01-18",
+-            "dailyActivity": []
+-        }"#;
+-
+-        let stats: ClaudeStatsCache = serde_json::from_str(json).unwrap();
+-        assert!(stats.daily_activity.is_empty());
+-    }
+-
+-    #[test]
+-    fn test_claude_stats_cache_parse_malformed() {
+-        let json = r#"{ "version": 1, "lastComputedDate": "2026-01-18" "dailyActivity": [] }"#;
+-        let result: std::result::Result<ClaudeStatsCache, _> = serde_json::from_str(json);
++        // Gemini doesn't support cost scanning
++        let result = scanner.scan(Provider::Gemini, false).await;
+         assert!(result.is_err());
+-    }
+-
+-    // =========================================================================
+-    // CodexEvent Parsing Tests
+-    // =========================================================================
+-
+-    #[test]
+-    fn test_codex_event_parse_full() {
+-        let json = r#"{"timestamp": "2026-01-18T10:30:00Z", "type": "message", "payload": {"text": "Hello"}}"#;
+-
+-        let event: CodexEvent = serde_json::from_str(json).unwrap();
+-        assert_eq!(event.timestamp, "2026-01-18T10:30:00Z");
+-        assert_eq!(event.event_type, "message");
+-        assert!(event.payload.is_some());
+-    }
+-
+-    #[test]
+-    fn test_codex_event_parse_minimal() {
+-        let json = r#"{"timestamp": "2026-01-18T10:30:00Z", "type": "response"}"#;
+-
+-        let event: CodexEvent = serde_json::from_str(json).unwrap();
+-        assert_eq!(event.timestamp, "2026-01-18T10:30:00Z");
+-        assert_eq!(event.event_type, "response");
+-        assert!(event.payload.is_none());
+-    }
+-
+-    #[test]
+-    fn test_codex_event_date_extraction() {
+-        let json = r#"{"timestamp": "2026-01-18T10:30:00Z", "type": "message"}"#;
+-        let event: CodexEvent = serde_json::from_str(json).unwrap();
+-
+-        // Extract date from first 10 chars
+-        let date = event.timestamp.get(..10);
+-        assert_eq!(date, Some("2026-01-18"));
+-    }
+-
+-    // =========================================================================
+-    // scan_codex_jsonl Tests
+-    // =========================================================================
+-
+-    #[test]
+-    fn test_scan_codex_jsonl_valid_file() {
+-        let dir = TempDir::new().unwrap();
+-        let file_path = dir.path().join("session.jsonl");
+-
+-        let content = r#"{"timestamp": "2026-01-18T10:30:00Z", "type": "message", "payload": {}}
+-{"timestamp": "2026-01-18T10:31:00Z", "type": "response", "payload": {}}
+-{"timestamp": "2026-01-17T14:00:00Z", "type": "message", "payload": {}}"#;
+-
+-        std::fs::write(&file_path, content).unwrap();
+-
+-        let scanner = CostScanner::new();
+-        let mut daily_counts: HashMap<String, DailyCount> = HashMap::new();
+-        let cutoff_date = "2026-01-01";
+-
+-        scanner.scan_codex_jsonl(&file_path, cutoff_date, &mut daily_counts);
+-
+-        // Should have 2 dates
+-        assert_eq!(daily_counts.len(), 2);
+-        assert_eq!(daily_counts.get("2026-01-18").unwrap().events, 2);
+-        assert_eq!(daily_counts.get("2026-01-17").unwrap().events, 1);
+-    }
+-
+-    #[test]
+-    fn test_scan_codex_jsonl_empty_lines() {
+-        let dir = TempDir::new().unwrap();
+-        let file_path = dir.path().join("session.jsonl");
+-
+-        let content = r#"{"timestamp": "2026-01-18T10:30:00Z", "type": "message"}
+-
+-{"timestamp": "2026-01-18T10:31:00Z", "type": "response"}
+-
+-"#;
+-
+-        std::fs::write(&file_path, content).unwrap();
+-
+-        let scanner = CostScanner::new();
+-        let mut daily_counts: HashMap<String, DailyCount> = HashMap::new();
+-
+-        scanner.scan_codex_jsonl(&file_path, "2026-01-01", &mut daily_counts);
+-
+-        // Should skip empty lines
+-        assert_eq!(daily_counts.get("2026-01-18").unwrap().events, 2);
+-    }
+-
+-    #[test]
+-    fn test_scan_codex_jsonl_malformed_lines() {
+-        let dir = TempDir::new().unwrap();
+-        let file_path = dir.path().join("session.jsonl");
+-
+-        let content = r#"{"timestamp": "2026-01-18T10:30:00Z", "type": "message"}
+-not valid json at all
+-{"timestamp": "2026-01-18T10:31:00Z", "type": "response"}
+-{incomplete json"#;
+-
+-        std::fs::write(&file_path, content).unwrap();
+ 
+-        let scanner = CostScanner::new();
+-        let mut daily_counts: HashMap<String, DailyCount> = HashMap::new();
+-
+-        scanner.scan_codex_jsonl(&file_path, "2026-01-01", &mut daily_counts);
+-
+-        // Should skip malformed lines, count only valid ones
+-        assert_eq!(daily_counts.get("2026-01-18").unwrap().events, 2);
+-    }
+-
+-    #[test]
+-    fn test_scan_codex_jsonl_100_line_limit() {
+-        let dir = TempDir::new().unwrap();
+-        let file_path = dir.path().join("session.jsonl");
+-
+-        // Create 150 lines
+-        let mut content = String::new();
+-        for i in 0..150 {
+-            let _ = write!(
+-                content,
+-                r#"{{"timestamp": "2026-01-18T10:{:02}:00Z", "type": "message"}}"#,
+-                i % 60
+-            );
+-            content.push('\n');
++        if let Err(CautError::Config(msg)) = result {
++            assert!(msg.contains("does not support local cost scanning"));
++        } else {
++            panic!("Expected Config error");
+         }
+-
+-        std::fs::write(&file_path, content).unwrap();
+-
+-        let scanner = CostScanner::new();
+-        let mut daily_counts: HashMap<String, DailyCount> = HashMap::new();
+-
+-        scanner.scan_codex_jsonl(&file_path, "2026-01-01", &mut daily_counts);
+-
+-        // Should only read first 100 lines
+-        assert_eq!(daily_counts.get("2026-01-18").unwrap().events, 100);
+     }
+ 
+     #[test]
+-    fn test_scan_codex_jsonl_date_cutoff() {
+-        let dir = TempDir::new().unwrap();
+-        let file_path = dir.path().join("session.jsonl");
+-
+-        let content = r#"{"timestamp": "2026-01-18T10:30:00Z", "type": "message"}
+-{"timestamp": "2025-12-20T10:30:00Z", "type": "message"}
+-{"timestamp": "2025-06-01T10:30:00Z", "type": "message"}"#;
+-
+-        std::fs::write(&file_path, content).unwrap();
+-
+-        let scanner = CostScanner::new();
+-        let mut daily_counts: HashMap<String, DailyCount> = HashMap::new();
+-
+-        // Cutoff is 2025-12-15, so 2026-01-18 and 2025-12-20 should pass, 2025-06-01 filtered out
+-        scanner.scan_codex_jsonl(&file_path, "2025-12-15", &mut daily_counts);
+-
+-        assert_eq!(daily_counts.len(), 2); // 2026-01-18 and 2025-12-20
+-        assert!(daily_counts.contains_key("2026-01-18"));
+-        assert!(daily_counts.contains_key("2025-12-20"));
+-        assert!(!daily_counts.contains_key("2025-06-01")); // Before cutoff
+-    }
+-
+-    #[test]
+-    fn test_scan_codex_jsonl_nonexistent_file() {
+-        let scanner = CostScanner::new();
+-        let mut daily_counts: HashMap<String, DailyCount> = HashMap::new();
+-
+-        // Should not panic on nonexistent file
+-        scanner.scan_codex_jsonl(
+-            &PathBuf::from("/nonexistent/path/file.jsonl"),
+-            "2026-01-01",
+-            &mut daily_counts,
++    fn scan_prices_claude_usage_by_day() {
++        let temp = TempDir::new().unwrap();
++        let claude = temp.path().join("claude");
++        let project = claude.join("projects").join("p");
++        let now = Local::now();
++        let today = now.with_timezone(&Utc);
++        let earlier = today - chrono::Duration::days(3);
++        let too_old = today - chrono::Duration::days(40);
++        write(
++            &project.join("a.jsonl"),
++            &[
++                claude_line("msg_1", "claude-opus-5-5", earlier, 1_000_000, 0),
++                claude_line("msg_2", "claude-opus-5-5", today, 0, 100_000),
++                claude_line("msg_old", "claude-opus-5-5", too_old, 1_000_000, 0),
++            ],
+         );
+-
+-        assert!(daily_counts.is_empty());
+-    }
+-
+-    // =========================================================================
+-    // scan_codex_history Tests
+-    // =========================================================================
+-
+-    #[test]
+-    fn test_scan_codex_history_valid() {
+-        let dir = TempDir::new().unwrap();
+-        let file_path = dir.path().join("history.jsonl");
+-
+-        // Unix timestamps for 2026-01-18 (~1768780800) and 2026-01-17 (~1768694400)
+-        // Using timestamps that are definitely in 2026
+-        let content = r#"{"session_id": "sess_001", "ts": 1768780800, "text": "First message"}
+-{"session_id": "sess_001", "ts": 1768780860, "text": "Second message"}
+-{"session_id": "sess_002", "ts": 1768694400, "text": "Yesterday message"}"#;
+-
+-        std::fs::write(&file_path, content).unwrap();
+-
+-        let scanner = CostScanner::new();
+-        let mut daily_counts: HashMap<String, DailyCount> = HashMap::new();
+-
+-        scanner.scan_codex_history(&file_path, "2026-01-01", &mut daily_counts);
+-
+-        // Should have entries (exact dates depend on timezone, but should have some)
+-        assert!(!daily_counts.is_empty());
+-    }
+-
+-    #[test]
+-    fn test_scan_codex_history_malformed() {
+-        let dir = TempDir::new().unwrap();
+-        let file_path = dir.path().join("history.jsonl");
+-
+-        // Using 2026 timestamps (~1768780800)
+-        let content = r#"{"session_id": "sess_001", "ts": 1768780800, "text": "Valid"}
+-not valid json
+-{"session_id": "sess_002", "ts": 1768780900, "text": "Also valid"}"#;
+-
+-        std::fs::write(&file_path, content).unwrap();
+-
+-        let scanner = CostScanner::new();
+-        let mut daily_counts: HashMap<String, DailyCount> = HashMap::new();
+-
+-        // Should not panic, should skip malformed lines
+-        scanner.scan_codex_history(&file_path, "2026-01-01", &mut daily_counts);
+-
+-        // Should have parsed the valid lines
+-        assert!(!daily_counts.is_empty());
+-    }
+-
+-    #[test]
+-    fn test_scan_codex_history_empty_lines() {
+-        let dir = TempDir::new().unwrap();
+-        let file_path = dir.path().join("history.jsonl");
+-
+-        // Using 2026 timestamps (~1768780800)
+-        let content = r#"{"session_id": "sess_001", "ts": 1768780800, "text": "Valid"}
+-
+-{"session_id": "sess_002", "ts": 1768780900, "text": "Also valid"}
+-"#;
+-
+-        std::fs::write(&file_path, content).unwrap();
+-
+-        let scanner = CostScanner::new();
+-        let mut daily_counts: HashMap<String, DailyCount> = HashMap::new();
+-
+-        scanner.scan_codex_history(&file_path, "2026-01-01", &mut daily_counts);
+-
+-        // Should skip empty lines
+-        assert!(!daily_counts.is_empty());
+-    }
+-
+-    #[test]
+-    fn test_scan_codex_history_nonexistent() {
+-        let scanner = CostScanner::new();
+-        let mut daily_counts: HashMap<String, DailyCount> = HashMap::new();
+-
+-        // Should not panic on nonexistent file
+-        scanner.scan_codex_history(
+-            &PathBuf::from("/nonexistent/history.jsonl"),
+-            "2026-01-01",
+-            &mut daily_counts,
++        // a resumed session, copying msg_1
++        write(
++            &project.join("b.jsonl"),
++            &[
++                claude_line("msg_1", "claude-opus-5-5", earlier, 1_000_000, 0),
++                claude_line("msg_3", "mystery-model", today, 1_000_000, 0),
++            ],
+         );
+ 
+-        assert!(daily_counts.is_empty());
+-    }
+-
+-    // =========================================================================
+-    // DailyCount Tests
+-    // =========================================================================
+-
+-    #[test]
+-    fn test_daily_count_default() {
+-        let count = DailyCount::default();
+-        assert_eq!(count.events, 0);
+-    }
+-
+-    #[test]
+-    fn test_daily_count_increment() {
+-        let mut count = DailyCount::default();
+-        count.events += 1;
+-        count.events += 1;
+-        assert_eq!(count.events, 2);
+-    }
+-
+-    // =========================================================================
+-    // Date Filtering Tests
+-    // =========================================================================
+-
+-    #[test]
+-    fn test_date_comparison() {
+-        // Test that string date comparison works correctly
+-        let cutoff = "2026-01-01";
+-        let recent_date = "2026-01-18";
+-        let old_date = "2025-12-01";
+-
+-        assert!(recent_date >= cutoff);
+-        assert!((old_date < cutoff));
+-    }
+-
+-    #[test]
+-    fn test_date_sorting() {
+-        let mut dates = vec!["2026-01-15", "2026-01-18", "2026-01-10", "2026-01-17"];
+-        dates.sort_by(|a, b| b.cmp(a)); // Descending
++        let finder = SessionLogFinder::with_paths(claude, temp.path().join("codex"));
++        let payload = CostScanner::new().scan_logs(Provider::Claude, &finder, now);
+ 
++        // today: 100K output @ $20/M (Opus 5.5) + 1M input @ $3/M (estimate)
++        assert_eq!(payload.session_tokens, Some(1_100_000));
++        assert!((payload.session_cost_usd.unwrap() - 5.0).abs() < 1e-9);
++        // plus 1M input @ $4/M, once
++        assert_eq!(payload.last_30_days_tokens, Some(2_100_000));
++        assert!((payload.last_30_days_cost_usd.unwrap() - 9.0).abs() < 1e-9);
++        assert_eq!(payload.daily.len(), 2);
++        assert_eq!(
++            payload.daily[0].date,
++            today.with_timezone(&Local).date_naive().to_string()
++        );
+         assert_eq!(
+-            dates,
+-            vec!["2026-01-18", "2026-01-17", "2026-01-15", "2026-01-10"]
++            payload.daily[0].models_used.as_deref(),
++            Some(&["claude-opus-5-5".to_string(), "mystery-model".to_string()][..])
+         );
++        assert_eq!(payload.unpriced_models, vec!["mystery-model".to_string()]);
++        assert_eq!(payload.totals.unwrap().input_tokens, Some(2_000_000));
+     }
+ 
+-    // =========================================================================
+-    // Integration-style Tests (with temp directories)
+-    // =========================================================================
+-
+     #[test]
+-    fn test_codex_directory_structure() {
+-        let dir = TempDir::new().unwrap();
+-        let sessions_dir = dir
+-            .path()
+-            .join("sessions")
+-            .join("2026")
+-            .join("01")
+-            .join("18");
+-        std::fs::create_dir_all(&sessions_dir).unwrap();
++    fn scan_prices_codex_usage() {
++        let temp = TempDir::new().unwrap();
++        let codex = temp.path().join("codex");
++        let ts = Utc::now().to_rfc3339();
++        write(
++            &codex.join("sessions/2026/10/20/rollout.jsonl"),
++            &[
++                r#"{"type":"turn_context","payload":{"model":"gpt-6-astra"}}"#.to_string(),
++                format!(
++                    r#"{{"timestamp":"{ts}","type":"event_msg","payload":{{"type":"token_count","info":{{"total_token_usage":{{"total_tokens":1}},"last_token_usage":{{"input_tokens":1000000,"cached_input_tokens":800000,"output_tokens":100000}}}}}}}}"#
++                ),
++            ],
++        );
+ 
+-        let session_file = sessions_dir.join("session_abc.jsonl");
+-        let content = r#"{"timestamp": "2026-01-18T10:30:00Z", "type": "message"}"#;
+-        std::fs::write(&session_file, content).unwrap();
++        let finder = SessionLogFinder::with_paths(temp.path().join("claude"), codex);
++        let payload = CostScanner::new().scan_logs(Provider::Codex, &finder, Local::now());
+ 
+-        // Verify structure was created
+-        assert!(session_file.exists());
++        // 200K input @ $10/M + 800K cached @ $1/M + 100K output @ $50/M
++        assert!((payload.session_cost_usd.unwrap() - 7.8).abs() < 1e-9);
++        assert_eq!(payload.session_tokens, Some(1_100_000));
++        assert!(payload.unpriced_models.is_empty());
+     }
+ 
+     #[test]
+-    fn test_cost_daily_entry_creation() {
+-        let entry = CostDailyEntry {
+-            date: "2026-01-18".to_string(),
+-            input_tokens: None,
+-            output_tokens: None,
+-            cache_read_tokens: None,
+-            cache_creation_tokens: None,
+-            total_tokens: Some(42),
+-            total_cost: None,
+-            models_used: None,
+-        };
+-
+-        assert_eq!(entry.date, "2026-01-18");
+-        assert_eq!(entry.total_tokens, Some(42));
+-    }
+-
+-    // =========================================================================
+-    // Error Handling Tests
+-    // =========================================================================
++    fn scan_without_logs_reports_no_activity() {
++        let temp = TempDir::new().unwrap();
++        let finder =
++            SessionLogFinder::with_paths(temp.path().join("claude"), temp.path().join("codex"));
++        let payload = CostScanner::new().scan_logs(Provider::Claude, &finder, Local::now());
+ 
+-    #[tokio::test]
+-    async fn test_scan_unsupported_provider() {
+-        let scanner = CostScanner::new();
+-
+-        // Gemini doesn't support cost scanning
+-        let result = scanner.scan(Provider::Gemini, false).await;
+-        assert!(result.is_err());
+-
+-        if let Err(CautError::Config(msg)) = result {
+-            assert!(msg.contains("does not support local cost scanning"));
+-        } else {
+-            panic!("Expected Config error");
+-        }
++        assert_eq!(payload.provider, "claude");
++        assert_eq!(payload.session_cost_usd, None);
++        assert_eq!(payload.last_30_days_tokens, None);
++        assert!(payload.daily.is_empty());
++        assert!(payload.totals.is_none());
+     }
+ }
+diff --git a/src/core/models.rs b/src/core/models.rs
+index ec485aa..fb23ad0 100644
+--- a/src/core/models.rs
++++ b/src/core/models.rs
+@@ -548,6 +548,9 @@ pub struct CostPayload {
+ 
+     #[serde(skip_serializing_if = "Option::is_none")]
+     pub totals: Option<CostTotals>,
++    /// Models without known pricing, whose cost is a mid-tier estimate.
++    #[serde(default, skip_serializing_if = "Vec::is_empty")]
++    pub unpriced_models: Vec<String>,
+ }
+ 
+ // =============================================================================
+diff --git a/src/core/pricing.rs b/src/core/pricing.rs
+index fd0ba5b..a124d18 100644
+--- a/src/core/pricing.rs
++++ b/src/core/pricing.rs
+@@ -3,7 +3,7 @@
+ //! This module provides model pricing information and calculates costs from
+ //! session token usage data parsed by the `session_logs` module.
+ 
+-use crate::core::session_logs::SessionUsage;
++use crate::core::session_logs::{SessionUsage, TokenCounts};
+ use chrono::{DateTime, Utc};
+ use std::collections::HashMap;
+ 
+@@ -60,18 +60,16 @@ impl ModelPricing {
+     /// Calculate cost for given token counts.
+     #[must_use]
+     #[allow(clippy::cast_precision_loss)] // token counts fit within f64 precision
+-    pub fn calculate_cost(
+-        &self,
+-        input: i64,
+-        output: i64,
+-        cache_read: i64,
+-        cache_creation: i64,
+-    ) -> TokenCostBreakdown {
+-        let input_cost = (input as f64 / 1_000_000.0) * self.input_per_million;
+-        let output_cost = (output as f64 / 1_000_000.0) * self.output_per_million;
+-        let cache_read_cost = (cache_read as f64 / 1_000_000.0) * self.cache_read_per_million;
+-        let cache_creation_cost =
+-            (cache_creation as f64 / 1_000_000.0) * self.cache_creation_per_million;
++    pub fn calculate_cost(&self, tokens: &TokenCounts) -> TokenCostBreakdown {
++        let cost = |count: i64, per_million: f64| count as f64 / 1_000_000.0 * per_million;
++        let input_cost = cost(tokens.input, self.input_per_million);
++        let output_cost = cost(tokens.output, self.output_per_million);
++        let cache_read_cost = cost(tokens.cache_read, self.cache_read_per_million);
++        // `cache_creation_per_million` is the 5-minute cache's; the 1-hour one costs 2x input
++        let cache_creation_cost = cost(
++            tokens.cache_creation - tokens.cache_creation_1h,
++            self.cache_creation_per_million,
++        ) + cost(tokens.cache_creation_1h, 2.0 * self.input_per_million);
+ 
+         TokenCostBreakdown {
+             input_cost_usd: input_cost,
+@@ -93,6 +91,16 @@ pub struct TokenCostBreakdown {
+     pub total_cost_usd: f64,
+ }
+ 
++impl TokenCostBreakdown {
++    fn add(&mut self, other: &Self) {
++        self.input_cost_usd += other.input_cost_usd;
++        self.output_cost_usd += other.output_cost_usd;
++        self.cache_read_cost_usd += other.cache_read_cost_usd;
++        self.cache_creation_cost_usd += other.cache_creation_cost_usd;
++        self.total_cost_usd += other.total_cost_usd;
++    }
++}
++
+ /// Collection of model pricing data with effective date.
+ #[derive(Debug, Clone)]
+ pub struct PricingTable {
+@@ -109,39 +117,43 @@ impl Default for PricingTable {
+ }
+ 
+ impl PricingTable {
+-    /// Create a pricing table with current (January 2026) pricing.
++    /// Create a pricing table with current (October 2026) pricing.
+     ///
+     /// Pricing sources:
+-    /// - Anthropic: <https://www.anthropic.com/pricing>
+-    /// - `OpenAI`: <https://openai.com/pricing>
++    /// - Anthropic: <https://platform.claude.com/docs/en/about-claude/pricing>
++    /// - `OpenAI`: <https://developers.openai.com/api/docs/pricing>
+     #[must_use]
++    #[allow(clippy::too_many_lines)] // a data table
+     pub fn current() -> Self {
+         let mut models = HashMap::new();
+ 
+-        // Anthropic Claude models (as of Jan 2026)
+-        // Claude Opus 4.5: $15/$75 per million
+-        Self::add_model(
+-            &mut models,
+-            "claude-opus-4-5-20251101",
+-            15.0,
+-            75.0,
+-            1.5,
+-            18.75,
+-        );
+-        Self::add_model(&mut models, "claude-opus-4.5", 15.0, 75.0, 1.5, 18.75);
+-        Self::add_model(&mut models, "claude-4-opus", 15.0, 75.0, 1.5, 18.75);
+-
+-        // Claude Sonnet 4: $3/$15 per million
+-        Self::add_model(
+-            &mut models,
+-            "claude-sonnet-4-20250514",
+-            3.0,
+-            15.0,
+-            0.3,
+-            3.75,
+-        );
+-        Self::add_model(&mut models, "claude-sonnet-4", 3.0, 15.0, 0.3, 3.75);
+-        Self::add_model(&mut models, "claude-4-sonnet", 3.0, 15.0, 0.3, 3.75);
++        // Anthropic Claude models (as of Oct 2026): input, output, cache read, 5-minute cache
++        // write; dated snapshots (`claude-haiku-4-5-20251001`) resolve to their base model
++        for model in ["claude-fable-5-1", "claude-mythos-5-1"] {
++            Self::add_model(&mut models, model, 10.0, 50.0, 0.25, 12.5);
++        }
++        for model in ["claude-fable-5", "claude-mythos-5"] {
++            Self::add_model(&mut models, model, 10.0, 50.0, 1.0, 12.5);
++        }
++        Self::add_model(&mut models, "claude-opus-5-5", 4.0, 20.0, 0.2, 5.0);
++        for model in [
++            "claude-opus-5",
++            "claude-opus-4-8",
++            "claude-opus-4-7",
++            "claude-opus-4-6",
++            "claude-opus-4-5",
++        ] {
++            Self::add_model(&mut models, model, 5.0, 25.0, 0.5, 6.25);
++        }
++        for model in ["claude-opus-4-1", "claude-opus-4"] {
++            Self::add_model(&mut models, model, 15.0, 75.0, 1.5, 18.75);
++        }
++        Self::add_model(&mut models, "claude-sonnet-5-5", 2.0, 10.0, 0.1, 2.5);
++        Self::add_model(&mut models, "claude-sonnet-5", 2.0, 10.0, 0.2, 2.5);
++        for model in ["claude-sonnet-4-6", "claude-sonnet-4-5", "claude-sonnet-4"] {
++            Self::add_model(&mut models, model, 3.0, 15.0, 0.3, 3.75);
++        }
++        Self::add_model(&mut models, "claude-haiku-4-5", 1.0, 5.0, 0.1, 1.25);
+ 
+         // Claude 3.5 Sonnet: $3/$15 per million
+         Self::add_model(
+@@ -189,6 +201,15 @@ impl PricingTable {
+         );
+         Self::add_model(&mut models, "claude-3-haiku", 0.25, 1.25, 0.03, 0.30);
+ 
++        // OpenAI GPT models (as of Oct 2026): input, output, cached input, cache write; Codex
++        // reports cached input as part of the input (see `session_logs`), and no cache writes
++        Self::add_model(&mut models, "gpt-6-astra", 10.0, 50.0, 1.0, 12.5);
++        Self::add_model(&mut models, "gpt-5.6-sol", 2.0, 10.0, 0.2, 2.5);
++        Self::add_model(&mut models, "gpt-5.5", 5.0, 30.0, 0.5, 5.0);
++        Self::add_model(&mut models, "gpt-5.4", 2.5, 15.0, 0.25, 2.5);
++        Self::add_model(&mut models, "gpt-5.4-mini", 0.75, 4.5, 0.075, 0.75);
++        Self::add_model(&mut models, "gpt-5.3-codex", 1.75, 14.0, 0.175, 1.75);
++
+         // OpenAI GPT models (as of Jan 2026)
+         // GPT-4o: $2.50/$10 per million
+         Self::add_model(&mut models, "gpt-4o", 2.5, 10.0, 1.25, 2.5);
+@@ -253,11 +274,20 @@ impl PricingTable {
+ 
+     /// Look up pricing for a model by name.
+     ///
+-    /// Model names are normalized to lowercase for matching.
++    /// Model names are normalized to lowercase for matching, and a dated
++    /// snapshot (`claude-haiku-4-5-20251001`) falls back to its base model.
+     /// Returns None if the model is not in the pricing table.
+     #[must_use]
+     pub fn get(&self, model: &str) -> Option<&ModelPricing> {
+-        self.models.get(&model.to_lowercase())
++        let model = model.to_lowercase();
++        self.models.get(&model).or_else(|| {
++            let (base, date) = model.rsplit_once('-')?;
++            if date.len() == 8 && date.bytes().all(|b| b.is_ascii_digit()) {
++                self.models.get(base)
++            } else {
++                None
++            }
++        })
+     }
+ 
+     /// Get pricing for a model, falling back to a conservative estimate.
+@@ -324,7 +354,7 @@ pub struct SessionCost {
+     pub model: String,
+     /// Confidence in the calculation.
+     pub confidence: CostConfidence,
+-    /// Whether the model pricing was known.
++    /// Whether the pricing of every model in the session was known.
+     pub model_known: bool,
+ }
+ 
+@@ -354,22 +384,22 @@ impl SessionCostCalculator {
+         Self { pricing }
+     }
+ 
+-    /// Calculate cost for a session.
++    /// Calculate cost for a session, pricing each response by its own model.
+     #[must_use]
+     pub fn calculate(&self, usage: &SessionUsage) -> SessionCost {
+         // Determine the primary model (most expensive or first found)
+         let primary_model = self.select_primary_model(usage);
+ 
+-        // Get pricing (known or estimated)
+-        let (pricing, model_known) = self.pricing.get_or_estimate(&primary_model);
+-
+-        // Calculate token costs
+-        let breakdown = pricing.calculate_cost(
+-            usage.input_tokens,
+-            usage.output_tokens,
+-            usage.cache_read_tokens,
+-            usage.cache_creation_tokens,
+-        );
++        // Calculate token costs, with known or estimated pricing
++        let mut breakdown = TokenCostBreakdown::default();
++        let mut model_known = true;
++        for record in &usage.records {
++            let (pricing, known) = self
++                .pricing
++                .get_or_estimate(record.model.as_deref().unwrap_or("unknown"));
++            breakdown.add(&pricing.calculate_cost(&record.tokens));
++            model_known &= known;
++        }
+ 
+         // Determine confidence level
+         let confidence = self.calculate_confidence(usage, model_known);
+@@ -454,9 +484,25 @@ impl SessionCostCalculator {
+ #[cfg(test)]
+ mod tests {
+     use super::*;
++    use crate::core::session_logs::UsageRecord;
+     use std::collections::HashSet;
+ 
++    fn record(model: Option<&str>, tokens: TokenCounts) -> UsageRecord {
++        UsageRecord {
++            message_id: None,
++            timestamp: Some(Utc::now()),
++            model: model.map(str::to_string),
++            tokens,
++        }
++    }
++
++    /// A session whose usage is all in one response of its first model.
+     fn make_usage(input: i64, output: i64, models: &[&str]) -> SessionUsage {
++        let tokens = TokenCounts {
++            input,
++            output,
++            ..TokenCounts::default()
++        };
+         SessionUsage {
+             session_id: "test".to_string(),
+             project_path: None,
+@@ -468,6 +514,7 @@ mod tests {
+             cache_creation_tokens: 0,
+             models_used: models.iter().map(|s| (*s).to_string()).collect(),
+             message_count: 1,
++            records: vec![record(models.first().copied(), tokens)],
+         }
+     }
+ 
+@@ -476,7 +523,18 @@ mod tests {
+         let table = PricingTable::current();
+         assert!(table.get("claude-3-opus").is_some());
+         assert!(table.get("claude-3.5-sonnet").is_some());
+-        assert!(table.get("claude-opus-4.5").is_some());
++        assert!(table.get("claude-opus-4-5").is_some());
++        assert!(table.get("claude-opus-5-5").is_some());
++        assert!(table.get("claude-fable-5-1").is_some());
++    }
++
++    #[test]
++    fn pricing_resolves_dated_snapshots() {
++        let table = PricingTable::current();
++        let haiku = table.get("claude-haiku-4-5-20251001").unwrap();
++        assert!((haiku.input_per_million - 1.0).abs() < f64::EPSILON);
++        assert!(table.get("claude-haiku-4-5-2025").is_none());
++        assert!(table.get("gpt-6-astra-preview").is_none());
+     }
+ 
+     #[test]
+@@ -533,8 +591,8 @@ mod tests {
+     fn calculate_cost_with_cache_tokens() {
+         let calc = SessionCostCalculator::new();
+         let mut usage = make_usage(100_000, 50_000, &["claude-3.5-sonnet"]);
+-        usage.cache_read_tokens = 200_000;
+-        usage.cache_creation_tokens = 50_000;
++        usage.records[0].tokens.cache_read = 200_000;
++        usage.records[0].tokens.cache_creation = 50_000;
+         let cost = calc.calculate(&usage);
+ 
+         // 100K input @ $3/M = $0.30
+@@ -591,6 +649,14 @@ mod tests {
+             cache_creation_tokens: 0,
+             models_used: HashSet::new(),
+             message_count: 1,
++            records: vec![record(
++                None,
++                TokenCounts {
++                    input: 100_000,
++                    output: 50_000,
++                    ..TokenCounts::default()
++                },
++            )],
+         };
+         let cost = calc.calculate(&usage);
+ 
+@@ -598,16 +664,59 @@ mod tests {
+         assert!(!cost.model_known);
+     }
+ 
++    #[test]
++    fn calculate_prices_each_response_by_its_model() {
++        let calc = SessionCostCalculator::new();
++        let mut usage = make_usage(1_000_000, 0, &["claude-opus-5-5", "claude-haiku-4-5"]);
++        usage.records.push(record(
++            Some("claude-haiku-4-5-20251001"),
++            TokenCounts {
++                input: 1_000_000,
++                ..TokenCounts::default()
++            },
++        ));
++        let cost = calc.calculate(&usage);
++
++        // 1M input @ $4/M (Opus 5.5) + 1M input @ $1/M (Haiku 4.5)
++        assert!((cost.total_usd - 5.0).abs() < 1e-9);
++        assert!(cost.model_known);
++    }
++
++    #[test]
++    fn calculate_cost_matches_claude_code() {
++        // a session's Opus 5.5 usage, with Claude Code's own cost for it ($13.2909096)
++        let pricing = PricingTable::current();
++        let tokens = TokenCounts {
++            input: 4428,
++            output: 202_284,
++            cache_read: 32_791_708,
++            cache_creation: 333_647,
++            cache_creation_1h: 333_647,
++        };
++        let cost = pricing
++            .get("claude-opus-5-5")
++            .unwrap()
++            .calculate_cost(&tokens);
++        assert!((cost.total_cost_usd - 13.290_909_6).abs() < 1e-6);
++    }
++
+     #[test]
+     fn model_pricing_calculates_correctly() {
+         let pricing = ModelPricing::from_static("test", 10.0, 50.0, 1.0, 12.5);
+-        let breakdown = pricing.calculate_cost(2_000_000, 500_000, 100_000, 50_000);
++        let breakdown = pricing.calculate_cost(&TokenCounts {
++            input: 2_000_000,
++            output: 500_000,
++            cache_read: 100_000,
++            cache_creation: 60_000,
++            cache_creation_1h: 10_000,
++        });
+ 
+         // 2M input @ $10/M = $20
+         // 500K output @ $50/M = $25
+         // 100K cache read @ $1/M = $0.10
+-        // 50K cache creation @ $12.5/M = $0.625
+-        // Total = $45.725
+-        assert!((breakdown.total_cost_usd - 45.725).abs() < 0.001);
++        // 50K 5-minute cache creation @ $12.5/M = $0.625
++        // 10K 1-hour cache creation @ $20/M = $0.20
++        // Total = $45.925
++        assert!((breakdown.total_cost_usd - 45.925).abs() < 0.001);
+     }
+ }
+diff --git a/src/core/session_logs.rs b/src/core/session_logs.rs
+index 29ae477..688665c 100644
+--- a/src/core/session_logs.rs
++++ b/src/core/session_logs.rs
+@@ -8,7 +8,7 @@ use crate::error::{CautError, Result};
+ use crate::providers::common::dir_from_env_or_home;
+ use chrono::{DateTime, Utc};
+ use serde_json::Value;
+-use std::collections::HashSet;
++use std::collections::{HashMap, HashSet};
+ use std::fs::{self, File};
+ use std::io::{BufRead, BufReader};
+ use std::path::{Path, PathBuf};
+@@ -25,6 +25,21 @@ pub struct SessionLogPath {
+ }
+ 
+ impl SessionLogPath {
++    /// Parse the log with its provider's parser.
++    ///
++    /// # Errors
++    /// Returns an error if the log cannot be read, or its provider has no parser.
++    pub fn parse(&self) -> Result<SessionUsage> {
++        match self.provider {
++            Provider::Claude => ClaudeSessionParser.parse(&self.path),
++            Provider::Codex => CodexSessionParser.parse(&self.path),
++            provider => Err(CautError::Config(format!(
++                "Session logs not supported for provider: {}",
++                provider.cli_name()
++            ))),
++        }
++    }
++
+     fn new(provider: Provider, path: PathBuf, project_path: Option<PathBuf>) -> Self {
+         let session_id = session_id_from_path(&path);
+         let modified_at = file_modified_at(&path);
+@@ -160,6 +175,18 @@ pub struct SessionUsage {
+     pub cache_creation_tokens: i64,
+     pub models_used: HashSet<String>,
+     pub message_count: i64,
++    /// The usage of each response, in log order.
++    pub records: Vec<UsageRecord>,
++}
++
++/// Token usage of one model response.
++#[derive(Debug, Clone)]
++pub struct UsageRecord {
++    /// Claude's message id, which resumed sessions copy along with the message.
++    pub message_id: Option<String>,
++    pub timestamp: Option<DateTime<Utc>>,
++    pub model: Option<String>,
++    pub tokens: TokenCounts,
+ }
+ 
+ impl SessionUsage {
+@@ -214,15 +241,19 @@ fn parse_session_log(path: &Path, extra_paths: &[PathBuf]) -> Result<SessionUsag
+         cache_creation_tokens: 0,
+         models_used: HashSet::new(),
+         message_count: 0,
++        records: Vec::new(),
+     };
+ 
+-    // Claude Code logs each content block of a response as its own line, repeating its usage
+-    let mut seen_messages = HashSet::new();
++    // Claude Code logs each content block of a response as its own line, with the usage so
++    // far: the response's record is the one of its first line, with the usage of its last
++    let mut message_records: HashMap<String, usize> = HashMap::new();
+     let mut last_codex_total = None;
+ 
+     for path in std::iter::once(path).chain(extra_paths.iter().map(PathBuf::as_path)) {
+         let file = File::open(path)
+             .map_err(|e| CautError::Config(format!("Failed to open session log: {e}")))?;
++        // Codex logs the model in `turn_context` lines, apart from the usage
++        let mut model = None;
+         for line in BufReader::new(file).lines() {
+             let Ok(line) = line else { continue };
+             if line.trim().is_empty() {
+@@ -234,22 +265,22 @@ fn parse_session_log(path: &Path, extra_paths: &[PathBuf]) -> Result<SessionUsag
+                 Err(_) => continue,
+             };
+ 
+-            if let Some(id) = value.pointer("/message/id").and_then(Value::as_str)
+-                && !seen_messages.insert(id.to_string())
+-            {
+-                continue;
++            let message_id = value.pointer("/message/id").and_then(Value::as_str);
++            let earlier = message_id.and_then(|id| message_records.get(id).copied());
++            if earlier.is_none() {
++                usage.message_count += 1;
+             }
+ 
+-            usage.message_count += 1;
+-
+-            if let Some(ts) = extract_timestamp(&value) {
++            let timestamp = extract_timestamp(&value);
++            if let Some(ts) = timestamp {
+                 usage.record_timestamp(ts);
+             }
+ 
+-            if let Some(model) = extract_model(&value)
+-                && !model.is_empty()
++            if let Some(name) = extract_model(&value)
++                && !name.is_empty()
+             {
+-                usage.models_used.insert(model.to_string());
++                usage.models_used.insert(name.to_string());
++                model = Some(name.to_string());
+             }
+ 
+             let candidates = match value.get("type").and_then(Value::as_str) {
+@@ -261,25 +292,63 @@ fn parse_session_log(path: &Path, extra_paths: &[PathBuf]) -> Result<SessionUsag
+                 _ => extract_usage_candidates(&value),
+             };
+             for usage_value in candidates {
+-                if let Some(counts) = extract_token_counts(usage_value) {
+-                    usage.input_tokens += counts.input;
+-                    usage.output_tokens += counts.output;
+-                    usage.cache_read_tokens += counts.cache_read;
+-                    usage.cache_creation_tokens += counts.cache_creation;
++                let Some(counts) = extract_token_counts(usage_value)
++                    .filter(|counts| *counts != TokenCounts::default())
++                else {
++                    continue;
++                };
++                if let Some(i) = earlier {
++                    usage.records[i].tokens = counts;
++                    continue;
++                }
++                if let Some(id) = message_id {
++                    message_records.insert(id.to_string(), usage.records.len());
+                 }
++                usage.records.push(UsageRecord {
++                    message_id: message_id.map(str::to_string),
++                    timestamp,
++                    model: model.clone(),
++                    tokens: counts,
++                });
+             }
+         }
+     }
+ 
++    for record in &usage.records {
++        usage.input_tokens += record.tokens.input;
++        usage.output_tokens += record.tokens.output;
++        usage.cache_read_tokens += record.tokens.cache_read;
++        usage.cache_creation_tokens += record.tokens.cache_creation;
++    }
+     Ok(usage)
+ }
+ 
+-#[derive(Default)]
+-struct TokenCounts {
+-    input: i64,
+-    output: i64,
+-    cache_read: i64,
+-    cache_creation: i64,
++/// Token counts of one or more responses.
++#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
++pub struct TokenCounts {
++    pub input: i64,
++    pub output: i64,
++    pub cache_read: i64,
++    pub cache_creation: i64,
++    /// The part of `cache_creation` written to the 1-hour cache.
++    pub cache_creation_1h: i64,
++}
++
++impl TokenCounts {
++    /// All tokens, cached ones included.
++    #[must_use]
++    pub const fn total(&self) -> i64 {
++        self.input + self.output + self.cache_read + self.cache_creation
++    }
++
++    /// Add `other`'s counts to these.
++    pub const fn add(&mut self, other: &Self) {
++        self.input += other.input;
++        self.output += other.output;
++        self.cache_read += other.cache_read;
++        self.cache_creation += other.cache_creation;
++        self.cache_creation_1h += other.cache_creation_1h;
++    }
+ }
+ 
+ fn extract_token_counts(value: &Value) -> Option<TokenCounts> {
+@@ -304,6 +373,10 @@ fn extract_token_counts(value: &Value) -> Option<TokenCounts> {
+         output,
+         cache_read,
+         cache_creation,
++        cache_creation_1h: value
++            .pointer("/cache_creation/ephemeral_1h_input_tokens")
++            .and_then(Value::as_i64)
++            .unwrap_or(0),
+     })
+ }
+ 
+@@ -570,7 +643,7 @@ malformed-line
+             )
+         };
+         let content = [
+-            line("msg_1", "thinking"),
++            line("msg_1", "thinking").replace(r#""output_tokens":10"#, r#""output_tokens":1"#),
+             line("msg_1", "tool_use"),
+             line("msg_2", "text"),
+         ]
+diff --git a/src/render/human.rs b/src/render/human.rs
+index fd0492f..b912a3b 100644
+--- a/src/render/human.rs
++++ b/src/render/human.rs
+@@ -428,13 +428,13 @@ pub fn render_cost(results: &[CostPayload], no_color: bool) -> Result<String> {
+         let today_text = match (payload.session_cost_usd, payload.session_tokens) {
+             (Some(cost), Some(tokens)) => {
+                 format!(
+-                    "Today: ${:.2} \u{00B7} {} messages",
++                    "Today: ${:.2} \u{00B7} {} tokens",
+                     cost,
+                     format_number(tokens)
+                 )
+             }
+             (Some(cost), None) => format!("Today: ${cost:.2}"),
+-            (None, Some(tokens)) => format!("Today: {} messages", format_number(tokens)),
++            (None, Some(tokens)) => format!("Today: {} tokens", format_number(tokens)),
+             (None, None) => "Today: No activity".to_string(),
+         };
+         content_lines.push(vec![Segment::plain(today_text)]);
+@@ -443,17 +443,24 @@ pub fn render_cost(results: &[CostPayload], no_color: bool) -> Result<String> {
+         let monthly_text = match (payload.last_30_days_cost_usd, payload.last_30_days_tokens) {
+             (Some(cost), Some(tokens)) => {
+                 format!(
+-                    "Last 30 days: ${:.2} \u{00B7} {} messages",
++                    "Last 30 days: ${:.2} \u{00B7} {} tokens",
+                     cost,
+                     format_number(tokens)
+                 )
+             }
+             (Some(cost), None) => format!("Last 30 days: ${cost:.2}"),
+-            (None, Some(tokens)) => format!("Last 30 days: {} messages", format_number(tokens)),
++            (None, Some(tokens)) => format!("Last 30 days: {} tokens", format_number(tokens)),
+             (None, None) => "Last 30 days: No activity".to_string(),
+         };
+         content_lines.push(vec![Segment::plain(monthly_text)]);
+ 
++        if !payload.unpriced_models.is_empty() {
++            content_lines.push(vec![Segment::plain(format!(
++                "Estimated (unpriced): {}",
++                payload.unpriced_models.join(", ")
++            ))]);
++        }
++
+         // Build panel
+         let title_text = format!("{} Cost (local)", payload.provider);
+         let title = if no_color {
+diff --git a/src/render/robot.rs b/src/render/robot.rs
+index 02ba383..068230b 100644
+--- a/src/render/robot.rs
++++ b/src/render/robot.rs
+@@ -191,13 +191,13 @@ pub fn render_cost_md(results: &[CostPayload]) -> Result<String> {
+         match (payload.session_cost_usd, payload.session_tokens) {
+             (Some(cost), Some(tokens)) => {
+                 let _ = writeln!(output, "- today_cost_usd: {cost:.2}");
+-                let _ = writeln!(output, "- today_messages: {tokens}");
++                let _ = writeln!(output, "- today_tokens: {tokens}");
+             }
+             (Some(cost), None) => {
+                 let _ = writeln!(output, "- today_cost_usd: {cost:.2}");
+             }
+             (None, Some(tokens)) => {
+-                let _ = writeln!(output, "- today_messages: {tokens}");
++                let _ = writeln!(output, "- today_tokens: {tokens}");
+             }
+             (None, None) => {
+                 output.push_str("- today: no_activity\n");
+@@ -208,19 +208,27 @@ pub fn render_cost_md(results: &[CostPayload]) -> Result<String> {
+         match (payload.last_30_days_cost_usd, payload.last_30_days_tokens) {
+             (Some(cost), Some(tokens)) => {
+                 let _ = writeln!(output, "- last_30d_cost_usd: {cost:.2}");
+-                let _ = writeln!(output, "- last_30d_messages: {tokens}");
++                let _ = writeln!(output, "- last_30d_tokens: {tokens}");
+             }
+             (Some(cost), None) => {
+                 let _ = writeln!(output, "- last_30d_cost_usd: {cost:.2}");
+             }
+             (None, Some(tokens)) => {
+-                let _ = writeln!(output, "- last_30d_messages: {tokens}");
++                let _ = writeln!(output, "- last_30d_tokens: {tokens}");
+             }
+             (None, None) => {
+                 output.push_str("- last_30d: no_activity\n");
+             }
+         }
+ 
++        if !payload.unpriced_models.is_empty() {
++            let _ = writeln!(
++                output,
++                "- unpriced_models: {}",
++                payload.unpriced_models.join(", ")
++            );
++        }
++
+         // Totals section (if available with token breakdown)
+         if let Some(totals) = &payload.totals {
+             let has_token_breakdown = totals.input_tokens.is_some()
+@@ -253,17 +261,17 @@ pub fn render_cost_md(results: &[CostPayload]) -> Result<String> {
+         // Daily breakdown (last 7 days for token efficiency)
+         if !payload.daily.is_empty() {
+             output.push_str("\n### Daily (last 7 days)\n");
+-            output.push_str("| date | messages | cost |\n");
+-            output.push_str("|------|----------|------|\n");
++            output.push_str("| date | tokens | cost |\n");
++            output.push_str("|------|--------|------|\n");
+ 
+             for entry in payload.daily.iter().take(7) {
+-                let messages = entry
++                let tokens = entry
+                     .total_tokens
+                     .map_or_else(|| "-".to_string(), |t| t.to_string());
+                 let cost = entry
+                     .total_cost
+                     .map_or_else(|| "-".to_string(), |c| format!("${c:.2}"));
+-                let _ = writeln!(output, "| {} | {} | {} |", entry.date, messages, cost);
++                let _ = writeln!(output, "| {} | {} | {} |", entry.date, tokens, cost);
+             }
+         }
+ 
+@@ -641,9 +649,9 @@ mod tests {
+         assert_contains!(&md, "## claude Cost (local)");
+         assert_contains!(&md, "### Summary");
+         assert_contains!(&md, "today_cost_usd: 2.45");
+-        assert_contains!(&md, "today_messages: 124500");
++        assert_contains!(&md, "today_tokens: 124500");
+         assert_contains!(&md, "last_30d_cost_usd: 47.82");
+-        assert_contains!(&md, "last_30d_messages: 2400000");
++        assert_contains!(&md, "last_30d_tokens: 2400000");
+         assert_contains!(&md, "### Daily");
+     }
+ 
+@@ -672,8 +680,8 @@ mod tests {
+ 
+         let md = render_cost_md(&[payload]).unwrap();
+         // Check markdown table formatting
+-        assert_contains!(&md, "| date | messages | cost |");
+-        assert_contains!(&md, "|------|----------|------|");
++        assert_contains!(&md, "| date | tokens | cost |");
++        assert_contains!(&md, "|------|--------|------|");
+     }
+ 
+     // =========================================================================
+diff --git a/src/test_utils.rs b/src/test_utils.rs
+index 6987974..6e9e619 100644
+--- a/src/test_utils.rs
++++ b/src/test_utils.rs
+@@ -319,6 +319,7 @@ pub fn make_test_cost_payload(provider: &str) -> CostPayload {
+             total_tokens: Some(2_400_000),
+             total_cost: Some(47.82),
+         }),
++        unpriced_models: Vec::new(),
+     }
+ }
+ 
+@@ -335,6 +336,7 @@ pub fn make_test_cost_payload_minimal(provider: &str) -> CostPayload {
+         last_30_days_cost_usd: None,
+         daily: Vec::new(),
+         totals: None,
++        unpriced_models: Vec::new(),
+     }
+ }
+ 
+diff --git a/tests/common/fixtures.rs b/tests/common/fixtures.rs
+index 7ada76c..036e6d3 100644
+--- a/tests/common/fixtures.rs
++++ b/tests/common/fixtures.rs
+@@ -352,6 +352,7 @@ pub fn cost_payload(
+             total_tokens: Some(session_tokens * 20),
+             total_cost: Some(monthly_cost),
+         }),
++        unpriced_models: Vec::new(),
+     }
+ }
+ 
+@@ -369,6 +370,7 @@ pub fn cost_payload_minimal(provider: &str) -> CostPayload {
+         last_30_days_cost_usd: None,
+         daily: Vec::new(),
+         totals: None,
++        unpriced_models: Vec::new(),
+     }
+ }
+ 

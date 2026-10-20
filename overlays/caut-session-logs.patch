@@ -1,5 +1,5 @@
 diff --git a/src/core/session_logs.rs b/src/core/session_logs.rs
-index d0942b3..a611451 100644
+index d0942b3..29ae477 100644
 --- a/src/core/session_logs.rs
 +++ b/src/core/session_logs.rs
 @@ -102,12 +102,7 @@ impl SessionLogFinder {
@@ -16,27 +16,19 @@ index d0942b3..a611451 100644
                      for file_entry in files.flatten() {
                          let path = file_entry.path();
                          if !is_jsonl_file(&path) {
-@@ -178,14 +173,24 @@ impl SessionUsage {
+@@ -178,14 +173,16 @@ impl SessionUsage {
  pub struct ClaudeSessionParser;
  
  impl ClaudeSessionParser {
 -    /// Parse a Claude session log JSONL file.
 +    /// Parse a Claude session log JSONL file, along with the logs of its
-+    /// subagents (`<session>/subagents/*.jsonl`).
++    /// subagents (`<session>/subagents/**/*.jsonl`, workflow agents' included).
      ///
      /// # Errors
      /// Returns an error if the file cannot be opened or read.
      pub fn parse(&self, path: &Path) -> Result<SessionUsage> {
 -        let mut usage = parse_session_log(path)?;
-+        let subagents: Vec<PathBuf> = fs::read_dir(path.with_extension("").join("subagents"))
-+            .map(|files| {
-+                files
-+                    .flatten()
-+                    .map(|f| f.path())
-+                    .filter(|p| is_jsonl_file(p))
-+                    .collect()
-+            })
-+            .unwrap_or_default();
++        let subagents = collect_jsonl_files(&path.with_extension("").join("subagents"));
 +        let mut usage = parse_session_log(path, &subagents)?;
          if usage.project_path.is_none() {
 -            usage.project_path = extract_claude_project_path(path);
@@ -44,7 +36,7 @@ index d0942b3..a611451 100644
          }
          Ok(usage)
      }
-@@ -200,15 +205,12 @@ impl CodexSessionParser {
+@@ -200,15 +197,12 @@ impl CodexSessionParser {
      /// # Errors
      /// Returns an error if the file cannot be opened or read.
      pub fn parse(&self, path: &Path) -> Result<SessionUsage> {
@@ -63,7 +55,7 @@ index d0942b3..a611451 100644
      let mut usage = SessionUsage {
          session_id: session_id_from_path(path),
          project_path: None,
-@@ -222,35 +224,57 @@ fn parse_session_log(path: &Path) -> Result<SessionUsage> {
+@@ -222,35 +216,57 @@ fn parse_session_log(path: &Path) -> Result<SessionUsage> {
          message_count: 0,
      };
  
@@ -145,7 +137,7 @@ index d0942b3..a611451 100644
              }
          }
      }
-@@ -271,10 +295,12 @@ fn extract_token_counts(value: &Value) -> Option<TokenCounts> {
+@@ -271,10 +287,12 @@ fn extract_token_counts(value: &Value) -> Option<TokenCounts> {
          return None;
      }
  
@@ -160,7 +152,7 @@ index d0942b3..a611451 100644
      let cache_creation = first_i64(
          value,
          &["cache_creation_input_tokens", "cache_creation_tokens"],
-@@ -289,6 +315,18 @@ fn extract_token_counts(value: &Value) -> Option<TokenCounts> {
+@@ -289,6 +307,18 @@ fn extract_token_counts(value: &Value) -> Option<TokenCounts> {
      })
  }
  
@@ -179,7 +171,7 @@ index d0942b3..a611451 100644
  fn extract_usage_candidates(value: &Value) -> Vec<&Value> {
      let mut candidates = Vec::new();
  
-@@ -419,14 +457,6 @@ fn session_id_from_path(path: &Path) -> String {
+@@ -419,14 +449,6 @@ fn session_id_from_path(path: &Path) -> String {
          .map_or_else(|| "unknown".to_string(), str::to_string)
  }
  
@@ -194,7 +186,7 @@ index d0942b3..a611451 100644
  fn file_modified_at(path: &Path) -> Option<DateTime<Utc>> {
      let metadata = fs::metadata(path).ok()?;
      let modified = metadata.modified().ok()?;
-@@ -474,14 +504,14 @@ mod tests {
+@@ -474,14 +496,14 @@ mod tests {
      use tempfile::TempDir;
  
      #[test]
@@ -214,7 +206,7 @@ index d0942b3..a611451 100644
  
          let finder = SessionLogFinder::with_paths(claude_base, temp.path().join(".codex"));
          let logs = finder.find_sessions(Provider::Claude, None, None);
-@@ -538,6 +568,92 @@ malformed-line
+@@ -538,6 +560,100 @@ malformed-line
          assert!(usage.ended_at.is_some());
      }
  
@@ -262,12 +254,20 @@ index d0942b3..a611451 100644
 +        )
 +        .unwrap();
 +        std::fs::write(subagents.join("agent-a.meta.json"), "{}").unwrap();
++        let workflow = subagents.join("workflows").join("wf_1");
++        std::fs::create_dir_all(&workflow).unwrap();
++        std::fs::write(
++            workflow.join("agent-b.jsonl"),
++            r#"{"message":{"id":"msg_3","model":"claude-haiku-4-5","usage":{"input_tokens":1,"output_tokens":1}},"timestamp":"2026-01-18T12:10:00Z"}"#,
++        )
++        .unwrap();
++        std::fs::write(workflow.join("journal.jsonl"), r#"{"type":"launched"}"#).unwrap();
 +
 +        let usage = ClaudeSessionParser.parse(&log_path).unwrap();
 +
 +        assert_eq!(usage.session_id, "session");
-+        assert_eq!(usage.input_tokens, 17);
-+        assert_eq!(usage.output_tokens, 8);
++        assert_eq!(usage.input_tokens, 18);
++        assert_eq!(usage.output_tokens, 9);
 +        assert!(usage.models_used.contains("claude-haiku-4-5"));
 +        assert_eq!(
 +            usage.ended_at.unwrap() - usage.started_at.unwrap(),

@@ -160,6 +160,10 @@ let
           ./caut-session-logs.patch
           # `doctor` and `usage` decode opaque OAuth tokens as JWTs, and flag a renewable access token
           ./caut-credential-health.patch
+          # `cost` counts Claude's stats-cache messages and Codex log lines instead of pricing the
+          # session logs; `session` prices a session at one model's rates, and takes a Claude
+          # response's usage from its first line, before the output is complete
+          ./caut-cost.patch
         ];
         # nightly-only `-Z threads` rustflag
         postPatch = "rm .cargo/config.toml";
