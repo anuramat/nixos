@@ -164,19 +164,47 @@ let
     };
 
   # bgm5 uploads slowly: fetch big prebuilt binaries from upstream and wrap them locally,
-  # instead of substituting from (or building on) bgm5
+  # instead of substituting from (or building on) bgm5; only for versioned download URLs
   upstreamOnly =
     _: prev:
-    lib.genAttrs [ "claude-code" "codex" "chatgpt" "claude-desktop" ] (
-      name:
-      (prev.${name}.override (o: {
-        fetchurl = a: o.fetchurl (a // { derivationArgs.allowSubstitutes = false; });
-      })).overrideAttrs
-        {
+    let
+      local =
+        drv:
+        drv.overrideAttrs {
           allowSubstitutes = false;
           preferLocalBuild = true;
-        }
-    );
+        };
+      upstream = fetchurl: a: fetchurl (a // { derivationArgs.allowSubstitutes = false; });
+    in
+    lib.genAttrs [ "claude-code" "codex" "claude-desktop" ] (
+      name:
+      local (
+        prev.${name}.override (o: {
+          fetchurl = upstream o.fetchurl;
+        })
+      )
+    )
+    // {
+      # `latest` moves on every release; the apt pool keeps every version
+      chatgpt = local (
+        prev.chatgpt.override (o: {
+          fetchurl =
+            a:
+            let
+              latest = "/deb/latest/chatgpt_";
+            in
+            assert lib.assertMsg (lib.hasInfix latest a.url) "chatgpt: unexpected download URL ${a.url}";
+            upstream o.fetchurl (
+              a
+              // {
+                url =
+                  lib.replaceStrings [ latest ] [ "/deb/pool/main/c/chatgpt/chatgpt_${prev.chatgpt.version}_" ]
+                    a.url;
+              }
+            );
+        })
+      );
+    };
 in
 lib.composeManyExtensions [
   overrides
