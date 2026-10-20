@@ -119,9 +119,15 @@ in
           ${config.lib.home.mkAgenixExportScript tokens}
           ${config.lib.shell.exportAll env}
         '';
+      # cheap to build, and substituting them from a slow cache drags in the wrapped package
+      derivationArgs = {
+        allowSubstitutes = false;
+        preferLocalBuild = true;
+      };
 
       passthrough = pkgs.writeShellApplication {
         name = passthroughName;
+        inherit derivationArgs;
         text =
           preamble
           +
@@ -170,6 +176,7 @@ in
         in
         pkgs.writeShellApplication {
           name = wrapperName;
+          inherit derivationArgs;
           runtimeInputs = with pkgs; [
             bubblewrap
           ];

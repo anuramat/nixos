@@ -1,6 +1,6 @@
 { inputs, lib, ... }:
 final: prev: {
-  caut = prev.rustPlatform.buildRustPackage {
+  caut-unwrapped = prev.rustPlatform.buildRustPackage {
     pname = "caut";
     version = "0.1.0";
     src = inputs.caut;
@@ -25,16 +25,19 @@ final: prev: {
     # vergen falls back to a `VERGEN_IDEMPOTENT_OUTPUT` placeholder without a git checkout
     env.VERGEN_GIT_SHA = inputs.caut.rev;
     env.VERGEN_GIT_DIRTY = "false";
-    nativeBuildInputs = [
-      prev.pkg-config
-      prev.makeWrapper
-    ];
+    nativeBuildInputs = [ prev.pkg-config ];
     buildInputs = [ prev.sqlite ];
     # 11 LTO'd integration test binaries; upstream `cargo install` skips them too
     doCheck = false;
+  };
+  # wrapped separately, so that substituting the build doesn't drag in codex
+  caut = prev.symlinkJoin {
+    inherit (final.caut-unwrapped) name meta;
+    paths = [ final.caut-unwrapped ];
+    nativeBuildInputs = [ prev.makeWrapper ];
     # the codex on PATH is the agent sandbox wrapper, whose forced
     # --dangerously-bypass-approvals-and-sandbox conflicts with the `-s read-only -a never` of
     # caut's `codex app-server` fallback for an expired auth.json
-    postFixup = "wrapProgram $out/bin/caut --prefix PATH : ${lib.makeBinPath [ final.codex ]}";
+    postBuild = "wrapProgram $out/bin/caut --prefix PATH : ${lib.makeBinPath [ final.codex ]}";
   };
 }
