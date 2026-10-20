@@ -1,0 +1,173 @@
+Let plugin rows, columns, boxes and images take onRightClick, like buttons.
+
+Only ui.button had onRightClick, and a button can't hold other controls, so a
+plugin had no way to react to a right-click on a composite element. The click
+wrapper that onClick and onHover already put around rows, columns, boxes and
+images now also takes onRightClick: it accepts the right button and runs that
+callback for it, and either click callback can be set without the other.
+
+--- a/src/ui/ui_tree_reconciler.cpp
++++ b/src/ui/ui_tree_reconciler.cpp
+@@ -363,6 +363,12 @@
+       return name != nullptr && !name->empty() ? name : nullptr;
+     }
+ 
++    bool needsWrapper(const UiTreeNode& node) {
++      return callbackProp(node, "onClick") != nullptr
++          || callbackProp(node, "onRightClick") != nullptr
++          || callbackProp(node, "onHover") != nullptr;
++    }
++
+     // Box/image and row/column get an InputArea wrapper only when clickable (see
+     // createControl). If a reconcile flips that need, the existing node can't
+     // be reused — its structure no longer matches — so it must be rebuilt like
+@@ -371,7 +377,7 @@
+       if (want.type != "box" && want.type != "image" && want.type != "row" && want.type != "column") {
+         return false;
+       }
+-      const bool wantsWrapper = callbackProp(want, "onClick") != nullptr || callbackProp(want, "onHover") != nullptr;
++      const bool wantsWrapper = needsWrapper(want);
+       const bool hasWrapper = inputAreaFromSlot(node) != nullptr;
+       return wantsWrapper != hasWrapper;
+     }
+@@ -411,13 +417,22 @@
+       return inputArea;
+     }
+ 
+-    void wireWrapperActivation(InputArea* inputArea, const std::function<void()>& sink) {
++    // Either sink may be empty: its button is then left to ancestors.
++    void wireWrapperActivation(
++        InputArea* inputArea, const std::function<void()>& sink, const std::function<void()>& rightSink
++    ) {
+       // A wrapper created hover-only starts with an empty button mask.
+-      inputArea->setAcceptedButtons(InputArea::buttonMask(BTN_LEFT));
+-      inputArea->setOnClick([sink](const InputArea::PointerData&) { sink(); });
+-      inputArea->setFocusable(true);
++      inputArea->setAcceptedButtons(
++          (sink ? InputArea::buttonMask(BTN_LEFT) : 0) | (rightSink ? InputArea::buttonMask(BTN_RIGHT) : 0)
++      );
++      inputArea->setOnClick([sink, rightSink](const InputArea::PointerData& data) {
++        if (const auto& target = data.button == BTN_RIGHT ? rightSink : sink) {
++          target();
++        }
++      });
++      inputArea->setFocusable(static_cast<bool>(sink));
+       inputArea->setOnKeyDown([sink](const InputArea::KeyData& key) {
+-        if (key.pressed && KeybindMatcher::matches(KeybindAction::Validate, key.sym, key.modifiers)) {
++        if (sink && key.pressed && KeybindMatcher::matches(KeybindAction::Validate, key.sym, key.modifiers)) {
+           sink();
+         }
+       });
+@@ -450,10 +465,11 @@
+                                                             "visible",   "gap",     "padding",     "paddingH",
+                                                             "paddingV",  "align",   "justify",     "fill",
+                                                             "radius",    "border",  "borderWidth", "minWidth",
+-                                                            "minHeight", "onClick", "onHover"};
++                                                            "minHeight", "onClick", "onRightClick", "onHover"};
+       static const std::unordered_set<std::string> kBox = {"width",       "height",   "flexGrow", "opacity",
+                                                            "visible",     "fill",     "radius",   "border",
+-                                                           "borderWidth", "softness", "onClick",  "onHover"};
++                                                           "borderWidth", "softness", "onClick",  "onRightClick",
++                                                           "onHover"};
+       static const std::unordered_set<std::string> kLabel = {"width",      "height",   "flexGrow", "opacity",
+                                                              "visible",    "text",     "fontSize", "color",
+                                                              "fontWeight", "maxWidth", "maxLines", "textAlign",
+@@ -462,7 +478,8 @@
+                                                              "visible", "name",   "size",     "color"};
+       static const std::unordered_set<std::string> kImage = {"width",   "height",      "flexGrow", "opacity",
+                                                              "visible", "path",        "radius",   "fit",
+-                                                             "border",  "borderWidth", "onClick",  "onHover"};
++                                                             "border",  "borderWidth", "onClick",  "onRightClick",
++                                                             "onHover"};
+       static const std::unordered_set<std::string> kSeparator = {"width",   "height",  "flexGrow",
+                                                                  "opacity", "visible", "thickness",
+                                                                  "color",   "spacing", "orientation"};
+@@ -569,7 +586,7 @@
+     std::string key;
+     Node* node = nullptr;
+     std::string callbackName;        // last-wired button onClick / control onChange target
+-    std::string rightCallbackName;   // last-wired button onRightClick target
++    std::string rightCallbackName;   // last-wired onRightClick target (button/box/image/row/column)
+     std::string hoverCallbackName;   // last-wired onHover target (button/box/image/row/column)
+     std::string submitCallbackName;  // last-wired input onSubmit target
+     std::string dragEndCallbackName; // last-wired slider onDragEnd target
+@@ -640,7 +657,7 @@
+       auto flex = std::make_unique<Flex>();
+       flex->setDirection(FlexDirection::Vertical);
+       flex->setAlign(FlexAlign::Stretch);
+-      if (callbackProp(desired, "onClick") != nullptr || callbackProp(desired, "onHover") != nullptr) {
++      if (needsWrapper(desired)) {
+         return wrapClickable(std::move(flex), callbackProp(desired, "onClick") != nullptr);
+       }
+       return flex;
+@@ -649,7 +666,7 @@
+       auto flex = std::make_unique<Flex>();
+       flex->setDirection(FlexDirection::Horizontal);
+       flex->setAlign(FlexAlign::Stretch);
+-      if (callbackProp(desired, "onClick") != nullptr || callbackProp(desired, "onHover") != nullptr) {
++      if (needsWrapper(desired)) {
+         return wrapClickable(std::move(flex), callbackProp(desired, "onClick") != nullptr);
+       }
+       return flex;
+@@ -667,7 +684,7 @@
+       return zone;
+     }
+     if (desired.type == "box") {
+-      if (callbackProp(desired, "onClick") != nullptr || callbackProp(desired, "onHover") != nullptr) {
++      if (needsWrapper(desired)) {
+         return wrapClickable(std::make_unique<Box>(), callbackProp(desired, "onClick") != nullptr);
+       }
+       return std::make_unique<Box>();
+@@ -679,7 +696,7 @@
+       return std::make_unique<Glyph>();
+     }
+     if (desired.type == "image") {
+-      if (callbackProp(desired, "onClick") != nullptr || callbackProp(desired, "onHover") != nullptr) {
++      if (needsWrapper(desired)) {
+         return wrapClickable(std::make_unique<Image>(), callbackProp(desired, "onClick") != nullptr);
+       }
+       return std::make_unique<Image>();
+@@ -832,21 +849,29 @@
+ 
+   void UiTreeReconciler::syncWrapperCallbacks(Slot& slot, const UiTreeNode& desired, Node* node) {
+     InputArea* inputArea = inputAreaFromSlot(node);
+-    if (const std::string* onClick = callbackProp(desired, "onClick"); onClick != nullptr) {
+-      if (*onClick != slot.callbackName) {
+-        slot.callbackName = *onClick;
+-        if (inputArea != nullptr) {
+-          wireWrapperActivation(inputArea, [this, name = slot.callbackName]() {
+-            if (m_sink) {
+-              m_sink(ControlCallback{name});
+-            }
+-          });
+-        }
+-      }
+-    } else if (!slot.callbackName.empty()) {
+-      slot.callbackName.clear();
++    const std::string* onClick = callbackProp(desired, "onClick");
++    const std::string* onRightClick = callbackProp(desired, "onRightClick");
++    const std::string click = onClick != nullptr ? *onClick : std::string();
++    const std::string rightClick = onRightClick != nullptr ? *onRightClick : std::string();
++    if (click != slot.callbackName || rightClick != slot.rightCallbackName) {
++      slot.callbackName = click;
++      slot.rightCallbackName = rightClick;
++      const auto sinkFor = [this](const std::string& name) -> std::function<void()> {
++        if (name.empty()) {
++          return {};
++        }
++        return [this, name]() {
++          if (m_sink) {
++            m_sink(ControlCallback{name});
++          }
++        };
++      };
+       if (inputArea != nullptr) {
+-        clearWrapperActivation(inputArea);
++        if (click.empty() && rightClick.empty()) {
++          clearWrapperActivation(inputArea);
++        } else {
++          wireWrapperActivation(inputArea, sinkFor(click), sinkFor(rightClick));
++        }
+       }
+     }
+     if (const std::string* onHover = callbackProp(desired, "onHover"); onHover != nullptr) {

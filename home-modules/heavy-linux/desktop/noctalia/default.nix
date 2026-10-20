@@ -27,12 +27,15 @@ in
     # reconnect
     # upstream never advances lockscreen widgets' animations, so the mouse
     # wheel can't scroll the fleet monitor there
+    # upstream has right-click only on plugin buttons, so the fleet monitor
+    # couldn't toggle a section on a right-click
     package = pkgs.noctalia.overrideAttrs (old: {
       patches = (old.patches or [ ]) ++ [
         ./pam-setcred.patch
         ./fileinfo-mtime.patch
         ./secret-agent-saved-psk.patch
         ./lockscreen-widget-animations.patch
+        ./ui-right-click.patch
       ];
     });
 
