@@ -147,41 +147,6 @@ let
           prev.gtk4-layer-shell
         ];
       };
-      caut = prev.rustPlatform.buildRustPackage {
-        pname = "caut";
-        version = "0.1.0";
-        src = inputs.caut;
-        cargoLock.lockFile = "${inputs.caut}/Cargo.lock";
-        patches = [
-          # `cost`, `session` and `doctor` read ~/.claude and ~/.codex, ignoring CLAUDE_CONFIG_DIR and CODEX_HOME
-          ./caut-env-dirs.patch
-          # `session` looks for Claude logs in a `conversations/` dir, counts a Claude response's
-          # usage once per content block, and misses most Codex usage
-          ./caut-session-logs.patch
-          # `doctor` and `usage` decode opaque OAuth tokens as JWTs, and flag a renewable access token
-          ./caut-credential-health.patch
-          # `cost` counts Claude's stats-cache messages and Codex log lines instead of pricing the
-          # session logs; `session` prices a session at one model's rates, and takes a Claude
-          # response's usage from its first line, before the output is complete
-          ./caut-cost.patch
-        ];
-        # nightly-only `-Z threads` rustflag
-        postPatch = "rm .cargo/config.toml";
-        # vergen falls back to a `VERGEN_IDEMPOTENT_OUTPUT` placeholder without a git checkout
-        env.VERGEN_GIT_SHA = inputs.caut.rev;
-        env.VERGEN_GIT_DIRTY = "false";
-        nativeBuildInputs = [
-          prev.pkg-config
-          prev.makeWrapper
-        ];
-        buildInputs = [ prev.sqlite ];
-        # 11 LTO'd integration test binaries; upstream `cargo install` skips them too
-        doCheck = false;
-        # the codex on PATH is the agent sandbox wrapper, whose forced
-        # --dangerously-bypass-approvals-and-sandbox conflicts with the `-s read-only -a never` of
-        # caut's `codex app-server` fallback for an expired auth.json
-        postFixup = "wrapProgram $out/bin/caut --prefix PATH : ${lib.makeBinPath [ final.codex ]}";
-      };
       todo = prev.writers.writePython3Bin "todo" {
         # black-formatted: long lines, line breaks before binary operators
         flakeIgnore = [
@@ -201,6 +166,7 @@ in
 lib.composeManyExtensions [
   overrides
   flakes
+  inputs.self.overlays.caut
   inputs.self.overlays.nx-studio
   inputs.self.overlays.pass-secret-service-rs
   inputs.self.overlays.proton-drive-cli
