@@ -1,5 +1,5 @@
--- desktop widget: renders the `sections` state published by service.luau; click a section to refresh it, right-click
--- it to hide or show its rows
+-- desktop widget: renders the `sections` state published by service.luau; click a section to hide or show its rows,
+-- right-click it to refresh it
 local FONT_SIZE = noctalia.getConfig("font_size")
 -- sizes below are given for noctalia's default 14px font and scale with FONT_SIZE
 local SCALE = FONT_SIZE / 14
@@ -93,20 +93,20 @@ local function section(h)
   if h.battery then table.insert(header, label(h.battery .. "%", "outline")) end
   if h.err then table.insert(header, label(h.err, "error", { maxWidth = 400 * SCALE, maxLines = 1 })) end
   if h.zellij then table.insert(header, label(h.zellij, "on_surface_variant")) end
-  local onClick
-  -- the local host is polled often, so it needs neither a refresh time nor clicks
+  local onRightClick
+  -- the local host is polled often, so it needs neither a refresh time nor right-clicks
   if not h.isLocal then
-    -- only clicks get "updating...", so frequent polling doesn't flicker
+    -- only right-clicks get "updating...", so frequent polling doesn't flicker
     if h.busy and h.clicked then
       table.insert(header, label("updating...", "outline"))
     elseif h.at then
       table.insert(header, label(duration((noctalia.nowMs() - h.at) // 1000), "outline"))
     end
-    function onClick()
+    function onRightClick()
       noctalia.state.set("refresh", h.name)
     end
   end
-  local function onRightClick()
+  local function onClick()
     local t = table.clone(hidden)
     t[h.name] = not t[h.name] or nil
     noctalia.state.set("hidden", t)
