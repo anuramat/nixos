@@ -2,8 +2,9 @@
 # outlive sandboxed sessions and show up in fleet-status; every command runs on
 # the job's host over ssh, even when it's this one; the job's dir
 # /home/agent/shared/jobs/NAME on HOST is staged by the caller (e.g. `rsync ...
-# HOST:DIR`), then used as the working dir and for `log` and `result`, plus
-# `desc` and `eta` (seconds since the epoch), shown by fleet-status
+# HOST:DIR`) or created by `job run`, then used as the working dir and for
+# `log` and `result`, plus `desc` and `eta` (seconds since the epoch), shown by
+# fleet-status
 { pkgs, inputs, ... }:
 let
   inherit (inputs.self.consts.agent) username sharedDir;
@@ -69,7 +70,7 @@ let
         shift $((OPTIND - 1))
         [ -n "$desc" ] || die "-d DESC is required: a short description of the job for the fleet monitor, e.g. -d 'smoke test of A on B'"
         (($#)) || die "$usage"
-        [ -d "$D" ] || die "stage the job in $D first"
+        mkdir -p "$D"
         [ ! -e "$D/result" ] || die "$D/result exists, the job already ran"
         printf '%s\n' "$desc" >"$D/desc"
         [ -z "$eta" ] || echo "$eta" >"$D/eta"
