@@ -162,10 +162,26 @@ let
           ;
       };
     };
+
+  # bgm5 uploads slowly: fetch big prebuilt binaries from upstream and wrap them locally,
+  # instead of substituting from (or building on) bgm5
+  upstreamOnly =
+    _: prev:
+    lib.genAttrs [ "claude-code" "codex" "chatgpt" "claude-desktop" ] (
+      name:
+      (prev.${name}.override (o: {
+        fetchurl = a: o.fetchurl (a // { derivationArgs.allowSubstitutes = false; });
+      })).overrideAttrs
+        {
+          allowSubstitutes = false;
+          preferLocalBuild = true;
+        }
+    );
 in
 lib.composeManyExtensions [
   overrides
   flakes
+  upstreamOnly
   inputs.self.overlays.caut
   inputs.self.overlays.nx-studio
   inputs.self.overlays.pass-secret-service-rs
