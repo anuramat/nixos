@@ -67,7 +67,7 @@ let
         model_verbosity = "low";
 
         web_search = "live"; # "disabled" | "cached" | "live"
-        service_tier = "fast"; # "fast" | unset
+        service_tier = "default"; # "fast" | "default"
 
         sandbox_mode = "workspace-write";
         sandbox_workspace_write.network_access = true;
