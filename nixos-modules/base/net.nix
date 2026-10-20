@@ -49,6 +49,8 @@ in
   # every start spends a TOTP: never replay a code, back off, and stop well
   # before the token locks (`systemctl reset-failed` resumes)
   systemd.services.openconnect-uhd = {
+    # with autoStart, the campus hook below starts it, once the uplink is up
+    wantedBy = lib.mkForce [ ];
     startLimitIntervalSec = 3600;
     startLimitBurst = 10;
     serviceConfig = {
