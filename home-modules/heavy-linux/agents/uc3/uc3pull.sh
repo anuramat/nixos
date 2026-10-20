@@ -6,13 +6,17 @@
 # slash); the object lands inside LOCAL_DIR under its own basename.
 set -euo pipefail
 src=$1 dst=${2:-.}
-code=pull-$(head -c 9 /dev/urandom | base32 | tr '[:upper:]' '[:lower:]')
+# croc names the relay room after the code's first 4 characters, so those have
+# to be random, or concurrent pulls end up in the same room
+code=$(head -c 10 /dev/urandom | base32 | tr '[:upper:]' '[:lower:]')
 sums=$(mktemp) && trap 'rm -f "$sums"' EXIT
-uc3ctl -t 0 "CROC_SECRET=$code nohup ~/.local/bin/croc --yes send $src </dev/null >/tmp/croc_send_\$USER.log 2>&1 &
+# --no-local: the receiver is never on the cluster's network, and concurrent
+# senders on one login node would share the first one's local relay
+uc3ctl -t 0 "CROC_SECRET=$code nohup ~/.local/bin/croc --yes send --no-local $src </dev/null >/tmp/croc-$code.log 2>&1 & echo \$! >/tmp/croc-$code.pid
   cd \$(dirname $src) && find \$(basename $src) -type f -exec md5sum {} + | sort -k2" >"$sums"
 mkdir -p "$dst"
 CROC_SECRET=$code croc --yes --out "$dst" || {
-	uc3ctl 'pkill -u $USER -f "[c]roc --yes send"'
+	uc3ctl "kill \$(cat /tmp/croc-$code.pid)"
 	exit 1
 }
 (cd "$dst" && find "$(basename "$src")" -type f -exec md5sum {} + | sort -k2) | diff - "$sums" \
