@@ -73,8 +73,9 @@ adding, removing, or renaming a direct child is an API change for this flake:
 
 - `hosts`: a hand-written static registry of
   `{ system, builder, agent, local, alias, deprecated }` per host plus a
-  required `description` (rendered into the agents' ssh instructions for agent
-  hosts by `home-modules/heavy-linux/agents/instructions.nix`); `alias` is an
+  required `description` (rendered into the agents' instructions by
+  `home-modules/heavy-linux/agents/instructions.nix`: for the host the agent
+  runs on, and in the ssh instructions for agent hosts); `alias` is an
   optional ssh alias (every non-deprecated host gets an ssh config entry in
   `home-modules/base/default.nix`, under its alias if it has one).
   `deprecated` hosts (t480) are left out of the `checks.SYSTEM.host-NAME`

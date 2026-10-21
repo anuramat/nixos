@@ -1,6 +1,21 @@
-{ lib, inputs, ... }:
+{
+  lib,
+  inputs,
+  osConfig ? null,
+  ...
+}:
 let
   inherit (inputs.self.consts.agent) username sharedDir;
+  # unknown under standalone Home Manager
+  currentHost = lib.optionalString (osConfig != null) (
+    let
+      inherit (osConfig.networking) hostName;
+    in
+    ''
+      You are running on `${hostName}` (${inputs.self.hosts.${hostName}.description}).
+
+    ''
+  );
   agentHosts =
     inputs.self.hosts
     |> lib.filterAttrs (_: v: !v.deprecated && v.agent)
@@ -136,7 +151,7 @@ let
         }
         {
           name = "Environment";
-          body = ''
+          body = currentHost + ''
             User is running NixOS, configured by the flake in `/etc/nixos`;
             whenever user refers to "the NixOS configuration", this path is
             implied. Everything is defined there, including your own
