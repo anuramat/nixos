@@ -43,8 +43,6 @@ let
         inputs.self.keys |> lib.mapAttrsToList (_: k: k.knownHostsFile) |> lib.concatStringsSep " "
       }
   '';
-  # the user's https -> ssh rewrite for GitHub, which the sandbox has no key for
-  githubSsh = "${config.home.homeDirectory}/${config.xdg.configFile."git/github-ssh".target}";
 in
 {
   options.agents.sandbox = {
@@ -228,7 +226,7 @@ in
                 ${roDirs} \
                 --tmpfs /etc/ssh \
                 --ro-bind ${sshConfig} /etc/ssh/ssh_config \
-                --ro-bind ${pkgs.emptyFile} ${githubSsh} \
+                --ro-bind ${pkgs.emptyFile} ${config.lib.git.githubSsh} \
                 ${rwDirs} \
                 "''${workspaceDirs[@]}" \
                 \

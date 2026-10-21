@@ -23,11 +23,12 @@
   # NOTE workaround for:
   # (https -> gh credential helper -> pass-secret-service -> pinentry)
   # where pinentry fails over ssh;
-  # in its own file, so that the agent sandboxes, which can't ssh to GitHub,
-  # can hide it
-  xdg.configFile."git/github-ssh".text = lib.generators.toGitINI {
-    url."git@github.com:".insteadOf = "https://github.com/";
-  };
+  # in its own store file, so that the agent sandboxes, which can't ssh to
+  # GitHub, can hide it; not via xdg.configFile, since bwrap can't mount over
+  # a symlink into the store
+  lib.git.githubSsh = pkgs.writeText "github-ssh" (
+    lib.generators.toGitINI { url."git@github.com:".insteadOf = "https://github.com/"; }
+  );
 
   programs = {
     delta = {
@@ -38,7 +39,7 @@
     git = {
       enable = true;
 
-      includes = [ { path = "${config.xdg.configHome}/git/github-ssh"; } ];
+      includes = [ { path = "${config.lib.git.githubSsh}"; } ];
 
       attributes = [
         "flake.lock -diff"
