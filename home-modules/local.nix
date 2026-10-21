@@ -10,7 +10,6 @@
   imports = [ inputs.self.homeModules.todo ];
 
   home.packages = with pkgs; [
-    libusb1 # user-mode USB access lib
     qrcp # share files over qr
     smartmontools # storage
   ];

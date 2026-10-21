@@ -1,7 +1,6 @@
 { pkgs, ... }:
 {
   home.packages = with pkgs; [
-    cudaPackages.cuda_nvcc
     fontpreview
 
     # settings
