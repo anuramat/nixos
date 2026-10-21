@@ -1,5 +1,6 @@
 {
   lib,
+  pkgs,
   ...
 }:
 let
@@ -36,4 +37,6 @@ in
       criticalPowerAction = "Hibernate";
     };
   };
+  # graphs of the battery history upower keeps for the last 7 days
+  environment.systemPackages = [ pkgs.gnome-power-manager ];
 }
