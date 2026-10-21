@@ -128,7 +128,7 @@ in
         disableAutoMode = "disable";
         disableAgentView = true;
         voice = {
-          enabled = true;
+          enabled = false;
           mode = "tap";
         };
         inherit
