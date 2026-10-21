@@ -52,6 +52,7 @@
     inputs.self.nixosModules.laptop
     inputs.nixos-hardware.nixosModules.framework-12-13th-gen-intel
     ./hardware-configuration.nix
+    ./wowlan.nix
   ];
 
   programs.captive-browser.interface = "wlp0s20f3";
