@@ -32,8 +32,11 @@ in
     upower = {
       enable = true; # sleep on low battery
       usePercentageForPolicy = true;
-      percentageCritical = 10;
-      criticalPowerAction = "Hibernate";
+      # upower resets all three levels unless low (20) > critical > action
+      percentageCritical = 18;
+      percentageAction = 15;
+      criticalPowerAction = "Suspend";
+      allowRiskyCriticalPowerAction = true; # upower turns Suspend into HybridSleep otherwise
     };
   };
 }
