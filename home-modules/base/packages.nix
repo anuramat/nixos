@@ -74,7 +74,6 @@
     gsocket # get shit through nat
     httpie # curl++
     inetutils # common network stuff
-    mosh # ssh over unstable connections
     mtr # net diagnostics
     netcat
     prettyping # ping++
