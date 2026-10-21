@@ -75,9 +75,6 @@ in
       '';
     }
   ];
-  environment.systemPackages = with pkgs; [
-    networkmanager-openconnect
-  ];
 
   services.resolved = {
     enable = true;

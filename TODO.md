@@ -177,21 +177,6 @@ Keep the `# auto start on 1st tty` comment and the `niri` script with its TODO c
 
 **Recommendation:** for the chown, (a). Nothing in the repo reads the key as `builder`, and root ownership is exactly what nix-daemon and harmonia's `LoadCredential` need. To verify after a switch: a path built remotely from f12 still carries bgm5's signature (`nix path-info --sigs`), and `systemctl status harmonia` stays healthy. The evidence does not favour either placement option.
 
-### H2. networkmanager-openconnect is installed as a system package but never registered as an NM plugin
-
-**Where:** `nixos-modules/base/net.nix:52-54`, `nixos-modules/base/net.nix:21-23`, `nixos-modules/base/net.nix:25-39`
-
-**Context:**
-
-- `environment.systemPackages = with pkgs; [ networkmanager-openconnect ];` has no effect on NetworkManager. The NixOS networkmanager module creates `/etc/NetworkManager/VPN/<plugin>` and wires up dbus and tmpfiles only for packages listed in `networking.networkmanager.plugins` (nixpkgs `networkmanager.nix:131-139,566`). Upstream removed `enableDefaultPlugins` with the message "Configure the required plugins explicitly in `networking.networkmanager.plugins`".
-- The evaluated `networking.networkmanager.plugins` is `[]`. On anuramat-bgm5, `/etc/NetworkManager/VPN` does not exist. The package's `.name` file (`networkManagerPlugin = "VPN/nm-openconnect-service.name"`) only ends up under `/run/current-system/sw/lib/NetworkManager/VPN`, which NM does not read.
-- History: c08ff430 (2026-06-07 13:27, WIP) added the package. 45 minutes later, b20f5eb8 added the declarative `networking.openconnect.interfaces.uhd` (net.nix:25-39), which is the VPN in use now. The package looks like a leftover from an NM attempt that failed because of this bug.
-
-**Options:**
-
-- **(a)** Keep the NM route: delete net.nix:52-54 and set `networkmanager = { enable = true; plugins = [ pkgs.networkmanager-openconnect ]; };` at net.nix:21-23. -- openconnect VPNs can then be managed through nmcli or the GUI, on every host, because this is the base module. To verify: `nix eval --json .#nixosConfigurations.anuramat-f12.config.environment.etc --apply 'e: builtins.filter (n: builtins.match "NetworkManager/VPN.*" n != null) (builtins.attrNames e)'` lists the openconnect `.name` file, and after a rebuild `nmcli connection add type vpn vpn-type openconnect ...` is accepted.
-- **(b)** Rely only on the systemd openconnect unit: delete net.nix:52-54 and change nothing else. -- Behaviour does not change, since the package does nothing today. NM still cannot manage openconnect VPNs.
-
 ### H3. podman: is `dns_enabled` on the default network still needed?
 
 **Where:** `nixos-modules/local/containers.nix:8-10`
