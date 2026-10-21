@@ -24,7 +24,6 @@
     mitmproxy
     nmap
     openconnect_openssl
-    tshark
 
     # cloud/sync
     firefox-sync-client

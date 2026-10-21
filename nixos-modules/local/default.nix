@@ -13,6 +13,7 @@ in
   imports = [
     ./containers.nix
     ./peripherals.nix
+    ./qrcp.nix
     ./rice.nix
   ];
 
@@ -29,6 +30,7 @@ in
     "camera" # gphoto2
     "scanner"
     "lp" # printers
+    "wireshark" # packet capture
   ];
 
   services.getty = lib.mkIf (config.boot.initrd.luks.devices != { }) {
@@ -65,6 +67,7 @@ in
     gphoto2.enable = true; # camera interface
     obs-studio.enableVirtualCamera = true; # set up the v4l2loopback kernel module, used in home-manager
     gnome-disks.enable = true; # udisks2 frontend
+    wireshark.enable = true; # tshark, with a dumpcap wrapper that can capture
     appimage = {
       enable = true;
       binfmt = true;
