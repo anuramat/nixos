@@ -71,6 +71,7 @@
     inputs.self.nixosModules.base
     ./hardware-configuration.nix
     ./llama.nix
+    ./maintenance.nix
     ./misc.nix
     ./power.nix
 
