@@ -14,7 +14,7 @@ sock = socket.socket(fileno=0)
 
 
 def caller(pid):
-    # the argv0 that sandbox.nix gives bwrap, see fleet-status
+    # the argv0 that sandbox.nix gives bwrap, see the fleet monitor
     while pid:
         with open(f"/proc/{pid}/cmdline", "rb") as f:
             argv0 = f.read().split(b"\0")[0].decode()

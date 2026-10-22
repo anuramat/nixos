@@ -114,7 +114,7 @@ adding, removing, or renaming a direct child is an API change for this flake:
     `sharedDir`), for sandboxed agents: created by
     `nixos-modules/base/agent.nix`, used by
     `home-modules/heavy-linux/agents/{sandbox,job,instructions}.nix` and
-    `home-modules/heavy-linux/desktop/noctalia/fleet-monitor/fleet-status.nix`.
+    `home-modules/heavy-linux/desktop/noctalia/fleet-monitor/probe.nix`.
     `builder` (`username`), for remote builds: created by
     `nixos-modules/base/builder.nix`, used by `nixos-modules/base/nix.nix` and
     `home-modules/base/bin/` (`nix-cache-keygen`).

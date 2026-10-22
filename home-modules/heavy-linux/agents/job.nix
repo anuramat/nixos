@@ -1,10 +1,10 @@
 # long-running jobs, run as the agent user under `systemd-run --user`, so they
-# outlive sandboxed sessions and show up in fleet-status; every command runs on
+# outlive sandboxed sessions and show up in the fleet monitor; every command runs on
 # the job's host over ssh, even when it's this one; the job's dir
 # /home/agent/shared/jobs/NAME on HOST is staged by the caller (e.g. `rsync ...
 # HOST:DIR`) or created by `job run`, then used as the working dir and for
 # `log` and `result`, plus `desc` and `eta` (seconds since the epoch), shown by
-# fleet-status
+# the fleet monitor
 { pkgs, inputs, ... }:
 let
   inherit (inputs.self.consts.agent) username sharedDir;

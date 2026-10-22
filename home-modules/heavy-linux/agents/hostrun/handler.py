@@ -24,7 +24,7 @@ prompts = []  # every one started, to withdraw them at the end
 
 
 def ask(h, request):
-    # like fleet-status: this host directly, the others over ssh, which drops a
+    # like fleet-probe: this host directly, the others over ssh, which drops a
     # host after 90s of silence; the description, for the notification, and the
     # request, for the review, each end with a NUL, then stdin carries
     # heartbeats, and closing it withdraws the prompt

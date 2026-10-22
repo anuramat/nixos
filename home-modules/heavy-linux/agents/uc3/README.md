@@ -85,9 +85,9 @@ caller's stdio.
 full hour was missed), which fetches `sinfo_t_idle`, a `---` line, and
 `squeue --me` through `uc3ctl` into `~/.local/state/uc3/status`. The file is
 replaced only on success; the last run's stderr is in `status.err`, empty after
-a success. The noctalia fleet monitor follows both files and starts the service
-on click; from a terminal, `cat` the file, or `systemctl --user start
-uc3-status` to refresh it first.
+a success. The fleet monitor follows both files and starts the service on
+refresh: `fleet` prints its uc3 section, and `fleet refresh uc3` fetches it
+first.
 
 ## Trust model
 

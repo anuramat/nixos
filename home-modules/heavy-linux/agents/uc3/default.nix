@@ -44,7 +44,7 @@ let
   ];
 in
 {
-  # for the noctalia fleet monitor plugin, which follows uc3-status.service's
+  # for the fleet monitor, which follows uc3-status.service's
   # snapshot there
   lib.uc3.stateDir = "${config.xdg.stateHome}/uc3";
 

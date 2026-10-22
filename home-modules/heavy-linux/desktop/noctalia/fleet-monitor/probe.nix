@@ -1,13 +1,11 @@
 # list the units running under the agent user's systemd (`systemd-run --user`
 # jobs, scopes, custom slices; agent hosts only), the current user's sandboxed
-# agent sessions and live zellij sessions on the given hosts (default: all
-# hosts), as
-# `HOST<TAB>job<TAB>UNIT<TAB>ELAPSED<TAB>ETA<TAB>DESC` (ETA and DESC are set by
+# agent sessions and live zellij sessions on the given host, as
+# `job<TAB>UNIT<TAB>ELAPSED<TAB>ETA<TAB>DESC` (ETA and DESC are set by
 # `job run`, see agents/job.nix; empty for other units and jobs without them),
-# `HOST<TAB>session<TAB>WRAPPER<TAB>CWD`,
-# `HOST<TAB>zellij<TAB>SESSION<TAB>CLIENTS`, plus the bgm5powerctl
-# profile (bgm5 only) as `HOST<TAB>power<TAB>MODE` and the battery charge
-# (laptops only) as `HOST<TAB>battery<TAB>PERCENT`; units are read from the
+# `session<TAB>WRAPPER<TAB>CWD`, `zellij<TAB>SESSION<TAB>CLIENTS`, plus the
+# bgm5powerctl profile (bgm5 only) as `power<TAB>MODE` and the battery charge
+# (laptops only) as `battery<TAB>PERCENT`; units are read from the
 # world-readable cgroupfs, so it needs neither the agent's user bus nor its ssh
 # key; the current host is queried directly instead of over ssh
 {
@@ -17,7 +15,7 @@
 }:
 let
   hosts = inputs.self.hosts |> lib.filterAttrs (_: h: !h.deprecated) |> lib.attrNames;
-  remote = pkgs.writeText "fleet-status-remote" ''
+  remote = pkgs.writeText "fleet-probe-remote" ''
     # jobs exist only on agent hosts, the only ones with an agent user
     if u=$(id -u ${inputs.self.consts.agent.username} 2>/dev/null); then
       # every cgroup with processes, minus the manager itself and its dbus
@@ -54,32 +52,18 @@ let
   '';
 in
 pkgs.writeShellApplication {
-  name = "fleet-status";
+  name = "fleet-probe";
   runtimeInputs = with pkgs; [
     bash
     coreutils
     findutils
     gnugrep
-    gnused
     openssh
     procps
   ];
   text = ''
-    hosts=("$@")
-    [ $# -gt 0 ] || hosts=(${lib.escapeShellArgs hosts})
-    rc=0
-    for h in "''${hosts[@]}"; do
-      run=(ssh -o BatchMode=yes -o ConnectTimeout=5 "$h" bash -s)
-      [ "$h" != "$HOSTNAME" ] || run=(bash)
-      out=$("''${run[@]}" < ${remote}) || {
-        echo "$h: unreachable" >&2
-        rc=1
-        continue
-      }
-      [ -z "$out" ] || printf '%s\n' "$out" | sed "s/^/$h\t/"
-    done
-    exit $rc
+    [ "$1" != "$HOSTNAME" ] || exec bash <${remote}
+    exec ssh -o BatchMode=yes -o ConnectTimeout=5 "$1" bash -s <${remote}
   '';
-  # for the noctalia fleet monitor plugin
   passthru = { inherit hosts; };
 }

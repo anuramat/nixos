@@ -1,8 +1,11 @@
--- desktop widget: renders the `sections` state published by service.luau; click a section to hide or show its rows,
--- right-click it to refresh it
+-- desktop widget: renders the sections of `fleet --json` (see default.nix), rerun every few seconds; click a section to
+-- hide or show its rows, right-click it to refresh it
 local FONT_SIZE = noctalia.getConfig("font_size")
 -- sizes below are given for noctalia's default 14px font and scale with FONT_SIZE
 local SCALE = FONT_SIZE / 14
+local FLEET, LOCAL_HOST = "@fleet@", "@localHost@"
+-- in ms; it probes the current host, and reads the cached rest
+local INTERVAL = 5000
 
 -- 3723 -> 1h2m3s
 local function duration(s)
@@ -28,115 +31,96 @@ local function indented(children)
   return ui.row({ align = "start" }, { ui.box({ width = 16 * SCALE }), ui.column({ gap = 4 * SCALE }, children) })
 end
 
--- name, elapsed time, the time left until the ETA or how long it's overdue, if set, and the description
-local function jobRow(job, now)
-  local cells = { label(job.unit, "on_surface"), label(duration(job.t), "outline") }
-  if job.eta then
-    local left = job.eta - now
-    table.insert(cells, left >= 0 and label("~" .. eta(left), "outline") or label("+" .. eta(-left), "error"))
+-- the time since, or the time left until (or how long it's overdue), or text, clipped to about `clip` characters
+local function cell(c, now)
+  if c.since then return label(duration(now - c.since), "outline") end
+  if c["until"] then
+    local left = c["until"] - now
+    return left >= 0 and label(eta(left), "outline") or label("+" .. eta(-left), "error")
   end
-  table.insert(cells, label(job.desc, "on_surface_variant", { maxWidth = 400 * SCALE, maxLines = 1 }))
-  return ui.row({ gap = 8 * SCALE, key = job.unit }, cells)
+  return label(c.text, c.style or "on_surface", c.clip and { maxWidth = c.clip * 8 * SCALE, maxLines = 1 })
 end
 
-local function hostRows(h)
-  local rows, now = {}, noctalia.nowMs() // 1000
-  for _, job in h.jobs do table.insert(rows, jobRow(job, now)) end
-  for _, line in h.sessions do table.insert(rows, label(line, "outline")) end
-  return rows
+local function cells(node, now)
+  local t = {}
+  for _, c in node.cells or {} do table.insert(t, cell(c, now)) end
+  return t
 end
 
-local function uc3Rows(h)
-  local rows = {}
-  for _, j in h.jobs do
-    table.insert(rows, ui.row({ gap = 8 * SCALE, key = j.id }, {
-      label(j.id, "on_surface"),
-      label(j.name, "on_surface", { maxWidth = 160 * SCALE, maxLines = 1 }),
-      label(j.part, "on_surface_variant"),
-      label(j.state, j.state == "RUNNING" and "primary" or "outline"),
-      label(j.t, "outline"),
-      label(j.reason, "on_surface_variant", { maxWidth = 200 * SCALE, maxLines = 1 }),
-    }))
+-- a row per child, followed by its own children, indented
+local function rows(node, now)
+  local t = {}
+  for _, c in node.children or {} do
+    local row = ui.row({ gap = 8 * SCALE }, cells(c, now))
+    table.insert(t, c.children and #c.children > 0
+      and ui.column({ gap = 4 * SCALE }, { row, indented(rows(c, now)) }) or row)
   end
-  for _, line in h.idle do table.insert(rows, label(line, "outline")) end
-  return rows
+  return t
 end
 
--- a rate limit window's remaining percentage, and the time left until it resets
-local function limit(w, now)
-  return ui.row({ gap = 8 * SCALE }, {
-    label(`{w.name}: {w.left}%`, "on_surface_variant"),
-    w.resets and label(eta(w.resets - now), "outline") or nil,
-  })
-end
+local sections, due, fetching = {}, 0, false
 
--- a row per provider, followed by its limits, or with several of them, by an indented line for each
-local function tokenRows(h)
-  local rows, now = {}, noctalia.nowMs() // 1000
-  for _, p in h.providers do
-    local name, limits = label(p.name, "on_surface"), {}
-    for _, w in p.windows do table.insert(limits, limit(w, now)) end
-    table.insert(rows, #limits > 1 and ui.column({ gap = 4 * SCALE, key = p.name }, { name, indented(limits) })
-      or ui.row({ gap = 8 * SCALE, key = p.name }, { name, limits[1] }))
-  end
-  return rows
+local function fetch()
+  due, fetching = noctalia.nowMs() + INTERVAL, true
+  noctalia.runAsync(FLEET .. " --json", function(r)
+    fetching = false
+    sections = noctalia.json.decode(r.stdout) or sections
+    update()
+  end, INTERVAL)
 end
-
-local rows = { host = hostRows, uc3 = uc3Rows, tokens = tokenRows }
 
 -- names of the sections whose rows are hidden, as a set shared by every widget instance
 local hidden = noctalia.state.get("hidden") or {}
+-- names of the sections being refreshed
+local busy = {}
 
-local function section(h)
-  local header = { label(h.name, "primary", { fontWeight = "semibold" }) }
-  if h.power == "quiet" then table.insert(header, label("quiet", "outline")) end
-  if h.battery then table.insert(header, label(h.battery .. "%", "outline")) end
-  if h.err then table.insert(header, label(h.err, "error", { maxWidth = 400 * SCALE, maxLines = 1 })) end
-  if h.zellij then table.insert(header, label(h.zellij, "on_surface_variant")) end
+local function section(s, now)
+  local header = cells(s, now)
+  table.insert(header, 1, label(s.name, "primary", { fontWeight = "semibold" }))
+  if s.err then table.insert(header, label(s.err, "error", { maxWidth = 400 * SCALE, maxLines = 1 })) end
   local onRightClick
-  -- the local host is polled often, so it needs neither a refresh time nor right-clicks
-  if not h.isLocal then
-    -- only right-clicks get "updating...", so frequent polling doesn't flicker
-    if h.busy and h.clicked then
+  -- the local host is probed on every fetch, so it needs neither a refresh time nor right-clicks
+  if s.name ~= LOCAL_HOST then
+    if busy[s.name] then
       table.insert(header, label("updating...", "outline"))
-    elseif h.at then
-      table.insert(header, label(duration((noctalia.nowMs() - h.at) // 1000), "outline"))
+    elseif s.at then
+      table.insert(header, label(duration(now - s.at), "outline"))
     end
     function onRightClick()
-      noctalia.state.set("refresh", h.name)
+      busy[s.name] = true
+      noctalia.runAsync(`{FLEET} refresh {s.name}`, function()
+        busy[s.name] = nil
+        fetch()
+      end, 60000)
+      update()
     end
   end
   local function onClick()
     local t = table.clone(hidden)
-    t[h.name] = not t[h.name] or nil
+    t[s.name] = not t[s.name] or nil
     noctalia.state.set("hidden", t)
   end
   -- a gutter marks hidden rows with a `+`, transparent otherwise, so that hiding them doesn't shift the section
-  return ui.row({ gap = 8 * SCALE, align = "start", key = h.name, onClick = onClick, onRightClick = onRightClick }, {
-    label("+", "outline", { opacity = hidden[h.name] and 1 or 0 }),
+  return ui.row({ gap = 8 * SCALE, align = "start", key = s.name, onClick = onClick, onRightClick = onRightClick }, {
+    label("+", "outline", { opacity = hidden[s.name] and 1 or 0 }),
     ui.column({ gap = 4 * SCALE }, {
       ui.row({ gap = 8 * SCALE }, header),
-      not hidden[h.name] and indented(rows[h.kind](h)) or nil,
+      not hidden[s.name] and indented(rows(s, now)) or nil,
     }),
   })
 end
 
-local sections = noctalia.state.get("sections") or {}
-
--- called every second (the desktop widget default), which keeps the refresh times current
+-- called every second (the desktop widget default), which keeps the times current
 function update()
-  local children = {}
-  for _, h in sections do table.insert(children, section(h)) end
+  if not fetching and noctalia.nowMs() >= due then fetch() end
+  local children, now = {}, noctalia.nowMs() // 1000
+  for _, s in sections do table.insert(children, section(s, now)) end
   -- a scroll view only sizes right when its parent hands it an exact size, so the card has a fixed one, filled by it
   desktopWidget.render(ui.column({ padding = 12 * SCALE, radius = 12 * SCALE, fill = "surface/0.8",
     width = noctalia.getConfig("width"), height = noctalia.getConfig("height") },
     { ui.scroll({ gap = 12 * SCALE, flexGrow = 1 }, children) }))
 end
 
-noctalia.state.watch("sections", function(s)
-  sections = s
-  update()
-end)
 noctalia.state.watch("hidden", function(s)
   hidden = s
   update()
