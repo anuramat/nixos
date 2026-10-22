@@ -12,6 +12,8 @@
     ./terminals.nix
   ];
 
+  programs.ripgrep-all.enable = true;
+
   home = {
     activation = {
       exercismConfig = config.lib.home.json.set {

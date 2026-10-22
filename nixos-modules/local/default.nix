@@ -17,6 +17,11 @@ in
     ./rice.nix
   ];
 
+  hardware = {
+    enableAllFirmware = true; # as in "regardless of license"; implies redistributable
+    enableAllHardware = true;
+  };
+
   virtualisation = {
     waydroid = {
       enable = true;

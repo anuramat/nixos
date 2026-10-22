@@ -2,6 +2,7 @@
 {
   home.packages = with pkgs; [
     fontpreview
+    percollate # html to markdown
 
     # settings
     ddcutil # configure external monitors (eg brightness)

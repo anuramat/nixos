@@ -38,10 +38,6 @@
   time.timeZone = inputs.self.consts.user.timeZone;
   # `nixos-version --configuration-revision`
   system.configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
-  hardware = {
-    enableAllFirmware = true; # as in "regardless of license"; implies redistributable
-    enableAllHardware = true;
-  };
   # udev autoloads it next to `button` (same ACPI id); it powers off by
   # signalling init on every power key press, bypassing logind
   boot.blacklistedKernelModules = [ "tiny_power_button" ];

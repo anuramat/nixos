@@ -142,10 +142,6 @@ in
         ++ (map mkGlob (ignores ++ rgIgnores));
     };
 
-    ripgrep-all = {
-      enable = true;
-    };
-
     fzf = {
       enable = true;
       # the image protocol is queried at launch, since fzf owns the tty while previewing;

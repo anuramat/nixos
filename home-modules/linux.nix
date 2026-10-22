@@ -13,7 +13,6 @@
 
     btrfs-progs
     cryptsetup # luks etc
-    percollate # html to markdown
 
     parted
     subcat
