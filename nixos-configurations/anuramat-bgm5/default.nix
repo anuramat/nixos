@@ -28,7 +28,6 @@
         # edge 84px above the screen's
         login = {
           output = "DP-3";
-          cx = 1280;
           cy = 1321;
         };
       };

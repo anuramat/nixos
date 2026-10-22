@@ -1,0 +1,26 @@
+Center the lockscreen login box horizontally, ignoring its cx.
+
+Widget positions are absolute logical px, so a fixed cx is only centered at
+one logical width: rotating the output or changing its scale moves the box
+off center. Only cy is taken from the config.
+
+diff --git a/src/shell/lockscreen/lock_surface.cpp b/src/shell/lockscreen/lock_surface.cpp
+index 0ecb116..9731dcc 100644
+--- a/src/shell/lockscreen/lock_surface.cpp
++++ b/src/shell/lockscreen/lock_surface.cpp
+@@ -942,12 +942,13 @@ void LockSurface::layoutScene(std::uint32_t width, std::uint32_t height) {
+     if (const DesktopWidgetState* loginBox =
+             lockscreen_login_box::findForOutput(m_config->config().lockscreenWidgets.widgets, m_outputKey);
+         loginBox != nullptr) {
+-      float cx = loginBox->cx;
+       float cy = loginBox->cy;
+       // Fit height to visible chrome so disabling media/weather/sessions does not leave empty panel space.
+       panelHeight = lockscreen_login_box::defaultPanelHeight(loginStyle.layout, showSession, showInfoConfigured);
+       panelWidth = lockscreen_login_box::resolvePanelWidth(sw, loginBox->boxWidth, loginStyle.layout);
+-      panelX = cx - panelWidth * 0.5F;
++      // Centered horizontally: a fixed cx drifts off center when the output's
++      // logical width changes with its scale or rotation.
++      panelX = std::round((sw - panelWidth) * 0.5F);
+       panelY = cy - panelHeight * 0.5F;
+     }
+   }

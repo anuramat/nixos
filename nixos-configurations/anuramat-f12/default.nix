@@ -34,7 +34,6 @@
           # 380px, so the ~70px box ends ~45px above it
           login = {
             output = "eDP-1";
-            cx = 960;
             cy = 500;
           };
         };
