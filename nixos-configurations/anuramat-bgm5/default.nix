@@ -97,10 +97,21 @@
       in
       {
         inherit (pkgs)
-          ec-su-axb35
           ec-su-axb35-monitor
           strix-halo-mes-firmware
           ;
+        # NOTE upstream builds the module with pkgs.stdenv instead of
+        # kernel.stdenv, which breaks once the kernel's compiler differs (e.g.
+        # GCC 16 kernel from unstable-slow); drop when fixed upstream
+        ec-su-axb35 =
+          { kernel }:
+          (prev.callPackage "${inputs.nix-strix-halo}/pkgs/ec-su-axb35.nix" {
+            pkgs = final // {
+              inherit (kernel) stdenv;
+            };
+            ec-su-axb35-src = inputs.nix-strix-halo.inputs.ec-su-axb35;
+          }).kernelModule
+            { inherit kernel; };
       }
     )
   ];
