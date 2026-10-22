@@ -149,7 +149,7 @@ in
         Service.ExecStart =
           let
             # the desktop layout, without the F-key row, Compose, Caps Lock,
-            # AltGr, right Ctrl and the layer switch
+            # AltGr, right Ctrl and right Shift, and the layer switch
             wvkbd = pkgs.wvkbd.overrideAttrs (o: {
               patches = (o.patches or [ ]) ++ [ ./wvkbd-layout.patch ];
               makeFlags = [ "LAYOUT=deskintl" ];
