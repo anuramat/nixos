@@ -218,6 +218,7 @@ lib.composeManyExtensions [
   inputs.self.overlays.proton-drive-cli
   inputs.self.overlays.tamron-lens-control
   inputs.self.overlays.vim-plugins
+  inputs.self.overlays.wvkbd
   inputs.neovim-nightly-overlay.overlays.default
   inputs.oh-my-pi.overlays.default
 ]

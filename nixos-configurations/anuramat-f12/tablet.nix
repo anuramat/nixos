@@ -132,16 +132,7 @@ in
           Description = "On-screen keyboard";
           PartOf = [ "tablet-mode.service" ];
         };
-        Service.ExecStart =
-          let
-            # the desktop layout, without the F-key row, Compose, Caps Lock,
-            # AltGr, right Ctrl and right Shift, and the layer switch
-            wvkbd = pkgs.wvkbd.overrideAttrs (o: {
-              patches = (o.patches or [ ]) ++ [ ./wvkbd-layout.patch ];
-              makeFlags = [ "LAYOUT=deskintl" ];
-            });
-          in
-          "${wvkbd}/bin/wvkbd-deskintl --hidden -H 450 -L 380 -l full --landscape-layers full";
+        Service.ExecStart = "${pkgs.wvkbd}/bin/wvkbd-deskintl --hidden -H 450 -L 380 -l full --landscape-layers full";
       };
     };
 }
