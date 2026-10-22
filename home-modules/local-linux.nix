@@ -15,7 +15,6 @@
     usbutils
 
     # wifi
-    geteduroam-cli
     wavemon # wifi signal plot
     wirelesstools # iwconfig etc
   ];
