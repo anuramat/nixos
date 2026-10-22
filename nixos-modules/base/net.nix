@@ -70,7 +70,7 @@ in
         read -r _ _ gw _ < <(${ip} route show default dev "$1") || exit 0
         systemctl=${lib.getExe' config.systemd.package "systemctl"}
         case $gw in
-        147.142.*) $systemctl stop openconnect-uhd ;;
+        129.206.* | 147.142.*) $systemctl stop openconnect-uhd ;;
         *) $systemctl kill -s USR2 --kill-whom=main openconnect-uhd || $systemctl start openconnect-uhd ;;
         esac
       '';
