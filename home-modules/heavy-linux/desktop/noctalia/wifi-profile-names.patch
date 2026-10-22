@@ -1,3 +1,12 @@
+Label wifi networks with their saved NetworkManager profile's name.
+
+The bar widget, the control center's network tab and its shortcut showed the
+SSID, so a network couldn't be given a readable name. The saved-connections
+scan now keeps each SSID's profile name, from the profile NM prefers to
+autoconnect when several share an SSID, and access points and the network
+state carry it as `name`; `displayName()` falls back to the SSID for networks
+without a saved profile. Renaming the profile with `nmcli` renames the network.
+
 diff -ruN a/src/dbus/network/network_manager_service.cpp b/src/dbus/network/network_manager_service.cpp
 --- a/src/dbus/network/network_manager_service.cpp
 +++ b/src/dbus/network/network_manager_service.cpp
