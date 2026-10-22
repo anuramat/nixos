@@ -17,7 +17,11 @@ let
     |> lib.filterAttrs (n: _: strings.hasSuffix ".desktop" n)
     |> builtins.attrNames
     |> builtins.concatMap (
-      n: dir + "/" + n |> builtins.readFile |> builtins.unsafeDiscardStringContext |> splitString "\n"
+      n:
+      dir + "/" + n
+      |> builtins.readFile
+      |> builtins.unsafeDiscardStringContext
+      |> splitString "\n"
     )
     |> filter (strings.hasPrefix "MimeType=")
     |> builtins.concatMap (l: l |> strings.removePrefix "MimeType=" |> splitString ";")

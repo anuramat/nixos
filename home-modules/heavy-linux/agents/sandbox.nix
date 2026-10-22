@@ -32,7 +32,11 @@ let
     in
     paths |> concatMap argsSingle |> escapeShellArgs;
 
-  relaySockets = config.agents.relays |> lib.attrNames |> map (n: "${n}.sock") |> escapeShellArgs;
+  relaySockets =
+    config.agents.relays
+    |> lib.attrNames
+    |> map (n: "${n}.sock")
+    |> escapeShellArgs;
 
   sshConfig = pkgs.writeText "ssh_config" ''
     Host *

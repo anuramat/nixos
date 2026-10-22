@@ -166,7 +166,13 @@ flake-parts.lib.mkFlake { inherit inputs; } {
             builtins.readFile (keyDir + /known_hosts)
             |> lib.splitString "\n"
             |> lib.filter (v: v != "")
-            |> map (v: v |> lib.splitString " " |> lib.drop 1 |> lib.concatStringsSep " ");
+            |> map (
+              v:
+              v
+              |> lib.splitString " "
+              |> lib.drop 1
+              |> lib.concatStringsSep " "
+            );
         }
       ) ./nixos-configurations;
     # }}}1
