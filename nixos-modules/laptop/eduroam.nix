@@ -1,6 +1,6 @@
 # eduroam with the university account; the RADIUS server is pinned to its
 # name and Telekom's root CA, so a rogue AP can't collect the password
-{ config, ... }:
+{ config, lib, ... }:
 let
   id = "eduroam";
 in
@@ -21,16 +21,15 @@ in
         anonymous-identity = "eduroamHDcat2024@uni-heidelberg.de";
         ca-cert = "${./t-telesec-globalroot-class2.pem}";
         altsubject-matches = "DNS:radius-node1.urz.uni-heidelberg.de";
-        password-flags = 1; # agent-owned: served from the file below
+        # stored in the profile: NM asks a secret agent only if it belongs to
+        # the user who started the activation, so a root agent like
+        # nm-file-secret-agent never answers when the user picks the network
+        password = "$HDPW";
       };
     };
-    secrets.entries = [
-      {
-        matchId = id;
-        matchSetting = "802-1x";
-        key = "password";
-        file = config.age.secrets.hdpw.path;
-      }
-    ];
   };
+  # substituted by envsubst in the script
+  systemd.services.NetworkManager-ensure-profiles.script = lib.mkBefore ''
+    export HDPW=$(< ${config.age.secrets.hdpw.path})
+  '';
 }
