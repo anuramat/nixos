@@ -39,7 +39,8 @@ in
       # the gateway is gone, so the reconnect would go into the tunnel itself
       script = "${pkgs.writeShellScript "vpn-slice-uhd" ''
         if [ "$reason" = attempt-reconnect ]; then
-          read -r _ _ gw _ dev _ < <(${ip} route show default)
+          # no uplink yet: nothing to route around
+          read -r _ _ gw _ dev _ < <(${ip} route show default) || exit 0
           exec ${ip} route replace "$VPNGATEWAY" via "$gw" dev "$dev"
         fi
         exec ${lib.getExe pkgs.vpn-slice} --no-host-names --no-ns-hosts bwunicluster.scc.kit.edu 129.206.0.0/16 147.142.0.0/16
