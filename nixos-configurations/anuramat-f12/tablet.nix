@@ -5,6 +5,7 @@
 # toggles the EC's tablet mode detection off ("laptop") and back on ("auto"),
 # since "auto" sometimes leaves the keyboard disabled
 {
+  config,
   inputs,
   pkgs,
   lib,
@@ -13,6 +14,7 @@
 let
   inherit (inputs.self.consts.user) username;
   output = "eDP-1";
+  sudo = "${config.security.wrapperDir}/sudo";
   # the EC override can't be read back, so the state lives in /run
   # TODO if a firmware update (past BIOS 03.04) doesn't fix the stuck keyboard:
   # the keyboard block lives in the EC, independent of the SW_TABLET_MODE gpio
@@ -86,7 +88,7 @@ in
           # also on the lock screen, where a disabled keyboard can't type the password
           binds."XF86PowerOff" = {
             allow-when-locked = true;
-            action.spawn-sh = ''notify-send "Tablet mode" "$(sudo ${toggle})"'';
+            action.spawn-sh = ''${lib.getExe' pkgs.libnotify "notify-send"} "Tablet mode" "$(${sudo} ${toggle})"'';
           };
           switch-events = {
             tablet-mode-on.action.spawn = [
