@@ -8,11 +8,11 @@
     children: (
       [$s.tail | split("\n")[] | split("|") | select(length == 7) | {cells: [
         {text: .[0]},
-        {text: .[6], clip: 20},
+        {text: .[6], width: 20},
         {text: .[1], style: "on_surface_variant"},
         {text: .[2], style: (if .[2] == "RUNNING" then "primary" else "outline" end)},
         {text: "\(.[3])/\(.[4])", style: "outline"},
-        {text: .[5], style: "on_surface_variant", clip: 25}
+        {text: .[5], style: "on_surface_variant", width: 25}
       ]}]
       + [$s.head | capture("Partition\\s+(?<p>\\S+)\\s*:\\s*(?<n>\\d+) nodes idle"; "g")
         | select(.n != "0" and (.p | contains("gpu")))

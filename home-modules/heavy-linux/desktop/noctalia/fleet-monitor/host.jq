@@ -29,7 +29,7 @@ def etime:
         {text: (.[0] | sub("^job-"; "") | sub("\\.service$"; ""))},
         {since: ($now - (.[1] | etime))},
         (.[2] | select(. != "") | {until: tonumber}),
-        (.[3] | select(. != "") | {text: ., style: "on_surface_variant", clip: 50})
+        (.[3] | select(. != "") | {text: ., style: "on_surface_variant", width: 50})
       ]}]
       + ([kind("session") | {name: .[0], project: (.[1] | sub("/+$"; "") | sub(".*/"; ""))}]
         | group_by(.project)

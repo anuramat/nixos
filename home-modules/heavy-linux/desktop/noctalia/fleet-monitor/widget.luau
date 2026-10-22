@@ -31,14 +31,14 @@ local function indented(children)
   return ui.row({ align = "start" }, { ui.box({ width = 16 * SCALE }), ui.column({ gap = 4 * SCALE }, children) })
 end
 
--- the time since, or the time left until (or how long it's overdue), or text, clipped to about `clip` characters
+-- the time since, or the time left until (or how long it's overdue), or text, wrapped at about `width` characters
 local function cell(c, now)
   if c.since then return label(duration(now - c.since), "outline") end
   if c["until"] then
     local left = c["until"] - now
     return left >= 0 and label(eta(left), "outline") or label("+" .. eta(-left), "error")
   end
-  return label(c.text, c.style or "on_surface", c.clip and { maxWidth = c.clip * 8 * SCALE, maxLines = 1 })
+  return label(c.text, c.style or "on_surface", c.width and { maxWidth = c.width * 8 * SCALE })
 end
 
 local function cells(node, now)
@@ -51,7 +51,7 @@ end
 local function rows(node, now)
   local t = {}
   for _, c in node.children or {} do
-    local row = ui.row({ gap = 8 * SCALE }, cells(c, now))
+    local row = ui.row({ gap = 8 * SCALE, align = "start" }, cells(c, now))
     table.insert(t, c.children and #c.children > 0
       and ui.column({ gap = 4 * SCALE }, { row, indented(rows(c, now)) }) or row)
   end
@@ -77,7 +77,7 @@ local busy = {}
 local function section(s, now)
   local header = cells(s, now)
   table.insert(header, 1, label(s.name, "primary", { fontWeight = "semibold" }))
-  if s.err then table.insert(header, label(s.err, "error", { maxWidth = 400 * SCALE, maxLines = 1 })) end
+  if s.err then table.insert(header, label(s.err, "error", { maxWidth = 400 * SCALE })) end
   local onRightClick
   -- the local host is probed on every fetch, so it needs neither a refresh time nor right-clicks
   if s.name ~= LOCAL_HOST then
@@ -104,7 +104,7 @@ local function section(s, now)
   return ui.row({ gap = 8 * SCALE, align = "start", key = s.name, onClick = onClick, onRightClick = onRightClick }, {
     label("+", "outline", { opacity = hidden[s.name] and 1 or 0 }),
     ui.column({ gap = 4 * SCALE }, {
-      ui.row({ gap = 8 * SCALE }, header),
+      ui.row({ gap = 8 * SCALE, align = "start" }, header),
       not hidden[s.name] and indented(rows(s, now)) or nil,
     }),
   })

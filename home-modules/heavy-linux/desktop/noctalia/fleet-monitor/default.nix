@@ -5,11 +5,12 @@
 # with `name`, `at` (seconds since the epoch of the last successful fetch) and
 # `err` (the last fetch's error):
 #   NODE = { cells: [CELL], children: [NODE] }
-#   CELL = { text, style?, clip? } | { since } | { until }
+#   CELL = { text, style?, width? } | { since } | { until }
 # a section's cells go to its header, after its name, and each child is a row,
 # followed by its own children, indented; `style` is a noctalia color role
-# (default on_surface), `clip` the length in characters to clip `text` to,
-# `since` and `until` are seconds since the epoch, rendered relative to now
+# (default on_surface), `width` the length in characters that the widget
+# wraps `text` at, and `fleet` clips it to, `since` and `until` are seconds
+# since the epoch, rendered relative to now
 {
   lib,
   config,

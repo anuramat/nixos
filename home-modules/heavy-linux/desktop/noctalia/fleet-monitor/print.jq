@@ -23,7 +23,7 @@ def cell:
     | if $left >= 0 then $left | eta | paint("outline") else "+\(-$left | eta)" | paint("error") end
   else
     . as $c
-    | .text | (if $c.clip and length > $c.clip then .[:$c.clip - 3] + "..." else . end)
+    | .text | (if $c.width and length > $c.width then .[:$c.width - 3] + "..." else . end)
     | paint($c.style)
   end;
 
