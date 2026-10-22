@@ -78,14 +78,19 @@ in
             ];
         });
         # 3 fingers drag the view and the workspaces; the patch's defaults also
-        # bind a 3-finger tap to maximize-column and let 4-finger vertical
-        # swipes drive the workspaces
+        # bind a 3-finger tap to maximize-column. 4-finger flicks and taps fire
+        # once, on lift
         extraConfig = ''
           layer-rule {
               match namespace="^wvkbd$"
               above-lock true
           }
           gestures {
+              touchscreen-swipe {
+                  tap-more { fullscreen-window; }
+                  swipe-more-down { spawn "${lib.getExe config.programs.noctalia.package}" "msg" "panel-toggle" "launcher"; }
+                  swipe-more-up { close-window; }
+              }
               touchscreen-edge-swipe {
                   top { toggle-overview; }
                   bottom allow-when-locked=true { spawn "${pkgs.systemd}/bin/systemctl" "--user" "kill" "-s" "RTMIN" "wvkbd"; }
