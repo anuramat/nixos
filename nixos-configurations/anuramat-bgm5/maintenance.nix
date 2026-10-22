@@ -32,10 +32,4 @@ in
     };
   };
   systemd.timers.nixpkgs-bump.timerConfig.Persistent = true;
-
-  nix.gc = {
-    automatic = true;
-    dates = "Sun 04:00";
-    options = "--delete-older-than 30d";
-  };
 }

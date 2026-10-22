@@ -61,6 +61,12 @@ in
       ++ config.lib.hosts.trusted-public-keys;
     };
 
+    gc = {
+      automatic = true;
+      dates = "Fri 23:00";
+      options = "--delete-older-than 30d";
+    };
+
     buildMachines = lib.mapAttrsToList (n: v: {
       # sshKey/sshUser are ignored (NixOS/nix#3423); see README.md "Problems"
       # TODO speedFactor, maxJobs
@@ -71,6 +77,8 @@ in
       protocol = "ssh-ng";
     }) config.lib.hosts.builders;
   };
+  # a run missed while asleep fires on resume; skip it on battery instead
+  systemd.services.nix-gc.unitConfig.ConditionACPower = true;
   services.harmonia.cache = {
     enable = true;
     signKeyPaths = [ config.nix.settings.secret-key-files ];
