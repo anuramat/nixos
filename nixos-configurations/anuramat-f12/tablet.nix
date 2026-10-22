@@ -143,9 +143,15 @@ in
         };
         Service.ExecStart =
           let
+            # the desktop layout, without the F-key row, Compose, AltGr and
+            # right Ctrl
+            wvkbd = pkgs.wvkbd.overrideAttrs (o: {
+              patches = (o.patches or [ ]) ++ [ ./wvkbd-layout.patch ];
+              makeFlags = [ "LAYOUT=deskintl" ];
+            });
             layers = "full,special";
           in
-          "${pkgs.wvkbd}/bin/wvkbd-mobintl --hidden -H 450 -L 380 -l ${layers} --landscape-layers ${layers}";
+          "${wvkbd}/bin/wvkbd-deskintl --hidden -H 450 -L 380 -l ${layers} --landscape-layers ${layers}";
       };
     };
 }
