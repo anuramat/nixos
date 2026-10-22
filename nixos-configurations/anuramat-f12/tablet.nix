@@ -14,6 +14,11 @@ let
   inherit (inputs.self.consts.user) username;
   output = "eDP-1";
   # the EC override can't be read back, so the state lives in /run
+  # TODO if a firmware update (past BIOS 03.04) doesn't fix the stuck keyboard:
+  # the keyboard block lives in the EC, independent of the SW_TABLET_MODE gpio
+  # that drives tablet-mode.service, so an untested automatic fix is pulsing
+  # `--tablet-mode laptop` then `auto` from the service's ExecStopPost (maybe
+  # with a delay in between); `laptop` alone would kill the switch events
   toggle = pkgs.writeShellScript "tablet-mode-toggle" ''
     f=/run/tablet-mode-laptop
     if [[ -e $f ]]; then rm $f; m=auto; else touch $f; m=laptop; fi
