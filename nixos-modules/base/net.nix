@@ -62,7 +62,8 @@ in
     };
   };
   # on campus the university ranges are reachable directly; elsewhere, reconnect
-  # right away instead of waiting for dead peer detection
+  # right away instead of waiting for dead peer detection; --no-block: the unit
+  # is ordered after network-online.target, which waits for this very hook
   networking.networkmanager.dispatcherScripts = lib.mkIf vpn.autoStart [
     {
       source = pkgs.writeShellScript "uhd-campus" ''
@@ -71,7 +72,7 @@ in
         systemctl=${lib.getExe' config.systemd.package "systemctl"}
         case $gw in
         129.206.* | 147.142.*) $systemctl stop openconnect-uhd ;;
-        *) $systemctl kill -s USR2 --kill-whom=main openconnect-uhd || $systemctl start openconnect-uhd ;;
+        *) $systemctl kill -s USR2 --kill-whom=main openconnect-uhd || $systemctl start --no-block openconnect-uhd ;;
         esac
       '';
     }
