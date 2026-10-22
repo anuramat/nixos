@@ -1,0 +1,254 @@
+diff -ruN a/src/dbus/network/network_manager_service.cpp b/src/dbus/network/network_manager_service.cpp
+--- a/src/dbus/network/network_manager_service.cpp
++++ b/src/dbus/network/network_manager_service.cpp
+@@ -80,14 +80,15 @@
+   struct PendingRefresh {
+     std::vector<AccessPointInfo> capturedAps;
+     std::vector<VpnConnectionInfo> capturedVpns;
+-    std::vector<std::string> capturedSaved;
++    std::unordered_map<std::string, std::string> capturedSaved;
+     std::vector<std::string> capturedWired;
+     int pendingOps = 0;
+     std::function<void()> onAllComplete;
+   };
+ 
+   struct SavedConnectionsState {
+-    std::vector<std::string> ssids;
++    std::unordered_map<std::string, std::string> names;       // SSID -> profile name
++    std::unordered_map<std::string, std::int32_t> priorities; // SSID -> that profile's autoconnect priority
+     std::vector<std::string> wiredConnectionPaths;
+     int pending = 0;
+   };
+@@ -213,7 +214,7 @@
+   auto pending = std::make_shared<PendingRefresh>();
+   pending->capturedAps = m_accessPoints;
+   pending->capturedVpns = m_vpnConnections;
+-  pending->capturedSaved = m_savedSsids;
++  pending->capturedSaved = m_savedNames;
+   pending->capturedWired = m_savedWiredConnectionPaths;
+   pending->pendingOps = 3;
+ 
+@@ -225,9 +226,17 @@
+       if (lifetimeToken.expired()) {
+         return;
+       }
++      const auto savedName = [this](const std::string& ssid) {
++        const auto it = m_savedNames.find(ssid);
++        return it == m_savedNames.end() ? std::string{} : it->second;
++      };
++      for (auto& ap : m_accessPoints) {
++        ap.name = savedName(ap.ssid);
++      }
++      next.name = savedName(next.ssid);
+       const bool apsChanged = pending->capturedAps != m_accessPoints;
+       const bool vpnsChanged = pending->capturedVpns != m_vpnConnections;
+-      const bool savedChanged = pending->capturedSaved != m_savedSsids;
++      const bool savedChanged = pending->capturedSaved != m_savedNames;
+       const bool wiredChanged = pending->capturedWired != m_savedWiredConnectionPaths;
+       const bool stateChanged = next != m_state;
+       const bool firstSnapshot = !m_hasStateSnapshot;
+@@ -1039,7 +1048,7 @@
+       return false;
+     }
+   }
+-  return std::ranges::contains(m_savedSsids, ssid);
++  return m_savedNames.contains(ssid);
+ }
+ 
+ void NetworkManagerService::refreshSavedConnections(std::function<void()> onComplete) {
+@@ -1061,7 +1070,7 @@
+           }
+ 
+           if (connectionPaths.empty()) {
+-            m_savedSsids.clear();
++            m_savedNames.clear();
+             m_savedWiredConnectionPaths.clear();
+             onComplete();
+             return;
+@@ -1072,7 +1081,7 @@
+ 
+           auto finishOne = [this, savedState, onComplete]() {
+             if (--savedState->pending == 0) {
+-              finishSavedConnections(savedState->ssids, savedState->wiredConnectionPaths, onComplete);
++              finishSavedConnections(savedState->names, savedState->wiredConnectionPaths, onComplete);
+             }
+           };
+ 
+@@ -1141,7 +1150,23 @@
+                                     const auto bytes = ssidIt->second.get<std::vector<std::uint8_t>>();
+                                     std::string ssid(bytes.begin(), bytes.end());
+                                     if (!ssid.empty()) {
+-                                      savedState->ssids.push_back(std::move(ssid));
++                                      // Several profiles can share an SSID: keep the one NM prefers to autoconnect.
++                                      std::string id;
++                                      std::int32_t priority = 0;
++                                      if (connIt != cfg.end()) {
++                                        if (auto it = connIt->second.find("id"); it != connIt->second.end()) {
++                                          id = it->second.get<std::string>();
++                                        }
++                                        if (auto it = connIt->second.find("autoconnect-priority");
++                                            it != connIt->second.end()) {
++                                          priority = it->second.get<std::int32_t>();
++                                        }
++                                      }
++                                      auto [it, inserted] = savedState->priorities.try_emplace(ssid, priority);
++                                      if (inserted || priority > it->second) {
++                                        it->second = priority;
++                                        savedState->names[ssid] = std::move(id);
++                                      }
+                                     }
+                                   } catch (const sdbus::Error&) {
+                                   }
+@@ -1149,7 +1174,7 @@
+                               }
+                             }
+                             if (--savedState->pending == 0) {
+-                              finishSavedConnections(savedState->ssids, savedState->wiredConnectionPaths, onComplete);
++                              finishSavedConnections(savedState->names, savedState->wiredConnectionPaths, onComplete);
+                             }
+                           });
+                     } catch (const sdbus::Error&) {
+@@ -1703,11 +1728,10 @@
+ }
+ 
+ void NetworkManagerService::finishSavedConnections(
+-    std::vector<std::string>& ssids, std::vector<std::string>& wiredConnectionPaths, std::function<void()> onComplete
++    std::unordered_map<std::string, std::string>& names, std::vector<std::string>& wiredConnectionPaths,
++    std::function<void()> onComplete
+ ) {
+-  std::ranges::sort(ssids);
+-  ssids.erase(std::ranges::unique(ssids).begin(), ssids.end());
+-  m_savedSsids = std::move(ssids);
++  m_savedNames = std::move(names);
+ 
+   std::ranges::sort(wiredConnectionPaths);
+   wiredConnectionPaths.erase(std::ranges::unique(wiredConnectionPaths).begin(), wiredConnectionPaths.end());
+diff -ruN a/src/dbus/network/network_manager_service.h b/src/dbus/network/network_manager_service.h
+--- a/src/dbus/network/network_manager_service.h
++++ b/src/dbus/network/network_manager_service.h
+@@ -73,7 +73,8 @@
+   void refreshVpnConnections(std::function<void()> onComplete);
+   void reconcileVpnActiveWatchers(const std::set<std::string>& activePaths);
+   void finishSavedConnections(
+-      std::vector<std::string>& ssids, std::vector<std::string>& wiredConnectionPaths, std::function<void()> onComplete
++      std::unordered_map<std::string, std::string>& names, std::vector<std::string>& wiredConnectionPaths,
++      std::function<void()> onComplete
+   );
+   void finishRefreshAccessPoints(std::vector<AccessPointInfo>& aps, std::function<void()> onComplete);
+   bool addAndActivateAccessPoint(const AccessPointInfo& ap, const std::optional<std::string>& psk);
+@@ -118,7 +119,8 @@
+   NetworkState m_state;
+   std::vector<AccessPointInfo> m_accessPoints;
+   std::vector<VpnConnectionInfo> m_vpnConnections;
+-  std::vector<std::string> m_savedSsids;
++  // Saved Wi-Fi SSID -> name of the profile NM prefers for it.
++  std::unordered_map<std::string, std::string> m_savedNames;
+   std::vector<std::string> m_savedWiredConnectionPaths;
+   std::unordered_map<std::string, std::unique_ptr<PendingAccessPointActivation>> m_pendingApActivations;
+   // Finished activations whose proxy may still be executing its own handler;
+diff -ruN a/src/dbus/network/network_types.h b/src/dbus/network/network_types.h
+--- a/src/dbus/network/network_types.h
++++ b/src/dbus/network/network_types.h
+@@ -7,10 +7,13 @@
+   std::string path;       // Backend access point object path.
+   std::string devicePath; // Backend device object path this AP belongs to.
+   std::string ssid;
++  std::string name;          // Saved profile name; empty when the backend has none.
+   std::uint8_t strength = 0; // 0..100
+   bool secured = false;
+   bool active = false;
+ 
++  [[nodiscard]] const std::string& displayName() const noexcept { return name.empty() ? ssid : name; }
++
+   bool operator==(const AccessPointInfo&) const = default;
+ };
+ 
+@@ -38,6 +41,7 @@
+   bool vpnActive = false;          // a VPN connection is active or activating
+   bool vpnConnected = false;       // a VPN tunnel is fully activated (routes applied)
+   std::string ssid;                // Wi-Fi only
++  std::string name;                // Wi-Fi only: saved profile name; empty when the backend has none
+   std::string ipv4;                // dotted-quad of first address; empty if none
+   std::string interfaceName;       // e.g. "wlan0", "eth0"
+   std::uint8_t signalStrength = 0; // 0..100, Wi-Fi only
+@@ -45,6 +49,8 @@
+   // does not report one (iwd).
+   std::uint32_t frequencyMhz = 0;
+ 
++  [[nodiscard]] const std::string& displayName() const noexcept { return name.empty() ? ssid : name; }
++
+   bool operator==(const NetworkState&) const = default;
+ };
+ 
+diff -ruN a/src/shell/bar/widgets/network_widget.cpp b/src/shell/bar/widgets/network_widget.cpp
+--- a/src/shell/bar/widgets/network_widget.cpp
++++ b/src/shell/bar/widgets/network_widget.cpp
+@@ -22,7 +22,7 @@
+ 
+   std::string labelForState(const NetworkState& s) {
+     if (s.kind == NetworkConnectivity::Wireless && s.connected && !s.ssid.empty()) {
+-      return s.ssid;
++      return s.displayName();
+     }
+     if (s.kind == NetworkConnectivity::Wired && s.connected) {
+       return s.interfaceName.empty() ? i18n::tr("bar.widgets.network.wired") : s.interfaceName;
+@@ -341,7 +341,7 @@
+   const NetworkState& s = m_network->state();
+   if (s.connected) {
+     if (s.kind == NetworkConnectivity::Wireless && !s.ssid.empty()) {
+-      rows.push_back({i18n::tr("bar.widgets.network.network"), s.ssid});
++      rows.push_back({i18n::tr("bar.widgets.network.network"), s.displayName()});
+       rows.push_back({i18n::tr("bar.widgets.network.signal"), std::to_string(s.signalStrength) + "%"});
+       if (const char* band = network_display::wifiFrequencyBandLabel(s.frequencyMhz); band != nullptr) {
+         rows.push_back({i18n::tr("bar.widgets.network.band"), band});
+diff -ruN a/src/shell/control_center/shortcut_registry.cpp b/src/shell/control_center/shortcut_registry.cpp
+--- a/src/shell/control_center/shortcut_registry.cpp
++++ b/src/shell/control_center/shortcut_registry.cpp
+@@ -66,7 +66,7 @@
+       if (m_svc != nullptr) {
+         const NetworkState& state = m_svc->state();
+         if (state.kind == NetworkConnectivity::Wireless && state.connected && !state.ssid.empty()) {
+-          return state.ssid;
++          return state.displayName();
+         }
+       }
+       return defaultLabel();
+diff -ruN a/src/shell/control_center/tabs/network_tab.cpp b/src/shell/control_center/tabs/network_tab.cpp
+--- a/src/shell/control_center/tabs/network_tab.cpp
++++ b/src/shell/control_center/tabs/network_tab.cpp
+@@ -27,7 +27,7 @@
+ 
+   std::string currentTitle(const NetworkState& s) {
+     if (s.kind == NetworkConnectivity::Wireless && s.connected && !s.ssid.empty()) {
+-      return s.ssid;
++      return s.displayName();
+     }
+     if (s.kind == NetworkConnectivity::Wired && s.connected) {
+       return s.interfaceName.empty() ? i18n::tr("control-center.network.wired-connection") : s.interfaceName;
+@@ -103,7 +103,7 @@
+       if (bandA != bandB) {
+         return bandA > bandB;
+       }
+-      return a.ssid < b.ssid;
++      return a.displayName() < b.displayName();
+     });
+     return aps;
+   }
+@@ -138,7 +138,7 @@
+     addChild(
+         ui::label({
+             .out = &m_title,
+-            .text = m_ap.ssid,
++            .text = m_ap.displayName(),
+             .fontSize = Style::fontSizeBody * scale,
+             .fontWeight = m_ap.active ? FontWeight::Bold : FontWeight::Normal,
+             .color = colorSpecFromRole(ColorRole::OnSurface),
+@@ -767,6 +767,8 @@
+   for (const auto& ap : aps) {
+     key += ap.ssid;
+     key.push_back(':');
++    key += ap.name;
++    key.push_back(':');
+     key += ap.secured ? '1' : '0';
+     key.push_back(':');
+     key += ap.active ? '1' : '0';

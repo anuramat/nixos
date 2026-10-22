@@ -29,6 +29,8 @@ in
     # wheel can't scroll the fleet monitor there
     # upstream has right-click only on plugin buttons, so the fleet monitor
     # couldn't toggle a section on a right-click
+    # upstream labels wifi networks by SSID; this shows the saved NM profile's
+    # name instead, so a network can be renamed with `nmcli`
     package = pkgs.noctalia.overrideAttrs (old: {
       patches = (old.patches or [ ]) ++ [
         ./pam-setcred.patch
@@ -36,6 +38,7 @@ in
         ./secret-agent-saved-psk.patch
         ./lockscreen-widget-animations.patch
         ./ui-right-click.patch
+        ./wifi-profile-names.patch
       ];
     });
 
