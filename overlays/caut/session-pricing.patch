@@ -1,0 +1,541 @@
+diff --git a/src/cli/session.rs b/src/cli/session.rs
+index f0ac3aa..9f17518 100644
+--- a/src/cli/session.rs
++++ b/src/cli/session.rs
+@@ -514,6 +514,7 @@ fn render_markdown(output: &SessionOutput) -> String {
+ #[cfg(test)]
+ mod tests {
+     use super::*;
++    use crate::core::session_logs::{TokenCounts, UsageRecord};
+     use std::collections::HashSet;
+ 
+     fn make_test_usage() -> SessionUsage {
+@@ -532,6 +533,16 @@ mod tests {
+                 set
+             },
+             message_count: 10,
++            records: vec![UsageRecord {
++                model: Some("claude-3-opus".to_string()),
++                tokens: TokenCounts {
++                    input: 100_000,
++                    output: 50_000,
++                    cache_read: 10_000,
++                    cache_creation: 5_000,
++                    cache_creation_1h: 0,
++                },
++            }],
+         }
+     }
+ 
+diff --git a/src/core/pricing.rs b/src/core/pricing.rs
+index fd0ba5b..89679ba 100644
+--- a/src/core/pricing.rs
++++ b/src/core/pricing.rs
+@@ -3,7 +3,7 @@
+ //! This module provides model pricing information and calculates costs from
+ //! session token usage data parsed by the `session_logs` module.
+ 
+-use crate::core::session_logs::SessionUsage;
++use crate::core::session_logs::{SessionUsage, TokenCounts};
+ use chrono::{DateTime, Utc};
+ use std::collections::HashMap;
+ 
+@@ -60,18 +60,16 @@ impl ModelPricing {
+     /// Calculate cost for given token counts.
+     #[must_use]
+     #[allow(clippy::cast_precision_loss)] // token counts fit within f64 precision
+-    pub fn calculate_cost(
+-        &self,
+-        input: i64,
+-        output: i64,
+-        cache_read: i64,
+-        cache_creation: i64,
+-    ) -> TokenCostBreakdown {
+-        let input_cost = (input as f64 / 1_000_000.0) * self.input_per_million;
+-        let output_cost = (output as f64 / 1_000_000.0) * self.output_per_million;
+-        let cache_read_cost = (cache_read as f64 / 1_000_000.0) * self.cache_read_per_million;
+-        let cache_creation_cost =
+-            (cache_creation as f64 / 1_000_000.0) * self.cache_creation_per_million;
++    pub fn calculate_cost(&self, tokens: &TokenCounts) -> TokenCostBreakdown {
++        let cost = |count: i64, per_million: f64| count as f64 / 1_000_000.0 * per_million;
++        let input_cost = cost(tokens.input, self.input_per_million);
++        let output_cost = cost(tokens.output, self.output_per_million);
++        let cache_read_cost = cost(tokens.cache_read, self.cache_read_per_million);
++        // `cache_creation_per_million` is the 5-minute cache's; the 1-hour one costs 2x input
++        let cache_creation_cost = cost(
++            tokens.cache_creation - tokens.cache_creation_1h,
++            self.cache_creation_per_million,
++        ) + cost(tokens.cache_creation_1h, 2.0 * self.input_per_million);
+ 
+         TokenCostBreakdown {
+             input_cost_usd: input_cost,
+@@ -93,6 +91,16 @@ pub struct TokenCostBreakdown {
+     pub total_cost_usd: f64,
+ }
+ 
++impl TokenCostBreakdown {
++    fn add(&mut self, other: &Self) {
++        self.input_cost_usd += other.input_cost_usd;
++        self.output_cost_usd += other.output_cost_usd;
++        self.cache_read_cost_usd += other.cache_read_cost_usd;
++        self.cache_creation_cost_usd += other.cache_creation_cost_usd;
++        self.total_cost_usd += other.total_cost_usd;
++    }
++}
++
+ /// Collection of model pricing data with effective date.
+ #[derive(Debug, Clone)]
+ pub struct PricingTable {
+@@ -109,39 +117,43 @@ impl Default for PricingTable {
+ }
+ 
+ impl PricingTable {
+-    /// Create a pricing table with current (January 2026) pricing.
++    /// Create a pricing table with current (October 2026) pricing.
+     ///
+     /// Pricing sources:
+-    /// - Anthropic: <https://www.anthropic.com/pricing>
+-    /// - `OpenAI`: <https://openai.com/pricing>
++    /// - Anthropic: <https://platform.claude.com/docs/en/about-claude/pricing>
++    /// - `OpenAI`: <https://developers.openai.com/api/docs/pricing>
+     #[must_use]
++    #[allow(clippy::too_many_lines)] // a data table
+     pub fn current() -> Self {
+         let mut models = HashMap::new();
+ 
+-        // Anthropic Claude models (as of Jan 2026)
+-        // Claude Opus 4.5: $15/$75 per million
+-        Self::add_model(
+-            &mut models,
+-            "claude-opus-4-5-20251101",
+-            15.0,
+-            75.0,
+-            1.5,
+-            18.75,
+-        );
+-        Self::add_model(&mut models, "claude-opus-4.5", 15.0, 75.0, 1.5, 18.75);
+-        Self::add_model(&mut models, "claude-4-opus", 15.0, 75.0, 1.5, 18.75);
+-
+-        // Claude Sonnet 4: $3/$15 per million
+-        Self::add_model(
+-            &mut models,
+-            "claude-sonnet-4-20250514",
+-            3.0,
+-            15.0,
+-            0.3,
+-            3.75,
+-        );
+-        Self::add_model(&mut models, "claude-sonnet-4", 3.0, 15.0, 0.3, 3.75);
+-        Self::add_model(&mut models, "claude-4-sonnet", 3.0, 15.0, 0.3, 3.75);
++        // Anthropic Claude models (as of Oct 2026): input, output, cache read, 5-minute cache
++        // write; dated snapshots (`claude-haiku-4-5-20251001`) resolve to their base model
++        for model in ["claude-fable-5-1", "claude-mythos-5-1"] {
++            Self::add_model(&mut models, model, 10.0, 50.0, 0.25, 12.5);
++        }
++        for model in ["claude-fable-5", "claude-mythos-5"] {
++            Self::add_model(&mut models, model, 10.0, 50.0, 1.0, 12.5);
++        }
++        Self::add_model(&mut models, "claude-opus-5-5", 4.0, 20.0, 0.2, 5.0);
++        for model in [
++            "claude-opus-5",
++            "claude-opus-4-8",
++            "claude-opus-4-7",
++            "claude-opus-4-6",
++            "claude-opus-4-5",
++        ] {
++            Self::add_model(&mut models, model, 5.0, 25.0, 0.5, 6.25);
++        }
++        for model in ["claude-opus-4-1", "claude-opus-4"] {
++            Self::add_model(&mut models, model, 15.0, 75.0, 1.5, 18.75);
++        }
++        Self::add_model(&mut models, "claude-sonnet-5-5", 2.0, 10.0, 0.1, 2.5);
++        Self::add_model(&mut models, "claude-sonnet-5", 2.0, 10.0, 0.2, 2.5);
++        for model in ["claude-sonnet-4-6", "claude-sonnet-4-5", "claude-sonnet-4"] {
++            Self::add_model(&mut models, model, 3.0, 15.0, 0.3, 3.75);
++        }
++        Self::add_model(&mut models, "claude-haiku-4-5", 1.0, 5.0, 0.1, 1.25);
+ 
+         // Claude 3.5 Sonnet: $3/$15 per million
+         Self::add_model(
+@@ -189,6 +201,15 @@ impl PricingTable {
+         );
+         Self::add_model(&mut models, "claude-3-haiku", 0.25, 1.25, 0.03, 0.30);
+ 
++        // OpenAI GPT models (as of Oct 2026): input, output, cached input, cache write; Codex
++        // reports cached input as part of the input (see `session_logs`), and no cache writes
++        Self::add_model(&mut models, "gpt-6-astra", 10.0, 50.0, 1.0, 12.5);
++        Self::add_model(&mut models, "gpt-5.6-sol", 2.0, 10.0, 0.2, 2.5);
++        Self::add_model(&mut models, "gpt-5.5", 5.0, 30.0, 0.5, 5.0);
++        Self::add_model(&mut models, "gpt-5.4", 2.5, 15.0, 0.25, 2.5);
++        Self::add_model(&mut models, "gpt-5.4-mini", 0.75, 4.5, 0.075, 0.75);
++        Self::add_model(&mut models, "gpt-5.3-codex", 1.75, 14.0, 0.175, 1.75);
++
+         // OpenAI GPT models (as of Jan 2026)
+         // GPT-4o: $2.50/$10 per million
+         Self::add_model(&mut models, "gpt-4o", 2.5, 10.0, 1.25, 2.5);
+@@ -253,11 +274,20 @@ impl PricingTable {
+ 
+     /// Look up pricing for a model by name.
+     ///
+-    /// Model names are normalized to lowercase for matching.
++    /// Model names are normalized to lowercase for matching, and a dated
++    /// snapshot (`claude-haiku-4-5-20251001`) falls back to its base model.
+     /// Returns None if the model is not in the pricing table.
+     #[must_use]
+     pub fn get(&self, model: &str) -> Option<&ModelPricing> {
+-        self.models.get(&model.to_lowercase())
++        let model = model.to_lowercase();
++        self.models.get(&model).or_else(|| {
++            let (base, date) = model.rsplit_once('-')?;
++            if date.len() == 8 && date.bytes().all(|b| b.is_ascii_digit()) {
++                self.models.get(base)
++            } else {
++                None
++            }
++        })
+     }
+ 
+     /// Get pricing for a model, falling back to a conservative estimate.
+@@ -324,7 +354,7 @@ pub struct SessionCost {
+     pub model: String,
+     /// Confidence in the calculation.
+     pub confidence: CostConfidence,
+-    /// Whether the model pricing was known.
++    /// Whether the pricing of every model in the session was known.
+     pub model_known: bool,
+ }
+ 
+@@ -354,22 +384,22 @@ impl SessionCostCalculator {
+         Self { pricing }
+     }
+ 
+-    /// Calculate cost for a session.
++    /// Calculate cost for a session, pricing each response by its own model.
+     #[must_use]
+     pub fn calculate(&self, usage: &SessionUsage) -> SessionCost {
+         // Determine the primary model (most expensive or first found)
+         let primary_model = self.select_primary_model(usage);
+ 
+-        // Get pricing (known or estimated)
+-        let (pricing, model_known) = self.pricing.get_or_estimate(&primary_model);
+-
+-        // Calculate token costs
+-        let breakdown = pricing.calculate_cost(
+-            usage.input_tokens,
+-            usage.output_tokens,
+-            usage.cache_read_tokens,
+-            usage.cache_creation_tokens,
+-        );
++        // Calculate token costs, with known or estimated pricing
++        let mut breakdown = TokenCostBreakdown::default();
++        let mut model_known = true;
++        for record in &usage.records {
++            let (pricing, known) = self
++                .pricing
++                .get_or_estimate(record.model.as_deref().unwrap_or("unknown"));
++            breakdown.add(&pricing.calculate_cost(&record.tokens));
++            model_known &= known;
++        }
+ 
+         // Determine confidence level
+         let confidence = self.calculate_confidence(usage, model_known);
+@@ -454,9 +484,23 @@ impl SessionCostCalculator {
+ #[cfg(test)]
+ mod tests {
+     use super::*;
++    use crate::core::session_logs::UsageRecord;
+     use std::collections::HashSet;
+ 
++    fn record(model: Option<&str>, tokens: TokenCounts) -> UsageRecord {
++        UsageRecord {
++            model: model.map(str::to_string),
++            tokens,
++        }
++    }
++
++    /// A session whose usage is all in one response of its first model.
+     fn make_usage(input: i64, output: i64, models: &[&str]) -> SessionUsage {
++        let tokens = TokenCounts {
++            input,
++            output,
++            ..TokenCounts::default()
++        };
+         SessionUsage {
+             session_id: "test".to_string(),
+             project_path: None,
+@@ -468,6 +512,7 @@ mod tests {
+             cache_creation_tokens: 0,
+             models_used: models.iter().map(|s| (*s).to_string()).collect(),
+             message_count: 1,
++            records: vec![record(models.first().copied(), tokens)],
+         }
+     }
+ 
+@@ -476,7 +521,18 @@ mod tests {
+         let table = PricingTable::current();
+         assert!(table.get("claude-3-opus").is_some());
+         assert!(table.get("claude-3.5-sonnet").is_some());
+-        assert!(table.get("claude-opus-4.5").is_some());
++        assert!(table.get("claude-opus-4-5").is_some());
++        assert!(table.get("claude-opus-5-5").is_some());
++        assert!(table.get("claude-fable-5-1").is_some());
++    }
++
++    #[test]
++    fn pricing_resolves_dated_snapshots() {
++        let table = PricingTable::current();
++        let haiku = table.get("claude-haiku-4-5-20251001").unwrap();
++        assert!((haiku.input_per_million - 1.0).abs() < f64::EPSILON);
++        assert!(table.get("claude-haiku-4-5-2025").is_none());
++        assert!(table.get("gpt-6-astra-preview").is_none());
+     }
+ 
+     #[test]
+@@ -533,8 +589,8 @@ mod tests {
+     fn calculate_cost_with_cache_tokens() {
+         let calc = SessionCostCalculator::new();
+         let mut usage = make_usage(100_000, 50_000, &["claude-3.5-sonnet"]);
+-        usage.cache_read_tokens = 200_000;
+-        usage.cache_creation_tokens = 50_000;
++        usage.records[0].tokens.cache_read = 200_000;
++        usage.records[0].tokens.cache_creation = 50_000;
+         let cost = calc.calculate(&usage);
+ 
+         // 100K input @ $3/M = $0.30
+@@ -591,6 +647,14 @@ mod tests {
+             cache_creation_tokens: 0,
+             models_used: HashSet::new(),
+             message_count: 1,
++            records: vec![record(
++                None,
++                TokenCounts {
++                    input: 100_000,
++                    output: 50_000,
++                    ..TokenCounts::default()
++                },
++            )],
+         };
+         let cost = calc.calculate(&usage);
+ 
+@@ -598,16 +662,59 @@ mod tests {
+         assert!(!cost.model_known);
+     }
+ 
++    #[test]
++    fn calculate_prices_each_response_by_its_model() {
++        let calc = SessionCostCalculator::new();
++        let mut usage = make_usage(1_000_000, 0, &["claude-opus-5-5", "claude-haiku-4-5"]);
++        usage.records.push(record(
++            Some("claude-haiku-4-5-20251001"),
++            TokenCounts {
++                input: 1_000_000,
++                ..TokenCounts::default()
++            },
++        ));
++        let cost = calc.calculate(&usage);
++
++        // 1M input @ $4/M (Opus 5.5) + 1M input @ $1/M (Haiku 4.5)
++        assert!((cost.total_usd - 5.0).abs() < 1e-9);
++        assert!(cost.model_known);
++    }
++
++    #[test]
++    fn calculate_cost_matches_claude_code() {
++        // a session's Opus 5.5 usage, with Claude Code's own cost for it ($13.2909096)
++        let pricing = PricingTable::current();
++        let tokens = TokenCounts {
++            input: 4428,
++            output: 202_284,
++            cache_read: 32_791_708,
++            cache_creation: 333_647,
++            cache_creation_1h: 333_647,
++        };
++        let cost = pricing
++            .get("claude-opus-5-5")
++            .unwrap()
++            .calculate_cost(&tokens);
++        assert!((cost.total_cost_usd - 13.290_909_6).abs() < 1e-6);
++    }
++
+     #[test]
+     fn model_pricing_calculates_correctly() {
+         let pricing = ModelPricing::from_static("test", 10.0, 50.0, 1.0, 12.5);
+-        let breakdown = pricing.calculate_cost(2_000_000, 500_000, 100_000, 50_000);
++        let breakdown = pricing.calculate_cost(&TokenCounts {
++            input: 2_000_000,
++            output: 500_000,
++            cache_read: 100_000,
++            cache_creation: 60_000,
++            cache_creation_1h: 10_000,
++        });
+ 
+         // 2M input @ $10/M = $20
+         // 500K output @ $50/M = $25
+         // 100K cache read @ $1/M = $0.10
+-        // 50K cache creation @ $12.5/M = $0.625
+-        // Total = $45.725
+-        assert!((breakdown.total_cost_usd - 45.725).abs() < 0.001);
++        // 50K 5-minute cache creation @ $12.5/M = $0.625
++        // 10K 1-hour cache creation @ $20/M = $0.20
++        // Total = $45.925
++        assert!((breakdown.total_cost_usd - 45.925).abs() < 0.001);
+     }
+ }
+diff --git a/src/core/session_logs.rs b/src/core/session_logs.rs
+index 29ae477..e2a9563 100644
+--- a/src/core/session_logs.rs
++++ b/src/core/session_logs.rs
+@@ -8,7 +8,7 @@ use crate::error::{CautError, Result};
+ use crate::providers::common::dir_from_env_or_home;
+ use chrono::{DateTime, Utc};
+ use serde_json::Value;
+-use std::collections::HashSet;
++use std::collections::{HashMap, HashSet};
+ use std::fs::{self, File};
+ use std::io::{BufRead, BufReader};
+ use std::path::{Path, PathBuf};
+@@ -160,6 +160,15 @@ pub struct SessionUsage {
+     pub cache_creation_tokens: i64,
+     pub models_used: HashSet<String>,
+     pub message_count: i64,
++    /// The usage of each response, in log order.
++    pub records: Vec<UsageRecord>,
++}
++
++/// Token usage of one model response.
++#[derive(Debug, Clone)]
++pub struct UsageRecord {
++    pub model: Option<String>,
++    pub tokens: TokenCounts,
+ }
+ 
+ impl SessionUsage {
+@@ -214,15 +223,19 @@ fn parse_session_log(path: &Path, extra_paths: &[PathBuf]) -> Result<SessionUsag
+         cache_creation_tokens: 0,
+         models_used: HashSet::new(),
+         message_count: 0,
++        records: Vec::new(),
+     };
+ 
+-    // Claude Code logs each content block of a response as its own line, repeating its usage
+-    let mut seen_messages = HashSet::new();
++    // Claude Code logs each content block of a response as its own line, with the usage so
++    // far: the response's record is the one of its first line, with the usage of its last
++    let mut message_records: HashMap<String, usize> = HashMap::new();
+     let mut last_codex_total = None;
+ 
+     for path in std::iter::once(path).chain(extra_paths.iter().map(PathBuf::as_path)) {
+         let file = File::open(path)
+             .map_err(|e| CautError::Config(format!("Failed to open session log: {e}")))?;
++        // Codex logs the model in `turn_context` lines, apart from the usage
++        let mut model = None;
+         for line in BufReader::new(file).lines() {
+             let Ok(line) = line else { continue };
+             if line.trim().is_empty() {
+@@ -234,22 +247,21 @@ fn parse_session_log(path: &Path, extra_paths: &[PathBuf]) -> Result<SessionUsag
+                 Err(_) => continue,
+             };
+ 
+-            if let Some(id) = value.pointer("/message/id").and_then(Value::as_str)
+-                && !seen_messages.insert(id.to_string())
+-            {
+-                continue;
++            let message_id = value.pointer("/message/id").and_then(Value::as_str);
++            let earlier = message_id.and_then(|id| message_records.get(id).copied());
++            if earlier.is_none() {
++                usage.message_count += 1;
+             }
+ 
+-            usage.message_count += 1;
+-
+             if let Some(ts) = extract_timestamp(&value) {
+                 usage.record_timestamp(ts);
+             }
+ 
+-            if let Some(model) = extract_model(&value)
+-                && !model.is_empty()
++            if let Some(name) = extract_model(&value)
++                && !name.is_empty()
+             {
+-                usage.models_used.insert(model.to_string());
++                usage.models_used.insert(name.to_string());
++                model = Some(name.to_string());
+             }
+ 
+             let candidates = match value.get("type").and_then(Value::as_str) {
+@@ -261,25 +273,44 @@ fn parse_session_log(path: &Path, extra_paths: &[PathBuf]) -> Result<SessionUsag
+                 _ => extract_usage_candidates(&value),
+             };
+             for usage_value in candidates {
+-                if let Some(counts) = extract_token_counts(usage_value) {
+-                    usage.input_tokens += counts.input;
+-                    usage.output_tokens += counts.output;
+-                    usage.cache_read_tokens += counts.cache_read;
+-                    usage.cache_creation_tokens += counts.cache_creation;
++                let Some(counts) = extract_token_counts(usage_value)
++                    .filter(|counts| *counts != TokenCounts::default())
++                else {
++                    continue;
++                };
++                if let Some(i) = earlier {
++                    usage.records[i].tokens = counts;
++                    continue;
+                 }
++                if let Some(id) = message_id {
++                    message_records.insert(id.to_string(), usage.records.len());
++                }
++                usage.records.push(UsageRecord {
++                    model: model.clone(),
++                    tokens: counts,
++                });
+             }
+         }
+     }
+ 
++    for record in &usage.records {
++        usage.input_tokens += record.tokens.input;
++        usage.output_tokens += record.tokens.output;
++        usage.cache_read_tokens += record.tokens.cache_read;
++        usage.cache_creation_tokens += record.tokens.cache_creation;
++    }
+     Ok(usage)
+ }
+ 
+-#[derive(Default)]
+-struct TokenCounts {
+-    input: i64,
+-    output: i64,
+-    cache_read: i64,
+-    cache_creation: i64,
++/// Token counts of one or more responses.
++#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
++pub struct TokenCounts {
++    pub input: i64,
++    pub output: i64,
++    pub cache_read: i64,
++    pub cache_creation: i64,
++    /// The part of `cache_creation` written to the 1-hour cache.
++    pub cache_creation_1h: i64,
+ }
+ 
+ fn extract_token_counts(value: &Value) -> Option<TokenCounts> {
+@@ -304,6 +335,10 @@ fn extract_token_counts(value: &Value) -> Option<TokenCounts> {
+         output,
+         cache_read,
+         cache_creation,
++        cache_creation_1h: value
++            .pointer("/cache_creation/ephemeral_1h_input_tokens")
++            .and_then(Value::as_i64)
++            .unwrap_or(0),
+     })
+ }
+ 
+@@ -570,7 +605,7 @@ malformed-line
+             )
+         };
+         let content = [
+-            line("msg_1", "thinking"),
++            line("msg_1", "thinking").replace(r#""output_tokens":10"#, r#""output_tokens":1"#),
+             line("msg_1", "tool_use"),
+             line("msg_2", "text"),
+         ]

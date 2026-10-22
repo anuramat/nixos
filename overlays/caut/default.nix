@@ -13,9 +13,11 @@ final: prev: {
       ./session-logs.patch
       # `doctor` and `usage` decode opaque OAuth tokens as JWTs, and flag a renewable access token
       ./credential-health.patch
+      # `session` prices a session at one model's rates, ignores the 1-hour cache's write price,
+      # and takes a Claude response's usage from its first line, before the output is complete
+      ./session-pricing.patch
       # `cost` counts Claude's stats-cache messages and Codex log lines instead of pricing the
-      # session logs; `session` prices a session at one model's rates, and takes a Claude
-      # response's usage from its first line, before the output is complete
+      # session logs
       ./cost.patch
       # Claude's fast mode and Codex's Fast tier (`service_tier = "fast"`) cost more
       ./fast-mode.patch
