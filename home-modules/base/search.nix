@@ -148,7 +148,8 @@ in
 
     fzf = {
       enable = true;
-      # the image protocol is queried at launch, since fzf owns the tty while previewing
+      # the image protocol is queried at launch, since fzf owns the tty while previewing;
+      # not for --bash, which only prints the shell integration, on every shell start
       package = pkgs.symlinkJoin {
         inherit (pkgs.fzf) name version;
         meta.mainProgram = "fzf";
@@ -157,7 +158,7 @@ in
           pkgs.fzf.man
         ];
         nativeBuildInputs = [ pkgs.makeWrapper ];
-        postBuild = "wrapProgram $out/bin/fzf --run 'export IMAGE_PROTOCOL=$(${imageProtocol})'";
+        postBuild = "wrapProgram $out/bin/fzf --run '[[ $1 == --bash ]] || export IMAGE_PROTOCOL=$(${imageProtocol})'";
       };
       defaultCommand = fd;
 
