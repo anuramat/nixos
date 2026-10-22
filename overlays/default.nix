@@ -57,6 +57,7 @@ let
 
       inherit (unstable)
         firefox
+        immich # 2.x is EOL and marked insecure in 26.05
         tailscale
         opencode
         proton-vpn
