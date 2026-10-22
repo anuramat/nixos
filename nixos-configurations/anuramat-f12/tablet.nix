@@ -1,7 +1,9 @@
 # touchscreen gestures, which niri lacks, come from the niri-tablet patch
 # series. tablet mode (screen folded back): a user service, started and
 # stopped by niri's switch events, rotates the panel with the accelerometer,
-# bumps its scale for fingers, and shows an on-screen keyboard
+# bumps its scale for fingers, and shows an on-screen keyboard. the power key
+# toggles the EC's tablet mode detection off ("laptop") and back on ("auto"),
+# since "auto" sometimes leaves the keyboard disabled
 {
   inputs,
   pkgs,
@@ -11,8 +13,26 @@
 let
   inherit (inputs.self.consts.user) username;
   output = "eDP-1";
+  # the EC override can't be read back, so the state lives in /run
+  toggle = pkgs.writeShellScript "tablet-mode-toggle" ''
+    f=/run/tablet-mode-laptop
+    if [[ -e $f ]]; then rm $f; m=auto; else touch $f; m=laptop; fi
+    ${lib.getExe pkgs.framework-tool} --tablet-mode $m >/dev/null && echo $m
+  '';
 in
 {
+  services.logind.settings.Login.HandlePowerKey = lib.mkForce "ignore";
+  security.sudo.extraRules = [
+    {
+      users = [ username ];
+      commands = [
+        {
+          command = "${toggle}";
+          options = [ "NOPASSWD" ];
+        }
+      ];
+    }
+  ];
   home-manager.users.${username} =
     { config, ... }:
     let
@@ -54,7 +74,15 @@ in
           }
         '';
         settings = {
-          input.touch.map-to-output = output;
+          input = {
+            touch.map-to-output = output;
+            power-key-handling.enable = false;
+          };
+          # also on the lock screen, where a disabled keyboard can't type the password
+          binds."XF86PowerOff" = {
+            allow-when-locked = true;
+            action.spawn-sh = ''notify-send "Tablet mode" "$(sudo ${toggle})"'';
+          };
           switch-events = {
             tablet-mode-on.action.spawn = [
               "systemctl"
