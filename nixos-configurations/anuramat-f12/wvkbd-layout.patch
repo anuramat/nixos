@@ -23,18 +23,21 @@
    {"`", "~", 1.0, Code, KEY_GRAVE},
    {"1", "!", 1.0, Code, KEY_1},
    {"2", "@", 1.0, Code, KEY_2},
-@@ -194,7 +178,7 @@
+@@ -194,8 +178,7 @@
    {"\\", "|", 1.0, Code, KEY_BACKSLASH},
    {"", "", 0.0, EndRow},
  
 -  {"Cmp", "Cmp", 1.0, Compose, .scheme = 1},
-+  {"Esc", "Esc", 1.0, Code, KEY_ESC, .scheme = 1},
-   {"Caps", "Caps", 1.0, Mod, CapsLock, .scheme = 1},
+-  {"Caps", "Caps", 1.0, Mod, CapsLock, .scheme = 1},
++  {"Esc", "Esc", 2.0, Code, KEY_ESC, .scheme = 1},
    {"a", "A", 1.0, Code, KEY_A, &layouts[ComposeA]},
    {"s", "S", 1.0, Code, KEY_S, &layouts[ComposeS]},
-@@ -227,11 +211,10 @@
+   {"d", "D", 1.0, Code, KEY_D, &layouts[ComposeD]},
+@@ -225,13 +208,11 @@
+   {"⇧", "⇫", 1.0, Mod, Shift, .scheme = 1},
+   {"", "", 0.0, EndRow},
  
-   {"⌨͕", "⌨͔", 1.5, NextLayer, .scheme = 1},
+-  {"⌨͕", "⌨͔", 1.5, NextLayer, .scheme = 1},
    {"Ctr", "Ctr", 1.0, Mod, Ctrl, .scheme = 1},
 -  {"Sup", "Sup", 1.0, Mod, Super, .scheme = 1},
    {"Alt", "Alt", 1.0, Mod, Alt, .scheme = 1},
@@ -42,7 +45,7 @@
 -  {"AGr", "AGr", 1.0, Mod, AltGr, .scheme = 1},
 -  {"Ctr", "Ctr", 1.0, Mod, Ctrl, .scheme = 1},
 +  {"Sup", "Sup", 1.0, Mod, Super, .scheme = 1},
-+  {"", "", 6.0, Code, KEY_SPACE},
++  {"", "", 7.5, Code, KEY_SPACE},
 +  {"Del", "Del", 1.0, Code, KEY_DELETE, .scheme = 1},
    {"←", "←", 1.0, Code, KEY_LEFT, .scheme = 1},
    {"↓", "↓", 1.0, Code, KEY_DOWN, .scheme = 1},
