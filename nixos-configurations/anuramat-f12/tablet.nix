@@ -7,7 +7,9 @@
 # since "auto" sometimes leaves the keyboard disabled. niri hides everything
 # but the lock surface while locked, so a local patch adds an `above-lock`
 # layer rule, which keeps the on-screen keyboard over the lock screen; another
-# lets an edge swipe fire while locked, like a bind's `allow-when-locked`
+# lets an edge swipe fire while locked, like a bind's `allow-when-locked`.
+# smithay forwards virtual keyboard keys straight to the focused client
+# (niri#2212), so a third matches the on-screen keyboard's keys against binds
 {
   config,
   inputs,
@@ -75,6 +77,7 @@ in
             ++ [
               ./niri-above-lock.patch
               ./niri-edge-swipe-when-locked.patch
+              ./niri-virtual-keyboard-binds.patch
             ];
         });
         # 3 fingers drag the view and the workspaces; the patch's defaults also

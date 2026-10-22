@@ -1,0 +1,251 @@
+diff --git a/src/handlers/mod.rs b/src/handlers/mod.rs
+index 3532078..de95103 100644
+--- a/src/handlers/mod.rs
++++ b/src/handlers/mod.rs
+@@ -1,6 +1,7 @@
+ pub mod background_effect;
+ mod compositor;
+ mod layer_shell;
++pub mod virtual_keyboard;
+ mod xdg_shell;
+ 
+ use std::fs::File;
+@@ -69,7 +70,7 @@ use smithay::{
+     delegate_pointer_gestures, delegate_presentation, delegate_primary_selection,
+     delegate_relative_pointer, delegate_seat, delegate_security_context, delegate_session_lock,
+     delegate_single_pixel_buffer, delegate_tablet_manager, delegate_text_input_manager,
+-    delegate_viewporter, delegate_virtual_keyboard_manager, delegate_xdg_activation,
++    delegate_viewporter, delegate_xdg_activation,
+ };
+ 
+ pub use crate::handlers::xdg_shell::KdeDecorationsModeState;
+@@ -280,7 +281,6 @@ impl KeyboardShortcutsInhibitHandler for State {
+ 
+ delegate_input_method_manager!(State);
+ delegate_keyboard_shortcuts_inhibit!(State);
+-delegate_virtual_keyboard_manager!(State);
+ 
+ impl SelectionHandler for State {
+     type SelectionUserData = Arc<[u8]>;
+diff --git a/src/handlers/virtual_keyboard.rs b/src/handlers/virtual_keyboard.rs
+new file mode 100644
+index 0000000..9ce81ff
+--- /dev/null
++++ b/src/handlers/virtual_keyboard.rs
+@@ -0,0 +1,102 @@
++use std::collections::HashSet;
++
++use smithay::input::keyboard::{xkb, Keycode};
++use smithay::reexports::wayland_protocols_misc::zwp_virtual_keyboard_v1::server::zwp_virtual_keyboard_manager_v1::ZwpVirtualKeyboardManagerV1;
++use smithay::reexports::wayland_protocols_misc::zwp_virtual_keyboard_v1::server::zwp_virtual_keyboard_v1::{
++    Request, ZwpVirtualKeyboardV1,
++};
++use smithay::reexports::wayland_server::backend::ClientId;
++use smithay::reexports::wayland_server::protocol::wl_keyboard::KeymapFormat;
++use smithay::reexports::wayland_server::{
++    delegate_dispatch, delegate_global_dispatch, Client, DataInit, Dispatch, DisplayHandle,
++    Resource,
++};
++use smithay::wayland::virtual_keyboard::{
++    VirtualKeyboardManagerGlobalData, VirtualKeyboardManagerState, VirtualKeyboardUserData,
++};
++
++use crate::niri::State;
++
++/// A copy of a virtual keyboard's XKB state, to match its keys against the binds.
++pub struct VirtualKeyboardBinds {
++    pub xkb: xkb::State,
++    pub suppressed_keys: HashSet<Keycode>,
++}
++
++// The manager is Smithay's; the keyboards are intercepted below.
++delegate_global_dispatch!(State: [ZwpVirtualKeyboardManagerV1: VirtualKeyboardManagerGlobalData] => VirtualKeyboardManagerState);
++delegate_dispatch!(State: [ZwpVirtualKeyboardManagerV1: ()] => VirtualKeyboardManagerState);
++
++type Smithay = VirtualKeyboardManagerState;
++
++impl Dispatch<ZwpVirtualKeyboardV1, VirtualKeyboardUserData<State>> for State {
++    fn request(
++        state: &mut Self,
++        client: &Client,
++        resource: &ZwpVirtualKeyboardV1,
++        request: Request,
++        data: &VirtualKeyboardUserData<State>,
++        dh: &DisplayHandle,
++        data_init: &mut DataInit<'_, Self>,
++    ) {
++        match &request {
++            Request::Keymap { format, fd, size } if *format == KeymapFormat::XkbV1 as u32 => {
++                let context = xkb::Context::new(xkb::CONTEXT_NO_FLAGS);
++                // SAFETY: Smithay maps the same keymap below.
++                let keymap = fd.try_clone().ok().and_then(|fd| unsafe {
++                    xkb::Keymap::new_from_fd(
++                        &context,
++                        fd,
++                        *size as usize,
++                        xkb::KEYMAP_FORMAT_TEXT_V1,
++                        xkb::KEYMAP_COMPILE_NO_FLAGS,
++                    )
++                    .ok()
++                    .flatten()
++                });
++                if let Some(keymap) = keymap {
++                    let binds = VirtualKeyboardBinds {
++                        xkb: xkb::State::new(&keymap),
++                        suppressed_keys: HashSet::new(),
++                    };
++                    state.niri.virtual_keyboards.insert(resource.id(), binds);
++                }
++            }
++            Request::Modifiers {
++                mods_depressed,
++                mods_latched,
++                mods_locked,
++                group,
++            } => {
++                if let Some(vk) = state.niri.virtual_keyboards.get_mut(&resource.id()) {
++                    vk.xkb
++                        .update_mask(*mods_depressed, *mods_latched, *mods_locked, 0, 0, *group);
++                }
++            }
++            // The protocol sends evdev codes, XKB's are offset by 8.
++            Request::Key {
++                key,
++                state: key_state,
++                ..
++            } => {
++                if state.intercept_virtual_key(&resource.id(), (key + 8).into(), *key_state == 1) {
++                    return;
++                }
++            }
++            _ => (),
++        }
++        <Smithay as Dispatch<_, _, State>>::request(
++            state, client, resource, request, data, dh, data_init,
++        );
++    }
++
++    fn destroyed(
++        state: &mut Self,
++        client: ClientId,
++        resource: &ZwpVirtualKeyboardV1,
++        data: &VirtualKeyboardUserData<State>,
++    ) {
++        state.niri.virtual_keyboards.remove(&resource.id());
++        <Smithay as Dispatch<_, _, State>>::destroyed(state, client, resource, data);
++    }
++}
+diff --git a/src/input/mod.rs b/src/input/mod.rs
+index 3935b7b..4be9386 100644
+--- a/src/input/mod.rs
++++ b/src/input/mod.rs
+@@ -34,6 +34,7 @@ use smithay::input::touch::{
+ };
+ use smithay::input::SeatHandler;
+ use smithay::output::Output;
++use smithay::reexports::wayland_server::backend::ObjectId;
+ use smithay::reexports::wayland_server::protocol::wl_data_source::WlDataSource;
+ use smithay::reexports::wayland_server::protocol::wl_surface::WlSurface;
+ use smithay::utils::{Logical, Point, Rectangle, Transform, SERIAL_COUNTER};
+@@ -610,6 +611,64 @@ impl State {
+         self.start_key_repeat(bind);
+     }
+ 
++    /// Matches a virtual keyboard's key against the binds, like on_keyboard() does for physical
++    /// keyboards, since Smithay forwards virtual keys straight to the focused client. Returns
++    /// whether the key was intercepted.
++    pub fn intercept_virtual_key(
++        &mut self,
++        id: &ObjectId,
++        key_code: Keycode,
++        pressed: bool,
++    ) -> bool {
++        let mod_key = self.backend.mod_key(&self.niri.config.borrow());
++        let is_inhibiting_shortcuts = self.is_inhibiting_shortcuts();
++        let Some(vk) = self.niri.virtual_keyboards.get_mut(id) else {
++            return false;
++        };
++
++        let mut mods = ModifiersState::default();
++        mods.update_with(&vk.xkb);
++        let modified = vk.xkb.key_get_one_sym(key_code);
++        let layout = vk.xkb.key_get_layout(key_code);
++        let raw = vk
++            .xkb
++            .get_keymap()
++            .key_get_syms_by_level(key_code, layout, 0)
++            .first()
++            .copied();
++
++        let config = self.niri.config.borrow();
++        let bindings = make_binds_iter(
++            &config,
++            &mut self.niri.window_mru_ui,
++            modifiers_from_state(mods),
++        );
++        let res = should_intercept_key(
++            &mut vk.suppressed_keys,
++            bindings,
++            mod_key,
++            key_code,
++            modified,
++            raw,
++            pressed,
++            mods,
++            &self.niri.screenshot_ui,
++            config.input.disable_power_key_handling,
++            is_inhibiting_shortcuts,
++        );
++        drop(config);
++
++        match res {
++            FilterResult::Forward => false,
++            FilterResult::Intercept(bind) => {
++                if let Some(bind) = bind {
++                    self.handle_bind(bind);
++                }
++                true
++            }
++        }
++    }
++
+     fn start_key_repeat(&mut self, bind: Bind) {
+         if !bind.repeat {
+             return;
+diff --git a/src/niri.rs b/src/niri.rs
+index 197567a..bb2d7f5 100644
+--- a/src/niri.rs
++++ b/src/niri.rs
+@@ -62,7 +62,7 @@ use smithay::reexports::wayland_protocols::xdg::shell::server::xdg_toplevel::WmC
+ use smithay::reexports::wayland_protocols_misc::server_decoration as _server_decoration;
+ use smithay::reexports::wayland_protocols_wlr::screencopy::v1::server::zwlr_screencopy_manager_v1::ZwlrScreencopyManagerV1;
+ use smithay::reexports::wayland_server::backend::{
+-    ClientData, ClientId, DisconnectReason, GlobalId,
++    ClientData, ClientId, DisconnectReason, GlobalId, ObjectId,
+ };
+ use smithay::reexports::wayland_server::protocol::wl_shm;
+ use smithay::reexports::wayland_server::protocol::wl_surface::WlSurface;
+@@ -127,6 +127,7 @@ use crate::dbus::gnome_shell_introspect::{self, IntrospectToNiri, NiriToIntrospe
+ #[cfg(feature = "dbus")]
+ use crate::dbus::gnome_shell_screenshot::{NiriToScreenshot, ScreenshotToNiri};
+ use crate::frame_clock::FrameClock;
++use crate::handlers::virtual_keyboard::VirtualKeyboardBinds;
+ use crate::handlers::{configure_lock_surface, XDG_ACTIVATION_TOKEN_TIMEOUT};
+ use crate::input::pick_color_grab::PickColorGrab;
+ use crate::input::scroll_swipe_gesture::ScrollSwipeGesture;
+@@ -295,6 +296,7 @@ pub struct Niri {
+     pub input_method_state: InputMethodManagerState,
+     pub keyboard_shortcuts_inhibit_state: KeyboardShortcutsInhibitState,
+     pub virtual_keyboard_state: VirtualKeyboardManagerState,
++    pub virtual_keyboards: HashMap<ObjectId, VirtualKeyboardBinds>,
+     pub virtual_pointer_state: VirtualPointerManagerState,
+     pub pointer_gestures_state: PointerGesturesState,
+     pub relative_pointer_state: RelativePointerManagerState,
+@@ -2545,6 +2547,7 @@ impl Niri {
+             input_method_state,
+             keyboard_shortcuts_inhibit_state,
+             virtual_keyboard_state,
++            virtual_keyboards: HashMap::new(),
+             virtual_pointer_state,
+             shm_state,
+             output_manager_state,
