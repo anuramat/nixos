@@ -1,15 +1,10 @@
-# touchscreen gestures, which niri lacks, come from the niri-tablet patch
-# series. tablet mode (screen folded back): a user service, started and
+# touchscreen gestures, the `above-lock` layer rule and edge swipes while
+# locked come from the patches in overlays/niri. tablet mode (screen folded back): a user service, started and
 # stopped by niri's switch events, rotates the panel with the accelerometer,
 # bumps its scale for fingers, and starts a hidden on-screen keyboard, which a
 # swipe from the bottom edge toggles, also on the lock screen. the power key
 # toggles the EC's tablet mode detection off ("laptop") and back on ("auto"),
-# since "auto" sometimes leaves the keyboard disabled. niri hides everything
-# but the lock surface while locked, so a local patch adds an `above-lock`
-# layer rule, which keeps the on-screen keyboard over the lock screen; another
-# lets an edge swipe fire while locked, like a bind's `allow-when-locked`.
-# smithay forwards virtual keyboard keys straight to the focused client
-# (niri#2212), so a third matches the on-screen keyboard's keys against binds
+# since "auto" sometimes leaves the keyboard disabled
 {
   config,
   inputs,
@@ -68,18 +63,6 @@ in
     in
     {
       programs.niri = {
-        package = pkgs.niri.overrideAttrs (old: {
-          patches =
-            (old.patches or [ ])
-            ++ (
-              lib.filesystem.listFilesRecursive "${inputs.niri-tablet}/pkg" |> lib.filter (lib.hasSuffix ".patch")
-            )
-            ++ [
-              ./niri-above-lock.patch
-              ./niri-edge-swipe-when-locked.patch
-              ./niri-virtual-keyboard-binds.patch
-            ];
-        });
         # 3 fingers drag the view and the workspaces; the patch's defaults also
         # bind a 3-finger tap to maximize-column. 4-finger flicks and taps fire
         # once, on lift

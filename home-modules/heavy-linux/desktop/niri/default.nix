@@ -101,7 +101,7 @@
   services.gnome-keyring.enable = lib.mkForce false;
   programs.niri = {
     enable = true;
-    package = lib.mkDefault pkgs.niri;
+    package = pkgs.niri;
     extraConfig = ''
       recent-windows {
           off

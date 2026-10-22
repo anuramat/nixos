@@ -212,6 +212,7 @@ lib.composeManyExtensions [
   flakes
   upstreamOnly
   inputs.self.overlays.caut
+  inputs.self.overlays.niri
   inputs.self.overlays.nx-studio
   inputs.self.overlays.pass-secret-service-rs
   inputs.self.overlays.proton-drive-cli
