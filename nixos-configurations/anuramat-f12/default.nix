@@ -29,13 +29,7 @@
         desktop_widgets.widget = { inherit fleet; };
         lockscreen_widgets.widget = {
           inherit fleet;
-          # clears the on-screen keyboard in tablet mode: at scale 1.25 the
-          # landscape screen is 960px tall and the keyboard covers its bottom
-          # 380px, so the ~70px box ends ~45px above it
-          login = {
-            output = "eDP-1";
-            cy = 500;
-          };
+          login.output = "eDP-1";
         };
       };
   };

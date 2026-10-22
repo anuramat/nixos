@@ -33,9 +33,9 @@ in
     # name instead, so a network can be renamed with `nmcli`
     # upstream always shows the lockscreen login box, which hides the widgets
     # behind it and takes their input; this hides it while the password is empty
-    # upstream places the login box at a fixed cx, which drifts off center when
-    # the output's logical width changes (f12's tablet mode rotates and rescales
-    # it); this always centers it horizontally
+    # upstream places the login box at a fixed cx/cy, which drifts off center
+    # when the output's logical size changes (f12's tablet mode rotates and
+    # rescales it); this always centers it
     package = pkgs.noctalia.overrideAttrs (old: {
       patches = (old.patches or [ ]) ++ [
         ./pam-setcred.patch
@@ -126,9 +126,8 @@ in
 
       lockscreen_widgets = {
         enabled = true;
-        # its height (`cy`) is set per host, like the fleet monitor's geometry,
-        # and it's always centered horizontally; noctalia replaces a login box
-        # without `output` with a default one, so its output is set per host too
+        # always centered; noctalia replaces a login box without `output` with a
+        # default one, so its output is set per host
         widget.login = {
           type = "login_box";
           settings = {
