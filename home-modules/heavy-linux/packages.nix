@@ -31,6 +31,7 @@
     waypipe # gui forwarding
     remmina # vnc client
     wayvnc # vnc server
+    wvkbd # on-screen keyboard: wvkbd-deskintl, e.g. in a vnc session
     wev # wayland event viewer, useful for debugging
     wl-clipboard # wl-copy/wl-paste: copy from stdin/paste to stdout
     wl-mirror # screen mirroring
