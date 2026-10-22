@@ -1410,6 +1410,23 @@
         "type": "github"
       }
     },
+    "niri-tablet": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1790127496,
+        "narHash": "sha256-9/lU9xTk739oZkehUBVOlS3NH4eAyxow3og1LWpGkOU=",
+        "owner": "GGEZUS",
+        "repo": "niri-tablet",
+        "rev": "d4dbaef7072599719835959e995cc0b561cb06a6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "GGEZUS",
+        "ref": "v26.04.20",
+        "repo": "niri-tablet",
+        "type": "github"
+      }
+    },
     "niri-unstable": {
       "flake": false,
       "locked": {
@@ -2303,6 +2320,7 @@
         "nikon-recipes": "nikon-recipes",
         "nil": "nil",
         "niri": "niri",
+        "niri-tablet": "niri-tablet",
         "nirimap": "nirimap",
         "nix-auth": "nix-auth",
         "nix-strix-halo": "nix-strix-halo",

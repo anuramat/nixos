@@ -1,6 +1,7 @@
-# tablet mode (screen folded back): a user service, started and stopped by
-# niri's switch events, rotates the panel with the accelerometer, bumps its
-# scale for fingers, and shows an on-screen keyboard
+# touchscreen gestures, which niri lacks, come from the niri-tablet patch
+# series. tablet mode (screen folded back): a user service, started and
+# stopped by niri's switch events, rotates the panel with the accelerometer,
+# bumps its scale for fingers, and shows an on-screen keyboard
 {
   inputs,
   pkgs,
@@ -34,6 +35,24 @@ in
     in
     {
       programs.niri = {
+        package = pkgs.niri.overrideAttrs (old: {
+          patches =
+            (old.patches or [ ])
+            ++ (
+              lib.filesystem.listFilesRecursive "${inputs.niri-tablet}/pkg" |> lib.filter (lib.hasSuffix ".patch")
+            );
+        });
+        # 3 fingers drag the view and the workspaces; the patch's defaults also
+        # bind a 3-finger tap to maximize-column and let 4-finger vertical
+        # swipes drive the workspaces
+        extraConfig = ''
+          gestures {
+              touchscreen-edge-swipe {
+                  top { toggle-overview; }
+                  bottom { spawn "${pkgs.systemd}/bin/systemctl" "--user" "kill" "-s" "RTMIN" "wvkbd"; }
+              }
+          }
+        '';
         settings = {
           input.touch.map-to-output = output;
           switch-events = {
