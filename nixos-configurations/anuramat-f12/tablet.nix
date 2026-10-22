@@ -1,11 +1,13 @@
 # touchscreen gestures, which niri lacks, come from the niri-tablet patch
 # series. tablet mode (screen folded back): a user service, started and
 # stopped by niri's switch events, rotates the panel with the accelerometer,
-# bumps its scale for fingers, and shows an on-screen keyboard. the power key
+# bumps its scale for fingers, and starts a hidden on-screen keyboard, which a
+# swipe from the bottom edge toggles, also on the lock screen. the power key
 # toggles the EC's tablet mode detection off ("laptop") and back on ("auto"),
 # since "auto" sometimes leaves the keyboard disabled. niri hides everything
 # but the lock surface while locked, so a local patch adds an `above-lock`
-# layer rule, which keeps the on-screen keyboard over the lock screen
+# layer rule, which keeps the on-screen keyboard over the lock screen; another
+# lets an edge swipe fire while locked, like a bind's `allow-when-locked`
 {
   config,
   inputs,
@@ -70,7 +72,10 @@ in
             ++ (
               lib.filesystem.listFilesRecursive "${inputs.niri-tablet}/pkg" |> lib.filter (lib.hasSuffix ".patch")
             )
-            ++ [ ./niri-above-lock.patch ];
+            ++ [
+              ./niri-above-lock.patch
+              ./niri-edge-swipe-when-locked.patch
+            ];
         });
         # 3 fingers drag the view and the workspaces; the patch's defaults also
         # bind a 3-finger tap to maximize-column and let 4-finger vertical
@@ -83,7 +88,7 @@ in
           gestures {
               touchscreen-edge-swipe {
                   top { toggle-overview; }
-                  bottom { spawn "${pkgs.systemd}/bin/systemctl" "--user" "kill" "-s" "RTMIN" "wvkbd"; }
+                  bottom allow-when-locked=true { spawn "${pkgs.systemd}/bin/systemctl" "--user" "kill" "-s" "RTMIN" "wvkbd"; }
               }
           }
         '';
@@ -113,11 +118,6 @@ in
           };
         };
       };
-      # shows the keyboard even if it was hidden, since the swipe that toggles
-      # it doesn't work while locked; a no-op outside tablet mode
-      programs.noctalia.settings.hooks.session_locked = [
-        "${pkgs.systemd}/bin/systemctl --user kill -s SIGUSR2 wvkbd"
-      ];
       systemd.user.services.tablet-mode = {
         Unit = {
           Description = "Tablet mode: auto-rotation, bigger scale, on-screen keyboard";
@@ -145,7 +145,7 @@ in
           let
             layers = "full,special";
           in
-          "${pkgs.wvkbd}/bin/wvkbd-mobintl -H 450 -L 380 -l ${layers} --landscape-layers ${layers}";
+          "${pkgs.wvkbd}/bin/wvkbd-mobintl --hidden -H 450 -L 380 -l ${layers} --landscape-layers ${layers}";
       };
     };
 }

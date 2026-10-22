@@ -1,0 +1,302 @@
+diff --git a/niri-config/src/gestures.rs b/niri-config/src/gestures.rs
+index fc285f7..3e4bca3 100644
+--- a/niri-config/src/gestures.rs
++++ b/niri-config/src/gestures.rs
+@@ -433,21 +433,81 @@ where
+         ctx: &mut knuffel::decode::Context<S>,
+     ) -> Result<Self, DecodeError<S>> {
+         expect_only_children(node, ctx);
++        let action = decode_single_action(node, ctx)?;
++        Ok(Self { action })
++    }
++}
++
++fn decode_single_action<S>(
++    node: &knuffel::ast::SpannedNode<S>,
++    ctx: &mut knuffel::decode::Context<S>,
++) -> Result<Action, DecodeError<S>>
++where
++    S: knuffel::traits::ErrorSpan,
++{
++    let mut children = node.children();
++    let Some(child) = children.next() else {
++        return Err(DecodeError::missing(node, "expected an action node"));
++    };
++    for unwanted_child in children {
++        ctx.emit_error(DecodeError::unexpected(
++            unwanted_child,
++            "node",
++            "only one action is allowed",
++        ));
++    }
++    <Action as knuffel::Decode<S>>::decode_node(child, ctx)
++}
+ 
+-        let mut children = node.children();
+-        let Some(child) = children.next() else {
+-            return Err(DecodeError::missing(node, "expected an action node"));
+-        };
+-        for unwanted_child in children {
++/// Action bound to an edge swipe zone, e.g.
++/// `bottom allow-when-locked=true { spawn "osk-toggle"; }`.
++#[derive(Debug, Clone, PartialEq)]
++pub struct TouchscreenEdgeSwipeAction {
++    pub action: Action,
++    /// Also fire while the session is locked, like the bind property.
++    pub allow_when_locked: bool,
++}
++
++impl<S> knuffel::Decode<S> for TouchscreenEdgeSwipeAction
++where
++    S: knuffel::traits::ErrorSpan,
++{
++    fn decode_node(
++        node: &knuffel::ast::SpannedNode<S>,
++        ctx: &mut knuffel::decode::Context<S>,
++    ) -> Result<Self, DecodeError<S>> {
++        if let Some(type_name) = &node.type_name {
+             ctx.emit_error(DecodeError::unexpected(
+-                unwanted_child,
+-                "node",
+-                "only one action is allowed",
++                type_name,
++                "type name",
++                "no type name expected for this node",
+             ));
+         }
+-
+-        let action = <Action as knuffel::Decode<S>>::decode_node(child, ctx)?;
+-        Ok(Self { action })
++        for val in node.arguments.iter() {
++            ctx.emit_error(DecodeError::unexpected(
++                &val.literal,
++                "argument",
++                "no arguments expected for this node",
++            ));
++        }
++        let mut allow_when_locked = false;
++        for (name, val) in &node.properties {
++            match &***name {
++                "allow-when-locked" => {
++                    allow_when_locked = knuffel::traits::DecodeScalar::decode(val, ctx)?;
++                }
++                name_str => ctx.emit_error(DecodeError::unexpected(
++                    name,
++                    "property",
++                    format!("unexpected property `{}`", name_str.escape_default()),
++                )),
++            }
++        }
++        let action = decode_single_action(node, ctx)?;
++        Ok(Self {
++            action,
++            allow_when_locked,
++        })
+     }
+ }
+ 
+@@ -460,20 +520,20 @@ where
+ /// gestures {
+ ///     touchscreen-edge-swipe {
+ ///         bottom { toggle-overview; }
+-///         top { spawn-sh "panel-toggle"; }
++///         top allow-when-locked=true { spawn-sh "panel-toggle"; }
+ ///     }
+ /// }
+ /// ```
+ #[derive(Debug, Default, Clone, PartialEq)]
+ pub struct TouchscreenEdgeSwipe {
+     /// Swipe up from the bottom edge.
+-    pub bottom: Option<Action>,
++    pub bottom: Option<TouchscreenEdgeSwipeAction>,
+     /// Swipe down from the top edge.
+-    pub top: Option<Action>,
++    pub top: Option<TouchscreenEdgeSwipeAction>,
+     /// Swipe right from the left edge.
+-    pub left: Option<Action>,
++    pub left: Option<TouchscreenEdgeSwipeAction>,
+     /// Swipe left from the right edge.
+-    pub right: Option<Action>,
++    pub right: Option<TouchscreenEdgeSwipeAction>,
+ }
+ 
+ impl TouchscreenEdgeSwipe {
+@@ -486,28 +546,28 @@ impl TouchscreenEdgeSwipe {
+ #[derive(knuffel::Decode, Debug, Default, Clone, PartialEq)]
+ pub struct TouchscreenEdgeSwipePart {
+     #[knuffel(child)]
+-    pub bottom: Option<TouchscreenTap>,
++    pub bottom: Option<TouchscreenEdgeSwipeAction>,
+     #[knuffel(child)]
+-    pub top: Option<TouchscreenTap>,
++    pub top: Option<TouchscreenEdgeSwipeAction>,
+     #[knuffel(child)]
+-    pub left: Option<TouchscreenTap>,
++    pub left: Option<TouchscreenEdgeSwipeAction>,
+     #[knuffel(child)]
+-    pub right: Option<TouchscreenTap>,
++    pub right: Option<TouchscreenEdgeSwipeAction>,
+ }
+ 
+ impl MergeWith<TouchscreenEdgeSwipePart> for TouchscreenEdgeSwipe {
+     fn merge_with(&mut self, part: &TouchscreenEdgeSwipePart) {
+         if let Some(a) = &part.bottom {
+-            self.bottom = Some(a.action.clone());
++            self.bottom = Some(a.clone());
+         }
+         if let Some(a) = &part.top {
+-            self.top = Some(a.action.clone());
++            self.top = Some(a.clone());
+         }
+         if let Some(a) = &part.left {
+-            self.left = Some(a.action.clone());
++            self.left = Some(a.clone());
+         }
+         if let Some(a) = &part.right {
+-            self.right = Some(a.action.clone());
++            self.right = Some(a.clone());
+         }
+     }
+ }
+diff --git a/niri-config/src/lib.rs b/niri-config/src/lib.rs
+index d26dc16..5d6d4b1 100644
+--- a/niri-config/src/lib.rs
++++ b/niri-config/src/lib.rs
+@@ -49,7 +49,9 @@ pub use crate::appearance::*;
+ pub use crate::binds::*;
+ pub use crate::debug::Debug;
+ pub use crate::error::{ConfigIncludeError, ConfigParseResult};
+-pub use crate::gestures::{Gestures, HorizontalSwipe, ShowTouchPoints, TouchscreenSwipe};
++pub use crate::gestures::{
++    Gestures, HorizontalSwipe, ShowTouchPoints, TouchscreenEdgeSwipeAction, TouchscreenSwipe,
++};
+ pub use crate::input::{Input, ModKey, ScrollMethod, TrackLayout, WarpMouseToFocusMode, Xkb};
+ pub use crate::layer_rule::LayerRule;
+ pub use crate::layout::*;
+@@ -673,7 +675,7 @@ mod tests {
+             gestures {
+                 touchscreen-edge-swipe {
+                     bottom { toggle-overview; }
+-                    left { focus-column-left; }
++                    left allow-when-locked=true { focus-column-left; }
+                 }
+                 touchscreen-corner-swipe {
+                     top-left { focus-column-right; }
+@@ -685,11 +687,17 @@ mod tests {
+         let gestures = &parsed.gestures;
+         assert_eq!(
+             gestures.touchscreen_edge_swipe.bottom,
+-            Some(Action::ToggleOverview)
++            Some(TouchscreenEdgeSwipeAction {
++                action: Action::ToggleOverview,
++                allow_when_locked: false,
++            })
+         );
+         assert_eq!(
+             gestures.touchscreen_edge_swipe.left,
+-            Some(Action::FocusColumnLeft)
++            Some(TouchscreenEdgeSwipeAction {
++                action: Action::FocusColumnLeft,
++                allow_when_locked: true,
++            })
+         );
+         assert_eq!(
+             gestures.touchscreen_corner_swipe.top_left,
+@@ -1838,7 +1846,10 @@ mod tests {
+                 },
+                 touchscreen_edge_swipe: TouchscreenEdgeSwipe {
+                     bottom: Some(
+-                        ToggleOverview,
++                        TouchscreenEdgeSwipeAction {
++                            action: ToggleOverview,
++                            allow_when_locked: false,
++                        },
+                     ),
+                     top: None,
+                     left: None,
+diff --git a/src/input/mod.rs b/src/input/mod.rs
+index 599ed70..3935b7b 100644
+--- a/src/input/mod.rs
++++ b/src/input/mod.rs
+@@ -8,7 +8,7 @@ use calloop::timer::{TimeoutAction, Timer};
+ use input::event::gesture::GestureEventCoordinates as _;
+ use niri_config::{
+     Action, Bind, Binds, Config, Key, ModKey, Modifiers, MruDirection, ShowTouchPoints,
+-    SwitchBinds, Trigger,
++    SwitchBinds, TouchscreenEdgeSwipeAction, Trigger,
+ };
+ use niri_ipc::LayoutSwitchTarget;
+ use smithay::backend::input::{
+@@ -4712,7 +4712,7 @@ impl State {
+                 } else {
+                     let action = touchscreen_edge_swipe_action(&self.niri.config.borrow(), zone);
+ 
+-                    if let Some(action) = action {
++                    if let Some((action, allow_when_locked)) = action {
+                         if self.niri.config.borrow().gestures.debug_log {
+                             info!(
+                                 "gesture-debug: edge-swipe trigger zone={zone:?} action={action:?}"
+@@ -4721,7 +4721,7 @@ impl State {
+ 
+                         // do_action() cancels active touches, releasing any grabs;
+                         // run it before installing the swallow grab below.
+-                        self.do_action(action, false);
++                        self.do_action(action, allow_when_locked);
+ 
+                         // Swallow the rest of this gesture so surfaces under the finger
+                         // don't receive a stray drag. End the touch the client has
+@@ -5185,18 +5185,24 @@ fn allowed_when_locked(action: &Action) -> bool {
+     )
+ }
+ 
+-/// Action bound to a fired edge/corner swipe zone, if any.
+-fn touchscreen_edge_swipe_action(config: &Config, zone: SwipeZone) -> Option<Action> {
+-    let gestures = &config.gestures;
++/// Action bound to a fired edge/corner swipe zone, if any, and whether it is
++/// allowed when locked.
++fn touchscreen_edge_swipe_action(config: &Config, zone: SwipeZone) -> Option<(Action, bool)> {
++    let edges = &config.gestures.touchscreen_edge_swipe;
++    let corners = &config.gestures.touchscreen_corner_swipe;
++    let edge = |a: &Option<TouchscreenEdgeSwipeAction>| {
++        a.clone().map(|a| (a.action, a.allow_when_locked))
++    };
++    let corner = |a: &Option<Action>| a.clone().map(|a| (a, false));
+     match zone {
+-        SwipeZone::Bottom => gestures.touchscreen_edge_swipe.bottom.clone(),
+-        SwipeZone::Top => gestures.touchscreen_edge_swipe.top.clone(),
+-        SwipeZone::Left => gestures.touchscreen_edge_swipe.left.clone(),
+-        SwipeZone::Right => gestures.touchscreen_edge_swipe.right.clone(),
+-        SwipeZone::TopLeft => gestures.touchscreen_corner_swipe.top_left.clone(),
+-        SwipeZone::TopRight => gestures.touchscreen_corner_swipe.top_right.clone(),
+-        SwipeZone::BottomLeft => gestures.touchscreen_corner_swipe.bottom_left.clone(),
+-        SwipeZone::BottomRight => gestures.touchscreen_corner_swipe.bottom_right.clone(),
++        SwipeZone::Bottom => edge(&edges.bottom),
++        SwipeZone::Top => edge(&edges.top),
++        SwipeZone::Left => edge(&edges.left),
++        SwipeZone::Right => edge(&edges.right),
++        SwipeZone::TopLeft => corner(&corners.top_left),
++        SwipeZone::TopRight => corner(&corners.top_right),
++        SwipeZone::BottomLeft => corner(&corners.bottom_left),
++        SwipeZone::BottomRight => corner(&corners.bottom_right),
+     }
+ }
+ 
+@@ -5695,15 +5701,15 @@ mod tests {
+ 
+         assert_eq!(
+             touchscreen_edge_swipe_action(&config, SwipeZone::Bottom),
+-            Some(Action::ToggleOverview)
++            Some((Action::ToggleOverview, false))
+         );
+         assert_eq!(
+             touchscreen_edge_swipe_action(&config, SwipeZone::Left),
+-            Some(Action::FocusColumnLeft)
++            Some((Action::FocusColumnLeft, false))
+         );
+         assert_eq!(
+             touchscreen_edge_swipe_action(&config, SwipeZone::TopLeft),
+-            Some(Action::FocusColumnRight)
++            Some((Action::FocusColumnRight, false))
+         );
+         assert_eq!(touchscreen_edge_swipe_action(&config, SwipeZone::Top), None);
+         assert_eq!(
