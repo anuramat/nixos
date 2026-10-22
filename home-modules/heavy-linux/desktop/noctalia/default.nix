@@ -131,7 +131,7 @@ in
           };
         };
       };
-      hooks.session_locked = lib.getExe config.lib.keyring.lock;
+      hooks.session_locked = [ (lib.getExe config.lib.keyring.lock) ];
 
       dock = {
         enabled = true;

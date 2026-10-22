@@ -1,0 +1,118 @@
+diff --git a/niri-config/src/layer_rule.rs b/niri-config/src/layer_rule.rs
+index cf099b3..d5a9f5f 100644
+--- a/niri-config/src/layer_rule.rs
++++ b/niri-config/src/layer_rule.rs
+@@ -20,6 +20,8 @@ pub struct LayerRule {
+     #[knuffel(child, unwrap(argument))]
+     pub place_within_backdrop: Option<bool>,
+     #[knuffel(child, unwrap(argument))]
++    pub above_lock: Option<bool>,
++    #[knuffel(child, unwrap(argument))]
+     pub baba_is_float: Option<bool>,
+     #[knuffel(child, default)]
+     pub background_effect: BackgroundEffectRule,
+diff --git a/niri-config/src/lib.rs b/niri-config/src/lib.rs
+index 17faf06..d26dc16 100644
+--- a/niri-config/src/lib.rs
++++ b/niri-config/src/lib.rs
+@@ -2117,6 +2117,7 @@ mod tests {
+                     },
+                     geometry_corner_radius: None,
+                     place_within_backdrop: None,
++                    above_lock: None,
+                     baba_is_float: None,
+                     background_effect: BackgroundEffectRule {
+                         xray: None,
+diff --git a/src/layer/mapped.rs b/src/layer/mapped.rs
+index fbaa6fc..0cdbf17 100644
+--- a/src/layer/mapped.rs
++++ b/src/layer/mapped.rs
+@@ -157,6 +157,10 @@ impl MappedLayer {
+         std::mem::take(&mut self.recompute_rules_on_commit)
+     }
+ 
++    pub fn above_lock(&self) -> bool {
++        self.rules.above_lock && self.surface.layer() == Layer::Overlay
++    }
++
+     pub fn place_within_backdrop(&self) -> bool {
+         if !self.rules.place_within_backdrop {
+             return false;
+diff --git a/src/layer/mod.rs b/src/layer/mod.rs
+index 767a6b0..27259f5 100644
+--- a/src/layer/mod.rs
++++ b/src/layer/mod.rs
+@@ -25,6 +25,9 @@ pub struct ResolvedLayerRules {
+     /// Whether to place this layer surface within the overview backdrop.
+     pub place_within_backdrop: bool,
+ 
++    /// Whether to show this overlay-layer surface above the lock screen.
++    pub above_lock: bool,
++
+     /// Whether to bob this window up and down.
+     pub baba_is_float: bool,
+ 
+@@ -72,6 +75,9 @@ impl ResolvedLayerRules {
+             if let Some(x) = rule.place_within_backdrop {
+                 resolved.place_within_backdrop = x;
+             }
++            if let Some(x) = rule.above_lock {
++                resolved.above_lock = x;
++            }
+             if let Some(x) = rule.baba_is_float {
+                 resolved.baba_is_float = x;
+             }
+diff --git a/src/niri.rs b/src/niri.rs
+index 6dc14a5..197567a 100644
+--- a/src/niri.rs
++++ b/src/niri.rs
+@@ -3316,6 +3316,26 @@ impl Niri {
+         if self.exit_confirm_dialog.is_open() {
+             return rv;
+         } else if self.is_locked() {
++            let layers = layer_map_for_output(output);
++            let above_lock = layers
++                .layers_on(Layer::Overlay)
++                .rev()
++                .find_map(|layer_surface| {
++                    if !self.mapped_layer_surfaces.get(layer_surface)?.above_lock() {
++                        return None;
++                    }
++                    let loc = layers.layer_geometry(layer_surface)?.loc;
++                    let (surface, pos) = layer_surface
++                        .surface_under(pos_within_output - loc.to_f64(), WindowSurfaceType::ALL)?;
++                    let pos = (pos + loc + output_pos_in_global_space).to_f64();
++                    Some(((surface, pos), layer_surface.clone()))
++                });
++            if let Some((surface, layer_surface)) = above_lock {
++                rv.surface = Some(surface);
++                rv.layer = Some(layer_surface);
++                return rv;
++            }
++
+             let Some(state) = self.output_state.get(output) else {
+                 return rv;
+             };
+@@ -4266,8 +4286,21 @@ impl Niri {
+             }
+         }
+ 
+-        // If the session is locked, draw the lock surface.
++        // If the session is locked, draw the lock surface, under the above-lock layer surfaces.
+         if self.is_locked() {
++            let layer_map = layer_map_for_output(output);
++            for (mapped, geo) in self.layers_in_render_order(&layer_map, Layer::Overlay, false) {
++                if mapped.above_lock() {
++                    mapped.render_normal(
++                        ctx.r(),
++                        None,
++                        geo.loc.to_f64(),
++                        XrayPos::default(),
++                        &mut |elem| push(elem.into()),
++                    );
++                }
++            }
++
+             if let Some(surface) = state.lock_surface.as_ref() {
+                 push_elements_from_surface_tree(
+                     ctx.renderer,

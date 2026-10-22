@@ -3,7 +3,9 @@
 # stopped by niri's switch events, rotates the panel with the accelerometer,
 # bumps its scale for fingers, and shows an on-screen keyboard. the power key
 # toggles the EC's tablet mode detection off ("laptop") and back on ("auto"),
-# since "auto" sometimes leaves the keyboard disabled
+# since "auto" sometimes leaves the keyboard disabled. niri hides everything
+# but the lock surface while locked, so a local patch adds an `above-lock`
+# layer rule, which keeps the on-screen keyboard over the lock screen
 {
   config,
   inputs,
@@ -67,12 +69,17 @@ in
             (old.patches or [ ])
             ++ (
               lib.filesystem.listFilesRecursive "${inputs.niri-tablet}/pkg" |> lib.filter (lib.hasSuffix ".patch")
-            );
+            )
+            ++ [ ./niri-above-lock.patch ];
         });
         # 3 fingers drag the view and the workspaces; the patch's defaults also
         # bind a 3-finger tap to maximize-column and let 4-finger vertical
         # swipes drive the workspaces
         extraConfig = ''
+          layer-rule {
+              match namespace="^wvkbd$"
+              above-lock true
+          }
           gestures {
               touchscreen-edge-swipe {
                   top { toggle-overview; }
@@ -106,6 +113,11 @@ in
           };
         };
       };
+      # shows the keyboard even if it was hidden, since the swipe that toggles
+      # it doesn't work while locked; a no-op outside tablet mode
+      programs.noctalia.settings.hooks.session_locked = [
+        "${pkgs.systemd}/bin/systemctl --user kill -s SIGUSR2 wvkbd"
+      ];
       systemd.user.services.tablet-mode = {
         Unit = {
           Description = "Tablet mode: auto-rotation, bigger scale, on-screen keyboard";
