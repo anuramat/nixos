@@ -42,6 +42,9 @@
     enableAllFirmware = true; # as in "regardless of license"; implies redistributable
     enableAllHardware = true;
   };
+  # udev autoloads it next to `button` (same ACPI id); it powers off by
+  # signalling init on every power key press, bypassing logind
+  boot.blacklistedKernelModules = [ "tiny_power_button" ];
   # NOTE 2026-10-22 eMudhra intermediate CA keys leaked (CVE-2026-111943);
   # non-browser TLS clients trust them via these roots -- drop once
   # nixpkgs' cacert no longer ships them
