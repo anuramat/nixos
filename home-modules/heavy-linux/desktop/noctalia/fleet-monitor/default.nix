@@ -140,7 +140,7 @@ let
 
   widget = {
     type = "anuramat/fleet-monitor:jobs";
-    settings.font_size = 32;
+    settings.font_size = 20;
   };
 in
 {
