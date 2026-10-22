@@ -1,0 +1,20 @@
+Hide the lockscreen login box while the password is empty.
+
+The login box covers the lockscreen widgets behind it and takes their clicks
+and scrolls. Keep it hidden, and so out of hit-testing, until something is
+typed; keys still reach the focused password field while it is hidden.
+
+diff --git a/src/shell/lockscreen/lock_surface.cpp b/src/shell/lockscreen/lock_surface.cpp
+index 13ba0fe..0ecb116 100644
+--- a/src/shell/lockscreen/lock_surface.cpp
++++ b/src/shell/lockscreen/lock_surface.cpp
+@@ -919,7 +919,8 @@ void LockSurface::layoutScene(std::uint32_t width, std::uint32_t height) {
+ 
+   m_wallpaper->setVisible(true);
+   m_widgetLayer->setVisible(true);
+-  const bool loginVisible = isLoginBoxEnabled();
++  // Hidden, and so out of hit-testing, while the password is empty.
++  const bool loginVisible = !m_password.empty() && isLoginBoxEnabled();
+   const lockscreen_login_box::LoginBoxStyle loginStyle = resolveLoginStyle();
+   m_loginPanel->setVisible(loginVisible);
+   m_loginContentRow->setVisible(loginVisible);

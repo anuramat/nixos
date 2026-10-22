@@ -31,6 +31,8 @@ in
     # couldn't toggle a section on a right-click
     # upstream labels wifi networks by SSID; this shows the saved NM profile's
     # name instead, so a network can be renamed with `nmcli`
+    # upstream always shows the lockscreen login box, which hides the widgets
+    # behind it and takes their input; this hides it while the password is empty
     package = pkgs.noctalia.overrideAttrs (old: {
       patches = (old.patches or [ ]) ++ [
         ./pam-setcred.patch
@@ -39,6 +41,7 @@ in
         ./lockscreen-widget-animations.patch
         ./ui-right-click.patch
         ./wifi-profile-names.patch
+        ./lockscreen-login-hide-empty.patch
       ];
     });
 
