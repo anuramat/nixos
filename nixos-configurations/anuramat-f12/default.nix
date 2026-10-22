@@ -29,12 +29,13 @@
         desktop_widgets.widget = { inherit fleet; };
         lockscreen_widgets.widget = {
           inherit fleet;
-          # noctalia's default spot for the compact layout: centered, bottom
-          # edge 84px above the screen's
+          # clears the on-screen keyboard in tablet mode: at scale 1.25 the
+          # landscape screen is 960px tall and the keyboard covers its bottom
+          # 380px, so the ~70px box ends ~45px above it
           login = {
             output = "eDP-1";
             cx = 960;
-            cy = 1081;
+            cy = 500;
           };
         };
       };
