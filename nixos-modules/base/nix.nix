@@ -63,7 +63,7 @@ in
 
     gc = {
       automatic = true;
-      dates = "Fri 23:00";
+      dates = lib.mkDefault "Fri 23:00";
       options = "--delete-older-than 30d";
     };
 

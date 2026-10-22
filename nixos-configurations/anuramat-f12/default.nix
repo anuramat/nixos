@@ -5,6 +5,8 @@
 {
   system.stateVersion = "25.05";
   networking.openconnect.interfaces.uhd.autoStart = true;
+  # daily, since it's rarely awake on AC at any given time
+  nix.gc.dates = "15:00";
 
   home-manager.users.${inputs.self.consts.user.username} = {
     services.kanshi.builtinDisplay = {
