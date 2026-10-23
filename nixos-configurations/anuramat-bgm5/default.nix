@@ -8,25 +8,8 @@
   system.stateVersion = "25.11";
   programs.captive-browser.interface = "wlp195s0";
 
-  home-manager.users.${inputs.self.consts.user.username}.programs.noctalia.settings =
-    let
-      # 2560x1440 (4K at 1.5)
-      fleet = {
-        cx = 1280;
-        cy = 720;
-        settings = {
-          width = 2432;
-          height = 1280;
-        };
-      };
-    in
-    {
-      desktop_widgets.widget = { inherit fleet; };
-      lockscreen_widgets.widget = {
-        inherit fleet;
-        login.output = "DP-3";
-      };
-    };
+  home-manager.users.${inputs.self.consts.user.username}.programs.noctalia.settings.lockscreen_widgets.widget.login.output =
+    "DP-3";
   nixpkgs.config.rocmSupport = true;
 
   fileSystems."/mnt/storage" = {

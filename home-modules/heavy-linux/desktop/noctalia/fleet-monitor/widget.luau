@@ -20,6 +20,14 @@ local function eta(s)
   return d > 0 and `{d}d{h}h` or h > 0 and `{h}h{m}m` or `{m}m`
 end
 
+-- the logical size of the widget's output
+local function outputSize()
+  for _, o in noctalia.outputs() do
+    if o.name == desktopWidget.outputName() then return o.width, o.height end
+  end
+  return 0, 0
+end
+
 local function label(text, color, props)
   props = props or {}
   props.text, props.color, props.fontSize = text, color, FONT_SIZE
@@ -116,8 +124,9 @@ function update()
   local children, now = {}, noctalia.nowMs() // 1000
   for _, s in sections do table.insert(children, section(s, now)) end
   -- a scroll view only sizes right when its parent hands it an exact size, so the card has a fixed one, filled by it
+  local w, h = outputSize()
   desktopWidget.render(ui.column({ padding = 12 * SCALE, radius = 12 * SCALE, fill = "surface/0.8",
-    width = noctalia.getConfig("width"), height = noctalia.getConfig("height") },
+    width = noctalia.getConfig("width") * w, height = noctalia.getConfig("height") * h },
     { ui.scroll({ gap = 12 * SCALE, flexGrow = 1 }, children) }))
 end
 

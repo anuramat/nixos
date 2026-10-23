@@ -1,0 +1,402 @@
+Desktop and lockscreen widget positions relative to the output.
+
+Widget positions (cx, cy) were absolute logical px, so a widget only stayed
+in place at one logical output size: rotating the output or changing its
+scale moved it, or pushed it off screen. They are now fractions of the
+output's logical size, converted to px on placement; the widget editor
+converts its snapshot to px on open and back on close. Desktop widgets also
+get `desktopWidget.outputName()`, so that a plugin can size itself to its
+output through `noctalia.outputs()`.
+
+diff --git a/example.toml b/example.toml
+index 1f6895c..037a0d4 100644
+--- a/example.toml
++++ b/example.toml
+@@ -419,8 +419,8 @@ enabled = false
+ # [desktop_widgets.widget.clock_main]
+ # type     = "clock"
+ # output   = "DP-1"
+-# cx       = 960.0
+-# cy       = 540.0
++# cx       = 0.5 # fraction of the output's logical width
++# cy       = 0.5 # fraction of the output's logical height
+ # scale    = 1.5
+ # rotation = 0.0
+ 
+@@ -435,8 +435,8 @@ enabled = false
+ # [lockscreen_widgets.widget.clock_main]
+ # type     = "clock"
+ # output   = "DP-1"
+-# cx       = 1600.0
+-# cy       = 120.0
++# cx       = 0.8
++# cy       = 0.1
+ # scale    = 1.5
+ # rotation = 0.0
+ 
+diff --git a/src/scripting/plugin_bindings.cpp b/src/scripting/plugin_bindings.cpp
+index 518ae31..3f304d9 100644
+--- a/src/scripting/plugin_bindings.cpp
++++ b/src/scripting/plugin_bindings.cpp
+@@ -601,6 +601,7 @@ namespace {
+   }
+ 
+   const luaL_Reg kDesktopWidgetLib[] = {
++      {"outputName", luau_outputName},
+       {"render", luau_ui_render},
+       {"setWantsSecondTicks", luau_ui_setWantsSecondTicks},
+       {"setNeedsFrameTick", luau_ui_setNeedsFrameTick},
+diff --git a/src/shell/desktop/desktop_widget_factory.cpp b/src/shell/desktop/desktop_widget_factory.cpp
+index 860dac3..b80d299 100644
+--- a/src/shell/desktop/desktop_widget_factory.cpp
++++ b/src/shell/desktop/desktop_widget_factory.cpp
+@@ -187,7 +187,8 @@ DesktopWidgetFactory::DesktopWidgetFactory(DesktopWidgetRuntimeServices services
+       m_scriptDeps(services.scriptDeps) {}
+ 
+ std::unique_ptr<DesktopWidget> DesktopWidgetFactory::create(
+-    const std::string& type, const std::unordered_map<std::string, WidgetSettingValue>& settings, float contentScale
++    const std::string& type, const std::unordered_map<std::string, WidgetSettingValue>& settings,
++    const std::string& outputName, float contentScale
+ ) const {
+   if (type == "clock") {
+     const std::string styleSetting = getStringSetting(settings, "clock_style", "digital");
+@@ -454,7 +455,7 @@ std::unique_ptr<DesktopWidget> DesktopWidgetFactory::create(
+             .httpClient = m_httpClient,
+             .clipboard = m_scriptDeps.clipboard,
+         },
+-        std::string{}
++        outputName
+     );
+     applyCommonSettings(*widget, settings);
+     widget->setContentScale(contentScale);
+diff --git a/src/shell/desktop/desktop_widget_factory.h b/src/shell/desktop/desktop_widget_factory.h
+index a1390fe..cbc07bd 100644
+--- a/src/shell/desktop/desktop_widget_factory.h
++++ b/src/shell/desktop/desktop_widget_factory.h
+@@ -20,7 +20,7 @@ public:
+ 
+   [[nodiscard]] std::unique_ptr<DesktopWidget> create(
+       const std::string& type, const std::unordered_map<std::string, WidgetSettingValue>& settings,
+-      float contentScale = 1.0F
++      const std::string& outputName, float contentScale = 1.0F
+   ) const;
+ 
+ private:
+diff --git a/src/shell/desktop/desktop_widget_layout.h b/src/shell/desktop/desktop_widget_layout.h
+index f65d2f3..2c49489 100644
+--- a/src/shell/desktop/desktop_widget_layout.h
++++ b/src/shell/desktop/desktop_widget_layout.h
+@@ -74,9 +74,34 @@ namespace desktop_widgets {
+     return static_cast<float>(std::max(1, output.effectiveLogicalHeight()));
+   }
+ 
+-  // Single source of truth for desktop widget coordinate clamping. Edit mode, default mode, and
+-  // snapshot normalization all route through here so the visibility rule stays identical. Resolves
+-  // the widget's effective output, then constrains state.cx/cy so that at least
++  // The config stores cx/cy as fractions of the widget's output's logical size, so that widgets keep
++  // their relative placement when the output is rotated or rescaled. The editor works in logical px:
++  // it converts its snapshot with toPx on open and back on close. Widgets without an available
++  // output are left as is, both ways.
++  inline void convertCenter(const WaylandConnection& wayland, DesktopWidgetState& state, bool toPx) {
++    const WaylandOutput* output = resolveStateOutput(wayland, state);
++    if (output == nullptr) {
++      return;
++    }
++    const float w = outputLogicalWidth(*output);
++    const float h = outputLogicalHeight(*output);
++    state.cx = toPx ? state.cx * w : state.cx / w;
++    state.cy = toPx ? state.cy * h : state.cy / h;
++  }
++
++  // The widget's center in logical px of the output, from its fractional cx/cy, constrained so
++  // that at least kDesktopWidgetMinVisibleFraction of its rotated AABB remains on screen.
++  inline WidgetTransformClampResult
++  centerOnOutput(const WaylandOutput& output, const DesktopWidgetState& state, float width, float height) {
++    const float w = outputLogicalWidth(output);
++    const float h = outputLogicalHeight(output);
++    return clampWidgetCenterToOutput(
++        state.cx * w, state.cy * h, width, height, 1.0F, state.rotationRad, w, h, kDesktopWidgetMinVisibleFraction
++    );
++  }
++
++  // The editor's coordinate clamping, on states in logical px (see convertCenter). Resolves the
++  // widget's effective output, then constrains state.cx/cy so that at least
+   // kDesktopWidgetMinVisibleFraction of the widget's rotated AABB remains on screen. The caller
+   // passes the widget's current box size as intrinsicWidth/intrinsicHeight, so no extra scale
+   // multiplier is applied here.
+diff --git a/src/shell/desktop/desktop_widgets_host.cpp b/src/shell/desktop/desktop_widgets_host.cpp
+index ab0f5af..2ad8f70 100644
+--- a/src/shell/desktop/desktop_widgets_host.cpp
++++ b/src/shell/desktop/desktop_widgets_host.cpp
+@@ -88,6 +88,12 @@ void DesktopWidgetsHost::onOutputChange() {
+     return;
+   }
+   syncInstances();
++  // placement is relative to the output's size, which may have changed
++  for (auto& instance : m_instances) {
++    if (instance->surface != nullptr) {
++      instance->surface->requestLayout();
++    }
++  }
+ }
+ 
+ void DesktopWidgetsHost::onSecondTick() {
+@@ -195,7 +201,9 @@ void DesktopWidgetsHost::createInstance(const DesktopWidgetState& state, const W
+   }
+ 
+   const float baseUiScale = m_config != nullptr ? m_config->config().accessibility.uiScale : 1.0F;
+-  auto widget = m_factory->create(state.type, state.settings, desktop_widgets::widgetContentScale(baseUiScale));
++  auto widget = m_factory->create(
++      state.type, state.settings, desktop_widgets::outputKey(output), desktop_widgets::widgetContentScale(baseUiScale)
++  );
+   if (widget == nullptr) {
+     return;
+   }
+@@ -208,19 +216,16 @@ void DesktopWidgetsHost::createInstance(const DesktopWidgetState& state, const W
+   const float intrinsicWidth = std::max(1.0F, widget->intrinsicWidth());
+   const float intrinsicHeight = std::max(1.0F, widget->intrinsicHeight());
+ 
+-  DesktopWidgetState clampedState = state;
+-  if (m_wayland != nullptr) {
+-    desktop_widgets::clampStateToOutput(*m_wayland, clampedState, intrinsicWidth, intrinsicHeight);
+-  }
+-
++  const WidgetTransformClampResult center =
++      desktop_widgets::centerOnOutput(output, state, intrinsicWidth, intrinsicHeight);
+   const float outW = desktop_widgets::outputLogicalWidth(output);
+   const float outH = desktop_widgets::outputLogicalHeight(output);
+   const WidgetTransformClippedGeometry geometry = computeClippedWidgetSurfaceGeometry(
+-      clampedState.cx, clampedState.cy, intrinsicWidth, intrinsicHeight, 1.0F, clampedState.rotationRad, outW, outH
++      center.cx, center.cy, intrinsicWidth, intrinsicHeight, 1.0F, state.rotationRad, outW, outH
+   );
+ 
+   auto surfaceConfig = LayerSurfaceConfig{
+-      .nameSpace = desktopWidgetNamespace(clampedState),
++      .nameSpace = desktopWidgetNamespace(state),
+       .layer = LayerShellLayer::Bottom,
+       .anchor = LayerShellAnchor::Top | LayerShellAnchor::Left,
+       .width = geometry.surfaceWidth,
+@@ -234,7 +239,7 @@ void DesktopWidgetsHost::createInstance(const DesktopWidgetState& state, const W
+   };
+ 
+   auto instance = std::make_unique<DesktopWidgetInstance>();
+-  instance->state = clampedState;
++  instance->state = state;
+   instance->effectiveOutputName = desktop_widgets::outputKey(output);
+   instance->output = output.output;
+   instance->widget = std::move(widget);
+@@ -339,23 +344,17 @@ void DesktopWidgetsHost::prepareFrame(DesktopWidgetInstance& instance, bool need
+     instance.intrinsicHeight = std::max(1.0F, instance.widget->intrinsicHeight());
+   }
+ 
+-  if (m_wayland != nullptr) {
+-    desktop_widgets::clampStateToOutput(*m_wayland, instance.state, instance.intrinsicWidth, instance.intrinsicHeight);
+-  }
+-
+-  float outputW = 1920.0F;
+-  float outputH = 1080.0F;
+-  if (m_wayland != nullptr) {
+-    if (const WaylandOutput* output = desktop_widgets::resolveStateOutput(*m_wayland, instance.state);
+-        output != nullptr) {
+-      outputW = desktop_widgets::outputLogicalWidth(*output);
+-      outputH = desktop_widgets::outputLogicalHeight(*output);
+-    }
++  // syncInstances drops the instances whose output is gone
++  const WaylandOutput* output =
++      m_wayland != nullptr ? desktop_widgets::resolveStateOutput(*m_wayland, instance.state) : nullptr;
++  if (output == nullptr) {
++    return;
+   }
+-
++  const WidgetTransformClampResult center =
++      desktop_widgets::centerOnOutput(*output, instance.state, instance.intrinsicWidth, instance.intrinsicHeight);
+   const WidgetTransformClippedGeometry geometry = computeClippedWidgetSurfaceGeometry(
+-      instance.state.cx, instance.state.cy, instance.intrinsicWidth, instance.intrinsicHeight, 1.0F,
+-      instance.state.rotationRad, outputW, outputH
++      center.cx, center.cy, instance.intrinsicWidth, instance.intrinsicHeight, 1.0F, instance.state.rotationRad,
++      desktop_widgets::outputLogicalWidth(*output), desktop_widgets::outputLogicalHeight(*output)
+   );
+ 
+   if (instance.surface->width() != geometry.surfaceWidth || instance.surface->height() != geometry.surfaceHeight) {
+diff --git a/src/shell/desktop/editor/desktop_widgets_editor.cpp b/src/shell/desktop/editor/desktop_widgets_editor.cpp
+index 17551fc..2d15273 100644
+--- a/src/shell/desktop/editor/desktop_widgets_editor.cpp
++++ b/src/shell/desktop/editor/desktop_widgets_editor.cpp
+@@ -249,6 +249,11 @@ void DesktopWidgetsEditor::open(const DesktopWidgetsEditorSnapshot& snapshot) {
+   if (m_profile.showLockscreenLoginPreview && m_wayland != nullptr) {
+     lockscreen_login_box::ensureWidgets(m_snapshot.widgets, *m_wayland);
+   }
++  if (m_wayland != nullptr) {
++    for (auto& widget : m_snapshot.widgets) {
++      desktop_widgets::convertCenter(*m_wayland, widget, true);
++    }
++  }
+   m_open = true;
+   clearSelection();
+   m_widgetClipboard.clear();
+@@ -290,7 +295,17 @@ DesktopWidgetsEditorSnapshot DesktopWidgetsEditor::close() {
+   m_leftAltHeld = false;
+   m_rightAltHeld = false;
+   m_open = false;
+-  return m_snapshot;
++  return snapshot();
++}
++
++DesktopWidgetsEditorSnapshot DesktopWidgetsEditor::snapshot() const {
++  DesktopWidgetsEditorSnapshot snapshot = m_snapshot;
++  if (m_wayland != nullptr) {
++    for (auto& widget : snapshot.widgets) {
++      desktop_widgets::convertCenter(*m_wayland, widget, false);
++    }
++  }
++  return snapshot;
+ }
+ 
+ void DesktopWidgetsEditor::clearSelection() {
+@@ -781,7 +796,7 @@ void DesktopWidgetsEditor::rebuildScene(OverlaySurface& surface) {
+       continue;
+     }
+ 
+-    auto widget = m_factory->create(widgetState.type, widgetState.settings, widgetContentScale());
++    auto widget = m_factory->create(widgetState.type, widgetState.settings, surface.outputName, widgetContentScale());
+     if (widget == nullptr) {
+       continue;
+     }
+diff --git a/src/shell/desktop/editor/desktop_widgets_editor.h b/src/shell/desktop/editor/desktop_widgets_editor.h
+index ef5abc1..9d52e7a 100644
+--- a/src/shell/desktop/editor/desktop_widgets_editor.h
++++ b/src/shell/desktop/editor/desktop_widgets_editor.h
+@@ -39,7 +39,8 @@ public:
+   void setExitRequestedCallback(std::function<void()> callback);
+ 
+   void open(const DesktopWidgetsEditorSnapshot& snapshot);
+-  [[nodiscard]] const DesktopWidgetsEditorSnapshot& snapshot() const noexcept { return m_snapshot; }
++  // with cx/cy converted back to fractions of the output (see desktop_widgets::convertCenter)
++  [[nodiscard]] DesktopWidgetsEditorSnapshot snapshot() const;
+   [[nodiscard]] DesktopWidgetsEditorSnapshot close();
+   [[nodiscard]] bool isOpen() const noexcept;
+ 
+diff --git a/src/shell/desktop/editor/desktop_widgets_editor_settings.cpp b/src/shell/desktop/editor/desktop_widgets_editor_settings.cpp
+index 9bd4cfe..b5015d3 100644
+--- a/src/shell/desktop/editor/desktop_widgets_editor_settings.cpp
++++ b/src/shell/desktop/editor/desktop_widgets_editor_settings.cpp
+@@ -950,7 +950,7 @@ void DesktopWidgetsEditor::applySettingChange(const std::string& key, WidgetSett
+       return;
+     }
+ 
+-    auto newWidget = m_factory->create(state->type, state->settings, widgetContentScale());
++    auto newWidget = m_factory->create(state->type, state->settings, surface->outputName, widgetContentScale());
+     if (newWidget == nullptr) {
+       return;
+     }
+diff --git a/src/shell/lockscreen/lock_surface.cpp b/src/shell/lockscreen/lock_surface.cpp
+index 0ecb116..c2292f9 100644
+--- a/src/shell/lockscreen/lock_surface.cpp
++++ b/src/shell/lockscreen/lock_surface.cpp
+@@ -942,8 +942,8 @@ void LockSurface::layoutScene(std::uint32_t width, std::uint32_t height) {
+     if (const DesktopWidgetState* loginBox =
+             lockscreen_login_box::findForOutput(m_config->config().lockscreenWidgets.widgets, m_outputKey);
+         loginBox != nullptr) {
+-      float cx = loginBox->cx;
+-      float cy = loginBox->cy;
++      float cx = loginBox->cx * sw;
++      float cy = loginBox->cy * sh;
+       // Fit height to visible chrome so disabling media/weather/sessions does not leave empty panel space.
+       panelHeight = lockscreen_login_box::defaultPanelHeight(loginStyle.layout, showSession, showInfoConfigured);
+       panelWidth = lockscreen_login_box::resolvePanelWidth(sw, loginBox->boxWidth, loginStyle.layout);
+diff --git a/src/shell/lockscreen/lockscreen_login_box.cpp b/src/shell/lockscreen/lockscreen_login_box.cpp
+index c1a1d1a..95f5d39 100644
+--- a/src/shell/lockscreen/lockscreen_login_box.cpp
++++ b/src/shell/lockscreen/lockscreen_login_box.cpp
+@@ -279,8 +279,8 @@ namespace lockscreen_login_box {
+     float height = defaultPanelHeight(layout, showSessionButtons, showInfoExtras);
+     const float panelX = std::round((screenWidth - width) * 0.5F);
+     const float panelY = std::max(Style::spaceLg, screenHeight - height - 84.0F);
+-    cx = panelX + width * 0.5F;
+-    cy = panelY + height * 0.5F;
++    cx = (panelX + width * 0.5F) / screenWidth;
++    cy = (panelY + height * 0.5F) / screenHeight;
+   }
+ 
+   void panelOriginFromCenter(
+@@ -428,7 +428,6 @@ namespace lockscreen_login_box {
+             screenWidth, widget.boxWidth, widget.boxHeight, style.layout, style.showSessionButtons, showInfo
+         );
+       }
+-      desktop_widgets::clampStateToOutput(wayland, widget, widget.boxWidth, widget.boxHeight);
+     }
+ 
+     for (const auto& output : wayland.outputs()) {
+diff --git a/src/shell/lockscreen/lockscreen_login_box.h b/src/shell/lockscreen/lockscreen_login_box.h
+index 4281d27..2782d57 100644
+--- a/src/shell/lockscreen/lockscreen_login_box.h
++++ b/src/shell/lockscreen/lockscreen_login_box.h
+@@ -128,6 +128,7 @@ namespace lockscreen_login_box {
+       bool showInfoExtras = true
+   );
+   [[nodiscard]] PanelContentLayout panelContentLayout(float panelWidth, float panelHeight, bool showLoginButton);
++  // cx/cy as fractions of the screen size, like every widget's
+   void defaultPanelCenter(
+       float screenWidth, float screenHeight, float& cx, float& cy, LayoutMode layout, bool showSessionButtons = true,
+       bool showInfoExtras = true
+diff --git a/src/shell/lockscreen/lockscreen_widgets_host.cpp b/src/shell/lockscreen/lockscreen_widgets_host.cpp
+index b902f3d..a60cd83 100644
+--- a/src/shell/lockscreen/lockscreen_widgets_host.cpp
++++ b/src/shell/lockscreen/lockscreen_widgets_host.cpp
+@@ -219,7 +219,9 @@ void LockscreenWidgetsHost::createInstance(
+   }
+ 
+   const float baseUiScale = m_config != nullptr ? m_config->config().accessibility.uiScale : 1.0F;
+-  auto widget = m_factory->create(state.type, state.settings, desktop_widgets::widgetContentScale(baseUiScale));
++  auto widget = m_factory->create(
++      state.type, state.settings, desktop_widgets::outputKey(output), desktop_widgets::widgetContentScale(baseUiScale)
++  );
+   if (widget == nullptr) {
+     return;
+   }
+@@ -236,11 +238,8 @@ void LockscreenWidgetsHost::createInstance(
+   const float intrinsicWidth = std::max(1.0F, widget->intrinsicWidth());
+   const float intrinsicHeight = std::max(1.0F, widget->intrinsicHeight());
+ 
+-  DesktopWidgetState clampedState = state;
+-  desktop_widgets::clampStateToOutput(*m_wayland, clampedState, intrinsicWidth, intrinsicHeight);
+-
+   auto instance = std::make_unique<WidgetInstance>();
+-  instance->state = clampedState;
++  instance->state = state;
+   instance->surface = &surface;
+   instance->widget = std::move(widget);
+   instance->intrinsicWidth = intrinsicWidth;
+@@ -379,24 +378,20 @@ void LockscreenWidgetsHost::prepareFrame(LockSurface& surface, bool needsUpdate,
+       instance->intrinsicHeight = std::max(1.0F, instance->widget->intrinsicHeight());
+     }
+ 
+-    if (m_wayland != nullptr) {
+-      DesktopWidgetState currentState = instance->state;
+-      if (const DesktopWidgetState* origState = findStateById(m_snapshot, instance->state.id); origState != nullptr) {
+-        currentState = *origState;
+-      }
+-      desktop_widgets::clampStateToOutput(
+-          *m_wayland, currentState, instance->intrinsicWidth, instance->intrinsicHeight
+-      );
+-      instance->state = currentState;
++    if (const DesktopWidgetState* origState = findStateById(m_snapshot, instance->state.id); origState != nullptr) {
++      instance->state = *origState;
+     }
+-
+-    if (instance->transformNode == nullptr) {
++    const WaylandOutput* output =
++        m_wayland != nullptr ? desktop_widgets::resolveStateOutput(*m_wayland, instance->state) : nullptr;
++    if (instance->transformNode == nullptr || output == nullptr) {
+       continue;
+     }
++    const WidgetTransformClampResult center =
++        desktop_widgets::centerOnOutput(*output, instance->state, instance->intrinsicWidth, instance->intrinsicHeight);
+ 
+     instance->transformNode->setFrameSize(instance->intrinsicWidth, instance->intrinsicHeight);
+     instance->transformNode->setPosition(
+-        instance->state.cx - instance->intrinsicWidth * 0.5F, instance->state.cy - instance->intrinsicHeight * 0.5F
++        center.cx - instance->intrinsicWidth * 0.5F, center.cy - instance->intrinsicHeight * 0.5F
+     );
+     instance->transformNode->setRotation(instance->state.rotationRad);
+     float flipScaleX = 1.0F;

@@ -139,8 +139,11 @@ let
         jq -r --argjson color "$color" -f ${./print.jq} <<<"$json"
       '';
 
+  # centered; cx and cy are fractions of the output's logical size
   widget = {
     type = "anuramat/fleet-monitor:jobs";
+    cx = 0.5;
+    cy = 0.5;
     settings.font_size = 20;
   };
 in
@@ -177,21 +180,21 @@ in
             {
               id = "jobs";
               entry = "widget.luau";
-              # card size in logical px, and the font size, which the rest of
-              # the layout scales with (14 is noctalia's default); unlike the
-              # widget box (`box_width`, `box_height`), which scales the
-              # content to fit it, these keep the font size fixed, and the
-              # content scrolls when it doesn't fit
+              # card size as fractions of the output's logical size, and the
+              # font size, which the rest of the layout scales with (14 is
+              # noctalia's default); unlike the widget box (`box_width`,
+              # `box_height`), which scales the content to fit it, these keep
+              # the font size fixed, and the content scrolls when it doesn't fit
               setting =
                 lib.mapAttrsToList
                   (key: default: {
                     inherit key default;
-                    type = "int";
+                    type = if builtins.isFloat default then "float" else "int";
                     label_key = key;
                   })
                   {
-                    width = 800;
-                    height = 600;
+                    width = 0.95;
+                    height = 0.89;
                     font_size = 14;
                   };
             }
@@ -205,8 +208,8 @@ in
 
   programs.noctalia.settings = {
     plugins.enabled = [ "anuramat/fleet-monitor" ];
-    # geometry is set per host (logical px of its display); without `output`,
-    # noctalia uses the first output instead of a host-specific connector
+    # without `output`, noctalia uses the first output instead of a
+    # host-specific connector
     desktop_widgets.widget.fleet = widget;
     lockscreen_widgets.widget.fleet = widget;
   };

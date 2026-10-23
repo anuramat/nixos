@@ -33,9 +33,10 @@ in
     # name instead, so a network can be renamed with `nmcli`
     # upstream always shows the lockscreen login box, which hides the widgets
     # behind it and takes their input; this hides it while the password is empty
-    # upstream places the login box at a fixed cx/cy, which drifts off center
-    # when the output's logical size changes (f12's tablet mode rotates and
-    # rescales it); this always centers it
+    # upstream places widgets at a fixed cx/cy in logical px, which drift off
+    # screen when the output's logical size changes (f12's tablet mode rotates
+    # and rescales it); this makes cx/cy fractions of the output's size, and
+    # lets plugin desktop widgets look up their output, to size themselves
     package = pkgs.noctalia.overrideAttrs (old: {
       patches = (old.patches or [ ]) ++ [
         ./pam-setcred.patch
@@ -45,7 +46,7 @@ in
         ./ui-right-click.patch
         ./wifi-profile-names.patch
         ./lockscreen-login-hide-empty.patch
-        ./lockscreen-login-center.patch
+        ./widget-relative-position.patch
       ];
     });
 
@@ -126,10 +127,12 @@ in
 
       lockscreen_widgets = {
         enabled = true;
-        # always centered; noctalia replaces a login box without `output` with a
+        # centered; noctalia replaces a login box without `output` with a
         # default one, so its output is set per host
         widget.login = {
           type = "login_box";
+          cx = 0.5;
+          cy = 0.5;
           settings = {
             layout = "compact";
             show_login_button = false;
