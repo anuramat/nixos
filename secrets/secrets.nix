@@ -26,6 +26,7 @@ in
   "tgfy-token.age"
   "tgfy-id.age"
   "agent.age" # private ssh key for agents
+  "nikon.age" # PTP/IP UUID for Z5II
 ]
 |> map (x: {
   name = x;
