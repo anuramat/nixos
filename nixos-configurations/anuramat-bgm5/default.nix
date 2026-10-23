@@ -44,6 +44,15 @@
       # https://wiki.archlinux.org/title/AMDGPU
       "amdgpu.dcdebugmask=0x600" # disable dynamic display IPS
     ];
+    # the SD reader's (GL9755) UHS-II mode times out every command with a
+    # Lexar V60 card, 10s each; UHS-I works
+    # https://lkml.iu.edu/2503.0/08894.html
+    kernelPatches = [
+      {
+        name = "gl9755-no-uhs2";
+        patch = ./gl9755-no-uhs2.patch;
+      }
+    ];
     # panic on a hard lockup and reboot 10s later, instead of staying frozen;
     # the panic log goes to EFI pstore, systemd-pstore saves it on the next boot
     kernel.sysctl = {

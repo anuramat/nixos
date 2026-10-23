@@ -1,0 +1,16 @@
+mmc: sdhci-pci-gli: disable UHS-II on GL9755
+
+Register the GL9755 with the plain sdhci host instead of the UHS-II one,
+so UHS-II cards fall back to UHS-I.
+
+--- a/drivers/mmc/host/sdhci-pci-gli.c
++++ b/drivers/mmc/host/sdhci-pci-gli.c
+@@ -2048,8 +2048,6 @@
+ 	.quirks		= SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC,
+ 	.quirks2	= SDHCI_QUIRK2_BROKEN_DDR50,
+ 	.probe_slot	= gli_probe_slot_gl9755,
+-	.add_host	= sdhci_pci_uhs2_add_host,
+-	.remove_host	= sdhci_pci_uhs2_remove_host,
+ 	.ops            = &sdhci_gl9755_ops,
+ #ifdef CONFIG_PM_SLEEP
+ 	.resume         = sdhci_pci_gli_resume,
