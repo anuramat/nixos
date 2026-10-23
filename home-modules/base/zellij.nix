@@ -199,7 +199,7 @@ in
           d = "Detach";
         };
       "shared_except locked" = lib.genAttrs [ "Ctrl g" "Enter" "Esc" ] (_: "SwitchToMode Locked");
-      "shared_among normal scroll" = {
+      "shared_among normal scroll" = lock {
         "y" = "Copy";
       };
       "shared_among scroll search" = {
