@@ -9,7 +9,7 @@
 # a section's cells go to its header, after its name, and each child is a row,
 # followed by its own children, indented; `style` is a noctalia color role
 # (default on_surface), `width` the length in characters that the widget
-# wraps `text` at, and `fleet` clips it to, `since` and `until` are seconds
+# wraps `text` at (`fleet` prints it whole), `since` and `until` are seconds
 # since the epoch, rendered relative to now
 {
   lib,

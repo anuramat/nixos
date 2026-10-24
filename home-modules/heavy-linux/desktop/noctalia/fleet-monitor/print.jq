@@ -21,10 +21,7 @@ def cell:
   elif .until then
     (.until - now | floor) as $left
     | if $left >= 0 then $left | eta | paint("outline") else "+\(-$left | eta)" | paint("error") end
-  else
-    . as $c
-    | .text | (if $c.width and length > $c.width then .[:$c.width - 3] + "..." else . end)
-    | paint($c.style)
+  else .style as $s | .text | paint($s)
   end;
 
 def row: [.cells[]? | cell] | join("  ");
