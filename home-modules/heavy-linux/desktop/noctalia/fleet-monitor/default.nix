@@ -45,7 +45,7 @@ let
     |> map (h: {
       name = h;
       interval = if h == localHost then null else 30;
-      cmd = script "fleet-${h}" [ pkgs.jq ] "${lib.getExe probe} ${h} | jq -nR -f ${./host.jq}";
+      cmd = script "fleet-${h}" [ pkgs.jq ] "${lib.getExe probe} ${h} | jq -nR -L ${./.} -f ${./host.jq}";
     });
   sections = hosts ++ [
     {
@@ -66,9 +66,8 @@ let
             [ -z "''${REFRESH-}" ] || systemctl --user start uc3-status.service || :
             # nothing to show before the first successful fetch
             [ -e "$d/status" ] || { echo '{}' && exit; }
-            jq -Rs -f ${./uc3.jq} "$d/status" |
-              jq --argjson at "$(stat -c %Y "$d/status")" --arg err "$(tail -n 1 "$d/status.err")" \
-                '. + {at: $at, err: (if $err == "" then null else $err end)}'
+            jq -Rs -L ${./.} -f ${./uc3.jq} --argjson at "$(stat -c %Y "$d/status")" \
+              --arg err "$(tail -n 1 "$d/status.err")" "$d/status"
           '';
     }
     {

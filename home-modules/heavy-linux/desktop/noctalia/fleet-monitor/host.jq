@@ -2,11 +2,7 @@
 # and zellij sessions in the header; jobs, then sandboxed sessions grouped by
 # project dir basename, as rows
 
-# ps etime, [[dd-]hh:]mm:ss -> seconds
-def etime:
-  split("-") as $p
-  | ($p[-1] | split(":") | reduce (.[] | tonumber) as $n (0; . * 60 + $n))
-    + (if $p | length > 1 then ($p[0] | tonumber) * 86400 else 0 end);
+include "etime";
 
 [inputs | split("\t")] as $lines
 | (now | floor) as $now
