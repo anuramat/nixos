@@ -274,8 +274,12 @@ flake-parts.lib.mkFlake { inherit inputs; } {
           shellcheck
           yamllint
         ];
+        # git-hooks.nix roots only the config, but the hook it installs runs
+        # pre-commit by its store path, which would otherwise get collected
         shellHook = ''
           ${config.pre-commit.installationScript}
+          nix-store --add-root "$(git rev-parse --git-common-dir)/pre-commit-root" --indirect \
+            -r ${config.pre-commit.settings.package} >/dev/null
         '';
       };
     };
