@@ -24,7 +24,8 @@ include "etime";
         # a `job run` job goes by its name
         {text: (.[0] | sub("^job-"; "") | sub("\\.service$"; ""))},
         {since: ($now - (.[1] | etime))},
-        (.[2] | select(. != "") | {until: tonumber}),
+        # empty without an ETA, to keep the description in its column
+        (.[2] | if . == "" then {text: ""} else {until: tonumber} end),
         (.[3] | select(. != "") | {text: ., style: "on_surface_variant", width: 50})
       ]}]
       + ([kind("session") | {name: .[0], project: (.[1] | sub("/+$"; "") | sub(".*/"; ""))}]

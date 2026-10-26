@@ -3,6 +3,8 @@
 local FONT_SIZE = noctalia.getConfig("font_size")
 -- sizes below are given for noctalia's default 14px font and scale with FONT_SIZE
 local SCALE = FONT_SIZE / 14
+-- a character's width: the font is stylix's monospace one, Monaspace, whose characters are 0.6em wide
+local CHAR = 0.6 * FONT_SIZE
 local FLEET, LOCAL_HOST = "@fleet@", "@localHost@"
 -- in ms; it probes the current host, and reads the cached rest
 local INTERVAL = 5000
@@ -34,32 +36,57 @@ local function label(text, color, props)
   return ui.label(props)
 end
 
--- a column, indented
+-- a column, indented, filling the rest of the row
 local function indented(children)
-  return ui.row({ align = "start" }, { ui.box({ width = 16 * SCALE }), ui.column({ gap = 4 * SCALE }, children) })
+  return ui.row({ align = "start" },
+    { ui.box({ width = 16 * SCALE }), ui.column({ gap = 4 * SCALE, flexGrow = 1 }, children) })
 end
 
--- the time since, or the time left until (or how long it's overdue), or text, wrapped at about `width` characters
-local function cell(c, now)
-  if c.since then return label(duration(now - c.since), "outline") end
+-- the text of a cell and its color: the time since, or the time left until (or how long it's overdue), or text
+local function cellText(c, now)
+  if c.since then return duration(now - c.since), "outline" end
   if c["until"] then
     local left = c["until"] - now
-    return left >= 0 and label(eta(left), "outline") or label("+" .. eta(-left), "error")
+    if left >= 0 then return eta(left), "outline" end
+    return "+" .. eta(-left), "error"
   end
-  return label(c.text, c.style or "on_surface", c.width and { maxWidth = c.width * 8 * SCALE })
+  return c.text, c.style or "on_surface"
 end
 
 local function cells(node, now)
   local t = {}
-  for _, c in node.cells or {} do table.insert(t, cell(c, now)) end
+  for _, c in node.cells or {} do table.insert(t, label(cellText(c, now))) end
   return t
 end
 
--- a row per child, followed by its own children, indented
+-- a row per child, followed by its own children, indented; the cells are aligned in columns as wide as their widest
+-- cell, up to `width` characters, which wraps the longer ones, except for each row's last cell, which takes the rest
+-- of the row, and wraps at its end
 local function rows(node, now)
+  local texts, widths = {}, {}
+  for i, c in node.children or {} do
+    texts[i] = {}
+    for j, x in c.cells or {} do
+      local text, color = cellText(x, now)
+      texts[i][j] = { text, color }
+      if j < #c.cells then
+        widths[j] = math.max(widths[j] or 0, math.min(utf8.len(text) or #text, x.width or math.huge))
+      end
+    end
+  end
   local t = {}
-  for _, c in node.children or {} do
-    local row = ui.row({ gap = 8 * SCALE, align = "start" }, cells(c, now))
+  for i, c in node.children or {} do
+    local row = {}
+    for j, x in texts[i] do
+      if j == #texts[i] then
+        table.insert(row, label(x[1], x[2], { flexGrow = 1 }))
+      else
+        -- with a pixel to spare, so that rounding doesn't wrap the widest cell
+        local w = widths[j] * CHAR + 1
+        table.insert(row, ui.row({ width = w }, { label(x[1], x[2], { maxWidth = w }) }))
+      end
+    end
+    row = ui.row({ gap = 8 * SCALE, align = "start" }, row)
     table.insert(t, c.children and #c.children > 0
       and ui.column({ gap = 4 * SCALE }, { row, indented(rows(c, now)) }) or row)
   end
@@ -111,7 +138,7 @@ local function section(s, now)
   -- a gutter marks hidden rows with a `+`, transparent otherwise, so that hiding them doesn't shift the section
   return ui.row({ gap = 8 * SCALE, align = "start", key = s.name, onClick = onClick, onRightClick = onRightClick }, {
     label("+", "outline", { opacity = hidden[s.name] and 1 or 0 }),
-    ui.column({ gap = 4 * SCALE }, {
+    ui.column({ gap = 4 * SCALE, flexGrow = 1 }, {
       ui.row({ gap = 8 * SCALE, align = "start" }, header),
       not hidden[s.name] and indented(rows(s, now)) or nil,
     }),
