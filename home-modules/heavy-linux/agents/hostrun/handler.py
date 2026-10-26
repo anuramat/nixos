@@ -73,8 +73,12 @@ def first_answer(request):
         for fd, _ in poll.poll(max(0, tick - time.monotonic()) * 1000):
             if answer := live[fd][1].stdout.readline().strip():
                 return answer
+            # gone: close its pipes and reap it, or each retry leaks them
             poll.unregister(fd)
-            del live[fd]
+            p = live.pop(fd)[1]
+            prompts.remove(p)
+            with p:
+                pass
 
 
 def withdraw():
