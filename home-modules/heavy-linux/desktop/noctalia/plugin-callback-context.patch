@@ -1,0 +1,121 @@
+Plugin callbacks keep the widget's context.
+
+A callback's result event (an async command, file, http, stream, ...) carries
+no snapshot, and the runtime started the callback with that empty snapshot, so
+inside it `desktopWidget.outputName()` and the other per-instance bindings read
+empty: the fleet monitor, which renders from its fetch callback, computed its
+row width from a 0-wide output every few seconds. Callbacks now keep the
+snapshot of the last call instead.
+
+diff --git a/src/scripting/plugin_bindings.h b/src/scripting/plugin_bindings.h
+index 30832d4..d617028 100644
+--- a/src/scripting/plugin_bindings.h
++++ b/src/scripting/plugin_bindings.h
+@@ -25,6 +25,13 @@ namespace scripting {
+       patch = {};
+       sideEffects.clear();
+     }
++    // A callback's result event (async command, file, http, stream, ...) carries no
++    // snapshot, so the callback keeps the last call's: outputName() and the like
++    // would otherwise read empty inside it.
++    void beginCallback() {
++      patch = {};
++      sideEffects.clear();
++    }
+   };
+ 
+   void registerPluginBindings(lua_State* L, PluginBindingContext* context);
+diff --git a/src/scripting/script_runtime.cpp b/src/scripting/script_runtime.cpp
+index 559f6da..0c6ec51 100644
+--- a/src/scripting/script_runtime.cpp
++++ b/src/scripting/script_runtime.cpp
+@@ -587,7 +587,7 @@ namespace scripting {
+         if (event.hostId != host->hostId() || !host->hasAsyncCommandCallback(event.callbackRef)) {
+           return std::nullopt;
+         }
+-        bindingContext.beginCall(event.snapshot);
++        bindingContext.beginCallback();
+         const bool ok = host->callAsyncCommandCallback(event.callbackRef, event.commandResult, event.budget);
+         return collectResult(event, "async command callback", ok);
+       }
+@@ -596,7 +596,7 @@ namespace scripting {
+         if (event.hostId != host->hostId() || !host->hasAsyncFileCallback(event.callbackRef)) {
+           return std::nullopt;
+         }
+-        bindingContext.beginCall(event.snapshot);
++        bindingContext.beginCallback();
+         const bool ok =
+             host->callAsyncFileCallback(event.callbackRef, event.fileOk, event.fileData, event.fileError, event.budget);
+         return collectResult(event, "async file callback", ok);
+@@ -606,7 +606,7 @@ namespace scripting {
+         if (event.hostId != host->hostId() || !host->hasAsyncProcessMatchCallback(event.callbackRef)) {
+           return std::nullopt;
+         }
+-        bindingContext.beginCall(event.snapshot);
++        bindingContext.beginCallback();
+         const bool ok = host->callAsyncProcessMatchCallback(event.callbackRef, event.processMatchResult, event.budget);
+         return collectResult(event, "process match callback", ok);
+       }
+@@ -615,7 +615,7 @@ namespace scripting {
+         if (event.hostId != host->hostId() || !host->hasAsyncHttpCallback(event.callbackRef)) {
+           return std::nullopt;
+         }
+-        bindingContext.beginCall(event.snapshot);
++        bindingContext.beginCallback();
+         const bool ok = event.httpIsDownload
+             ? host->callAsyncDownloadCallback(event.callbackRef, event.httpOk, event.budget)
+             : host->callAsyncHttpCallback(
+@@ -628,7 +628,7 @@ namespace scripting {
+         if (event.hostId != host->hostId() || !host->hasSoundLoadCallback(event.callbackRef)) {
+           return std::nullopt;
+         }
+-        bindingContext.beginCall(event.snapshot);
++        bindingContext.beginCallback();
+         const bool ok =
+             host->callSoundLoadCallback(event.callbackRef, event.soundLoadOk, event.soundLoadError, event.budget);
+         return collectResult(event, "sound load callback", ok);
+@@ -638,7 +638,7 @@ namespace scripting {
+         if (event.hostId != host->hostId() || !host->hasColorPickerCallback(event.callbackRef)) {
+           return std::nullopt;
+         }
+-        bindingContext.beginCall(event.snapshot);
++        bindingContext.beginCallback();
+         const bool ok = host->callColorPickerCallback(event.callbackRef, event.colorPickerResult, event.budget);
+         return collectResult(event, "color picker callback", ok);
+       }
+@@ -647,7 +647,7 @@ namespace scripting {
+         if (!host->hasStateWatchCallback(event.callbackRef)) {
+           return std::nullopt;
+         }
+-        bindingContext.beginCall(event.snapshot);
++        bindingContext.beginCallback();
+         const bool ok = host->callStateWatchCallback(event.callbackRef, event.stateJson, event.budget);
+         return collectResult(event, "state watch callback", ok);
+       }
+@@ -656,7 +656,7 @@ namespace scripting {
+         if (event.hostId != host->hostId() || !host->hasStreamCallback(event.callbackRef)) {
+           return std::nullopt; // stale (reloaded host) or unregistered
+         }
+-        bindingContext.beginCall(event.snapshot);
++        bindingContext.beginCallback();
+         const bool ok = host->callStreamCallback(event.callbackRef, event.first, event.budget);
+         return collectResult(event, "stream callback", ok);
+       }
+@@ -665,7 +665,7 @@ namespace scripting {
+         if (event.hostId != host->hostId() || !host->hasHttpStream(event.callbackRef)) {
+           return std::nullopt; // stale (reloaded host) or stopped stream
+         }
+-        bindingContext.beginCall(event.snapshot);
++        bindingContext.beginCallback();
+         const bool ok = host->callHttpStreamLineCallback(event.callbackRef, event.first, event.budget);
+         return collectResult(event, "http stream callback", ok);
+       }
+@@ -674,7 +674,7 @@ namespace scripting {
+         if (event.hostId != host->hostId() || !host->hasHttpStream(event.callbackRef)) {
+           return std::nullopt;
+         }
+-        bindingContext.beginCall(event.snapshot);
++        bindingContext.beginCallback();
+         const bool ok =
+             host->callHttpStreamCloseCallback(event.callbackRef, event.httpOk, event.httpStatus, event.budget);
+         return collectResult(event, "http stream close callback", ok);

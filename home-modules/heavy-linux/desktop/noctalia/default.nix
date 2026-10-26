@@ -37,6 +37,9 @@ in
     # screen when the output's logical size changes (f12's tablet mode rotates
     # and rescales it); this makes cx/cy fractions of the output's size, and
     # lets plugin desktop widgets look up their output, to size themselves
+    # upstream runs plugin callbacks (async commands, streams, ...) with an
+    # empty context, so that `desktopWidget.outputName()` reads nil inside
+    # them; this keeps the last call's
     package = pkgs.noctalia.overrideAttrs (old: {
       patches = (old.patches or [ ]) ++ [
         ./pam-setcred.patch
@@ -47,6 +50,7 @@ in
         ./wifi-profile-names.patch
         ./lockscreen-login-hide-empty.patch
         ./widget-relative-position.patch
+        ./plugin-callback-context.patch
       ];
     });
 
