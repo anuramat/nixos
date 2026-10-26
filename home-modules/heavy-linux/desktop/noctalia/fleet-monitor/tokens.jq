@@ -8,9 +8,10 @@
 def window($name):
   [
     {
-      text: "\($name // (.windowMinutes | if . % 1440 == 0 then "\(. / 1440)d" else "\(. / 60)h" end)): \(100 - .usedPercent | round)%",
+      text: ($name // (.windowMinutes | if . % 1440 == 0 then "\(. / 1440)d" else "\(. / 60)h" end)),
       style: "on_surface_variant"
     },
+    {text: "\(100 - .usedPercent | round)%", style: "on_surface_variant"},
     (.resetsAt | select(.) | {until: (sub("\\.\\d+"; "") | fromdateiso8601)})
   ];
 
