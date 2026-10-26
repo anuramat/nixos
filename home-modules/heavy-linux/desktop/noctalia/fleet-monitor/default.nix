@@ -1,17 +1,18 @@
 # the fleet monitor: a fleet-poll-NAME user service per section keeps
 # $XDG_STATE_HOME/fleet/NAME.json up to date, except for the current host's,
 # which is cheap enough to probe on demand; `fleet --json` gathers them, and
-# both the noctalia widget and `fleet` itself render that; a section is a node
+# both the noctalia widget and `fleet` itself render that, laid out by
+# layout.luau; a section is a node
 # with `name`, `at` (seconds since the epoch of the last successful fetch) and
 # `err` (the last fetch's error):
 #   NODE = { cells: [CELL], children: [NODE] }
 #   CELL = { text, style?, width? } | { since } | { until }
 # a section's cells go to its header, after its name, and each child is a row,
 # followed by its own children, indented; `style` is a noctalia color role
-# (default on_surface), `width` the length in characters that the widget
-# wraps `text` at, unless it's the row's last cell, which the widget wraps at
-# the end of the row (`fleet` prints it whole); `since` and `until` are
-# seconds since the epoch, rendered relative to now
+# (default on_surface), `width` the length in characters that `text` is
+# wrapped at, unless it's the row's last cell, which is wrapped at the end of
+# the row; `since` and `until` are seconds since the epoch, rendered relative
+# to now
 {
   lib,
   config,
@@ -93,13 +94,16 @@ let
     jq
   ]) (builtins.readFile ./poll.sh);
   # usage: fleet [--json | refresh SECTION]
-  # prints the sections; `refresh` makes one fetch its section right away, and
-  # waits for it
+  # prints the sections, laid out like the widget does, in the terminal's
+  # width (`COLUMNS=N fleet` for another one); `refresh` makes one fetch its
+  # section right away, and waits for it
   fleet =
     script "fleet"
       (with pkgs; [
         coreutils
         jq
+        lune
+        ncurses
         systemd
       ])
       ''
@@ -134,9 +138,10 @@ let
           echo "$json"
           exit
         fi
-        color=false
-        [ ! -t 1 ] || color=true
-        jq -r --argjson color "$color" -f ${./print.jq} <<<"$json"
+        color=
+        [ ! -t 1 ] || color=color
+        # cli.luau requires layout.luau next to it
+        lune run ${./.}/cli.luau "$(tput cols)" $color <<<"$json"
       '';
 
   # centered; cx and cy are fractions of the output's logical size
@@ -204,6 +209,7 @@ in
       inherit localHost;
       fleet = lib.getExe fleet;
     };
+    "noctalia/plugins/fleet-monitor/layout.luau".source = ./layout.luau;
   };
 
   programs.noctalia.settings = {
