@@ -5,11 +5,14 @@
 {
   networking.networkmanager = {
     # stock NM still takes WoWLAN devices down after resume, to recheck
-    # connectivity, which means a full reconnect anyway; patched, it only
-    # does so if the link was lost while asleep, since otherwise NM waits
-    # 30s for the supplicant to get the old AP back before moving on
+    # connectivity, which means a full reconnect anyway; without that, a
+    # network left behind while asleep is only dropped after the 15-30s link
+    # timeout, so NM also gives up on a lost link once a scan doesn't find it
     package = pkgs.networkmanager.overrideAttrs (old: {
-      patches = (old.patches or [ ]) ++ [ ./networkmanager-keep-wowlan-on-resume.patch ];
+      patches = (old.patches or [ ]) ++ [
+        ./networkmanager-keep-wowlan-on-resume.patch
+        ./networkmanager-fail-lost-wifi-after-scan.patch
+      ];
     });
     # wake on magic packet; NM disables WoWLAN if this is unset
     settings.connection."wifi.wake-on-wlan" = 8;

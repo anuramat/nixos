@@ -1,0 +1,42 @@
+--- a/src/core/devices/wifi/nm-device-wifi.c
++++ b/src/core/devices/wifi/nm-device-wifi.c
+@@ -210,6 +210,8 @@
+ 
+ static gboolean _scan_notify_allowed(NMDeviceWifi *self, NMTernary do_kickoff);
+ 
++static gboolean link_timeout_cb(gpointer user_data);
++
+ /*****************************************************************************/
+ 
+ typedef struct {
+@@ -463,6 +465,18 @@
+ 
+     priv->scan_is_scanning = scanning;
+ 
++    /* The link is gone and the supplicant didn't get it back after a whole scan,
++     * so the network is most likely out of range: fail shortly instead of waiting
++     * out the link timeout, so that another network can autoconnect. The delay is
++     * for the supplicant's state change that may follow the scan result.
++     */
++    if (!scanning && priv->link_timeout_id
++        && !nm_supplicant_interface_state_is_associated(
++            nm_supplicant_interface_get_state(priv->sup_iface))) {
++        nm_clear_g_source(&priv->link_timeout_id);
++        priv->link_timeout_id = g_timeout_add_seconds(1, link_timeout_cb, self);
++    }
++
+     if (!scanning || priv->scan_last_complete_msec == 0) {
+         last_scan_changed             = TRUE;
+         priv->scan_last_complete_msec = nm_utils_get_monotonic_timestamp_msec();
+@@ -2279,6 +2293,11 @@
+ 
+     priv->link_timeout_id = 0;
+ 
++    /* Reassociating; a later disconnect will start a new timeout */
++    if (nm_supplicant_interface_state_is_associated(
++            nm_supplicant_interface_get_state(priv->sup_iface)))
++        return FALSE;
++
+     /* Disconnect event while activated; the supplicant hasn't been able
+      * to reassociate within the timeout period, so the connection must
+      * fail.
