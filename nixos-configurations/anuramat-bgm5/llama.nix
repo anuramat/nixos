@@ -14,7 +14,11 @@ let
       rocmSupport = false;
       cpuArchDynamicDispatch = false;
     }).overrideAttrs
-      { doCheck = false; };
+      (old: {
+        doCheck = false;
+        # /completion's noncausal_suffix: the block-bidirectional attention of mammoth-1
+        patches = (old.patches or [ ]) ++ [ ./llama-cpp-noncausal-suffix.patch ];
+      });
   modelDir = "/mnt/storage/llama-cpp";
   inherit (inputs.self.consts.llama) port decisionPort;
 

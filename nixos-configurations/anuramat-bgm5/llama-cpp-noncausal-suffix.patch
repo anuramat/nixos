@@ -1,0 +1,222 @@
+diff --git a/tools/server/server-context.cpp b/tools/server/server-context.cpp
+index a18b754..de26c6e 100644
+--- a/tools/server/server-context.cpp
++++ b/tools/server/server-context.cpp
+@@ -482,6 +482,11 @@ struct server_slot {
+             return false;
+         }
+ 
++        // non-causal attention is set for the whole batch
++        if (task->n_noncausal() > 0 || other_slot.task->n_noncausal() > 0) {
++            return false;
++        }
++
+         return task->type == other_slot.task->type
+             && inp_embd.size() == other_slot.inp_embd.size()
+             && are_lora_equal(lora, other_slot.lora);
+@@ -3326,11 +3331,20 @@ private:
+             llama_set_embeddings(ctx_tgt, slot_batched->need_embd());
+         }
+ 
++        // see task_params::noncausal_suffix, the batch holds one block of it
++        const bool causal    = llama_get_causal_attn(ctx_tgt);
++        const bool noncausal = batch.slot_batched && batch.slot_batched->task->n_noncausal() > 0;
++        llama_set_causal_attn(ctx_tgt, causal && !noncausal);
++
+         int32_t off_next = 0;
+         int32_t n_batch = llama_n_batch(ctx_tgt);
+         for (int32_t off = 0; off < batch.size(); off = off_next) {
+             const int32_t n_tokens = std::min(n_batch, batch.size() - off);
+             try {
++                if (noncausal && n_tokens < batch.size()) {
++                    throw std::runtime_error("a non-causal block does not fit in the KV cache");
++                }
++
+                 scoped_timer t(t_decode, n_decode);
+                 // TODO @ngxson : maybe handle n_batch == 1 here instead of inside decode()
+ 
+@@ -3365,6 +3379,8 @@ private:
+                 break; // stop any further processing
+             }
+         }
++
++        llama_set_causal_attn(ctx_tgt, causal);
+     }
+ 
+     void pre_decode() {
+@@ -3695,6 +3711,17 @@ private:
+                                 return;
+                             }
+ 
++                            // each block of non-causal attention is decoded in one ubatch
++                            if (slot.task->params.noncausal_suffix > 0 && (slot.task->n_noncausal() < 1 || slot.task->n_tokens() > n_ubatch)) {
++                                send_error(slot,
++                                           string_format("noncausal_suffix (%d) must be shorter than the prompt (%d tokens), "
++                                                         "and the prompt must fit in the physical batch size (%d)",
++                                                         slot.task->params.noncausal_suffix, slot.task->n_tokens(), n_ubatch),
++                                           ERROR_TYPE_INVALID_REQUEST);
++                                slot.release();
++                                return;
++                            }
++
+                             if (slot.task->params.cache_prompt && !slot.task->is_stateless()) {
+                                 // reuse any previously computed tokens that are common with the new prompt
+                                 n_past = slot.prompt.tokens.get_common_prefix(input_tokens);
+@@ -3709,6 +3736,14 @@ private:
+                                     n_past = std::min(n_past, n_decision_first);
+                                 }
+ 
++                                // a token of a non-causal block depends on all of it: keep only a whole first block
++                                // that was decoded as one
++                                if (slot.prompt.n_noncausal != slot.task->n_noncausal()) {
++                                    n_past = 0;
++                                } else if (slot.task->n_noncausal() > 0) {
++                                    n_past = n_past < slot.task->n_noncausal() ? 0 : slot.task->n_noncausal();
++                                }
++
+                                 // if there is an alora invoked, don't cache after the invocation start
+                                 if (slot.alora_invocation_start > 0) {
+                                     SLT_DBG(slot, "only caching to alora invocation start (n_past = %d, alora_invocation_start = %d)\n", n_past, slot.alora_invocation_start);
+@@ -3917,6 +3952,7 @@ private:
+                         metrics.add_prompt_cached(n_past);
+ 
+                         slot.prompt.tokens.keep_first(n_past);
++                        slot.prompt.n_noncausal = slot.task->n_noncausal();
+ 
+                         // this is to signal the client that the request has started processing
+                         if (slot.task->params.stream) {
+@@ -3996,8 +4032,10 @@ private:
+                             n_swa > 0);
+ 
+                     // TODO: do the same for all models, then remove process_mtmd_chunk()
+-                    if (use_mixed_batch() && !slot.can_split() && input_tokens.has_mtmd) {
+-                        if (!add_prompt_mixed(slot)) {
++                    // the images of a non-causal block go in its ubatch too
++                    const int32_t n_noncausal = slot.task->n_noncausal();
++                    if (input_tokens.has_mtmd && ((use_mixed_batch() && !slot.can_split()) || n_noncausal > 0)) {
++                        if (!add_prompt_mixed(slot, slot.prompt.n_tokens() < n_noncausal ? n_noncausal : slot.task->n_tokens())) {
+                             return;
+                         }
+                     }
+@@ -4065,6 +4103,12 @@ private:
+                             break;
+                         }
+ 
++                        // the first non-causal block is a batch of its own: the checkpoint at its end, made before
++                        // the next batch, is where the prompts with the same first block continue from
++                        if (n_noncausal > 0 && slot.prompt.n_tokens() == n_noncausal && batch.size() > n_tokens_prev) {
++                            break;
++                        }
++
+                         // the outputs of a decision are read from one batch, do not split them
+                         if (slot.prompt.n_tokens() == n_decision_first && batch.size() + slot.task->n_tokens() - n_decision_first > n_batch) {
+                             break;
+@@ -4092,7 +4136,8 @@ private:
+                         slot.prompt.tokens.push_back(cur_tok);
+ 
+                         // break at the last user message, or at user messages at least min step past the last checkpoint
+-                        if (do_checkpoint && spans.is_user_start(slot.prompt.n_tokens())) {
++                        // (a non-causal block is not split)
++                        if (do_checkpoint && n_noncausal == 0 && spans.is_user_start(slot.prompt.n_tokens())) {
+                             const auto pos = slot.prompt.n_tokens();
+                             const auto & checkpoints = slot.prompt.checkpoints;
+ 
+@@ -4106,7 +4151,7 @@ private:
+                         //  - 4 + n_ubatch
+                         //  - 4
+                         // ref: https://github.com/ggml-org/llama.cpp/pull/20288
+-                        if (do_checkpoint) {
++                        if (do_checkpoint && n_noncausal == 0) {
+                             static const int checkpoint_offsets[] = {4 + n_ubatch, 4};
+ 
+                             bool should_break = false;
+@@ -4193,14 +4238,14 @@ private:
+         return !llama_get_memory(ctx_tgt) || !llama_get_causal_attn(ctx_tgt);
+     }
+ 
+-    // add the rest of the prompt to the batch, the mtmd chunks are added as embeddings next to the text tokens
++    // add the prompt up to token end to the batch, the mtmd chunks are added as embeddings next to the text tokens
+     // the caller makes sure that it fits in the batch
+     // returns false on error, the slot is then released
+-    bool add_prompt_mixed(server_slot & slot) {
++    bool add_prompt_mixed(server_slot & slot, int32_t end) {
+         const auto & input_tokens = slot.task->tokens;
+         const auto n_tokens_prev = batch.size();
+ 
+-        while (slot.prompt.n_tokens() < slot.task->n_tokens()) {
++        while (slot.prompt.n_tokens() < end) {
+             const auto cur_token_idx = slot.prompt.n_tokens();
+             const llama_token cur_tok = input_tokens[cur_token_idx];
+ 
+diff --git a/tools/server/server-schema.cpp b/tools/server/server-schema.cpp
+index 54e126a..89fa0b3 100644
+--- a/tools/server/server-schema.cpp
++++ b/tools/server/server-schema.cpp
+@@ -68,6 +68,10 @@ std::vector<std::unique_ptr<field>> make_llama_cmpl_schema(const common_params &
+         ->set_hard_limits(0, INT32_MAX)
+         ->set_desc("Min chunk size to attempt reusing from the cache via KV shifting. See --cache-reuse arg"));
+ 
++    add((new field_num("noncausal_suffix", params.noncausal_suffix))
++        ->set_hard_limits(0, INT32_MAX)
++        ->set_desc("If > 0, the prompt is two blocks of non-causal attention: its last noncausal_suffix tokens, and the tokens before them. A token attends to all the tokens of its block and of the block before it. The prompt must fit in one ubatch"));
++
+     // TODO: implement t_max_prompt_ms
+     // add((new field_num("t_max_prompt_ms", params.t_max_prompt_ms))
+ 
+diff --git a/tools/server/server-task.cpp b/tools/server/server-task.cpp
+index 3f30da2..6772f00 100644
+--- a/tools/server/server-task.cpp
++++ b/tools/server/server-task.cpp
+@@ -1783,6 +1783,7 @@ server_prompt_cache_state * server_prompt_cache::alloc(const server_prompt & pro
+         /*.prompt =*/ {
+             /*.tokens      =*/ prompt.tokens.clone(),
+             /*.checkpoints =*/ prompt.checkpoints,
++            /*.n_noncausal =*/ prompt.n_noncausal,
+         },
+         /*.data   =*/ {
+             /*.main =*/ std::move(state_data_tgt),
+diff --git a/tools/server/server-task.h b/tools/server/server-task.h
+index e7bb043..49df7bc 100644
+--- a/tools/server/server-task.h
++++ b/tools/server/server-task.h
+@@ -65,6 +65,10 @@ struct task_params {
+ 
+     int32_t n_cache_reuse = 0; // min chunk size to attempt reusing from the cache via KV shifting (0 = disabled)
+ 
++    // if > 0, the prompt is two blocks of non-causal attention: its last noncausal_suffix tokens, and the tokens
++    // before them; a token attends to all the tokens of its block and of the block before it
++    int32_t noncausal_suffix = 0;
++
+     int64_t t_max_prompt_ms  = -1; // TODO: implement
+     int64_t t_max_predict_ms = -1; // if positive, limit the generation phase to this time limit
+ 
+@@ -217,6 +221,11 @@ struct server_task {
+         return tokens.size();
+     }
+ 
++    // the number of prompt tokens in the first non-causal block, 0 if the attention is causal
++    int32_t n_noncausal() const {
++        return params.noncausal_suffix > 0 ? n_tokens() - params.noncausal_suffix : 0;
++    }
++
+     bool need_embd() const {
+         switch (type) {
+             case SERVER_TASK_TYPE_EMBEDDING:
+@@ -624,6 +633,9 @@ struct server_prompt {
+ 
+     std::list<common_prompt_checkpoint> checkpoints;
+ 
++    // the cached tokens before this index are a non-causal block, see server_task::n_noncausal()
++    int32_t n_noncausal = 0;
++
+     void clear() {
+         tokens.clear();
+         checkpoints.clear();
+@@ -637,6 +649,7 @@ struct server_prompt {
+         return server_prompt {
+             tokens.clone(),
+             checkpoints,
++            n_noncausal,
+         };
+     }
+ };
