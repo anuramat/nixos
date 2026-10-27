@@ -59,6 +59,8 @@ let
       ];
       # a plain causal LM: knowline.py answers /v1/systemone from llama-server's label-token logprobs
       frontend = true;
+      # write short text-only requests twice (Gen1.5): more accurate, up to ~2x slower
+      readTwice = true;
     };
     d3 = {
       filename = "vllm-d3-Q8_0.gguf";
@@ -134,7 +136,9 @@ in
       bindsTo = [ "llama-decision.service" ];
       wantedBy = [ "multi-user.target" ];
       serviceConfig = {
-        ExecStart = "${lib.getExe pkgs.knowline} http://127.0.0.1:${toString decisionServer.port} 0.0.0.0 ${toString decisionPort}";
+        ExecStart = "${lib.getExe pkgs.knowline} http://127.0.0.1:${toString decisionServer.port} 0.0.0.0 ${toString decisionPort}${
+          lib.optionalString (!decision.readTwice) " --no-read-twice"
+        }";
         DynamicUser = true;
       };
     };

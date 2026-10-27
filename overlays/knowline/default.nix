@@ -1,4 +1,4 @@
-# KnowLine's /v1/systemone server on a llama-server backend: `knowline LLAMA_URL HOST PORT`
+# KnowLine's /v1/systemone server on a llama-server backend: `knowline LLAMA_URL HOST PORT [--no-read-twice]`
 { lib, ... }:
 _final: prev:
 let

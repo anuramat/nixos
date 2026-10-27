@@ -1,7 +1,8 @@
 """KnowLine's /v1/systemone server (knowline_server.py from its model repo), with llama-server as the backend.
 
-usage: knowline.py SRC LLAMA_URL HOST PORT
-SRC holds the model repo's knowline_server.py, knowline_layout.py and tokenizer files.
+usage: knowline.py SRC LLAMA_URL HOST PORT [--no-read-twice]
+SRC holds the model repo's knowline_server.py, knowline_layout.py and tokenizer files. Short text-only requests are
+written twice (Gen1.5); --no-read-twice gives the Gen1 prompts, as the flag of upstream's server.
 
 KnowLine is a plain causal LM: an answer is the softmax over the options' label tokens after the prompt. With
 temperature < 0, llama-server's n_probs are a plain softmax of the raw logits (the readout temperature is folded into
@@ -15,7 +16,7 @@ import sys
 
 import requests
 
-src, url, host, port = sys.argv[1:]
+src, url, host, port, *opts = sys.argv[1:]
 sys.path.insert(0, src)
 import knowline_server as ks  # noqa: E402
 from knowline_layout import Layout  # noqa: E402
@@ -104,7 +105,11 @@ class Handler(ks.Handler):
 tok = AutoTokenizer.from_pretrained(src)
 srv = ks.Server((host, int(port)), Handler)
 srv.engine, srv.name = (
-    ks.KnowLine(tok, LlamaCpp(tok), layout=Layout(read_twice=True)),
+    ks.KnowLine(
+        tok,
+        LlamaCpp(tok),
+        layout=None if "--no-read-twice" in opts else Layout(read_twice=True),
+    ),
     "knowline",
 )
 srv.serve_forever()
