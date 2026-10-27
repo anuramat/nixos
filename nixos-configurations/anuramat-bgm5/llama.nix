@@ -44,11 +44,13 @@ let
       flags = [
         "--mmproj"
         "${modelDir}/KnowLine-35B-A3B-Gen1.mmproj-f16.gguf"
-        # the image sizes of the model's own preprocessor, in tokens of 32x32 px (256x256 to 16.7 MP)
+        # image sizes in tokens of 32x32 px: the model's own preprocessor's minimum (256x256), and
+        # llama.cpp's default maximum (4.2 MP): at the preprocessor's 16384 (16.7 MP), the vision
+        # encoder's GPU work hit the kernel's compute timeout (ErrorDeviceLost)
         "--image-min-tokens"
         "64"
         "--image-max-tokens"
-        "16384"
+        "4096"
         "-fa"
         "on"
         # the model's full context: only its 10 full-attention layers have a KV cache, 20 KiB a token
