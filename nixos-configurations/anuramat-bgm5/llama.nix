@@ -48,8 +48,10 @@ let
         "on"
         "-c"
         "32768"
+        # one slot, so that a request's questions reuse the cached state and images;
+        # llama-server caches per slot, and parallel slots would each recompute them
         "-np"
-        "4"
+        "1"
         "-b"
         "4096"
         "-ub"
