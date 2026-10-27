@@ -44,10 +44,16 @@ let
       flags = [
         "--mmproj"
         "${modelDir}/KnowLine-35B-A3B-Gen1.mmproj-f16.gguf"
+        # the image sizes of the model's own preprocessor, in tokens of 32x32 px (256x256 to 16.7 MP)
+        "--image-min-tokens"
+        "64"
+        "--image-max-tokens"
+        "16384"
         "-fa"
         "on"
+        # the model's full context: only its 10 full-attention layers have a KV cache, 20 KiB a token
         "-c"
-        "32768"
+        "262144"
         # one slot, so that a request's questions reuse the cached state and images;
         # llama-server caches per slot, and parallel slots would each recompute them
         "-np"
