@@ -1,0 +1,16 @@
+diff --git a/src/providers/codex/rpc.rs b/src/providers/codex/rpc.rs
+index 9fd1490..1f87c32 100644
+--- a/src/providers/codex/rpc.rs
++++ b/src/providers/codex/rpc.rs
+@@ -23,8 +23,9 @@ use crate::core::provider::Provider;
+ use crate::error::{CautError, Result};
+ use crate::providers::common;
+ 
+-/// Arguments that start the app-server without granting it write access.
+-const APP_SERVER_ARGS: &[&str] = &["-s", "read-only", "-a", "never", "app-server"];
++/// Arguments that start the app-server; it runs no turns, so the sandbox and approval policy are
++/// left to the config, or to a wrapper that forces its own.
++const APP_SERVER_ARGS: &[&str] = &["app-server"];
+ 
+ /// Time allowed for `initialize` (the CLI may refresh tokens here).
+ const INITIALIZE_TIMEOUT: Duration = Duration::from_secs(10);

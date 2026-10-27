@@ -34,7 +34,6 @@
     vhs # terminal gif generator
 
     # misc
-    caut # codex/claude usage
     exercism # cli for exercism.org
     libqalculate # `qalc` - advanced calculator
     qrrs # generate/read QR codes

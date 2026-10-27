@@ -49,6 +49,7 @@ in
 
   home = {
     packages = with pkgs; [
+      caut # codex/claude usage
       inspector
     ];
   };
