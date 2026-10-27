@@ -7,7 +7,15 @@
 }:
 let
   cfg = config.services.llama-cpp;
-  llamaPkg = pkgs.llama-cpp-vulkan;
+  # the server runs on Vulkan0: skip the HIP backend that config.rocmSupport adds (built for
+  # every GPU arch), the per-ISA CPU backends, and the tests, which only cover the CPU
+  llamaPkg =
+    (pkgs.llama-cpp.override {
+      vulkanSupport = true;
+      rocmSupport = false;
+      cpuArchDynamicDispatch = false;
+    }).overrideAttrs
+      { doCheck = false; };
   modelDir = "/mnt/storage/llama-cpp";
   inherit (inputs.self.consts.llama) port;
 
