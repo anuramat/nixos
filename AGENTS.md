@@ -120,8 +120,7 @@ adding, removing, or renaming a direct child is an API change for this flake:
     `home-modules/base/bin/` (`nix-cache-keygen`).
   - `llama`: the designated LLM inference endpoint (host, the LLM server's
     port, and the decision-model server's `decisionPort`), consumed by
-    `nixos-configurations/anuramat-bgm5/llama.nix` and
-    `home-modules/base/hosts.nix`.
+    `nixos-configurations/anuramat-bgm5/llama.nix`.
 - `keys`: per-host key material discovered from `nixos-configurations/*/keys/`
   (client key files and strings, `known_hosts` file path and parsed keys,
   cache key). Single source of truth for key discovery, consumed by

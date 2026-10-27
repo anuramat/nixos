@@ -279,7 +279,7 @@ To verify any option: the sorted list of names in `home.packages` is the same be
 - Each of these literals is written in both a NixOS module and an HM or nixvim module:
   - pastebin.nix:5 `domain = "bin.ctrl.sn";` and nixvim heavy/custom.nix:10 `url = "https://bin.ctrl.sn",`;
   - net.nix:37, where vpn-slice routes `bwunicluster.scc.kit.edu` through the uhd VPN, and base/default.nix:67 `HostName = "bwunicluster.scc.kit.edu";` for the `uc3` ssh host.
-- consts already models this kind of cross-layer endpoint: `llama = { host; port; }` (outputs.nix:136) is consumed by bgm5/llama.nix and home-modules/base/hosts.nix.
+- consts already models this kind of endpoint: `llama = { host; port; decisionPort; }` (outputs.nix:136), consumed by bgm5/llama.nix.
 - Adding these means designing part of the consts API:
   - names and shape (`pastebin` vs `web.pastebin.domain`, and `uc3.host` vs a `uc3` namespace that also holds `User = "hd_un330"` and the VPN ranges `129.206.0.0/16 147.142.0.0/16`);
   - whether these literals belong in consts at all.

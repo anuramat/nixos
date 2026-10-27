@@ -37,7 +37,6 @@ in
 {
   imports = [
     ./gui.nix
-    ./hosts.nix
     ./bash
     ./bin
     ./editor.nix
