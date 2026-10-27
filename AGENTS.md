@@ -118,8 +118,9 @@ adding, removing, or renaming a direct child is an API change for this flake:
     `builder` (`username`), for remote builds: created by
     `nixos-modules/base/builder.nix`, used by `nixos-modules/base/nix.nix` and
     `home-modules/base/bin/` (`nix-cache-keygen`).
-  - `llama`: the designated LLM inference endpoint (host and port), consumed
-    by `nixos-configurations/anuramat-bgm5/llama.nix` and
+  - `llama`: the designated LLM inference endpoint (host, the LLM server's
+    port, and the decision-model server's `decisionPort`), consumed by
+    `nixos-configurations/anuramat-bgm5/llama.nix` and
     `home-modules/base/hosts.nix`.
 - `keys`: per-host key material discovered from `nixos-configurations/*/keys/`
   (client key files and strings, `known_hosts` file path and parsed keys,

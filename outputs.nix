@@ -137,6 +137,8 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       llama = {
         host = "anuramat-bgm5";
         port = 11343;
+        # /v1/systemone decision models
+        decisionPort = 11344;
       };
     };
 

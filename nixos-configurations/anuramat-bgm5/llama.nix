@@ -1,13 +1,12 @@
 {
   lib,
-  config,
   pkgs,
+  utils,
   inputs,
   ...
 }:
 let
-  cfg = config.services.llama-cpp;
-  # the server runs on Vulkan0: skip the HIP backend that config.rocmSupport adds (built for
+  # the servers run on Vulkan0: skip the HIP backend that config.rocmSupport adds (built for
   # every GPU arch), the per-ISA CPU backends, and the tests, which only cover the CPU
   llamaPkg =
     (pkgs.llama-cpp.override {
@@ -17,9 +16,9 @@ let
     }).overrideAttrs
       { doCheck = false; };
   modelDir = "/mnt/storage/llama-cpp";
-  inherit (inputs.self.consts.llama) port;
+  inherit (inputs.self.consts.llama) port decisionPort;
 
-  models = {
+  llms = {
     qwen35 = {
       filename = "unsloth_Qwen3.5-35B-A3B-GGUF_Qwen3.5-35B-A3B-UD-Q4_K_XL.gguf";
       flags = [
@@ -54,7 +53,9 @@ let
         "3"
       ];
     };
-    # decision models, served on /v1/systemone
+  };
+  # served on /v1/systemone
+  decisionModels = {
     knowline = {
       filename = "KnowLine-35B-A3B-Gen1.Q8_0.gguf";
       flags = [
@@ -89,37 +90,73 @@ let
       ];
     };
   };
-  selected = models.knowline;
-  frontend = selected.frontend or false;
+  llmEnable = false;
+  llm = llms.qwen35;
+  decision = decisionModels.knowline;
+  frontend = decision.frontend or false;
+
+  llamaServer =
+    {
+      model,
+      host,
+      port,
+    }:
+    {
+      description = "llama.cpp server: ${model.filename}";
+      after = [ "network.target" ];
+      wantedBy = [ "multi-user.target" ];
+      serviceConfig = {
+        ExecStart = utils.escapeSystemdExecArgs (
+          [
+            (lib.getExe' llamaPkg "llama-server")
+            "--host"
+            host
+            "--port"
+            (toString port)
+            "-m"
+            "${modelDir}/${model.filename}"
+          ]
+          ++ model.flags
+          ++ [
+            "-dev"
+            "Vulkan0"
+          ]
+        );
+        DynamicUser = true;
+        Restart = "on-failure";
+      };
+    };
   # with a front end, llama-server listens locally behind it
-  llamaPort = if frontend then port + 1 else port;
+  decisionServer = {
+    model = decision;
+    host = if frontend then "127.0.0.1" else "0.0.0.0";
+    port = if frontend then decisionPort + 1 else decisionPort;
+  };
 in
 {
-  services.llama-cpp = {
-    port = llamaPort;
-    enable = false;
-    package = llamaPkg;
-    openFirewall = false;
-    host = if frontend then "127.0.0.1" else "0.0.0.0";
-    model = "${modelDir}/${selected.filename}";
-    extraFlags = selected.flags ++ [
-      "-dev"
-      "Vulkan0"
-    ];
-  };
-
-  systemd.services.knowline = lib.mkIf (cfg.enable && frontend) {
-    description = "KnowLine /v1/systemone in front of llama-server";
-    after = [ "llama-cpp.service" ];
-    bindsTo = [ "llama-cpp.service" ];
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      ExecStart = "${lib.getExe pkgs.knowline} http://127.0.0.1:${toString llamaPort} 0.0.0.0 ${toString port}";
-      DynamicUser = true;
+  systemd.services = {
+    llama-llm = lib.mkIf llmEnable (llamaServer {
+      model = llm;
+      host = "0.0.0.0";
+      inherit port;
+    });
+    llama-decision = llamaServer decisionServer;
+    knowline = lib.mkIf frontend {
+      description = "KnowLine /v1/systemone in front of llama-server";
+      after = [ "llama-decision.service" ];
+      bindsTo = [ "llama-decision.service" ];
+      wantedBy = [ "multi-user.target" ];
+      serviceConfig = {
+        ExecStart = "${lib.getExe pkgs.knowline} http://127.0.0.1:${toString decisionServer.port} 0.0.0.0 ${toString decisionPort}";
+        DynamicUser = true;
+      };
     };
   };
 
-  networking.firewall.interfaces.tailscale0.allowedTCPPorts = lib.optionals cfg.enable [ port ];
+  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
+    decisionPort
+  ]
+  ++ lib.optional llmEnable port;
 
   environment = {
     sessionVariables.LLAMA_CACHE = modelDir;
