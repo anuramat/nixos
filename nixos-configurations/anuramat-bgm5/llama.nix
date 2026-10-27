@@ -137,7 +137,11 @@ in
       host = "0.0.0.0";
       inherit port;
     });
-    llama-decision = llamaServer decisionServer;
+    llama-decision = llamaServer decisionServer // {
+      # bindsTo stops the front end with llama-server; this starts it again once llama-server
+      # is back, e.g. restarted on failure
+      upholds = lib.optional frontend "knowline.service";
+    };
     knowline = lib.mkIf frontend {
       description = "KnowLine /v1/systemone in front of llama-server";
       after = [ "llama-decision.service" ];
