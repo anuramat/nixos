@@ -3,9 +3,10 @@
 usage: knowline.py SRC LLAMA_URL HOST PORT
 SRC holds the model repo's knowline_server.py, knowline_layout.py and tokenizer files.
 
-KnowLine is a plain causal LM: an answer is the softmax over the options' label tokens after the prompt. The prompt
-is tokenized with the model's own tokenizer and sent as token ids; with temperature < 0, llama-server's n_probs are a
-plain softmax of the raw logits (the readout temperature is folded into the weights).
+KnowLine is a plain causal LM: an answer is the softmax over the options' label tokens after the prompt. With
+temperature < 0, llama-server's n_probs are a plain softmax of the raw logits (the readout temperature is folded into
+the weights). The prompt goes as text, since llama-server takes images only with a text prompt: its tokenizer gives
+the same ids as the HF one, once the text has gone through the HF tokenizer's normalizer (NFC).
 """
 
 import io
@@ -21,44 +22,82 @@ from knowline_layout import Layout  # noqa: E402
 from transformers import AutoTokenizer  # noqa: E402
 
 N_PROBS = 128  # labels outside the top N get probability 0
+IMAGE = "<|vision_start|><|image_pad|><|vision_end|>"  # an image in the chat template's output
+
+
+def base64_of(src):
+    if not isinstance(src, str) or not src.startswith("data:"):
+        raise ValueError("images must be data URLs (data:image/...;base64,...)")
+    return src.split(",", 1)[1]
 
 
 class LlamaCpp:
     def __init__(self, tok):
-        self.tok, self.http = tok, requests.Session()
+        self.norm = tok.backend_tokenizer.normalizer.normalize_str
+        self.http = requests.Session()
+        self.marker = None  # llama-server's placeholder for an image in a text prompt, random per run
 
-    def _post(self, text):
-        ids = self.tok.encode(text, add_special_tokens=False)
-        body = {"prompt": ids, "n_predict": 1, "n_probs": N_PROBS, "temperature": -1}
+    def _post(self, text, media):
+        if self.marker is None:
+            self.marker = self.http.get(f"{url}/props").json()["media_marker"]
+        prompt = {
+            "prompt_string": self.norm(text).replace(IMAGE, self.marker),
+            "multimodal_data": [base64_of(m) for m in media],
+        }
+        body = {"prompt": prompt, "n_predict": 1, "n_probs": N_PROBS, "temperature": -1}
         r = self.http.post(f"{url}/completion", json=body, timeout=600)
         r.raise_for_status()
-        return r.json(), len(ids)
+        return r.json()
 
     def warm(self, prefix, media):
-        self._post(prefix)
+        self._post(prefix, media)
 
     def score(self, text, media, ids):
-        if media:
-            raise ValueError("images are not supported")
-        r, n = self._post(text)
+        r = self._post(text, media)
         got = {
             t["id"]: t["logprob"]
             for t in r["completion_probabilities"][0]["top_logprobs"]
         }
-        return ks._finite([got.get(i) for i in ids]), n
+        return ks._finite([got.get(i) for i in ids]), r["tokens_evaluated"]
+
+
+def images_to_state(req):
+    """llama-server's /v1/systemone also takes top-level images; upstream reads them only from the state's chat."""
+    parts = [
+        {"type": "image_url", "image_url": {"url": u}}
+        for k in ("images", "files")
+        for u in req.pop(k, None) or []
+    ]
+    if not parts:
+        return req
+    state = req.get("state", "")
+    msgs = (
+        state["messages"]
+        if isinstance(state, dict) and set(state) == {"messages"}
+        else state
+    )
+    if (
+        isinstance(msgs, list)
+        and msgs
+        and all(isinstance(m, dict) and "role" in m for m in msgs)
+    ):
+        req["state"] = [{"role": "user", "content": parts}] + msgs
+    else:
+        text = {"type": "text", "text": ks.render_value(state)}
+        req["state"] = [{"role": "user", "content": parts + [text]}]
+    return req
 
 
 class Handler(ks.Handler):
     def do_POST(self):
-        # upstream ignores llama-server's top-level image fields, answering without the images
         body = self.rfile.read(int(self.headers.get("Content-Length", 0)))
         try:
-            media = {"images", "files"} & set(json.loads(body or b"{}"))
+            body = json.dumps(images_to_state(json.loads(body or b"{}"))).encode()
         except ValueError:
-            media = None  # invalid JSON: upstream reports it
-        if media:
-            return self._send(422, {"error": "images are not supported"})
+            pass  # invalid JSON: upstream reports it
         self.rfile = io.BytesIO(body)
+        del self.headers["Content-Length"]
+        self.headers["Content-Length"] = str(len(body))
         super().do_POST()
 
 

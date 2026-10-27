@@ -42,6 +42,8 @@ let
     knowline = {
       filename = "KnowLine-35B-A3B-Gen1.Q8_0.gguf";
       flags = [
+        "--mmproj"
+        "${modelDir}/KnowLine-35B-A3B-Gen1.mmproj-f16.gguf"
         "-fa"
         "on"
         "-c"
