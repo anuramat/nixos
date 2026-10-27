@@ -5,7 +5,9 @@
 {
   networking.networkmanager = {
     # stock NM still takes WoWLAN devices down after resume, to recheck
-    # connectivity, which means a full reconnect anyway
+    # connectivity, which means a full reconnect anyway; patched, it only
+    # does so if the link was lost while asleep, since otherwise NM waits
+    # 30s for the supplicant to get the old AP back before moving on
     package = pkgs.networkmanager.overrideAttrs (old: {
       patches = (old.patches or [ ]) ++ [ ./networkmanager-keep-wowlan-on-resume.patch ];
     });

@@ -1,18 +1,19 @@
 --- a/src/core/nm-manager.c
 +++ b/src/core/nm-manager.c
-@@ -7400,15 +7400,6 @@
+@@ -7400,10 +7400,13 @@
                  if (nm_device_is_software(device))
                      continue;
  
 -                /* Belatedly take down Wake-on-LAN devices; ideally we wouldn't have to do this
 -                 * but for now it's the only way to make sure we re-check their connectivity.
--                 */
++                /* Belatedly take down Wake-on-LAN devices that lost their link while asleep,
++                 * so that they reconnect right away instead of waiting out the link timeout;
++                 * the ones that kept it stay up.
+                  */
 -                if (device_is_wake_on_lan(priv->platform, device))
--                    nm_device_set_unmanaged_by_flags(device,
--                                                     NM_UNMANAGED_MANAGER_DISABLED,
--                                                     NM_UNMAN_FLAG_OP_SET_UNMANAGED,
--                                                     NM_DEVICE_STATE_REASON_SLEEPING);
--
-                 /* Check if the device is unmanaged but the state transition is still pending.
-                  * If so, change state now so that later we re-manage the device forcing a
-                  * re-check of available connections.
++                if (device_is_wake_on_lan(priv->platform, device)
++                    && !nm_platform_link_is_connected(priv->platform,
++                                                      nm_device_get_ip_ifindex(device)))
+                     nm_device_set_unmanaged_by_flags(device,
+                                                      NM_UNMANAGED_MANAGER_DISABLED,
+                                                      NM_UNMAN_FLAG_OP_SET_UNMANAGED,
