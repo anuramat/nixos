@@ -1,4 +1,4 @@
-# KnowLine's /v1/systemone server on a llama-server backend: `knowline LLAMA_URL HOST PORT [--no-read-twice]`
+# KnowLine's /v1/systemone server on a llama-server backend: `knowline LLAMA_URL HOST PORT MAX_IMAGE_TOKENS [--no-read-twice]`
 { lib, ... }:
 _final: prev:
 let
@@ -31,6 +31,7 @@ let
         p.transformers
         p.requests
         p.jinja2
+        p.pillow
       ]);
 in
 {

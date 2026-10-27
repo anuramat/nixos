@@ -39,18 +39,20 @@ let
   };
   # served on /v1/systemone
   decisionModels = {
-    knowline = {
+    knowline = rec {
       filename = "KnowLine-35B-A3B-Gen1.Q8_0.gguf";
+      # image sizes in tokens of 32x32 px: the model's own preprocessor's minimum (256x256), and
+      # llama.cpp's default maximum (4.2 MP), over which the front end refuses images: at the
+      # preprocessor's 16384 (16.7 MP), the vision encoder's GPU work hit the kernel's compute
+      # timeout (ErrorDeviceLost)
+      imageMaxTokens = 4096;
       flags = [
         "--mmproj"
         "${modelDir}/KnowLine-35B-A3B-Gen1.mmproj-f16.gguf"
-        # image sizes in tokens of 32x32 px: the model's own preprocessor's minimum (256x256), and
-        # llama.cpp's default maximum (4.2 MP): at the preprocessor's 16384 (16.7 MP), the vision
-        # encoder's GPU work hit the kernel's compute timeout (ErrorDeviceLost)
         "--image-min-tokens"
         "64"
         "--image-max-tokens"
-        "4096"
+        (toString imageMaxTokens)
         "-fa"
         "on"
         # the model's full context: only its 10 full-attention layers have a KV cache, 20 KiB a token
@@ -148,9 +150,16 @@ in
       bindsTo = [ "llama-decision.service" ];
       wantedBy = [ "multi-user.target" ];
       serviceConfig = {
-        ExecStart = "${lib.getExe pkgs.knowline} http://127.0.0.1:${toString decisionServer.port} 0.0.0.0 ${toString decisionPort}${
-          lib.optionalString (!decision.readTwice) " --no-read-twice"
-        }";
+        ExecStart = utils.escapeSystemdExecArgs (
+          [
+            (lib.getExe pkgs.knowline)
+            "http://127.0.0.1:${toString decisionServer.port}"
+            "0.0.0.0"
+            (toString decisionPort)
+            (toString decision.imageMaxTokens)
+          ]
+          ++ lib.optional (!decision.readTwice) "--no-read-twice"
+        );
         DynamicUser = true;
       };
     };
