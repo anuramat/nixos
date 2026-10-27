@@ -19,23 +19,6 @@ let
   inherit (inputs.self.consts.llama) port decisionPort;
 
   llms = {
-    qwen35 = {
-      filename = "unsloth_Qwen3.5-35B-A3B-GGUF_Qwen3.5-35B-A3B-UD-Q4_K_XL.gguf";
-      flags = [
-        "--min-p"
-        "0"
-        "--temp"
-        "0.6"
-        "--top-k"
-        "20"
-        "--top-p"
-        "0.95"
-        "-c"
-        "262144"
-        "-np"
-        "5"
-      ];
-    };
     oss120 = {
       filename = "ggml-org_gpt-oss-120b-GGUF_gpt-oss-120b-mxfp4-00001-of-00003.gguf";
       flags = [
@@ -91,7 +74,7 @@ let
     };
   };
   llmEnable = false;
-  llm = llms.qwen35;
+  llm = llms.oss120;
   decision = decisionModels.knowline;
   frontend = decision.frontend or false;
 
