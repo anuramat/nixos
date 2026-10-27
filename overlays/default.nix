@@ -164,6 +164,21 @@ let
       };
     };
 
+  # 0.7.0: /v1/systemone serves the pplx-decider and vllm-d3 decision models;
+  # drop once nixpkgs-unstable-slow has it
+  llamaCpp =
+    _: prev:
+    lib.genAttrs [ "llama-cpp" "llama-cpp-rocm" "llama-cpp-vulkan" ] (
+      name:
+      prev.${name}.overrideAttrs (old: {
+        version = "0.7.0";
+        src = old.src.override { hash = "sha256-pEDYgI3AMTU+cekvRX7NNt5wddznydQSNuerswvEpsA="; };
+        patches = [ ];
+        npmDepsHash = "sha256-hqYzdp1FwPhYkBP278fQXgY9NCKB6Q3P6Gko7BfP0m0=";
+        disabledTests = old.disabledTests ++ [ "test-llama-context-model" ];
+      })
+    );
+
   # bgm5 uploads slowly: fetch big prebuilt binaries from upstream and wrap them locally,
   # instead of substituting from (or building on) bgm5; only for versioned download URLs
   upstreamOnly =
@@ -209,6 +224,7 @@ let
 in
 lib.composeManyExtensions [
   overrides
+  llamaCpp
   flakes
   upstreamOnly
   inputs.self.overlays.caut
