@@ -54,21 +54,69 @@ let
         "3"
       ];
     };
+    # decision models, served on /v1/systemone
+    knowline = {
+      filename = "KnowLine-35B-A3B-Gen1.Q8_0.gguf";
+      flags = [
+        "-fa"
+        "on"
+        "-c"
+        "32768"
+        "-np"
+        "4"
+        "-b"
+        "4096"
+        "-ub"
+        "4096"
+      ];
+      # a plain causal LM: knowline.py answers /v1/systemone from llama-server's label-token logprobs
+      frontend = true;
+    };
+    d3 = {
+      filename = "vllm-d3-Q8_0.gguf";
+      # the whole prompt, images included, has to fit in one ubatch
+      flags = [
+        "--mmproj"
+        "${modelDir}/mmproj-vllm-d3-Q8_0.gguf"
+        "-fa"
+        "on"
+        "-c"
+        "8192"
+        "-b"
+        "8192"
+        "-ub"
+        "8192"
+      ];
+    };
   };
-  selected = models.qwen35;
+  selected = models.knowline;
+  frontend = selected.frontend or false;
+  # with a front end, llama-server listens locally behind it
+  llamaPort = if frontend then port + 1 else port;
 in
 {
   services.llama-cpp = {
-    inherit port;
+    port = llamaPort;
     enable = false;
     package = llamaPkg;
     openFirewall = false;
-    host = "0.0.0.0";
+    host = if frontend then "127.0.0.1" else "0.0.0.0";
     model = "${modelDir}/${selected.filename}";
     extraFlags = selected.flags ++ [
       "-dev"
       "Vulkan0"
     ];
+  };
+
+  systemd.services.knowline = lib.mkIf (cfg.enable && frontend) {
+    description = "KnowLine /v1/systemone in front of llama-server";
+    after = [ "llama-cpp.service" ];
+    bindsTo = [ "llama-cpp.service" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      ExecStart = "${lib.getExe pkgs.knowline} http://127.0.0.1:${toString llamaPort} 0.0.0.0 ${toString port}";
+      DynamicUser = true;
+    };
   };
 
   networking.firewall.interfaces.tailscale0.allowedTCPPorts = lib.optionals cfg.enable [ port ];
