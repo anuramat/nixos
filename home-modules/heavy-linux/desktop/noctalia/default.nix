@@ -20,8 +20,6 @@ in
 
     # upstream never runs the credential stack, so pam_gnupg can't preset the
     # gpg passphrase on unlock; see the patch and nixos-modules/local/default.nix
-    # upstream's fileInfo mtime jitters between calls, which the fleet monitor
-    # compares to detect a new uc3 snapshot
     # upstream's secret agent leaves NM's background requests for a new wifi
     # key to an unseen prompt, so NM gives up on the network until a manual
     # reconnect
@@ -43,7 +41,6 @@ in
     package = pkgs.noctalia.overrideAttrs (old: {
       patches = (old.patches or [ ]) ++ [
         ./pam-setcred.patch
-        ./fileinfo-mtime.patch
         ./secret-agent-saved-psk.patch
         ./lockscreen-widget-animations.patch
         ./ui-right-click.patch
