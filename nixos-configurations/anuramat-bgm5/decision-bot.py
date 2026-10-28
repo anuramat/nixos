@@ -2,8 +2,9 @@
 # it's confident, replies with a random canned reply for the category.
 # usage: decision-bot URL, with the bot token in $CREDENTIALS_DIRECTORY/token
 # and the config in $CREDENTIALS_DIRECTORY/config: JSON of the form
-# {"chat": ID, "categories": {NAME: [DESCRIPTION, [REPLY, ...]], ...}}, where
-# chat is the only chat the bot reads, and the description is the model's.
+# {"chat": ID, "categories": {NAME: [DESCRIPTION, [REPLY, ...], [USERNAME, ...]], ...}},
+# where chat is the only chat the bot reads, the description is the model's, and
+# a category with usernames (without the @) is only offered for their messages.
 # URL is the decision model's /v1/systemone. In groups, the bot needs privacy
 # mode off (BotFather: /setprivacy) to see messages not addressed to it.
 import base64
@@ -28,8 +29,9 @@ url = sys.argv[1]
 credentials = os.environ["CREDENTIALS_DIRECTORY"]
 token = open(os.path.join(credentials, "token")).read().strip()
 config = json.load(open(os.path.join(credentials, "config")))
-# category -> (description for the model, replies); "none" is never replied to
-categories = config["categories"] | {"none": ("none of the above", [])}
+# category -> (description for the model, replies, usernames or [] for everyone);
+# "none" is never replied to
+categories = config["categories"] | {"none": ("none of the above", [], [])}
 # chat -> (line, photo as a data URI of CONTEXT_IMAGE_SIZE, or None) per message
 history = defaultdict(lambda: deque(maxlen=HISTORY))
 http = httpx.AsyncClient(timeout=60)
@@ -57,7 +59,7 @@ async def photo_uri(msg, size):
     return "data:image/jpeg;base64," + base64.b64encode(buf.getvalue()).decode()
 
 
-async def classify(state, media):
+async def classify(state, media, criteria):
     r = await http.post(
         url,
         json={
@@ -67,7 +69,7 @@ async def classify(state, media):
                 "category": {
                     "type": "choice",
                     "instructions": "Which category does the latest message belong to?",
-                    "criteria": {k: d for k, (d, _) in categories.items()},
+                    "criteria": criteria,
                 }
             },
         },
@@ -94,7 +96,12 @@ async def on_message(update, _context):
         )
     state["latest message"] = entry(line(msg), await photo_uri(msg, IMAGE_SIZE))
     history[msg.chat_id].append((line(msg), await photo_uri(msg, CONTEXT_IMAGE_SIZE)))
-    a = await classify(state, media)
+    criteria = {
+        k: d
+        for k, (d, _, users) in categories.items()
+        if not users or msg.from_user.username in users
+    }
+    a = await classify(state, media, criteria)
     # stderr, since stdout is buffered under systemd
     print(
         msg.chat_id,
