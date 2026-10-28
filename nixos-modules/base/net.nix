@@ -14,11 +14,7 @@ in
 {
   users.users.${username}.extraGroups = [ "networkmanager" ]; # wifi
   networking = {
-    firewall = {
-      allowedTCPPorts = [
-        12345
-      ];
-    };
+    firewall.interfaces.tailscale0.allowedTCPPorts = [ 12345 ]; # for adhoc stuff
     networkmanager = {
       enable = true;
     };
