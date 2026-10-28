@@ -41,6 +41,71 @@ let
       ];
     };
   };
+  # Base Labs' decision models (GGUF files by mradermacher), served as they were trained, with a
+  # block-bidirectional mask on the full-attention layers
+  baselabs = name: rev: configHash: rec {
+    filename = "${name}.Q8_0.gguf";
+    # in tokens of 32x32 px, see knowline; the front end refuses larger images
+    imageMaxTokens = 4096;
+    flags = [
+      "--mmproj"
+      "${modelDir}/${name}.mmproj-f16.gguf"
+      "--image-max-tokens"
+      (toString imageMaxTokens)
+      "-fa"
+      "on"
+      # the trained length, over which the front end refuses requests
+      "-c"
+      "16384"
+      # one slot, so that a request's questions continue from the cached state, see knowline
+      "-np"
+      "1"
+      # the prefix and each question are blocks of non-causal attention, each decoded in one ubatch
+      "-b"
+      "16384"
+      "-ub"
+      "16384"
+    ];
+    # the checkpoint's tokenizer, chat template and image processor, and its config.json, whose
+    # block-bidirectional mask makes qev send each question as noncausal_suffix
+    files = pkgs.linkFarm name (
+      lib.mapAttrsToList
+        (file: hash: {
+          name = file;
+          path = pkgs.fetchurl {
+            url = "https://huggingface.co/baselabs/${name}/resolve/${rev}/${file}";
+            inherit hash;
+          };
+        })
+        {
+          "config.json" = configHash;
+          # the same for mammoth-1 and elephant-1
+          "tokenizer.json" = "sha256-pc2XMrrc5B3lfm786DApMN7RwRiMX4H+sr1sJMShlB8=";
+          "tokenizer_config.json" = "sha256-KYTANCWijSQnROI0pQA3hv0omzcT23n+CVjGXrWdhbI=";
+          "chat_template.jinja" = "sha256-pK7or88uBxGULPhIiZvmYBb40UqIn/nt4HvKCZwo9xU=";
+          "processor_config.json" = "sha256-v7wkr1mj5zqc0GU7jUrnWN+uxOPmwV37HGyO6NVoPIU=";
+        }
+    );
+    # OneJev's server, the one these models were trained and served with
+    frontend = url: [
+      (lib.getExe pkgs.qev)
+      "serve"
+      "--llama-url"
+      url
+      "--tokenizer"
+      "${files}"
+      "--max-branch-tokens"
+      "16384"
+      "--max-image-tokens"
+      (toString imageMaxTokens)
+      "--name"
+      name
+      "--host"
+      "0.0.0.0"
+      "--port"
+      (toString decisionPort)
+    ];
+  };
   # served on /v1/systemone
   decisionModels = {
     knowline = rec {
@@ -85,68 +150,13 @@ let
       # write short text-only requests twice (Gen1.5): more accurate, up to ~2x slower
       readTwice = true;
     };
-    mammoth = rec {
-      filename = "mammoth-1.Q8_0.gguf";
-      # in tokens of 32x32 px, see knowline; the front end refuses larger images
-      imageMaxTokens = 4096;
-      flags = [
-        "--mmproj"
-        "${modelDir}/mammoth-1.mmproj-f16.gguf"
-        "--image-max-tokens"
-        (toString imageMaxTokens)
-        "-fa"
-        "on"
-        # the trained length, over which the front end refuses requests
-        "-c"
-        "16384"
-        # one slot, so that a request's questions continue from the cached state, see knowline
-        "-np"
-        "1"
-        # the prefix and each question are blocks of non-causal attention, each decoded in one ubatch
-        "-b"
-        "16384"
-        "-ub"
-        "16384"
-      ];
-      # the checkpoint's tokenizer, chat template and image processor, and its config.json, whose
-      # block-bidirectional mask makes qev send each question as noncausal_suffix
-      files = pkgs.linkFarm "mammoth-1" (
-        lib.mapAttrsToList
-          (name: hash: {
-            inherit name;
-            path = pkgs.fetchurl {
-              url = "https://huggingface.co/baselabs/mammoth-1/resolve/61cec44c281c693992e3d6ebeb44dd3402dfa186/${name}";
-              inherit hash;
-            };
-          })
-          {
-            "config.json" = "sha256-urWozrc/1qjxka+vI6+/aJ2THaWzx8nVFTzx5LUCRQI=";
-            "tokenizer.json" = "sha256-pc2XMrrc5B3lfm786DApMN7RwRiMX4H+sr1sJMShlB8=";
-            "tokenizer_config.json" = "sha256-KYTANCWijSQnROI0pQA3hv0omzcT23n+CVjGXrWdhbI=";
-            "chat_template.jinja" = "sha256-pK7or88uBxGULPhIiZvmYBb40UqIn/nt4HvKCZwo9xU=";
-            "processor_config.json" = "sha256-v7wkr1mj5zqc0GU7jUrnWN+uxOPmwV37HGyO6NVoPIU=";
-          }
-      );
-      # OneJev's server, the one mammoth-1 was trained and served with
-      frontend = url: [
-        (lib.getExe pkgs.qev)
-        "serve"
-        "--llama-url"
-        url
-        "--tokenizer"
-        "${files}"
-        "--max-branch-tokens"
-        "16384"
-        "--max-image-tokens"
-        (toString imageMaxTokens)
-        "--name"
-        "mammoth-1"
-        "--host"
-        "0.0.0.0"
-        "--port"
-        (toString decisionPort)
-      ];
-    };
+    mammoth =
+      baselabs "mammoth-1" "61cec44c281c693992e3d6ebeb44dd3402dfa186"
+        "sha256-urWozrc/1qjxka+vI6+/aJ2THaWzx8nVFTzx5LUCRQI=";
+    # the 9B sibling: about a third of the compute, scores lower than knowline
+    elephant =
+      baselabs "elephant-1" "b3f8a93462fb1051a9de031e94a7ff380e254072"
+        "sha256-8mMkWJ0Vky4nQtuxPbx8Vhhlzk+AmQrzt9/wXv5Nras=";
     d3 = {
       filename = "vllm-d3-Q8_0.gguf";
       # the whole prompt, images included, has to fit in one ubatch
