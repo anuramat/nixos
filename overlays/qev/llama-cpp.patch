@@ -1,0 +1,162 @@
+diff --git a/qev/cli.py b/qev/cli.py
+index bf57f1e..061f3c6 100644
+--- a/qev/cli.py
++++ b/qev/cli.py
+@@ -79,7 +79,8 @@ def _serve_gguf(args: argparse.Namespace) -> None:
+     else:
+         name = args.name or (args.gguf or tok).split("/")[-1].replace(":", "-")
+     engine = LlamaCppEngine(url, tok_dir, calibration=calib, name=name, max_branch_tokens=args.max_branch_tokens,
+-                            max_request_tokens=args.max_request_tokens, image_config=image_config)
++                            max_request_tokens=args.max_request_tokens, image_config=image_config,
++                            max_image_tokens=args.max_image_tokens)
+     app = create_app(engine, model_name=name)
+     uvicorn.run(app, host=args.host, port=args.port, log_level="info")
+ 
+@@ -187,6 +188,8 @@ def main() -> None:
+     s.add_argument("--tokenizer", default=None,
+                    help="OneJev repository or directory for the tokenizer with --gguf (guessed from the file name)")
+     s.add_argument("--parallel", type=int, default=2, help="llama-server slots for --gguf")
++    s.add_argument("--max-image-tokens", type=int, default=None,
++                   help="with --gguf, refuse images over this many tokens rather than let llama-server downscale them")
+     s.add_argument("--host", default="0.0.0.0")
+     s.add_argument("--port", type=int, default=8000)
+     s.set_defaults(func=cmd_serve)
+diff --git a/qev/llamacpp.py b/qev/llamacpp.py
+index 5f000d7..5e8280a 100644
+--- a/qev/llamacpp.py
++++ b/qev/llamacpp.py
+@@ -3,6 +3,10 @@
+ Prompts, answer slots, calibration and answer assembly are those of `qev.engine`. llama-server computes the next-token
+ distribution at the end of each branch; the answer is read off the slot tokens of that distribution, as in the
+ PyTorch engine. Images are resized here the way the model's processor resizes them, so llama.cpp sees the same pixels.
++
++Each branch is a request of its own. A checkpoint whose config.json declares a block-bidirectional mask on the
++full-attention layers (`modeling_overrides`) is served with it: the branch's question suffix goes as `noncausal_suffix`,
++so that it and the shared prefix are two blocks of non-causal attention.
+ """
+ from __future__ import annotations
+ 
+@@ -137,7 +141,7 @@ class LlamaServer:
+ class LlamaCppEngine(DecisionEngine):
+     def __init__(self, url: str, tokenizer: str, calibration: Calibration | None = None, name: str = "gguf",
+                  max_branch_tokens: int = 32768, max_request_tokens: int = 65536, style: PromptStyle = DEFAULT_STYLE,
+-                 timeout: float = 900, image_config: dict | None = None) -> None:
++                 timeout: float = 900, image_config: dict | None = None, max_image_tokens: int | None = None) -> None:
+         import transformers
+ 
+         self.url = url.rstrip("/")
+@@ -148,6 +152,8 @@ class LlamaCppEngine(DecisionEngine):
+         self.style = style
+         self.model_path = name
+         self.tokenizer = transformers.AutoTokenizer.from_pretrained(tokenizer)
++        overrides = getattr(transformers.AutoConfig.from_pretrained(tokenizer), "modeling_overrides", None) or {}
++        self.noncausal = overrides.get("attention", {}).get("full_attention") == "block_bidirectional"
+         self.model_type = "qwen3_5"
+         self.template_kwargs = {"enable_thinking": False}
+         self.slot_ids = self._verify_slots()
+@@ -156,6 +162,7 @@ class LlamaCppEngine(DecisionEngine):
+         size = cfg.get("size", {})
+         self.min_pixels = int(size.get("shortest_edge", 65536))
+         self.max_pixels = int(size.get("longest_edge", 16777216))
++        self.max_image_tokens = max_image_tokens
+         self._media: list[dict] = []
+         self._images: list[str] = []
+         self._lock = threading.Lock()
+@@ -197,6 +204,10 @@ class LlamaCppEngine(DecisionEngine):
+ 
+     def _png(self, image) -> str:
+         h, w = smart_resize(image.height, image.width, self.factor, self.min_pixels, self.max_pixels)
++        n = h // self.factor * (w // self.factor)
++        if self.max_image_tokens and n > self.max_image_tokens:
++            raise mmedia.MediaError(f"a {image.width}x{image.height} image is {n} tokens of {self.factor}x{self.factor} px, "
++                                    f"over the {self.max_image_tokens} allowed")
+         if (w, h) != image.size:
+             from PIL import Image
+ 
+@@ -218,18 +229,20 @@ class LlamaCppEngine(DecisionEngine):
+             raise mmedia.MediaError(f"could not load media: {type(exc).__name__}: {exc}") from exc
+         self._media = items
+ 
+-    def _prompts(self, state: Any, rendered: list[RenderedQuestion]) -> list[Any]:
++    def _prompts(self, state: Any, rendered: list[RenderedQuestion]) -> list[tuple[Any, int]]:
++        """Each branch's prompt, with the number of tokens of its question suffix."""
++        prefix_ids, suffixes = self._prefix_and_suffix_ids(state, rendered)
+         if not self._media:
+-            prefix_ids, suffixes = self._prefix_and_suffix_ids(state, rendered)
+-            return [prefix_ids + s for s in suffixes]
+-        return [{"prompt_string": VISION_BLOCK.sub(self.media_marker, self._render_prompt(state, r.suffix)),
+-                 "multimodal_data": self._images} for r in rendered]
+-
+-    def _complete(self, prompts: list[Any], extra: dict) -> list[list[dict]]:
+-        body = {"prompt": prompts, "n_predict": 1, "cache_prompt": True, "temperature": 0.0, **extra}
+-        out = self._post("/completion", body)
+-        out = out if isinstance(out, list) else [out]
+-        out = sorted(out, key=lambda r: r.get("index", 0))
++            prompts = [prefix_ids + s for s in suffixes]
++        else:
++            prompts = [{"prompt_string": VISION_BLOCK.sub(self.media_marker, self._render_prompt(state, r.suffix)),
++                        "multimodal_data": self._images} for r in rendered]
++        return [(p, len(s)) for p, s in zip(prompts, suffixes)]
++
++    def _complete(self, prompts: list[tuple[Any, int]], extra: dict) -> list[list[dict]]:
++        body = {"n_predict": 1, "cache_prompt": True, "temperature": 0.0, **extra}
++        out = [self._post("/completion", {"prompt": p, **({"noncausal_suffix": n} if self.noncausal else {}), **body})
++               for p, n in prompts]
+         return [r["completion_probabilities"][0] for r in out]
+ 
+     def _run_sequential(self, state: Any, rendered: list[RenderedQuestion]) -> list[BranchResult]:
+diff --git a/qev/server.py b/qev/server.py
+index 607a63d..ced9765 100644
+--- a/qev/server.py
++++ b/qev/server.py
+@@ -20,6 +20,7 @@ from pydantic import ValidationError
+ 
+ from . import __version__
+ from .engine import DecisionEngine
++from .prompt import render_state
+ from .schema import ModelMetadata, ModelMetadataList, SystemOneRequest
+ 
+ log = logging.getLogger("qev.server")
+@@ -27,6 +28,33 @@ log = logging.getLogger("qev.server")
+ ALIASES = {"jev-latest", "jev-preview", "qev-latest"}
+ 
+ 
++def typesafe_images(body: Any) -> Any:
++    """TypeSafe's images as `media` with `<image:N>` placeholders: top-level `images` / `files` (URLs or data URLs)
++    before the state, and the `image` / `image_url` parts of a chat state in their place."""
++    if not isinstance(body, dict):
++        return body
++    media = body.get("media") or []
++
++    def image(src: str) -> str:
++        media.append({"type": "image", ("data" if src.startswith("data:") else "url"): src})
++        return f"<image:{len(media)}>"
++
++    def walk(x: Any) -> Any:
++        if isinstance(x, list):
++            return [walk(v) for v in x]
++        if isinstance(x, dict) and x.get("type") in ("image", "image_url"):
++            return image(x.get("image") or x.get("url") or (x.get("image_url") or {}).get("url"))
++        if isinstance(x, dict):
++            return {k: walk(v) for k, v in x.items()}
++        return x
++
++    top = "".join(image(src) for k in ("images", "files") for src in body.pop(k, None) or [])
++    state = walk(body.get("state"))
++    body["state"] = top + "\n" + render_state(state) if top else state
++    body["media"] = media or None
++    return body
++
++
+ def _validation_error(exc: ValidationError) -> JSONResponse:
+     detail = [{"loc": ["body", *[str(x) for x in e["loc"]]], "msg": e["msg"], "type": e["type"]} for e in exc.errors()]
+     return JSONResponse(status_code=422, content={"detail": detail})
+@@ -68,7 +96,7 @@ def create_app(engine: DecisionEngine, model_name: str, description: str = "", r
+         except Exception:
+             return JSONResponse(status_code=422, content={"detail": [{"loc": ["body"], "msg": "invalid JSON", "type": "json_invalid"}]})
+         try:
+-            req = SystemOneRequest.model_validate(body)
++            req = SystemOneRequest.model_validate(typesafe_images(body))
+         except ValidationError as exc:
+             return _validation_error(exc)
+         requested = req.model or "jev-latest"

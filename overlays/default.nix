@@ -235,6 +235,7 @@ lib.composeManyExtensions [
   inputs.self.overlays.nx-studio
   inputs.self.overlays.pass-secret-service-rs
   inputs.self.overlays.proton-drive-cli
+  inputs.self.overlays.qev
   inputs.self.overlays.tamron-lens-control
   inputs.self.overlays.vim-plugins
   inputs.self.overlays.wvkbd
