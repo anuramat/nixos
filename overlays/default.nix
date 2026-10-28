@@ -18,8 +18,6 @@ let
         nix-auth
         claude-code
         codex
-        hermes
-        copilot-cli
         devin-cli
         chatgpt
         claude-desktop

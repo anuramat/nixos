@@ -67,10 +67,6 @@
       url = "github:yuxqiu/omp-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    copilot-cli = {
-      url = "github:scarisey/copilot-cli-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     chatgpt = {
       url = "github:poeck/chatgpt-desktop-app-nix-flake";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -83,7 +79,6 @@
       url = "github:charliemeyer2000/devin-cli-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hermes.url = "github:NousResearch/hermes-agent";
     ghostty.url = "github:ghostty-org/ghostty"; # no follows: keeps ghostty.cachix.org hits
     niri = {
       url = "github:sodiboo/niri-flake";
