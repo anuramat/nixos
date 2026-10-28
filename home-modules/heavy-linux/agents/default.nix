@@ -15,6 +15,7 @@ in
 
   imports = [
     ./commands.nix
+    ./decide.nix
     ./feedback.nix
     ./frontends
     ./hostrun
