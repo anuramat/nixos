@@ -14,8 +14,7 @@ let
       config.nix.package
       git
       jq
-      curl # for tgfy
-      hm.home.path # tgfy
+      hm.lib.tgfy.package
     ];
     text = builtins.readFile ./nixpkgs-bump.sh;
   };
@@ -41,8 +40,7 @@ in
   systemd.services.nixpkgs-cves = {
     path = [
       config.nix.package
-      pkgs.curl # for tgfy
-      hm.home.path # tgfy
+      hm.lib.tgfy.package
     ];
     serviceConfig = {
       Type = "oneshot";

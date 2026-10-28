@@ -44,6 +44,7 @@ in
     ./misc.nix
     ./packages.nix
     ./readline.nix
+    ./tgfy.nix
     ./search.nix
     ./yazi.nix
     ./zellij.nix
