@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Bumps the `nixpkgs` input of the flake repo at $1, builds every non-deprecated
-# host, points the `nixpkgs-bump` branch at the bump commit, and fast-forwards
-# the checked out branch to it. All work happens in a throwaway worktree, so
+# Bumps the `nixpkgs` input of the flake repo at $1, builds every host,
+# points the `nixpkgs-bump` branch at the bump commit, and fast-forwards the
+# checked out branch to it. All work happens in a throwaway worktree, so
 # concurrent edits in the checkout are safe: if the branch moved or flake.lock
 # is dirty, the fast-forward is skipped and the bump waits on `nixpkgs-bump`.
 # Build results are kept as GC roots in $2.
@@ -38,7 +38,7 @@ nix flake check 2>"$log" || {
 	notify 'flake check failed' log
 	exit 1
 }
-mapfile -t hosts < <(nix eval --json '.#hosts' | jq -r 'to_entries[] | select(.value.deprecated | not) | .key')
+mapfile -t hosts < <(nix eval --json '.#hosts' | jq -r 'keys[]')
 for host in "${hosts[@]}"; do
 	nix build --out-link "$roots/$host" ".#nixosConfigurations.$host.config.system.build.toplevel" 2>"$log" || {
 		notify "build of $host failed" log

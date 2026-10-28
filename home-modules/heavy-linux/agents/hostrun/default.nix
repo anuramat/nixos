@@ -17,8 +17,7 @@
   ...
 }:
 let
-  promptHosts =
-    inputs.self.hosts |> lib.filterAttrs (_: h: h.local && !h.deprecated) |> lib.attrNames;
+  promptHosts = inputs.self.hosts |> lib.filterAttrs (_: h: h.local) |> lib.attrNames;
   appId = "sn.ctrl.hostrun";
 
   client = pkgs.writeShellApplication {

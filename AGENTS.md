@@ -30,8 +30,8 @@ Useful repo commands:
   `deadnix`, `shellcheck`, and `yamllint`.
 - `nix fmt`: format through treefmt.
 - `just lint`: run statix, deadnix, Nix parsing, shellcheck, and yamllint.
-- `nix flake check`: the `checks` output evaluates every non-deprecated host's
-  toplevel (firing all assertions) without building it.
+- `nix flake check`: the `checks` output evaluates every host's toplevel
+  (firing all assertions) without building it.
 - `just nixos [COMMAND] [FLAGS]`: `nixos-rebuild COMMAND` (default `switch`)
   on the current host; `just nixos-local ...` does the same without remote
   builders or `http:` substituters, `just nixos-offline ...` with `--offline`.
@@ -72,16 +72,12 @@ adding, removing, or renaming a direct child is an API change for this flake:
 `outputs.nix` also exposes:
 
 - `hosts`: a hand-written static registry of
-  `{ system, builder, agent, local, alias, deprecated }` per host plus a
+  `{ system, builder, agent, local, alias }` per host plus a
   required `description` (rendered into the agents' instructions by
   `home-modules/heavy-linux/agents/instructions.nix`: for the host the agent
   runs on, and in the ssh instructions for agent hosts); `alias` is an
-  optional ssh alias (every non-deprecated host gets an ssh config entry in
+  optional ssh alias (every host gets an ssh config entry in
   `home-modules/base/default.nix`, under its alias if it has one).
-  `deprecated` hosts (t480) are left out of the `checks.SYSTEM.host-NAME`
-  outputs, remote builders and default substituters, ssh config entries, agent
-  instructions, hostrun prompts and the fleet monitor, but keep their keys and
-  trust (`names` in `nixos-modules/base/hosts.nix` is unfiltered).
   Cross-host facts come from this registry, not from evaluating sibling
   configurations. Adding a host (or changing its system/builder/agent status)
   requires updating the registry. The `builder` and `agent` flags enable
@@ -89,9 +85,9 @@ adding, removing, or renaming a direct child is an API change for this flake:
   machines) imports `nixos-modules/local/` in `outputs.nix`, not in the host's
   `default.nix`; `hosts.nix` asserts the registry's names and systems against
   the configurations, and the per-host `checks.SYSTEM.host-NAME` outputs
-  evaluate every non-deprecated host's toplevel, so `nix flake check` catches
-  drift on those hosts. Host changes can still affect secrets, SSH,
-  substituters, and remote-build behavior on every other host.
+  evaluate every host's toplevel, so `nix flake check` catches drift. Host
+  changes can still affect secrets, SSH, substituters, and remote-build
+  behavior on every other host.
 - `consts`: constants shared by NixOS, Home Manager and nixvim modules. The
   only place these are written; every consumer reads `inputs.self.consts`
   directly, with no intervening NixOS option.
@@ -145,7 +141,7 @@ experimental feature; run inside the dev shell or pass it explicitly.
   `nixos-modules/local/`: workstation layer on top of it, on hosts flagged
   `local` in the registry.
   `nixos-modules/laptop/`: power management and keyd remaps, imported by
-  t480 and f12 only.
+  f12 only.
 - `home-modules/` layers: `base` (base CLI environment, cross-platform),
   `linux` (Linux-only CLI), `local` (physical machines, cross-platform),
   `local-linux` (Linux hardware tools), `heavy` (editor, toolchains,
@@ -158,10 +154,9 @@ experimental feature; run inside the dev shell or pass it explicitly.
   feature modules (`pss`, `todo`), imported by the layer that enables them
   (`linux` and `local`).
 - Hosts: `anuramat-root` (server-like QEMU guest; nginx, ACME, `ctrl.sn`,
-  wastebin), `anuramat-t480` (ThinkPad T480 laptop, deprecated), `anuramat-f12`
-  (Framework 12 laptop), `anuramat-bgm5` (AMD Strix Halo workstation; build
-  server, ROCm, llama, Immich). Per-host details live in
-  `nixos-configurations/*/default.nix`.
+  wastebin), `anuramat-f12` (Framework 12 laptop), `anuramat-bgm5` (AMD
+  Strix Halo workstation; build server, ROCm, llama, Immich). Per-host details
+  live in `nixos-configurations/*/default.nix`.
 
 ## Secrets and Keys
 

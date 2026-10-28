@@ -21,11 +21,9 @@ let
     name = "uc3";
     text = "SSH_ASKPASS=${lib.getExe uc3-askpass} SSH_ASKPASS_REQUIRE=force ssh uc3";
   };
-  # NOTE hosts without an alias are explicitly listed for `wishlist`; deprecated
-  # hosts are left out of it
+  # NOTE hosts without an alias are explicitly listed for `wishlist`
   sshHosts =
     inputs.self.hosts
-    |> lib.filterAttrs (_: h: !h.deprecated)
     |> lib.mapAttrs' (
       name: h:
       if h.alias != null then

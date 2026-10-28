@@ -11,7 +11,7 @@ let
   name = config.networking.hostName;
   hosts = lib.filterAttrs (n: _: n != name) registry;
   names = lib.attrNames hosts;
-  builders = lib.filterAttrs (_: v: !v.deprecated && v.builder) hosts;
+  builders = lib.filterAttrs (_: v: v.builder) hosts;
   cachePort = 5000;
 
   # lower priority number -> used earlier; cache.nixos.org=40, cachix=41

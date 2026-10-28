@@ -14,7 +14,7 @@
   inputs,
 }:
 let
-  hosts = inputs.self.hosts |> lib.filterAttrs (_: h: !h.deprecated) |> lib.attrNames;
+  hosts = lib.attrNames inputs.self.hosts;
   remote = pkgs.writeText "fleet-probe-remote" ''
     # jobs exist only on agent hosts, the only ones with an agent user
     if u=$(id -u ${inputs.self.consts.agent.username} 2>/dev/null); then

@@ -87,7 +87,6 @@ flake-parts.lib.mkFlake { inherit inputs; } {
           agent = false;
           local = false; # physical machine: gets nixosModules.local
           alias = null; # ssh alias
-          deprecated = false;
         };
       in
       lib.mapAttrs (_: host: defaults // host) {
@@ -104,11 +103,6 @@ flake-parts.lib.mkFlake { inherit inputs; } {
           local = true;
         };
         anuramat-root.description = "server: 4GB ram, 4 vCPU; personal website";
-        anuramat-t480 = {
-          description = "old thinkpad, not actively used";
-          local = true;
-          deprecated = true;
-        };
       };
 
     # constants shared by NixOS, Home Manager and nixvim modules, read directly
@@ -133,7 +127,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       };
       builder.username = "builder";
 
-      # designated LLM inference endpoint
+      # designated LLM inference endpoint: /v1/systemone decision models
       llama = {
         host = "anuramat-bgm5";
         port = 11343;
@@ -202,7 +196,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       checks = # {{{1
         (
           inputs.self.hosts
-          |> lib.filterAttrs (_: host: !host.deprecated && host.system == system)
+          |> lib.filterAttrs (_: host: host.system == system)
           |> lib.mapAttrs' (
             name: _:
             lib.nameValuePair "host-${name}" (
