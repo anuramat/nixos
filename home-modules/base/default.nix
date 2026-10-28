@@ -36,7 +36,6 @@ in
   imports = [
     ./gui.nix
     ./bash
-    ./bin
     ./editor.nix
     ./git
     ./keyring.nix

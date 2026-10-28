@@ -2,6 +2,7 @@
   config,
   inputs,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -18,8 +19,29 @@ let
   ];
   keyPath = "${config.users.users.${username}.home}/.ssh/id_ed25519";
   inherit (config.lib.hosts) cachePort;
+
+  nix-cache-keygen =
+    let
+      # TODO move and read public
+      private = config.nix.settings.secret-key-files;
+      public = "${private}.pub";
+      # its own group too, see nixos-modules/base/builder.nix
+      builder = inputs.self.consts.builder.username;
+    in
+    pkgs.writeShellApplication {
+      name = "nix-cache-keygen";
+      text = ''
+        if [ ! -e '${private}' ] && [ ! -e '${public}' ]; then
+          sudo nix-store --generate-binary-cache-key "$(hostname)" '${private}' '${public}'
+        fi
+        sudo chown '${builder}:${builder}' '${private}' '${public}'
+        [ ! -e "$HOME/.ssh" ] && yes "" | ssh-keygen -N ""
+      '';
+    };
 in
 {
+  environment.systemPackages = [ nix-cache-keygen ];
+
   programs.nh = {
     enable = true;
   };
@@ -69,6 +91,7 @@ in
 
     buildMachines = lib.mapAttrsToList (n: v: {
       # sshKey/sshUser are ignored (NixOS/nix#3423); see README.md "Problems"
+      # TODO root ssh config from here?
       # TODO speedFactor, maxJobs
       sshUser = inputs.self.consts.builder.username;
       sshKey = keyPath;

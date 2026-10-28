@@ -112,8 +112,8 @@ adding, removing, or renaming a direct child is an API change for this flake:
     `home-modules/heavy-linux/agents/{sandbox,job,instructions}.nix` and
     `home-modules/heavy-linux/desktop/noctalia/fleet-monitor/probe.nix`.
     `builder` (`username`), for remote builds: created by
-    `nixos-modules/base/builder.nix`, used by `nixos-modules/base/nix.nix` and
-    `home-modules/base/bin/` (`nix-cache-keygen`).
+    `nixos-modules/base/builder.nix`, used by `nixos-modules/base/nix.nix`
+    (`buildMachines` and `nix-cache-keygen`).
   - `llama`: the designated LLM inference endpoint (host, the LLM server's
     port, and the decision-model server's `decisionPort`), consumed by
     `nixos-configurations/anuramat-bgm5/llama.nix`.
