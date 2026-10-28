@@ -164,7 +164,7 @@ let
       };
     };
 
-  # 0.7.0: /v1/systemone serves the pplx-decider and vllm-d3 decision models;
+  # 0.7.0, which bgm5's llama.cpp patch (noncausal_suffix) is made against;
   # drop once nixpkgs-unstable-slow has it
   llamaCpp =
     _: prev:
@@ -230,7 +230,6 @@ lib.composeManyExtensions [
   inputs.self.overlays.caut
   # `codex` is the agent sandbox wrapper (home-modules/heavy-linux/agents)
   (_: prev: { caut = prev.caut.override { codex = "codex-unboxed"; }; })
-  inputs.self.overlays.knowline
   inputs.self.overlays.niri
   inputs.self.overlays.nx-studio
   inputs.self.overlays.pass-secret-service-rs

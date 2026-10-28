@@ -45,7 +45,9 @@ let
   # block-bidirectional mask on the full-attention layers
   baselabs = name: rev: configHash: rec {
     filename = "${name}.Q8_0.gguf";
-    # in tokens of 32x32 px, see knowline; the front end refuses larger images
+    # in tokens of 32x32 px: llama.cpp's default maximum (4.2 MP), over which the front end refuses
+    # images: at the image processor's 16384 (16.7 MP), the vision encoder's GPU work hit the
+    # kernel's compute timeout (ErrorDeviceLost)
     imageMaxTokens = 4096;
     flags = [
       "--mmproj"
@@ -57,7 +59,8 @@ let
       # the trained length, over which the front end refuses requests
       "-c"
       "16384"
-      # one slot, so that a request's questions continue from the cached state, see knowline
+      # one slot, so that a request's questions continue from the cached state and images;
+      # llama-server caches per slot, and parallel slots would each recompute them
       "-np"
       "1"
       # the prefix and each question are blocks of non-causal attention, each decoded in one ubatch
@@ -108,76 +111,18 @@ let
   };
   # served on /v1/systemone
   decisionModels = {
-    knowline = rec {
-      filename = "KnowLine-35B-A3B-Gen1.Q8_0.gguf";
-      # image sizes in tokens of 32x32 px: the model's own preprocessor's minimum (256x256), and
-      # llama.cpp's default maximum (4.2 MP), over which the front end refuses images: at the
-      # preprocessor's 16384 (16.7 MP), the vision encoder's GPU work hit the kernel's compute
-      # timeout (ErrorDeviceLost)
-      imageMaxTokens = 4096;
-      flags = [
-        "--mmproj"
-        "${modelDir}/KnowLine-35B-A3B-Gen1.mmproj-f16.gguf"
-        "--image-min-tokens"
-        "64"
-        "--image-max-tokens"
-        (toString imageMaxTokens)
-        "-fa"
-        "on"
-        # the model's full context: only its 10 full-attention layers have a KV cache, 20 KiB a token
-        "-c"
-        "262144"
-        # one slot, so that a request's questions reuse the cached state and images;
-        # llama-server caches per slot, and parallel slots would each recompute them
-        "-np"
-        "1"
-        "-b"
-        "4096"
-        "-ub"
-        "4096"
-      ];
-      # a plain causal LM: knowline.py answers /v1/systemone from llama-server's label-token logprobs
-      frontend =
-        url:
-        [
-          (lib.getExe pkgs.knowline)
-          url
-          "0.0.0.0"
-          (toString decisionPort)
-          (toString imageMaxTokens)
-        ]
-        ++ lib.optional (!readTwice) "--no-read-twice";
-      # write short text-only requests twice (Gen1.5): more accurate, up to ~2x slower
-      readTwice = true;
-    };
     mammoth =
       baselabs "mammoth-1" "61cec44c281c693992e3d6ebeb44dd3402dfa186"
         "sha256-urWozrc/1qjxka+vI6+/aJ2THaWzx8nVFTzx5LUCRQI=";
-    # the 9B sibling: about a third of the compute, scores lower than knowline
+    # the 9B sibling: 2-3x faster here, and less accurate (Jev Decision Index 0.4: 60.3, against
+    # mammoth-1's 68.4)
     elephant =
       baselabs "elephant-1" "b3f8a93462fb1051a9de031e94a7ff380e254072"
         "sha256-8mMkWJ0Vky4nQtuxPbx8Vhhlzk+AmQrzt9/wXv5Nras=";
-    d3 = {
-      filename = "vllm-d3-Q8_0.gguf";
-      # the whole prompt, images included, has to fit in one ubatch
-      flags = [
-        "--mmproj"
-        "${modelDir}/mmproj-vllm-d3-Q8_0.gguf"
-        "-fa"
-        "on"
-        "-c"
-        "8192"
-        "-b"
-        "8192"
-        "-ub"
-        "8192"
-      ];
-    };
   };
   llmEnable = false;
   llm = llms.oss120;
   decision = decisionModels.mammoth;
-  frontend = decision ? frontend;
 
   llamaServer =
     {
@@ -210,11 +155,11 @@ let
         Restart = "on-failure";
       };
     };
-  # with a front end, llama-server listens locally behind it
+  # llama-server listens locally, behind the front end
   decisionServer = {
     model = decision;
-    host = if frontend then "127.0.0.1" else "0.0.0.0";
-    port = if frontend then decisionPort + 1 else decisionPort;
+    host = "127.0.0.1";
+    port = decisionPort + 1;
   };
 in
 {
@@ -227,9 +172,9 @@ in
     llama-decision = llamaServer decisionServer // {
       # bindsTo stops the front end with llama-server; this starts it again once llama-server
       # is back, e.g. restarted on failure
-      upholds = lib.optional frontend "decision-frontend.service";
+      upholds = [ "decision-frontend.service" ];
     };
-    decision-frontend = lib.mkIf frontend {
+    decision-frontend = {
       description = "/v1/systemone in front of llama-server: ${decision.filename}";
       after = [ "llama-decision.service" ];
       bindsTo = [ "llama-decision.service" ];
