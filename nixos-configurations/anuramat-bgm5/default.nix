@@ -47,6 +47,7 @@
   imports = [
     inputs.self.nixosModules.base
     ./hardware-configuration.nix
+    ./decision-bot.nix
     ./llama.nix
     ./maintenance.nix
     ./misc.nix

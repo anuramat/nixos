@@ -28,6 +28,8 @@ in
   "agent.age" # private ssh key for agents
   "nikon.age" # PTP/IP UUID for Z5II
   "baseten.age"
+  "decision-bot-token.age" # Telegram bot of bgm5's decision-bot
+  "decision-bot-config.age" # its chat and categories
 ]
 |> map (x: {
   name = x;
