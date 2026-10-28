@@ -72,9 +72,80 @@ let
         "4096"
       ];
       # a plain causal LM: knowline.py answers /v1/systemone from llama-server's label-token logprobs
-      frontend = true;
+      frontend =
+        url:
+        [
+          (lib.getExe pkgs.knowline)
+          url
+          "0.0.0.0"
+          (toString decisionPort)
+          (toString imageMaxTokens)
+        ]
+        ++ lib.optional (!readTwice) "--no-read-twice";
       # write short text-only requests twice (Gen1.5): more accurate, up to ~2x slower
       readTwice = true;
+    };
+    mammoth = rec {
+      filename = "mammoth-1.Q8_0.gguf";
+      # in tokens of 32x32 px, see knowline; the front end refuses larger images
+      imageMaxTokens = 4096;
+      flags = [
+        "--mmproj"
+        "${modelDir}/mammoth-1.mmproj-f16.gguf"
+        "--image-max-tokens"
+        (toString imageMaxTokens)
+        "-fa"
+        "on"
+        # the trained length, over which the front end refuses requests
+        "-c"
+        "16384"
+        # one slot, so that a request's questions continue from the cached state, see knowline
+        "-np"
+        "1"
+        # the prefix and each question are blocks of non-causal attention, each decoded in one ubatch
+        "-b"
+        "16384"
+        "-ub"
+        "16384"
+      ];
+      # the checkpoint's tokenizer, chat template and image processor, and its config.json, whose
+      # block-bidirectional mask makes qev send each question as noncausal_suffix
+      files = pkgs.linkFarm "mammoth-1" (
+        lib.mapAttrsToList
+          (name: hash: {
+            inherit name;
+            path = pkgs.fetchurl {
+              url = "https://huggingface.co/baselabs/mammoth-1/resolve/61cec44c281c693992e3d6ebeb44dd3402dfa186/${name}";
+              inherit hash;
+            };
+          })
+          {
+            "config.json" = "sha256-urWozrc/1qjxka+vI6+/aJ2THaWzx8nVFTzx5LUCRQI=";
+            "tokenizer.json" = "sha256-pc2XMrrc5B3lfm786DApMN7RwRiMX4H+sr1sJMShlB8=";
+            "tokenizer_config.json" = "sha256-KYTANCWijSQnROI0pQA3hv0omzcT23n+CVjGXrWdhbI=";
+            "chat_template.jinja" = "sha256-pK7or88uBxGULPhIiZvmYBb40UqIn/nt4HvKCZwo9xU=";
+            "processor_config.json" = "sha256-v7wkr1mj5zqc0GU7jUrnWN+uxOPmwV37HGyO6NVoPIU=";
+          }
+      );
+      # OneJev's server, the one mammoth-1 was trained and served with
+      frontend = url: [
+        (lib.getExe pkgs.qev)
+        "serve"
+        "--llama-url"
+        url
+        "--tokenizer"
+        "${files}"
+        "--max-branch-tokens"
+        "16384"
+        "--max-image-tokens"
+        (toString imageMaxTokens)
+        "--name"
+        "mammoth-1"
+        "--host"
+        "0.0.0.0"
+        "--port"
+        (toString decisionPort)
+      ];
     };
     d3 = {
       filename = "vllm-d3-Q8_0.gguf";
@@ -95,8 +166,8 @@ let
   };
   llmEnable = false;
   llm = llms.oss120;
-  decision = decisionModels.knowline;
-  frontend = decision.frontend or false;
+  decision = decisionModels.mammoth;
+  frontend = decision ? frontend;
 
   llamaServer =
     {
@@ -146,25 +217,21 @@ in
     llama-decision = llamaServer decisionServer // {
       # bindsTo stops the front end with llama-server; this starts it again once llama-server
       # is back, e.g. restarted on failure
-      upholds = lib.optional frontend "knowline.service";
+      upholds = lib.optional frontend "decision-frontend.service";
     };
-    knowline = lib.mkIf frontend {
-      description = "KnowLine /v1/systemone in front of llama-server";
+    decision-frontend = lib.mkIf frontend {
+      description = "/v1/systemone in front of llama-server: ${decision.filename}";
       after = [ "llama-decision.service" ];
       bindsTo = [ "llama-decision.service" ];
       wantedBy = [ "multi-user.target" ];
       serviceConfig = {
         ExecStart = utils.escapeSystemdExecArgs (
-          [
-            (lib.getExe pkgs.knowline)
-            "http://127.0.0.1:${toString decisionServer.port}"
-            "0.0.0.0"
-            (toString decisionPort)
-            (toString decision.imageMaxTokens)
-          ]
-          ++ lib.optional (!decision.readTwice) "--no-read-twice"
+          decision.frontend "http://127.0.0.1:${toString decisionServer.port}"
         );
         DynamicUser = true;
+        # qev reads llama-server's props when it starts, which fails while the model is loading
+        Restart = "on-failure";
+        RestartSec = 5;
       };
     };
   };
