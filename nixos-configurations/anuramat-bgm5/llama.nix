@@ -122,7 +122,7 @@ let
   };
   llmEnable = false;
   llm = llms.oss120;
-  decision = decisionModels.mammoth;
+  decision = decisionModels.elephant;
 
   llamaServer =
     {
