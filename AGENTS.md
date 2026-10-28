@@ -209,7 +209,6 @@ experimental feature; run inside the dev shell or pass it explicitly.
 - `services.pss` (`home-modules/pss/`) is a custom Home Manager module
   replacing the normal pass-secret-service module with the Rust
   `pass-secret-service-rs` package from `overlays/pass-secret-service-rs.nix`.
-  It also ships `pss-migrate` for migration.
 - Agent commands are generated from Nix. `home-modules/heavy-linux/agents`
   builds Codex/Claude instruction files, skill/prompt files, TOML/JSON configs,
   and bubblewrap wrappers.
