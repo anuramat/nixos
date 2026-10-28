@@ -13,6 +13,7 @@ import json
 import os
 import random
 import sys
+import time
 from collections import defaultdict, deque
 
 import httpx
@@ -20,6 +21,7 @@ from PIL import Image
 from telegram.ext import Application, MessageHandler, filters
 
 THRESHOLD = 0.7  # of the answer's confidence: 0 is uniform, 1 is certain
+COOLDOWN = 30 * 60  # s a category stays silent after replying
 HISTORY = 10  # earlier messages per chat given as context
 # photos are shrunk to fit a square of this many px: the latest message's, and the rest
 IMAGE_SIZE = 1024
@@ -34,6 +36,8 @@ config = json.load(open(os.path.join(credentials, "config")))
 categories = config["categories"] | {"none": ("none of the above", [], [])}
 # chat -> (line, photo as a data URI of CONTEXT_IMAGE_SIZE, or None) per message
 history = defaultdict(lambda: deque(maxlen=HISTORY))
+# category -> time.monotonic() of its last reply
+last_reply = defaultdict(lambda: -COOLDOWN)
 http = httpx.AsyncClient(timeout=60)
 
 
@@ -112,7 +116,13 @@ async def on_message(update, _context):
         file=sys.stderr,
     )
     replies = categories[a["choice"]][1]
-    if replies and a["confidence"] >= THRESHOLD:
+    now = time.monotonic()
+    if (
+        replies
+        and a["confidence"] >= THRESHOLD
+        and now - last_reply[a["choice"]] >= COOLDOWN
+    ):
+        last_reply[a["choice"]] = now
         await msg.reply_text(random.choice(replies))
 
 
