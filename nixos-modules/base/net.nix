@@ -15,6 +15,17 @@ in
   users.users.${username}.extraGroups = [ "networkmanager" ]; # wifi
   networking = {
     firewall.interfaces.tailscale0.allowedTCPPorts = [ 12345 ]; # for adhoc stuff
+    # keep tailnet peers off the VPN: between two clients, packets have to fit
+    # both tunnels, but each client only knows its own MTU, so full-size
+    # WireGuard packets vanish
+    firewall.extraCommands =
+      let
+        rule = "OUTPUT -o uhd -p udp --sport ${toString config.services.tailscale.port} -j DROP";
+      in
+      ''
+        ip46tables -D ${rule} 2>/dev/null || true
+        ip46tables -A ${rule}
+      '';
     networkmanager = {
       enable = true;
     };
@@ -92,6 +103,9 @@ in
         KbdInteractiveAuthentication = false;
         PermitRootLogin = "no";
         PrintLastLog = false;
+        # no passwords to guess, and a flaky link would lock out the whole
+        # tailnet address of a host
+        PerSourcePenalties = "no";
       };
     };
   };
