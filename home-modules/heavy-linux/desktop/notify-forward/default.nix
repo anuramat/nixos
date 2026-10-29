@@ -8,7 +8,10 @@
 }:
 let
   notify-forward = pkgs.writers.writePython3Bin "notify-forward" {
-    libraries = [ pkgs.python3Packages.jeepney ];
+    libraries = with pkgs.python3Packages; [
+      jeepney
+      pillow
+    ];
     flakeIgnore = [ "E501" ];
   } (builtins.readFile ./notify-forward.py);
   inherit (inputs.self.consts.ntfy) host port;

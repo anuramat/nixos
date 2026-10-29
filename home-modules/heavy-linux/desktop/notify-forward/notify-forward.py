@@ -1,4 +1,6 @@
 # forwards desktop notifications to ntfy: notify-forward TOPIC_URL
+import io
+import os
 import sys
 import time
 import urllib.parse
@@ -6,11 +8,30 @@ import urllib.request
 
 from jeepney import DBusAddress, new_method_call
 from jeepney.io.blocking import open_dbus_connection
+from PIL import Image
 
 # apps that notify on the phone natively
 SKIP = {"org.telegram.desktop"}
 # at most BURST messages per WINDOW seconds, in case a loop slips through
 BURST, WINDOW = 10, 60
+
+
+def image(hints):
+    """(filename, bytes) of the notification's image, if any"""
+    if "image-path" in hints:
+        path = urllib.parse.unquote(hints["image-path"][1].removeprefix("file://"))
+        try:  # may also be an icon name
+            with open(path, "rb") as f:
+                return os.path.basename(path), f.read()
+        except OSError:
+            return None
+    if "image-data" in hints:
+        w, h, stride, alpha, _, _, data = hints["image-data"][1]
+        mode = "RGBA" if alpha else "RGB"
+        png = io.BytesIO()
+        Image.frombytes(mode, (w, h), bytes(data), "raw", mode, stride).save(png, "PNG")
+        return "image.png", png.getvalue()
+
 
 bus = DBusAddress(
     "/org/freedesktop/DBus",
@@ -39,11 +60,18 @@ while True:
     if dropped:
         body += f"\n(+{dropped} dropped)"
         dropped = 0
-    # query params, since headers can't carry non-latin1 titles
-    title = urllib.parse.urlencode({"title": f"[{app}] {summary}" if app else summary})
+    # query params, since headers can't carry non-latin1 titles; the body is
+    # the attachment, if any
+    params = {
+        "title": f"[{app}] {summary}" if app else summary,
+        "message": body.strip() or summary,
+    }
+    data = b""
+    if img := image(hints):
+        params["filename"], data = img
     try:
         urllib.request.urlopen(
-            f"{sys.argv[1]}?{title}", (body.strip() or summary).encode(), timeout=30
+            f"{sys.argv[1]}?{urllib.parse.urlencode(params)}", data, timeout=30
         )
     except OSError as e:
         print(e, file=sys.stderr)
