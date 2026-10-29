@@ -63,7 +63,7 @@ pkgs.writeShellApplication {
   ];
   text = ''
     [ "$1" != "$HOSTNAME" ] || exec bash <${remote}
-    exec ssh -o BatchMode=yes -o ConnectTimeout=5 "$1" bash -s <${remote}
+    exec ssh "_bg-$1" bash -s <${remote}
   '';
   passthru = { inherit hosts; };
 }

@@ -31,6 +31,24 @@ let
       else
         lib.nameValuePair name { }
     );
+  # for background polling (e.g. the fleet monitor): one shared connection per
+  # host, kept off interactive ssh so that bulk transfers never share it
+  bgHosts =
+    inputs.self.hosts
+    |> lib.mapAttrs' (
+      name: _:
+      lib.nameValuePair "_bg-${name}" {
+        HostName = name;
+        BatchMode = "yes";
+        ConnectTimeout = 5;
+        ControlMaster = "auto";
+        ControlPath = "\${XDG_RUNTIME_DIR}/ssh-bg-%C";
+        ControlPersist = "10m";
+        # drops a master left dead by a suspend or a network change
+        ServerAliveInterval = 15;
+        ServerAliveCountMax = 2;
+      }
+    );
 in
 {
   imports = [
@@ -57,20 +75,23 @@ in
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false; # NOTE: deprecated, removed in next release
-    settings = sshHosts // {
-      uc3 = {
-        User = "hd_un330";
-        HostName = "bwunicluster.scc.kit.edu";
-        ControlMaster = "auto";
-        ControlPath = "~/.ssh/cm-%r@%h-%p";
-        ControlPersist = "yes";
-        ServerAliveInterval = 60;
-        # the askpass mints the same TOTP for a whole window: a second prompt
-        # can only replay it, which the cluster counts as a failed attempt
-        NumberOfPasswordPrompts = 1;
-        WarnWeakCrypto = "no";
+    settings =
+      sshHosts
+      // bgHosts
+      // {
+        uc3 = {
+          User = "hd_un330";
+          HostName = "bwunicluster.scc.kit.edu";
+          ControlMaster = "auto";
+          ControlPath = "~/.ssh/cm-%r@%h-%p";
+          ControlPersist = "yes";
+          ServerAliveInterval = 60;
+          # the askpass mints the same TOTP for a whole window: a second prompt
+          # can only replay it, which the cluster counts as a failed attempt
+          NumberOfPasswordPrompts = 1;
+          WarnWeakCrypto = "no";
+        };
       };
-    };
   };
 
   xdg.enable = true; # set xdg basedir vars in .profile
