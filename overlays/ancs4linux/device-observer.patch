@@ -1,0 +1,14 @@
+diff --git a/ancs4linux/observer/scanner.py b/ancs4linux/observer/scanner.py
+index 29ca4c1..e4dbb23 100644
+--- a/ancs4linux/observer/scanner.py
++++ b/ancs4linux/observer/scanner.py
+@@ -76,6 +76,8 @@ class Scanner:
+             return
+ 
+     def remove_observers(self, path: ObjPath, services: List[Str]) -> None:
+-        if path in self.property_observers:
++        # A disconnecting device sheds interfaces like Battery1 but stays put,
++        # and its reconnect doesn't re-add Device1, so keep watching it.
++        if BluezDeviceAPI.interface in services and path in self.property_observers:
+             self.property_observers[path].PropertiesChanged.disconnect()
+             del self.property_observers[path]

@@ -10,6 +10,7 @@ in
     inherit (project) version;
     pyproject = true;
     src = inputs.ancs4linux;
+    patches = [ ./device-observer.patch ];
     build-system = [ prev.python3Packages.hatchling ];
     dependencies = with prev.python3Packages; [
       dasbus
