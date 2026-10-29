@@ -223,6 +223,7 @@ lib.composeManyExtensions [
   llamaCpp
   flakes
   upstreamOnly
+  inputs.self.overlays.ancs4linux
   inputs.self.overlays.caut
   # `codex` is the agent sandbox wrapper (home-modules/heavy-linux/agents)
   (_: prev: { caut = prev.caut.override { codex = "codex-unboxed"; }; })

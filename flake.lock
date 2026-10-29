@@ -48,6 +48,22 @@
         "type": "github"
       }
     },
+    "ancs4linux": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1792792800,
+        "narHash": "sha256-m1OUrBCMgFRct7GDxrBHJE4Tu5Jdzh5W1AaboE/XcWI=",
+        "owner": "pzmarzly",
+        "repo": "ancs4linux",
+        "rev": "138451721ff10d3c8634b32656ae3d38a99b9163",
+        "type": "github"
+      },
+      "original": {
+        "owner": "pzmarzly",
+        "repo": "ancs4linux",
+        "type": "github"
+      }
+    },
     "base16": {
       "inputs": {
         "fromYaml": "fromYaml"
@@ -2070,6 +2086,7 @@
     "root": {
       "inputs": {
         "agenix": "agenix",
+        "ancs4linux": "ancs4linux",
         "caut": "caut",
         "chatgpt": "chatgpt",
         "claude-code": "claude-code",

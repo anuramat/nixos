@@ -115,6 +115,10 @@
       url = "github:yikerman/tamron-lens-control";
       flake = false;
     };
+    ancs4linux = {
+      url = "github:pzmarzly/ancs4linux";
+      flake = false;
+    };
     nikon-recipes = {
       url = "github:shouryan01/Nikon-Recipes";
       flake = false;

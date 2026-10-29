@@ -30,6 +30,7 @@
     inputs.self.nixosModules.laptop
     inputs.nixos-hardware.nixosModules.framework-12-13th-gen-intel
     ./hardware-configuration.nix
+    ./ancs4linux.nix
     ./tablet.nix
     ./wowlan.nix
   ];
