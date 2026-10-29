@@ -9,6 +9,7 @@ Items are numbered per section (A4, D12, ...). Sections A, D and F are confirmed
 - F. Refactors: flake, NixOS, Home Manager
 - H. Needs your decision
 - I. Considered and rejected
+- J. From the 2026-10-28 maintainability review
 - Verifiability: what an agent can and cannot check for the remaining items
 
 ## A. Bugs and broken tooling
@@ -153,29 +154,26 @@ Keep the `# auto start on 1st tty` comment and the `niri` script with its TODO c
 
 ## H. Needs your decision
 
-### H1. nix-cache-keygen: `chown builder` breaks it on non-builder hosts, it exits 1 when ~/.ssh exists, and it lives in Home Manager
+### H1. nix-cache-keygen: `chown builder` breaks it on non-builder hosts, and it exits 1 when ~/.ssh exists
 
-**Where:** `home-modules/base/bin/default.nix:29-47`, `home-modules/base/bin/default.nix:52`, `nixos-modules/base/nix.nix:41`, `nixos-modules/base/nix.nix:86-90`, `nixos-modules/base/builder.nix:12`, `AGENTS.md:112-114`, `justfile:16`
+**Where:** `nixos-modules/base/nix.nix` (`nix-cache-keygen`, `secret-key-files`, harmonia), `nixos-modules/base/builder.nix:12`, `justfile:16`
 
 **Context:**
 
-- What the script does: if both `/etc/nix/cache.pem` and `/etc/nix/cache.pem.pub` are missing, it runs `sudo nix-store --generate-binary-cache-key "$(hostname)" ...`. Then it runs `sudo chown '${builder}:${builder}' '${private}' '${public}'` (with `builder = inputs.self.consts.builder.username`) and finally `[ ! -e "$HOME/.ssh" ] && yes "" | ssh-keygen -N ""`. It is installed through HM `home.packages`, but only when `osConfig != null`.
+- What the script does: if both `/etc/nix/cache.pem` and `/etc/nix/cache.pem.pub` are missing, it runs `sudo nix-store --generate-binary-cache-key "$(hostname)" ...`. Then it runs `sudo chown '${builder}:${builder}' '${private}' '${public}'` (with `builder = inputs.self.consts.builder.username`) and finally `[ ! -e "$HOME/.ssh" ] && yes "" | ssh-keygen -N ""`. It is installed through `environment.systemPackages` in nix.nix.
 - Every host needs the key (the README's bootstrap step now says so). The base NixOS module sets `secret-key-files = "/etc/nix/cache.pem"` (nix.nix:41) and enables harmonia with `signKeyPaths = [ config.nix.settings.secret-key-files ]` (nix.nix:86-90) on every host. The `keys` output in outputs.nix reads every host's `keys/cache.pem.pub`, and hosts.nix adds those keys to the other hosts' `trusted-public-keys`.
-- The chown breaks the script on 3 of 4 hosts. The `builder` account is created only under `lib.mkIf inputs.self.hosts.${...}.builder` (builder.nix:12), and only anuramat-bgm5 has `builder = true` in the registry. On f12, root and t480, `chown builder:builder` fails under writeShellApplication's errexit, so the script aborts before the ssh-keygen step.
+- The chown breaks the script on 3 of 4 hosts. The `builder` account is created only under `lib.mkIf inputs.self.hosts.${...}.builder` (builder.nix:12), and only anuramat-bgm5 has `builder = true` in the registry. On f12 and root, `chown builder:builder` fails under writeShellApplication's errexit, so the script aborts before the ssh-keygen step.
 - Nothing in the code needs `builder` to own the key. nix-daemon signs as root: a remote `nix-daemon --stdio` running as `builder` over ssh-ng forwards to the root daemon. Harmonia runs with `DynamicUser = true` and gets the key through `LoadCredential` (nixpkgs `nixos/modules/services/networking/harmonia.nix:152,160`). History: the original README step was `sudo chown nix-serve cache-priv-key.pem` (e60d38a7), which was for the old nix-serve cache server, and 17ad32a7 still had `sudo chown builder:builder "$private" "$public" # TODO hide somewhere in nix`. The reason for builder ownership is not recorded anywhere.
 - Separate bug, to fix under every option: `[ ! -e "$HOME/.ssh" ] && yes "" | ssh-keygen -N ""` is the script's last command. When `~/.ssh` exists, which is the usual case, the test fails and the script exits 1 even though nothing went wrong. Replace it with `if [ ! -e "$HOME/.ssh" ]; then yes "" | ssh-keygen -N ""; fi`.
-- Where the script lives: it works at the NixOS level but sits in HM. It reads `osConfig.nix.settings.secret-key-files`, derives `public = "${private}.pub"` from it, and is gated on `osConfig != null`. The path `/etc/nix/cache.pem` is written once, in nix.nix's `secret-key-files`; justfile:16 (`nixos-pre`) hardcodes `/etc/nix/cache.pem.pub`, since it can't read Nix.
-- The `# TODO move and read public` at bin/default.nix:31 asks for the move, but "read public" is ambiguous. It could mean taking the public key path from config, or reading the key from the `keys` output.
-- The script also mixes a system step (`sudo nix-store`, `chown`) with a per-user bootstrap step (`ssh-keygen` into `$HOME`), so moving it also means deciding where the ssh-keygen step goes.
+- The `# TODO move and read public` next to it is ambiguous: it could mean taking the public key path from config, or reading the key from the `keys` output.
+- The script also mixes a system step (`sudo nix-store`, `chown`) with a per-user bootstrap step (`ssh-keygen` into `$HOME`), so the ssh-keygen step may belong in the README bootstrap steps instead.
 
-**Options:** these are two independent choices, one about the chown and one about placement. Under all of them, also fix the trailing `&&` line as above.
+**Options:** under both, also fix the trailing `&&` line as above.
 
-- **(a)** Chown: drop it. Delete line 44, the `builder` binding and its `# its own group too, see nixos-modules/base/builder.nix` comment (lines 34-35), and the `inputs` arg, which is then unused. In AGENTS.md:112-114, remove `home-modules/base/bin/ (nix-cache-keygen)` from the consumers of `consts.builder`. -- The script then works on every host, and the key stays `root:root` as `nix-store` creates it. If anything outside the repo depends on `builder` owning the key on bgm5, it breaks; nothing in the repo does.
-- **(b)** Chown: keep it only on builder hosts, gated on `inputs.self.hosts.${hostName}.builder`. -- Behaviour on bgm5 stays as it is. In HM this needs the hostname from `osConfig`; in a NixOS module the flag is available directly.
-- **(c)** Placement: move the script into `nixos-modules/base/nix.nix`, with `private = config.nix.settings.secret-key-files` and `public = "${private}.pub"`. Install it through `environment.systemPackages = [ (pkgs.writeShellApplication { name = "nix-cache-keygen"; ... }) ]`. Remove the block, the `osConfig` arg and the `lib.optional (osConfig != null) nix-cache-keygen` from bin/default.nix. -- This resolves the TODO at line 31. You still need to decide whether the per-user ssh-keygen step stays in a system package or moves out, for example into the README bootstrap steps. Verify with `nix flake check`, and check that `nix eval .#nixosConfigurations.anuramat-bgm5.config.environment.systemPackages --apply 'map (p: p.name)'` contains nix-cache-keygen and that `secret-key-files` is unchanged.
-- **(d)** Placement: keep it in HM, and only fix the chown and the exit status. -- This is the smaller diff, but the TODO stays open.
+- **(a)** Chown: drop it, with the `builder` binding and its `# its own group too` comment. -- The script then works on every host, and the key stays `root:root` as `nix-store` creates it. If anything outside the repo depends on `builder` owning the key on bgm5, it breaks; nothing in the repo does.
+- **(b)** Chown: keep it only on builder hosts, gated on `inputs.self.hosts.${hostName}.builder`. -- Behaviour on bgm5 stays as it is. The flag is available directly in nix.nix.
 
-**Recommendation:** for the chown, (a). Nothing in the repo reads the key as `builder`, and root ownership is exactly what nix-daemon and harmonia's `LoadCredential` need. To verify after a switch: a path built remotely from f12 still carries bgm5's signature (`nix path-info --sigs`), and `systemctl status harmonia` stays healthy. The evidence does not favour either placement option.
+**Recommendation:** for the chown, (a). Nothing in the repo reads the key as `builder`, and root ownership is exactly what nix-daemon and harmonia's `LoadCredential` need. To verify after a switch: a path built remotely from f12 still carries bgm5's signature (`nix path-info --sigs`), and `systemctl status harmonia` stays healthy.
 
 ### H3. podman: is `dns_enabled` on the default network still needed?
 
@@ -193,30 +191,6 @@ Keep the `# auto start on 1st tty` comment and the `niri` script with its TODO c
 
 - **(a)** Delete lines 8-10. This removes the quoted rationale comment and the TODO; the `podman` attrset keeps `enable` and `dockerCompat`. -- Containers on the rootful default `podman` network lose name resolution, which affects the multi-network compose case above and plain `podman run`, and UDP 53 closes on podman0. This is fine if you only use rootless podman or compose files that don't hit that case. To verify after a rebuild: run `podman-compose up -d` on a two-service project with no `networks:`, then check that `podman exec <svc1> getent hosts <svc2>` resolves and that `podman network inspect <project>_default` shows `dns_enabled: true`.
 - **(b)** Keep the setting and replace the TODO with `# still needed for rootful podman-compose projects that declare several networks but no 'default' one (podman-compose then falls back to the 'podman' bridge)`. -- Behaviour does not change, and the comment records why the setting is there.
-
-### H4. 64 lines of commented-out sway config in niri/default.nix
-
-**Where:** `home-modules/heavy-linux/desktop/niri/default.nix:9-72`, `home-modules/heavy-linux/desktop/niri/default.nix:150-166`, `home-modules/heavy-linux/desktop/niri/zsa-tap.nix:2`
-
-**Context:**
-
-- Between the module args and the module body, lines 9-72 hold commented-out sway HM config: `# systemd = { xdgAutostart = true; variables = ...`, which includes `"DBUS_SESSION_BUS_ADDRESS" # for proton-bridge`, and `# wayland.windowManager.sway.config.input = { ... }`. Sway is no longer used.
-- Already ported:
-  - the keyboard repeat and layout settings and the touchpad settings, now in `programs.niri.settings.input` (lines 150-166);
-  - the `grp:alt_space_toggle` layout switch, replaced by the `"Ctrl+Alt+Space".action.switch-layout` bind (keys.nix:152).
-- Never ported, though niri can express them per device type:
-  - `"*" = { accel_profile = "flat"; }` maps to niri `input.mouse.accel-profile = "flat"`;
-  - the t480 TrackPoint settings `pointer_accel = "0.7"; accel_profile = "adaptive";` map to niri `input.trackpoint`. t480 is `deprecated = true` in the registry.
-- Not expressible in niri: the per-device entries (the Razer entries are empty, plus ZSA `rotation_angle = "30"` and the t480 Synaptics `events = "disabled"`), because niri has no per-device input settings (zsa-tap.nix:2).
-- So part of the block is reference material rather than purely outdated, and the rule against removing comments that are not outdated applies.
-
-**Options:**
-
-- **(a)** Port `input.mouse.accel-profile = "flat"`, and optionally `input.trackpoint` for t480, then delete lines 9-72. -- Mice get flat acceleration under niri (today they use niri's default). The commented-out block is removed.
-- **(b)** Delete lines 9-72 without porting anything. -- The rendered niri config does not change. The flat-acceleration preference and the proton-bridge DBUS note are then only in git history. The commented-out block is removed.
-- **(c)** Keep the block. -- No change.
-
-To verify (a) or (b): `nix-instantiate --parse` succeeds; for (b), the rendered niri config is also unchanged.
 
 ### H5. Linux/Wayland-only shell helpers in the cross-platform base layer
 
@@ -330,7 +304,6 @@ Needs a decision:
 - `nixos-modules/local/default.nix:138` -- `# TODO move to local-minimal; the rest to local-heavy` -- No local-minimal or local-heavy NixOS layers exist (only base, local and laptop), and every local host imports all of `local`. Splitting it means adding a new layer, which is a design choice.
 - `nixos-configurations/anuramat-bgm5/default.nix:96` -- `# TODO tmpfs` -- The target is unclear: `/tmp` via `boot.tmp.useTmpfs`, or an impermanent root. bgm5 is the build server, and a RAM-backed `/tmp` caps scratch space, so how far to take this is up to you.
 - `home-modules/base/bash/default.nix:47` -- `# TODO just in case; verify/move` (above `LC_ALL = inputs.self.consts.user.locale;`) -- On NixOS, `LANG` already comes from `i18n.defaultLocale` (nixos-modules/base/default.nix:40) with no `LC_*` overrides, so this only matters for the standalone configs. Moving it to standalone.nix changes precedence: `home.language.base`/`LANG` there would no longer override every `LC_*` category the way `LC_ALL` does.
-- `home-modules/base/bin/default.nix:49` -- `# TODO root ssh config from nix.nix?` -- This is in the wrong module: it refers to the buildMachines `BUG` comment in nixos-modules/base/nix.nix (sshUser/sshKey ignored, NixOS/nix#3423, manual `/root/.ssh/config`). Generating that config, for example via NixOS `programs.ssh.extraConfig`, first needs a re-check of whether the upstream bug still exists. At minimum, move the TODO next to that comment; this happens naturally if nix-cache-keygen moves to nix.nix (H1 option (c)).
 - `home-modules/base/bash/git.sh:3` -- `# TODO reconsider stderr/stdout depending on usecases` -- An open-ended question about each function's I/O; it belongs to the planned rewrite (git.sh:5).
 - `home-modules/heavy-linux/default.nix:25` -- `light = dark; # TODO find a light theme` -- Choosing a light icon theme to pair with Dracula is a matter of taste. Noctalia and stylix are dark-only anyway (`theme.mode = "dark"`).
 - `home-modules/heavy-linux/desktop/portals.nix:40` -- `# TODO read and verify that all needs are covered with no overlap <https://wiki.archlinux.org/title/XDG_Desktop_Portal>` -- The overlap is real. The imported niri-flake HM module adds xdg-desktop-portal-gnome and `niri-portals.conf` (configPackages), and the user's `xdg.portal.config.common` (ScreenCast/Screenshot = wlr) overrides both. So xdp-gnome, which is the screencast path niri recommends, is installed but unused. Whether to use gnome or wlr for screencasting is a decision.
@@ -397,3 +370,41 @@ Two pieces of H items have one fix whatever is decided for the rest:
 - H5: moving `orphans` to `home-modules/linux.nix`, checkable by eval.
 
 The rest of H and the open TODO markers need a decision or runtime testing.
+
+## J. From the 2026-10-28 maintainability review
+
+Read-only review of the whole repo, each proposal checked by an independent verifier. Ordered by value for effort; file references are to the code as of 2026-10-29.
+
+### Quick wins
+
+- **J1. CUDA/ROCm in base.** `nixos-modules/base/cuda.nix` is gated on `cudaSupport`, which no host sets: delete it, plus the `cache.nixos-cuda.org` substituter and key in `nix.nix`. Move `rocm.nix`'s body, without the gate, into bgm5 and drop both imports from `nixos-modules/base/default.nix`.
+- **J2. University VPN and corefreq in base.** `nixos-modules/base/net.nix` defines the `uhd` openconnect interface, its unit and dispatcher on every host, including the server. Move them to a new `nixos-modules/local/uhd.nix` with `autoStart = true` and drop the per-host `autoStart` lines. Move `corefreq.enable` to f12 and drop bgm5's `mkForce false`.
+- **J3. llama leftovers.** In `nixos-configurations/anuramat-bgm5/llama.nix`, delete the disabled `llama-llm` path (`llms`, `llmEnable`, `llm`) and `consts.llama.port` in `outputs.nix`, and inline `llamaServer` into `llama-decision`. In `overlays/default.nix`, drop the ollama, ollama-rocm, ollama-vulkan, llama-cpp-rocm and llama-cpp-vulkan pins (unused), and add a `versionOlder` assert to the `llamaCpp` 0.7.0 bump so it fails once nixpkgs-unstable-slow catches up.
+- **J4. Unused secrets.** Nothing in the repo reads anthropic, cerebras, claudecode-jojo, gemini, groq, minimax, ollama, openai, openrouter, perplexity or baseten. Delete the ones not read by hand; mark the rest `# manual` in `secrets/secrets.nix`.
+- **J5. Re-encrypt secrets without t480.** The `.age` files are still encrypted to t480's keys: run `agenix -r` (needs the user's key).
+- **J6. Pin caut.** The 7 patches in `overlays/caut/` (3.3k lines) depend on the exact upstream rev, but the input follows a branch: pin it in `flake.nix` with a comment saying why.
+- **J7. Remote-builder ssh config.** `nix.buildMachines` passes `sshUser`/`sshKey`, which nix ignores (NixOS/nix#3423), so `/root/.ssh/config` is written by hand (README "Problems"). Generate `programs.ssh.extraConfig` with a `Match localuser root host NAME` stanza per builder, then drop the ignored fields, the README section, and the `# TODO root ssh config from here?` in `nix.nix`. Verify a remote build from f12 before deleting `/root/.ssh/config`.
+- **J8. pss and todo.** In `home-modules/pss/`, replace the `package`/`storePath` options with let bindings, drop the dead `storePath != null` branches and the platform assertion, keep at most one keyring assertion. Inline `home-modules/todo.nix` (package, `TODO_FILE`, git merge driver) into `local.nix`; `niri/keys.nix:84` should read `config.home.sessionVariables.TODO_FILE`.
+- **J9. pam-gnupg in base.** Move the pam-gnupg sync and `lib.keyring` from `home-modules/base/keyring.nix` to `local-linux`, keeping gpg, password-store and the `~/.gnupg` link in base; drop the unused coreutils/findutils deps.
+- **J10. nixvim `mkVimFiles`.** The `fileKinds` router in `nixvim-modules/base/lib.nix` has one unused kind (`injections`); delete it, keep `keymap`/`cmd`, and rewrite the callers in `heavy/lang/{go,sh,markdown,rust,misc}.nix` with native `files."after/ftplugin/X.lua".localOpts` and `extraFiles`.
+- **J11. nixvim nixpkgs plumbing.** Drop `sharedModules.nixpkgs` from `nixvim-modules/base/default.nix`: pass the overlaid `pkgs` to the standalone build in `outputs.nix` and delete the `submoduleWith` re-declaration and `extraSpecialArgs.inputs` in `home-modules/base/editor.nix`. Verify with the `neovim*` checks.
+- **J12. Overlay structure.** In `overlays/`: import nixpkgs-unstable once and reuse it in nx-studio and vim-plugins; compose the per-package overlays with `attrValues (removeAttrs inputs.self.overlays [ "default" ])` instead of listing them; move the rustaceanvim pin into vim-plugins; give the loose zellij/darktable/todo patches their own directories. Decide on `tinted-nvim`, which is pinned and loaded but never configured.
+- **J13. uc3 README.** Trim the Usage section of `home-modules/heavy-linux/agents/uc3/README.md` to a pointer to `uc3ctl help` (passing askpass by reference is rejected, see I2).
+- **J14. Upstream workarounds.** bgm5's `ec-su-axb35` stdenv override (`anuramat-bgm5/default.nix`) reaches into nix-strix-halo internals: fix it upstream and delete it. Add issue/MR links next to the NetworkManager and llama.cpp `patches =` lines.
+- **J15. statix warning.** `just lint` fails on W20 (repeated `systemd` keys) in `nixos-configurations/anuramat-bgm5/maintenance.nix`: merge them into one `systemd = { ... }`.
+- **J16. laptop layer.** `nixos-modules/laptop/` is only imported by f12 now: consider merging it into the host.
+
+### Medium effort
+
+- **J17. `web.sites`.** `nixos-modules/base/web.nix` is an option framework used only by anuramat-root: write plain nginx vhosts there, one `security.acme.certs."ctrl.sn".extraDomainNames` and a let-bound `noRobots`, move the `nginx` extraGroups line, and delete web.nix with its base import. Keep the `ctrl.sn` unit name, or check what refers to it first.
+- **J18. Patch stacks.** 29 patches, 5.9k lines, rebased by hand on every bump. caut: upstream env-dirs, session-logs and credential-health, keep the rest as commits on a pinned fork. noctalia: upstream the generic patches; keep widget-relative-position, wifi-profile-names and lockscreen-login-hide-empty in a fork or locally.
+- **J19. fzf preview.** `home-modules/base/search.nix` puts kitten, chafa, ffmpeg and poppler on every host, the server included. Keep a text-only preview (eza, bat) in base and override it from a new `home-modules/heavy/preview.nix` via one `mkDefault` attribute, with full `ffmpeg`.
+
+### Small cleanups
+
+- **J20. Core.** Move the substituter/builder plumbing from `lib.hosts` into `nix.nix`, keeping only `keyFiles`/`knownHostsFiles` in `hosts.nix` (and rename its local `hosts` to `others`); import `nixosModules.base` in `outputs.nix` instead of in each host; add an `evalCheck` helper for the duplicated drvPath checks and `mapAttrs` the two neovim checks; inline `parts/` into perSystem and drop `argsWithInputs`; merge `external_keys.nix` into `user.nix`; in `nixos-modules/local/default.nix`, merge the two `hardware` blocks and drop restated defaults, the `audio` group and stale TODOs; delete `disabled = []` from `statix.toml`; delete `.stylua.toml` or enable stylua in treefmt; delete or expand the vague TODO at the top of `flake.nix`.
+- **J21. bgm5 and overlays.** Add `httpx` to decision-bot's libraries (it comes in transitively today); add a `versionOlder` assert to the kitty 0.49.1 pin; change typst-preview's `open_cmd` from chromium to google-chrome; replace base nixvim's `g:nonfiles` with an `&buftype` check.
+- **J22. Home Manager.** Move STACK_ROOT, NODE_REPL_HISTORY and the mitmproxy aliases next to their tools; drop DOT_SAGE and the `up`/`m` historyIgnore entries; reduce the yamllint config to `extends: default` plus the 2 overrides; merge `__check` into `check()`, delete `__zoxide_add_ghq` and the `# XXX checked ok` markers; delete the commented fzf widget lines. Pick one tool per overlapping group (default deletions: pdfpc, cbfmt, one of gotop/bottom, nix-search, nix-diff; move nvtop to local).
+- **J23. Agents.** Make commands plain `{ description; text; }` with one frontmatter helper; move the static instruction sections to `.md` files and turn `for [ "claude" ]` into `claudeOnly`; use the `sharedDir` value instead of the literal path in `job.nix`'s header; move `job.nix`'s script and hostrun's prompt into `.sh` files with `runtimeEnv`; in `claude.nix`, delete the empty `permissions`, the commented `env` block and the stale TODO, and delete `claudeMcp` or comment that it deliberately wipes runtime MCP servers; unwrap `codex.nix`'s `config = {`; generate the sandbox bind args, relay sockets included, in Nix instead of a bash loop in `sandbox.nix`.
+- **J24. Desktop.** Drop wmenu and j4-dmenu-desktop, keep one of satty/swappy, decide on grim, slurp, shotman and remmina; in `vnc.nix`, use `WAYLAND_DISPLAY=wayland-1` or a shared `niri-env` wrapper.
+- **J25. bgm5powerctl.** Move the script in `anuramat-bgm5/power.nix` to a `.sh` file built with `writeShellApplication`, so it is shellchecked, with the profile values injected from Nix.
