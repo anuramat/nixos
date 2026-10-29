@@ -100,5 +100,7 @@
 
   environment.systemPackages = [
     pkgs.amd-debug-tools
+    pkgs.headsetcontrol
   ];
+  services.udev.packages = [ pkgs.headsetcontrol ]; # uaccess for the headsets' hidraw
 }
