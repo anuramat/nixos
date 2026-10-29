@@ -18,7 +18,6 @@ let
         nix-auth
         claude-code
         codex
-        devin-cli
         chatgpt
         claude-desktop
         ghostty
@@ -57,7 +56,6 @@ let
         firefox
         immich # 2.x is EOL and marked insecure in 26.05
         tailscale
-        opencode
         proton-vpn
         rnote
         swayimg
@@ -237,5 +235,4 @@ lib.composeManyExtensions [
   inputs.self.overlays.vim-plugins
   inputs.self.overlays.wvkbd
   inputs.neovim-nightly-overlay.overlays.default
-  inputs.oh-my-pi.overlays.default
 ]

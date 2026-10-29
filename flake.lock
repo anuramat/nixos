@@ -408,26 +408,6 @@
         "type": "github"
       }
     },
-    "devin-cli": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1784510484,
-        "narHash": "sha256-ojz8zTGjByQLGktiE3RFa/xJCmhsrnx0GrLr+v058i8=",
-        "owner": "charliemeyer2000",
-        "repo": "devin-cli-overlay",
-        "rev": "9f4898eca4f527a785e14ae8bfc789e1f2ebb28f",
-        "type": "github"
-      },
-      "original": {
-        "owner": "charliemeyer2000",
-        "repo": "devin-cli-overlay",
-        "type": "github"
-      }
-    },
     "ds4": {
       "flake": false,
       "locked": {
@@ -2070,26 +2050,6 @@
         "type": "github"
       }
     },
-    "oh-my-pi": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1784427145,
-        "narHash": "sha256-0Omh/pDaaE71gVqyuSGTCWsduj83Uggk72qQzczOO7k=",
-        "owner": "yuxqiu",
-        "repo": "omp-nix",
-        "rev": "f981c7a2b357fac0a1466ba7b9a3d3353c4d2b69",
-        "type": "github"
-      },
-      "original": {
-        "owner": "yuxqiu",
-        "repo": "omp-nix",
-        "type": "github"
-      }
-    },
     "pass-secret-service": {
       "flake": false,
       "locked": {
@@ -2117,7 +2077,6 @@
         "codex": "codex",
         "ctrlsn": "ctrlsn",
         "deadnix": "deadnix",
-        "devin-cli": "devin-cli",
         "figtree": "figtree",
         "flake-parts": "flake-parts",
         "ghostty": "ghostty",
@@ -2139,7 +2098,6 @@
         "nixpkgs-unstable-slow": "nixpkgs-unstable-slow",
         "nixvim": "nixvim",
         "noctalia": "noctalia",
-        "oh-my-pi": "oh-my-pi",
         "pass-secret-service": "pass-secret-service",
         "sem": "sem",
         "spicetify-nix": "spicetify-nix",

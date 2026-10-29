@@ -304,5 +304,5 @@ let
     |> lib.concatStringsSep "\n";
 in
 {
-  lib.agents.instructions = lib.genAttrs [ "claude" "codex" "omp" ] mkInstructions;
+  lib.agents.instructions = lib.genAttrs [ "claude" "codex" ] mkInstructions;
 }

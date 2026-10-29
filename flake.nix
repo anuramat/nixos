@@ -63,20 +63,12 @@
       url = "github:sadjow/codex-cli-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    oh-my-pi = {
-      url = "github:yuxqiu/omp-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     chatgpt = {
       url = "github:poeck/chatgpt-desktop-app-nix-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     claude-desktop = {
       url = "github:poeck/claude-desktop-nix-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    devin-cli = {
-      url = "github:charliemeyer2000/devin-cli-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     ghostty.url = "github:ghostty-org/ghostty"; # no follows: keeps ghostty.cachix.org hits
