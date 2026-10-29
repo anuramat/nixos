@@ -61,6 +61,7 @@ in
     ./misc.nix
     ./packages.nix
     ./readline.nix
+    ./ntfy-send.nix
     ./tgfy.nix
     ./search.nix
     ./yazi.nix
