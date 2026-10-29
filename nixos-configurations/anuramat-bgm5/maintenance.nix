@@ -23,30 +23,33 @@ let
   } ./nixpkgs-cves.py;
 in
 {
-  # weekly stable bump, built here so the other hosts only download it
-  systemd.services.nixpkgs-bump = {
-    startAt = "Sat 04:00";
-    serviceConfig = {
-      Type = "oneshot";
-      User = username;
-      StateDirectory = "nixpkgs-bump";
-      ExecStart = "${lib.getExe nixpkgs-bump} /etc/nixos /var/lib/nixpkgs-bump";
+  systemd = {
+    services = {
+      # weekly stable bump, built here so the other hosts only download it
+      nixpkgs-bump = {
+        startAt = "Sat 04:00";
+        serviceConfig = {
+          Type = "oneshot";
+          User = username;
+          StateDirectory = "nixpkgs-bump";
+          ExecStart = "${lib.getExe nixpkgs-bump} /etc/nixos /var/lib/nixpkgs-bump";
+        };
+        # report new security tracker issues that affect the freshly built bump
+        onSuccess = [ "nixpkgs-cves.service" ];
+      };
+      nixpkgs-cves = {
+        path = [
+          config.nix.package
+          hm.lib.tgfy.package
+        ];
+        serviceConfig = {
+          Type = "oneshot";
+          User = username;
+          StateDirectory = "nixpkgs-cves";
+          ExecStart = "${lib.getExe nixpkgs-cves} /var/lib/nixpkgs-cves /var/lib/nixpkgs-bump ${config.system.nixos.release}";
+        };
+      };
     };
-  };
-  systemd.timers.nixpkgs-bump.timerConfig.Persistent = true;
-
-  # report new security tracker issues that affect the freshly built bump
-  systemd.services.nixpkgs-bump.onSuccess = [ "nixpkgs-cves.service" ];
-  systemd.services.nixpkgs-cves = {
-    path = [
-      config.nix.package
-      hm.lib.tgfy.package
-    ];
-    serviceConfig = {
-      Type = "oneshot";
-      User = username;
-      StateDirectory = "nixpkgs-cves";
-      ExecStart = "${lib.getExe nixpkgs-cves} /var/lib/nixpkgs-cves /var/lib/nixpkgs-bump ${config.system.nixos.release}";
-    };
+    timers.nixpkgs-bump.timerConfig.Persistent = true;
   };
 }
