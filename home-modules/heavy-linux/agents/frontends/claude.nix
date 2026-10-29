@@ -97,6 +97,13 @@ let
       src=("$dir/$sid.jsonl")
       [[ -d $dir/$sid ]] && src+=("$dir/$sid")
       rsync -a --mkpath "''${src[@]}" "$host:$dir/"
+      # shellcheck disable=SC2029 # $dir is the same on both hosts
+      jq -cs --arg from "$HOSTNAME" --arg to "$host" --arg uuid "$(cat /proc/sys/kernel/random/uuid)" '
+        map(select(.uuid and (.isSidechain | not))) | last
+        | {parentUuid: .uuid, isSidechain, type: "user", uuid: $uuid, timestamp: (now | todate),
+          userType, entrypoint, cwd, sessionId, version, gitBranch,
+          message: {role: "user", content: "[automated note from claude-teleport] This session was moved from \($from) to \($to); files outside the project (e.g. the scratchpad) and background processes from before the move are gone."}}
+      ' "$dir/$sid.jsonl" | ssh "$host" "cat >> '$dir/$sid.jsonl'"
       echo "teleported $sid to $host:$PWD"
     '';
   };
