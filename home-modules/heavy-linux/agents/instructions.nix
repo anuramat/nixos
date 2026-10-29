@@ -207,8 +207,9 @@ let
 
             Important: `/tmp`, `$TMPDIR`, and XDG cache/data/state home directories
             are bind mounted to tmpfs, so files created there will not persist
-            after the session is finished. Most of the other paths are bind
-            mounted read-only.
+            after the session is finished. The working directory and its git
+            worktree are writable; most of the other paths are bind mounted
+            read-only.
 
             A process can only trace its own descendants (`kernel.yama.ptrace_scope=1`,
             in and outside the sandbox), so attaching to a running process
@@ -219,7 +220,8 @@ let
         {
           name = "Environment feedback";
           body = ''
-            Your environment is defined in `/etc/nixos`, which you can't edit.
+            Your environment is defined in `/etc/nixos`.
+
             When it doesn't match your instructions -- an instruction is stale,
             wrong, or ambiguous enough that you had to guess; a documented tool is
             missing or behaves differently; a sandbox limitation needs a
