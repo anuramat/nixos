@@ -1,3 +1,22 @@
+# Saving noctalia GUI changes: they are written as overrides to
+# $XDG_STATE_HOME/noctalia/settings.toml, on top of programs.noctalia.settings.
+# - Ignore the [wallpaper.*] entries (wallpaper.default, wallpaper.last):
+#   noctalia writes them on its own, they are not user choices.
+# - Desktop and lockscreen widgets, geometry included, go here (the fleet
+#   monitor's to fleet-monitor/), without `output`, under the stable ids
+#   declared in Nix rather than noctalia's generated desktop-widget-N and
+#   lockscreen-login-box@CONNECTOR ids: widget-relative-position.patch makes cx
+#   and cy fractions of the output's logical size, so the same placement fits
+#   every host and survives f12's tablet-mode rotation.
+# - The login box is the one widget that needs `output`, set per host in
+#   nixos-configurations/$HOST/default.nix: noctalia replaces one without it
+#   with a default box.
+# - The fleet monitor must not get box_width or box_height: a box scales the
+#   content to fit it, so its size goes to settings.width and settings.height,
+#   also fractions of the output's logical size.
+# - Any edit in noctalia's widget editor writes every widget's placement to the
+#   state file, shadowing the Nix values, so once they are saved here, delete
+#   the [desktop_widgets] and [lockscreen_widgets] sections from the state file.
 {
   lib,
   config,
