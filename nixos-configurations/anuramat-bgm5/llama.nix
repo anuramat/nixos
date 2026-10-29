@@ -40,6 +40,22 @@ let
         "3"
       ];
     };
+    # unsloth's GGUF; the thinking mode's sampling, over the full trained context
+    qwen27 = {
+      filename = "Qwen3.8-27B-UD-Q6_K.gguf";
+      flags = [
+        "--temp"
+        "1.0"
+        "--top-p"
+        "0.95"
+        "--top-k"
+        "20"
+        "--min-p"
+        "0"
+        "-c"
+        "262144"
+      ];
+    };
   };
   # Base Labs' decision models (GGUF files by mradermacher), served as they were trained, with a
   # block-bidirectional mask on the full-attention layers
@@ -120,8 +136,8 @@ let
       baselabs "elephant-1" "b3f8a93462fb1051a9de031e94a7ff380e254072"
         "sha256-8mMkWJ0Vky4nQtuxPbx8Vhhlzk+AmQrzt9/wXv5Nras=";
   };
-  llmEnable = false;
-  llm = llms.oss120;
+  llmEnable = true;
+  llm = llms.qwen27;
   decision = decisionModels.elephant;
 
   llamaServer =
