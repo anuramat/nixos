@@ -32,23 +32,23 @@ let
         lib.nameValuePair name { }
     );
   # for background polling (e.g. the fleet monitor): one shared connection per
-  # host, kept off interactive ssh so that bulk transfers never share it
-  bgHosts =
-    inputs.self.hosts
-    |> lib.mapAttrs' (
-      name: _:
-      lib.nameValuePair "_bg-${name}" {
-        HostName = name;
-        BatchMode = "yes";
-        ConnectTimeout = 5;
-        ControlMaster = "auto";
-        ControlPath = "\${XDG_RUNTIME_DIR}/ssh-bg-%C";
-        ControlPersist = "10m";
-        # drops a master left dead by a suspend or a network change
-        ServerAliveInterval = 15;
-        ServerAliveCountMax = 2;
-      }
-    );
+  # host, kept off interactive ssh so that bulk transfers never share it; Match
+  # instead of Host blocks keeps the aliases out of completion and wishlist
+  bgHosts = {
+    "Match originalhost _bg-*" = {
+      BatchMode = "yes";
+      ConnectTimeout = 5;
+      ControlMaster = "auto";
+      ControlPath = "\${XDG_RUNTIME_DIR}/ssh-bg-%C";
+      ControlPersist = "10m";
+      # drops a master left dead by a suspend or a network change
+      ServerAliveInterval = 15;
+      ServerAliveCountMax = 2;
+    };
+  }
+  // lib.mapAttrs' (
+    name: _: lib.nameValuePair "Match originalhost _bg-${name}" { HostName = name; }
+  ) inputs.self.hosts;
 in
 {
   imports = [
