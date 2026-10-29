@@ -1,12 +1,13 @@
-# forwards desktop notifications to telegram: notify-forward TGFY
-import subprocess
+# forwards desktop notifications to ntfy: notify-forward TOPIC_URL
 import sys
 import time
+import urllib.parse
+import urllib.request
 
 from jeepney import DBusAddress, new_method_call
 from jeepney.io.blocking import open_dbus_connection
 
-# apps that notify on the phone natively, incl. the telegram bot's messages
+# apps that notify on the phone natively
 SKIP = {"org.telegram.desktop"}
 # at most BURST messages per WINDOW seconds, in case a loop slips through
 BURST, WINDOW = 10, 60
@@ -35,8 +36,14 @@ while True:
         dropped += 1
         continue
     sent.append(now)
-    text = "\n".join(filter(None, [f"[{app}] {summary}" if app else summary, body]))
     if dropped:
-        text += f"\n(+{dropped} dropped)"
+        body += f"\n(+{dropped} dropped)"
         dropped = 0
-    subprocess.run([sys.argv[1]], input=text, text=True)
+    # query params, since headers can't carry non-latin1 titles
+    title = urllib.parse.urlencode({"title": f"[{app}] {summary}" if app else summary})
+    try:
+        urllib.request.urlopen(
+            f"{sys.argv[1]}?{title}", (body.strip() or summary).encode(), timeout=30
+        )
+    except OSError as e:
+        print(e, file=sys.stderr)
