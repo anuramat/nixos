@@ -56,7 +56,7 @@ index 353e541..318863d 100644
  class Notification:
      def __init__(self, id: int):
          self.device_id = id
-@@ -37,9 +46,9 @@ class Notification:
+@@ -37,9 +46,10 @@ class Notification:
              UInt32(self.host_id),
              "",
              data.title,
@@ -64,7 +64,8 @@ index 353e541..318863d 100644
 +            "\n".join(filter(None, [data.subtitle, data.body])),
              actions,
 -            [],
-+            {"urgency": Variant("y", Byte(urgency(data)))},
++            # x-ancs4linux: lets forwarders tell these from local notifications
++            {"urgency": Variant("y", Byte(urgency(data))), "x-ancs4linux": Variant("b", True)},
              Int32(notification_timeout),
          )
          log.debug(f"Shown {self.host_id} from {data.app_name}.")

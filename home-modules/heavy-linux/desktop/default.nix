@@ -10,6 +10,7 @@
     ./portals.nix
     ./niri
     ./noctalia
+    ./notify-forward
     ./syncthing.nix
   ];
   config = lib.mkIf (osConfig != null) {
