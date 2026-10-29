@@ -6,6 +6,7 @@
   imports = [
     inputs.self.nixosModules.base
     ./web
+    ./ntfy.nix
     ./hardware-configuration.nix
   ];
 

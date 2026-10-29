@@ -134,6 +134,12 @@ flake-parts.lib.mkFlake { inherit inputs; } {
         # /v1/systemone decision models
         decisionPort = 11344;
       };
+
+      # tailnet-only ntfy server, plain HTTP inside the tunnel
+      ntfy = {
+        host = "anuramat-root";
+        port = 2586;
+      };
     };
 
     # per-host key material discovered from nixos-configurations/*/keys/ {{{1
