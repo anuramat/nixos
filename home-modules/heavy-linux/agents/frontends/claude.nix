@@ -62,6 +62,44 @@ let
     allow = [ ];
     deny = [ ];
   };
+
+  # `claude-teleport HOST [SID]`: copy a session of $PWD to the same path on
+  # HOST, to be picked up there with `claude -r`; fzf picker if SID is omitted
+  teleport = pkgs.writeShellApplication {
+    name = "claude-teleport";
+    runtimeInputs = with pkgs; [
+      fzf
+      jq
+      rsync
+      openssh
+    ];
+    text = ''
+      host=$1
+      dir=${cfgDir}/projects/''${PWD//[^[:alnum:]]/-}
+      title='(map(select(.type == "ai-title").aiTitle) | last)
+        // (map(select(.type == "user" and (.message.content | type) == "string").message.content) | first)
+        // "" | gsub("\\s+"; " ")'
+      export dir preview='select((.type == "user" or .type == "assistant") and (.isSidechain | not))
+        | .type + ": " + (.message.content | if type == "string" then . else map(.text // empty) | join("\n") end)
+        | select(endswith(": ") | not)'
+
+      pick() {
+        # shellcheck disable=SC2016 # the preview is expanded by fzf's shell
+        find "$dir" -maxdepth 1 -name '*.jsonl' -printf '%T@ %f\n' | sort -rn | while read -r _ f; do
+          printf '%s\t%s\t%s\n' "''${f%.jsonl}" "$(date -r "$dir/$f" '+%F %R')" "$(jq -rs "$title" "$dir/$f")"
+        done |
+          fzf --delimiter='\t' --with-nth=2.. \
+            --preview='jq -r "$preview" "$dir"/{1}.jsonl | tail -n 100' --preview-window=wrap,follow |
+          cut -f1
+      }
+
+      sid=''${2:-$(pick)}
+      src=("$dir/$sid.jsonl")
+      [[ -d $dir/$sid ]] && src+=("$dir/$sid")
+      rsync -a --mkpath "''${src[@]}" "$host:$dir/"
+      echo "teleported $sid to $host:$PWD"
+    '';
+  };
 in
 {
   xdg.configFile = {
@@ -111,7 +149,10 @@ in
       lib.mapAttrsToList (
         wrapperName: overrides: mkWrapper (overrides // { inherit wrapperName; })
       ) wrapperOverrides
-      ++ [ pkgs.claude-desktop ];
+      ++ [
+        pkgs.claude-desktop
+        teleport
+      ];
     activation = {
       claudeSettings = config.lib.home.json.set {
         showThinkingSummaries = true;
