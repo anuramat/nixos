@@ -5,6 +5,7 @@
     ./desktop
     ./gui
     ./packages.nix
+    ./screentime
     ./vnc.nix
   ];
 

@@ -1,0 +1,140 @@
+--- a/zellij-server/src/panes/floating_panes/mod.rs
++++ b/zellij-server/src/panes/floating_panes/mod.rs
+@@ -54,7 +54,6 @@
+     // initial_position,
+     // last_position)
+     senders: ThreadSenders,
+-    window_title: Option<String>,
+     dimmed_clients: HashSet<ClientId>,
+     fullscreen_covers_ui: Rc<RefCell<bool>>,
+     fullscreen_pane_id: Option<PaneId>,
+@@ -97,7 +96,6 @@
+             active_panes: ActivePanes::new(&os_input),
+             pane_being_moved_with_mouse: None,
+             senders,
+-            window_title: None,
+             dimmed_clients: HashSet::new(),
+             fullscreen_covers_ui,
+             fullscreen_pane_id: None,
+@@ -305,7 +303,6 @@
+             .or_else(|| self.panes.keys().next().copied())
+     }
+     pub fn toggle_show_panes(&mut self, should_show_floating_panes: bool) {
+-        self.window_title = None; // clear so that it will be re-rendered once we toggle back
+         self.show_panes = should_show_floating_panes;
+         if should_show_floating_panes {
+             self.active_panes.focus_all_panes(&mut self.panes);
+@@ -627,11 +624,7 @@
+                         .render_pane_contents_for_client(*client_id)
+                         .with_context(err_context)?;
+                 }
+-                pane_contents_and_ui.render_terminal_title_if_needed(
+-                    *client_id,
+-                    client_mode,
+-                    &mut self.window_title,
+-                );
++                pane_contents_and_ui.render_terminal_title_if_needed(*client_id, client_mode);
+                 // this is done for panes that don't have their own cursor (eg. panes of
+                 // another user)
+                 pane_contents_and_ui
+--- a/zellij-server/src/panes/tiled_panes/mod.rs
++++ b/zellij-server/src/panes/tiled_panes/mod.rs
+@@ -83,7 +83,6 @@
+     fullscreen_is_active: Option<PaneId>,
+     fullscreen_covers_ui: Rc<RefCell<bool>>,
+     senders: ThreadSenders,
+-    window_title: Option<String>,
+     client_id_to_boundaries: HashMap<ClientId, Boundaries>,
+     tombstones_before_increase: Option<(PaneId, Vec<HashMap<PaneId, PaneGeom>>)>,
+     tombstones_before_decrease: Option<(PaneId, Vec<HashMap<PaneId, PaneGeom>>)>,
+@@ -128,7 +127,6 @@
+             fullscreen_is_active: None,
+             fullscreen_covers_ui,
+             senders,
+-            window_title: None,
+             client_id_to_boundaries: HashMap::new(),
+             tombstones_before_increase: None,
+             tombstones_before_decrease: None,
+@@ -1341,11 +1339,7 @@
+                             pane_is_on_bottom_of_stack,
+                         );
+                     }
+-                    pane_contents_and_ui.render_terminal_title_if_needed(
+-                        *client_id,
+-                        client_mode,
+-                        &mut self.window_title,
+-                    );
++                    pane_contents_and_ui.render_terminal_title_if_needed(*client_id, client_mode);
+                     // this is done for panes that don't have their own cursor (eg. panes of
+                     // another user)
+                     pane_contents_and_ui
+@@ -1397,10 +1391,6 @@
+                 .add_character_chunks_to_client(client_id, boundaries_to_render, None)
+                 .with_context(err_context)?;
+         }
+-        if floating_panes_are_visible {
+-            // we do this here so that when they are toggled off, we will make sure to re-render the title
+-            self.window_title = None;
+-        }
+         Ok(())
+     }
+     pub fn get_panes(&self) -> impl Iterator<Item = (&PaneId, &Box<dyn Pane>)> {
+--- a/zellij-server/src/screen.rs
++++ b/zellij-server/src/screen.rs
+@@ -5105,6 +5105,8 @@
+ 
+     pub fn remove_client(&mut self, client_id: ClientId) -> Result<()> {
+         let err_context = || format!("failed to remove client {client_id}");
++        // client ids are reused, and a new client's terminal has no title yet
++        crate::ui::pane_contents_and_ui::forget_sent_title(client_id);
+ 
+         self.set_client_dimmed(client_id, false, None);
+         let passthrough_panes: Vec<PaneId> = self
+--- a/zellij-server/src/ui/pane_contents_and_ui.rs
++++ b/zellij-server/src/ui/pane_contents_and_ui.rs
+@@ -5,11 +5,21 @@
+ use crate::ui::boundaries::Boundaries;
+ use crate::ui::pane_boundaries_frame::{FrameParams, StackListEntry};
+ use crate::ClientId;
+-use std::collections::{HashMap, HashSet};
++use std::collections::{BTreeMap, HashMap, HashSet};
++use std::sync::Mutex;
+ use zellij_utils::data::{client_id_to_colors, InputMode, PaletteColor, Style};
+ use zellij_utils::errors::prelude::*;
+ use zellij_utils::pane_size::PaneGeom;
+ 
++// the title last sent to each client; upstream keeps one per tab instead, so
++// a tab switch, or another client in the same tab, could leave a client with
++// a stale title
++static SENT_TITLES: Mutex<BTreeMap<ClientId, String>> = Mutex::new(BTreeMap::new());
++
++pub fn forget_sent_title(client_id: ClientId) {
++    SENT_TITLES.lock().unwrap().remove(&client_id);
++}
++
+ pub fn dim_character_chunks(character_chunks: &mut Vec<CharacterChunk>) {
+     for chunk in character_chunks.iter_mut() {
+         for terminal_character in chunk.terminal_characters.iter_mut() {
+@@ -296,18 +306,16 @@
+         &mut self,
+         client_id: ClientId,
+         client_mode: InputMode,
+-        previous_title: &mut Option<String>,
+     ) {
+         if !self.focused_clients.contains(&client_id) {
+             return;
+         }
+         let vte_output = self.pane.render_terminal_title(client_mode);
+-        if let Some(previous_title) = previous_title {
+-            if *previous_title == vte_output {
+-                return;
+-            }
++        let mut sent = SENT_TITLES.lock().unwrap();
++        if sent.get(&client_id) == Some(&vte_output) {
++            return;
+         }
+-        *previous_title = Some(vte_output.clone());
++        sent.insert(client_id, vte_output.clone());
+         self.output
+             .add_post_vte_instruction_to_client(client_id, &vte_output);
+     }

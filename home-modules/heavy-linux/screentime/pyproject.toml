@@ -1,0 +1,14 @@
+[project]
+name = "screentime"
+version = "0.1.0"
+requires-python = ">=3.12"
+
+[project.scripts]
+screentime = "screentime.cli:main"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["screentime"]

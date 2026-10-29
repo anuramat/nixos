@@ -13,14 +13,21 @@
       # cons: slowest startup
       # pros: supports kitty image protocol; almost zero config; not bloated
       enable = true;
-      # emoji presentation: use the (monochrome) emoji font instead of the embedded color one
-      package = pkgs.ghostty.overrideAttrs { patches = [ ./ghostty-emoji.patch ]; };
+      package = pkgs.ghostty.overrideAttrs {
+        patches = [
+          # emoji presentation: use the (monochrome) emoji font instead of the embedded color one
+          ./ghostty-emoji.patch
+          # window titles start with "ghostty - ", for screentime
+          ./ghostty-title-prefix.patch
+        ];
+      };
       clearDefaultKeybinds = true;
       settings = {
         cursor-style = "block";
         cursor-style-blink = "false";
         resize-overlay = "never";
-        title = "ghostty";
+        # the bell would prefix the title, which screentime parses
+        bell-features = "no-title";
         gtk-single-instance = true;
         confirm-close-surface = false;
         command = "bash -l";

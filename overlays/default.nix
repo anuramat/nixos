@@ -113,6 +113,12 @@ let
           };
         in
         unstable.zellij-unwrapped.overrideAttrs (old: {
+          patches = (old.patches or [ ]) ++ [
+            # the terminal title names the host, session and pane, for screentime
+            ./zellij-title-pane-id.patch
+            # and is re-sent on a tab switch
+            ./zellij-title-per-client.patch
+          ];
           postPatch = old.postPatch + ''
             cp ${compactBar}/compact-bar.wasm zellij-utils/assets/plugins/
           '';

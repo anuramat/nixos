@@ -1,0 +1,74 @@
+--- a/zellij-server/src/panes/plugin_pane.rs
++++ b/zellij-server/src/panes/plugin_pane.rs
+@@ -510,15 +510,8 @@
+     ) -> Option<String> {
+         None
+     }
+-    fn render_terminal_title(&mut self, input_mode: InputMode) -> String {
+-        let pane_title = if self.pane_name.is_empty() && input_mode == InputMode::RenamePane {
+-            "Enter name..."
+-        } else if self.pane_name.is_empty() {
+-            &self.pane_title
+-        } else {
+-            &self.pane_name
+-        };
+-        make_terminal_title(pane_title)
++    fn render_terminal_title(&mut self, _input_mode: InputMode) -> String {
++        make_terminal_title(&format!("plugin_{}", self.pid))
+     }
+     fn update_name(&mut self, name: &str) {
+         match name {
+--- a/zellij-server/src/panes/terminal_pane.rs
++++ b/zellij-server/src/panes/terminal_pane.rs
+@@ -647,15 +647,8 @@
+         }
+         vte_output
+     }
+-    fn render_terminal_title(&mut self, input_mode: InputMode) -> String {
+-        let pane_title = if self.pane_name.is_empty() && input_mode == InputMode::RenamePane {
+-            "Enter name..."
+-        } else if self.pane_name.is_empty() {
+-            self.grid.title.as_deref().unwrap_or("")
+-        } else {
+-            &self.pane_name
+-        };
+-        make_terminal_title(pane_title)
++    fn render_terminal_title(&mut self, _input_mode: InputMode) -> String {
++        make_terminal_title(&format!("terminal_{}", self.pid))
+     }
+     fn update_name(&mut self, name: &str) {
+         match name {
+--- a/zellij-utils/src/shared.rs
++++ b/zellij-utils/src/shared.rs
+@@ -67,17 +67,21 @@
+         .join("\n\r")
+ }
+ 
+-pub fn make_terminal_title(pane_title: &str) -> String {
++// `<hostname>/<session>/<pane_id>`, so that the terminal's title identifies
++// the pane, even over ssh; pane_id is e.g. `terminal_3`
++pub fn make_terminal_title(pane_id: &str) -> String {
++    static HOSTNAME: std::sync::OnceLock<String> = std::sync::OnceLock::new();
++    let hostname = HOSTNAME.get_or_init(|| {
++        std::fs::read_to_string("/proc/sys/kernel/hostname")
++            .unwrap_or_default()
++            .trim()
++            .to_owned()
++    });
+     format!(
+-        "\u{1b}]0;{}{}\u{07}",
+-        get_session_name()
+-            .map(|n| if pane_title.is_empty() {
+-                format!("{}", n)
+-            } else {
+-                format!("{} | ", n)
+-            })
+-            .unwrap_or_default(),
+-        pane_title
++        "\u{1b}]0;{}/{}/{}\u{07}",
++        hostname,
++        get_session_name().unwrap_or_default(),
++        pane_id
+     )
+ }
+ 

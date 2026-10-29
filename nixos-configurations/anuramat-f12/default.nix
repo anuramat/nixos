@@ -14,6 +14,7 @@
       scale = 1.0;
     };
     programs.noctalia.settings.lockscreen_widgets.widget.login.output = "eDP-1";
+    screentime.screen = true;
   };
 
   # swap partition

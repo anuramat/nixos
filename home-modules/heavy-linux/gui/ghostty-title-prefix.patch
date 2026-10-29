@@ -1,0 +1,13 @@
+--- a/src/apprt/gtk/class/tab.zig
++++ b/src/apprt/gtk/class/tab.zig
+@@ -517,6 +517,10 @@
+         var buf: std.Io.Writer.Allocating = .init(Application.default().allocator());
+         defer buf.deinit();
+ 
++        // A fixed prefix lets window title matchers tell ghostty windows
++        // apart from the program's title.
++        buf.writer.writeAll("ghostty - ") catch {};
++
+         // If our bell is ringing, then we prefix the bell icon to the title.
+         if (bell_ringing and config.@"bell-features".title) {
+             buf.writer.writeAll("🔔 ") catch {};

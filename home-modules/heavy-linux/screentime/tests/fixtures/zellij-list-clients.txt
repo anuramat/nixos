@@ -1,0 +1,2 @@
+CLIENT_ID ZELLIJ_PANE_ID RUNNING_COMMAND
+1         terminal_238   lazygit        

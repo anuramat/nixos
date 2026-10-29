@@ -1,0 +1,30 @@
+{
+  "name": "eDP-1",
+  "make": "BOE",
+  "model": "NV122WUM-N42",
+  "serial": null,
+  "physical_size": [
+    260,
+    160
+  ],
+  "modes": [
+    {
+      "width": 1920,
+      "height": 1200,
+      "refresh_rate": 60002,
+      "is_preferred": true
+    }
+  ],
+  "current_mode": 0,
+  "is_custom_mode": false,
+  "vrr_supported": true,
+  "vrr_enabled": false,
+  "logical": {
+    "x": 0,
+    "y": 0,
+    "width": 1920,
+    "height": 1200,
+    "scale": 1.0,
+    "transform": "Normal"
+  }
+}
