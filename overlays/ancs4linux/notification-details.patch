@@ -1,0 +1,184 @@
+diff --git a/ancs4linux/common/apis.py b/ancs4linux/common/apis.py
+index 9407ee4..d35366a 100644
+--- a/ancs4linux/common/apis.py
++++ b/ancs4linux/common/apis.py
+@@ -14,7 +14,10 @@ class ShowNotificationData:
+     app_name: str
+     id: int
+     title: str
++    subtitle: str
+     body: str
++    category: int
++    flags: int
+     positive_action: Optional[str]
+     negative_action: Optional[str]
+ 
+diff --git a/ancs4linux/common/external_apis.py b/ancs4linux/common/external_apis.py
+index 0a15c7a..f32b3c3 100644
+--- a/ancs4linux/common/external_apis.py
++++ b/ancs4linux/common/external_apis.py
+@@ -63,7 +63,7 @@ class NotificationAPI(ABC):
+         summary: Str,
+         body: Str,
+         actions: List[Str],
+-        hints: List[Variant],
++        hints: Dict[Str, Variant],
+         expire_timeout: Int32,
+     ) -> UInt32:
+         pass
+diff --git a/ancs4linux/desktop_integration/main.py b/ancs4linux/desktop_integration/main.py
+index 353e541..318863d 100644
+--- a/ancs4linux/desktop_integration/main.py
++++ b/ancs4linux/desktop_integration/main.py
+@@ -4,8 +4,9 @@ from typing import Dict, Optional
+ import typer
+ 
+ from ancs4linux.common.apis import AdvertisingAPI, ObserverAPI, ShowNotificationData
+-from ancs4linux.common.dbus import EventLoop, Int32, SessionBus, UInt32
++from ancs4linux.common.dbus import Byte, EventLoop, Int32, SessionBus, UInt32, Variant
+ from ancs4linux.common.external_apis import NotificationAPI
++from ancs4linux.observer.ancs.constants import CategoryID, EventFlag
+ 
+ log = logging.getLogger(__name__)
+ app = typer.Typer()
+@@ -19,6 +20,14 @@ desktop_clients = {"ph.telegra.Telegraph": "org.telegram.desktop"}
+ session_bus = SessionBus()
+ 
+ 
++def urgency(data: ShowNotificationData) -> int:
++    if data.category == CategoryID.IncomingCall:
++        return 2  # critical
++    if data.flags & EventFlag.Silent:
++        return 0
++    return 1
++
++
+ class Notification:
+     def __init__(self, id: int):
+         self.device_id = id
+@@ -37,9 +46,9 @@ class Notification:
+             UInt32(self.host_id),
+             "",
+             data.title,
+-            data.body,
++            "\n".join(filter(None, [data.subtitle, data.body])),
+             actions,
+-            [],
++            {"urgency": Variant("y", Byte(urgency(data)))},
+             Int32(notification_timeout),
+         )
+         log.debug(f"Shown {self.host_id} from {data.app_name}.")
+diff --git a/ancs4linux/observer/ancs/builders.py b/ancs4linux/observer/ancs/builders.py
+index ef0130f..663fa50 100644
+--- a/ancs4linux/observer/ancs/builders.py
++++ b/ancs4linux/observer/ancs/builders.py
+@@ -19,12 +19,14 @@ class GetNotificationAttributes:
+ 
+     def to_list(self) -> List[int]:
+         msg = struct.pack(
+-            "<BIBBHBH",
++            "<BIBBHBHBH",
+             CommandID.GetNotificationAttributes,
+             self.id,
+             NotificationAttributeID.AppIdentifier,
+             NotificationAttributeID.Title,
+             USHORT_MAX,
++            NotificationAttributeID.Subtitle,
++            USHORT_MAX,
+             NotificationAttributeID.Message,
+             USHORT_MAX,
+         )
+diff --git a/ancs4linux/observer/ancs/parsers.py b/ancs4linux/observer/ancs/parsers.py
+index d6e99a1..016b7e6 100644
+--- a/ancs4linux/observer/ancs/parsers.py
++++ b/ancs4linux/observer/ancs/parsers.py
+@@ -3,6 +3,7 @@ from dataclasses import dataclass
+ from typing import Optional, Tuple
+ 
+ from ancs4linux.observer.ancs.constants import (
++    CategoryID,
+     CommandID,
+     EventFlag,
+     EventID,
+@@ -21,11 +22,12 @@ class Notification:
+     id: int
+     type: EventID
+     flags: EventFlag
++    category: CategoryID
+ 
+     @classmethod
+     def parse(cls, data: bytes) -> "Notification":
+-        [type, flags, _, _, id] = struct.unpack("<BBBBI", bytearray(data))
+-        return cls(id=id, type=type, flags=flags)
++        [type, flags, category, _, id] = struct.unpack("<BBBBI", bytearray(data))
++        return cls(id=id, type=type, flags=flags, category=category)
+ 
+     def is_preexisting(self) -> bool:
+         return self.flags & EventFlag.PreExisting > 0
+@@ -65,6 +67,7 @@ class NotificationAttributes:
+     id: int
+     app_id: str
+     title: str
++    subtitle: str
+     message: str
+     positive_action: Optional[str]
+     negative_action: Optional[str]
+@@ -75,6 +78,7 @@ class NotificationAttributes:
+         id, msg = struct.unpack("<I", msg[:4])[0], msg[4:]
+         app_id, msg = parse_string(msg)
+         title, msg = parse_string(msg)
++        subtitle, msg = parse_string(msg)
+         message, msg = parse_string(msg)
+         positive_action = negative_action = None
+         if len(msg) > 0 and msg[0] == NotificationAttributeID.PositiveActionLabel:
+@@ -85,6 +89,7 @@ class NotificationAttributes:
+             id=id,
+             app_id=app_id,
+             title=title,
++            subtitle=subtitle,
+             message=message,
+             positive_action=positive_action,
+             negative_action=negative_action,
+diff --git a/ancs4linux/observer/device_comm.py b/ancs4linux/observer/device_comm.py
+index 3e99676..a7c6fdd 100644
+--- a/ancs4linux/observer/device_comm.py
++++ b/ancs4linux/observer/device_comm.py
+@@ -27,6 +27,7 @@ class DeviceCommunicator:
+         self.notification_queue: List[ShowNotificationData] = []
+         self.awaiting_app_names: Set[str] = set()
+         self.known_app_names: Dict[str, str] = dict()
++        self.events: Dict[int, Notification] = dict()
+ 
+     def attach(self) -> None:
+         assert self.device.notification_source and self.device.data_source
+@@ -47,9 +48,11 @@ class DeviceCommunicator:
+         elif notification.type == EventID.NotificationModified:
+             self.ask_for_notification_details(notification)
+         else:
++            self.events.pop(notification.id, None)
+             self.device.server.emit_dismiss_notification(notification.id)
+ 
+     def ask_for_notification_details(self, notification: Notification) -> None:
++        self.events[notification.id] = notification
+         msg = GetNotificationAttributes(
+             id=notification.id,
+             get_positive_action=notification.has_positive_action(),
+@@ -72,6 +75,7 @@ class DeviceCommunicator:
+ 
+     def on_notification_attributes(self, attrs: NotificationAttributes) -> None:
+         assert self.device.name
++        event = self.events[attrs.id]
+         self.queue_notification(
+             ShowNotificationData(
+                 device_handle=self.device.path,
+@@ -80,7 +84,10 @@ class DeviceCommunicator:
+                 app_name="",
+                 id=(self.id + attrs.id) % UINT_MAX,
+                 title=attrs.title,
++                subtitle=attrs.subtitle,
+                 body=attrs.message,
++                category=event.category,
++                flags=event.flags,
+                 positive_action=attrs.positive_action,
+                 negative_action=attrs.negative_action,
+             )

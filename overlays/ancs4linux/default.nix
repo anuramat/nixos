@@ -13,6 +13,7 @@ in
     patches = [
       ./device-observer.patch
       ./desktop-clients.patch
+      ./notification-details.patch
     ];
     build-system = [ prev.python3Packages.hatchling ];
     dependencies = with prev.python3Packages; [
