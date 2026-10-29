@@ -1,9 +1,11 @@
-# forwards desktop notifications to the phone with ntfy while the session is locked
+# routes desktop notifications to wherever the user is, over ntfy: an unlocked
+# peer among the `local` hosts, or the phone
 {
   config,
   inputs,
   lib,
   pkgs,
+  osConfig ? null,
   ...
 }:
 let
@@ -15,19 +17,38 @@ let
     flakeIgnore = [ "E501" ];
   } (builtins.readFile ./notify-forward.py);
   inherit (inputs.self.consts.ntfy) host port;
-  systemctl = action: "systemctl --user ${action} notify-forward.service";
+  inherit (osConfig.networking) hostName;
+  peers = inputs.self.hosts |> lib.filterAttrs (n: h: h.local && n != hostName) |> lib.attrNames;
 in
 {
-  options.notifyForward = lib.mkEnableOption "forwarding notifications to ntfy while locked";
-
-  config = lib.mkIf config.notifyForward {
+  config = lib.mkIf (osConfig != null) {
     systemd.user.services.notify-forward = {
-      Unit.Description = "forward desktop notifications to ntfy";
-      Service.ExecStart = "${lib.getExe notify-forward} http://${host}:${toString port}/notify-forward";
-    };
-    programs.noctalia.settings.hooks = {
-      session_locked = [ (systemctl "start") ];
-      session_unlocked = [ (systemctl "stop") ];
+      Unit = {
+        Description = "route desktop notifications to wherever the user is";
+        After = [ config.wayland.systemd.target ];
+        PartOf = [ config.wayland.systemd.target ];
+      };
+      Service = {
+        ExecStart = lib.escapeShellArgs (
+          [
+            (lib.getExe notify-forward)
+            "http://${host}:${toString port}"
+            hostName
+          ]
+          ++ peers
+        );
+        # sh and loginctl for the lock state, ssh for the peers'
+        Environment = "PATH=${
+          lib.makeBinPath [
+            pkgs.bash
+            pkgs.openssh
+            pkgs.systemd
+          ]
+        }";
+        Restart = "on-failure";
+        RestartSec = 5;
+      };
+      Install.WantedBy = [ config.wayland.systemd.target ];
     };
   };
 }
