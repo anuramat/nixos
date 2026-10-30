@@ -29,20 +29,7 @@ let
     padding = 0;
   };
 
-  # TODO: curl -d 'test' ntfy.sh/topic-name
   hooks = {
-    Notification = [
-      {
-        hooks = [
-          {
-            command = # bash
-              ''notify-send -a claude "Claude Code" "$(jq .message -r)"'';
-            type = "command";
-          }
-        ];
-        matcher = "";
-      }
-    ];
     # bypass mode still prompts for critical-path rm/rmdir, then auto-denies
     PermissionRequest = [
       {
