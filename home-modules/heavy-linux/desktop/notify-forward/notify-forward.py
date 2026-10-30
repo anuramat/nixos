@@ -82,8 +82,9 @@ def show(conn, ev):
     if origin and origin != HOST:
         hints["x-forwarded"] = ("s", origin)
     if (att := ev.get("attachment")) and att.get("type", "").startswith("image/"):
-        os.makedirs(IMAGES, exist_ok=True)
-        path = os.path.join(IMAGES, ev["id"] + "-" + att["name"])
+        # a directory per message keeps the file name for the next hop
+        os.makedirs(os.path.join(IMAGES, ev["id"]), exist_ok=True)
+        path = os.path.join(IMAGES, ev["id"], att["name"])
         urllib.request.urlretrieve(att["url"], path)
         hints["image-path"] = ("s", path)
     elif att:  # other files stay on the server, reachable over the tailnet
@@ -158,14 +159,19 @@ def monitor():
             dropped += 1
             continue
         sent.append(now)
+        body = body.strip()
         if dropped:
             body += f"\n(+{dropped} dropped)"
             dropped = 0
         params = {
-            "title": f"[{app}] {summary}" if app else summary,
-            "message": body.strip() or summary,
+            "message": body or summary,
             "tags": hints.get("x-forwarded", ("s", HOST))[1],  # the origin host
         }
+        # without a body, the summary is the message
+        if body:
+            params["title"] = f"[{app}] {summary}" if app else summary
+        elif app:
+            params["title"] = app
         img = image(hints)
         for t in to:
             publish(t, params, img)
