@@ -29,19 +29,17 @@ let
     padding = 0;
   };
 
-  # TODO: curl -d 'test' ntfy.sh/topic-name
+  notify = agents.notifyHook "claude";
+
   hooks = {
-    Notification = [
-      {
-        hooks = [
-          {
-            command = # bash
-              ''notify-send -a claude "Claude Code" "$(jq .message -r)"'';
-            type = "command";
-          }
-        ];
-        matcher = "";
-      }
+    Stop = [ (notify ''.last_assistant_message // "turn complete"'') ];
+    PreToolUse = [
+      (
+        notify ''if .tool_name == "ExitPlanMode" then "plan ready" else .tool_input.questions[0].question end''
+        // {
+          matcher = "AskUserQuestion|ExitPlanMode";
+        }
+      )
     ];
     # bypass mode still prompts for critical-path rm/rmdir, then auto-denies
     PermissionRequest = [
@@ -170,7 +168,7 @@ in
         };
         includeCoAuthoredBy = false;
         switchModelsOnFlag = false;
-        preferredNotifChannel = "ghostty"; # kitty = osc99, ghostty = osc777
+        preferredNotifChannel = "notifications_disabled"; # replaced by the notify hooks
         remoteControlAtStartup = false;
         showClearContextOnPlanAccept = true;
         disableAutoMode = "disable";
