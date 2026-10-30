@@ -59,8 +59,15 @@ let
         fi
 
         TEXT=$(cat)
+        # ntfy turns messages of 4096 bytes and up into attachments
+        if [ "$(
+        	LC_ALL=C
+        	echo "''${#TEXT}"
+        )" -ge 4096 ]; then
+        	err "message must be under 4096 bytes"
+        fi
         if [ "$TEXT" = "" ] && [ "$#" -eq 0 ]; then
-        	err "nothing to send: empty stdin and no files"
+        	err "nothing to send: empty stdin and no file"
         fi
 
         if [ "$fail" -ne 0 ]; then
@@ -68,18 +75,12 @@ let
         fi
 
         if [ "$#" -eq 0 ]; then
-        	# messages over ntfy's size limit arrive as a text attachment
         	set -- --data-binary "$TEXT"
         else
-        	# the body is the file, so the message goes in a query parameter,
-        	# truncated to fit ntfy's limit; the file name stands in for no text
+        	# the body is the file, so the message goes in a query parameter; the
+        	# file name stands in for no text
         	file=''${1##*/}
-        	msg=''${TEXT:-$file}
-        	if [ "''${#msg}" -gt 3900 ]; then
-        		msg="''${msg:0:3900}
-        [truncated]"
-        	fi
-        	url="$url?$(jq -rn --arg f "$file" --arg m "$msg" '"filename=\($f | @uri)&message=\($m | @uri)"')"
+        	url="$url?$(jq -rn --arg f "$file" --arg m "''${TEXT:-$file}" '"filename=\($f | @uri)&message=\($m | @uri)"')"
         	set -- -T "$1"
         fi
 
