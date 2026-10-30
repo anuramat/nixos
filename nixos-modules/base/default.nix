@@ -2,6 +2,7 @@
   config,
   inputs,
   lib,
+  pkgs,
   ...
 }:
 {
@@ -50,6 +51,8 @@
     "emSign Root CA - C1"
     "emSign Root CA - G1"
   ];
+  # TERM=xterm-ghostty arrives over ssh on hosts without ghostty installed
+  environment.systemPackages = [ pkgs.ghostty.terminfo ];
   programs.iotop = {
     # setcap wrapper to use rootless
     enable = true;
