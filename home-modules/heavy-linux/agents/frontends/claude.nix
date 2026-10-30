@@ -29,7 +29,28 @@ let
     padding = 0;
   };
 
+  # notifies regardless of focus, unlike the built-in notifications; the
+  # message is cut to stay under ntfy's size limit
+  notify = jqMessage: {
+    hooks = [
+      {
+        command = # bash
+          ''jq -r '"claude: " + (${jqMessage})[:500]' | notify'';
+        type = "command";
+      }
+    ];
+  };
+
   hooks = {
+    Stop = [ (notify ''.last_assistant_message // "turn complete"'') ];
+    PreToolUse = [
+      (
+        notify ''if .tool_name == "ExitPlanMode" then "plan ready" else .tool_input.questions[0].question end''
+        // {
+          matcher = "AskUserQuestion|ExitPlanMode";
+        }
+      )
+    ];
     # bypass mode still prompts for critical-path rm/rmdir, then auto-denies
     PermissionRequest = [
       {
@@ -157,7 +178,7 @@ in
         };
         includeCoAuthoredBy = false;
         switchModelsOnFlag = false;
-        preferredNotifChannel = "ghostty"; # kitty = osc99, ghostty = osc777
+        preferredNotifChannel = "notifications_disabled"; # replaced by the notify hooks
         remoteControlAtStartup = false;
         showClearContextOnPlanAccept = true;
         disableAutoMode = "disable";
