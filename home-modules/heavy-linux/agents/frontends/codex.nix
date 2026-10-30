@@ -50,6 +50,7 @@ let
             "total-output-tokens"
           ];
           status_line_use_colors = true;
+          notification_condition = "always";
           keymap.composer = {
             queue = "alt-enter";
           };
