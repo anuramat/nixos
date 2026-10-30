@@ -166,6 +166,7 @@ let
             - Don't run `find` and similar commands on paths like `/` or `/nix/store` -- those are huge.
             - nixpkgs search: `nh search $PACKAGE_NAME`; prefer this over `nix search`, which is slower
             - If user asks you to "notify" them about something, `notify` command is implied. It sends a notification to whichever machine the user is at, or to their phone. Usage: `echo 'text message' | notify [file]`, with at most one optional attachment; the message must be under 4096 bytes.
+            - If user asks you to send something over Telegram, `tgfy` command is implied. Usage: `echo 'text message' | tgfy file1.txt file2.png`. Attachments are optional.
           '';
         }
         {
