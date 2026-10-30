@@ -20,13 +20,6 @@ let
       text = toJSON value;
     };
 
-  yamlFile =
-    value:
-    writeTextFile {
-      name = "value.yaml";
-      text = lib.generators.toYAML { } value;
-    };
-
   mkGenericActivationScript =
     sourceFile: targetFile:
     let
@@ -65,20 +58,26 @@ let
     lib.hm.dag.entryAfter [ "writeBoundary" ] script;
 
   mkYqActivationScript =
-    source: target:
+    # @returns: activation script, that deep-merges a value into a file
+    # @args:
+    #   - format -- "yaml" or "toml"
+    #   - source -- value to merge; it wins on conflicts, arrays are replaced
+    #     whole, unmanaged keys are preserved
+    #   - target -- path of the file to update
+    format: source: target:
     let
+      sourceFile = (pkgs.formats.${format} { }).generate "value.${format}" source;
       script =
         # bash
         ''
           target=${lib.escapeShellArg target}
-          current=$(mktemp)
           merged=$(mktemp)
           mkdir -p "$(dirname "$target")"
-          { [ -s "$target" ] && cat "$target" || echo '{}'; } >"$current"
-          ${getExe pkgs.yq-go} eval-all \
-            'select(fileIndex == 0) * select(fileIndex == 1)' \
-            "$current" ${yamlFile source} >"$merged"
-          rm "$current"
+          touch "$target"
+          # unlike `select(fileIndex == 0) * ...`, this survives an empty target
+          ${getExe pkgs.yq-go} eval-all -p ${format} -o ${format} \
+            '. as $item ireduce ({}; . * $item)' \
+            "$target" ${sourceFile} >"$merged"
 
           run mv "$merged" "$target"
         '';
@@ -104,6 +103,7 @@ in
   lib.home = {
     inherit mkGenericActivationScript mkAgenixExportScript;
     json.set = mkJqActivationScript;
-    yaml.set = mkYqActivationScript;
+    yaml.set = mkYqActivationScript "yaml";
+    toml.set = mkYqActivationScript "toml";
   };
 }
