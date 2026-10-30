@@ -20,11 +20,11 @@ let
       text = ''
         usage() {
         	cat <<'EOF'
-        Send notification to ntfy topic ${topic} with optional file attachments.
+        Send notification to ntfy topic ${topic} with an optional file attachment.
         Reads the message from stdin. Silent on success; errors go to stderr.
-        Exit code: 0 iff the message and all attachments were delivered.
+        Exit code: 0 iff the notification was delivered.
         Usage:
-          command | ${name} [file1 file2 ...]
+          command | ${name} [file]
         EOF
         }
 
@@ -42,17 +42,21 @@ let
         	fail=1
         }
 
+        if [ "$#" -gt 1 ]; then
+        	usage >&2
+        	echo "${name}: at most one file" >&2
+        	exit 1
+        fi
+
         if [ -t 0 ]; then
         	usage >&2
         	echo "${name}: stdin is a terminal; pipe the message in" >&2
         	exit 1
         fi
 
-        for file; do
-        	if [ ! -r "$file" ]; then
-        		err "no such file: $file"
-        	fi
-        done
+        if [ "$#" -eq 1 ] && [ ! -r "$1" ]; then
+        	err "no such file: $1"
+        fi
 
         TEXT=$(cat)
         if [ "$TEXT" = "" ] && [ "$#" -eq 0 ]; then
@@ -63,27 +67,29 @@ let
         	exit 1
         fi
 
-        # publish with the given curl args to URL; report ntfy's .error on failure
-        publish() {
-        	local url=$1 resp msg
-        	shift
-        	if ! resp=$(curl -sS --max-time 60 --fail-with-body "$@" "$url" 2>&1); then
-        		if ! msg=$(jq -er '.error' <<<"$resp" 2>/dev/null); then
-        			msg=$resp
-        		fi
-        		err "$msg"
+        if [ "$#" -eq 0 ]; then
+        	# messages over ntfy's size limit arrive as a text attachment
+        	set -- --data-binary "$TEXT"
+        else
+        	# the body is the file, so the message goes in a query parameter,
+        	# truncated to fit ntfy's limit; the file name stands in for no text
+        	file=''${1##*/}
+        	msg=''${TEXT:-$file}
+        	if [ "''${#msg}" -gt 3900 ]; then
+        		msg="''${msg:0:3900}
+        [truncated]"
         	fi
-        	return 0
-        }
-
-        # messages over ntfy's size limit arrive as a text attachment
-        if [ "$TEXT" != "" ]; then
-        	publish "$url" --data-binary "$TEXT"
+        	url="$url?$(jq -rn --arg f "$file" --arg m "$msg" '"filename=\($f | @uri)&message=\($m | @uri)"')"
+        	set -- -T "$1"
         fi
 
-        for file; do
-        	publish "$url?filename=$(jq -rn --arg f "''${file##*/}" '$f | @uri')" -T "$file"
-        done
+        # report ntfy's .error on failure
+        if ! resp=$(curl -sS --max-time 60 --fail-with-body "$@" "$url" 2>&1); then
+        	if ! msg=$(jq -er '.error' <<<"$resp" 2>/dev/null); then
+        		msg=$resp
+        	fi
+        	err "$msg"
+        fi
 
         exit "$fail"
       '';
