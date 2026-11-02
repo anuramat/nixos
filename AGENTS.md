@@ -39,7 +39,8 @@ flake outputs, so adding, removing, or renaming a direct child is an API
 change: `nixos-configurations/`, `home-configurations/` (each entry also needs
 a `homeSystems` entry in `outputs.nix`), `nixos-modules/`, `home-modules/`,
 `nixvim-modules/`, `shared-modules/` (usable from both NixOS and standalone
-Home Manager), `overlays/`.
+Home Manager), `overlays/`, `templates/` (flake templates; some are also
+shipped in agent skill directories).
 
 The editor is nixvim-based, not a hand-written `init.lua`. `nixvim-modules`
 mirrors the Home Manager layers: `base` (minimal editor) and `heavy`, which is

@@ -1,0 +1,35 @@
+[package]
+name = "template"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+
+[dev-dependencies]
+insta = { version = "1", features = ["redactions", "yaml"] }
+similar-asserts = "2"
+
+[lints.clippy]
+complexity = { level = "deny", priority = -1 }
+correctness = { level = "deny", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+perf = { level = "deny", priority = -1 }
+style = { level = "warn", priority = -1 }
+suspicious = { level = "warn", priority = -1 }
+
+missing_const_for_fn = "allow"
+
+[lints.rust]
+keyword_idents = { level = "warn", priority = -1 }
+let_underscore = { level = "warn", priority = -1 }
+nonstandard_style = { level = "warn", priority = -1 }
+refining_impl_trait = { level = "warn", priority = -1 }
+rust_2018_idioms = { level = "warn", priority = -1 }
+unknown_or_malformed_diagnostic_attributes = { level = "warn", priority = -1 }
+unused = { level = "warn", priority = -1 }
+
+# recommended by insta: faster snapshot diffing
+[profile.dev.package]
+insta.opt-level = 3
+similar.opt-level = 3

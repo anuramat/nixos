@@ -182,6 +182,10 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     overlays = mkImportSet { inherit inputs lib; } ./overlays;
     nixvimModules = mkModuleSet ./nixvim-modules;
     sharedModules = mkModuleSet ./shared-modules;
+    templates = mapDir (name: path: {
+      inherit path;
+      description = "${name} project";
+    }) ./templates;
   };
 
   perSystem =

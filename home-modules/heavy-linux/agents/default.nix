@@ -34,8 +34,8 @@ in
       config.lib.agents.skills
       |> lib.mapAttrs' (
         name: v:
-        lib.nameValuePair "${dir}/${name}" {
-          source = pkgs.writeTextDir "SKILL.md" (
+        let
+          skillFile = pkgs.writeText "SKILL.md" (
             concatStringsSep "\n" [
               "---"
               "name: ${name}"
@@ -44,6 +44,14 @@ in
               v.text
             ]
           );
+        in
+        # files are copied rather than linked, for the same reason
+        lib.nameValuePair "${dir}/${name}" {
+          source = pkgs.runCommand "skill-${name}" { } ''
+            mkdir $out
+            cp ${skillFile} $out/SKILL.md
+            ${lib.concatMapAttrsStringSep "\n" (n: p: "cp -r ${p} $out/${n}") (v.files or { })}
+          '';
         }
       );
   };
