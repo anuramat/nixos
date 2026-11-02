@@ -1,26 +1,13 @@
 {
-  lib,
   pkgs,
   config,
   ...
 }:
 let
-  inherit (lib) mapAttrs';
   inherit (config.lib) agents;
 
   codexHome = config.xdg.configHome + "/codex";
   codexCfgPath = codexHome + "/config.toml";
-
-  skillFiles =
-    agents.skillFiles
-    |> mapAttrs' (
-      n: text: {
-        name = "codexSkill-" + n;
-        value = config.lib.home.mkGenericActivationScript (pkgs.writeText "${n}-SKILL.md" text) (
-          codexHome + "/skills/${n}/SKILL.md"
-        );
-      }
-    );
 
   notify = agents.notifyHook "codex";
 
@@ -132,13 +119,13 @@ in
       ];
       activation = {
         codexConfig = config.lib.home.toml.set codexCfg codexCfgPath;
-      }
-      // skillFiles;
+      };
     };
     xdg.configFile = {
       "codex/AGENTS.md" = {
         text = config.lib.agents.instructions.codex;
       };
-    };
+    }
+    // agents.mkSkillLinks "codex/skills";
   };
 }

@@ -110,9 +110,7 @@ in
   xdg.configFile = {
     "claude/CLAUDE.md".text = agents.instructions.claude;
   }
-  // lib.mapAttrs' (
-    n: text: lib.nameValuePair "claude/skills/${n}/SKILL.md" { inherit text; }
-  ) agents.skillFiles;
+  // agents.mkSkillLinks "claude/skills";
   home = {
     sessionVariables = {
       CLAUDE_CONFIG_DIR = cfgDir;

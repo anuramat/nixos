@@ -7,7 +7,6 @@
 let
   inherit (lib)
     concatStringsSep
-    mapAttrs
     ;
 in
 
@@ -28,18 +27,24 @@ in
   ];
 
   lib.agents = {
-    # name -> SKILL.md contents
-    skillFiles =
+    # xdg.configFile entries linking each skill's directory into DIR; agents
+    # skip a symlinked SKILL.md, but follow a symlinked skill directory
+    mkSkillLinks =
+      dir:
       config.lib.agents.skills
-      |> mapAttrs (
+      |> lib.mapAttrs' (
         name: v:
-        concatStringsSep "\n" [
-          "---"
-          "name: ${name}"
-          "description: ${v.description}"
-          "---"
-          v.text
-        ]
+        lib.nameValuePair "${dir}/${name}" {
+          source = pkgs.writeTextDir "SKILL.md" (
+            concatStringsSep "\n" [
+              "---"
+              "name: ${name}"
+              "description: ${v.description}"
+              "---"
+              v.text
+            ]
+          );
+        }
       );
   };
 

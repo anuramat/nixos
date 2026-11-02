@@ -20,21 +20,6 @@ let
       text = toJSON value;
     };
 
-  mkGenericActivationScript =
-    sourceFile: targetFile:
-    let
-      script =
-        # bash
-        ''
-          source=${lib.escapeShellArg sourceFile}
-          target=${lib.escapeShellArg targetFile}
-          mkdir -p "$(dirname "$target")"
-
-          run cp --no-preserve=mode "$source" "$target"
-        '';
-    in
-    lib.hm.dag.entryAfter [ "writeBoundary" ] script;
-
   mkJqActivationScript =
     # @returns: activation script, that updates a JSON file
     # @args:
@@ -101,7 +86,7 @@ in
 {
   lib.secrets = secrets;
   lib.home = {
-    inherit mkGenericActivationScript mkAgenixExportScript;
+    inherit mkAgenixExportScript;
     json.set = mkJqActivationScript;
     yaml.set = mkYqActivationScript "yaml";
     toml.set = mkYqActivationScript "toml";
