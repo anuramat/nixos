@@ -1,5 +1,5 @@
-# tgfy over the tailnet ntfy server; `lib.ntfy.send NAME TOPIC` builds a
-# variant that publishes to TOPIC
+# `lib.ntfy.send NAME TOPIC`: a tgfy-like command NAME that publishes to TOPIC
+# on the tailnet ntfy server
 {
   config,
   inputs,
@@ -99,5 +99,4 @@ let
 in
 {
   lib.ntfy.send = ntfySend;
-  home.packages = [ (ntfySend "ntfy-send" "ntfy-send") ];
 }
