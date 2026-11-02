@@ -102,10 +102,6 @@
       url = "github:GGEZUS/niri-tablet/v26.04.20";
       flake = false;
     };
-    caut = {
-      url = "github:Dicklesworthstone/coding_agent_usage_tracker";
-      flake = false;
-    };
     tamron-lens-control = {
       url = "github:yikerman/tamron-lens-control";
       flake = false;

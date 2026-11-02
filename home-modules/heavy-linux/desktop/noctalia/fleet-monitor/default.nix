@@ -73,20 +73,34 @@ let
           '';
     }
     {
-      # `caut usage` reads no cache: every run queries the providers' APIs, so
-      # it is polled no more often than caut's own freshness threshold; when
-      # only some providers fail, it exits non-zero, but prints the rest along
-      # with the errors
+      # the CLIs' own access tokens are used as they are: an expired one fails
+      # its provider until the CLI's next run refreshes it
       name = "tokens";
       interval = 300;
-      cmd = script "fleet-tokens" [ pkgs.jq ] ''
-        # the credentials are located by the session variables, which user services don't get
-        set +u
-        # shellcheck source=/dev/null
-        . ${config.home.sessionVariablesPackage}/etc/profile.d/hm-session-vars.sh
-        set -u
-        { ${lib.getExe' pkgs.caut "caut"} usage --json || :; } | jq -f ${./tokens.jq}
-      '';
+      cmd =
+        script "fleet-tokens"
+          [
+            pkgs.curl
+            pkgs.jq
+          ]
+          ''
+            # the credentials are located by the session variables, which user services don't get
+            set +u
+            # shellcheck source=/dev/null
+            . ${config.home.sessionVariablesPackage}/etc/profile.d/hm-session-vars.sh
+            set -u
+            # usage URL ARGS...: GETs URL with the headers on stdin (keeping the
+            # tokens off the command line), or prints {error}
+            usage() {
+              local out
+              if out=$(curl -fsS --max-time 20 -H @- "$@" 2>&1); then echo "$out"; else jq -n --arg e "$out" '{error: $e}'; fi
+            }
+            claude=$(jq -r '"Authorization: Bearer \(.claudeAiOauth.accessToken)"' "$CLAUDE_CONFIG_DIR/.credentials.json" |
+              usage https://api.anthropic.com/api/oauth/usage -H 'anthropic-beta: oauth-2025-04-20')
+            codex=$(jq -r '.tokens | "Authorization: Bearer \(.access_token)\nChatGPT-Account-Id: \(.account_id)"' "$CODEX_HOME/auth.json" |
+              usage https://chatgpt.com/backend-api/wham/usage)
+            jq -n --argjson claude "$claude" --argjson codex "$codex" -f ${./tokens.jq}
+          '';
     }
   ];
   poll = script "fleet-poll" (with pkgs; [
