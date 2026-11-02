@@ -10,7 +10,6 @@ let
       inherit (inputs)
         sem
         vicode
-        subcat
         nil
         statix
         deadnix
@@ -232,6 +231,7 @@ lib.composeManyExtensions [
   inputs.self.overlays.caut
   # `codex` is the agent sandbox wrapper (home-modules/heavy-linux/agents)
   (_: prev: { caut = prev.caut.override { codex = "codex-unboxed"; }; })
+  inputs.self.overlays.figtree
   inputs.self.overlays.niri
   inputs.self.overlays.nx-studio
   inputs.self.overlays.pass-secret-service-rs

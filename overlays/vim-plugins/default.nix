@@ -1,7 +1,6 @@
 { inputs, ... }:
 _final: prev: {
   vimPlugins = prev.vimPlugins // {
-    figtree-nvim = inputs.figtree.packages.${prev.stdenv.hostPlatform.system}.default;
     wastebin-nvim = prev.vimUtils.buildVimPlugin {
       pname = "wastebin.nvim";
       version = "nightly";

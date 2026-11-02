@@ -48,14 +48,6 @@
       url = "https://registry.npmjs.org/modern-normalize/-/modern-normalize-3.0.1.tgz";
       flake = false;
     };
-    figtree = {
-      url = "github:anuramat/figtree.nvim";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    subcat = {
-      url = "github:anuramat/subcat";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     vicode.url = "github:anuramat/vicode/dev";
 
     # forks

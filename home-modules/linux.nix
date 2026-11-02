@@ -15,7 +15,6 @@
     cryptsetup # luks etc
 
     parted
-    subcat
     trashy # `trash`
   ];
 
