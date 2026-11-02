@@ -28,6 +28,10 @@ nixos-local command="switch" *flags: nixos-pre
 nixos-offline command="switch" *flags: nixos-pre
     {{ rebuild }} {{ command }} --offline --builders '' {{ flags }}
 
+[group('build')]
+nixos-root command="switch" *flags:
+    {{ rebuild }} {{ command }} --flake .#anuramat-root --target-host anuramat-root --ask-sudo-password {{ flags }}
+
 [group('code')]
 lint:
     statix check
