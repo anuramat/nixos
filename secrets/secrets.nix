@@ -30,6 +30,7 @@ in
   "baseten.age"
   "decision-bot-token.age" # Telegram bot of bgm5's decision-bot
   "decision-bot-config.age" # its chat and categories
+  "ctrlsn.age"
 ]
 |> map (x: {
   name = x;

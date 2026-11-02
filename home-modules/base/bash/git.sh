@@ -4,7 +4,7 @@
 # TODO more local/readonly
 # TODO total rehaul, then move
 
-__free_repos_cand=("$HOME/notes" "/etc/nixos" "/var/www")
+__free_repos_cand=("$HOME/notes" "/etc/nixos")
 __free_repos=()
 for i in "${__free_repos_cand[@]}"; do
 	[ -d "$i" ] && __free_repos+=("$i")

@@ -21,14 +21,6 @@ let
         type = types.bool;
         default = true;
       };
-      binary = mkOption {
-        type = types.nullOr types.str;
-        default = null;
-      };
-      cwd = mkOption {
-        type = types.nullOr types.str;
-        default = null;
-      };
     };
   };
   vhostsFor =
@@ -63,20 +55,6 @@ let
   acmeCertFor = w: {
     ${w.root}.extraDomainNames = [ (if w.root == w.domain then "www.${w.domain}" else w.domain) ];
   };
-  systemdServicesFor =
-    w:
-    optional (w.binary != null) {
-      ${w.domain} = {
-        after = [ "network.target" ];
-        wantedBy = [ "multi-user.target" ];
-        serviceConfig = {
-          ExecStart = w.binary;
-          Restart = "always";
-          WorkingDirectory = w.cwd;
-          Environment = "PORT=${w.port}";
-        };
-      };
-    };
 in
 {
   options.web.sites = mkOption {
@@ -88,6 +66,5 @@ in
       optional config.services.nginx.enable "nginx";
     services.nginx.virtualHosts = mkMerge (concatMap vhostsFor config.web.sites);
     security.acme.certs = mkMerge (map acmeCertFor config.web.sites);
-    systemd.services = mkMerge (concatMap systemdServicesFor config.web.sites);
   };
 }

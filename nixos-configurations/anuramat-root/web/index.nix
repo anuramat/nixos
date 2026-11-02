@@ -1,12 +1,34 @@
-{ lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  domain = "ctrl.sn";
+  port = "8080";
+in
 {
   web.sites = [
     {
-      domain = "ctrl.sn";
-      root = "ctrl.sn";
-      cwd = "/var/www/";
-      port = "8080";
-      binary = lib.getExe pkgs.ctrlsn;
+      inherit domain port;
+      root = domain;
     }
   ];
+  systemd.services.${domain} = {
+    after = [ "network.target" ];
+    wantedBy = [ "multi-user.target" ];
+    environment = {
+      PORT = port;
+      # uploaded by hand, must be world-readable
+      PHOTO_DIR = "/var/www/photo";
+    };
+    serviceConfig = {
+      ExecStart = lib.getExe pkgs.ctrlsn;
+      # PHOTO_PASS=...
+      EnvironmentFile = config.age.secrets.ctrlsn.path;
+      DynamicUser = true;
+      Restart = "always";
+    };
+  };
 }
