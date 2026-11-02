@@ -1,6 +1,6 @@
 use crate::{
     AppState,
-    pages::{crumbs, page, sep},
+    pages::{page, sep},
 };
 use async_zip::{Compression, ZipEntryBuilder, base::write::ZipFileWriter};
 use axum::{
@@ -40,14 +40,16 @@ pub async fn albums(State(s): State<AppState>) -> Markup {
     let mut names = ls(&s.photos.join("fullsize"), true);
     // newest first: names start with YYYY-MM-DD_
     names.reverse();
-    page(&html! {
-        (crumbs(&["photo"]))
-        (sep())
-        form .inline method="post" action="/logout" { button .link { "logout" } }
-        ul {
-            @for a in &names { li { a href={ "/photo/" (a) } { (a) } } }
-        }
-    })
+    page(
+        &["photo"],
+        &html! {
+            (sep())
+            form .inline method="post" action="/logout" { button .link { "logout" } }
+            ul {
+                @for a in &names { li { a href={ "/photo/" (a) } { (a) } } }
+            }
+        },
+    )
 }
 
 pub async fn album(
@@ -55,20 +57,22 @@ pub async fn album(
     Path(album): Path<String>,
 ) -> Result<Markup, StatusCode> {
     let photos = album_files(&s, &album)?;
-    Ok(page(&html! {
-        (crumbs(&["photo", &album]))
-        (sep())
-        a href={ "/photo/" (album) "/zip" } { "zip" }
-        #album {
-            @for p in &photos {
-                a href={ "/photo/fullsize/" (album) "/" (p) } data-fslightbox="gallery" {
-                    img src={ "/photo/preview/" (album) "/" (p) } loading="lazy"
-                        onerror="this.onerror=null; this.src='/static/assets/pfp.gif';";
+    Ok(page(
+        &["photo", &album],
+        &html! {
+            (sep())
+            a href={ "/photo/" (album) "/zip" } { "zip" }
+            #album {
+                @for p in &photos {
+                    a href={ "/photo/fullsize/" (album) "/" (p) } data-fslightbox="gallery" {
+                        img src={ "/photo/preview/" (album) "/" (p) } loading="lazy"
+                            onerror="this.onerror=null; this.src='/static/assets/pfp.gif';";
+                    }
                 }
             }
-        }
-        script src="/static/js/fslightbox.js" {}
-    }))
+            script src="/static/js/fslightbox.js" {}
+        },
+    ))
 }
 
 // exact size of the archive of files (name, size): the same zip written to a

@@ -188,7 +188,7 @@ async fn about() {
     insta::assert_yaml_snapshot!(get(&s, "/about", None).await.snap(), @r#"
     status: 200
     headers:
-      content-length: "676"
+      content-length: "686"
       content-type: text/html; charset=utf-8
     body:
       - "<a href=\"/\">ctrl.sn</a> <span class=\"sep\">•</span> about<br>"
@@ -357,7 +357,7 @@ async fn album_list() {
     insta::assert_yaml_snapshot!(get(&s, "/photo", Some(&c)).await.snap(), @r#"
     status: 200
     headers:
-      content-length: "716"
+      content-length: "726"
       content-type: text/html; charset=utf-8
     body:
       - "<a href=\"/\">ctrl.sn</a> <span class=\"sep\">•</span> photo <span class=\"sep\">•</span> <form class=\"inline\" method=\"post\" action=\"/logout\">"
@@ -384,7 +384,7 @@ async fn album_page() {
     insta::assert_yaml_snapshot!(get(&s, "/photo/misc", Some(&c)).await.snap(), @r#"
     status: 200
     headers:
-      content-length: "1154"
+      content-length: "1163"
       content-type: text/html; charset=utf-8
     body:
       - "<a href=\"/\">ctrl.sn</a> <span class=\"sep\">•</span> <a href=\"/photo\">photo</a> <span class=\"sep\">•</span> misc <span class=\"sep\">•</span> <a href=\"/photo/misc/zip\">zip</a>"
@@ -444,7 +444,7 @@ async fn not_found_page() {
     insta::assert_yaml_snapshot!(get(&s, "/nope", None).await.snap(), @r#"
     status: 404
     headers:
-      content-length: "413"
+      content-length: "421"
       content-type: text/html; charset=utf-8
     body:
       - "<a href=\"/\">ctrl.sn</a> <span class=\"sep\">•</span> 404"
@@ -576,4 +576,33 @@ async fn trailing_slash() {
       - 308
       - /photo/misc?a=1
     "#);
+}
+
+#[tokio::test]
+async fn titles() {
+    let s = site();
+    let c = session(&s).await;
+    let title = |r: Res| {
+        let t = r.text();
+        t.split_once("<title>")
+            .unwrap()
+            .1
+            .split_once("</title>")
+            .unwrap()
+            .0
+            .to_string()
+    };
+    let mut got = BTreeMap::new();
+    for uri in ["/", "/about", "/photo", "/photo/misc", "/nope"] {
+        got.insert(uri, title(get(&s, uri, Some(&c)).await));
+    }
+    got.insert("login", title(get(&s, "/photo", None).await));
+    insta::assert_yaml_snapshot!(got, @"
+    /: ctrl.sn
+    /about: ctrl.sn • about
+    /nope: ctrl.sn • 404
+    /photo: ctrl.sn • photo
+    /photo/misc: ctrl.sn • misc
+    login: ctrl.sn
+    ");
 }
