@@ -32,14 +32,6 @@ nixos-offline command="switch" *flags: nixos-pre
 nixos-root command="switch" *flags:
     {{ rebuild }} {{ command }} --flake .#anuramat-root --target-host anuramat-root --ask-sudo-password {{ flags }}
 
-[group('code')]
-lint:
-    statix check
-    fd -F hardware-configuration.nix | xargs deadnix -l --exclude
-    fd -e nix | xargs nix-instantiate --parse --quiet >/dev/null
-    fd -e sh --print0 | xargs -0 shellcheck --enable=all --color=always
-    yamllint .
-
 [group('util')]
 build pkg:
     nix build ".#nixosConfigurations.$(hostname).pkgs.{{ pkg }}"

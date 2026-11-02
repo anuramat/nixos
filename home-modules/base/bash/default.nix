@@ -6,16 +6,7 @@
 }:
 let
   inherit (lib) attrValues escapeShellArgs;
-  excludeShellChecks = [
-    "SC2016" # expansion in '' won't work
-    "SC2059" # don't use variables in printf format string
-    "SC2292" # prefer [[]] over []
-    "SC2139" # unintended? expansion in an alias (alias a="$test" instead of '$test')
-    "SC2250" # use braces even if not necessary
-    "SC1003" # trying to escape a single quote?
-    "SC2312" # return value is masked by $()
-    "SC2154" # referenced but not assigned, e.g. $XDG_CONFIG_HOME
-  ];
+  inherit (inputs.self.consts) excludeShellChecks;
 in
 {
   imports = [

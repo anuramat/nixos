@@ -135,6 +135,19 @@ flake-parts.lib.mkFlake { inherit inputs; } {
         decisionPort = 11344;
       };
 
+      # shellcheck warnings disabled everywhere: the user's shellcheckrc,
+      # writeShellApplication scripts and the pre-commit hook
+      excludeShellChecks = [
+        "SC2016" # expansion in '' won't work
+        "SC2059" # don't use variables in printf format string
+        "SC2292" # prefer [[]] over []
+        "SC2139" # unintended? expansion in an alias (alias a="$test" instead of '$test')
+        "SC2250" # use braces even if not necessary
+        "SC1003" # trying to escape a single quote?
+        "SC2312" # return value is masked by $()
+        "SC2154" # referenced but not assigned, e.g. $XDG_CONFIG_HOME
+      ];
+
       # tailnet-only ntfy server, plain HTTP inside the tunnel
       ntfy = {
         host = "anuramat-root";
@@ -273,12 +286,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
           nh
           just
           fd
-
           nixfmt
-          statix
-          deadnix
-          shellcheck
-          yamllint
         ];
         # git-hooks.nix roots only the config, but the hook it installs runs
         # pre-commit by its store path, which would otherwise get collected
