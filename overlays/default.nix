@@ -13,7 +13,6 @@ let
         nil
         statix
         deadnix
-        html2text
         nix-auth
         claude-code
         codex

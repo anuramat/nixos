@@ -50,9 +50,6 @@
     };
     vicode.url = "github:anuramat/vicode/dev";
 
-    # forks
-    html2text.url = "github:anuramat/html2text/dev";
-
     claude-code = {
       url = "github:sadjow/claude-code-nix";
       inputs.nixpkgs.follows = "nixpkgs";

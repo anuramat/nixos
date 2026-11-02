@@ -49,7 +49,6 @@
     gron # make json greppable (every value gets its own line)
     remarshal # convert between json, toml, yaml, ...
     csvkit
-    html2text # html to plain text
     tidy-viewer # csv viewer
 
     # development
