@@ -1,0 +1,565 @@
+#![cfg(test)]
+
+use crate::{AppState, app, pages, photo};
+use axum::{
+    Router,
+    body::{Body, to_bytes},
+    http::{HeaderMap, Request, StatusCode, header},
+    response::IntoResponse,
+};
+use axum_extra::extract::{
+    SignedCookieJar,
+    cookie::{Cookie, Key},
+};
+use serde::Serialize;
+use similar_asserts::assert_eq;
+use std::{collections::BTreeMap, fs, io::Read};
+use tempfile::TempDir;
+use tower::ServiceExt;
+
+const PASS: &str = "hunter2";
+
+struct Site {
+    app: Router,
+    key: Key,
+    _dir: TempDir,
+}
+
+fn site() -> Site {
+    let dir = TempDir::new().unwrap();
+    for (album, files) in [
+        ("misc", &["b.jpg", "a.jpg", "\u{fc}.jpg"][..]),
+        ("berlin_2024-05-01", &["x.jpg"]),
+        ("paris_2025-01-02", &[]),
+    ] {
+        for kind in ["fullsize", "preview"] {
+            fs::create_dir_all(dir.path().join(kind).join(album)).unwrap();
+            for f in files {
+                fs::write(
+                    dir.path().join(kind).join(album).join(f),
+                    format!("{kind} {f}"),
+                )
+                .unwrap();
+            }
+        }
+    }
+    fs::write(dir.path().join("fullsize/.gitkeep"), "").unwrap();
+    let key = Key::generate();
+    let state = AppState {
+        key: key.clone(),
+        pass: PASS.into(),
+        photos: dir.path().into(),
+    };
+    Site {
+        app: app(state),
+        key,
+        _dir: dir,
+    }
+}
+
+struct Res {
+    status: StatusCode,
+    headers: HeaderMap,
+    body: Vec<u8>,
+}
+
+// a response as a snapshot: the html body (without the shared <head>) is
+// split into one tag per line
+#[derive(Serialize)]
+struct Snap {
+    status: u16,
+    headers: BTreeMap<String, String>,
+    body: Vec<String>,
+}
+
+impl Res {
+    fn text(&self) -> String {
+        String::from_utf8(self.body.clone()).unwrap()
+    }
+
+    fn header_map(&self) -> BTreeMap<String, String> {
+        self.headers
+            .iter()
+            .map(|(k, v)| (k.to_string(), v.to_str().unwrap().into()))
+            .collect()
+    }
+
+    fn snap(&self) -> Snap {
+        let text = self.text();
+        let body = text
+            .split_once("<body>")
+            .map_or("", |(_, b)| b.trim_end_matches("</body></html>"));
+        Snap {
+            status: self.status.as_u16(),
+            headers: self.header_map(),
+            body: body
+                .replace("><", ">\n<")
+                .lines()
+                .map(String::from)
+                .collect(),
+        }
+    }
+}
+
+// replaces the signed value and the expiry date of a set-cookie header
+fn redact_cookie() -> insta::internals::Redaction {
+    insta::dynamic_redaction(|v, _| {
+        let (value, attrs) = v.as_str().unwrap().split_once(';').unwrap();
+        let value = if value == "session=" {
+            value
+        } else {
+            "session=[value]"
+        };
+        let attrs = attrs.split_once("; Expires=").map_or_else(
+            || attrs.to_string(),
+            |(a, _)| format!("{a}; Expires=[date]"),
+        );
+        format!("{value};{attrs}")
+    })
+}
+
+async fn send(s: &Site, req: Request<Body>) -> Res {
+    let res = s.app.clone().oneshot(req).await.unwrap();
+    let (parts, body) = res.into_parts();
+    Res {
+        status: parts.status,
+        headers: parts.headers,
+        body: to_bytes(body, usize::MAX).await.unwrap().to_vec(),
+    }
+}
+
+async fn get(s: &Site, uri: &str, cookie: Option<&str>) -> Res {
+    let mut req = Request::get(uri);
+    if let Some(c) = cookie {
+        req = req.header(header::COOKIE, c);
+    }
+    send(s, req.body(Body::empty()).unwrap()).await
+}
+
+async fn login(s: &Site, pass: &str, next: &str) -> Res {
+    let req = Request::post("/login")
+        .header(header::CONTENT_TYPE, "application/x-www-form-urlencoded")
+        .body(Body::from(format!("password={pass}&next={next}")))
+        .unwrap();
+    send(s, req).await
+}
+
+fn set_cookie(r: &Res) -> String {
+    let v = r.headers[header::SET_COOKIE].to_str().unwrap();
+    v.split(';').next().unwrap().to_string()
+}
+
+async fn session(s: &Site) -> String {
+    set_cookie(&login(s, PASS, "/photo").await)
+}
+
+// a validly signed session cookie with the given value
+fn signed(s: &Site, value: &str) -> String {
+    let jar = SignedCookieJar::new(s.key.clone()).add(Cookie::new("session", value.to_string()));
+    let res = (jar, ()).into_response();
+    let v = res.headers()[header::SET_COOKIE].to_str().unwrap();
+    v.split(';').next().unwrap().to_string()
+}
+
+#[test]
+fn date_suffix() {
+    let names = [
+        "berlin_2024-05-01",
+        "a_b_2024-05-01",
+        "berlin2024-05-01",
+        "berlin_2024-5-01",
+        "berlin_2024-05-01x",
+        "berlin_2024-05-01_2",
+        "berlin_2024_05_01",
+    ];
+    assert_eq!(
+        names.map(photo::date),
+        [
+            Some("2024-05-01"),
+            Some("2024-05-01"),
+            None,
+            None,
+            None,
+            None,
+            None
+        ]
+    );
+}
+
+#[test]
+fn album_order() {
+    let mut names: Vec<String> = [
+        "b_2024-01-01",
+        "z",
+        "a_2024-01-01",
+        "c_2025-06-01",
+        "a",
+        "d_2023-12-31",
+    ]
+    .map(String::from)
+    .into();
+    photo::sort_albums(&mut names);
+    assert_eq!(
+        names,
+        [
+            "a",
+            "z",
+            "c_2025-06-01",
+            "a_2024-01-01",
+            "b_2024-01-01",
+            "d_2023-12-31"
+        ]
+    );
+}
+
+#[tokio::test]
+async fn index() {
+    let s = site();
+    insta::assert_yaml_snapshot!(get(&s, "/", None).await.snap(), @r#"
+    status: 200
+    headers:
+      content-length: "474"
+      content-type: text/html; charset=utf-8
+    body:
+      - ctrl.sn<ul>
+      - "<li>"
+      - "<a href=\"/about\">about</a>"
+      - "</li>"
+      - "<li>"
+      - "<a href=\"/photo\">photo</a>"
+      - "</li>"
+      - "</ul>"
+      - "<p>last updated: 2026-10-30</p>"
+    "#);
+}
+
+#[tokio::test]
+async fn about() {
+    let s = site();
+    insta::assert_yaml_snapshot!(get(&s, "/about", None).await.snap(), @r#"
+    status: 200
+    headers:
+      content-length: "676"
+      content-type: text/html; charset=utf-8
+    body:
+      - "<a href=\"/\">ctrl.sn</a> <span class=\"sep\">•</span> about<br>"
+      - "<img id=\"pfp\" src=\"/static/assets/pfp.gif\">"
+      - "<ul>"
+      - "<li>"
+      - "<a href=\"mailto:x@ctrl.sn\">email</a>"
+      - "</li>"
+      - "<li>"
+      - "<a href=\"https://t.me/anuramat\">tg</a>"
+      - "</li>"
+      - "<li>"
+      - "<a href=\"https://github.com/anuramat\">github</a>"
+      - "</li>"
+      - "<li>"
+      - "<a href=\"https://instagram.com/anuramat\">ig</a>"
+      - "</li>"
+      - "</ul>"
+    "#);
+}
+
+#[tokio::test]
+async fn static_files() {
+    let s = site();
+    let r = get(&s, "/static/css/main.css", None).await;
+    assert_eq!(r.body, fs::read("static/css/main.css").unwrap());
+    let mut got = vec![];
+    for uri in [
+        "/static/css/main.css",
+        "/static/js/fslightbox.js",
+        "/static/css/modern-normalize.css",
+        "/static/nope.css",
+        "/static/../Cargo.toml",
+    ] {
+        let r = get(&s, uri, None).await;
+        got.push((uri, r.status, r.headers.get(header::CONTENT_TYPE).cloned()));
+    }
+    let mime = |m| Some(header::HeaderValue::from_static(m));
+    assert_eq!(
+        got,
+        [
+            ("/static/css/main.css", StatusCode::OK, mime("text/css")),
+            (
+                "/static/js/fslightbox.js",
+                StatusCode::OK,
+                mime("text/javascript")
+            ),
+            (
+                "/static/css/modern-normalize.css",
+                StatusCode::OK,
+                mime("text/css")
+            ),
+            ("/static/nope.css", StatusCode::NOT_FOUND, None),
+            ("/static/../Cargo.toml", StatusCode::NOT_FOUND, None),
+        ]
+    );
+}
+
+#[tokio::test]
+async fn static_revalidation() {
+    let s = site();
+    let revalidate = async |uri: &str, etag: &str| {
+        let req = Request::get(uri).header(header::IF_NONE_MATCH, etag);
+        send(&s, req.body(Body::empty()).unwrap()).await
+    };
+    for uri in ["/static/css/main.css", "/static/js/fslightbox.js"] {
+        let etag = get(&s, uri, None).await.headers[header::ETAG].clone();
+        let etag = etag.to_str().unwrap();
+        assert_eq!(etag.len(), 66, "{etag}");
+        assert_eq!(get(&s, uri, None).await.headers[header::ETAG], etag);
+        for cached in [etag.to_string(), format!("W/{etag}")] {
+            let r = revalidate(uri, &cached).await;
+            assert_eq!(
+                (r.status, r.body, r.headers[header::ETAG].to_str().unwrap()),
+                (StatusCode::NOT_MODIFIED, vec![], etag),
+                "{uri} {cached}"
+            );
+        }
+        let r = revalidate(uri, "\"stale\"").await;
+        assert_eq!(r.status, StatusCode::OK);
+        assert!(!r.body.is_empty());
+    }
+    let css = get(&s, "/static/css/main.css", None).await;
+    let favicon = get(&s, "/static/favicons/xott.png", None).await;
+    assert_ne!(css.headers[header::ETAG], favicon.headers[header::ETAG]);
+}
+
+#[tokio::test]
+async fn protected_without_session() {
+    let s = site();
+    for uri in [
+        "/photo",
+        "/photo/misc",
+        "/photo/misc/zip",
+        "/photo/fullsize/misc/a.jpg",
+        "/photo/preview/misc/a.jpg",
+    ] {
+        let r = get(&s, uri, None).await;
+        assert_eq!(
+            (r.status, r.text()),
+            (
+                StatusCode::UNAUTHORIZED,
+                pages::login(uri, false).into_string()
+            ),
+            "{uri}"
+        );
+    }
+    insta::assert_yaml_snapshot!(get(&s, "/photo/misc", None).await.snap(), @r#"
+    status: 401
+    headers:
+      content-length: "641"
+      content-type: text/html; charset=utf-8
+    body:
+      - "<div id=\"login\">"
+      - "<form class=\"pill\" id=\"auth\" method=\"post\" action=\"/login\">"
+      - "<input type=\"hidden\" name=\"next\" value=\"/photo/misc\">"
+      - "<input class=\"pill\" type=\"password\" name=\"password\" placeholder=\"password\" required autofocus>"
+      - "<button class=\"pill\" type=\"submit\">login</button>"
+      - "</form>"
+      - "</div>"
+    "#);
+}
+
+#[tokio::test]
+async fn wrong_password() {
+    let s = site();
+    insta::assert_yaml_snapshot!(login(&s, "nope", "/photo/misc").await.snap(), @r#"
+    status: 401
+    headers:
+      content-length: "681"
+      content-type: text/html; charset=utf-8
+    body:
+      - "<div id=\"login\">"
+      - "<div class=\"pill\" id=\"error\">wrong</div>"
+      - "<form class=\"pill\" id=\"auth\" method=\"post\" action=\"/login\">"
+      - "<input type=\"hidden\" name=\"next\" value=\"/photo/misc\">"
+      - "<input class=\"pill\" type=\"password\" name=\"password\" placeholder=\"password\" required autofocus>"
+      - "<button class=\"pill\" type=\"submit\">login</button>"
+      - "</form>"
+      - "</div>"
+    "#);
+}
+
+#[tokio::test]
+async fn login_redirects_back() {
+    let s = site();
+    insta::assert_yaml_snapshot!(
+        login(&s, PASS, "/photo/misc").await.snap(),
+        { ".headers[\"set-cookie\"]" => redact_cookie() },
+        @r#"
+    status: 303
+    headers:
+      content-length: "0"
+      location: /photo/misc
+      set-cookie: "session=[value]; HttpOnly; SameSite=Lax; Secure; Path=/; Max-Age=3600"
+    body: []
+    "#
+    );
+}
+
+#[tokio::test]
+async fn album_list() {
+    let s = site();
+    let c = session(&s).await;
+    insta::assert_yaml_snapshot!(get(&s, "/photo", Some(&c)).await.snap(), @r#"
+    status: 200
+    headers:
+      content-length: "716"
+      content-type: text/html; charset=utf-8
+    body:
+      - "<a href=\"/\">ctrl.sn</a> <span class=\"sep\">•</span> photo <span class=\"sep\">•</span> <form class=\"inline\" method=\"post\" action=\"/logout\">"
+      - "<button class=\"link\">logout</button>"
+      - "</form>"
+      - "<ul>"
+      - "<li>"
+      - "<a href=\"/photo/misc\">misc</a>"
+      - "</li>"
+      - "<li>"
+      - "<a href=\"/photo/paris_2025-01-02\">paris_2025-01-02</a>"
+      - "</li>"
+      - "<li>"
+      - "<a href=\"/photo/berlin_2024-05-01\">berlin_2024-05-01</a>"
+      - "</li>"
+      - "</ul>"
+    "#);
+}
+
+#[tokio::test]
+async fn album_page() {
+    let s = site();
+    let c = session(&s).await;
+    insta::assert_yaml_snapshot!(get(&s, "/photo/misc", Some(&c)).await.snap(), @r#"
+    status: 200
+    headers:
+      content-length: "1154"
+      content-type: text/html; charset=utf-8
+    body:
+      - "<a href=\"/\">ctrl.sn</a> <span class=\"sep\">•</span> <a href=\"/photo\">photo</a> <span class=\"sep\">•</span> misc <span class=\"sep\">•</span> <a href=\"/photo/misc/zip\">zip</a>"
+      - "<div id=\"album\">"
+      - "<a href=\"/photo/fullsize/misc/a.jpg\" data-fslightbox=\"gallery\">"
+      - "<img src=\"/photo/preview/misc/a.jpg\" loading=\"lazy\" onerror=\"this.onerror=null; this.src='/static/assets/pfp.gif';\">"
+      - "</a>"
+      - "<a href=\"/photo/fullsize/misc/b.jpg\" data-fslightbox=\"gallery\">"
+      - "<img src=\"/photo/preview/misc/b.jpg\" loading=\"lazy\" onerror=\"this.onerror=null; this.src='/static/assets/pfp.gif';\">"
+      - "</a>"
+      - "<a href=\"/photo/fullsize/misc/ü.jpg\" data-fslightbox=\"gallery\">"
+      - "<img src=\"/photo/preview/misc/ü.jpg\" loading=\"lazy\" onerror=\"this.onerror=null; this.src='/static/assets/pfp.gif';\">"
+      - "</a>"
+      - "</div>"
+      - "<script src=\"/static/js/fslightbox.js\">"
+      - "</script>"
+    "#);
+}
+
+#[tokio::test]
+async fn missing_and_traversal() {
+    let s = site();
+    let c = session(&s).await;
+    let uris = [
+        "/photo/nope",
+        "/photo/nope/zip",
+        "/photo/..",
+        "/photo/..%2F..%2Fetc",
+        "/photo/..%2Ffullsize/zip",
+        "/photo/fullsize/..%2F..%2Fetc%2Fpasswd",
+        "/photo/fullsize/misc/nope.jpg",
+    ];
+    let mut got = vec![];
+    for uri in uris {
+        got.push((uri, get(&s, uri, Some(&c)).await.status));
+    }
+    assert_eq!(got, uris.map(|u| (u, StatusCode::NOT_FOUND)));
+}
+
+#[tokio::test]
+async fn images() {
+    let s = site();
+    let c = session(&s).await;
+    let mut got = vec![];
+    for uri in [
+        "/photo/fullsize/misc/a.jpg",
+        "/photo/preview/berlin_2024-05-01/x.jpg",
+    ] {
+        let r = get(&s, uri, Some(&c)).await;
+        got.push((r.status, r.text()));
+    }
+    assert_eq!(
+        got,
+        [
+            (StatusCode::OK, "fullsize a.jpg".into()),
+            (StatusCode::OK, "preview x.jpg".into())
+        ]
+    );
+}
+
+#[tokio::test]
+async fn zip() {
+    let s = site();
+    let r = get(&s, "/photo/misc/zip", Some(&session(&s).await)).await;
+    assert_eq!(r.headers[header::CONTENT_LENGTH], r.body.len().to_string());
+    let mut zip = zip::ZipArchive::new(std::io::Cursor::new(&r.body)).unwrap();
+    let mut files = BTreeMap::new();
+    for i in 0..zip.len() {
+        let mut f = zip.by_index(i).unwrap();
+        let mut data = String::new();
+        f.read_to_string(&mut data).unwrap();
+        files.insert(f.name().unwrap().to_string(), data);
+    }
+    insta::assert_yaml_snapshot!((r.status.as_u16(), r.header_map(), files), @r#"
+    - 200
+    - content-disposition: "attachment; filename=\"misc.zip\""
+      content-length: "325"
+      content-type: application/zip
+    - a.jpg: fullsize a.jpg
+      b.jpg: fullsize b.jpg
+      ü.jpg: fullsize ü.jpg
+    "#);
+}
+
+#[tokio::test]
+async fn bad_sessions() {
+    let s = site();
+    let other = site();
+    let mut got = vec![];
+    for c in [
+        "session=9999999999".to_string(),
+        signed(&s, "0"),
+        signed(&s, "garbage"),
+        session(&other).await,
+        signed(&s, "9999999999"),
+    ] {
+        got.push(get(&s, "/photo", Some(&c)).await.status);
+    }
+    assert_eq!(
+        got,
+        [
+            StatusCode::UNAUTHORIZED,
+            StatusCode::UNAUTHORIZED,
+            StatusCode::UNAUTHORIZED,
+            StatusCode::UNAUTHORIZED,
+            StatusCode::OK
+        ]
+    );
+}
+
+#[tokio::test]
+async fn logout() {
+    let s = site();
+    let req = Request::post("/logout").header(header::COOKIE, session(&s).await);
+    let r = send(&s, req.body(Body::empty()).unwrap()).await;
+    insta::assert_yaml_snapshot!(
+        r.snap(),
+        { ".headers[\"set-cookie\"]" => redact_cookie() },
+        @r#"
+    status: 303
+    headers:
+      content-length: "0"
+      location: /
+      set-cookie: "session=; Path=/; Max-Age=0; Expires=[date]"
+    body: []
+    "#
+    );
+}

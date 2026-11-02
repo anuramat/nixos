@@ -77,6 +77,10 @@ only meaningful on top of `base`.
   what makes `anuramat-darwin` evaluate. Opt-in feature modules (`pss`, `todo`)
   are imported by the layer that enables them.
 - Per-host details live in `nixos-configurations/*/default.nix`.
+- The ctrl.sn website (Rust) lives in
+  `nixos-configurations/anuramat-root/web/ctrlsn/`, with its own `AGENTS.md`;
+  it is not a flake: `index.nix` imports its `default.nix` with the flake's
+  inputs, and its `nix-build`/`nix-shell` take them from `NIX_PATH`.
 
 ## Secrets and Keys
 

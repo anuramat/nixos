@@ -19,6 +19,7 @@
     };
     yamlfmt.enable = true;
     black.enable = true;
+    rustfmt.enable = true;
     just.enable = true;
   };
 }

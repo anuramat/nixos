@@ -1,0 +1,72 @@
+# ctrl.sn
+
+My personal website: photo galleries behind a password; blog posts are
+planned.
+
+## Stack
+
+Rust: axum + tokio, maud for HTML, rust-embed for `static/` (embedded in
+release builds, read from disk in debug builds), axum-extra signed cookies
+for auth, async_zip for album downloads. Built with
+crane in `default.nix` (dependencies are a separate derivation), imported by
+`index.nix` next to this directory with the `/etc/nixos` flake's inputs.
+Standalone, `default.nix` and `shell.nix` take nixpkgs, crane and the assets
+from `NIX_PATH`, which NixOS points at the same inputs; new inputs show up
+there only after a rebuild.
+
+Third-party assets (fslightbox, modern-normalize) are inputs of the
+`/etc/nixos` flake (npm tarballs), copied into `$CTRLSN_VENDOR` by `default.nix` and embedded like
+`static/`; both are served under `/static`. To update one, change its URL in
+`/etc/nixos/flake.nix`.
+
+## Layout
+
+```
+src/main.rs    state, router, embedded static files, entry point
+src/auth.rs    login/logout, session middleware
+src/pages.rs   layout, breadcrumbs, public pages, login page
+src/photo.rs   album listing/sorting, album page, zip download
+src/tests.rs   in-process router tests
+static/        css, images
+```
+
+## Behaviour
+
+- `/`, `/about`, `/static/*` are public.
+- `/photo`, `/photo/{album}`, `/photo/{album}/zip`, `/photo/fullsize/*`,
+  `/photo/preview/*` require a session; otherwise the login page is
+  returned with 401. The login form posts to `/login` with the page to
+  return to; `/logout` is a POST.
+- Single password, no username. The session cookie is signed with a key
+  generated at startup (restarts log everyone out) and holds its expiry
+  (1h).
+- Albums are the subdirectories of `$PHOTO_DIR/fullsize`, read on every
+  request. Albums without a `_YYYY-MM-DD` suffix come first, then newest
+  first. Previews (256px) live under the same paths in `$PHOTO_DIR/preview`.
+
+## Configuration
+
+Environment variables, all required: `PORT` (binds 127.0.0.1),
+`PHOTO_DIR`, `PHOTO_PASS`.
+
+## Commands
+
+- `nix-shell`: shell with cargo, clippy, rust-analyzer,
+  cargo-insta;
+  cargo only builds inside it, since it needs `$CTRLSN_VENDOR`
+- `PORT=8080 PHOTO_DIR=path/to/photos PHOTO_PASS=dev cargo run`: run locally
+- `cargo test`, `cargo clippy --all-targets`
+- `nix-build` (also runs the tests); `nix fmt` in `/etc/nixos` formats
+  everything, including rustfmt
+
+Before committing: `nix-build` succeeds and `nix fmt` changes
+nothing.
+
+## Deployment
+
+NixOS host `anuramat-root`, configured in `/etc/nixos`
+(`index.nix` next to this directory): nginx terminates TLS and proxies to
+the `ctrl.sn` systemd service (`DynamicUser`), `PHOTO_PASS` comes from the
+agenix secret `ctrlsn.age`, photos are uploaded to `/var/www/photo`; then
+`make` in `/var/www` (`previews.mk` next to this directory) generates the
+missing previews. To deploy: rebuild `anuramat-root`.

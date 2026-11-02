@@ -1,0 +1,47 @@
+[package]
+name = "ctrlsn"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+async_zip = { version = "0.0.19", features = ["tokio"] }
+axum = "0.8.9"
+axum-extra = { version = "0.12.6", features = ["attachment", "cookie-signed"] }
+maud = { version = "0.27.0", features = ["axum"] }
+rust-embed = { version = "8.13.0", features = ["mime-guess", "interpolate-folder-path"] }
+serde = { version = "1.0.229", features = ["derive"] }
+tokio = { version = "1.54.1", features = ["macros", "rt-multi-thread", "io-util", "fs"] }
+tokio-util = { version = "0.7.20", features = ["io"] }
+tower-http = { version = "0.7.1", features = ["fs"] }
+
+[dev-dependencies]
+insta = { version = "1", features = ["redactions", "yaml"] }
+similar-asserts = "2"
+tempfile = "3.27.0"
+tower = { version = "0.5.3", features = ["util"] }
+zip = { version = "9.1.3", default-features = false }
+
+[lints.clippy]
+complexity = { level = "deny", priority = -1 }
+correctness = { level = "deny", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+perf = { level = "deny", priority = -1 }
+style = { level = "warn", priority = -1 }
+suspicious = { level = "warn", priority = -1 }
+
+missing_const_for_fn = "allow"
+
+[lints.rust]
+keyword_idents = { level = "warn", priority = -1 }
+let_underscore = { level = "warn", priority = -1 }
+nonstandard_style = { level = "warn", priority = -1 }
+refining_impl_trait = { level = "warn", priority = -1 }
+rust_2018_idioms = { level = "warn", priority = -1 }
+unknown_or_malformed_diagnostic_attributes = { level = "warn", priority = -1 }
+unused = { level = "warn", priority = -1 }
+
+# recommended by insta: faster snapshot diffing
+[profile.dev.package]
+insta.opt-level = 3
+similar.opt-level = 3

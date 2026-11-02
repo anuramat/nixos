@@ -22,7 +22,6 @@ let
         claude-desktop
         ghostty
         noctalia
-        ctrlsn
         ;
     });
 

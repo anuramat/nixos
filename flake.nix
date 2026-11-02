@@ -31,6 +31,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     treefmt-nix.url = "github:numtide/treefmt-nix";
+    crane.url = "github:ipetkov/crane";
     git-hooks-nix.url = "github:cachix/git-hooks.nix";
     nix-auth = {
       url = "github:numtide/nix-auth";
@@ -38,9 +39,14 @@
     };
 
     # my stuff
-    ctrlsn = {
-      url = "git+ssh://git@github.com/anuramat/ctrl.sn?ref=main";
-      inputs.nixpkgs.follows = "nixpkgs";
+    # ctrlsn's third-party assets, served under /static
+    fslightbox = {
+      url = "https://registry.npmjs.org/fslightbox/-/fslightbox-3.0.9.tgz";
+      flake = false;
+    };
+    modern-normalize = {
+      url = "https://registry.npmjs.org/modern-normalize/-/modern-normalize-3.0.1.tgz";
+      flake = false;
     };
     figtree = {
       url = "github:anuramat/figtree.nvim";

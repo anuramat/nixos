@@ -1,0 +1,148 @@
+/* common {{{1 */
+* {
+	transition:
+		background-color 0.2s,
+		color 0.2s,
+		border-color 0.2s;
+	font-size: 16pt;
+	font-family: monospace;
+}
+a {
+	text-decoration: none;
+}
+a:hover,
+button.link:hover {
+	text-decoration: underline;
+}
+ul {
+	list-style-type: "• ";
+}
+body {
+	margin: 24pt;
+	gap: 18pt;
+}
+.pill {
+	border-radius: 6px;
+	border: 0;
+	padding: 10px;
+	text-align: center;
+	outline: none;
+}
+button {
+	cursor: pointer;
+}
+form.inline {
+	display: inline;
+}
+button.link {
+	all: unset;
+	cursor: pointer;
+	color: LinkText;
+}
+form#auth {
+	width: 60vh;
+	max-width: 300px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+/* pandoc code blocks {{{1 */
+/* TODO check if this is still required */
+pre.sourceCode {
+	margin: 0;
+}
+div.sourceCode {
+	padding: 12pt;
+}
+
+/* about {{{1 */
+img#pfp {
+	padding: 12pt;
+	width: 300px;
+}
+
+/* images {{{1 */
+div#album {
+	margin: 32pt 0 0 0;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* TODO what */
+	gap: 32px 0;
+	justify-items: center;
+}
+div#album img {
+	width: 256px;
+	aspect-ratio: 3 / 2;
+	object-fit: contain;
+}
+
+/* login page {{{1 */
+div#login {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 100vh;
+}
+div#error {
+	position: absolute;
+	top: 25vh;
+}
+
+/* smaller screens {{{1 */
+@media (max-width: 1024px) {
+	/* todo center align? */
+}
+
+/* colors {{{1 */
+@media (prefers-color-scheme: dark) {
+	/* common {{{2 */
+	body {
+		background-color: #111;
+		color: #eee;
+	}
+	a,
+	button.link {
+		color: #88f;
+	}
+	a:hover,
+	button.link:hover {
+		color: #bbf;
+	}
+	.sep,
+	ul li::marker {
+		color: #888;
+	}
+
+	/* forms {{{2 */
+	form#auth {
+		background-color: #222;
+	}
+	#auth input,
+	#auth button {
+		color: inherit;
+		background-color: #333;
+	}
+	#auth input:focus,
+	#auth button:hover {
+		background-color: #444;
+	}
+	div#error {
+		background-color: #f33;
+		color: black;
+	}
+
+	/* misc {{{2 */
+	code {
+		color: teal;
+	}
+	div.sourceCode {
+		background-color: #222;
+		padding: 12pt;
+	}
+	div#album img {
+		background-color: black;
+	}
+}
+/* vim: fdm=marker fdl=0
+*/
