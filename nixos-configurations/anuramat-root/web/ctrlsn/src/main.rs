@@ -7,11 +7,11 @@ use axum::{
     Router,
     extract::{FromRef, Path},
     http::{
-        HeaderMap, StatusCode,
+        HeaderMap, StatusCode, Uri,
         header::{CONTENT_TYPE, ETAG, IF_NONE_MATCH},
     },
     middleware,
-    response::{IntoResponse, Response},
+    response::{IntoResponse, Redirect, Response},
     routing::{get, post},
 };
 use axum_extra::extract::cookie::Key;
@@ -65,6 +65,17 @@ async fn asset(Path(path): Path<String>, headers: HeaderMap) -> Response {
     ([(CONTENT_TYPE, mime), (ETAG, etag)], f.data).into_response()
 }
 
+// `/photo/` -> `/photo`; leading slashes are collapsed too, so that `//host/`
+// can't become a protocol-relative redirect
+async fn trailing_slash(uri: Uri) -> Response {
+    if !uri.path().ends_with('/') {
+        return StatusCode::NOT_FOUND.into_response();
+    }
+    let path = uri.path().trim_matches(['/', '\\']);
+    let query = uri.query().map_or_else(String::new, |q| format!("?{q}"));
+    Redirect::permanent(&format!("/{path}{query}")).into_response()
+}
+
 fn app(state: AppState) -> Router {
     Router::new()
         .route("/photo", get(photo::albums))
@@ -85,6 +96,7 @@ fn app(state: AppState) -> Router {
         .route("/static/{*path}", get(asset))
         .route("/login", post(auth::login))
         .route("/logout", post(auth::logout))
+        .fallback(trailing_slash)
         .with_state(state)
 }
 

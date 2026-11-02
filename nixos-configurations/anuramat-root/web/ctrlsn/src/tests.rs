@@ -512,3 +512,40 @@ async fn logout() {
     "#
     );
 }
+
+#[tokio::test]
+async fn trailing_slash() {
+    let s = site();
+    let mut got = BTreeMap::new();
+    for uri in [
+        "/photo/",
+        "/photo/misc//?a=1",
+        "//evil.com/",
+        "/\\evil.com/",
+        "/nope",
+    ] {
+        let r = get(&s, uri, None).await;
+        let loc = r
+            .headers
+            .get(header::LOCATION)
+            .map(|v| v.to_str().unwrap().to_string());
+        got.insert(uri, (r.status.as_u16(), loc));
+    }
+    insta::assert_yaml_snapshot!(got, @r#"
+    //evil.com/:
+      - 308
+      - /evil.com
+    "/\\evil.com/":
+      - 308
+      - /evil.com
+    /nope:
+      - 404
+      - ~
+    /photo/:
+      - 308
+      - /photo
+    /photo/misc//?a=1:
+      - 308
+      - /photo/misc?a=1
+    "#);
+}
