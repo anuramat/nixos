@@ -65,6 +65,10 @@ pub async fn about() -> Markup {
     })
 }
 
+pub fn not_found() -> Markup {
+    page(&html! { (crumbs(&["404"])) })
+}
+
 pub fn login(next: &str, wrong: bool) -> Markup {
     page(&html! {
         #login {

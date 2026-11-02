@@ -227,6 +227,7 @@ async fn static_files() {
         got.push((uri, r.status, r.headers.get(header::CONTENT_TYPE).cloned()));
     }
     let mime = |m| Some(header::HeaderValue::from_static(m));
+    let html = mime("text/html; charset=utf-8");
     assert_eq!(
         got,
         [
@@ -241,8 +242,8 @@ async fn static_files() {
                 StatusCode::OK,
                 mime("text/css")
             ),
-            ("/static/nope.css", StatusCode::NOT_FOUND, None),
-            ("/static/../Cargo.toml", StatusCode::NOT_FOUND, None),
+            ("/static/nope.css", StatusCode::NOT_FOUND, html.clone()),
+            ("/static/../Cargo.toml", StatusCode::NOT_FOUND, html),
         ]
     );
 }
@@ -421,6 +422,33 @@ async fn missing_and_traversal() {
         got.push((uri, get(&s, uri, Some(&c)).await.status));
     }
     assert_eq!(got, uris.map(|u| (u, StatusCode::NOT_FOUND)));
+}
+
+#[tokio::test]
+async fn not_found_page() {
+    let s = site();
+    let c = session(&s).await;
+    let page = pages::not_found().into_string();
+    let uris = [
+        "/nope",
+        "/static/nope.css",
+        "/photo/nope",
+        "/photo/fullsize/misc/nope.jpg",
+    ];
+    let mut got = vec![];
+    for uri in uris {
+        let r = get(&s, uri, Some(&c)).await;
+        got.push((uri, r.status, r.text()));
+    }
+    assert_eq!(got, uris.map(|u| (u, StatusCode::NOT_FOUND, page.clone())));
+    insta::assert_yaml_snapshot!(get(&s, "/nope", None).await.snap(), @r#"
+    status: 404
+    headers:
+      content-length: "413"
+      content-type: text/html; charset=utf-8
+    body:
+      - "<a href=\"/\">ctrl.sn</a> <span class=\"sep\">•</span> 404"
+    "#);
 }
 
 #[tokio::test]

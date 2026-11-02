@@ -76,6 +76,15 @@ async fn trailing_slash(uri: Uri) -> Response {
     Redirect::permanent(&format!("/{path}{query}")).into_response()
 }
 
+// every 404 gets the same page, whichever handler or service returned it
+async fn not_found(r: Response) -> Response {
+    if r.status() == StatusCode::NOT_FOUND {
+        (StatusCode::NOT_FOUND, pages::not_found()).into_response()
+    } else {
+        r
+    }
+}
+
 fn app(state: AppState) -> Router {
     Router::new()
         .route("/photo", get(photo::albums))
@@ -97,6 +106,7 @@ fn app(state: AppState) -> Router {
         .route("/login", post(auth::login))
         .route("/logout", post(auth::logout))
         .fallback(trailing_slash)
+        .layer(middleware::map_response(not_found))
         .with_state(state)
 }
 

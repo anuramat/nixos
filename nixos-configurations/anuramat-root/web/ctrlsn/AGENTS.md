@@ -39,6 +39,7 @@ static/        css, images
   return to; `/logout` is a POST.
 - Any other path ending in `/` redirects (308) to the same path without
   the trailing slashes, keeping the query; the rest is 404.
+- Every 404, from any handler or `ServeDir`, gets the same page.
 - Single password, no username. The session cookie is signed with a key
   generated at startup (restarts log everyone out) and holds its expiry
   (1h).
