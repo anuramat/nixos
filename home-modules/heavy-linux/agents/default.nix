@@ -7,14 +7,13 @@
 let
   inherit (lib)
     concatStringsSep
-    mapAttrsToList
+    mapAttrs
     ;
 in
 
 {
 
   imports = [
-    ./commands.nix
     ./decide.nix
     ./feedback.nix
     ./frontends
@@ -24,28 +23,23 @@ in
     ./notify.nix
     ./relay
     ./sandbox.nix
+    ./skills.nix
     ./uc3
   ];
 
   lib.agents = {
-    prependFrontmatter =
-      text: fields:
-      let
-        fm = fields |> mapAttrsToList (n: v: n + ": " + v) |> concatStringsSep "\n";
-      in
-      [
-        "---"
-        fm
-        "---"
-        text
-      ]
-      |> concatStringsSep "\n";
-
-    mkCommandFiles =
-      dir:
-      config.lib.agents.commands
-      |> lib.mapAttrs' (
-        n: v: lib.nameValuePair "${dir}/${n}.md" { text = v.withFM { inherit (v) description; }; }
+    # name -> SKILL.md contents
+    skillFiles =
+      config.lib.agents.skills
+      |> mapAttrs (
+        name: v:
+        concatStringsSep "\n" [
+          "---"
+          "name: ${name}"
+          "description: ${v.description}"
+          "---"
+          v.text
+        ]
       );
   };
 

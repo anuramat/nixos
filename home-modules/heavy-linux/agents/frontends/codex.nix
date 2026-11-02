@@ -12,22 +12,13 @@ let
   codexCfgPath = codexHome + "/config.toml";
 
   skillFiles =
-    agents.commands
+    agents.skillFiles
     |> mapAttrs' (
-      n: v: {
+      n: text: {
         name = "codexSkill-" + n;
-        value =
-          let
-            text = v.withFM {
-              name = n;
-              inherit (v) description;
-            };
-            file = pkgs.writeTextFile {
-              name = "${n}-SKILL.md";
-              inherit text;
-            };
-          in
-          config.lib.home.mkGenericActivationScript file (codexHome + "/skills/${n}/SKILL.md");
+        value = config.lib.home.mkGenericActivationScript (pkgs.writeText "${n}-SKILL.md" text) (
+          codexHome + "/skills/${n}/SKILL.md"
+        );
       }
     );
 

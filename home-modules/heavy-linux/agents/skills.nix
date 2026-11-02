@@ -1,12 +1,7 @@
-{ config, ... }:
-let
-  inherit (config.lib.agents) prependFrontmatter;
-in
 {
-  lib.agents.commands = {
-    explain_diff = rec {
+  lib.agents.skills = {
+    explain-diff = {
       description = "explain a diff in a human-friendly way, so that the user can easily review it";
-      withFM = prependFrontmatter text;
       text = ''
         Help me review this diff by providing a review guide:
 
@@ -28,9 +23,8 @@ in
         file names, with no explanations.
       '';
     };
-    iterate_spec = rec {
+    iterate-spec = {
       description = "refine feature specification/implementation plan/design document/SPEC.md/PLAN.md";
-      withFM = prependFrontmatter text;
       text = ''
         Specification describes a feature that was not yet implemented. Your
         task is to review the specification and report to user. Do not edit the
@@ -52,7 +46,6 @@ in
         - completeness of decription/deterministic result: there should be one obvious way to implement the spec
         - quality of the end result: resulting implementation should be maintainable and correct
       '';
-
     };
   };
 }
