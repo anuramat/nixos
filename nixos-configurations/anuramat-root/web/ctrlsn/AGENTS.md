@@ -41,8 +41,8 @@ static/        css, images
   generated at startup (restarts log everyone out) and holds its expiry
   (1h).
 - Albums are the subdirectories of `$PHOTO_DIR/fullsize`, read on every
-  request. Albums without a `_YYYY-MM-DD` suffix come first, then newest
-  first. Previews (256px) live under the same paths in `$PHOTO_DIR/preview`.
+  request, in reverse alphabetical order: names start with `YYYY-MM-DD_`,
+  so the newest album comes first. Previews (256px) live under the same paths in `$PHOTO_DIR/preview`.
 
 ## Configuration
 

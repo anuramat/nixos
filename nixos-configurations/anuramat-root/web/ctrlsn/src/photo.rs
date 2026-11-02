@@ -11,7 +11,7 @@ use axum::{
 };
 use axum_extra::response::Attachment;
 use maud::{Markup, html};
-use std::{cmp::Reverse, fs, io, path::Path as FsPath};
+use std::{fs, io, path::Path as FsPath};
 use tokio_util::io::{InspectWriter, ReaderStream};
 
 // sorted names of subdirectories (or files) of dir
@@ -27,24 +27,6 @@ fn ls(dir: &FsPath, dirs: bool) -> Vec<String> {
     names
 }
 
-// album name suffix _YYYY-MM-DD
-pub fn date(album: &str) -> Option<&str> {
-    let d = album.rsplit_once('_')?.1;
-    let shape = d.bytes().map(|b| if b.is_ascii_digit() { b'0' } else { b });
-    shape.eq(*b"0000-00-00").then_some(d)
-}
-
-// undated first, then newest first, then by name
-pub fn sort_albums(names: &mut [String]) {
-    names.sort_by_cached_key(|n| {
-        (
-            date(n).is_some(),
-            Reverse(date(n).map(str::to_owned)),
-            n.clone(),
-        )
-    });
-}
-
 // files of the album, if it exists; also validates the name
 fn album_files(s: &AppState, album: &str) -> Result<Vec<String>, StatusCode> {
     let fullsize = s.photos.join("fullsize");
@@ -56,7 +38,8 @@ fn album_files(s: &AppState, album: &str) -> Result<Vec<String>, StatusCode> {
 
 pub async fn albums(State(s): State<AppState>) -> Markup {
     let mut names = ls(&s.photos.join("fullsize"), true);
-    sort_albums(&mut names);
+    // newest first: names start with YYYY-MM-DD_
+    names.reverse();
     page(&html! {
         (crumbs(&["photo"]))
         (sep())

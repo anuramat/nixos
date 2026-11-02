@@ -1,6 +1,6 @@
 #![cfg(test)]
 
-use crate::{AppState, app, pages, photo};
+use crate::{AppState, app, pages};
 use axum::{
     Router,
     body::{Body, to_bytes},
@@ -29,8 +29,8 @@ fn site() -> Site {
     let dir = TempDir::new().unwrap();
     for (album, files) in [
         ("misc", &["b.jpg", "a.jpg", "\u{fc}.jpg"][..]),
-        ("berlin_2024-05-01", &["x.jpg"]),
-        ("paris_2025-01-02", &[]),
+        ("2024-05-01_berlin", &["x.jpg"]),
+        ("2025-01-02_paris", &[]),
     ] {
         for kind in ["fullsize", "preview"] {
             fs::create_dir_all(dir.path().join(kind).join(album)).unwrap();
@@ -159,57 +159,6 @@ fn signed(s: &Site, value: &str) -> String {
     let res = (jar, ()).into_response();
     let v = res.headers()[header::SET_COOKIE].to_str().unwrap();
     v.split(';').next().unwrap().to_string()
-}
-
-#[test]
-fn date_suffix() {
-    let names = [
-        "berlin_2024-05-01",
-        "a_b_2024-05-01",
-        "berlin2024-05-01",
-        "berlin_2024-5-01",
-        "berlin_2024-05-01x",
-        "berlin_2024-05-01_2",
-        "berlin_2024_05_01",
-    ];
-    assert_eq!(
-        names.map(photo::date),
-        [
-            Some("2024-05-01"),
-            Some("2024-05-01"),
-            None,
-            None,
-            None,
-            None,
-            None
-        ]
-    );
-}
-
-#[test]
-fn album_order() {
-    let mut names: Vec<String> = [
-        "b_2024-01-01",
-        "z",
-        "a_2024-01-01",
-        "c_2025-06-01",
-        "a",
-        "d_2023-12-31",
-    ]
-    .map(String::from)
-    .into();
-    photo::sort_albums(&mut names);
-    assert_eq!(
-        names,
-        [
-            "a",
-            "z",
-            "c_2025-06-01",
-            "a_2024-01-01",
-            "b_2024-01-01",
-            "d_2023-12-31"
-        ]
-    );
 }
 
 #[tokio::test]
@@ -418,10 +367,10 @@ async fn album_list() {
       - "<a href=\"/photo/misc\">misc</a>"
       - "</li>"
       - "<li>"
-      - "<a href=\"/photo/paris_2025-01-02\">paris_2025-01-02</a>"
+      - "<a href=\"/photo/2025-01-02_paris\">2025-01-02_paris</a>"
       - "</li>"
       - "<li>"
-      - "<a href=\"/photo/berlin_2024-05-01\">berlin_2024-05-01</a>"
+      - "<a href=\"/photo/2024-05-01_berlin\">2024-05-01_berlin</a>"
       - "</li>"
       - "</ul>"
     "#);
@@ -481,7 +430,7 @@ async fn images() {
     let mut got = vec![];
     for uri in [
         "/photo/fullsize/misc/a.jpg",
-        "/photo/preview/berlin_2024-05-01/x.jpg",
+        "/photo/preview/2024-05-01_berlin/x.jpg",
     ] {
         let r = get(&s, uri, Some(&c)).await;
         got.push((r.status, r.text()));
