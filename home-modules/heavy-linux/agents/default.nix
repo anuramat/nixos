@@ -27,6 +27,8 @@ in
   ];
 
   lib.agents = {
+    # where the user drops files for agents to read
+    userSharedDir = "${config.home.homeDirectory}/shared";
     # xdg.configFile entries linking each skill's directory into DIR; agents
     # skip a symlinked SKILL.md, but follow a symlinked skill directory
     mkSkillLinks =
@@ -55,6 +57,9 @@ in
         }
       );
   };
+
+  # must exist before an agent starts, or the sandbox skips its bind
+  systemd.user.tmpfiles.rules = [ "d ${config.lib.agents.userSharedDir} - - - -" ];
 
   home = {
     packages = with pkgs; [

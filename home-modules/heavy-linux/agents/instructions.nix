@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   inputs,
   osConfig ? null,
@@ -6,6 +7,7 @@
 }:
 let
   inherit (inputs.self.consts.agent) username sharedDir;
+  inherit (config.lib.agents) userSharedDir;
   # unknown under standalone Home Manager
   currentHost = lib.optionalString (osConfig != null) (
     let
@@ -211,6 +213,10 @@ let
             after the session is finished. The working directory and its git
             worktree are writable; most of the other paths are bind mounted
             read-only.
+
+            The user gives you ad-hoc read-only access to files by putting
+            them in `${userSharedDir}`; if the user mentions a shared file
+            without a path, look there, not in `${sharedDir}`.
 
             A process can only trace its own descendants (`kernel.yama.ptrace_scope=1`,
             in and outside the sandbox), so attaching to a running process
