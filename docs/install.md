@@ -97,8 +97,7 @@ Secrets don't decrypt until step 5; nothing needed for booting depends on them.
 
 ```bash
 nmtui
-nix-cache-keygen # /etc/nix/cache.pem; aborts on non-builder hosts (see TODO.md)
-ssh-keygen -t ed25519 -N '' -f ~/.ssh/id_ed25519 # home-manager already made ~/.ssh, so nix-cache-keygen skips this
+nix-cache-keygen # /etc/nix/cache.pem and ~/.ssh/id_ed25519
 sudo tailscale up "--operator=$(whoami)"
 # git rewrites https://github.com/ to ssh, which Nix's git fetcher (e.g. Cargo
 # git deps) also obeys: without the key on GitHub, rebuilds fail to fetch

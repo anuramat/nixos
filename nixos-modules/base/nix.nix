@@ -25,8 +25,6 @@ let
       # TODO move and read public
       private = config.nix.settings.secret-key-files;
       public = "${private}.pub";
-      # its own group too, see nixos-modules/base/builder.nix
-      builder = inputs.self.consts.builder.username;
     in
     pkgs.writeShellApplication {
       name = "nix-cache-keygen";
@@ -34,8 +32,9 @@ let
         if [ ! -e '${private}' ] && [ ! -e '${public}' ]; then
           sudo nix-store --generate-binary-cache-key "$(hostname)" '${private}' '${public}'
         fi
-        sudo chown '${builder}:${builder}' '${private}' '${public}'
-        [ ! -e "$HOME/.ssh" ] && yes "" | ssh-keygen -N ""
+        if [ ! -e ~/.ssh/id_ed25519 ]; then
+          ssh-keygen -t ed25519 -N "" -f ~/.ssh/id_ed25519
+        fi
       '';
     };
 in

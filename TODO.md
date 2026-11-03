@@ -154,27 +154,6 @@ Keep the `# auto start on 1st tty` comment and the `niri` script with its TODO c
 
 ## H. Needs your decision
 
-### H1. nix-cache-keygen: `chown builder` breaks it on non-builder hosts, and it exits 1 when ~/.ssh exists
-
-**Where:** `nixos-modules/base/nix.nix` (`nix-cache-keygen`, `secret-key-files`, harmonia), `nixos-modules/base/builder.nix:12`, `justfile:16`
-
-**Context:**
-
-- What the script does: if both `/etc/nix/cache.pem` and `/etc/nix/cache.pem.pub` are missing, it runs `sudo nix-store --generate-binary-cache-key "$(hostname)" ...`. Then it runs `sudo chown '${builder}:${builder}' '${private}' '${public}'` (with `builder = inputs.self.consts.builder.username`) and finally `[ ! -e "$HOME/.ssh" ] && yes "" | ssh-keygen -N ""`. It is installed through `environment.systemPackages` in nix.nix.
-- Every host needs the key (the README's bootstrap step now says so). The base NixOS module sets `secret-key-files = "/etc/nix/cache.pem"` (nix.nix:41) and enables harmonia with `signKeyPaths = [ config.nix.settings.secret-key-files ]` (nix.nix:86-90) on every host. The `keys` output in outputs.nix reads every host's `keys/cache.pem.pub`, and hosts.nix adds those keys to the other hosts' `trusted-public-keys`.
-- The chown breaks the script on 3 of 4 hosts. The `builder` account is created only under `lib.mkIf inputs.self.hosts.${...}.builder` (builder.nix:12), and only anuramat-bgm5 has `builder = true` in the registry. On f12 and root, `chown builder:builder` fails under writeShellApplication's errexit, so the script aborts before the ssh-keygen step.
-- Nothing in the code needs `builder` to own the key. nix-daemon signs as root: a remote `nix-daemon --stdio` running as `builder` over ssh-ng forwards to the root daemon. Harmonia runs with `DynamicUser = true` and gets the key through `LoadCredential` (nixpkgs `nixos/modules/services/networking/harmonia.nix:152,160`). History: the original README step was `sudo chown nix-serve cache-priv-key.pem` (e60d38a7), which was for the old nix-serve cache server, and 17ad32a7 still had `sudo chown builder:builder "$private" "$public" # TODO hide somewhere in nix`. The reason for builder ownership is not recorded anywhere.
-- Separate bug, to fix under every option: `[ ! -e "$HOME/.ssh" ] && yes "" | ssh-keygen -N ""` is the script's last command. When `~/.ssh` exists, which is the usual case, the test fails and the script exits 1 even though nothing went wrong. Replace it with `if [ ! -e "$HOME/.ssh" ]; then yes "" | ssh-keygen -N ""; fi`.
-- The `# TODO move and read public` next to it is ambiguous: it could mean taking the public key path from config, or reading the key from the `keys` output.
-- The script also mixes a system step (`sudo nix-store`, `chown`) with a per-user bootstrap step (`ssh-keygen` into `$HOME`), so the ssh-keygen step may belong in the README bootstrap steps instead.
-
-**Options:** under both, also fix the trailing `&&` line as above.
-
-- **(a)** Chown: drop it, with the `builder` binding and its `# its own group too` comment. -- The script then works on every host, and the key stays `root:root` as `nix-store` creates it. If anything outside the repo depends on `builder` owning the key on bgm5, it breaks; nothing in the repo does.
-- **(b)** Chown: keep it only on builder hosts, gated on `inputs.self.hosts.${hostName}.builder`. -- Behaviour on bgm5 stays as it is. The flag is available directly in nix.nix.
-
-**Recommendation:** for the chown, (a). Nothing in the repo reads the key as `builder`, and root ownership is exactly what nix-daemon and harmonia's `LoadCredential` need. To verify after a switch: a path built remotely from f12 still carries bgm5's signature (`nix path-info --sigs`), and `systemctl status harmonia` stays healthy.
-
 ### H3. podman: is `dns_enabled` on the default network still needed?
 
 **Where:** `nixos-modules/local/containers.nix:8-10`
@@ -362,9 +341,8 @@ The build or eval side can be checked, but the real effect needs the user.
 
 ### Unambiguous parts of H
 
-Two pieces of H items have one fix whatever is decided for the rest:
+One piece of an H item has one fix whatever is decided for the rest:
 
-- H1: the trailing `[ ! -e "$HOME/.ssh" ] && ... ssh-keygen` makes nix-cache-keygen exit 1 whenever `~/.ssh` exists. Testable only with `sudo` stubbed.
 - H5: moving `orphans` to `home-modules/linux.nix`, checkable by eval.
 
 The rest of H and the open TODO markers need a decision or runtime testing.
