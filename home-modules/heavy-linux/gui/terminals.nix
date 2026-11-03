@@ -2,8 +2,35 @@
   config,
   lib,
   pkgs,
+  osConfig ? null,
   ...
 }:
+let
+  ghostty = pkgs.ghostty.overrideAttrs {
+    patches = [
+      # emoji presentation: use the (monochrome) emoji font instead of the embedded color one
+      ./ghostty-emoji.patch
+      # window titles start with "ghostty - ", for screentime
+      ./ghostty-title-prefix.patch
+    ];
+  };
+  # with prime offload, glvnd picks the nvidia EGL, whose dmabufs the iGPU compositor rejects: black window;
+  # a wrapper instead of a postFixup, so that it doesn't rebuild ghostty
+  mesaGhostty = pkgs.symlinkJoin {
+    inherit (ghostty) name meta;
+    paths = [ ghostty ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/ghostty \
+        --set __EGL_VENDOR_LIBRARY_FILENAMES /run/opengl-driver/share/glvnd/egl_vendor.d/50_mesa.json
+      # the services exec the binary by its store path
+      for f in $out/share/systemd/user/*.service $out/share/dbus-1/services/*.service; do
+        cp --remove-destination "$(readlink "$f")" "$f"
+        substituteInPlace "$f" --replace-fail ${ghostty} $out
+      done
+    '';
+  };
+in
 {
   # start the background instance with the session, so the first window opens fast too
   xdg.configFile."systemd/user/${config.wayland.systemd.target}.wants/app-com.mitchellh.ghostty.service".source =
@@ -13,14 +40,8 @@
       # cons: slowest startup
       # pros: supports kitty image protocol; almost zero config; not bloated
       enable = true;
-      package = pkgs.ghostty.overrideAttrs {
-        patches = [
-          # emoji presentation: use the (monochrome) emoji font instead of the embedded color one
-          ./ghostty-emoji.patch
-          # window titles start with "ghostty - ", for screentime
-          ./ghostty-title-prefix.patch
-        ];
-      };
+      package =
+        if osConfig != null && osConfig.hardware.nvidia.prime.offload.enable then mesaGhostty else ghostty;
       clearDefaultKeybinds = true;
       settings = {
         cursor-style = "block";
