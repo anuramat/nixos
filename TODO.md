@@ -72,6 +72,17 @@ mkShortcut =
 
 **Verify:** The three packages build (which runs shellcheck). Over ssh, `open-link https://example.com` opens the page in the niri session, and `echo hi | set-clipboard; get-clipboard` prints `hi`.
 
+### A14. Home Manager session variables are missing outside login shells
+
+**Where:** `home-modules/heavy-linux/desktop/niri/autologin.nix:10`, `home-modules/heavy-linux/gui/terminals.nix:53`
+**Effort:** small -- **Risk:** medium
+
+**Problem:** `home.sessionVariables` reach only login shells: `hm-session-vars.sh` is sourced from `~/.profile`. niri runs as a systemd user service, and the autologin script imports only `XDG_VTNR XDG_SESSION_TYPE XDG_SESSION_ID` into the systemd environment, so niri and everything it spawns lack the session variables. Ghostty hides this with `command = "bash -l"`; kitty starts a non-login bash, so e.g. `CLAUDE_CONFIG_DIR` is unset there. GUI apps and user services are affected the same way.
+
+**Fix:** Put the session variables into the systemd user environment, e.g. `systemd.user.sessionVariables = config.home.sessionVariables;` (environment.d), or import them before `systemctl --user start niri.service`. This also resolves the `import-environment` TODO in autologin.nix (see "Open TODO markers"). Afterwards ghostty's `bash -l` may be unnecessary.
+
+**Verify:** After relogin, `systemctl --user show-environment` lists the session variables, and `echo $CLAUDE_CONFIG_DIR` is set in a fresh kitty window.
+
 ## D. TODOs that can be resolved now
 
 ### D12. hotdoc: ship the PDF placeholder as a store file and close zathura on Ctrl-C
