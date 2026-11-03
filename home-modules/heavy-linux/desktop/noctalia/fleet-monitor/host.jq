@@ -1,6 +1,6 @@
-# fleet-probe's lines (read with -R) -> a host section: power profile, battery
-# and zellij sessions in the header; jobs, then sandboxed sessions grouped by
-# project dir basename, as rows
+# fleet-probe's lines (read with -R) -> a host section: power profile, battery,
+# an awake dGPU and zellij sessions in the header; jobs, then sandboxed sessions
+# grouped by project dir basename, as rows
 
 include "etime";
 
@@ -12,6 +12,7 @@ include "etime";
 | {
     cells: [
       (kind("power") | select(.[0] == "quiet") | {text: "quiet", style: "outline"}),
+      (kind("gpu") | select(.[0] == "active") | {text: "dgpu", style: "error"}),
       (kind("battery") | {text: "\(.[0])%", style: "outline"}),
       # `z` for a lone detached session, else `z(detached/total)`
       (select($z != []) | {

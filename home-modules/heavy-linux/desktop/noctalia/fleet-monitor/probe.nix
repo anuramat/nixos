@@ -4,10 +4,11 @@
 # `job<TAB>UNIT<TAB>ELAPSED<TAB>ETA<TAB>DESC` (ETA and DESC are set by
 # `job run`, see agents/job.nix; empty for other units and jobs without them),
 # `session<TAB>WRAPPER<TAB>CWD`, `zellij<TAB>SESSION<TAB>CLIENTS`, plus the
-# bgm5powerctl profile (bgm5 only) as `power<TAB>MODE` and the battery charge
-# (laptops only) as `battery<TAB>PERCENT`; units are read from the
-# world-readable cgroupfs, so it needs neither the agent's user bus nor its ssh
-# key; the current host is queried directly instead of over ssh
+# bgm5powerctl profile (bgm5 only) as `power<TAB>MODE`, the battery charge
+# (laptops only) as `battery<TAB>PERCENT` and the runtime PM state of nvidia
+# GPUs as `gpu<TAB>STATUS`; units are read from the world-readable cgroupfs, so
+# it needs neither the agent's user bus nor its ssh key; the current host is
+# queried directly instead of over ssh
 {
   pkgs,
   lib,
@@ -37,6 +38,10 @@ let
     # the system battery; peripherals' batteries are named after their device
     for b in /sys/class/power_supply/BAT*/capacity; do
       [ ! -e "$b" ] || printf 'battery\t%s\n' "$(<"$b")"
+    done
+    # reading this, unlike nvidia-smi, doesn't wake a suspended GPU
+    for g in /sys/bus/pci/drivers/nvidia/*/power/runtime_status; do
+      [ ! -e "$g" ] || printf 'gpu\t%s\n' "$(<"$g")"
     done
     # zellij sessions, minus the exited (resurrectable) ones; a hung session
     # would block the script, and over ssh nothing kills it once the poll gives up
