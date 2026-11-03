@@ -298,7 +298,6 @@ None of these markers is fully covered by an H item above. The TODOs that H item
 Needs a decision:
 
 - `flake.nix:1` -- `# TODO use max-jobs to fetch caches` -- This marker sits in the wrong place: it came over from inputs.nix (24c7ce05), where it sat next to TODOs about input `follows` vs binary-cache hits that are now gone, and flake.nix only declares inputs. Nix 2.34 runs substitutions under `max-substitution-jobs` (16), separately from `max-jobs`, and `nix build --dry-run` already lists what will be fetched vs built. Either drop it, or move the intent to `nix.settings` in nixos-modules/base/nix.nix.
-- `README.md:38` -- `todo:` (bootstrap checklist block: keys/tailscale/rekey, keygen script in the dev shell, unshallow the repo, gpg/pass init) -- This is a lowercase list, so the TODO grep misses it. It overlaps the README.md:32 bootstrap item and needs the same bootstrap design. Its "keygen script" line also relates to where nix-cache-keygen lives (H1).
 - `nixos-modules/base/nix.nix:78` -- `# TODO speedFactor, maxJobs` -- In the evaluated f12 `buildMachines`, the entry for bgm5 has `maxJobs = 1`, `speedFactor = 1` and `supportedFeatures = []`. That means one remote job at a time, and `big-parallel`/`kvm` derivations are never offloaded. speedFactor does not matter with a single builder. Picking maxJobs and features, or adding them to the hosts registry, is a decision.
 - `nixos-modules/local/default.nix:1` -- `# TODO tidy comments` -- Vague and a matter of taste (for example `"audio" # just in case (?)` and the verbose avahi/CUPS comments); there is nothing mechanical to do.
 - `nixos-modules/local/default.nix:138` -- `# TODO move to local-minimal; the rest to local-heavy` -- No local-minimal or local-heavy NixOS layers exist (only base, local and laptop), and every local host imports all of `local`. Splitting it means adding a new layer, which is a design choice.
@@ -321,7 +320,6 @@ Needs a decision:
 
 Nontrivial:
 
-- `README.md:32` -- `# TODO put these into the justfile, together with some other bootstrap stuff` -- `just nixos` already exports `pipe-operators` and could replace the nh/nixos-rebuild lines. But its `nixos-pre` dependency fails on a fresh machine: with no `~/.ssh/*.pub`, `xargs cp -ft keys_dir` runs `cp` with no operands. The bootstrap order (keygen, registry entry, rekey) needs to be designed first.
 - `nixos-modules/base/net.nix:58` -- `# dnssec = "true"; # TODO breaks sometimes, try again with captive` -- This needs a runtime test on captive-portal networks. If you revisit it, note that the commented-out option has been renamed to `services.resolved.settings.Resolve.DNSSEC` (mkRenamedOptionModule in resolved.nix).
 - `home-modules/base/bash/git.sh:4` -- `# TODO more local/readonly` -- Vague and applies to the whole file. The concrete leaking globals in `gcreate` are fixed; the rest belongs to the rewrite.
 - `home-modules/base/bash/git.sh:5` -- `# TODO total rehaul, then move` -- A large rewrite with no defined target. The concrete bugs are split out as A4 and A5 (the `gcreate` one is fixed).

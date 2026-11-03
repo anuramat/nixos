@@ -6,54 +6,7 @@
 
 ## Install
 
-0. prepare a minimal config in `nixos-configurations/$HOSTNAME/default.nix` and add `$HOSTNAME` to `hosts` in `outputs.nix`
-1. install the base (reminder: swap and luks)
-2. rebuild with the right hostname, connect to wifi with `nmtui`
-3. install the config:
-
-
-```bash
-# backup
-cp -r /etc/nixos ~/old
-
-# get the repo
-nix-shell -p git
-git clone --depth 1 https://github.com/anuramat/nixos ~/nixos
-sudo rm -rf /etc/nixos
-sudo mv -T ~/nixos /etc/nixos
-
-# add hw config
-cp "$HOME/old/hardware-configuration.nix" "/etc/nixos/nixos-configurations/$HOSTNAME"
-git -C /etc/nixos add -A
-
-# install
-export NIX_CONFIG="experimental-features = nix-command flakes pipe-operators"
-nix develop
-# TODO put these into the justfile, together with some other bootstrap stuff
-nh os switch /etc/nixos -H "$HOSTNAME"
-# might fail; try
-sudo nixos-rebuild switch --option extra-experimental-features pipe-operators --flake ".#$HOSTNAME"
-```
-
-todo:
-
-```bash
-# - new step: after installing minimal config -- generate keys, start tailscale, scp from a trusted machine, rekey secrets with agenix and commit
-# - keygen script -- make easily accessible from dev shell
-# - new step: unfuck the repo (switch to ssh and unshallow)
-# gpg --full-generate-key
-# pass init $EMAIL
-# firefox
-```
-
-some extras:
-
-```bash
-nix-cache-keygen # every host: nix and harmonia sign with /etc/nix/cache.pem; also creates ~/.ssh keys
-# misc
-gh auth login -p ssh # offers to upload the ~/.ssh public key
-sudo tailscale up "--operator=$(whoami)"
-```
+See [docs/install.md](docs/install.md).
 
 ## Problems
 
