@@ -95,20 +95,25 @@ flake-parts.lib.mkFlake { inherit inputs; } {
           builder = true;
           agent = true;
           local = true;
-          alias = "bgm5";
+          alias = "b";
         };
         anuramat-f12 = {
           description = "edc laptop: framework 12, 48GB RAM, i5-1334U";
           agent = true;
           local = true;
+          alias = "f";
         };
         anuramat-ll7 = {
           description = "laptop: Lenovo Legion, Intel iGPU + NVIDIA dGPU";
           builder = true;
           agent = true;
           local = true;
+          alias = "l";
         };
-        anuramat-root.description = "server: 4GB ram, 4 vCPU; personal website";
+        anuramat-root = {
+          description = "server: 4GB ram, 4 vCPU; personal website";
+          alias = "r";
+        };
       };
 
     # constants shared by NixOS, Home Manager and nixvim modules, read directly
