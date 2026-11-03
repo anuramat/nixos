@@ -102,6 +102,12 @@ flake-parts.lib.mkFlake { inherit inputs; } {
           agent = true;
           local = true;
         };
+        anuramat-ll7 = {
+          description = "laptop: Lenovo Legion, Intel iGPU + NVIDIA dGPU";
+          builder = true;
+          agent = true;
+          local = true;
+        };
         anuramat-root.description = "server: 4GB ram, 4 vCPU; personal website";
       };
 
