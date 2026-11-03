@@ -83,7 +83,10 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       let
         defaults = {
           system = "x86_64-linux";
-          builder = false;
+          # "default": every other host builds on it and substitutes from it;
+          # "on-demand": only when asked to, e.g. `--builders ssh-ng://HOST`,
+          # `--extra-substituters http://HOST:5000`
+          builder = null;
           agent = false;
           local = false; # physical machine: gets nixosModules.local
           alias = null; # ssh alias
@@ -92,7 +95,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
       lib.mapAttrs (_: host: defaults // host) {
         anuramat-bgm5 = {
           description = "GPU workstation: AMD Strix Halo, 128GB URAM";
-          builder = true;
+          builder = "default";
           agent = true;
           local = true;
           alias = "b";
@@ -105,7 +108,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
         };
         anuramat-ll7 = {
           description = "laptop: Lenovo Legion, Intel iGPU + NVIDIA dGPU";
-          builder = true;
+          builder = "on-demand";
           agent = true;
           local = true;
           alias = "l";

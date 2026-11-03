@@ -93,8 +93,9 @@ only meaningful on top of `base`.
 
 ## Surprising Or Complex Parts
 
-- A host flagged `builder` is a build server, never a distributed-build client
-  (`nix.distributedBuilds` in `nixos-modules/base/nix.nix`).
+- A host is a distributed-build client iff some other host has `builder =
+  "default"` (`nix.distributedBuilds` in `nixos-modules/base/nix.nix`), so a
+  default builder never forwards builds, while an `"on-demand"` one does.
 - `nixos-modules/base/agent.nix`, on hosts flagged `agent`, accepts ssh from
   sandboxed agents on other hosts as `consts.agent.username`. The bwrap
   sandbox binds `secrets/agent.age` read-only and replaces `/etc/ssh` with its

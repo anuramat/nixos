@@ -9,7 +9,7 @@ let
   inherit (inputs.self.consts.builder) username;
 in
 {
-  config = lib.mkIf inputs.self.hosts.${config.networking.hostName}.builder {
+  config = lib.mkIf (inputs.self.hosts.${config.networking.hostName}.builder != null) {
     users.users.${username} = {
       isNormalUser = true;
       createHome = false;

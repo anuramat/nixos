@@ -46,7 +46,7 @@ in
   };
 
   nix = {
-    distributedBuilds = !inputs.self.hosts.${config.networking.hostName}.builder;
+    distributedBuilds = config.lib.hosts.builders != { };
 
     channel.enable = false;
 

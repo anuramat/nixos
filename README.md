@@ -11,7 +11,7 @@ See [docs/install.md](docs/install.md).
 ## Problems
 
 - sshKey and sshUser in nix.buildMachines are ignored: <https://github.com/NixOS/nix/issues/3423>;
-  for now add this to /root/.ssh/config, for each `builder = true` host in `hosts` (`outputs.nix`):
+  for now add this to /root/.ssh/config, for each host with `builder` set in `hosts` (`outputs.nix`):
   ```ssh_config
   Host anuramat-bgm5
           IdentitiesOnly yes
