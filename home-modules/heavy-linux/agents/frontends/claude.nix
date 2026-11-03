@@ -185,8 +185,6 @@ in
       } "${cfgDir}/settings.json";
       claudeState = config.lib.home.json.set {
         hasCompletedOnboarding = true;
-        mcpServers = {
-        };
       } "${cfgDir}/.claude.json";
     };
   };
