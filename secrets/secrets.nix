@@ -31,6 +31,7 @@ in
   "decision-bot-token.age" # Telegram bot of bgm5's decision-bot
   "decision-bot-config.age" # its chat and categories
   "ctrlsn.age"
+  "syncthing-gui.age" # GUI password, plaintext or bcrypt hash
 ]
 |> map (x: {
   name = x;

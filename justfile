@@ -14,6 +14,8 @@ nixos-pre:
     grep -rL PRIVATE "$HOME/.ssh" | grep '\.pub$' | xargs cp -ft "{{ keys_dir }}"
     # copy binary cache public key
     cp -ft "{{ keys_dir }}" "/etc/nix/cache.pem.pub" 2>/dev/null || true
+    # syncthing device id, once syncthing has generated its cert
+    syncthing device-id > "{{ keys_dir }}/syncthing-id" 2>/dev/null || rm -f "{{ keys_dir }}/syncthing-id"
 
 [group('build')]
 nixos command="switch" *flags: nixos-pre

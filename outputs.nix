@@ -191,6 +191,12 @@ flake-parts.lib.mkFlake { inherit inputs; } {
           clientKeys = clientKeyFiles |> map builtins.readFile |> map lib.trim;
           knownHostsFile = keyDir + /known_hosts;
           cacheKey = builtins.readFile (keyDir + /${cacheFilename});
+          # null until syncthing has run on the host
+          syncthingId =
+            let
+              f = keyDir + /syncthing-id;
+            in
+            if builtins.pathExists f then lib.trim (builtins.readFile f) else null;
           knownHostsKeys =
             builtins.readFile (keyDir + /known_hosts)
             |> lib.splitString "\n"
