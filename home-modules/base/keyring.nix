@@ -91,7 +91,9 @@ in
 
   services.gpg-agent = {
     enable = true;
-    defaultCacheTtl = 999999;
+    # no "infinite" value
+    defaultCacheTtl = 999999999;
+    maxCacheTtl = 999999999;
     extraConfig = ''
       allow-preset-passphrase
     '';
