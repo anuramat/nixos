@@ -44,4 +44,9 @@
   ];
 
   hardware.graphics.enable32Bit = true; # compat
+
+  services.fprintd.enable = true; # goodix 27c6:659a
+  # noctalia's lockscreen talks to fprintd directly; pam_fprintd would make its
+  # password auth (PAM service "login") wait for a finger first
+  security.pam.services.login.fprintAuth = false;
 }
