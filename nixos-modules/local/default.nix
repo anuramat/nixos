@@ -100,6 +100,7 @@ in
       HandleSuspendKey = "suspend";
       HandleHibernateKey = "suspend";
     };
+    fwupd.enable = true; # LVFS firmware updates
     udisks2 = {
       enable = true;
       mountOnMedia = true;
