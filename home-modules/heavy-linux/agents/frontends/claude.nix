@@ -166,7 +166,10 @@ in
           "rust-analyzer-lsp@claude-plugins-official" = false;
           "pyright-lsp@claude-plugins-official" = false;
         };
-        includeCoAuthoredBy = false;
+        attribution = {
+          commit = "";
+          pr = "";
+        };
         switchModelsOnFlag = false;
         preferredNotifChannel = "notifications_disabled"; # replaced by the notify hooks
         remoteControlAtStartup = false;
