@@ -4,6 +4,8 @@
     inputs.nixos-hardware.nixosModules.common-gpu-nvidia
   ];
 
+  nixpkgs.config.cudaSupport = true;
+
   services.xserver.videoDrivers = [ "nvidia" ]; # use proprietary drivers
 
   hardware = {
