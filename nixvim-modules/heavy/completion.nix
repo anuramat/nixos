@@ -17,9 +17,12 @@ let
   shouldAttach = # lua
     ''
       function(_, bufname)
-        if string.match(bufname, "notes") then return false end
-        if string.match(bufname, "%.local/share/ghq") then return true end
-        if string.match(bufname, "/etc/nixos") then return true end
+        local home = vim.fs.normalize(vim.env.HOME)
+        bufname = vim.fs.normalize(bufname)
+        if vim.startswith(bufname, home .. "/notes/") then return false end
+        if vim.startswith(bufname, home .. "/.local/share/ghq/") then return true end
+        if vim.startswith(bufname, "/etc/nixos/") then return true end
+        if string.match(bufname, "^/tmp/bash%-fc%.") then return true end
         return false
       end
     '';
