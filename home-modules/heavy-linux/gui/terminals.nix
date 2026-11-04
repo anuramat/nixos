@@ -6,14 +6,8 @@
   ...
 }:
 let
-  ghostty = pkgs.ghostty.overrideAttrs {
-    patches = [
-      # emoji presentation: use the (monochrome) emoji font instead of the embedded color one
-      ./ghostty-emoji.patch
-      # window titles start with "ghostty - ", for screentime
-      ./ghostty-title-prefix.patch
-    ];
-  };
+  # emoji presentation: use the (monochrome) emoji font instead of the embedded color one
+  ghostty = pkgs.ghostty.overrideAttrs { patches = [ ./ghostty-emoji.patch ]; };
   # with prime offload, glvnd picks the nvidia EGL, whose dmabufs the iGPU compositor rejects: black window;
   # a wrapper instead of a postFixup, so that it doesn't rebuild ghostty
   mesaGhostty = pkgs.symlinkJoin {
@@ -47,8 +41,7 @@ in
         cursor-style = "block";
         cursor-style-blink = "false";
         resize-overlay = "never";
-        # the bell would prefix the title, which screentime parses
-        bell-features = "no-title";
+        title = "ghostty";
         gtk-single-instance = true;
         confirm-close-surface = false;
         command = "bash -l";
