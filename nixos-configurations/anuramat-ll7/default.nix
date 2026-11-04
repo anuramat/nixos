@@ -1,6 +1,7 @@
 {
   config,
   inputs,
+  pkgs,
   ...
 }:
 {
@@ -45,7 +46,40 @@
 
   hardware.graphics.enable32Bit = true; # compat
 
-  services.fprintd.enable = true; # goodix 27c6:659a
+  services = {
+    fprintd.enable = true; # goodix 27c6:659a
+    tlp = {
+      package = pkgs.tlp.overrideAttrs (old: {
+        patches = (old.patches or [ ]) ++ [ ./tlp-performance-on-battery.patch ];
+      });
+      settings.PLATFORM_PROFILE_ON_BAT = "quiet"; # balanced profile, despite the name
+    };
+  };
+
+  # fn+q is handled by the firmware and can't be disabled, so undo it; last_pwr
+  # is "PROFILE SOURCE", with 0 = performance or AC, 1 = balanced or battery
+  systemd.services.fnq-revert = {
+    description = "Revert fn+q to the platform profile set by TLP";
+    after = [ "tlp.service" ];
+    wantedBy = [ "multi-user.target" ];
+    path = [ pkgs.inotify-tools ];
+    script = ''
+      profile=/sys/firmware/acpi/platform_profile
+      inotifywait -qm -e modify "$profile" | while read -r _; do
+        case "$(cat /run/tlp/last_pwr)" in
+          "0 1") want=balanced ;;
+          0*) want=performance ;;
+          1*) want=quiet ;;
+          *) continue ;;
+        esac
+        if [ "$(cat "$profile")" != "$want" ]; then
+          echo "$want" > "$profile" || true
+          sleep 1 # the readback lags behind the write
+        fi
+      done
+    '';
+  };
+
   # noctalia's lockscreen talks to fprintd directly; pam_fprintd would make its
   # password auth (PAM service "login") wait for a finger first
   security.pam.services.login.fprintAuth = false;

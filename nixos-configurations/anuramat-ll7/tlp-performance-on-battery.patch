@@ -1,0 +1,33 @@
+Make the performance profile use the balanced platform profile on battery.
+
+The firmware has no performance platform profile on battery. That makes the
+platform profile depend on the power source too, so `tlp auto` has to reapply
+settings when the source changes, even if the profile stays the same: a profile
+kept across plugging or unplugging would otherwise keep the wrong platform
+profile.
+
+--- a/func.d/10-tlp-func-cpu
++++ b/func.d/10-tlp-func-cpu
+@@ -503,7 +503,10 @@
+     local pwr
+ 
+     case "$1" in
+-        "$PP_PRF") pwr="${PLATFORM_PROFILE_ON_AC:-}" ;;
++        "$PP_PRF")
++            pwr="${PLATFORM_PROFILE_ON_AC:-}"
++            [ "$_syspwr" = "$PS_BAT" ] && pwr="balanced"
++            ;;
+         "$PP_BAL") pwr="${PLATFORM_PROFILE_ON_BAT:-}" ;;
+         "$PP_SAV") pwr="${PLATFORM_PROFILE_ON_SAV:-$PLATFORM_PROFILE_ON_BAT}" ;;
+     esac
+--- a/tlp.in
++++ b/tlp.in
+@@ -336,7 +336,7 @@
+         _bgtask=1
+         check_services_activation_status
+         if lock_tlp_nb; then
+-            if has_power_profile_changed; then
++            if has_power_profile_changed || [ "$_syspwr" != "$_ps_last" ]; then
+                 apply_common_settings "$_pp_next"
+                 notify_profile_daemon "$(pp2str "$_pp_next")"
+                 poweroff_drivebay "$_pp_next" 0
