@@ -8,61 +8,75 @@
   programs.yazi = {
     enable = true;
     shellWrapperName = "y";
-    plugins.toggle-pane = pkgs.yaziPlugins.toggle-pane;
-    # SLOP: show embedded jpeg in preview
-    plugins.nef =
-      pkgs.writeTextDir "main.lua" # lua
-        ''
-          local M = {}
+    plugins = {
+      toggle-pane = pkgs.yaziPlugins.toggle-pane;
+      mime-ext = pkgs.yaziPlugins.mime-ext;
+      # SLOP: show embedded jpeg in preview
+      nef =
+        pkgs.writeTextDir "main.lua" # lua
+          ''
+            local M = {}
 
-          function M:peek(job)
-            local start, cache = os.clock(), ya.file_cache(job)
-            if not cache then return end
+            function M:peek(job)
+              local start, cache = os.clock(), ya.file_cache(job)
+              if not cache then return end
 
-            local ok, err = self:preload(job)
-            if not ok or err then return ya.preview_widget(job, err) end
+              local ok, err = self:preload(job)
+              if not ok or err then return ya.preview_widget(job, err) end
 
-            ya.sleep(math.max(0, rt.preview.image_delay / 1000 + start - os.clock()))
+              ya.sleep(math.max(0, rt.preview.image_delay / 1000 + start - os.clock()))
 
-            local _, err = ya.image_show(cache, job.area)
-            ya.preview_widget(job, err)
-          end
+              local _, err = ya.image_show(cache, job.area)
+              ya.preview_widget(job, err)
+            end
 
-          function M:seek() end
+            function M:seek() end
 
-          function M:preload(job)
-            local cache = ya.file_cache(job)
-            if not cache or fs.cha(cache) then return true end
+            function M:preload(job)
+              local cache = ya.file_cache(job)
+              if not cache or fs.cha(cache) then return true end
 
-            local out, err = Command("${lib.getExe pkgs.exiftool}")
-              :arg({ "-b", "-JpgFromRaw", tostring(job.file.path) })
-              :stdout(Command.PIPED)
-              :output()
-            if not out then return true, Err("Failed to start `exiftool`, error: %s", err) end
+              local out, err = Command("${lib.getExe pkgs.exiftool}")
+                :arg({ "-b", "-JpgFromRaw", tostring(job.file.path) })
+                :stdout(Command.PIPED)
+                :output()
+              if not out then return true, Err("Failed to start `exiftool`, error: %s", err) end
 
-            local jpg = Url(cache .. ".jpg")
-            fs.write(jpg, out.stdout)
-            local ok, err = ya.image_precache(jpg, cache)
-            fs.remove("file", jpg)
-            return ok, err
-          end
+              local jpg = Url(cache .. ".jpg")
+              fs.write(jpg, out.stdout)
+              local ok, err = ya.image_precache(jpg, cache)
+              fs.remove("file", jpg)
+              return ok, err
+            end
 
-          function M:spot(job) require("file"):spot(job) end
+            function M:spot(job) require("file"):spot(job) end
 
-          return M
-        '';
+            return M
+          '';
+    };
     settings = {
-      plugin.preloaders = [ ];
-      plugin.prepend_previewers = [
-        {
-          url = "/media/**";
-          run = "noop";
-        }
-        {
-          url = "*.nef";
-          run = "nef";
-        }
-      ];
+      plugin = {
+        preloaders = [ ];
+        # file(1) reads every file, which is slow on removable media
+        prepend_fetchers = [
+          {
+            url = "/media/**";
+            run = "mime-ext.local";
+            prio = "high";
+            group = "mime";
+          }
+        ];
+        prepend_previewers = [
+          {
+            url = "/media/**";
+            run = "noop";
+          }
+          {
+            url = "*.nef";
+            run = "nef";
+          }
+        ];
+      };
       mgr = {
         title_format = "";
         sort_by = "natural";
