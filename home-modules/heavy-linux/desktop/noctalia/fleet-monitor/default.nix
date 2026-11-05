@@ -73,15 +73,19 @@ let
           '';
     }
     {
-      # the CLIs' own access tokens are used as they are: an expired one fails
-      # its provider until the CLI's next run refreshes it
+      # the CLIs' own access tokens are used: Claude's is refreshed by starting
+      # the CLI, whose refresh is safe to race with running sessions; an expired
+      # Codex one fails its provider until the CLI's next run refreshes it
       name = "tokens";
       interval = 300;
       cmd =
         script "fleet-tokens"
           [
+            pkgs.claude-code
+            pkgs.coreutils
             pkgs.curl
             pkgs.jq
+            pkgs.util-linux
           ]
           ''
             # the credentials are located by the session variables, which user services don't get
@@ -95,7 +99,12 @@ let
               local out
               if out=$(curl -fsS --max-time 20 -H @- "$@" 2>&1); then echo "$out"; else jq -n --arg e "$out" '{error: $e}'; fi
             }
-            claude=$(jq -r '"Authorization: Bearer \(.claudeAiOauth.accessToken)"' "$CLAUDE_CONFIG_DIR/.credentials.json" |
+            creds=$CLAUDE_CONFIG_DIR/.credentials.json
+            # only the TUI refreshes the token (`claude auth status` doesn't), and it needs a pty
+            if jq -e '.claudeAiOauth.expiresAt < now * 1000' "$creds" >/dev/null; then
+              timeout 5 script -qec claude /dev/null </dev/null >/dev/null 2>&1 || :
+            fi
+            claude=$(jq -r '"Authorization: Bearer \(.claudeAiOauth.accessToken)"' "$creds" |
               usage https://api.anthropic.com/api/oauth/usage -H 'anthropic-beta: oauth-2025-04-20')
             codex=$(jq -r '.tokens | "Authorization: Bearer \(.access_token)\nChatGPT-Account-Id: \(.account_id)"' "$CODEX_HOME/auth.json" |
               usage https://chatgpt.com/backend-api/wham/usage)
