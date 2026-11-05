@@ -83,7 +83,9 @@ let
       # inside zellij, yazi trusts the environment, which names the terminal zellij was first
       # started from, and only tries sixel; zellij 0.45 answers the image queries for the
       # attached terminals, and has kitty graphics, but no unicode placeholders;
-      # previewers also run when the preview pane is hidden, drawing to an empty area
+      # previewers also run when the preview pane is hidden, drawing to an empty area;
+      # plugins can't sort files, so `sort exif` orders them by whatever the exif-date plugin
+      # puts in the directory size map, the only per-file data plugins can hand to the sorter
       yazi-unwrapped = prev.yazi-unwrapped.overrideAttrs {
         postPatch = ''
           substituteInPlace yazi-emulator/src/emulator.rs --replace-fail \
@@ -95,6 +97,19 @@ let
           substituteInPlace yazi-core/src/tab/preview.rs --replace-fail \
             'YAZI.plugin.previewers.matches(&file, &mime) else {' \
             'YAZI.plugin.previewers.matches(&file, &mime).filter(|_| !LAYOUT.get().preview.is_empty()) else {'
+          substituteInPlace yazi-fs/src/sorting.rs --replace-fail \
+            'Random,' \
+            'Random, Exif,'
+          substituteInPlace yazi-fs/src/files.rs --replace-fail \
+            'if self.sorter.by == SortBy::Size {' \
+            'if matches!(self.sorter.by, SortBy::Size | SortBy::Exif) {'
+          substituteInPlace yazi-fs/src/sorter.rs --replace-fail \
+            'SortBy::Random => {' \
+            'SortBy::Exif => items.sort_unstable_by(|a, b| {
+              promote!(a, b);
+              self.fallback(a, b, self.cmp(sizes.get(&a.urn()), sizes.get(&b.urn())))
+            }),
+            SortBy::Random => {'
         '';
       };
 
