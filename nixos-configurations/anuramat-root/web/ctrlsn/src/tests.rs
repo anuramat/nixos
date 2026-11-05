@@ -373,6 +373,25 @@ async fn image_revalidation() {
 }
 
 #[tokio::test]
+async fn session_check() {
+    let s = site();
+    let c = session(&s).await;
+    let head = |cookie: Option<&str>| {
+        let mut req = Request::head("/photo/misc");
+        if let Some(c) = cookie {
+            req = req.header(header::COOKIE, c);
+        }
+        send(&s, req.body(Body::empty()).unwrap())
+    };
+    assert_eq!(head(Some(&c)).await.status, StatusCode::OK);
+    assert_eq!(head(None).await.status, StatusCode::UNAUTHORIZED);
+    assert_eq!(
+        get(&s, "/static/js/session.js", None).await.status,
+        StatusCode::OK
+    );
+}
+
+#[tokio::test]
 async fn wrong_password() {
     let s = site();
     insta::assert_yaml_snapshot!(login(&s, "nope", "/photo/misc").await.snap(), @r#"
@@ -403,7 +422,7 @@ async fn login_redirects_back() {
     headers:
       content-length: "0"
       location: /photo/misc
-      set-cookie: "session=[value]; HttpOnly; SameSite=Lax; Secure; Path=/; Max-Age=3600"
+      set-cookie: "session=[value]; HttpOnly; SameSite=Lax; Secure; Path=/; Max-Age=2592000"
     body: []
     "#
     );
@@ -417,10 +436,12 @@ async fn album_list() {
     status: 200
     headers:
       cache-control: no-store
-      content-length: "726"
+      content-length: "771"
       content-type: text/html; charset=utf-8
     body:
-      - "<a href=\"/\">ctrl.sn</a> <span class=\"sep\">•</span> photo <span class=\"sep\">•</span> <form class=\"inline\" method=\"post\" action=\"/logout\">"
+      - "<a href=\"/\">ctrl.sn</a> <span class=\"sep\">•</span> photo <span class=\"sep\">•</span> <script src=\"/static/js/session.js\">"
+      - "</script>"
+      - "<form class=\"inline\" method=\"post\" action=\"/logout\">"
       - "<button class=\"link\">logout</button>"
       - "</form>"
       - "<ul>"
@@ -445,19 +466,21 @@ async fn album_page() {
     status: 200
     headers:
       cache-control: no-store
-      content-length: "1163"
+      content-length: "1256"
       content-type: text/html; charset=utf-8
     body:
-      - "<a href=\"/\">ctrl.sn</a> <span class=\"sep\">•</span> <a href=\"/photo\">photo</a> <span class=\"sep\">•</span> misc <span class=\"sep\">•</span> <a href=\"/photo/misc/zip\">zip</a>"
+      - "<a href=\"/\">ctrl.sn</a> <span class=\"sep\">•</span> <a href=\"/photo\">photo</a> <span class=\"sep\">•</span> misc <span class=\"sep\">•</span> <script src=\"/static/js/session.js\">"
+      - "</script>"
+      - "<a href=\"/photo/misc/zip\">zip</a>"
       - "<div id=\"album\">"
       - "<a href=\"/photo/fullsize/misc/a.jpg\" data-fslightbox=\"gallery\">"
-      - "<img src=\"/photo/preview/misc/a.jpg\" loading=\"lazy\" onerror=\"this.onerror=null; this.src='/static/assets/pfp.gif';\">"
+      - "<img src=\"/photo/preview/misc/a.jpg\" loading=\"lazy\" onerror=\"this.onerror=null; this.src='/static/assets/pfp.gif'; checkSession();\">"
       - "</a>"
       - "<a href=\"/photo/fullsize/misc/b.jpg\" data-fslightbox=\"gallery\">"
-      - "<img src=\"/photo/preview/misc/b.jpg\" loading=\"lazy\" onerror=\"this.onerror=null; this.src='/static/assets/pfp.gif';\">"
+      - "<img src=\"/photo/preview/misc/b.jpg\" loading=\"lazy\" onerror=\"this.onerror=null; this.src='/static/assets/pfp.gif'; checkSession();\">"
       - "</a>"
       - "<a href=\"/photo/fullsize/misc/ü.jpg\" data-fslightbox=\"gallery\">"
-      - "<img src=\"/photo/preview/misc/ü.jpg\" loading=\"lazy\" onerror=\"this.onerror=null; this.src='/static/assets/pfp.gif';\">"
+      - "<img src=\"/photo/preview/misc/ü.jpg\" loading=\"lazy\" onerror=\"this.onerror=null; this.src='/static/assets/pfp.gif'; checkSession();\">"
       - "</a>"
       - "</div>"
       - "<script src=\"/static/js/fslightbox.js\">"

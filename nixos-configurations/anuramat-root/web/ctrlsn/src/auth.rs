@@ -14,7 +14,7 @@ use serde::Deserialize;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 const COOKIE: &str = "session";
-const TTL: Duration = Duration::from_hours(1);
+const TTL: Duration = Duration::from_hours(30 * 24);
 
 fn now() -> u64 {
     SystemTime::now()

@@ -43,7 +43,7 @@ in
           inherit (inputs) crane fslightbox modern-normalize;
         }
       );
-      # PHOTO_PASS=...
+      # PHOTO_PASS=... and SESSION_KEY=...
       EnvironmentFile = config.age.secrets.ctrlsn.path;
       DynamicUser = true;
       Restart = "always";

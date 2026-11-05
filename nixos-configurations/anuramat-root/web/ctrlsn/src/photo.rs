@@ -44,6 +44,7 @@ pub async fn albums(State(s): State<AppState>) -> Markup {
         &["photo"],
         &html! {
             (sep())
+            script src="/static/js/session.js" {}
             form .inline method="post" action="/logout" { button .link { "logout" } }
             ul {
                 @for a in &names { li { a href={ "/photo/" (a) } { (a) } } }
@@ -61,12 +62,14 @@ pub async fn album(
         &["photo", &album],
         &html! {
             (sep())
+            // before the images, whose onerror uses it
+            script src="/static/js/session.js" {}
             a href={ "/photo/" (album) "/zip" } { "zip" }
             #album {
                 @for p in &photos {
                     a href={ "/photo/fullsize/" (album) "/" (p) } data-fslightbox="gallery" {
                         img src={ "/photo/preview/" (album) "/" (p) } loading="lazy"
-                            onerror="this.onerror=null; this.src='/static/assets/pfp.gif';";
+                            onerror="this.onerror=null; this.src='/static/assets/pfp.gif'; checkSession();";
                     }
                 }
             }

@@ -127,8 +127,7 @@ fn app(state: AppState) -> Router {
 async fn main() {
     let var = |k| env::var(k).unwrap_or_else(|_| panic!("{k} is not set"));
     let state = AppState {
-        // sessions don't survive restarts
-        key: Key::generate(),
+        key: Key::from(var("SESSION_KEY").as_bytes()),
         pass: var("PHOTO_PASS"),
         photos: var("PHOTO_DIR").into(),
     };
