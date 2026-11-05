@@ -1,7 +1,8 @@
 # a relay (see ../relay) that lets sandboxed agents ask to run a command
 # outside the sandbox: the request's description pops up as a notification
 # on every physical machine, whose [Review] opens a terminal with the full
-# request;
+# request; `hostrun-review` answers the host's pending requests from any
+# terminal instead, e.g. over ssh;
 # hosts that can't show one yet (asleep, offline) get retried; the first
 # answer counts and withdraws the other prompts; once approved, the command
 # runs as the user on the agent's host, in the agent's cwd, or with -h, over
@@ -50,24 +51,34 @@ let
     flakeIgnore = [ "E501" ];
   } (builtins.readFile ./handler.py);
 
+  # answers the given request, or, from a terminal, every pending one
   review = pkgs.writeShellApplication {
     name = "hostrun-review";
     text = ''
-      # control characters are shown instead of interpreted, so that the
-      # command can't hide parts of itself
-      cat -v "$1/request"
-      echo
-      read -rp 'run it? [y/N] ' answer
-      [ "$answer" != y ] || touch "$1/allow"
+      shopt -s nullglob
+      [ "$#" -gt 0 ] || set -- "$XDG_RUNTIME_DIR"/hostrun/*
+      [ "$#" -gt 0 ] || echo 'nothing pending'
+      for dir; do
+        # control characters are shown instead of interpreted, so that the
+        # command can't hide parts of itself
+        cat -v "$dir/request"
+        echo
+        read -rp 'run it? [y/N] ' answer
+        if [ "$answer" = y ]; then answer=allow; else answer=deny; fi
+        # read-write, so that a fifo left without its prompt can't block this
+        { echo "$answer" 1<>"$dir/answer"; } 2>/dev/null || echo 'already withdrawn'
+      done
     '';
   };
 
   # reads the description and the request on stdin, prints allow or deny;
-  # withdraws the prompt once stdin ends or goes quiet
+  # withdraws the prompt once stdin ends or goes quiet; the request stays open
+  # to hostrun-review, even while the notification can't be shown
   prompt = pkgs.writeShellApplication {
     name = "hostrun-prompt";
     runtimeInputs = with pkgs; [
       coreutils
+      procps # pkill
       # upstream notify-send --wait hangs when it can't show the notification,
       # e.g. without a desktop session
       (libnotify.overrideAttrs (old: {
@@ -76,8 +87,11 @@ let
       systemd
     ];
     text = ''
-      dir=$(mktemp -d)
+      # where hostrun-review finds it, and the sandboxes can't
+      mkdir -p "$XDG_RUNTIME_DIR/hostrun"
+      dir=$(mktemp -d -p "$XDG_RUNTIME_DIR/hostrun")
       trap 'rm -rf "$dir"' EXIT
+      trap exit HUP PIPE TERM # so that the EXIT trap runs
       # the description and the request each end with a NUL; stdin then stays
       # open until any host has an answer, or the requester is gone
       IFS= read -r -d "" desc
@@ -86,33 +100,48 @@ let
       unit=hostrun-review-''${dir##*.}
       # ssh sessions don't get the address, but the session bus is still there
       export DBUS_SESSION_BUS_ADDRESS=''${DBUS_SESSION_BUS_ADDRESS:-unix:path=$XDG_RUNTIME_DIR/bus}
-      # just the description: the whole request can push the buttons out of a
-      # long notification; notify-send expands backslash escapes in the body
-      notify-send --wait --urgency=critical --expire-time=0 --app-name=hostrun \
-        --action=review=Review --action=deny=Deny \
-        "hostrun: $(head -1 "$dir/request")" "''${desc//\\/\\\\}" >"$dir/action" &
-      notify=$!
+      # the first line written here is the answer; read-write, so that opening
+      # it doesn't wait for a writer
+      mkfifo "$dir/answer"
+      exec 3<>"$dir/answer"
+      (
+        # just the description: the whole request can push the buttons out of a
+        # long notification; notify-send expands backslash escapes in the body;
+        # it fails without a desktop session, which may still appear
+        until notify-send --wait --urgency=critical --expire-time=0 --app-name=hostrun \
+          --action=review=Review --action=deny=Deny \
+          "hostrun: $(head -1 "$dir/request")" "''${desc//\\/\\\\}" >"$dir/action"; do
+          # outlives this subshell, and ssh would wait for it on the outputs
+          sleep 30 >/dev/null 2>&1
+        done
+        if [ "$(<"$dir/action")" = review ]; then
+          # systemd-run: the graphical session's environment, which ssh sessions
+          # lack; a separate instance, so that --wait waits for this very window
+          systemd-run --user --wait --collect --quiet --unit="$unit" -- \
+            ${lib.getExe config.programs.ghostty.package} --class=${appId} \
+            --gtk-single-instance=false --title=hostrun -e ${lib.getExe review} "$dir" || true
+        fi
+        echo deny >&3
+      ) &
+      offer=$!
       # withdraw once the broker hangs up or misses 3 heartbeats (one every 30s);
-      # notify-send closes its notification on SIGINT; the explicit stdin, since
-      # background jobs get /dev/null otherwise
+      # the explicit stdin, since background jobs get /dev/null otherwise
       {
-        set +e
         while read -r -t 90; do :; done
-        kill -INT "$notify"
-        systemctl --user stop "$unit"
+        echo deny >&3
       } <&0 >/dev/null 2>&1 &
       watcher=$!
-      # needed only while this runs, and mustn't signal a stale pid later
-      trap 'rm -rf "$dir"; kill "$watcher" 2>/dev/null' EXIT
-      wait "$notify"
-      if [ "$(<"$dir/action")" = review ]; then
-        # systemd-run: the graphical session's environment, which ssh sessions
-        # lack; a separate instance, so that --wait waits for this very window
-        systemd-run --user --wait --collect --quiet --unit="$unit" -- \
-          ${lib.getExe config.programs.ghostty.package} --class=${appId} \
-          --gtk-single-instance=false --title=hostrun -e ${lib.getExe review} "$dir"
-      fi
-      if [ -e "$dir/allow" ]; then echo allow; else echo deny; fi
+      # notify-send closes its notification on SIGINT
+      cleanup() {
+        set +e
+        pkill -INT -P "$offer"
+        kill "$offer" "$watcher"
+        systemctl --user stop "$unit"
+        rm -rf "$dir"
+      } >/dev/null 2>&1
+      trap cleanup EXIT
+      IFS= read -r answer <&3
+      echo "$answer"
     '';
   };
 
@@ -127,6 +156,7 @@ in
   home.packages = [
     client
     prompt # found in PATH over ssh
+    review
   ];
 
   agents.relays.hostrun = "${lib.getExe handler} ${lib.getExe prompt} ${lib.concatStringsSep "," promptHosts}";

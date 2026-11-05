@@ -55,8 +55,7 @@ def ask(h, request):
 
 def first_answer(request):
     # the first line from any prompt; every 30s, the prompts get a heartbeat,
-    # and hosts without one (asleep, offline, logged out, dropped) get another
-    # try
+    # and hosts without one (asleep, offline, dropped) get another try
     poll = select.poll()
     live = {}  # stdout fd -> (host, prompt)
     tick = 0
