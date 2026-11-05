@@ -60,23 +60,37 @@ in
         return "'" .. s:gsub("'", "'\"'\"'") .. "'"
       end
 
+      local function marked_paths()
+        local paths = {}
+        for _, entry in ipairs(swayimg.imagelist.get()) do
+          if entry.mark then table.insert(paths, entry.path) end
+        end
+        return paths
+      end
+
       local function trash(mode)
         return function()
-          local img = mode.get_image()
-          if not img then return end
-          os.execute("${lib.getExe pkgs.trashy} -- " .. shquote(img.path))
-          swayimg.imagelist.remove(img.path)
-          swayimg.text.status = "File removed: " .. img.path
+          local paths = marked_paths()
+          if #paths == 0 then
+            local img = mode.get_image()
+            if not img then return end
+            paths = { img.path }
+          end
+          local trashed = 0
+          for _, path in ipairs(paths) do
+            if os.execute("${lib.getExe pkgs.trashy} -- " .. shquote(path)) == 0 then
+              swayimg.imagelist.remove(path)
+              trashed = trashed + 1
+            end
+          end
+          swayimg.text.status = "Trashed " .. trashed .. "/" .. #paths
         end
       end
       swayimg.viewer.on_key("Shift+Delete", trash(swayimg.viewer))
       swayimg.gallery.on_key("Shift+Delete", trash(swayimg.gallery))
 
       local function move_marked()
-        local marked = {}
-        for _, entry in ipairs(swayimg.imagelist.get()) do
-          if entry.mark then table.insert(marked, entry.path) end
-        end
+        local marked = marked_paths()
         if #marked == 0 then return end
         local picker = io.popen("${pickDir} " .. shquote(marked[1]:match("(.*)/")))
         local dest = picker:read("l")
