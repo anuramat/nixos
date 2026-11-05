@@ -887,19 +887,6 @@
         "type": "github"
       }
     },
-    "fslightbox": {
-      "flake": false,
-      "locked": {
-        "lastModified": 499162500,
-        "narHash": "sha256-2L6DDDg0V8icM971bWFAYrf2pKxKaAXAh//66I+OoBo=",
-        "type": "tarball",
-        "url": "https://registry.npmjs.org/fslightbox/-/fslightbox-3.0.9.tgz"
-      },
-      "original": {
-        "type": "tarball",
-        "url": "https://registry.npmjs.org/fslightbox/-/fslightbox-3.0.9.tgz"
-      }
-    },
     "ghostty": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -2013,6 +2000,19 @@
         "type": "github"
       }
     },
+    "photoswipe": {
+      "flake": false,
+      "locked": {
+        "lastModified": 499162500,
+        "narHash": "sha256-k0rs59aczlD5H/ia9WIVXBMpDf20eiEHiZh0LScncAo=",
+        "type": "tarball",
+        "url": "https://registry.npmjs.org/photoswipe/-/photoswipe-5.4.4.tgz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://registry.npmjs.org/photoswipe/-/photoswipe-5.4.4.tgz"
+      }
+    },
     "root": {
       "inputs": {
         "agenix": "agenix",
@@ -2024,7 +2024,6 @@
         "crane": "crane_2",
         "deadnix": "deadnix",
         "flake-parts": "flake-parts",
-        "fslightbox": "fslightbox",
         "ghostty": "ghostty",
         "git-hooks-nix": "git-hooks-nix",
         "home-manager": "home-manager_3",
@@ -2045,6 +2044,7 @@
         "nixvim": "nixvim",
         "noctalia": "noctalia",
         "pass-secret-service": "pass-secret-service",
+        "photoswipe": "photoswipe",
         "sem": "sem",
         "spicetify-nix": "spicetify-nix",
         "statix": "statix",

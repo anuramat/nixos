@@ -23,7 +23,7 @@ use tower_http::services::ServeDir;
 struct AppState {
     key: Key,
     pass: String,
-    // contains fullsize/ and preview/, each with a subdirectory per album
+    // contains fullsize/, medium/ and preview/, each with a subdirectory per album
     photos: PathBuf,
 }
 
@@ -106,6 +106,7 @@ fn app(state: AppState) -> Router {
             "/photo/fullsize",
             ServeDir::new(state.photos.join("fullsize")),
         )
+        .nest_service("/photo/medium", ServeDir::new(state.photos.join("medium")))
         .nest_service(
             "/photo/preview",
             ServeDir::new(state.photos.join("preview")),

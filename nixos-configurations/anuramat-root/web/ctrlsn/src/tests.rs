@@ -22,7 +22,7 @@ const PASS: &str = "hunter2";
 struct Site {
     app: Router,
     key: Key,
-    _dir: TempDir,
+    dir: TempDir,
 }
 
 fn site() -> Site {
@@ -32,7 +32,7 @@ fn site() -> Site {
         ("2024-05-01_berlin", &["x.jpg"]),
         ("2025-01-02_paris", &[]),
     ] {
-        for kind in ["fullsize", "preview"] {
+        for kind in ["fullsize", "medium", "preview"] {
             fs::create_dir_all(dir.path().join(kind).join(album)).unwrap();
             for f in files {
                 fs::write(
@@ -53,7 +53,7 @@ fn site() -> Site {
     Site {
         app: app(state),
         key,
-        _dir: dir,
+        dir,
     }
 }
 
@@ -218,7 +218,7 @@ async fn static_files() {
     let mut got = vec![];
     for uri in [
         "/static/css/main.css",
-        "/static/js/fslightbox.js",
+        "/static/js/photoswipe.esm.min.js",
         "/static/css/modern-normalize.css",
         "/static/nope.css",
         "/static/../Cargo.toml",
@@ -233,7 +233,7 @@ async fn static_files() {
         [
             ("/static/css/main.css", StatusCode::OK, mime("text/css")),
             (
-                "/static/js/fslightbox.js",
+                "/static/js/photoswipe.esm.min.js",
                 StatusCode::OK,
                 mime("text/javascript")
             ),
@@ -255,7 +255,7 @@ async fn static_revalidation() {
         let req = Request::get(uri).header(header::IF_NONE_MATCH, etag);
         send(&s, req.body(Body::empty()).unwrap()).await
     };
-    for uri in ["/static/css/main.css", "/static/js/fslightbox.js"] {
+    for uri in ["/static/css/main.css", "/static/js/photoswipe.esm.min.js"] {
         let etag = get(&s, uri, None).await.headers[header::ETAG].clone();
         let etag = etag.to_str().unwrap();
         assert_eq!(etag.len(), 66, "{etag}");
@@ -285,6 +285,7 @@ async fn protected_without_session() {
         "/photo/misc",
         "/photo/misc/zip",
         "/photo/fullsize/misc/a.jpg",
+        "/photo/medium/misc/a.jpg",
         "/photo/preview/misc/a.jpg",
     ] {
         let r = get(&s, uri, None).await;
@@ -330,7 +331,7 @@ async fn cache_control() {
         ("/photo/misc", None, "no-store"),
         ("/photo/preview/misc/a.jpg", None, "no-store"),
         ("/photo/preview/misc/a.jpg", Some(&c), "no-cache"),
-        ("/photo/fullsize/misc/a.jpg", Some(&c), "no-cache"),
+        ("/photo/medium/misc/a.jpg", Some(&c), "no-cache"),
     ] {
         assert_eq!(
             policy(&get(&s, uri, cookie.map(String::as_str)).await),
@@ -458,6 +459,29 @@ async fn album_list() {
     "#);
 }
 
+// headers of a jpeg
+fn jpeg(width: u16, height: u16) -> Vec<u8> {
+    let mut b = vec![0xff, 0xd8, 0xff, 0xc0, 0, 11, 8];
+    b.extend(height.to_be_bytes());
+    b.extend(width.to_be_bytes());
+    b.extend([1, 1, 0x11, 0, 0xff, 0xd9]);
+    b
+}
+
+#[tokio::test]
+async fn album_page_sizes() {
+    let s = site();
+    let c = session(&s).await;
+    let dir = s.dir.path();
+    fs::write(dir.join("fullsize/2025-01-02_paris/x.jpg"), "").unwrap();
+    fs::write(dir.join("medium/2025-01-02_paris/x.jpg"), jpeg(1067, 1600)).unwrap();
+    let body = get(&s, "/photo/2025-01-02_paris", Some(&c)).await.text();
+    let link = "<a href=\"/photo/fullsize/2025-01-02_paris/x.jpg\" \
+                data-pswp-src=\"/photo/medium/2025-01-02_paris/x.jpg\" \
+                data-pswp-width=\"1067\" data-pswp-height=\"1600\">";
+    assert!(body.contains(link), "{body}");
+}
+
 #[tokio::test]
 async fn album_page() {
     let s = site();
@@ -466,24 +490,25 @@ async fn album_page() {
     status: 200
     headers:
       cache-control: no-store
-      content-length: "1256"
+      content-length: "1368"
       content-type: text/html; charset=utf-8
     body:
-      - "<a href=\"/\">ctrl.sn</a> <span class=\"sep\">•</span> <a href=\"/photo\">photo</a> <span class=\"sep\">•</span> misc <span class=\"sep\">•</span> <script src=\"/static/js/session.js\">"
+      - "<a href=\"/\">ctrl.sn</a> <span class=\"sep\">•</span> <a href=\"/photo\">photo</a> <span class=\"sep\">•</span> misc <span class=\"sep\">•</span> <link rel=\"stylesheet\" href=\"/static/css/photoswipe.css\">"
+      - "<script src=\"/static/js/session.js\">"
       - "</script>"
       - "<a href=\"/photo/misc/zip\">zip</a>"
       - "<div id=\"album\">"
-      - "<a href=\"/photo/fullsize/misc/a.jpg\" data-fslightbox=\"gallery\">"
+      - "<a href=\"/photo/fullsize/misc/a.jpg\" data-pswp-src=\"/photo/medium/misc/a.jpg\">"
       - "<img src=\"/photo/preview/misc/a.jpg\" loading=\"lazy\" onerror=\"this.onerror=null; this.src='/static/assets/pfp.gif'; checkSession();\">"
       - "</a>"
-      - "<a href=\"/photo/fullsize/misc/b.jpg\" data-fslightbox=\"gallery\">"
+      - "<a href=\"/photo/fullsize/misc/b.jpg\" data-pswp-src=\"/photo/medium/misc/b.jpg\">"
       - "<img src=\"/photo/preview/misc/b.jpg\" loading=\"lazy\" onerror=\"this.onerror=null; this.src='/static/assets/pfp.gif'; checkSession();\">"
       - "</a>"
-      - "<a href=\"/photo/fullsize/misc/ü.jpg\" data-fslightbox=\"gallery\">"
+      - "<a href=\"/photo/fullsize/misc/ü.jpg\" data-pswp-src=\"/photo/medium/misc/ü.jpg\">"
       - "<img src=\"/photo/preview/misc/ü.jpg\" loading=\"lazy\" onerror=\"this.onerror=null; this.src='/static/assets/pfp.gif'; checkSession();\">"
       - "</a>"
       - "</div>"
-      - "<script src=\"/static/js/fslightbox.js\">"
+      - "<script type=\"module\" src=\"/static/js/album.js\">"
       - "</script>"
     "#);
 }
@@ -498,8 +523,8 @@ async fn missing_and_traversal() {
         "/photo/..",
         "/photo/..%2F..%2Fetc",
         "/photo/..%2Ffullsize/zip",
-        "/photo/fullsize/..%2F..%2Fetc%2Fpasswd",
-        "/photo/fullsize/misc/nope.jpg",
+        "/photo/medium/..%2F..%2Fetc%2Fpasswd",
+        "/photo/medium/misc/nope.jpg",
     ];
     let mut got = vec![];
     for uri in uris {
@@ -517,7 +542,7 @@ async fn not_found_page() {
         "/nope",
         "/static/nope.css",
         "/photo/nope",
-        "/photo/fullsize/misc/nope.jpg",
+        "/photo/medium/misc/nope.jpg",
     ];
     let mut got = vec![];
     for uri in uris {
@@ -542,6 +567,7 @@ async fn images() {
     let mut got = vec![];
     for uri in [
         "/photo/fullsize/misc/a.jpg",
+        "/photo/medium/2024-05-01_berlin/x.jpg",
         "/photo/preview/2024-05-01_berlin/x.jpg",
     ] {
         let r = get(&s, uri, Some(&c)).await;
@@ -551,6 +577,7 @@ async fn images() {
         got,
         [
             (StatusCode::OK, "fullsize a.jpg".into()),
+            (StatusCode::OK, "medium x.jpg".into()),
             (StatusCode::OK, "preview x.jpg".into())
         ]
     );

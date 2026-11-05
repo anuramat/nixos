@@ -58,22 +58,28 @@ pub async fn album(
     Path(album): Path<String>,
 ) -> Result<Markup, StatusCode> {
     let photos = album_files(&s, &album)?;
+    let dir = s.photos.join("medium").join(&album);
     Ok(page(
         &["photo", &album],
         &html! {
             (sep())
+            link rel="stylesheet" href="/static/css/photoswipe.css";
             // before the images, whose onerror uses it
             script src="/static/js/session.js" {}
             a href={ "/photo/" (album) "/zip" } { "zip" }
             #album {
                 @for p in &photos {
-                    a href={ "/photo/fullsize/" (album) "/" (p) } data-fslightbox="gallery" {
+                    @let size = imagesize::size(dir.join(p)).ok();
+                    a href={ "/photo/fullsize/" (album) "/" (p) }
+                        data-pswp-src={ "/photo/medium/" (album) "/" (p) }
+                        data-pswp-width=[size.map(|s| s.width)]
+                        data-pswp-height=[size.map(|s| s.height)] {
                         img src={ "/photo/preview/" (album) "/" (p) } loading="lazy"
                             onerror="this.onerror=null; this.src='/static/assets/pfp.gif'; checkSession();";
                     }
                 }
             }
-            script src="/static/js/fslightbox.js" {}
+            script type="module" src="/static/js/album.js" {}
         },
     ))
 }

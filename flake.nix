@@ -40,8 +40,8 @@
 
     # my stuff
     # ctrlsn's third-party assets, served under /static
-    fslightbox = {
-      url = "https://registry.npmjs.org/fslightbox/-/fslightbox-3.0.9.tgz";
+    photoswipe = {
+      url = "https://registry.npmjs.org/photoswipe/-/photoswipe-5.4.4.tgz";
       flake = false;
     };
     modern-normalize = {

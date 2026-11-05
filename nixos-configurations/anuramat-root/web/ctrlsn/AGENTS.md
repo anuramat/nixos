@@ -14,7 +14,7 @@ Standalone, `default.nix` and `shell.nix` take nixpkgs, crane and the assets
 from `NIX_PATH`, which NixOS points at the same inputs; new inputs show up
 there only after a rebuild.
 
-Third-party assets (fslightbox, modern-normalize) are inputs of the
+Third-party assets (modern-normalize, photoswipe) are inputs of the
 `/etc/nixos` flake (npm tarballs), copied into `$CTRLSN_VENDOR` by `default.nix` and embedded like
 `static/`; both are served under `/static`. To update one, change its URL in
 `/etc/nixos/flake.nix`.
@@ -34,7 +34,7 @@ static/        css, images
 
 - `/`, `/about`, `/static/*` are public.
 - `/photo`, `/photo/{album}`, `/photo/{album}/zip`, `/photo/fullsize/*`,
-  `/photo/preview/*` require a session; otherwise the login page is
+  `/photo/medium/*`, `/photo/preview/*` require a session; otherwise the login page is
   returned with 401. The login form posts to `/login` with the page to
   return to; `/logout` is a POST. Their HTML responses are `no-store` and
   the rest `no-cache`, so that browsers can't show them without a session.
@@ -49,7 +49,12 @@ static/        css, images
   again, and when a preview fails to load.
 - Albums are the subdirectories of `$PHOTO_DIR/fullsize`, read on every
   request, in reverse alphabetical order: names start with `YYYY-MM-DD_`,
-  so the newest album comes first. Previews (256px) live under the same paths in `$PHOTO_DIR/preview`.
+  so the newest album comes first. Previews (256px wide) and medium sizes (1600px long edge, for the lightbox)
+  live under the same paths in `$PHOTO_DIR/preview` and `$PHOTO_DIR/medium`.
+- The album page gives PhotoSwipe (`static/js/album.js`) the size of each
+  medium photo, read from its headers on every request. Full-size photos are
+  only for downloads: the zips, the album links ("save link as"), and the
+  lightbox's download button.
 
 ## Configuration
 
@@ -77,4 +82,4 @@ NixOS host `anuramat-root`, configured in `/etc/nixos`
 the `ctrl.sn` systemd service (`DynamicUser`), `PHOTO_PASS` and `SESSION_KEY` come from the
 agenix secret `ctrlsn.age`, photos are uploaded to `/var/www/photo`; then
 `make` in `/var/www` (`previews.mk` next to this directory) generates the
-missing previews. To deploy: rebuild `anuramat-root`.
+missing previews and medium sizes. To deploy: rebuild `anuramat-root`.

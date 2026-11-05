@@ -17,10 +17,11 @@ in
       root = domain;
     }
   ];
-  # photos are uploaded by hand, then `make` in /var/www generates previews;
+  # photos are uploaded by hand, then `make` in /var/www generates the smaller sizes;
   # world-readable, since the service runs as a dynamic user
   systemd.tmpfiles.rules = [
     "d /var/www/photo/fullsize 0755 ${username} users -"
+    "d /var/www/photo/medium 0755 ${username} users -"
     "d /var/www/photo/preview 0755 ${username} users -"
     "L+ /var/www/Makefile - - - - ${
       pkgs.replaceVars ./previews.mk {
@@ -40,7 +41,7 @@ in
       ExecStart = lib.getExe (
         import ./ctrlsn {
           inherit pkgs;
-          inherit (inputs) crane fslightbox modern-normalize;
+          inherit (inputs) crane modern-normalize photoswipe;
         }
       );
       # PHOTO_PASS=... and SESSION_KEY=...
