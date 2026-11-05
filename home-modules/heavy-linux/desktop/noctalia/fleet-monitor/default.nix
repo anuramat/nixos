@@ -100,12 +100,17 @@ let
               if out=$(curl -fsS --max-time 20 -H @- "$@" 2>&1); then echo "$out"; else jq -n --arg e "$out" '{error: $e}'; fi
             }
             creds=$CLAUDE_CONFIG_DIR/.credentials.json
-            # only the TUI refreshes the token (`claude auth status` doesn't), and it needs a pty
-            if jq -e '.claudeAiOauth.expiresAt < now * 1000' "$creds" >/dev/null; then
-              timeout 5 script -qec claude /dev/null </dev/null >/dev/null 2>&1 || :
+            # claude blanks the tokens when the server rejects the refresh token
+            if jq -e '.claudeAiOauth.refreshToken == ""' "$creds" >/dev/null; then
+              claude='{"error": "not logged in"}'
+            else
+              # only the TUI refreshes the token (`claude auth status` doesn't), and it needs a pty
+              if jq -e '.claudeAiOauth.expiresAt < now * 1000' "$creds" >/dev/null; then
+                timeout 5 script -qec claude /dev/null </dev/null >/dev/null 2>&1 || :
+              fi
+              claude=$(jq -r '"Authorization: Bearer \(.claudeAiOauth.accessToken)"' "$creds" |
+                usage https://api.anthropic.com/api/oauth/usage -H 'anthropic-beta: oauth-2025-04-20')
             fi
-            claude=$(jq -r '"Authorization: Bearer \(.claudeAiOauth.accessToken)"' "$creds" |
-              usage https://api.anthropic.com/api/oauth/usage -H 'anthropic-beta: oauth-2025-04-20')
             codex=$(jq -r '.tokens | "Authorization: Bearer \(.access_token)\nChatGPT-Account-Id: \(.account_id)"' "$CODEX_HOME/auth.json" |
               usage https://chatgpt.com/backend-api/wham/usage)
             jq -n --argjson claude "$claude" --argjson codex "$codex" -f ${./tokens.jq}
