@@ -52,7 +52,13 @@
       package = pkgs.tlp.overrideAttrs (old: {
         patches = (old.patches or [ ]) ++ [ ./tlp-performance-on-battery.patch ];
       });
-      settings.PLATFORM_PROFILE_ON_BAT = "quiet"; # balanced profile, despite the name
+      settings = {
+        PLATFORM_PROFILE_ON_BAT = "quiet"; # balanced profile, despite the name
+        # RUNTIME_PM_ON_AC=on would keep the dGPU awake on AC: directly, and through
+        # its HDMI audio function, a runtime PM consumer of the GPU; the Thunderbolt
+        # xHCI needs listing too, since TLP denylists xhci_hcd by default
+        RUNTIME_PM_ENABLE = "01:00.0 01:00.1 3d:00.0";
+      };
     };
   };
 
