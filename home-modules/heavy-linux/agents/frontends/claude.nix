@@ -162,6 +162,7 @@ in
       claudeSettings = config.lib.home.json.set {
         showThinkingSummaries = true;
         tui = "fullscreen";
+        outputStyle = "Concise";
         enabledPlugins = {
           "rust-analyzer-lsp@claude-plugins-official" = false;
           "pyright-lsp@claude-plugins-official" = false;
