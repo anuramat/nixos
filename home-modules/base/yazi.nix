@@ -8,6 +8,10 @@
   programs.yazi = {
     enable = true;
     shellWrapperName = "y";
+    initLua = # lua
+      ''
+        require("toggle-pane"):entry("min-preview")
+      '';
     plugins = {
       toggle-pane = pkgs.yaziPlugins.toggle-pane;
       mime-ext = pkgs.yaziPlugins.mime-ext;

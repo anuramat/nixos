@@ -82,7 +82,8 @@ let
 
       # inside zellij, yazi trusts the environment, which names the terminal zellij was first
       # started from, and only tries sixel; zellij 0.45 answers the image queries for the
-      # attached terminals, and has kitty graphics, but no unicode placeholders
+      # attached terminals, and has kitty graphics, but no unicode placeholders;
+      # previewers also run when the preview pane is hidden, drawing to an empty area
       yazi-unwrapped = prev.yazi-unwrapped.overrideAttrs {
         postPatch = ''
           substituteInPlace yazi-emulator/src/emulator.rs --replace-fail \
@@ -91,6 +92,9 @@ let
           substituteInPlace yazi-adapter/src/adapter.rs --replace-fail \
             'adapters.retain(|p| *p == Self::Sixel);' \
             'adapters.retain(|p| *p != Self::Kgp);'
+          substituteInPlace yazi-core/src/tab/preview.rs --replace-fail \
+            'YAZI.plugin.previewers.matches(&file, &mime) else {' \
+            'YAZI.plugin.previewers.matches(&file, &mime).filter(|_| !LAYOUT.get().preview.is_empty()) else {'
         '';
       };
 
