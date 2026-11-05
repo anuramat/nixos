@@ -44,6 +44,9 @@ let
             $SHORT_DESCRIPTION` as in conventional commits -- you MUST omit the
             type. WIP commits get an additional "WIP: " prefix.
 
+            Unless the user asks for a new branch, you MUST commit on the
+            current branch, even if it's the default one.
+
             Backward compatibility is not a goal, unless explicitly specified.
             You MUST NOT add fallbacks, shims, wrappers, aliases, or dual
             behavior for old codepaths.
