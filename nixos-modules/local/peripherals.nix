@@ -8,9 +8,8 @@ let
 in
 {
   users.users.${username}.extraGroups = [ "dialout" ]; # serial ports
-  # NOTE 2026-05-29 razer commented out because it breaks with newer kernel
   hardware = {
-    # openrazer.enable = true;
+    openrazer.enable = true;
     openrazer.users = [ username ];
     keyboard.zsa.enable = true;
   };
