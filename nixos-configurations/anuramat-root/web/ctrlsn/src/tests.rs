@@ -300,6 +300,7 @@ async fn protected_without_session() {
     insta::assert_yaml_snapshot!(get(&s, "/photo/misc", None).await.snap(), @r#"
     status: 401
     headers:
+      cache-control: no-store
       content-length: "641"
       content-type: text/html; charset=utf-8
     body:
@@ -311,6 +312,64 @@ async fn protected_without_session() {
       - "</form>"
       - "</div>"
     "#);
+}
+
+#[tokio::test]
+async fn cache_control() {
+    let s = site();
+    let c = session(&s).await;
+    let policy = |r: &Res| {
+        r.headers[header::CACHE_CONTROL]
+            .to_str()
+            .unwrap()
+            .to_string()
+    };
+    for (uri, cookie, expected) in [
+        ("/photo", Some(&c), "no-store"),
+        ("/photo/misc", Some(&c), "no-store"),
+        ("/photo/misc", None, "no-store"),
+        ("/photo/preview/misc/a.jpg", None, "no-store"),
+        ("/photo/preview/misc/a.jpg", Some(&c), "no-cache"),
+        ("/photo/fullsize/misc/a.jpg", Some(&c), "no-cache"),
+    ] {
+        assert_eq!(
+            policy(&get(&s, uri, cookie.map(String::as_str)).await),
+            expected,
+            "{uri}"
+        );
+    }
+    assert!(
+        !get(&s, "/", None)
+            .await
+            .headers
+            .contains_key(header::CACHE_CONTROL)
+    );
+}
+
+// revalidation is cheap with a session, and fails without one
+#[tokio::test]
+async fn image_revalidation() {
+    let s = site();
+    let c = session(&s).await;
+    let uri = "/photo/preview/misc/a.jpg";
+    let first = get(&s, uri, Some(&c)).await;
+    let modified = first.headers[header::LAST_MODIFIED].clone();
+    let revalidate = |cookie: Option<&str>| {
+        let mut req = Request::get(uri).header(header::IF_MODIFIED_SINCE, modified.clone());
+        if let Some(c) = cookie {
+            req = req.header(header::COOKIE, c);
+        }
+        send(&s, req.body(Body::empty()).unwrap())
+    };
+    let cached = revalidate(Some(&c)).await;
+    assert_eq!(
+        (
+            cached.status,
+            cached.headers[header::CACHE_CONTROL].to_str().unwrap()
+        ),
+        (StatusCode::NOT_MODIFIED, "no-cache")
+    );
+    assert_eq!(revalidate(None).await.status, StatusCode::UNAUTHORIZED);
 }
 
 #[tokio::test]
@@ -357,6 +416,7 @@ async fn album_list() {
     insta::assert_yaml_snapshot!(get(&s, "/photo", Some(&c)).await.snap(), @r#"
     status: 200
     headers:
+      cache-control: no-store
       content-length: "726"
       content-type: text/html; charset=utf-8
     body:
@@ -384,6 +444,7 @@ async fn album_page() {
     insta::assert_yaml_snapshot!(get(&s, "/photo/misc", Some(&c)).await.snap(), @r#"
     status: 200
     headers:
+      cache-control: no-store
       content-length: "1163"
       content-type: text/html; charset=utf-8
     body:
@@ -487,7 +548,8 @@ async fn zip() {
     }
     insta::assert_yaml_snapshot!((r.status.as_u16(), r.header_map(), files), @r#"
     - 200
-    - content-disposition: "attachment; filename=\"misc.zip\""
+    - cache-control: no-cache
+      content-disposition: "attachment; filename=\"misc.zip\""
       content-length: "325"
       content-type: application/zip
     - a.jpg: fullsize a.jpg

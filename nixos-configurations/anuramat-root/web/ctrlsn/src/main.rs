@@ -7,8 +7,8 @@ use axum::{
     Router,
     extract::{FromRef, Path},
     http::{
-        HeaderMap, StatusCode, Uri,
-        header::{CONTENT_TYPE, ETAG, IF_NONE_MATCH},
+        HeaderMap, HeaderValue, StatusCode, Uri,
+        header::{CACHE_CONTROL, CONTENT_TYPE, ETAG, IF_NONE_MATCH},
     },
     middleware,
     response::{IntoResponse, Redirect, Response},
@@ -85,6 +85,18 @@ async fn not_found(r: Response) -> Response {
     }
 }
 
+// a browser's copy must not outlive the session: pages are never stored, and
+// everything else is revalidated, which goes through the session check
+async fn cache_control(mut r: Response) -> Response {
+    let html = r
+        .headers()
+        .get(CONTENT_TYPE)
+        .is_some_and(|v| v.as_bytes().starts_with(b"text/html"));
+    let policy = HeaderValue::from_static(if html { "no-store" } else { "no-cache" });
+    r.headers_mut().insert(CACHE_CONTROL, policy);
+    r
+}
+
 fn app(state: AppState) -> Router {
     Router::new()
         .route("/photo", get(photo::albums))
@@ -100,6 +112,7 @@ fn app(state: AppState) -> Router {
         )
         // only applies to the routes above
         .route_layer(middleware::from_fn_with_state(state.clone(), auth::require))
+        .route_layer(middleware::map_response(cache_control))
         .route("/", get(pages::index))
         .route("/about", get(pages::about))
         .route("/static/{*path}", get(asset))

@@ -36,7 +36,8 @@ static/        css, images
 - `/photo`, `/photo/{album}`, `/photo/{album}/zip`, `/photo/fullsize/*`,
   `/photo/preview/*` require a session; otherwise the login page is
   returned with 401. The login form posts to `/login` with the page to
-  return to; `/logout` is a POST.
+  return to; `/logout` is a POST. Their HTML responses are `no-store` and
+  the rest `no-cache`, so that browsers can't show them without a session.
 - Any other path ending in `/` redirects (308) to the same path without
   the trailing slashes, keeping the query; the rest is 404.
 - Every 404, from any handler or `ServeDir`, gets the same page.
