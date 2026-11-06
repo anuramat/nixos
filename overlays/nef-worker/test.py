@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 # SLOP
-"""Exercises every nef-worker command: test.py WORKER NEF LEGACY_NEF NRW JPEG
+"""Exercises every nef-worker command: test.py WORKER NEF LEGACY_NEF NRW JPEG RECIPES
 
 NEF should be from a recent body, and LEGACY_NEF from one that predates Picture Control, e.g. a D70.
+RECIPES is a directory of .NP3 files that has BleachBypass_01a, e.g. the nikon-recipes flake input.
 Uses /dev/shm; set XDG_CACHE_HOME to try a fresh wine prefix.
 """
 
 import array
+import glob
 import itertools
 import json
 import os
@@ -18,7 +20,7 @@ import tempfile
 import threading
 import unittest
 
-WORKER, NEF, LEGACY_NEF, NRW, JPEG = sys.argv[1:6]
+WORKER, NEF, LEGACY_NEF, NRW, JPEG, RECIPES = sys.argv[1:7]
 
 OK, INVALID_PARAM, FILE_IO = 0, 4, 9
 FORMAT_JPEG, FORMAT_NEF, FORMAT_NRW = 0x20, 0x100000, 0x200000
@@ -94,6 +96,7 @@ COMMANDS = {
     "GetDynamicRange",
     "SetDynamicRange",
     "GetWBGain",
+    "ApplyRecipe",
 }
 
 
@@ -647,6 +650,171 @@ class Protocol(unittest.TestCase):
 
     def test_unknown_session(self):
         self.assertNotEqual(worker("GetImageInfo", ulSessionID=9999)["code"], OK)
+
+
+def recipe_records(path):
+    with open(path, "rb") as file:
+        data = file.read()
+    records, at = {}, 4
+    while tag := int.from_bytes(data[at : at + 4], "big"):
+        size = int.from_bytes(data[at + 4 : at + 8], "big")
+        records[tag] = data[at + 8 : at + 8 + size]
+        at += 8 + size
+    return records
+
+
+def recipe_value(value, divisor, unset):
+    return unset if value in (0, 1, 0xFF) else (value - 0x80) / divisor
+
+
+def expected_recipe(records):
+    blender, grading = records[0x1F00], records[0x2000]
+    sliders = [
+        recipe_value(records[tag][0], records[tag][1], 0)
+        for tag in range(0x1900, 0x1F00, 0x100)
+    ]
+    return {
+        "dbContrast": sliders[0],
+        "dbHighlight": sliders[1],
+        "dbShadow": sliders[2],
+        "dbWhiteLevel": sliders[3],
+        "dbBlackLevel": sliders[4],
+        "dbSaturation": sliders[5],
+        "dbColorBlender": [
+            [
+                recipe_value(blender[color * 3 + value], blender[24 + value], 0)
+                for value in range(3)
+            ]
+            for color in range(8)
+        ],
+        "dbColorGrading": [
+            [
+                int.from_bytes(grading[zone * 4 : zone * 4 + 2], "big") - 0x8000,
+                recipe_value(grading[zone * 4 + 2], grading[13], 0),
+                recipe_value(grading[zone * 4 + 3], grading[14], 0),
+            ]
+            for zone in range(3)
+        ],
+        "dbBlending": recipe_value(grading[16], grading[17], 50),
+        "dbBalance": recipe_value(grading[18], grading[19], 0),
+    }
+
+
+class Recipes(unittest.TestCase):
+    def bleach_bypass(self):
+        return f"{RECIPES}/Color Grading/BleachBypass_01a.NP3"
+
+    def test_known_recipe(self):
+        with Session() as session:
+            response = session("ApplyRecipe", path=self.bleach_bypass())
+            self.assertEqual(response["code"], OK)
+            value = session("GetRawDevelopmentParam", ulRawDevelopment=PICTURE_CONTROL)
+            self.assertEqual(value["ulPictureControl"], PICTURE_CONTROL_FLEXIBLE_COLOR)
+            self.assertEqual(value["dbSharpness"], 2)
+            self.assertEqual(value["dbClarity"], 0.5)
+            self.assertEqual(value["dbMiddleRangeSharp"], 1)
+            flexible = value["flc_dbParams"]
+            self.assertEqual(flexible["dbContrast"], 40)
+            self.assertEqual(flexible["dbHighlight"], -20)
+            self.assertEqual(flexible["dbShadow"], -55)
+            self.assertEqual(flexible["dbWhiteLevel"], 0)
+            self.assertEqual(flexible["dbBlackLevel"], -10)
+            self.assertEqual(flexible["dbSaturation"], -50)
+            self.assertEqual(flexible["dbColorBlender"][0], [2, -2, -15])
+            self.assertEqual(
+                flexible["dbColorGrading"], [[0, 0, -5], [0, 0, -30], [0, 0, 0]]
+            )
+            self.assertEqual(flexible["dbBlending"], 50)
+            self.assertEqual(flexible["dbBalance"], 0)
+
+    def test_every_recipe(self):
+        applied = 0
+        with Session() as session:
+            for path in glob.glob(f"{RECIPES}/**/*.NP3", recursive=True):
+                records = recipe_records(path)
+                response = session("ApplyRecipe", path=path)
+                if 1 in records or 2 in records:
+                    self.assertEqual(response["code"], INVALID_PARAM, path)
+                    self.assertIn("curve", response["message"])
+                elif records[0x300] != PICTURE_CONTROL_FLEXIBLE_COLOR.to_bytes(
+                    2, "big"
+                ):
+                    self.assertEqual(response["code"], INVALID_PARAM, path)
+                    self.assertIn("Flexible Color", response["message"])
+                else:
+                    self.assertEqual(response["code"], OK, path)
+                    value = session(
+                        "GetRawDevelopmentParam", ulRawDevelopment=PICTURE_CONTROL
+                    )
+                    flexible = value["flc_dbParams"]
+                    expected = expected_recipe(records)
+                    self.assertEqual(
+                        {key: flexible[key] for key in expected}, expected, path
+                    )
+                    for field, tag in (
+                        ("dbSharpness", 0x600),
+                        ("dbClarity", 0x700),
+                        ("dbMiddleRangeSharp", 0x1600),
+                    ):
+                        self.assertEqual(
+                            value[field], recipe_value(*records[tag], None), path
+                        )
+                    applied += 1
+        self.assertGreater(applied, 0)
+
+    def test_image_changes(self):
+        with Session() as session:
+            session.scale()
+            session.set_profile("NKsRGB")
+            session(
+                "RawDevelopment",
+                ulRawDevelopment=PICTURE_CONTROL,
+                ulPictureControl=PICTURE_CONTROL_FLEXIBLE_COLOR,
+            )
+            base = session.develop()[1]
+            session("ApplyRecipe", path=self.bleach_bypass())
+            self.assertNotEqual(session.develop()[1], base)
+
+    def test_recipes_replace_each_other(self):
+        other = f"{RECIPES}/Color Grading/ClrMode_Bu_01a.NP3"
+        with Session() as session:
+            session.scale()
+            session.set_profile("NKsRGB")
+            session("ApplyRecipe", path=self.bleach_bypass())
+            first = session.develop()[1]
+            session("ApplyRecipe", path=other)
+            session("ApplyRecipe", path=self.bleach_bypass())
+            self.assertEqual(session.develop()[1], first)
+
+    def test_settings_stay_changeable(self):
+        with Session() as session:
+            session("ApplyRecipe", path=self.bleach_bypass())
+            session("RawDevelopment", ulRawDevelopment=EXP_COMP, dbExpComp=1)
+            value = session("GetRawDevelopmentParam", ulRawDevelopment=PICTURE_CONTROL)
+            self.assertEqual(value["flc_dbParams"]["dbContrast"], 40)
+
+    def test_bad_files(self):
+        with Session() as session:
+            missing = session("ApplyRecipe", path="/nonexistent/recipe.NP3")
+            self.assertEqual(missing["code"], INVALID_PARAM)
+            self.assertIn("recipe.NP3", missing["message"])
+            path = f"{shm.name}/{next(names)}"
+            with open(self.bleach_bypass(), "rb") as source, open(path, "wb") as file:
+                file.write(source.read()[:200])
+            truncated = session("ApplyRecipe", path=path)
+            self.assertEqual(truncated["code"], INVALID_PARAM)
+            with open(path, "wb") as file:
+                file.write(b"junk")
+            junk = session("ApplyRecipe", path=path)
+            self.assertEqual(junk["code"], INVALID_PARAM)
+            self.assertIn("recipe", junk["message"])
+            os.unlink(path)
+
+    def test_legacy_file_is_left_to_the_sdk(self):
+        with Session(LEGACY_NEF) as session:
+            response = session("ApplyRecipe", path=self.bleach_bypass())
+            self.assertTrue(failed(response["code"]), response)
+            self.assertNotIn("message", response)
 
 
 def test_all_commands_called():

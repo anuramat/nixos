@@ -27,6 +27,9 @@
 //   where the SDK's profiles are), or the SDK's special values, e.g. "HLG"
 // - GetTagData answers with "pData": a number, string, boolean, structure, or hex for raw bytes
 // - GetWBGain {path} is new: it's MiniSDK's NkWBGetWBGain, with an eNkwbResultValues "code"
+// - ApplyRecipe {ulSessionID, path} is new: it applies a Flexible Color .NP3 Picture Control recipe, and
+//   answers like RawDevelopment; the SDK has no such command, and can't take custom tone curves,
+//   so recipes with one are refused, as are those based on other Picture Controls
 // Missing on purpose: kNkfl_RawDevelopment_PictureControlAsShot, undocumented, which the SDK rejects
 // whatever the structure's size. Nothing cancels a development, since contrary to its documentation
 // the SDK ignores what the progress callback returns: to abort, kill the worker, and start a new one.
@@ -326,6 +329,94 @@ static const std::map<unsigned long, json (*)(const json &, bool)> rawParams = {
 static json rawDevelopment(const json &req) { return rawParams.at(req.at("ulRawDevelopment"))(req, true); }
 static json getRawDevelopmentParam(const json &req) { return rawParams.at(req.at("ulRawDevelopment"))(req, false); }
 
+// A recipe file is a 4-byte ID, then records of a big-endian 32-bit tag and size, up to a zero tag.
+// The layout comes from the SDK's own reader, CPictureControlData::Import, which it only uses internally.
+static std::map<unsigned long, std::string> recipeRecords(const std::vector<char> &file) {
+	std::map<unsigned long, std::string> records;
+	auto u32 = [&](size_t at) {
+		auto *p = (const unsigned char *)file.data() + at;
+		return (unsigned long)p[0] << 24 | p[1] << 16 | p[2] << 8 | p[3];
+	};
+	for (size_t at = 4; at + 8 <= file.size() && u32(at);) {
+		unsigned long size = u32(at + 4);
+		if (at + 8 + size > file.size()) throw std::runtime_error("truncated recipe");
+		records[u32(at)].assign(file.data() + at + 8, size);
+		at += 8 + size;
+	}
+	return records;
+}
+
+static unsigned char recipeByte(const std::string &record, size_t at) { return record.at(at); }
+
+// 0, 1 and 0xFF mean that the value is unset
+static bool recipeValueIsSet(const std::string &record, size_t at) {
+	unsigned char value = recipeByte(record, at);
+	return value > 1 && value != 0xFF;
+}
+
+static double recipeValue(const std::string &record, size_t at, size_t divisorAt, double unset) {
+	if (!recipeValueIsSet(record, at)) return unset;
+	return (recipeByte(record, at) - 0x80) / (double)recipeByte(record, divisorAt);
+}
+
+static json applyRecipe(const json &req) {
+	auto records = recipeRecords(read(req.at("path")));
+	auto version = records.find(0x100);
+	if (version == records.end() || version->second != "0310") throw std::runtime_error("not a version 3.10 recipe");
+	if (records.count(1) || records.count(2)) throw std::runtime_error("custom tone curves aren't supported");
+	const std::string &base = records.at(0x300);
+	if (recipeByte(base, 0) || recipeByte(base, 1) != kNkfl_PictureControl_FlexibleColor)
+		throw std::runtime_error("only Flexible Color recipes are supported");
+
+	// changing the Picture Control resets the other fields, so it needs a request of its own
+	json change = {{"ulSessionID", req.at("ulSessionID")}, {"ulRawDevelopment", kNkfl_RawDevelopment_PictureControl}, {"ulPictureControl", kNkfl_PictureControl_FlexibleColor}};
+	json defaults = rawParam<NkflRawDevelopment_PictureControl>(change, true);
+	if (failed(defaults["code"])) return defaults;
+
+	auto slider = [&](json &target, const json &unset, const char *field, unsigned long tag) {
+		target[field] = recipeValue(records.at(tag), 0, 1, unset[field]);
+	};
+	slider(change, defaults, "dbSharpness", 0x600);
+	slider(change, defaults, "dbClarity", 0x700);
+	slider(change, defaults, "dbMiddleRangeSharp", 0x1600);
+	// when it's set, the SDK derives the three above from it, as the recipe did
+	change["bApplyQuickSharp"] = recipeValueIsSet(records.at(0x1400), 0);
+	slider(change, defaults, "dbQuickSharp", 0x1400);
+
+	json flexible;
+	const json &unset = defaults["flc_dbParams"];
+	slider(flexible, unset, "dbContrast", 0x1900);
+	slider(flexible, unset, "dbHighlight", 0x1A00);
+	slider(flexible, unset, "dbShadow", 0x1B00);
+	slider(flexible, unset, "dbWhiteLevel", 0x1C00);
+	slider(flexible, unset, "dbBlackLevel", 0x1D00);
+	slider(flexible, unset, "dbSaturation", 0x1E00);
+
+	// 8 colors of hue, chroma and brightness, then the divisors of these
+	const std::string &blender = records.at(0x1F00);
+	double colors[8][3] = {};
+	for (size_t color = 0; color < 8; color++)
+		for (size_t value = 0; value < 3; value++)
+			colors[color][value] = recipeValue(blender, color * 3 + value, 24 + value, 0);
+	flexible["dbColorBlender"] = colors;
+
+	// 3 zones of a 16-bit hue, chroma and brightness, the divisors of these, then blending and balance
+	const std::string &grading = records.at(0x2000);
+	double zones[3][3] = {};
+	for (size_t zone = 0; zone < 3; zone++) {
+		unsigned hue = recipeByte(grading, zone * 4) << 8 | recipeByte(grading, zone * 4 + 1);
+		zones[zone][0] = hue == 0xFFFF ? 0 : ((int)hue - 0x8000) / (double)recipeByte(grading, 12);
+		zones[zone][1] = recipeValue(grading, zone * 4 + 2, 13, 0);
+		zones[zone][2] = recipeValue(grading, zone * 4 + 3, 14, 0);
+	}
+	flexible["dbColorGrading"] = zones;
+	flexible["dbBlending"] = recipeValue(grading, 16, 17, unset["dbBlending"]);
+	flexible["dbBalance"] = recipeValue(grading, 18, 19, unset["dbBalance"]);
+
+	change["flc_dbParams"] = flexible;
+	return rawParam<NkflRawDevelopment_PictureControl>(change, true);
+}
+
 static json getTagInfo(const json &req) {
 	auto p = param<NkflTagInfoParam>(req);
 	unsigned long code = sdk(kNkfl_Cmd_GetTagInfo, &p);
@@ -434,6 +525,7 @@ static const std::map<std::string, json (*)(const json &)> commands = {
 	PLAIN(GetRawDevelopmentInfo, NkflRawDevelopmentInfo),
 	{"RawDevelopment", rawDevelopment},
 	{"GetRawDevelopmentParam", getRawDevelopmentParam},
+	{"ApplyRecipe", applyRecipe},
 	PLAIN(GetRawDevelopmentRange, NkflRawDevelopmentRange),
 	PLAIN(GetColorTempRange, NkflColorTempRangeParam),
 	PLAIN(GetThumbnailCount, NkflImageInfoParam),
