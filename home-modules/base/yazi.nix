@@ -30,41 +30,40 @@
 
             local function tag(file, name) return (tags[tostring(file.url)] or {})[name] end
 
-            local function pending(_)
-              local paths = {}
-              for i = 1, #cx.active.current.files do
-                local file = cx.active.current.files[i]
-                local path = tostring(file.url)
-                if not tags[path] and not file.cha.is_dir then paths[#paths + 1] = path end
+            local function current(_) return cx.active.current.cwd end
+
+            -- sync blocks get sets of paths: unlike tables with string keys, lists are converted in
+            -- one go, which runs out of Lua references in huge directories
+            local function unknown(_, paths)
+              local todo = {}
+              for path in pairs(paths) do
+                if not tags[path] then todo[path] = true end
               end
-              return paths
+              return todo
             end
 
-            local function publish(_, paths, found)
-              for _, path in ipairs(paths) do tags[path] = found[path] or {} end
+            -- returns the sort keys of paths, if the folder has to be told about them
+            local function publish(_, cwd, paths, todo, found)
+              for path in pairs(todo) do tags[path] = found[path] or {} end
               ui.render()
 
               local by = cx.active.pref.sort_by
-              if not is_exif(by) then return end
+              if not is_exif(by) or tostring(cx.active.current.cwd) ~= cwd then return end
 
-              local cwd, sizes, count = cx.active.current.cwd, {}, 0
-              for i = 1, #cx.active.current.files do
-                local file = cx.active.current.files[i]
-                if not file.cha.is_dir then
-                  -- files without the tag still have to overwrite the previous mode's value
-                  sizes[file.url.urn], count = tag(file, by) or 0, count + (tags[tostring(file.url)] and 1 or 0)
-                end
+              local keys, count = {}, 0
+              for path in pairs(paths) do
+                -- files without the tag still have to overwrite the previous mode's value
+                keys[path], count = tags[path][by] or 0, count + 1
               end
 
               -- a size update that changes the order fires another `load`
-              local key, state = cx.active.id.value .. tostring(cwd), by .. count
-              if sent[key] ~= state then
-                sent[key] = state
-                ya.emit("update_files", { op = fs.op("size", { url = cwd, sizes = sizes }) })
-              end
+              local key, state = cx.active.id.value .. cwd, by .. count
+              if next(todo) == nil and sent[key] == state then return end
+              sent[key] = state
+              return keys
             end
 
-            local pending, publish = ya.sync(pending), ya.sync(publish)
+            local current, unknown, publish = ya.sync(current), ya.sync(unknown), ya.sync(publish)
 
             function M:setup()
               Linemode["exif-date"] = function(self)
@@ -96,19 +95,42 @@
               end
             end
 
+            -- lists the directory itself: cx and fs.read_dir files each pin several Lua references
+            -- per file while in use, which panics in huge directories
             function M:entry()
-              local paths, found, chunks, scans = pending(), {}, {}, {}
-              for i, path in ipairs(paths) do
-                local n = (i - 1) % 8 + 1
-                chunks[n] = chunks[n] or {}
-                table.insert(chunks[n], path)
+              local cwd = current()
+              local out = Command("${lib.getExe' pkgs.findutils "find"}")
+                :arg({ "-L", tostring(cwd), "-mindepth", "1", "-maxdepth", "1", "-not", "-type", "d", "-printf", "%f\n" })
+                :stdout(Command.PIPED)
+                :output()
+
+              local urns, paths = {}, {}
+              for name in (out and out.stdout or ""):gmatch("[^\n]+") do
+                local path = tostring(cwd:join(name))
+                urns[path], paths[path] = Path.os(name), true
               end
-              -- exiftool takes about as long per file however many it's given, so split the work
-              for i, chunk in ipairs(chunks) do
-                scans[i] = function() scan(chunk, found) end
+
+              local todo, found, queue, workers = unknown(paths), {}, {}, {}
+              for path in pairs(todo) do queue[#queue + 1] = path end
+
+              -- exiftool gets slower per file the more files it's given, so use small batches
+              local size = math.min(256, math.ceil(#queue / 8))
+              local function work()
+                while #queue > 0 do
+                  local batch = {}
+                  for _ = 1, math.min(size, #queue) do batch[#batch + 1] = table.remove(queue) end
+                  scan(batch, found)
+                end
               end
-              ya.join(table.unpack(scans))
-              publish(paths, found)
+              for n = 1, 8 do workers[n] = work end
+              ya.join(table.unpack(workers))
+
+              local keys = publish(tostring(cwd), paths, todo, found)
+              if not keys then return end
+
+              local sizes = {}
+              for path, urn in pairs(urns) do sizes[urn] = keys[path] end
+              ya.emit("update_files", { op = fs.op("size", { url = cwd, sizes = sizes }) })
             end
 
             return M
