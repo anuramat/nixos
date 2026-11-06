@@ -57,7 +57,7 @@
               end
 
               -- a size update that changes the order fires another `load`
-              local key, state = tostring(cx.active.id) .. tostring(cwd), by .. count
+              local key, state = cx.active.id.value .. tostring(cwd), by .. count
               if sent[key] ~= state then
                 sent[key] = state
                 ya.emit("update_files", { op = fs.op("size", { url = cwd, sizes = sizes }) })
@@ -84,19 +84,30 @@
               end)
             end
 
-            function M:entry()
-              local paths, found = pending(), {}
-              if #paths > 0 then
-                -- not -fast2, which skips the maker notes that hold the shutter count
-                local out = Command("${lib.getExe pkgs.exiftool}")
-                  :arg({ "-fast", "-m", "-q", "-d", "%s", "-p", "$Directory/$FileName\t$DateTimeOriginal\t$ShutterCount#", "--" })
-                  :arg(paths)
-                  :stdout(Command.PIPED)
-                  :output()
-                for path, date, shutter in (out and out.stdout or ""):gmatch("([^\n]+)\t(%d*)\t(%d*)\n") do
-                  found[path] = { ["exif-date"] = tonumber(date), ["exif-shutter"] = tonumber(shutter) }
-                end
+            local function scan(paths, found)
+              -- not -fast2, which skips the maker notes that hold the shutter count
+              local out = Command("${lib.getExe pkgs.exiftool}")
+                :arg({ "-fast", "-m", "-q", "-d", "%s", "-p", "$Directory/$FileName\t$DateTimeOriginal\t$ShutterCount#", "--" })
+                :arg(paths)
+                :stdout(Command.PIPED)
+                :output()
+              for path, date, shutter in (out and out.stdout or ""):gmatch("([^\n]+)\t(%d*)\t(%d*)\n") do
+                found[path] = { ["exif-date"] = tonumber(date), ["exif-shutter"] = tonumber(shutter) }
               end
+            end
+
+            function M:entry()
+              local paths, found, chunks, scans = pending(), {}, {}, {}
+              for i, path in ipairs(paths) do
+                local n = (i - 1) % 8 + 1
+                chunks[n] = chunks[n] or {}
+                table.insert(chunks[n], path)
+              end
+              -- exiftool takes about as long per file however many it's given, so split the work
+              for i, chunk in ipairs(chunks) do
+                scans[i] = function() scan(chunk, found) end
+              end
+              ya.join(table.unpack(scans))
               publish(paths, found)
             end
 
