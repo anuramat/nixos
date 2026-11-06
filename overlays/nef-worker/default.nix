@@ -1,3 +1,4 @@
+# SLOP
 # Nikon's Image SDK, Windows-only, for native Linux clients; the protocol is in worker.cpp
 _: _final: prev:
 let
@@ -16,7 +17,7 @@ let
         ];
       }
       ''
-        unzip -q ${sdk} '*/win/Include/*' '*/win/Bin/x64/Release/*' '*/win/Profiles/*'
+        unzip -q ${sdk} '*/win/Include/*' '*/win/Bin/x64/Release/*' '*/win/Profiles/*' '*/win/MiniSDK/WBLibrary/*'
         cd 'Image SDK/Library/win'
         mkdir $out
         cp -r Profiles $out
@@ -24,7 +25,11 @@ let
         cp NkImgSDK.dll Elm.dll Elm.nlf RCSigProc.dll tbb.dll tbbmalloc.dll prm.bin $out
         cd ../../..
         export ZIG_GLOBAL_CACHE_DIR=$TMPDIR/zig
-        zig c++ -target x86_64-windows-gnu -O2 -s -static -I Include ${./worker.cpp} -o $out/nef-worker.exe
+        # NkMiniLib asks for MSVC's libraries by name; worker.cpp has what it needs from them
+        for lib in uuid libcpmt LIBCMT OLDNAMES; do echo '!<arch>' >lib$lib.a; done
+        zig c++ -target x86_64-windows-gnu -std=c++17 -O2 -s -static -D_WINDOWS -L . \
+          -I Include -I MiniSDK/WBLibrary -I ${prev.nlohmann_json}/include \
+          ${./worker.cpp} MiniSDK/WBLibrary/win/Release64/NkMiniLib.lib -o $out/nef-worker.exe
       '';
 in
 {
@@ -41,7 +46,7 @@ in
       mkdir -p "$nikon"
       # the SDK only looks for its profiles here
       ln -sfn ${runtime}/Profiles "$nikon/Profiles"
-      exec wine ${runtime}/nef-worker.exe
+      exec wine ${runtime}/nef-worker.exe "$@"
     '';
   };
 }
