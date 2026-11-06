@@ -19,6 +19,7 @@ import sys
 import tempfile
 import threading
 import unittest
+from unittest.mock import ANY
 
 WORKER, NEF, LEGACY_NEF, NRW, JPEG, RECIPES = sys.argv[1:7]
 
@@ -700,19 +701,60 @@ def expected_recipe(records):
     }
 
 
-class Recipes(unittest.TestCase):
-    def bleach_bypass(self):
-        return f"{RECIPES}/Color Grading/BleachBypass_01a.NP3"
+AS_SHOT = 1
 
+
+class RecipeSession(Session):
+    def setup(self):
+        self.scale()
+        self.set_profile("NKsRGB")
+        return self
+
+    def apply(self, path):
+        response = self("ApplyRecipe", path=path)
+        assert response["code"] == OK, response
+        return response
+
+    def picture_control(self):
+        return self("GetRawDevelopmentParam", ulRawDevelopment=PICTURE_CONTROL)
+
+    def edit(self, **fields):
+        return self("RawDevelopment", ulRawDevelopment=PICTURE_CONTROL, **fields)
+
+
+def recipe(name):
+    return next(path for path in glob.glob(f"{RECIPES}/**/{name}.NP3", recursive=True))
+
+
+BLEACH_BYPASS, CURVED, KODACHROME = "BleachBypass_01a", "24Look_24Frames", "Kodachrome"
+RICH_TONE = next(
+    os.path.basename(path)[:-4]
+    for path in sorted(glob.glob(f"{RECIPES}/**/*.NP3", recursive=True))
+    if recipe_records(path)[0x300] == b"\x04\x93"
+)
+
+
+def render(name, setup=lambda session: None, **fields):
+    """A session's first development: later ones can differ a little."""
+    with RecipeSession(**fields) as session:
+        session.setup()
+        if name:
+            session.apply(recipe(name))
+        setup(session)
+        return session.develop()[1]
+
+
+class Recipes(unittest.TestCase):
     def test_known_recipe(self):
-        with Session() as session:
-            response = session("ApplyRecipe", path=self.bleach_bypass())
-            self.assertEqual(response["code"], OK)
-            value = session("GetRawDevelopmentParam", ulRawDevelopment=PICTURE_CONTROL)
-            self.assertEqual(value["ulPictureControl"], PICTURE_CONTROL_FLEXIBLE_COLOR)
+        with RecipeSession() as session:
+            response = session.apply(recipe(BLEACH_BYPASS))
+            value = session.picture_control()
+            self.assertEqual(response["dbSharpness"], 2)
+            self.assertEqual(value["ulPictureControl"], AS_SHOT)
             self.assertEqual(value["dbSharpness"], 2)
             self.assertEqual(value["dbClarity"], 0.5)
             self.assertEqual(value["dbMiddleRangeSharp"], 1)
+            self.assertFalse(value["bUserDefinedCurve"])
             flexible = value["flc_dbParams"]
             self.assertEqual(flexible["dbContrast"], 40)
             self.assertEqual(flexible["dbHighlight"], -20)
@@ -728,70 +770,84 @@ class Recipes(unittest.TestCase):
             self.assertEqual(flexible["dbBalance"], 0)
 
     def test_every_recipe(self):
-        applied = 0
-        with Session() as session:
-            for path in glob.glob(f"{RECIPES}/**/*.NP3", recursive=True):
+        paths = glob.glob(f"{RECIPES}/**/*.NP3", recursive=True)
+        self.assertGreater(len(paths), 0)
+        with RecipeSession() as session:
+            for path in paths:
                 records = recipe_records(path)
                 response = session("ApplyRecipe", path=path)
-                if 1 in records or 2 in records:
-                    self.assertEqual(response["code"], INVALID_PARAM, path)
-                    self.assertIn("curve", response["message"])
-                elif records[0x300] != PICTURE_CONTROL_FLEXIBLE_COLOR.to_bytes(
-                    2, "big"
+                self.assertEqual(response["code"], OK, path)
+                self.assertEqual(response["bUserDefinedCurve"], 2 in records, path)
+                for field, tag in (
+                    ("dbSharpness", 0x600),
+                    ("dbClarity", 0x700),
+                    ("dbMiddleRangeSharp", 0x1600),
                 ):
-                    self.assertEqual(response["code"], INVALID_PARAM, path)
-                    self.assertIn("Flexible Color", response["message"])
-                else:
-                    self.assertEqual(response["code"], OK, path)
-                    value = session(
-                        "GetRawDevelopmentParam", ulRawDevelopment=PICTURE_CONTROL
+                    self.assertEqual(
+                        response[field], recipe_value(*records[tag], None), path
                     )
-                    flexible = value["flc_dbParams"]
-                    expected = expected_recipe(records)
+                if records[0x300] == PICTURE_CONTROL_FLEXIBLE_COLOR.to_bytes(2, "big"):
+                    flexible, expected = response["flc_dbParams"], expected_recipe(
+                        records
+                    )
                     self.assertEqual(
                         {key: flexible[key] for key in expected}, expected, path
                     )
-                    for field, tag in (
-                        ("dbSharpness", 0x600),
-                        ("dbClarity", 0x700),
-                        ("dbMiddleRangeSharp", 0x1600),
-                    ):
-                        self.assertEqual(
-                            value[field], recipe_value(*records[tag], None), path
-                        )
-                    applied += 1
-        self.assertGreater(applied, 0)
 
-    def test_image_changes(self):
-        with Session() as session:
-            session.scale()
-            session.set_profile("NKsRGB")
-            session(
-                "RawDevelopment",
-                ulRawDevelopment=PICTURE_CONTROL,
-                ulPictureControl=PICTURE_CONTROL_FLEXIBLE_COLOR,
+    def test_flexible_color_matches_the_sdk(self):
+        def by_hand(session):
+            records = recipe_records(recipe(BLEACH_BYPASS))
+            session.edit(ulPictureControl=PICTURE_CONTROL_FLEXIBLE_COLOR)
+            session.edit(
+                dbSharpness=2,
+                dbClarity=0.5,
+                dbMiddleRangeSharp=1,
+                flc_dbParams=expected_recipe(records),
             )
-            base = session.develop()[1]
-            session("ApplyRecipe", path=self.bleach_bypass())
-            self.assertNotEqual(session.develop()[1], base)
+
+        self.assertEqual(render(BLEACH_BYPASS), render(None, by_hand))
+
+    def test_curve_changes_the_image(self):
+        self.assertNotEqual(render(CURVED), render(None))
 
     def test_recipes_replace_each_other(self):
-        other = f"{RECIPES}/Color Grading/ClrMode_Bu_01a.NP3"
-        with Session() as session:
-            session.scale()
-            session.set_profile("NKsRGB")
-            session("ApplyRecipe", path=self.bleach_bypass())
-            first = session.develop()[1]
-            session("ApplyRecipe", path=other)
-            session("ApplyRecipe", path=self.bleach_bypass())
-            self.assertEqual(session.develop()[1], first)
+        def twice(session):
+            session.apply(recipe(CURVED))
+            session.apply(recipe(BLEACH_BYPASS))
 
-    def test_settings_stay_changeable(self):
-        with Session() as session:
-            session("ApplyRecipe", path=self.bleach_bypass())
+        self.assertEqual(render(BLEACH_BYPASS), render(None, twice))
+
+    def test_curve_goes_with_its_recipe(self):
+        with RecipeSession() as session:
+            self.assertTrue(session.apply(recipe(CURVED))["bUserDefinedCurve"])
+            self.assertFalse(session.apply(recipe(BLEACH_BYPASS))["bUserDefinedCurve"])
+            session.apply(recipe(CURVED))
+            self.assertFalse(session.apply(recipe(KODACHROME))["bUserDefinedCurve"])
+
+    def test_memory_session(self):
+        self.assertEqual(render(BLEACH_BYPASS), render(BLEACH_BYPASS, memory=True))
+
+    def test_session_survives(self):
+        with RecipeSession() as session:
             session("RawDevelopment", ulRawDevelopment=EXP_COMP, dbExpComp=1)
-            value = session("GetRawDevelopmentParam", ulRawDevelopment=PICTURE_CONTROL)
-            self.assertEqual(value["flc_dbParams"]["dbContrast"], 40)
+            width = session("GetImageInfo")["ulWidth"]
+            profile = session("GetOutputProfile")["OutputProfile"]
+            response = session("ApplyRecipe", path=recipe(CURVED))
+            self.assertEqual(response["code"], OK)
+            session.edit(dbSharpness=4)
+            self.assertEqual(session("GetImageInfo")["ulWidth"], width)
+            self.assertEqual(session("GetOutputProfile")["OutputProfile"], profile)
+            value = session("GetRawDevelopmentParam", ulRawDevelopment=EXP_COMP)
+            self.assertEqual(value["dbExpComp"], 1)
+
+    def test_settings_apply_on_top(self):
+        def brighter(session):
+            session("RawDevelopment", ulRawDevelopment=EXP_COMP, dbExpComp=1)
+
+        base = render(CURVED)
+        self.assertGreater(
+            statistics.fmean(render(CURVED, brighter)), statistics.fmean(base)
+        )
 
     def test_bad_files(self):
         with Session() as session:
@@ -799,7 +855,7 @@ class Recipes(unittest.TestCase):
             self.assertEqual(missing["code"], INVALID_PARAM)
             self.assertIn("recipe.NP3", missing["message"])
             path = f"{shm.name}/{next(names)}"
-            with open(self.bleach_bypass(), "rb") as source, open(path, "wb") as file:
+            with open(recipe(BLEACH_BYPASS), "rb") as source, open(path, "wb") as file:
                 file.write(source.read()[:200])
             truncated = session("ApplyRecipe", path=path)
             self.assertEqual(truncated["code"], INVALID_PARAM)
@@ -809,12 +865,200 @@ class Recipes(unittest.TestCase):
             self.assertEqual(junk["code"], INVALID_PARAM)
             self.assertIn("recipe", junk["message"])
             os.unlink(path)
+            self.assertEqual(session("GetFileInfo")["ulFormat"], FORMAT_NEF)
 
-    def test_legacy_file_is_left_to_the_sdk(self):
-        with Session(LEGACY_NEF) as session:
-            response = session("ApplyRecipe", path=self.bleach_bypass())
-            self.assertTrue(failed(response["code"]), response)
-            self.assertNotIn("message", response)
+    def test_unsupported_files(self):
+        for path in (LEGACY_NEF, JPEG):
+            with Session(path) as session:
+                response = session("ApplyRecipe", path=recipe(BLEACH_BYPASS))
+                self.assertEqual(response["code"], INVALID_PARAM, path)
+                self.assertIn("message", response)
+
+
+class RecipeEdits(unittest.TestCase):
+    EDIT = {
+        "dbSharpness": 3.25,
+        "dbClarity": -1.5,
+        "dbMiddleRangeSharp": 2.5,
+    }
+    COLORS = {
+        "dbContrast": 12,
+        "dbHighlight": -33,
+        "dbShadow": 21,
+        "dbWhiteLevel": 7,
+        "dbBlackLevel": -14,
+        "dbSaturation": -8,
+        "dbBlending": 70,
+        "dbBalance": 15,
+        "dbColorBlender": [[index - 4, 2 * index, -index] for index in range(8)],
+        "dbColorGrading": [[120, 30, -5], [240, 15, 10], [0, 0, 20]],
+    }
+
+    def test_edits_match_the_sdk(self):
+        def edited(session):
+            response = session.edit(**self.EDIT, flc_dbParams=self.COLORS)
+            self.assertEqual(response["code"], OK)
+
+        def by_hand(session):
+            session.edit(ulPictureControl=PICTURE_CONTROL_FLEXIBLE_COLOR)
+            session.edit(bApplyQuickSharp=False, **self.EDIT, flc_dbParams=self.COLORS)
+
+        self.assertEqual(render(BLEACH_BYPASS, edited), render(None, by_hand))
+
+    def test_edits_read_back(self):
+        with RecipeSession() as session:
+            session.apply(recipe(BLEACH_BYPASS))
+            response = session.edit(**self.EDIT, flc_dbParams=self.COLORS)
+            self.assertEqual(response["code"], OK)
+            value = session.picture_control()
+            self.assertEqual(value["ulPictureControl"], AS_SHOT)
+            for field, expected in self.EDIT.items():
+                self.assertEqual(value[field], expected)
+            for field, expected in self.COLORS.items():
+                self.assertEqual(value["flc_dbParams"][field], expected, field)
+
+    def test_each_edit_builds_on_the_last(self):
+        with RecipeSession() as session:
+            session.apply(recipe(BLEACH_BYPASS))
+            session.edit(dbSharpness=4)
+            session.edit(flc_dbParams={"dbSaturation": 20})
+            session.edit(dbClarity=1)
+            value = session.picture_control()
+            self.assertEqual(value["dbSharpness"], 4)
+            self.assertEqual(value["dbClarity"], 1)
+            self.assertEqual(value["flc_dbParams"]["dbSaturation"], 20)
+            self.assertEqual(value["flc_dbParams"]["dbContrast"], 40)
+
+    def test_curve_survives_edits(self):
+        def edited(session):
+            session.edit(dbSharpness=5, flc_dbParams={"dbSaturation": -60})
+            value = session.picture_control()
+            self.assertTrue(value["bUserDefinedCurve"])
+            self.assertEqual(value["dbSharpness"], 5)
+            self.assertEqual(value["flc_dbParams"]["dbSaturation"], -60)
+
+        def without_curve(session):
+            session.edit(bUserDefinedCurve=False, flc_dbParams={"dbSaturation": -60})
+
+        image = render(CURVED, edited)
+        self.assertNotEqual(image, render(CURVED))
+        self.assertNotEqual(image, render(CURVED, without_curve))
+
+    def test_curve_replaces_sliders(self):
+        with RecipeSession() as session:
+            session.apply(recipe(CURVED))
+            refused = session.edit(flc_dbParams={"dbContrast": 10})
+            self.assertEqual(refused["code"], INVALID_PARAM)
+            self.assertIn("curve", refused["message"])
+            self.assertTrue(session.picture_control()["bUserDefinedCurve"])
+            response = session.edit(
+                bUserDefinedCurve=False, flc_dbParams={"dbContrast": 10}
+            )
+            self.assertEqual(response["code"], OK)
+            self.assertFalse(response["bUserDefinedCurve"])
+            self.assertEqual(response["flc_dbParams"]["dbContrast"], 10)
+
+    def test_curve_turns_off_and_on(self):
+        def off(session):
+            session.edit(bUserDefinedCurve=False)
+
+        def off_and_on(session):
+            off(session)
+            self.assertTrue(session.edit(bUserDefinedCurve=True)["bUserDefinedCurve"])
+
+        self.assertNotEqual(render(CURVED, off), render(CURVED))
+        self.assertEqual(render(CURVED, off_and_on), render(CURVED))
+
+    def test_no_curve_to_turn_on(self):
+        with RecipeSession() as session:
+            session.apply(recipe(BLEACH_BYPASS))
+            response = session.edit(bUserDefinedCurve=True)
+            self.assertEqual(response["code"], INVALID_PARAM)
+
+    def test_non_flexible_recipe(self):
+        with RecipeSession() as session:
+            session.apply(recipe(KODACHROME))
+            value = session.edit(
+                dbApplyLevel=50, dbSharpness=5, dbSaturation=1, dbHue=-1
+            )
+            self.assertEqual(value["code"], OK)
+            for field, expected in (
+                ("dbApplyLevel", 50),
+                ("dbSharpness", 5),
+                ("dbSaturation", 1),
+                ("dbHue", -1),
+            ):
+                self.assertEqual(value[field], expected, field)
+
+    def test_non_flexible_recipe_with_a_curve(self):
+        with RecipeSession() as session:
+            self.assertTrue(session.apply(recipe(RICH_TONE))["bUserDefinedCurve"])
+            value = session.edit(dbSharpness=5, dbHighlight=1, dbShadow=-1)
+            self.assertEqual(value["code"], OK)
+            self.assertTrue(value["bUserDefinedCurve"])
+            self.assertEqual((value["dbHighlight"], value["dbShadow"]), (1, -1))
+            refused = session.edit(dbContrast=1)
+            self.assertEqual(refused["code"], INVALID_PARAM)
+            self.assertEqual(
+                session.edit(bUserDefinedCurve=False, dbContrast=1)["dbContrast"], 1
+            )
+
+    def test_fixed_fields(self):
+        with RecipeSession() as session:
+            session.apply(recipe(BLEACH_BYPASS))
+            for field in (
+                {"dbQuickSharp": 1},
+                {"bSharpessAuto": True},
+                {"lFilter": 3},
+                {"bApplyQuickAdjust": True},
+            ):
+                response = session.edit(**field)
+                self.assertEqual(response["code"], INVALID_PARAM, field)
+                self.assertIn(next(iter(field)), response["message"])
+
+    def test_out_of_range(self):
+        with RecipeSession() as session:
+            session.apply(recipe(BLEACH_BYPASS))
+            response = session.edit(flc_dbParams={"dbSaturation": 500})
+            self.assertEqual(response["code"], INVALID_PARAM)
+            self.assertEqual(
+                session.picture_control()["flc_dbParams"]["dbSaturation"], -50
+            )
+
+    def test_refused_edit_changes_nothing(self):
+        with RecipeSession() as session:
+            session.apply(recipe(CURVED))
+            before = session.picture_control()
+            session.edit(dbSharpness=7, flc_dbParams={"dbContrast": 10})
+            self.assertEqual(session.picture_control(), {**before, "id": ANY})
+
+    def test_other_picture_control_leaves_the_recipe(self):
+        with RecipeSession() as session:
+            session_sharpness = session.apply(recipe(CURVED))["dbSharpness"]
+            standard = session.edit(ulPictureControl=PICTURE_CONTROL_STANDARD)
+            self.assertEqual(standard["code"], OK)
+            self.assertEqual(standard["ulPictureControl"], PICTURE_CONTROL_STANDARD)
+            self.assertNotEqual(standard["dbSharpness"], session_sharpness)
+            edited = session.edit(bApplyQuickSharp=False, dbSharpness=6)
+            self.assertEqual(
+                (edited["ulPictureControl"], edited["dbSharpness"]),
+                (PICTURE_CONTROL_STANDARD, 6),
+            )
+            back = session.edit(ulPictureControl=AS_SHOT)
+            self.assertEqual(back["code"], OK)
+            self.assertTrue(session.picture_control()["bUserDefinedCurve"])
+            self.assertEqual(session.edit(dbSharpness=4)["dbSharpness"], 4)
+            self.assertTrue(session.picture_control()["bUserDefinedCurve"])
+
+    def test_plain_sessions_are_untouched(self):
+        with RecipeSession() as session:
+            response = session.edit(
+                ulPictureControl=PICTURE_CONTROL_STANDARD, dbSharpness=5
+            )
+            self.assertEqual(response["code"], OK)
+            self.assertEqual(
+                session.picture_control()["ulPictureControl"], PICTURE_CONTROL_STANDARD
+            )
 
 
 def test_all_commands_called():
