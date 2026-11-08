@@ -186,6 +186,14 @@ class Session:
     def set_profile(self, name):
         self("SetOutputProfile", OutputProfile=rf"{PROFILES}\{name}.icm")
 
+    def camera_profile(self):
+        path = f"{shm.name}/{next(names)}"
+        self.develop(profile=path)
+        with open(path, "rb") as file:
+            data = file.read()
+        os.unlink(path)
+        return data
+
 
 def failed(code):
     return code and not code & 0xF00
@@ -329,6 +337,144 @@ class Images(unittest.TestCase):
             session("SetOutputDeviceProfile", OutputDeviceProfile="HLG")
             response = session("GetOutputDeviceProfile")
             self.assertEqual(response["OutputDeviceProfile"], "HLG")
+
+
+def icc_tags(profile):
+    count = int.from_bytes(profile[128:132], "big")
+    return {profile[132 + i * 12 : 136 + i * 12] for i in range(count)}
+
+
+def camera_profile(path=NEF, setup=lambda session: None):
+    """From a session of its own, after setup."""
+    with RecipeSession(path) as session:
+        session.scale(8)
+        setup(session)
+        return session.camera_profile()
+
+
+def monochrome(session):
+    response = session(
+        "RawDevelopment",
+        ulRawDevelopment=PICTURE_CONTROL,
+        ulPictureControl=PICTURE_CONTROL_MONOCHROME,
+    )
+    assert response["code"] == OK, response
+
+
+class CameraProfiles(unittest.TestCase):
+    def test_raw_files_have_one(self):
+        for path in NEF, LEGACY_NEF, NRW:
+            profile = camera_profile(path)
+            self.assertEqual(int.from_bytes(profile[:4], "big"), len(profile), path)
+            self.assertEqual(profile[36:40], b"acsp", path)
+            self.assertEqual(profile[12:24], b"scnrRGB Lab ", path)
+            self.assertIn(b"A2B0", icc_tags(profile), path)
+
+    def test_recent_body(self):
+        self.assertRegex(camera_profile(), rb"Nikon ID\d+ for NEF Mode\d")
+
+    def test_same_settings_same_profile(self):
+        with Session() as session:
+            session.scale(8)
+            first = session.camera_profile()
+            # the session reuses its engine, and a new one can get it from the SDK's cache
+            self.assertEqual(session.camera_profile(), first)
+        self.assertEqual(camera_profile(), first)
+
+    def test_settings_change_it(self):
+        with Session() as session:
+            session.scale(8)
+            standard = session.camera_profile()
+            monochrome(session)
+            changed = session.camera_profile()
+        self.assertNotEqual(changed, standard)
+        self.assertEqual(changed, camera_profile(setup=monochrome))
+
+    def test_output_size_leaves_it(self):
+        def larger(session):
+            session.scale(4)
+
+        self.assertEqual(camera_profile(setup=larger), camera_profile())
+
+    def test_recipes_change_it(self):
+        def bleach_bypass(session):
+            session.apply(recipe(BLEACH_BYPASS))
+
+        def saturated(session):
+            flexible = session.picture_control()["flc_dbParams"]
+            response = session.edit(flc_dbParams={**flexible, "dbSaturation": 50})
+            assert response["code"] == OK, response
+
+        def edited(session):
+            bleach_bypass(session)
+            saturated(session)
+
+        # one session through all three, each against a session of its own
+        with RecipeSession() as session:
+            session.scale(8)
+            plain = session.camera_profile()
+            bleach_bypass(session)
+            recipe_profile = session.camera_profile()
+            saturated(session)
+            edited_profile = session.camera_profile()
+        self.assertEqual(len({plain, recipe_profile, edited_profile}), 3)
+        self.assertEqual(camera_profile(), plain)
+        self.assertEqual(camera_profile(setup=bleach_bypass), recipe_profile)
+        self.assertEqual(camera_profile(setup=edited), edited_profile)
+
+    def test_curve_recipe(self):
+        def curved(session):
+            session.apply(recipe(CURVED))
+
+        def straight(session):
+            curved(session)
+            assert session.edit(bUserDefinedCurve=False)["code"] == OK
+
+        self.assertNotEqual(
+            camera_profile(setup=curved), camera_profile(setup=straight)
+        )
+
+    def test_sessions_side_by_side_get_their_own(self):
+        expected = [camera_profile(), camera_profile(setup=monochrome)]
+        with Session() as first, Session() as second:
+            for session in first, second:
+                session.scale(8)
+            monochrome(second)
+            paths = [f"{shm.name}/{next(names)}" for _ in range(4)]
+            ids = [
+                worker.send(
+                    "GetImageData", ulSessionID=session.id, path=image, profile=profile
+                )
+                for session, image, profile in zip(
+                    (first, second), paths[::2], paths[1::2]
+                )
+            ]
+            self.assertEqual([worker.wait(id)["code"] for id in ids], [OK, OK])
+            profiles = []
+            for path in paths:
+                with open(path, "rb") as file:
+                    profiles.append(file.read())
+                os.unlink(path)
+        self.assertEqual(profiles[1::2], expected)
+
+    def test_jpeg_has_none(self):
+        with Session(JPEG) as session:
+            session.scale(4, 1)
+            path = f"{shm.name}/{next(names)}"
+            response = session("GetImageData", path=path, profile=f"{path}.icc")
+            os.unlink(path)
+            self.assertEqual(response["code"], INVALID_PARAM)
+            self.assertIn("profile", response["message"])
+            self.assertFalse(os.path.exists(f"{path}.icc"))
+
+    def test_bad_profile_path(self):
+        with Session() as session:
+            session.scale(8)
+            path = f"{shm.name}/{next(names)}"
+            response = session("GetImageData", path=path, profile="/nonexistent/x.icc")
+            os.unlink(path)
+            self.assertEqual(response["code"], INVALID_PARAM)
+            self.assertIn("/nonexistent/x.icc", response["message"])
 
 
 class Thumbnails(unittest.TestCase):

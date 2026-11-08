@@ -20,6 +20,12 @@
 // - with "progress" set, GetImageData also sends {ulDone, ulTotal} lines, with its "id", every percent;
 //   they're the SDK's numbers: ulDone restarts from 0 at each processing stage, and ulTotal differs
 //   between the first development of a session and the later ones
+// - with "profile" set, GetImageData also writes the camera profile that the development used to that
+//   path: an ICC profile to Lab from the SDK's own encoding of the raw data, RGB or, for some bodies like
+//   the D850, YCbCr, which the SDK makes for each file and its settings, and otherwise keeps to itself.
+//   Developments reuse it until the settings change. Its lookup table has the colors and tones of the
+//   Picture Control or recipe, though not the sharpening or clarity. Files without one, e.g. JPEGs, get
+//   a kNkfl_Code_Err_InvalidParam instead of the image's info, with the samples written
 // - RawDevelopment {ulSessionID, ulRawDevelopment, ...} takes the fields of the structure for that
 //   ulRawDevelopment, and keeps the current values of those it's not given
 // - GetRawDevelopmentParam {ulSessionID, ulRawDevelopment} answers with these fields, and so does
@@ -138,6 +144,7 @@ struct Session {
 	bool recipe = false;
 	bool recipeHasCurve = false;
 	std::vector<json> settings; // the requests to send again after reopening
+	std::string profile; // the camera profile that the SDK last got for it
 };
 
 static std::mutex mutex; // guards stdout and the sessions
@@ -168,6 +175,48 @@ static std::vector<char> read(const std::string &path, DWORD limit = MAXDWORD) {
 	ReadFile(file, data.data(), data.size(), &done, NULL);
 	CloseHandle(file);
 	return data;
+}
+
+static void write(const std::string &path, const std::string &data) {
+	HANDLE file = CreateFileW(wide(dos(path)).c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, 0, NULL);
+	if (file == INVALID_HANDLE_VALUE) throw std::runtime_error("can't create " + path);
+	DWORD done;
+	WriteFile(file, data.data(), data.size(), &done, NULL);
+	CloseHandle(file);
+}
+
+// The SDK develops a raw file with a camera profile that it makes for the file and its settings, and keeps
+// to itself. It gets the color engine for it from CCMSUtilities::GetCMSEngine(TReferencedObjectPointer<
+// CFltCMLEngine> &, ProfileParams *, StratoFile const &output, int *, bool, int, int, bool, bool,
+// CProfileGenerator **), on the thread of whichever request needs it: a development, or a change of Picture
+// Control, after which the developments reuse it. This build of NkImgSDK.dll only calls that through slot 30
+// of the class's vtable, and the engine keeps its input profile in a nikon::detail::ref_counted_allocation
+// at 0x40, with the data at 0x28 and the size at 0x30. For JPEGs, the input is an sRGB monitor profile.
+static const uintptr_t kCMSUtilitiesVtable = 0x1782D48, kGetCMSEngine = 0x3B8FD0;
+typedef bool (*GetCMSEngineProc)(void *, char **, void *, const void *, int *, bool, int, int, bool, bool, void **);
+static GetCMSEngineProc getCMSEngine;
+static thread_local std::string *sessionProfile; // the camera profile of the request's session
+
+static bool cmsEngine(void *self, char **engine, void *params, const void *output, int *error, bool a, int b, int c, bool d, bool e, void **generator) {
+	bool result = getCMSEngine(self, engine, params, output, error, a, b, c, d, e, generator);
+	char *allocation = sessionProfile && *engine ? *(char **)(*engine + 0x40) : NULL;
+	if (allocation) {
+		const char *data = *(const char **)(allocation + 0x28);
+		size_t size = *(size_t *)(allocation + 0x30);
+		// an input device profile
+		if (size > 40 && !memcmp(data + 12, "scnr", 4) && !memcmp(data + 36, "acsp", 4)) sessionProfile->assign(data, size);
+	}
+	return result;
+}
+
+static void hookCMSEngine(HMODULE dll) {
+	auto *slot = (void **)((char *)dll + kCMSUtilitiesVtable) + 30;
+	if (*slot != (char *)dll + kGetCMSEngine) return; // another build of the SDK
+	DWORD protection;
+	VirtualProtect(slot, sizeof *slot, PAGE_READWRITE, &protection);
+	getCMSEngine = (GetCMSEngineProc)*slot;
+	*slot = (void *)cmsEngine;
+	VirtualProtect(slot, sizeof *slot, protection, &protection);
 }
 
 // only Unix paths need translating
@@ -316,6 +365,15 @@ template <unsigned long infoCommand, unsigned long dataCommand> static json imag
 	json res = info;
 	res.update(json(image));
 	res["code"] = code;
+	return res;
+}
+
+static json getImageData(const json &req) {
+	json res = imageData<kNkfl_Cmd_GetImageInfo, kNkfl_Cmd_GetImageData>(req);
+	if (!req.contains("profile") || failed(res.at("code"))) return res;
+	const std::string &profile = sessionOf(req).profile;
+	if (profile.empty()) throw std::runtime_error(getCMSEngine ? "the SDK develops this file without a camera profile" : "this build of the SDK hides its camera profiles");
+	write(req.at("profile"), profile);
 	return res;
 }
 
@@ -734,7 +792,7 @@ static const std::map<std::string, json (*)(const json &)> commands = {
 	PLAIN(GetImageInfo, NkflImageInfoParam),
 	PLAIN(SetImageInfo, NkflImageInfoParam),
 	PLAIN(GetOriginalInfo, NkflImageInfoParam),
-	{"GetImageData", imageData<kNkfl_Cmd_GetImageInfo, kNkfl_Cmd_GetImageData>},
+	{"GetImageData", getImageData},
 	PLAIN(GetRawDevelopmentInfo, NkflRawDevelopmentInfo),
 	{"RawDevelopment", rawDevelopment},
 	{"GetRawDevelopmentParam", getRawDevelopmentParam},
@@ -786,7 +844,9 @@ static void handle(const std::string &line) {
 		json inner = req;
 		if (req.contains("ulSessionID")) {
 			inner["session"] = req["ulSessionID"];
-			inner["ulSessionID"] = sessionOf(inner).sdkId;
+			Session &session = sessionOf(inner);
+			inner["ulSessionID"] = session.sdkId;
+			sessionProfile = &session.profile;
 		}
 		res = dispatch(inner);
 		if (req.contains("ulSessionID")) {
@@ -803,7 +863,9 @@ static void handle(const std::string &line) {
 int main(int argc, char **argv) {
 	_setmode(_fileno(stdout), _O_BINARY);
 	setvbuf(stdout, NULL, _IONBF, 0);
-	sdk = (Nkfl_EntryProcPtr)GetProcAddress(LoadLibraryA("NkImgSDK.dll"), "Nkfl_Entry");
+	HMODULE dll = LoadLibraryA("NkImgSDK.dll");
+	sdk = (Nkfl_EntryProcPtr)GetProcAddress(dll, "Nkfl_Entry");
+	hookCMSEngine(dll);
 	char temp[MAX_PATH];
 	GetTempPathA(MAX_PATH, temp);
 	NkflLibraryParam library{};
