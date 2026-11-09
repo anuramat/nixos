@@ -37,7 +37,7 @@ in
       exiftoolConfig = "${./exiftool.config}";
     })
     (pkgs.replaceVars ./strip-metadata.lua { inherit exiftool; })
-    ./jpeg-leader.lua
+    ./group-leader.lua
   ];
   home.activation.darktablerc = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     target=${lib.escapeShellArg "${config.xdg.configHome}/darktable/darktablerc"}
