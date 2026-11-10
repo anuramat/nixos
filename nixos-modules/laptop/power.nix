@@ -7,7 +7,6 @@ let
 in
 {
   services = {
-    thermald.enable = true; # cooling
     logind.settings.Login = {
       HandleLidSwitch = "suspend";
       HandleLidSwitchDocked = "lock";

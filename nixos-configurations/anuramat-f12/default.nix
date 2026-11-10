@@ -34,5 +34,8 @@
     ./wowlan.nix
   ];
 
+  # applies the firmware's DPTF tables, e.g. skin-temperature power limits
+  services.thermald.enable = true;
+
   programs.captive-browser.interface = "wlp0s20f3";
 }
