@@ -78,7 +78,8 @@ def show(conn, ev):
     """posts a message from this host's topic as a desktop notification"""
     origin = ",".join(ev.get("tags", []))
     message = ev.get("message", "")
-    hints = {}
+    # titled already, so that forwarding it again doesn't prefix the app
+    hints = {"x-ntfy": ("b", True)}
     if origin and origin != HOST:
         hints["x-forwarded"] = ("s", origin)
     if (att := ev.get("attachment")) and att.get("type", "").startswith("image/"):
@@ -153,6 +154,8 @@ def monitor():
         if msg.header.fields.get(8) != "susssasa{sv}i":  # 8: signature
             continue
         app, _, _, summary, body, _, hints, _ = msg.body
+        if "x-ntfy" in hints:
+            app = ""
         to = destinations(hints)
         if not to:
             continue
