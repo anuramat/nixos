@@ -62,8 +62,10 @@ in
 
   config.agents.sandbox = {
     rwDirs = [
-      config.home.sessionVariables.RUSTUP_HOME
-      config.home.sessionVariables.CARGO_HOME
+      # just the crate cache: CARGO_HOME/bin is in PATH, ahead of the sudo
+      # wrapper
+      "${config.home.sessionVariables.CARGO_HOME}/registry"
+      "${config.home.sessionVariables.CARGO_HOME}/git"
       config.programs.go.env.GOPATH
       "${config.home.homeDirectory}/.npm"
       config.home.sessionVariables.GHQ_ROOT
