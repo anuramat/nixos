@@ -1,6 +1,7 @@
 # the hostrun relay's handler, see ../relay
 import atexit
 import contextlib
+import json
 import os
 import select
 import shlex
@@ -9,11 +10,13 @@ import socket
 import subprocess
 import sys
 import time
+import urllib.request
 
 from systemd import journal
 
-# the prompt hosts are comma-separated; target is the -h host, or empty
-prompt, prompt_hosts, desc, target, cmd = sys.argv[1:]
+# the prompt hosts are comma-separated; question is the decision model's
+# question about the command, see verdict.json; target is the -h host, or empty
+prompt, prompt_hosts, decision_url, question, desc, target, cmd = sys.argv[1:]
 prompt_hosts = prompt_hosts.split(",")
 host = socket.gethostname()
 cwd = os.environ["RELAY_CWD"]
@@ -94,6 +97,21 @@ def settle():
         p.wait()
 
 
+def verdict():
+    # whether the command can destroy data in $HOME, for the review; tested by
+    # eval/eval.py; the request waits for it, so a decision model host that's
+    # asleep or offline only gets a few seconds
+    body = {"state": cmd, "questions": {"q": json.load(open(question))}}
+    req = urllib.request.Request(
+        decision_url, json.dumps(body).encode(), {"Content-Type": "application/json"}
+    )
+    try:
+        a = json.load(urllib.request.urlopen(req, timeout=10))["answers"]["q"]
+    except Exception as e:
+        return f"unavailable ({e})"
+    return f"{a['choice']} ({', '.join(f'{k} {v:.2f}' for k, v in a['probabilities'].items())})"
+
+
 def fail(rc, message):
     print(f"hostrun: {message}", file=sys.stderr)
     sys.exit(rc)
@@ -111,7 +129,9 @@ if target:
 elif not os.path.isdir(cwd):
     fail(1, f"{cwd} doesn't exist outside the sandbox")
 
-answer = first_answer(f"{who}\ndescription: {desc}\n{where}\n$ {cmd}\n".encode())
+# the first line is the notification's title
+request = f"{who}\ndescription: {desc}\n{where}\ndecision model: {verdict()}\n$ {cmd}\n"
+answer = first_answer(request.encode())
 withdraw()
 if answer == b"deny":
     fail(77, "denied by the user")

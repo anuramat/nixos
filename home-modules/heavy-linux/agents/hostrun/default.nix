@@ -9,7 +9,9 @@
 # ssh on another host, in the user's home there, straight on the agent's
 # stdout and stderr, and its exit status is passed back; an agent
 # that hangs up withdraws the prompts, or stops the command; requests and
-# outcomes are logged on the agent's host: `journalctl --user -u 'hostrun@*'`
+# outcomes are logged on the agent's host: `journalctl --user -u 'hostrun@*'`;
+# the review also shows the decision model's verdict on whether the command can
+# destroy data in $HOME (verdict.json, evaluated by eval/eval.py)
 {
   config,
   inputs,
@@ -20,6 +22,7 @@
 let
   promptHosts = inputs.self.hosts |> lib.filterAttrs (_: h: h.local) |> lib.attrNames;
   appId = "sn.ctrl.hostrun";
+  inherit (inputs.self.consts.llama) host decisionPort;
 
   client = pkgs.writeShellApplication {
     name = "hostrun";
@@ -159,7 +162,13 @@ in
     review
   ];
 
-  agents.relays.hostrun = "${lib.getExe handler} ${lib.getExe prompt} ${lib.concatStringsSep "," promptHosts}";
+  agents.relays.hostrun = lib.concatStringsSep " " [
+    (lib.getExe handler)
+    (lib.getExe prompt)
+    (lib.concatStringsSep "," promptHosts)
+    "http://${host}:${toString decisionPort}/v1/systemone"
+    "${./verdict.json}"
+  ];
   systemd.user.services."hostrun@".Service.Environment = "BASH_ENV=${bashEnv}";
 
   programs.niri.settings.window-rules = [
