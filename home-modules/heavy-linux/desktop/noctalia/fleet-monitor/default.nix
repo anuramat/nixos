@@ -3,8 +3,9 @@
 # which is cheap enough to probe on demand; `fleet --json` gathers them, and
 # both the noctalia widget and `fleet` itself render that, laid out by
 # layout.luau; a section is a node
-# with `name`, `at` (seconds since the epoch of the last successful fetch) and
-# `err` (the last fetch's error):
+# with `name`, `at` (seconds since the epoch of the last successful fetch),
+# `err` (the last fetch's error) and `offline` (the host was unreachable on the
+# last fetch, which greys out its name):
 #   NODE = { cells: [CELL], children: [NODE] }
 #   CELL = { text, style?, width? } | { since } | { until }
 # a section's cells go to its header, after its name, and each child is a row,
@@ -47,7 +48,16 @@ let
     |> map (h: {
       name = h;
       interval = if h == localHost then null else 30;
-      cmd = script "fleet-${h}" [ pkgs.jq ] "${lib.getExe probe} ${h} | jq -nR -L ${./.} -f ${./host.jq}";
+      # ssh exits with 255 when it can't reach the host
+      cmd = script "fleet-${h}" [ pkgs.jq ] ''
+        if out=$(${lib.getExe probe} ${h}); then
+          jq -nR -L ${./.} -f ${./host.jq} <<<"$out"
+        elif [ $? = 255 ]; then
+          echo '{"offline": true}'
+        else
+          exit 1
+        fi
+      '';
     });
   sections = hosts ++ [
     {

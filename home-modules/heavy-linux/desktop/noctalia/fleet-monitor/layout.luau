@@ -78,10 +78,11 @@ local function rows(node, now, room, indent, out)
   end
 end
 
--- a section in `room` characters, at `now` (seconds since the epoch) -> its header: its name, cells, refresh time
+-- a section in `room` characters, at `now` (seconds since the epoch) -> its header: its name (greyed out while
+-- offline), cells, refresh time
 -- ("updating..." while `busy`) and error, the last one wrapped at the end of the row; and its rows, indented
 function layout.section(s, now, room, busy)
-  local header = { { s.name, "primary", true } }
+  local header = { { s.name, s.offline and "outline" or "primary", true } }
   for _, c in s.cells or {} do table.insert(header, { cellText(c, now) }) end
   if busy then
     table.insert(header, { "updating...", "outline" })

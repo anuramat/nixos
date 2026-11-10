@@ -10,6 +10,7 @@ include "etime";
 [kind("zellij")] as $z
 | ($z | map(select(.[1] == "0")) | length) as $detached
 | {
+    offline: false,
     cells: [
       (kind("power") | select(.[0] == "quiet") | {text: "quiet", style: "outline"}),
       (kind("gpu") | select(.[0] == "active") | {text: "dgpu", style: "error"}),
