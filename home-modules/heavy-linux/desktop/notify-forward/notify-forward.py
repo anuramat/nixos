@@ -1,11 +1,12 @@
 # routes desktop notifications to wherever the user is: an unlocked peer, or
-# the phone; shows the ones routed to this host
+# the phone, over tgfy; shows the ones routed to this host
 # usage: notify-forward NTFY_URL HOST [PEER...]
 import io
 import json
 import os
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 import urllib.parse
@@ -16,7 +17,7 @@ from jeepney.io.blocking import open_dbus_connection
 from PIL import Image
 
 NTFY, HOST, PEERS = sys.argv[1], sys.argv[2], sys.argv[3:]
-PHONE = "notify-forward"  # topic the phone subscribes to
+PHONE = "phone"  # sent with tgfy rather than to a topic
 # apps that notify on the phone and the peers natively
 SKIP = {"org.telegram.desktop"}
 # at most BURST messages per WINDOW seconds, in case a loop slips through
@@ -72,6 +73,21 @@ def publish(to, params, img):
         )
     except OSError as e:
         print(e, file=sys.stderr)
+
+
+def tgfy(params, img):
+    """tgfy reports its own errors on stderr"""
+    title = params.get("title")
+    text = f"[{params['tags']}] " + (
+        f"{title}\n{params['message']}" if title else params["message"]
+    )
+    with tempfile.TemporaryDirectory() as d:
+        files = []
+        if img:
+            files.append(os.path.join(d, img[0]))
+            with open(files[0], "wb") as f:
+                f.write(img[1])
+        subprocess.run(["tgfy", *files], input=text, text=True)
 
 
 def show(conn, ev):
@@ -181,7 +197,10 @@ def monitor():
             params["title"] = app
         img = image(hints)
         for t in to:
-            publish(t, params, img)
+            if t == PHONE:
+                tgfy(params, img)
+            else:
+                publish(t, params, img)
 
 
 threading.Thread(target=subscribe, daemon=True).start()

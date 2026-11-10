@@ -1,5 +1,5 @@
-# routes desktop notifications to wherever the user is, over ntfy: an unlocked
-# peer among the `local` hosts, or the phone
+# routes desktop notifications to wherever the user is: an unlocked peer among
+# the `local` hosts, over ntfy, or the phone, over tgfy
 {
   config,
   inputs,
@@ -37,12 +37,14 @@ in
           ]
           ++ peers
         );
-        # sh and loginctl for the lock state, ssh for the peers'
+        # sh and loginctl for the lock state, ssh for the peers', tgfy for the
+        # phone
         Environment = "PATH=${
           lib.makeBinPath [
             pkgs.bash
             pkgs.openssh
             pkgs.systemd
+            config.lib.tgfy.package
           ]
         }";
         Restart = "on-failure";

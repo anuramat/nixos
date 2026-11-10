@@ -1,5 +1,4 @@
-# push notifications to the phone; tailnet-only, iOS push goes through the
-# ntfy.sh relay, which only gets message IDs
+# notify-forward's message bus between the hosts; tailnet-only
 { inputs, ... }:
 let
   inherit (inputs.self.consts.ntfy) host port;
@@ -11,9 +10,6 @@ in
     settings = {
       base-url = "http://${host}:${toString port}";
       listen-http = ":${toString port}";
-      upstream-base-url = "https://ntfy.sh";
-      # long enough for the phone to fetch each message after the push
-      cache-duration = "3h";
     };
   };
 }
