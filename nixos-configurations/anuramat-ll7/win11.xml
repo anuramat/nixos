@@ -1,0 +1,136 @@
+<domain type="kvm" xmlns:qemu="http://libvirt.org/schemas/domain/qemu/1.0">
+  <name>win11</name>
+  <memory unit="GiB">16</memory>
+  <memoryBacking>
+    <source type="memfd"/>
+    <access mode="shared"/>
+  </memoryBacking>
+
+  <!-- 6 P-cores (cpus 4-15, siblings adjacent); 0-3 stay with the host,
+       qemu's own threads go to E-cores -->
+  <vcpu placement="static">12</vcpu>
+  <cputune>
+    <vcpupin vcpu="0" cpuset="4"/>
+    <vcpupin vcpu="1" cpuset="5"/>
+    <vcpupin vcpu="2" cpuset="6"/>
+    <vcpupin vcpu="3" cpuset="7"/>
+    <vcpupin vcpu="4" cpuset="8"/>
+    <vcpupin vcpu="5" cpuset="9"/>
+    <vcpupin vcpu="6" cpuset="10"/>
+    <vcpupin vcpu="7" cpuset="11"/>
+    <vcpupin vcpu="8" cpuset="12"/>
+    <vcpupin vcpu="9" cpuset="13"/>
+    <vcpupin vcpu="10" cpuset="14"/>
+    <vcpupin vcpu="11" cpuset="15"/>
+    <emulatorpin cpuset="16-19"/>
+  </cputune>
+  <cpu mode="host-passthrough" check="none">
+    <topology sockets="1" dies="1" cores="6" threads="2"/>
+  </cpu>
+
+  <os firmware="efi">
+    <type arch="x86_64" machine="q35">hvm</type>
+    <firmware>
+      <feature enabled="yes" name="secure-boot"/>
+    </firmware>
+    <loader secure="yes"/>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+    <hyperv mode="custom">
+      <relaxed state="on"/>
+      <vapic state="on"/>
+      <spinlocks state="on" retries="8191"/>
+      <vpindex state="on"/>
+      <runtime state="on"/>
+      <synic state="on"/>
+      <stimer state="on"/>
+      <reset state="on"/>
+      <frequencies state="on"/>
+      <tlbflush state="on"/>
+      <ipi state="on"/>
+    </hyperv>
+    <vmport state="off"/>
+    <smm state="on"/>
+  </features>
+  <clock offset="localtime">
+    <timer name="rtc" tickpolicy="catchup"/>
+    <timer name="pit" tickpolicy="delay"/>
+    <timer name="hpet" present="no"/>
+    <timer name="hypervclock" present="yes"/>
+  </clock>
+  <pm>
+    <suspend-to-mem enabled="no"/>
+    <suspend-to-disk enabled="no"/>
+  </pm>
+
+  <devices>
+    <disk type="file" device="disk">
+      <driver name="qemu" type="qcow2" discard="unmap"/>
+      <source file="/var/lib/libvirt/images/win11.qcow2"/>
+      <target dev="vda" bus="virtio"/>
+      <boot order="1"/>
+    </disk>
+    <disk type="file" device="cdrom">
+      <driver name="qemu" type="raw"/>
+      <source file="/var/lib/libvirt/images/win11.iso"/>
+      <target dev="sda" bus="sata"/>
+      <readonly/>
+      <boot order="2"/>
+    </disk>
+    <!-- storage driver for the installer: viostor/w11/amd64 -->
+    <disk type="file" device="cdrom">
+      <driver name="qemu" type="raw"/>
+      <source file="@virtio@"/>
+      <target dev="sdb" bus="sata"/>
+      <readonly/>
+    </disk>
+
+    <!-- RTX 4070 Mobile, bound to vfio-pci at boot -->
+    <hostdev mode="subsystem" type="pci" managed="yes">
+      <source>
+        <address domain="0x0000" bus="0x01" slot="0x00" function="0x0"/>
+      </source>
+    </hostdev>
+    <hostdev mode="subsystem" type="pci" managed="yes">
+      <source>
+        <address domain="0x0000" bus="0x01" slot="0x00" function="0x1"/>
+      </source>
+    </hostdev>
+
+    <!-- usermode networking: nothing to set up on the host -->
+    <interface type="user">
+      <model type="virtio"/>
+    </interface>
+    <controller type="usb" model="qemu-xhci"/>
+    <tpm model="tpm-crb">
+      <backend type="emulator" version="2.0"/>
+    </tpm>
+
+    <!-- spice carries looking glass input, clipboard and audio;
+         virt-manager shows the vga display for the install -->
+    <graphics type="spice">
+      <listen type="none"/>
+    </graphics>
+    <video>
+      <model type="vga"/>
+    </video>
+    <channel type="spicevmc">
+      <target type="virtio" name="com.redhat.spice.0"/>
+    </channel>
+    <input type="mouse" bus="virtio"/>
+    <input type="keyboard" bus="virtio"/>
+    <sound model="ich9"/>
+    <audio id="1" type="spice"/>
+    <memballoon model="none"/>
+  </devices>
+
+  <!-- looking glass frame buffer, /dev/kvmfr0 (static_size_mb=64) -->
+  <qemu:commandline>
+    <qemu:arg value="-device"/>
+    <qemu:arg value="{&quot;driver&quot;:&quot;ivshmem-plain&quot;,&quot;id&quot;:&quot;shmem0&quot;,&quot;memdev&quot;:&quot;looking-glass&quot;}"/>
+    <qemu:arg value="-object"/>
+    <qemu:arg value="{&quot;qom-type&quot;:&quot;memory-backend-file&quot;,&quot;id&quot;:&quot;looking-glass&quot;,&quot;mem-path&quot;:&quot;/dev/kvmfr0&quot;,&quot;size&quot;:67108864,&quot;share&quot;:true}"/>
+  </qemu:commandline>
+</domain>

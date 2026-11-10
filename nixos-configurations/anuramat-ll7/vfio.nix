@@ -52,6 +52,23 @@ in
         '';
       };
     };
+    # (re)define the VM from the repo; the disk is created once
+    systemd.services.win11-define = {
+      requires = [ "libvirtd.service" ];
+      after = [ "libvirtd.service" ];
+      wantedBy = [ "multi-user.target" ];
+      path = with config.virtualisation.libvirtd; [
+        package
+        qemu.package
+      ];
+      serviceConfig.Type = "oneshot";
+      script = ''
+        img=/var/lib/libvirt/images/win11.qcow2
+        mkdir -p "$(dirname "$img")"
+        [ -e "$img" ] || qemu-img create -f qcow2 "$img" 512G
+        virsh define ${pkgs.replaceVars ./win11.xml { virtio = pkgs.virtio-win.src; }}
+      '';
+    };
     programs.virt-manager.enable = true;
     users.users.${inputs.self.consts.user.username}.extraGroups = [
       "libvirtd"
