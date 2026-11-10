@@ -101,13 +101,13 @@ flake-parts.lib.mkFlake { inherit inputs; } {
           alias = "b";
         };
         anuramat-f12 = {
-          description = "edc laptop: framework 12, 48GB RAM, i5-1334U";
+          description = "edc laptop: framework 12, 16GB RAM, i5-1334U";
           agent = true;
           local = true;
           alias = "f";
         };
         anuramat-ll7 = {
-          description = "laptop: Lenovo Legion, Intel iGPU + NVIDIA dGPU";
+          description = "laptop: Lenovo Legion, 96GB RAM, Intel iGPU + NVIDIA dGPU";
           builder = "on-demand";
           agent = true;
           local = true;
