@@ -29,7 +29,15 @@ let
     padding = 0;
   };
 
-  notify = agents.notifyHook "claude";
+  # the directory claude started in, and the session's title, as in /resume:
+  # the last one set with /rename, or else the last generated one
+  notify = agents.notifyHook "claude" {
+    dir = ''"$CLAUDE_PROJECT_DIR"'';
+    name = ''
+      grep -hE '"type":"(custom|ai)-title"' "$(printf '%s' "$hook" | jq -r .transcript_path)" |
+        jq -rs '(map(.customTitle // empty) | last) // (map(.aiTitle // empty) | last) // empty'
+    '';
+  };
 
   hooks = {
     Stop = [ (notify ''.last_assistant_message // "turn complete"'') ];

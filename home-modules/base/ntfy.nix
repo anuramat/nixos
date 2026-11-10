@@ -20,21 +20,29 @@ let
       text = ''
         usage() {
         	cat <<'EOF'
-        Send notification to ntfy topic ${topic} with an optional file attachment.
-        Reads the message from stdin. Silent on success; errors go to stderr.
-        Exit code: 0 iff the notification was delivered.
+        Send notification to ntfy topic ${topic} with an optional title and file
+        attachment. Reads the message from stdin. Silent on success; errors go to
+        stderr. Exit code: 0 iff the notification was delivered.
         Usage:
-          command | ${name} [file]
+          command | ${name} [-t title] [file]
         EOF
         }
 
-        case "''${1-}" in
-        	-h | --help)
+        title=""
+        while getopts ht: opt; do
+        	case $opt in
+        	h)
         		usage
         		exit
         		;;
-        	*) ;;
-        esac
+        	t) title=$OPTARG ;;
+        	*)
+        		usage >&2
+        		exit 1
+        		;;
+        	esac
+        done
+        shift $((OPTIND - 1))
 
         fail=0
         err() {
@@ -74,15 +82,19 @@ let
         	exit 1
         fi
 
+        file="" message=""
         if [ "$#" -eq 0 ]; then
         	set -- --data-binary "$TEXT"
         else
         	# the body is the file, so the message goes in a query parameter; the
         	# file name stands in for no text
         	file=''${1##*/}
-        	url="$url?$(jq -rn --arg f "$file" --arg m "''${TEXT:-$file}" '"filename=\($f | @uri)&message=\($m | @uri)"')"
+        	message=''${TEXT:-$file}
         	set -- -T "$1"
         fi
+        # query params, since headers can't carry non-latin1 text
+        url="$url?$(jq -rn --arg title "$title" --arg filename "$file" --arg message "$message" \
+        	'$ARGS.named | to_entries | map(select(.value != "") | "\(.key)=\(.value | @uri)") | join("&")')"
 
         # report ntfy's .error on failure
         if ! resp=$(curl -sS --max-time 60 --fail-with-body "$@" "$url" 2>&1); then

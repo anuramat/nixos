@@ -9,7 +9,9 @@ let
   codexHome = config.xdg.configHome + "/codex";
   codexCfgPath = codexHome + "/config.toml";
 
-  notify = agents.notifyHook "codex";
+  notify = agents.notifyHook "codex" {
+    dir = ''"$(printf '%s' "$hook" | jq -r .cwd)"'';
+  };
 
   # merged into config.toml, which keeps what codex writes there, e.g. the
   # hooks' trust in hooks.state
