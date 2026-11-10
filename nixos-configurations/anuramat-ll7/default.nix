@@ -90,4 +90,6 @@
   # noctalia's lockscreen talks to fprintd directly; pam_fprintd would make its
   # password auth (PAM service "login") wait for a finger first
   security.pam.services.login.fprintAuth = false;
+  # same for sudo with the password on stdin, e.g. hostrun -r
+  security.pam.services.sudo.fprintAuth = false;
 }
