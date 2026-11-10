@@ -5,7 +5,7 @@
 # layout.luau; a section is a node
 # with `name`, `at` (seconds since the epoch of the last successful fetch),
 # `err` (the last fetch's error) and `offline` (the host was unreachable on the
-# last fetch, which greys out its name):
+# last fetch, which greys out the section):
 #   NODE = { cells: [CELL], children: [NODE] }
 #   CELL = { text, style?, width? } | { since } | { until }
 # a section's cells go to its header, after its name, and each child is a row,
@@ -17,7 +17,7 @@
 # the color roles, by their meaning in the monitor:
 #   primary             title: section names
 #   outline             muted: metadata (times, battery, groups) and inactive
-#                       states (offline hosts, quiet profile)
+#                       states (offline hosts' sections, quiet profile)
 #   on_surface_variant  secondary: descriptions and side details
 #   on_surface          body: plain cells
 #   error               alert: errors, overdue ETAs, an awake dGPU
