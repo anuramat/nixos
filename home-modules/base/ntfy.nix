@@ -13,6 +13,7 @@ let
     pkgs.writeShellApplication {
       inherit name;
       runtimeInputs = with pkgs; [
+        coreutils
         curl
         jq
       ];

@@ -7,6 +7,7 @@ let
   tgfy = pkgs.writeShellApplication {
     name = "tgfy";
     runtimeInputs = with pkgs; [
+      coreutils
       curl
       jq
     ];
