@@ -1,5 +1,6 @@
 # SLOP
 # Nikon's Image SDK, Windows-only, for native Linux clients; the protocol is in worker.cpp
+# The target is the Nikon Z5II: other cameras only get what works for it at no extra effort
 _: _final: prev:
 let
   version = "1.47.0";
