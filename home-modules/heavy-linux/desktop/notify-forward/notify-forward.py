@@ -76,11 +76,12 @@ def publish(to, params, img):
 
 def show(conn, ev):
     """posts a message from this host's topic as a desktop notification"""
-    origin = ",".join(ev.get("tags", []))
+    # untagged ones were published straight to this host's topic, e.g. by notify
+    origin = ",".join(ev.get("tags", [])) or HOST
     message = ev.get("message", "")
     # titled already, so that forwarding it again doesn't prefix the app
     hints = {"x-ntfy": ("b", True)}
-    if origin and origin != HOST:
+    if origin != HOST:
         hints["x-forwarded"] = ("s", origin)
     if (att := ev.get("attachment")) and att.get("type", "").startswith("image/"):
         # a directory per message keeps the file name for the next hop
@@ -97,7 +98,7 @@ def show(conn, ev):
             notifications,
             "Notify",
             "susssasa{sv}i",
-            (origin or "ntfy", 0, "", title, body, [], hints, -1),
+            (origin, 0, "", title, body, [], hints, -1),
         )
     )
 
