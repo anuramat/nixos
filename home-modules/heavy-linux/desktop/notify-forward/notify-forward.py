@@ -126,6 +126,9 @@ def destinations(hints):
         return []
     if unlocked(HOST):
         return []
+    # shown by every peer on its own; the phone gets it from the origin only
+    if "x-fanout" in hints:
+        return [PHONE] if hints["x-fanout"][1] == HOST else []
     # one that came from a peer only ever moves on to the phone, so that
     # notifications can't bounce between hosts
     if "x-forwarded" in hints:

@@ -31,8 +31,9 @@ def ask(h, request):
     # like fleet-probe: this host directly, the others over ssh, which drops a
     # host after 90s of silence; the description, for the notification, the
     # request, for the review, and the root flag each end with a NUL, then
-    # stdin carries heartbeats, and closing it withdraws the prompt
-    cmd = [prompt]
+    # stdin carries heartbeats, and closing it withdraws the prompt; the
+    # argument is this host, the one notify-forward routes the prompt from
+    cmd = [prompt, host]
     if h != host:
         cmd = [
             "ssh",
@@ -46,6 +47,7 @@ def ask(h, request):
             "ServerAliveCountMax=3",
             h,
             "hostrun-prompt",
+            host,
         ]
     # unbuffered, so that a write to a dead prompt leaves nothing to flush
     p = subprocess.Popen(

@@ -88,9 +88,10 @@ let
   };
 
   # reads the description, the request and whether it's for root on stdin,
-  # prints the answer line (deny, allow, or allow and sudo's password);
-  # withdraws the prompt once stdin ends or goes quiet; the request stays open
-  # to hostrun-review, even while the notification can't be shown
+  # takes the requester's host as the argument, prints the answer line (deny,
+  # allow, or allow and sudo's password); withdraws the prompt once stdin ends
+  # or goes quiet; the request stays open to hostrun-review, even while the
+  # notification can't be shown
   prompt = pkgs.writeShellApplication {
     name = "hostrun-prompt";
     runtimeInputs = with pkgs; [
@@ -104,6 +105,7 @@ let
       systemd
     ];
     text = ''
+      origin=$1
       # where hostrun-review finds it, and the sandboxes can't
       mkdir -p "$XDG_RUNTIME_DIR/hostrun"
       dir=$(mktemp -d -p "$XDG_RUNTIME_DIR/hostrun")
@@ -127,8 +129,11 @@ let
       (
         # just the description: the whole request can push the buttons out of a
         # long notification; notify-send expands backslash escapes in the body;
-        # it fails without a desktop session, which may still appear
+        # it fails without a desktop session, which may still appear; every
+        # prompt host shows its own, so notify-forward only sends the origin's
+        # to the phone
         until notify-send --wait --urgency=critical --expire-time=0 --app-name=hostrun \
+          --hint="string:x-fanout:$origin" \
           --action=review=Review --action=deny=Deny \
           "hostrun: $(head -1 "$dir/request")" "''${desc//\\/\\\\}" >"$dir/action"; do
           # outlives this subshell, and ssh would wait for it on the outputs
