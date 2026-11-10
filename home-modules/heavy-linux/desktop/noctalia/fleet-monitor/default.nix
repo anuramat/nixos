@@ -14,6 +14,13 @@
 # wrapped at, unless it's the row's last cell, which is wrapped at the end of
 # the row; `since` and `until` are seconds since the epoch, rendered relative
 # to now
+# the color roles, by their meaning in the monitor:
+#   primary             title: section names
+#   outline             muted: metadata (times, battery, groups) and inactive
+#                       states (offline hosts, quiet profile)
+#   on_surface_variant  secondary: descriptions and side details
+#   on_surface          body: plain cells
+#   error               alert: errors, overdue ETAs, an awake dGPU
 {
   lib,
   config,
