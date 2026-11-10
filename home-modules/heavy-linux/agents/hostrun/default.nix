@@ -10,8 +10,9 @@
 # stdout and stderr, and its exit status is passed back; an agent
 # that hangs up withdraws the prompts, or stops the command; requests and
 # outcomes are logged on the agent's host: `journalctl --user -u 'hostrun@*'`;
-# the review also shows the decision model's verdict on whether the command can
-# destroy data in $HOME (verdict.json, evaluated by eval/eval.py)
+# the review also shows the decision model's verdicts on whether the command
+# can destroy data in $HOME or on other disks (questions.json, evaluated by
+# eval/eval.py)
 {
   config,
   inputs,
@@ -167,7 +168,7 @@ in
     (lib.getExe prompt)
     (lib.concatStringsSep "," promptHosts)
     "http://${host}:${toString decisionPort}/v1/systemone"
-    "${./verdict.json}"
+    "${./questions.json}"
   ];
   systemd.user.services."hostrun@".Service.Environment = "BASH_ENV=${bashEnv}";
 

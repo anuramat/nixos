@@ -14,9 +14,10 @@ import urllib.request
 
 from systemd import journal
 
-# the prompt hosts are comma-separated; question is the decision model's
-# question about the command, see verdict.json; target is the -h host, or empty
-prompt, prompt_hosts, decision_url, question, desc, target, cmd = sys.argv[1:]
+# the prompt hosts are comma-separated; questions are the decision model's
+# questions about the command, see questions.json; target is the -h host, or
+# empty
+prompt, prompt_hosts, decision_url, questions, desc, target, cmd = sys.argv[1:]
 prompt_hosts = prompt_hosts.split(",")
 host = socket.gethostname()
 cwd = os.environ["RELAY_CWD"]
@@ -97,19 +98,23 @@ def settle():
         p.wait()
 
 
-def verdict():
-    # whether the command can destroy data in $HOME, for the review; tested by
-    # eval/eval.py; the request waits for it, so a decision model host that's
-    # asleep or offline only gets a few seconds
-    body = {"state": cmd, "questions": {"q": json.load(open(question))}}
+def verdicts():
+    # whether the command can destroy data in $HOME or on other disks, one line
+    # per question, for the review; tested by eval/eval.py; the request waits
+    # for it, so a decision model host that's asleep or offline only gets a few
+    # seconds
+    body = {"state": cmd, "questions": json.load(open(questions))}
     req = urllib.request.Request(
         decision_url, json.dumps(body).encode(), {"Content-Type": "application/json"}
     )
     try:
-        a = json.load(urllib.request.urlopen(req, timeout=10))["answers"]["q"]
+        answers = json.load(urllib.request.urlopen(req, timeout=10))["answers"]
     except Exception as e:
-        return f"unavailable ({e})"
-    return f"{a['choice']} ({', '.join(f'{k} {v:.2f}' for k, v in a['probabilities'].items())})"
+        return f" unavailable ({e})"
+    return "".join(
+        f"\n  {q}: {a['choice']} ({', '.join(f'{k} {v:.2f}' for k, v in a['probabilities'].items())})"
+        for q, a in answers.items()
+    )
 
 
 def fail(rc, message):
@@ -130,7 +135,7 @@ elif not os.path.isdir(cwd):
     fail(1, f"{cwd} doesn't exist outside the sandbox")
 
 # the first line is the notification's title
-request = f"{who}\ndescription: {desc}\n{where}\ndecision model: {verdict()}\n$ {cmd}\n"
+request = f"{who}\ndescription: {desc}\n{where}\ndecision model:{verdicts()}\n$ {cmd}\n"
 answer = first_answer(request.encode())
 withdraw()
 if answer == b"deny":

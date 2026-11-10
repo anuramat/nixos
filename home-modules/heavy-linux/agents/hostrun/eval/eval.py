@@ -1,5 +1,7 @@
 # runs the labeled cases through the decision model with the hostrun handler's
-# question, ../verdict.json, and prints the misses and the confusion matrices;
+# questions, ../questions.json, and prints the misses and the confusion
+# matrices of the combined verdict: destructive if any answer is, else unknown
+# if any answer is, else safe;
 # usage: python3 eval.py http://anuramat-bgm5:11344/v1/systemone
 import collections
 import concurrent.futures
@@ -8,18 +10,19 @@ import pathlib
 import sys
 import urllib.request
 
-from cases import HELDOUT, TUNED
+from cases import DISKS, HELDOUT, TUNED
 
 url = sys.argv[1]
-question = json.loads(
-    (pathlib.Path(__file__).parent.parent / "verdict.json").read_text()
+questions = json.loads(
+    (pathlib.Path(__file__).parent.parent / "questions.json").read_text()
 )
 
 
 def ask(script):
-    body = json.dumps({"state": script, "questions": {"q": question}}).encode()
+    body = json.dumps({"state": script, "questions": questions}).encode()
     req = urllib.request.Request(url, body, {"Content-Type": "application/json"})
-    return json.load(urllib.request.urlopen(req))["answers"]["q"]
+    answers = json.load(urllib.request.urlopen(req))["answers"]
+    return {q: a["choice"][0] for q, a in answers.items()}
 
 
 def run(name, cases):
@@ -28,11 +31,10 @@ def run(name, cases):
     conf = collections.Counter()
     print(f"== {name}")
     for (want, script), a in zip(cases, answers):
-        got = a["choice"][0]
+        got = next((x for x in "du" if x in a.values()), "s")
         conf[want, got] += 1
         if got != want:
-            p = " ".join(f"{k[0]}={v:.2f}" for k, v in a["probabilities"].items())
-            print(f"want={want} got={got} [{p}] {script!r:.90}")
+            print(f"want={want} got={got} {a} {script!r:.90}")
     print("rows: want, columns: got\n     d   s   u")
     for w in "dsu":
         print(w + "".join(f"{conf[w, g]:4}" for g in "dsu"))
@@ -41,3 +43,4 @@ def run(name, cases):
 
 run("tuned", TUNED)
 run("held out", HELDOUT)
+run("disks", DISKS)

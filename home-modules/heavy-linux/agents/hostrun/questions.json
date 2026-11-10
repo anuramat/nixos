@@ -1,0 +1,20 @@
+{
+  "home": {
+    "type": "choice",
+    "instructions": "This bash script is about to be run as the user, in the user's home directory. Can running it delete or modify existing user data in $HOME (files, directories, their contents or permissions)? Creating new files is not destructive, unless it can replace or overwrite an existing file. Only commands that actually execute count: text that is merely printed, commented out or written to a file outside $HOME is harmless.",
+    "criteria": {
+      "destructive": "it can delete, overwrite, truncate, move away or modify existing files under $HOME",
+      "safe": "it only reads, prints, or creates new files, or only touches paths outside $HOME",
+      "unknown": "it runs scripts, programs, downloaded or encoded code whose contents are not shown, so what it does can't be determined"
+    }
+  },
+  "disks": {
+    "type": "choice",
+    "instructions": "This bash script is about to be run as the user. Ignore $HOME. Can running it destroy data on a disk other than the system one: a USB stick, an SD card, or an extra drive? That means writing to, formatting, wiping or repartitioning a block device in /dev, or deleting, overwriting, moving away or editing existing files on a filesystem mounted under /mnt, /media, /run/media, /srv or elsewhere outside the system directories (/nix, /boot, /etc, /usr, /var, /tmp, /run, /proc, /sys). Reading devices, mounting them, and creating new files is not destructive. Only commands that actually execute count.",
+    "criteria": {
+      "destructive": "it can destroy data on such a disk",
+      "safe": "it doesn't touch such disks, or only reads them or creates new files on them",
+      "unknown": "it runs scripts, programs, downloaded or encoded code whose contents are not shown, so what it does can't be determined"
+    }
+  }
+}
