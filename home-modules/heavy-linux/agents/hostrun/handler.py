@@ -16,8 +16,8 @@ from systemd import journal
 
 # the prompt hosts are comma-separated; questions are the decision model's
 # questions about the command, see questions.json; target is the -h host, or
-# empty
-prompt, prompt_hosts, decision_url, questions, desc, target, cmd = sys.argv[1:]
+# empty; root is non-empty for -r
+prompt, prompt_hosts, decision_url, questions, desc, target, root, cmd = sys.argv[1:]
 prompt_hosts = prompt_hosts.split(",")
 host = socket.gethostname()
 cwd = os.environ["RELAY_CWD"]
@@ -29,9 +29,9 @@ prompts = []  # every one started, to withdraw them at the end
 
 def ask(h, request):
     # like fleet-probe: this host directly, the others over ssh, which drops a
-    # host after 90s of silence; the description, for the notification, and the
-    # request, for the review, each end with a NUL, then stdin carries
-    # heartbeats, and closing it withdraws the prompt
+    # host after 90s of silence; the description, for the notification, the
+    # request, for the review, and the root flag each end with a NUL, then
+    # stdin carries heartbeats, and closing it withdraws the prompt
     cmd = [prompt]
     if h != host:
         cmd = [
@@ -52,13 +52,13 @@ def ask(h, request):
         cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=log, bufsize=0
     )
     with contextlib.suppress(BrokenPipeError):
-        p.stdin.write(desc.encode() + b"\0" + request + b"\0")
+        p.stdin.write(b"\0".join([desc.encode(), request, root.encode(), b""]))
     prompts.append(p)
     return p
 
 
 def first_answer(request):
-    # the first line from any prompt; every 30s, the prompts get a heartbeat,
+    # the first line from any prompt, without its newline; every 30s, the prompts get a heartbeat,
     # and hosts without one (asleep, offline, dropped) get another try
     poll = select.poll()
     live = {}  # stdout fd -> (host, prompt)
@@ -74,7 +74,8 @@ def first_answer(request):
                 live[p.stdout.fileno()] = h, p
                 poll.register(p.stdout, select.POLLIN)
         for fd, _ in poll.poll(max(0, tick - time.monotonic()) * 1000):
-            if answer := live[fd][1].stdout.readline().strip():
+            # not stripped: the rest of the line after allow may be sudo's password
+            if answer := live[fd][1].stdout.readline().removesuffix(b"\n"):
                 return answer
             # gone: close its pipes and reap it, or each retry leaks them
             poll.unregister(fd)
@@ -125,6 +126,11 @@ def fail(rc, message):
 # the relay's signal that the requester is gone; exits through settle()
 signal.signal(signal.SIGTERM, lambda *_: sys.exit())
 run = ["bash", "-c", cmd]
+if root:
+    # -k: always reads the password, so that the command's stdin never gets it;
+    # the user services' PATH may lack the wrappers, a login shell's doesn't
+    sudo = "sudo" if target else "/run/wrappers/bin/sudo"
+    run = [sudo, "-k", "-S", "-p", "", "--", *run]
 where = f"cwd: {shlex.quote(cwd)}"
 if target:
     # in the user's home there, as with a plain ssh
@@ -135,11 +141,14 @@ elif not os.path.isdir(cwd):
     fail(1, f"{cwd} doesn't exist outside the sandbox")
 
 # the first line is the notification's title
-request = f"{who}\ndescription: {desc}\n{where}\ndecision model:{verdicts()}\n$ {cmd}\n"
-answer = first_answer(request.encode())
+as_root = "\nas: root" if root else ""
+request = f"{who}\ndescription: {desc}\n{where}{as_root}\ndecision model:{verdicts()}\n$ {cmd}\n"
+answer, _, password = first_answer(request.encode()).partition(b" ")
 withdraw()
 if answer == b"deny":
     fail(77, "denied by the user")
 if answer != b"allow":
     fail(255, f"unexpected answer {answer!r}, see the journal on {host}")
-sys.exit(subprocess.run(run, cwd=cwd, stdin=subprocess.DEVNULL).returncode)
+# sudo reads the password, then the command gets EOF, as with /dev/null
+stdin = {"input": password + b"\n"} if root else {"stdin": subprocess.DEVNULL}
+sys.exit(subprocess.run(run, cwd=cwd, **stdin).returncode)

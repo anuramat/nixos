@@ -10,6 +10,8 @@
 # stdout and stderr, and its exit status is passed back; an agent
 # that hangs up withdraws the prompts, or stops the command; requests and
 # outcomes are logged on the agent's host: `journalctl --user -u 'hostrun@*'`;
+# with -r, the command runs as root, through sudo, with the password typed in
+# the review, which travels with the answer and is never stored;
 # the review also shows the decision model's verdicts on whether the command
 # can destroy data in $HOME or on other disks (questions.json, evaluated by
 # eval/eval.py)
@@ -33,21 +35,22 @@ let
     # in the sandbox
     text = ''
       usage() {
-        echo 'usage: hostrun -d DESCRIPTION [-h HOST] {-c CMD | -f FILE}' >&2
+        echo 'usage: hostrun -d DESCRIPTION [-h HOST] [-r] {-c CMD | -f FILE}' >&2
         exit 2
       }
-      desc="" host="" cmd="" # host: this one
-      while getopts d:h:c:f: opt; do
+      desc="" host="" root="" cmd="" # host: this one
+      while getopts d:h:rc:f: opt; do
         case $opt in
           d) desc=$OPTARG ;;
           h) host=$OPTARG ;;
+          r) root=1 ;;
           c) cmd=$OPTARG ;;
           f) cmd=$(<"$OPTARG") ;;
           *) usage ;;
         esac
       done
       if [ -z "$desc" ] || [ -z "$cmd" ] || [ "$OPTIND" -le "$#" ]; then usage; fi
-      exec relay-client hostrun 0 "$desc" "$host" "$cmd"
+      exec relay-client hostrun 0 "$desc" "$host" "$root" "$cmd"
     '';
   };
   handler = pkgs.writers.writePython3Bin "hostrun-handler" {
@@ -68,14 +71,24 @@ let
         cat -v "$dir/request"
         echo
         read -rp 'run it? [y/N] ' answer
-        if [ "$answer" = y ]; then answer=allow; else answer=deny; fi
+        if [ "$answer" != y ]; then
+          answer=deny
+        elif [ -e "$dir/root" ]; then
+          # the rest of the line, verbatim, is sudo's password
+          IFS= read -rsp 'sudo password: ' password
+          echo
+          answer="allow $password"
+        else
+          answer=allow
+        fi
         # read-write, so that a fifo left without its prompt can't block this
         { echo "$answer" 1<>"$dir/answer"; } 2>/dev/null || echo 'already withdrawn'
       done
     '';
   };
 
-  # reads the description and the request on stdin, prints allow or deny;
+  # reads the description, the request and whether it's for root on stdin,
+  # prints the answer line (deny, allow, or allow and sudo's password);
   # withdraws the prompt once stdin ends or goes quiet; the request stays open
   # to hostrun-review, even while the notification can't be shown
   prompt = pkgs.writeShellApplication {
@@ -96,11 +109,14 @@ let
       dir=$(mktemp -d -p "$XDG_RUNTIME_DIR/hostrun")
       trap 'rm -rf "$dir"' EXIT
       trap exit HUP PIPE TERM # so that the EXIT trap runs
-      # the description and the request each end with a NUL; stdin then stays
-      # open until any host has an answer, or the requester is gone
+      # the description, the request and the root flag each end with a NUL;
+      # stdin then stays open until any host has an answer, or the requester
+      # is gone
       IFS= read -r -d "" desc
       IFS= read -r -d "" request
+      IFS= read -r -d "" root
       printf '%s' "$request" >"$dir/request"
+      [ -z "$root" ] || touch "$dir/root" # for hostrun-review
       unit=hostrun-review-''${dir##*.}
       # ssh sessions don't get the address, but the session bus is still there
       export DBUS_SESSION_BUS_ADDRESS=''${DBUS_SESSION_BUS_ADDRESS:-unix:path=$XDG_RUNTIME_DIR/bus}

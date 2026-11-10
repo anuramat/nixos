@@ -182,7 +182,7 @@ let
             Some commands may not work as expected. If a command can't work in
             the sandbox (e.g. it needs the user's SSH keys or user services, or
             writes outside the bound paths), you MAY ask the user to approve
-            running it outside the sandbox with `hostrun -d DESC -c CMD`, where
+            running it outside the sandbox with `hostrun -d DESC [-r] -c CMD`, where
             CMD is a single argument, run with `bash -c`, or `hostrun -d DESC
             -f FILE`, which runs FILE's content the same way; FILE is read
             inside the sandbox, so it can be in your scratchpad, or
@@ -193,7 +193,9 @@ let
             runs the command as the user on this host, in the current
             directory, or, with `-h HOST`, over ssh as the user on HOST, in the
             user's home there (unlike your own `ssh HOST`, which logs in as
-            `agent`). stdout, stderr and the exit status are passed through,
+            `agent`); with `-r`, as root, through sudo, which the user
+            authenticates in the review, so don't use `sudo` in CMD itself.
+            stdout, stderr and the exit status are passed through,
             stdin is `/dev/null`, and exit status 77 means the user denied it.
             Paths that only exist in the sandbox, such as anything under
             `/tmp`, don't exist outside it.
