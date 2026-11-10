@@ -170,8 +170,8 @@ let
             - If you need tools that are not available on the system, you SHOULD use `nix run nixpkgs#package_name -- arg1 ...`.
             - Don't run `find` and similar commands on paths like `/` or `/nix/store` -- those are huge.
             - nixpkgs search: `nh search $PACKAGE_NAME`; prefer this over `nix search`, which is slower
-            - If user asks you to "notify" them about something, `notify` command is implied. It sends a notification to whichever machine the user is at, or to their phone. Usage: `echo 'text message' | notify [file]`, with at most one optional attachment; the message must be under 4096 bytes.
-            - If user asks you to send something over Telegram, `tgfy` command is implied. Usage: `echo 'text message' | tgfy file1.txt file2.png`. Attachments are optional.
+            - If user asks you to "notify" them about something, `notify` command is implied. It is for alerts that need the user's attention now: it sends a notification to whichever machine the user is at, or to their phone. Usage: `echo 'text message' | notify`; the message must be under 4096 bytes, with no attachments -- use `tgfy` for files.
+            - If user asks you to send something over Telegram, `tgfy` command is implied; it is also for anything the user wants to keep or receive in Telegram, e.g. files or reports. Usage: `echo 'text message' | tgfy file1.txt file2.png`. Attachments are optional.
           '';
         }
         {

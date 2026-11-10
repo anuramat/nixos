@@ -99,14 +99,13 @@ def show(conn, ev):
     hints = {"x-ntfy": ("b", True)}
     if origin != HOST:
         hints["x-forwarded"] = ("s", origin)
-    if (att := ev.get("attachment")) and att.get("type", "").startswith("image/"):
+    # peers attach only images
+    if att := ev.get("attachment"):
         # a directory per message keeps the file name for the next hop
         os.makedirs(os.path.join(IMAGES, ev["id"]), exist_ok=True)
         path = os.path.join(IMAGES, ev["id"], att["name"])
         urllib.request.urlretrieve(att["url"], path)
         hints["image-path"] = ("s", path)
-    elif att:  # other files stay on the server, reachable over the tailnet
-        message += f"\n{att['url']}"
     title = ev.get("title") or message
     body = message if ev.get("title") else ""
     conn.send_and_get_reply(
