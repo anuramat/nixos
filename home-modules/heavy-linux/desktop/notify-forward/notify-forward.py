@@ -6,7 +6,6 @@ import json
 import os
 import subprocess
 import sys
-import tempfile
 import threading
 import time
 import urllib.parse
@@ -75,19 +74,13 @@ def publish(to, params, img):
         print(e, file=sys.stderr)
 
 
-def tgfy(params, img):
-    """tgfy reports its own errors on stderr"""
+def tgfy(params):
+    """tgfy reports its own errors on stderr; images are dropped"""
     title = params.get("title")
     text = f"[{params['tags']}] " + (
         f"{title}\n{params['message']}" if title else params["message"]
     )
-    with tempfile.TemporaryDirectory() as d:
-        files = []
-        if img:
-            files.append(os.path.join(d, img[0]))
-            with open(files[0], "wb") as f:
-                f.write(img[1])
-        subprocess.run(["tgfy", *files], input=text, text=True)
+    subprocess.run(["tgfy"], input=text, text=True)
 
 
 def show(conn, ev):
@@ -197,7 +190,7 @@ def monitor():
         img = image(hints)
         for t in to:
             if t == PHONE:
-                tgfy(params, img)
+                tgfy(params)
             else:
                 publish(t, params, img)
 
