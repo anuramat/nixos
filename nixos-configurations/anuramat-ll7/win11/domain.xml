@@ -86,6 +86,13 @@
       <target dev="sdb" bus="sata"/>
       <readonly/>
     </disk>
+    <!-- autounattend.xml and first-logon setup -->
+    <disk type="file" device="cdrom">
+      <driver name="qemu" type="raw"/>
+      <source file="@unattend@"/>
+      <target dev="sdc" bus="sata"/>
+      <readonly/>
+    </disk>
 
     <!-- RTX 4070 Mobile, bound to vfio-pci at boot -->
     <hostdev mode="subsystem" type="pci" managed="yes">
@@ -116,6 +123,9 @@
     <video>
       <model type="vga"/>
     </video>
+    <channel type="unix">
+      <target type="virtio" name="org.qemu.guest_agent.0"/>
+    </channel>
     <channel type="spicevmc">
       <target type="virtio" name="com.redhat.spice.0"/>
     </channel>

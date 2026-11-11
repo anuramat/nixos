@@ -8,6 +8,32 @@
 let
   # RTX 4070 Mobile and its HDMI audio, IOMMU group 13
   gpuIds = "10de:2860,10de:22bd";
+
+  # must match the client version
+  lgHost = pkgs.fetchurl {
+    name = "looking-glass-host.zip";
+    url = "https://looking-glass.io/artifact/${pkgs.looking-glass-client.version}/host";
+    hash = "sha256-wkFaWgxAXx1qqTaYa91LgGxQV0tFIXR+ETw74r4Eexs=";
+  };
+  unattend =
+    pkgs.runCommand "win11-unattend.iso"
+      {
+        nativeBuildInputs = with pkgs; [
+          xorriso
+          unzip
+        ];
+      }
+      ''
+        mkdir d
+        cp ${./win11/autounattend.xml} d/autounattend.xml
+        sed 's/$/\r/' ${./win11/setup.cmd} > d/setup.cmd
+        unzip -j ${lgHost} looking-glass-host-setup.exe -d d
+        xorriso -as mkisofs -J -r -V UNATTEND -o $out d
+      '';
+  domain = pkgs.replaceVars ./win11/domain.xml {
+    virtio = pkgs.virtio-win.src;
+    inherit unattend;
+  };
 in
 {
   # separate boot entry with the dGPU bound to vfio-pci for a VM;
@@ -66,7 +92,7 @@ in
         img=/var/lib/libvirt/images/win11.qcow2
         mkdir -p "$(dirname "$img")"
         [ -e "$img" ] || qemu-img create -f qcow2 "$img" 512G
-        virsh define ${pkgs.replaceVars ./win11.xml { virtio = pkgs.virtio-win.src; }}
+        virsh define ${domain}
       '';
     };
     programs.virt-manager.enable = true;
