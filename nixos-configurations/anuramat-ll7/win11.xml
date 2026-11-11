@@ -98,8 +98,9 @@
 
     <!-- spice carries looking glass input, clipboard and audio;
          the only display is the 4070 with a virtual monitor (VDD) -->
-    <graphics type="spice">
-      <listen type="none"/>
+    <!-- looking-glass-client connects here by default -->
+    <graphics type="spice" port="5900" autoport="no">
+      <listen type="address" address="127.0.0.1"/>
     </graphics>
     <video>
       <model type="none"/>
