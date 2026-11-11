@@ -74,27 +74,6 @@
       <target dev="vda" bus="virtio"/>
       <boot order="1"/>
     </disk>
-    <disk type="file" device="cdrom">
-      <driver name="qemu" type="raw"/>
-      <source file="/var/lib/libvirt/images/win11.iso"/>
-      <target dev="sda" bus="sata"/>
-      <readonly/>
-      <boot order="2"/>
-    </disk>
-    <!-- storage driver for the installer: viostor/w11/amd64 -->
-    <disk type="file" device="cdrom">
-      <driver name="qemu" type="raw"/>
-      <source file="@virtio@"/>
-      <target dev="sdb" bus="sata"/>
-      <readonly/>
-    </disk>
-    <!-- autounattend.xml and first-logon setup -->
-    <disk type="file" device="cdrom">
-      <driver name="qemu" type="raw"/>
-      <source file="@unattend@"/>
-      <target dev="sdc" bus="sata"/>
-      <readonly/>
-    </disk>
 
     <!-- RTX 4070 Mobile, bound to vfio-pci at boot -->
     <hostdev mode="subsystem" type="pci" managed="yes">
@@ -118,12 +97,12 @@
     </tpm>
 
     <!-- spice carries looking glass input, clipboard and audio;
-         virt-manager shows the vga display for the install -->
+         the only display is the 4070 with a virtual monitor (VDD) -->
     <graphics type="spice">
       <listen type="none"/>
     </graphics>
     <video>
-      <model type="vga"/>
+      <model type="none"/>
     </video>
     <channel type="unix">
       <target type="virtio" name="org.qemu.guest_agent.0"/>
