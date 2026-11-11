@@ -1,5 +1,7 @@
 <domain type="kvm" xmlns:qemu="http://libvirt.org/schemas/domain/qemu/1.0">
   <name>win11</name>
+  <!-- fixed, so virsh define updates the domain instead of clashing -->
+  <uuid>748bb818-dc05-4787-bc02-bb9c6d966025</uuid>
   <memory unit="GiB">16</memory>
   <memoryBacking>
     <source type="memfd"/>
