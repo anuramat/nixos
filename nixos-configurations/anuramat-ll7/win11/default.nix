@@ -37,6 +37,13 @@ let
   '';
 
   # vga only for the install: looking glass needs the 4070 to be the only display
+  vga = ''
+    <model type="vga"/>
+    <!-- off 00:01, which would shift the root ports, so that the 4070 would
+         come back without its driver as a new device once vga is gone -->
+    <address type="pci" domain="0x0000" bus="0x00" slot="0x10" function="0x0"/>
+  '';
+  none = ''<model type="none"/>'';
   domain =
     video:
     pkgs.replaceVars ./domain.xml {
@@ -60,7 +67,7 @@ in
       serviceConfig.Type = "oneshot";
       script = ''
         if [ -e ${images}/win11.qcow2 ]; then
-          virsh define ${domain "none"}
+          virsh define ${domain none}
         else
           systemctl start --no-block win11-install
         fi
@@ -83,7 +90,7 @@ in
           exit 1
         fi
         qemu-img create -f qcow2 "$img" 512G
-        virsh define ${domain "vga"}
+        virsh define ${domain vga}
 
         # windows asks to press a key to boot from the ISO; until setup
         # starts writing the disk, reboot and press Enter through the prompt
@@ -96,7 +103,7 @@ in
 
         # setup.ps1 shuts the guest down when it's done
         until [ "$(virsh domstate win11)" = "shut off" ]; do sleep 10; done
-        virsh define ${domain "none"}
+        virsh define ${domain none}
         virsh start win11
       '';
     };

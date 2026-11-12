@@ -126,7 +126,7 @@
       <listen type="address" address="127.0.0.1"/>
     </graphics>
     <video>
-      <model type="@video@"/>
+      @video@
     </video>
     <channel type="unix">
       <target type="virtio" name="org.qemu.guest_agent.0"/>
