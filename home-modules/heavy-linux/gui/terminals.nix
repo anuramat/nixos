@@ -56,6 +56,10 @@ in
 
           "ctrl+shift+f=start_search"
 
+          "ctrl+equal=increase_font_size:1"
+          "ctrl+minus=decrease_font_size:1"
+          "ctrl+zero=reset_font_size"
+
           "page_up=scroll_page_up"
           "page_down=scroll_page_down"
           "home=scroll_to_top"
