@@ -27,7 +27,8 @@ if (!(Test-Path C:\Windows\System32\nvidia-smi.exe)) {
 # ask for; the driver reads its settings from C:\VirtualDisplayDriver
 if (!(Get-PnpDevice | ? HardwareID -contains Root\MttVDD)) {
   New-Item -ItemType Directory -Force C:\VirtualDisplayDriver | Out-Null
-  Copy-Item "$d\vdd\vdd_settings.xml" C:\VirtualDisplayDriver
+  # writable, unlike on the cdrom
+  (Copy-Item "$d\vdd\vdd_settings.xml" C:\VirtualDisplayDriver -PassThru).IsReadOnly = $false
   & "$d\nefconc.exe" --create-device-node --hardware-id Root\MttVDD --class-name Display --class-guid 4d36e968-e325-11ce-bfc1-08002be10318
   $store = [Security.Cryptography.X509Certificates.X509Store]::new('TrustedPublisher', 'LocalMachine')
   $store.Open('ReadWrite')
