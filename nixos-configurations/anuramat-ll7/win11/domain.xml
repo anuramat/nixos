@@ -74,6 +74,29 @@
       <target dev="vda" bus="virtio"/>
       <boot order="1"/>
     </disk>
+    <!-- install media; the Windows ISO is put there by hand, and is
+         dropped from the domain when it's missing -->
+    <disk type="file" device="cdrom">
+      <driver name="qemu" type="raw"/>
+      <source file="/var/lib/libvirt/images/win11.iso" startupPolicy="optional"/>
+      <target dev="sda" bus="sata"/>
+      <readonly/>
+      <boot order="2"/>
+    </disk>
+    <!-- virtio drivers: storage for the installer, guest tools after -->
+    <disk type="file" device="cdrom">
+      <driver name="qemu" type="raw"/>
+      <source file="@virtio@"/>
+      <target dev="sdb" bus="sata"/>
+      <readonly/>
+    </disk>
+    <!-- autounattend.xml, setup.ps1 and what it installs -->
+    <disk type="file" device="cdrom">
+      <driver name="qemu" type="raw"/>
+      <source file="@unattend@"/>
+      <target dev="sdc" bus="sata"/>
+      <readonly/>
+    </disk>
 
     <!-- RTX 4070 Mobile, bound to vfio-pci at boot -->
     <hostdev mode="subsystem" type="pci" managed="yes">
@@ -96,14 +119,14 @@
       <backend type="emulator" version="2.0"/>
     </tpm>
 
-    <!-- spice carries looking glass input, clipboard and audio;
-         the only display is the 4070 with a virtual monitor (VDD) -->
+    <!-- spice carries looking glass input, clipboard and audio; the
+         display is the 4070 with a virtual monitor, plus vga to install -->
     <!-- looking-glass-client connects here by default -->
     <graphics type="spice" port="5900" autoport="no">
       <listen type="address" address="127.0.0.1"/>
     </graphics>
     <video>
-      <model type="none"/>
+      <model type="@video@"/>
     </video>
     <channel type="unix">
       <target type="virtio" name="org.qemu.guest_agent.0"/>

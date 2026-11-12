@@ -13,6 +13,7 @@ in
   # separate boot entry with the dGPU bound to vfio-pci for a VM;
   # the default entry keeps it for CUDA and PRIME offload
   specialisation.vfio.configuration = {
+    imports = [ ./win11 ];
     system.nixos.tags = [ "vfio" ];
 
     # keep the nvidia driver away from the card; the panel stays on the iGPU
@@ -51,23 +52,6 @@ in
           ]
         '';
       };
-    };
-    # (re)define the VM from the repo; the disk is created once
-    systemd.services.win11-define = {
-      requires = [ "libvirtd.service" ];
-      after = [ "libvirtd.service" ];
-      wantedBy = [ "multi-user.target" ];
-      path = with config.virtualisation.libvirtd; [
-        package
-        qemu.package
-      ];
-      serviceConfig.Type = "oneshot";
-      script = ''
-        img=/var/lib/libvirt/images/win11.qcow2
-        mkdir -p "$(dirname "$img")"
-        [ -e "$img" ] || qemu-img create -f qcow2 "$img" 512G
-        virsh define ${./win11.xml}
-      '';
     };
     programs.virt-manager.enable = true;
     users.users.${inputs.self.consts.user.username}.extraGroups = [
