@@ -1,5 +1,8 @@
 export NIX_CONFIG := "extra-experimental-features = nix-command flakes pipe-operators"
 rebuild := "nixos-rebuild --sudo"
+# switch/test would otherwise activate the default entry while booted into a
+# specialisation; it names itself in /etc/specialisation
+booted := `[ -e /etc/specialisation ] && echo "--specialisation $(cat /etc/specialisation)" || true`
 keys_dir := `pwd` / "nixos-configurations" / `hostname` / "keys"
 
 default: nixos
@@ -19,16 +22,16 @@ nixos-pre:
 
 [group('build')]
 nixos command="switch" *flags: nixos-pre
-    {{ rebuild }} {{ command }} {{ flags }}
+    {{ rebuild }} {{ command }} {{ if command =~ '^(switch|test)$' { booted } else { '' } }} {{ flags }}
 
 [group('build')]
 nixos-local command="switch" *flags: nixos-pre
     subs=$(nix config show substituters | tr ' ' '\n' | grep -v '^http:' | xargs) && \
-    {{ rebuild }} {{ command }} --builders '' --option substituters "$subs" {{ flags }}
+    {{ rebuild }} {{ command }} {{ if command =~ '^(switch|test)$' { booted } else { '' } }} --builders '' --option substituters "$subs" {{ flags }}
 
 [group('build')]
 nixos-offline command="switch" *flags: nixos-pre
-    {{ rebuild }} {{ command }} --offline --builders '' {{ flags }}
+    {{ rebuild }} {{ command }} {{ if command =~ '^(switch|test)$' { booted } else { '' } }} --offline --builders '' {{ flags }}
 
 [group('build')]
 nixos-root command="switch" *flags:

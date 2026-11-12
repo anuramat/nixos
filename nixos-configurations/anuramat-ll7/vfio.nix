@@ -15,6 +15,7 @@ in
   specialisation.vfio.configuration = {
     imports = [ ./win11 ];
     system.nixos.tags = [ "vfio" ];
+    environment.etc.specialisation.text = "vfio"; # for `just nixos`
 
     # keep the nvidia driver away from the card; the panel stays on the iGPU
     services.xserver.videoDrivers = lib.mkForce [ "modesetting" ];
