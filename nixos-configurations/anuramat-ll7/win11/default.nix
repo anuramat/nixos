@@ -23,18 +23,27 @@ let
   # creates the root device that the virtual display driver binds to
   nefcon = fetchzip "https://github.com/nefarius/nefcon/releases/download/v1.21.1/nefcon_v1.21.1.zip" "sha256-xh/aeN+TkqfQAK6ASH7QpbTn4CAUnKA48QZCJ8LJd8U=";
 
-  unattend = pkgs.runCommand "win11-unattend.iso" { nativeBuildInputs = [ pkgs.xorriso ]; } ''
-    mkdir -p d/vdd
-    cp ${./autounattend.xml} d/autounattend.xml
-    cp ${./setup.ps1} d/setup.ps1
-    cp ${lgHost}/looking-glass-host-setup.exe ${nefcon}/x64/nefconc.exe d/
-    cp ${nvidia} d/nvidia.exe
-    cp ${vdd}/VirtualDisplayDriver/{MttVDD.inf,MttVDD.dll,mttvdd.cat} d/vdd/
-    # add the 3200x2000 panel mode; the global refresh rates include 165
-    sed 's|<resolutions>|<resolutions><resolution><width>3200</width><height>2000</height><refresh_rate>165</refresh_rate></resolution>|' \
-      ${vdd}/VirtualDisplayDriver/vdd_settings.xml > d/vdd/vdd_settings.xml
-    xorriso -as mkisofs -J -r -V UNATTEND -o $out d
-  '';
+  unattend =
+    pkgs.runCommand "win11-unattend.iso"
+      {
+        nativeBuildInputs = [
+          pkgs.xorriso
+          pkgs.perl
+        ];
+      }
+      ''
+        mkdir -p d/vdd
+        cp ${./autounattend.xml} d/autounattend.xml
+        cp ${./setup.ps1} d/setup.ps1
+        cp ${lgHost}/looking-glass-host-setup.exe ${nefcon}/x64/nefconc.exe d/
+        cp ${nvidia} d/nvidia.exe
+        cp ${vdd}/VirtualDisplayDriver/{MttVDD.inf,MttVDD.dll,mttvdd.cat} d/vdd/
+        # the panel's 3200x2000 as the only mode, so that windows uses it; the
+        # global refresh rates include 165
+        perl -0pe 's|<resolutions>.*</resolutions>|<resolutions><resolution><width>3200</width><height>2000</height><refresh_rate>165</refresh_rate></resolution></resolutions>|s' \
+          ${vdd}/VirtualDisplayDriver/vdd_settings.xml > d/vdd/vdd_settings.xml
+        xorriso -as mkisofs -J -r -V UNATTEND -o $out d
+      '';
 
   # vga only for the install: looking glass needs the 4070 to be the only display
   vga = ''
