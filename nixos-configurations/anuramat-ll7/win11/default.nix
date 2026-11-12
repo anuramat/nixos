@@ -38,9 +38,10 @@ let
         cp ${lgHost}/looking-glass-host-setup.exe ${nefcon}/x64/nefconc.exe d/
         cp ${nvidia} d/nvidia.exe
         cp ${vdd}/VirtualDisplayDriver/{MttVDD.inf,MttVDD.dll,mttvdd.cat} d/vdd/
-        # the panel's 3200x2000 as the only mode, so that windows uses it; the
-        # global refresh rates include 165
-        perl -0pe 's|<resolutions>.*</resolutions>|<resolutions><resolution><width>3200</width><height>2000</height><refresh_rate>165</refresh_rate></resolution></resolutions>|s' \
+        # the panel's 3200x2000@165 as the only mode, so that windows uses it;
+        # the global refresh rates apply to every resolution
+        perl -0pe 's|<global>.*</global>|<global><g_refresh_rate>165</g_refresh_rate></global>|s;
+          s|<resolutions>.*</resolutions>|<resolutions><resolution><width>3200</width><height>2000</height><refresh_rate>165</refresh_rate></resolution></resolutions>|s' \
           ${vdd}/VirtualDisplayDriver/vdd_settings.xml > d/vdd/vdd_settings.xml
         xorriso -as mkisofs -J -r -V UNATTEND -o $out d
       '';
