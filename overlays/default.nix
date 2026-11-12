@@ -241,7 +241,6 @@ lib.composeManyExtensions [
   upstreamOnly
   inputs.self.overlays.ancs4linux
   inputs.self.overlays.figtree
-  inputs.self.overlays.nef-worker
   inputs.self.overlays.niri
   inputs.self.overlays.nx-studio
   inputs.self.overlays.pass-secret-service-rs
