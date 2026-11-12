@@ -30,8 +30,8 @@ let
     cp ${lgHost}/looking-glass-host-setup.exe ${nefcon}/x64/nefconc.exe d/
     cp ${nvidia} d/nvidia.exe
     cp ${vdd}/VirtualDisplayDriver/{MttVDD.inf,MttVDD.dll,mttvdd.cat} d/vdd/
-    # add the 2560x1600 panel mode
-    sed 's|<resolutions>|<resolutions><resolution><width>2560</width><height>1600</height><refresh_rate>60</refresh_rate></resolution>|' \
+    # add the 3200x2000 panel mode; the global refresh rates include 165
+    sed 's|<resolutions>|<resolutions><resolution><width>3200</width><height>2000</height><refresh_rate>165</refresh_rate></resolution>|' \
       ${vdd}/VirtualDisplayDriver/vdd_settings.xml > d/vdd/vdd_settings.xml
     xorriso -as mkisofs -J -r -V UNATTEND -o $out d
   '';
