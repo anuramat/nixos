@@ -104,6 +104,8 @@ in
       };
       script = ''
         img=${images}/win11.qcow2
+        # drop the previous install's UEFI variables and TPM state, if any
+        virsh undefine --nvram --tpm win11 || true
         qemu-img create -f qcow2 "$img" 512G
         virsh define ${domain vga}
 
