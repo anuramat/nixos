@@ -106,8 +106,19 @@ in
           };
         };
       };
-      # niri would keep the nvidia driver in use
-      niri.settings.debug.ignore-drm-device = "/dev/dri/by-path/pci-${gpu}-render";
+      niri.settings = {
+        # niri would keep the nvidia driver in use
+        debug.ignore-drm-device = "/dev/dri/by-path/pci-${gpu}-render";
+        # VRR while looking glass is on screen, so that frames below 165 fps
+        # are shown when they arrive, not at the next fixed refresh
+        outputs."eDP-1".variable-refresh-rate = "on-demand";
+        window-rules = [
+          {
+            matches = [ { app-id = "^looking-glass-client$"; } ];
+            variable-refresh-rate = true;
+          }
+        ];
+      };
     };
   };
 }
