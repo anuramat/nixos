@@ -92,6 +92,8 @@ in
         "/lib64"
 
         "/run/current-system"
+        # GPU drivers (vulkan ICDs, libGL), for the /dev/dri and /dev/kfd binds
+        "/run/opengl-driver"
         "/run/systemd/resolve/stub-resolv.conf"
         "/var/log"
 
