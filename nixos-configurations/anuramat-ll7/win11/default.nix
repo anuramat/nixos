@@ -94,6 +94,24 @@ in
     }
   ];
 
+  # click-to-capture latency benchmark, see ./latency.py
+  environment.systemPackages = [
+    (pkgs.writers.writePython3Bin "win11-latency" {
+      libraries = with pkgs.python3Packages; [
+        evdev
+        # with bindings for wlr-screencopy, which it doesn't ship
+        (pywayland.overridePythonAttrs (_: {
+          postPatch = ''
+            substituteInPlace setup.py --replace-fail \
+              'input_files = [self.xml_file]' \
+              'input_files = [self.xml_file, "${pkgs.wlr-protocols}/share/wlr-protocols/unstable/wlr-screencopy-unstable-v1.xml"]'
+          '';
+        }))
+      ];
+      flakeIgnore = [ "E501" ];
+    } ./latency.py)
+  ];
+
   systemd.services = {
     # (re)define the VM from the repo, or install it if there's no disk
     win11-define = {
