@@ -1,18 +1,19 @@
 # long-running jobs, run as the agent user under `systemd-run --user`, so they
 # outlive sandboxed sessions and show up in the fleet monitor; every command runs on
 # the job's host over ssh, even when it's this one; the job's dir
-# /home/agent/shared/jobs/NAME on HOST is staged by the caller (e.g. `rsync ...
-# HOST:DIR`) or created by `job run`, then used as the working dir and for
-# `log` and `result`, plus `desc` and `eta` (seconds since the epoch), shown by
-# the fleet monitor
+# /home/agent/shared/jobs/NAME on HOST holds `log` and `result`, plus `desc`
+# and `eta` (seconds since the epoch), shown by the fleet monitor, and `work`,
+# the working dir, staged by the caller (e.g. `rsync ... HOST:DIR/work`) or
+# created by `job run`; CMD gets a dir of its own, so that its files (e.g. a
+# `nix build` out-link named `result`) can't clobber job's
 { pkgs, inputs, ... }:
 let
   inherit (inputs.self.consts.agent) username sharedDir;
   # the ExecStopPost; a script, since systemd saves a transient unit with every
   # `$` doubled, so an inline `$$` comes back as `$$$$` after a reload (e.g. a
-  # rebuild), and the job's result as the shell's PID
+  # rebuild), and the job's result as the shell's PID; takes the job's dir
   writeResult = pkgs.writeShellScript "job-result" ''
-    echo "$SERVICE_RESULT $EXIT_CODE $EXIT_STATUS" >result.tmp && mv result.tmp result
+    echo "$SERVICE_RESULT $EXIT_CODE $EXIT_STATUS" >"$1/result.tmp" && mv "$1/result.tmp" "$1/result"
   '';
   job = pkgs.writeShellApplication {
     name = "job";
@@ -70,7 +71,7 @@ let
         shift $((OPTIND - 1))
         [ -n "$desc" ] || die "-d DESC is required: a short description of the job for the fleet monitor, e.g. -d 'smoke test of A on B'"
         (($#)) || die "$usage"
-        mkdir -p "$D"
+        mkdir -p "$D/work"
         [ ! -e "$D/result" ] || die "$D/result exists, the job already ran"
         printf '%s\n' "$desc" >"$D/desc"
         [ -z "$eta" ] || echo "$eta" >"$D/eta"
@@ -79,8 +80,8 @@ let
         # Type=exec: return once CMD runs, not right after the fork, so that
         # `job wait` finds the log, which tells it the job exists
         exec systemd-run --user --unit="$unit" --collect --expand-environment=no \
-          --working-directory="$D" -p Type=exec -p StandardOutput="append:$D/log" \
-          -p ExecStopPost=${writeResult} \
+          --working-directory="$D/work" -p Type=exec -p StandardOutput="append:$D/log" \
+          -p ExecStopPost="${writeResult} $D" \
           "$@"
         ;;
       eta)

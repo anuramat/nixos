@@ -188,8 +188,9 @@ let
           minutes, MUST be run as a job:
 
           - `job run HOST:NAME -d DESC [-e WHEN] -- CMD...` runs CMD as
-            `${username}` on HOST, in `D=${sharedDir}/jobs/NAME` on HOST; output
-            goes to `D/log`. NAME is `[a-z0-9-]+` and can't be reused.
+            `${username}` on HOST, in `D=${sharedDir}/jobs/NAME/work` on HOST;
+            output goes to `D/../log`, next to job's own files. NAME is
+            `[a-z0-9-]+` and can't be reused.
           - DESC and the ETA are shown to the user next to the job. DESC is
             required: about 40 characters, what is run on what, e.g.
             `smoke test of A on B` or `full training run of C with D`.
@@ -213,7 +214,7 @@ let
 
           ```sh
           H=$HOSTNAME # or another host from the list above
-          D=${sharedDir}/jobs/NAME
+          D=${sharedDir}/jobs/NAME/work
           # just the flake files, so that nix doesn't copy the repo into the store
           rsync -t --mkpath flake.nix flake.lock "$H:$D/flake/"
           git ls-files -z -co --exclude-standard |
@@ -224,7 +225,7 @@ let
 
           - If the flake reads other repo files (e.g. `src = ./.`), copy those to `D/flake` too.
           - Big data (datasets, caches) SHOULD live in `${sharedDir}/data/PROJECT` on the host, symlinked into D: `ssh $H ln -s ${sharedDir}/data/PROJECT/cache $D/src/cache`.
-          - Results: read D directly on this host; on another host, use `ssh $H tail $D/log` or `rsync -rlpt "$H:$D/src/out/" out/`.
+          - Results: read D directly on this host; on another host, use `ssh $H tail $D/../log` or `rsync -rlpt "$H:$D/src/out/" out/`.
           - Record `HOST:NAME` wherever the run is documented, so a later session can re-attach with `job wait`.
         ''
         + (for [ "claude" ] ''
