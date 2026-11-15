@@ -6,6 +6,7 @@ let
     |> lib.filterAttrs (_: v: v.agent)
     |> lib.mapAttrsToList (n: v: "- `${n}` -- ${v.description}")
     |> lib.concatStringsSep "\n";
+  decisionUrl = with inputs.self.consts.llama; "http://${host}:${toString decisionPort}";
 
   mkSkills =
     agent:
@@ -241,6 +242,88 @@ let
           Kernel callchains need `kernel.perf_event_paranoid` <= 1 (it's 2,
           in and outside the sandbox), so `perf record -g` and
           `--call-graph dwarf` fail: add `--user-callchains`.
+        '';
+      };
+      decision-model = {
+        description = "the user's decision model, which answers yes/no, multiple-choice and scale questions about text and images with probabilities; read before classifying or judging something automatically, e.g. in a script or a bot";
+        text = ''
+          The decision model doesn't generate text: given a state (text, JSON
+          and images) and questions about it, it returns the probability of
+          each answer. It's one of Base Labs' decision models, served by qev at
+          `${decisionUrl}/v1/systemone`, reachable from the sandbox and from
+          every host; `GET ${decisionUrl}/v1/models` names the one that is
+          served (`decision` in `nixos-configurations/anuramat-bgm5/llama.nix`).
+
+          For a single yes/no question about text, `decide QUESTION... < STATE`
+          prints the probability of yes.
+
+          ## requests
+
+          `POST /v1/systemone` with a JSON body:
+
+          ```json
+          {
+            "state": "text, or any JSON value, which the model sees as indented JSON",
+            "images": ["data:image/jpeg;base64,...", "https://..."],
+            "questions": {
+              "retry": {"type": "noul", "instructions": "Should the job be retried unchanged?"},
+              "cause": {
+                "type": "choice",
+                "instructions": "What is the most likely cause?",
+                "criteria": {"memory": "not enough RAM", "bug": "a bug in the code", "hardware": "a hardware fault"}
+              },
+              "severity": {"type": "score", "instructions": "How severe is this?", "criteria": ["harmless", "minor", "major", "critical"]}
+            }
+          }
+          ```
+
+          Each question's answer is in `.answers.NAME`:
+
+          - `noul` (yes/no): `{"noul": P(yes)}`; an optional
+            `"criteria": {"true": ..., "false": ...}` describes what each answer
+            means.
+          - `choice` (one of up to 255 options): `{"choice": BEST,
+            "probabilities": {OPTION: P, ...}, "confidence": C}`, where C is the
+            top probability rescaled from uniform (0) to certain (1).
+          - `score` (a scale of up to 10 levels): `{"score": S, "probabilities":
+            {"0": P, ...}, "legend": {"0": LEVEL, ...}, "confidence": C}`, where
+            S is the expected level index, from 0.
+
+          ## images
+
+          Top-level `images` (data URLs or URLs) go before the state. To place
+          images inside the state, pass `"media": [{"type": "image", "data":
+          DATA_URL}, ...]` (or `"url"` instead of `"data"`), and write
+          `<image:N>` where each belongs, numbered from 1 in order of appearance
+          (see `nixos-configurations/anuramat-bgm5/decision-bot.py`).
+
+          Images over 4096 tokens of 32x32 px (about 4.2 MP) are refused, and a
+          whole request must fit in 16384 tokens: shrink images first, e.g.
+          `magick IN -resize '4000000@>' OUT.jpg`. A base64 image is too long
+          for a command-line argument, so pipe it:
+
+          ```sh
+          base64 -w0 shot.jpg |
+            jq -Rs '{state: "a screenshot of the screen", images: ["data:image/jpeg;base64," + .],
+              questions: {q: {type: "noul", instructions: "Is the game ready to run?"}}}' |
+            curl -sSf --json @- ${decisionUrl}/v1/systemone | jq .answers.q.noul
+          ```
+
+          ## usage
+
+          - Requests are served one at a time, and the model is shared with
+            hostrun's reviews and the user's bots: a text request takes about a
+            second, one with a 2-4 MP image about 8 s. You SHOULD ask all the
+            questions about a state in one request, since the state is only
+            processed once, and you MUST NOT flood it with parallel requests.
+          - The questions and criteria are all the model knows about the task:
+            make the instructions self-contained, say what counts as each answer,
+            keep the options mutually exclusive, and add an `unknown` option when
+            the state may not be enough to decide (see
+            `home-modules/heavy-linux/agents/hostrun/questions.json`).
+          - Before relying on a threshold, check it against labeled cases; e.g.
+            `home-modules/heavy-linux/agents/hostrun/eval/eval.py` evaluates
+            hostrun's questions.
         '';
       };
     };
