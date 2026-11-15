@@ -14,6 +14,7 @@ let
     VK_LOADER_DRIVERS_DISABLE = "*nvidia*";
     __EGL_VENDOR_LIBRARY_FILENAMES = "/run/opengl-driver/share/glvnd/egl_vendor.d/50_mesa.json";
   };
+  hm = config.home-manager.users.${user};
 in
 {
   # windows VM with the dGPU passed through; libvirt takes the dGPU from the
@@ -85,8 +86,42 @@ in
   users.users.${user}.extraGroups = [
     "libvirtd"
     "kvm"
+    "keyd" # for keyd-application-mapper
   ];
+  users.groups.keyd = { }; # keyd gives it its socket
   home-manager.users.${user} = {
+    # no keyd remaps while looking glass is focused: the guest gets plain keys
+    xdg.configFile."keyd/app.conf".text = ''
+      [looking-glass-client]
+      ${
+        builtins.attrNames config.services.keyd.keyboards.main.settings.main
+        # keyd's defaults: plain keys, and layers for modifiers
+        |> map (
+          k:
+          "${k} = ${
+            {
+              leftalt = "layer(alt)";
+              leftshift = "layer(shift)";
+              rightalt = "layer(altgr)";
+            }
+            .${k} or k
+          }"
+        )
+        |> lib.concatLines
+      }'';
+    systemd.user.services.keyd-application-mapper = {
+      Unit = {
+        After = [ hm.wayland.systemd.target ];
+        PartOf = [ hm.wayland.systemd.target ];
+        X-Restart-Triggers = [ hm.xdg.configFile."keyd/app.conf".source ];
+      };
+      Service = {
+        ExecStart = lib.getExe' config.services.keyd.package "keyd-application-mapper";
+        Environment = [ "KEYD_BIN=${lib.getExe config.services.keyd.package}" ];
+        Restart = "on-failure";
+      };
+      Install.WantedBy = [ hm.wayland.systemd.target ];
+    };
     systemd.user.services.nirimap.Service.Environment = lib.mapAttrsToList (
       k: v: "${k}=${v}"
     ) hideNvidia;
