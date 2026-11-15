@@ -1,9 +1,9 @@
 """Click-to-capture latency of the win11 VM through looking glass.
 
-Clicks with a virtual mouse, and polls a screen pixel with wlr-screencopy until
-the guest's page turns white. niri renders each capture on request, so the
-latency ends when the looking glass client's window shows the change, before
-niri's next frame and the panel's scanout.
+Clicks with a virtual mouse, and captures a screen pixel with wlr-screencopy
+until the guest's page turns white. The capture waits for the niri redraw that
+changes the pixel, so the latency ends at the compositor's frame, before the
+panel's scanout.
 Alternates blocks of samples with the page idle and redrawing every frame
 (toggled with the A key), since an idle desktop lets the capture slow down. In
 the guest, open this in a fullscreen browser, then focus the looking glass
@@ -17,6 +17,7 @@ import json
 import mmap
 import os
 import random
+import select
 import statistics
 import subprocess
 import time
@@ -58,33 +59,37 @@ class Pixel:
             self.buf = pool.create_buffer(0, width, height, stride, fmt)
         return self.buf
 
-    def capture(self):
-        """Presentation time of the captured frame, and if it's bright."""
+    def capture(self, damage, timeout=1.0):
+        """Capture time and if the pixel is bright, or None on timeout.
+
+        Without damage, niri renders the capture right away; with damage, at
+        its next redraw that changes the pixel.
+        """
         frame = self.manager.capture_output_region(0, self.output, self.x, self.y, 1, 1)
-        done = []
+        done, end = [], time.monotonic() + timeout
+        copy = frame.copy_with_damage if damage else frame.copy
         frame.dispatcher["buffer"] = lambda f, *b: setattr(self, "fmt", b)
-        frame.dispatcher["buffer_done"] = lambda f: f.copy(self.buffer(*self.fmt))
+        frame.dispatcher["buffer_done"] = lambda f: copy(self.buffer(*self.fmt))
         frame.dispatcher["ready"] = lambda f, hi, lo, ns: done.append(
             (hi << 32) + lo + ns / 1e9
         )
         frame.dispatcher["failed"] = lambda f: done.append(None)
-        while not done:
-            self.display.dispatch(block=True)
+        while not done and (left := end - time.monotonic()) > 0:
+            self.display.flush()
+            if select.select([self.display.get_fd()], [], [], left)[0]:
+                self.display.dispatch(block=True)
         frame.destroy()
-        if done[0] is None:
+        if done == [None]:
             raise SystemExit("screencopy failed")
-        return done[0], sum(self.mem[:3]) > 3 * 128
+        return done and (done[0], sum(self.mem[:3]) > 3 * 128)
 
 
-def wait_for(pixel, want, timeout=1.0):
-    """Time of the first frame that shows `want` and the median poll period, or None."""
-    end, times = time.monotonic() + timeout, []
-    while time.monotonic() < end:
-        t, bright = pixel.capture()
-        times.append(t)
-        if bright == want:
-            gaps = [b - a for a, b in zip(times, times[1:])]
-            return t, statistics.median(gaps) if gaps else 0
+def wait_for(pixel, want, damage, timeout=1.0):
+    """Capture time of the first frame that shows `want`, or None."""
+    end = time.monotonic() + timeout
+    while (left := end - time.monotonic()) > 0:
+        if (c := pixel.capture(damage, left)) and c[1] == want:
+            return c[0]
     return None
 
 
@@ -94,14 +99,14 @@ def tap(ui, code, value):
 
 
 def sample(ui, pixel):
-    """Click latency and the median poll period, in ms, or None."""
-    if wait_for(pixel, False) is None:
+    """Click latency in ms, or None."""
+    if wait_for(pixel, False, damage=False) is None:
         raise SystemExit("the sampled pixel isn't black, run with --help")
-    t0 = time.monotonic()  # CLOCK_MONOTONIC, like the presentation times
+    t0 = time.monotonic()  # CLOCK_MONOTONIC, like the capture times
     tap(ui, e.BTN_LEFT, 1)
-    r = wait_for(pixel, True)
+    t = wait_for(pixel, True, damage=True)
     tap(ui, e.BTN_LEFT, 0)
-    return r and ((r[0] - t0) * 1000, r[1] * 1000)
+    return t and (t - t0) * 1000
 
 
 def summary(lat):
@@ -139,7 +144,7 @@ def run(args, pixel):
     for _ in range(3):  # the first clicks also wake up the input path
         sample(ui, pixel)
 
-    lat, periods, redraw = {False: [], True: []}, {False: [], True: []}, False
+    lat, redraw = {False: [], True: []}, False
     for i in range(args.n):
         if redraw != (i // args.b % 2 == 1):
             redraw = not redraw
@@ -150,19 +155,15 @@ def run(args, pixel):
         if (s := sample(ui, pixel)) is None:
             print(f"{i} {mode}: timed out")
             continue
-        lat[redraw].append(s[0])
-        periods[redraw].append(s[1])
-        print(f"{i} {mode}: {s[0]:.1f} ms")
+        lat[redraw].append(s)
+        print(f"{i} {mode}: {s:.1f} ms")
     if redraw:
         tap(ui, e.KEY_A, 1)
         tap(ui, e.KEY_A, 0)
     ui.close()
 
-    for redraw, mode in [(False, "idle:  "), (True, "redraw:")]:
-        print(
-            f"{mode} {summary(lat[redraw])};"
-            f" poll period ~{statistics.median(periods[redraw]):.1f} ms"
-        )
+    print(f"idle:   {summary(lat[False])}")
+    print(f"redraw: {summary(lat[True])}")
 
 
 main()
