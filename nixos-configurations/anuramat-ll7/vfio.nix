@@ -10,6 +10,12 @@ let
   # RTX 4070 Mobile and its HDMI audio, IOMMU group 13
   gpuIds = "10de:2860,10de:22bd";
   gpu = "0000:01:00.0";
+  # for programs that would open the dGPU, through nvidia's vulkan or EGL
+  # driver, while rendering on the iGPU
+  hideNvidia = {
+    VK_LOADER_DRIVERS_DISABLE = "*nvidia*";
+    __EGL_VENDOR_LIBRARY_FILENAMES = "/run/opengl-driver/share/glvnd/egl_vendor.d/50_mesa.json";
+  };
 in
 {
   # windows VM with the dGPU passed through; in the default boot entry,
@@ -58,17 +64,23 @@ in
         [ "$1" = win11 ] || exit 0
         case $2 in
           prepare)
-            systemctl stop nvidia-powerd
-            modprobe -r nvidia_drm nvidia_modeset nvidia_uvm nvidia && exit
-            fuser -v /dev/nvidia* /dev/dri/by-path/pci-${gpu}-*
-            load
-            exit 1
+            # openrgb opens the dGPU on start; it comes back without it
+            systemctl stop nvidia-powerd openrgb
+            if ! modprobe -r nvidia_drm nvidia_modeset nvidia_uvm nvidia; then
+              fuser -v /dev/nvidia* /dev/dri/by-path/pci-${gpu}-*
+              load
+              systemctl start openrgb
+              exit 1
+            fi
+            systemctl start openrgb
             ;;
           release) load ;;
         esac
       '';
     };
   };
+  # gtk4 opens every GPU, see hideNvidia
+  systemd.user.services.polkit-soteria.environment = hideNvidia;
   programs.virt-manager.enable = true;
   # the VM is in the system instance; virsh would default to the user's
   environment.sessionVariables.LIBVIRT_DEFAULT_URI = "qemu:///system";
@@ -76,24 +88,29 @@ in
     "libvirtd"
     "kvm"
   ];
-  home-manager.users.${user}.programs = {
-    looking-glass-client = {
-      enable = true; # the version must match the guest's host, see ./win11
-      settings = {
-        win = {
-          fullScreen = true;
-          showFPS = false;
-          noScreensaver = true;
-        };
-        input = {
-          escapeKey = "KEY_INSERT"; # scroll lock needs fn on this keyboard
-          rawMouse = true;
-          captureOnFocus = true;
+  home-manager.users.${user} = {
+    systemd.user.services.nirimap.Service.Environment = lib.mapAttrsToList (
+      k: v: "${k}=${v}"
+    ) hideNvidia;
+    programs = {
+      looking-glass-client = {
+        enable = true; # the version must match the guest's host, see ./win11
+        settings = {
+          win = {
+            fullScreen = true;
+            showFPS = false;
+            noScreensaver = true;
+          };
+          input = {
+            escapeKey = "KEY_INSERT"; # scroll lock needs fn on this keyboard
+            rawMouse = true;
+            captureOnFocus = true;
+          };
         };
       };
+      # niri would keep the nvidia driver in use
+      niri.settings.debug.ignore-drm-device = "/dev/dri/by-path/pci-${gpu}-render";
     };
-    # niri would keep the nvidia driver in use
-    niri.settings.debug.ignore-drm-device = "/dev/dri/by-path/pci-${gpu}-render";
   };
 
   # separate boot entry with the dGPU bound to vfio-pci from boot, so the
