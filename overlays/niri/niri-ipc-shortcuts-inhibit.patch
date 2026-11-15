@@ -1,0 +1,156 @@
+diff --git a/niri-ipc/src/lib.rs b/niri-ipc/src/lib.rs
+index 0aa3cb4..7b67f8e 100644
+--- a/niri-ipc/src/lib.rs
++++ b/niri-ipc/src/lib.rs
+@@ -1669,6 +1669,13 @@ pub enum Event {
+         /// The new state of the overview.
+         is_open: bool,
+     },
++    /// The focused surface started or stopped inhibiting keyboard shortcuts.
++    ///
++    /// For example, a VM viewer that captures the input inhibits them while capturing.
++    KeyboardShortcutsInhibitChanged {
++        /// Whether the focused surface now inhibits keyboard shortcuts.
++        is_inhibiting: bool,
++    },
+     /// The configuration was reloaded.
+     ///
+     /// You will always receive this event when connecting to the event stream, indicating the last
+diff --git a/niri-ipc/src/state.rs b/niri-ipc/src/state.rs
+index b603dfc..dbc9d06 100644
+--- a/niri-ipc/src/state.rs
++++ b/niri-ipc/src/state.rs
+@@ -44,6 +44,9 @@ pub struct EventStreamState {
+     /// State of the overview.
+     pub overview: OverviewState,
+ 
++    /// State of the keyboard shortcuts inhibitor of the focused surface.
++    pub shortcuts_inhibit: ShortcutsInhibitState,
++
+     /// State of the config.
+     pub config: ConfigState,
+ 
+@@ -79,6 +82,13 @@ pub struct OverviewState {
+     pub is_open: bool,
+ }
+ 
++/// The keyboard shortcuts inhibit state communicated over the event stream.
++#[derive(Debug, Default)]
++pub struct ShortcutsInhibitState {
++    /// Whether the focused surface inhibits keyboard shortcuts.
++    pub is_inhibiting: bool,
++}
++
+ /// The config state communicated over the event stream.
+ #[derive(Debug, Default)]
+ pub struct ConfigState {
+@@ -100,6 +110,7 @@ impl EventStreamStatePart for EventStreamState {
+         events.extend(self.windows.replicate());
+         events.extend(self.keyboard_layouts.replicate());
+         events.extend(self.overview.replicate());
++        events.extend(self.shortcuts_inhibit.replicate());
+         events.extend(self.config.replicate());
+         events.extend(self.casts.replicate());
+         events
+@@ -110,6 +121,7 @@ impl EventStreamStatePart for EventStreamState {
+         let event = self.windows.apply(event)?;
+         let event = self.keyboard_layouts.apply(event)?;
+         let event = self.overview.apply(event)?;
++        let event = self.shortcuts_inhibit.apply(event)?;
+         let event = self.config.apply(event)?;
+         let event = self.casts.apply(event)?;
+         Some(event)
+@@ -280,6 +292,24 @@ impl EventStreamStatePart for OverviewState {
+     }
+ }
+ 
++impl EventStreamStatePart for ShortcutsInhibitState {
++    fn replicate(&self) -> Vec<Event> {
++        vec![Event::KeyboardShortcutsInhibitChanged {
++            is_inhibiting: self.is_inhibiting,
++        }]
++    }
++
++    fn apply(&mut self, event: Event) -> Option<Event> {
++        match event {
++            Event::KeyboardShortcutsInhibitChanged { is_inhibiting } => {
++                self.is_inhibiting = is_inhibiting;
++            }
++            event => return Some(event),
++        }
++        None
++    }
++}
++
+ impl EventStreamStatePart for ConfigState {
+     fn replicate(&self) -> Vec<Event> {
+         vec![Event::ConfigLoaded {
+diff --git a/src/input/mod.rs b/src/input/mod.rs
+index 402cdee..7a8814f 100644
+--- a/src/input/mod.rs
++++ b/src/input/mod.rs
+@@ -404,7 +404,7 @@ impl State {
+         Some(pos + target_geo.loc.to_f64())
+     }
+ 
+-    fn is_inhibiting_shortcuts(&self) -> bool {
++    pub fn is_inhibiting_shortcuts(&self) -> bool {
+         self.niri
+             .keyboard_focus
+             .surface()
+diff --git a/src/ipc/client.rs b/src/ipc/client.rs
+index 40a58ef..dfb6afb 100644
+--- a/src/ipc/client.rs
++++ b/src/ipc/client.rs
+@@ -480,6 +480,9 @@ pub fn handle_msg(mut msg: Msg, json: bool) -> anyhow::Result<()> {
+                     Event::OverviewOpenedOrClosed { is_open: opened } => {
+                         println!("Overview toggled: {opened}");
+                     }
++                    Event::KeyboardShortcutsInhibitChanged { is_inhibiting } => {
++                        println!("Keyboard shortcuts inhibited: {is_inhibiting}");
++                    }
+                     Event::ConfigLoaded { failed } => {
+                         let status = if failed {
+                             "with an error"
+diff --git a/src/ipc/server.rs b/src/ipc/server.rs
+index db71da6..11df551 100644
+--- a/src/ipc/server.rs
++++ b/src/ipc/server.rs
+@@ -806,6 +806,24 @@ impl State {
+         server.send_event(event);
+     }
+ 
++    pub fn ipc_refresh_shortcuts_inhibit(&mut self) {
++        let Some(server) = &self.niri.ipc_server else {
++            return;
++        };
++
++        let mut state = server.event_stream_state.borrow_mut();
++        let state = &mut state.shortcuts_inhibit;
++        let is_inhibiting = self.is_inhibiting_shortcuts();
++
++        if state.is_inhibiting == is_inhibiting {
++            return;
++        }
++
++        let event = Event::KeyboardShortcutsInhibitChanged { is_inhibiting };
++        state.apply(event.clone());
++        server.send_event(event);
++    }
++
+     pub fn ipc_refresh_casts(&mut self) {
+         let Some(server) = &self.niri.ipc_server else {
+             return;
+diff --git a/src/niri.rs b/src/niri.rs
+index bb2d7f5..0b38750 100644
+--- a/src/niri.rs
++++ b/src/niri.rs
+@@ -843,6 +843,8 @@ impl State {
+         self.refresh_ipc_outputs();
+         self.ipc_refresh_layout();
+         self.ipc_refresh_keyboard_layout_index();
++        // Needs to be called after updating the keyboard focus.
++        self.ipc_refresh_shortcuts_inhibit();
+ 
+         // Needs to be called after updating the keyboard focus.
+         #[cfg(feature = "dbus")]

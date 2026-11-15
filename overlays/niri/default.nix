@@ -5,7 +5,9 @@
 # bind's `allow-when-locked`. smithay forwards virtual keyboard keys straight
 # to the focused client (niri#2212), so a third matches them against binds.
 # niri takes 3- and 4-finger touchpad swipes even from a client that inhibits
-# shortcuts, like looking glass holding the input; a fourth passes them on
+# shortcuts, like looking glass holding the input; a fourth passes them on.
+# A fifth reports the focused surface's shortcuts inhibitor on the IPC event
+# stream, so that keyd can drop the remaps while looking glass captures
 { inputs, lib, ... }:
 _final: prev: {
   niri = prev.niri.overrideAttrs (old: {
@@ -19,6 +21,7 @@ _final: prev: {
         ./niri-edge-swipe-when-locked.patch
         ./niri-virtual-keyboard-binds.patch
         ./niri-inhibit-gestures.patch
+        ./niri-ipc-shortcuts-inhibit.patch
       ];
   });
 }

@@ -96,39 +96,55 @@ in
   users.users.${user}.extraGroups = [
     "libvirtd"
     "kvm"
-    "keyd" # for keyd-application-mapper
+    "keyd" # for keyd-plain-when-inhibited
   ];
   users.groups.keyd = { }; # keyd gives it its socket, see CAP_SETGID
   home-manager.users.${user} = {
-    # no keyd remaps while looking glass is focused: the guest gets plain keys
-    xdg.configFile."keyd/app.conf".text = ''
-      [looking-glass-client]
-      ${
-        builtins.attrNames config.services.keyd.keyboards.main.settings.main
-        # keyd's defaults: plain keys, and layers for modifiers
-        |> map (
-          k:
-          "${k} = ${
-            {
-              leftalt = "layer(alt)";
-              leftshift = "layer(shift)";
-              rightalt = "layer(altgr)";
-            }
-            .${k} or k
-          }"
-        )
-        |> lib.concatLines
-      }'';
-    systemd.user.services.keyd-application-mapper = {
+    # no keyd remaps while a client inhibits shortcuts, e.g. looking glass
+    # while capturing: the guest gets plain keys
+    systemd.user.services.keyd-plain-when-inhibited = {
       Unit = {
         After = [ hm.wayland.systemd.target ];
         PartOf = [ hm.wayland.systemd.target ];
-        X-Restart-Triggers = [ hm.xdg.configFile."keyd/app.conf".source ];
       };
       Service = {
-        ExecStart = lib.getExe' config.services.keyd.package "keyd-application-mapper";
-        Environment = [ "KEYD_BIN=${lib.getExe config.services.keyd.package}" ];
-        Restart = "on-failure";
+        ExecStart = lib.getExe (
+          pkgs.writeShellApplication {
+            name = "keyd-plain-when-inhibited";
+            runtimeInputs = [
+              hm.programs.niri.package
+              pkgs.jq
+              config.services.keyd.package
+            ];
+            text = ''
+              niri msg -j event-stream |
+                jq --unbuffered '.KeyboardShortcutsInhibitChanged.is_inhibiting // empty' |
+                while read -r inhibiting; do
+                  if [ "$inhibiting" = true ]; then
+                    keyd bind reset ${
+                      builtins.attrNames config.services.keyd.keyboards.main.settings.main
+                      # keyd's defaults: plain keys, and layers for modifiers
+                      |> map (
+                        k:
+                        "${k} = ${
+                          {
+                            leftalt = "layer(alt)";
+                            leftshift = "layer(shift)";
+                            rightalt = "layer(altgr)";
+                          }
+                          .${k} or k
+                        }"
+                      )
+                      |> lib.escapeShellArgs
+                    }
+                  else
+                    keyd bind reset
+                  fi
+                done
+            '';
+          }
+        );
+        Restart = "always"; # the event stream ends when niri restarts
       };
       Install.WantedBy = [ hm.wayland.systemd.target ];
     };
