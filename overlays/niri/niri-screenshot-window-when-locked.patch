@@ -1,0 +1,13 @@
+diff --git a/src/input/mod.rs b/src/input/mod.rs
+index 7a8814f..310f95f 100644
+--- a/src/input/mod.rs
++++ b/src/input/mod.rs
+@@ -5244,6 +5244,8 @@ fn allowed_when_locked(action: &Action) -> bool {
+             | Action::PowerOnMonitors
+             | Action::SwitchLayout(_)
+             | Action::ToggleKeyboardShortcutsInhibit
++            // IPC-only, and renders the window itself rather than the locked output
++            | Action::ScreenshotWindowById { .. }
+     )
+ }
+ 
