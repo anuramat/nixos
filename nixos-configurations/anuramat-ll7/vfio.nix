@@ -31,7 +31,7 @@ in
         "vfio-pci.ids=${gpuIds}"
       ];
 
-      # looking glass shared memory: 2560x1600 SDR frames need ~42MB, rounded up
+      # looking glass shared memory: 3200x2000 SDR frames need ~59MB, rounded up
       extraModulePackages = [ config.boot.kernelPackages.kvmfr ];
       kernelModules = [ "kvmfr" ];
       extraModprobeConfig = "options kvmfr static_size_mb=64";
