@@ -163,7 +163,6 @@ in
           input = {
             escapeKey = "KEY_INSERT"; # scroll lock needs fn on this keyboard
             rawMouse = true;
-            captureOnFocus = true;
           };
         };
       };
