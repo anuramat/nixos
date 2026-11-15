@@ -324,6 +324,55 @@ let
           - Before relying on a threshold, check it against labeled cases; e.g.
             `home-modules/heavy-linux/agents/hostrun/eval/eval.py` evaluates
             hostrun's questions.
+
+          ## watching a GUI app
+
+          To wait for something that only shows in a GUI, e.g. a download
+          finishing or a game becoming ready to run, poll screenshots of it and
+          notify the user once the model says yes. The screenshots need the
+          user's niri session (`NIRI_SOCKET` for `niri msg`, `WAYLAND_DISPLAY`
+          for `grim`), so write the script and ask the user to start it from a
+          terminal there. For example, for a game in the Windows VM, shown by
+          looking glass:
+
+          ```sh
+          #!/usr/bin/env bash
+          # every 15 s, asks the decision model whether the game in the looking
+          # glass window is ready to run; once it says yes, sends the screenshot
+          # over tgfy and exits
+          q='Is the game ready to run?'
+          id=$(niri msg -j windows | jq '.[] | select(.app_id == "looking-glass-client") | .id')
+          d=$(mktemp -d)
+          trap 'rm -r "$d"' EXIT
+          while :; do
+          	rm -f "$d/shot.png"
+          	niri msg action screenshot-window --id "$id" --path "$d/shot.png"
+          	# niri writes the file after the command returns
+          	until [ -s "$d/shot.png" ]; do sleep 0.2; done
+          	magick "$d/shot.png" -resize '4000000@>' "$d/shot.jpg"
+          	p=$(base64 -w0 "$d/shot.jpg" |
+          		jq -Rs --arg q "$q" '{state: "a screenshot of a window", images: ["data:image/jpeg;base64," + .],
+          			questions: {q: {type: "noul", instructions: $q}}}' |
+          		curl -sSf --json @- ${decisionUrl}/v1/systemone | jq .answers.q.noul)
+          	echo "$(date +%T) P(yes) = $p"
+          	jq -en "$p > 0.5" >/dev/null && break
+          	sleep 15
+          done
+          echo "$q yes, P = $p" | tgfy "$d/shot.jpg"
+          ```
+
+          - `niri msg windows` lists the windows' app IDs and titles; the ID
+            changes when the app restarts.
+          - `screenshot-window` works while the session is locked
+            (`overlays/niri/niri-screenshot-window-when-locked.patch`), and a
+            hidden window, e.g. on another workspace or behind the lock screen,
+            still gets a frame callback every second, so it keeps redrawing.
+          - For the whole screen, use `grim - | magick - -resize '4000000@>'
+            "$d/shot.jpg"` instead; while the session is locked, grim captures
+            the lock screen, so the model never says yes.
+          - Each check takes about 8 s on top of the sleep. Before leaving it
+            running, check the question on screenshots of both states, e.g.
+            downloading and ready.
         '';
       };
     };
