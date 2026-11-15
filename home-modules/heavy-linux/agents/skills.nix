@@ -245,7 +245,7 @@ let
         '';
       };
       decision-model = {
-        description = "the user's decision model, which answers yes/no, multiple-choice and scale questions about text and images with probabilities; read before classifying or judging something automatically, e.g. in a script or a bot";
+        description = "the user's decision model, which answers yes/no, multiple-choice and scale questions about text and images with probabilities; it's much cheaper than reading the text or image yourself, but much dumber, so use it for simple judgments made many times or unattended, e.g. watching a GUI app until a download finishes or a game is ready, classifying chat messages in a bot, screening commands for danger, or triaging logs; read before using it";
         text = ''
           The decision model doesn't generate text: given a state (text, JSON
           and images) and questions about it, it returns the probability of
