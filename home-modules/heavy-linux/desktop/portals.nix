@@ -18,33 +18,38 @@ let
   '';
 in
 {
-  xdg.configFile = {
-    "systemd/user/xdg-desktop-portal.service.d/session.conf".text = inSession;
-    "systemd/user/xdg-desktop-portal-termfilechooser.service.d/session.conf".text = inSession;
-    "systemd/user/xdg-desktop-portal-gtk.service.d/session.conf".text = inSession;
-    "systemd/user/xdg-desktop-portal-wlr.service.d/session.conf".text = inSession;
-    "xdg-desktop-portal-termfilechooser/config".text =
-      let
-        wrapper = pkgs.writeShellApplication {
-          name = "yazi-wrapper";
-          runtimeInputs = with pkgs; [
-            yazi
-            gnused
-            bash
-          ];
-          text = builtins.readFile "${chooser}/share/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh";
-        };
-        # no single instance: the wrapper blocks until the terminal exits
-        term = "${config.home.sessionVariables.TERMCMD} --gtk-single-instance=false -e";
-      in
-      # ini
-      ''
-        [filechooser]
-        cmd=${lib.getExe wrapper}
-        default_dir=$HOME/Downloads
-        env=TERMCMD=${term}
-      '';
-  };
+  xdg.configFile =
+    lib.genAttrs
+      (
+        [ pkgs.xdg-desktop-portal ] ++ config.xdg.portal.extraPortals
+        |> map (p: "systemd/user/${p.pname}.service.d/session.conf")
+      )
+      (_: {
+        text = inSession;
+      })
+    // {
+      "xdg-desktop-portal-termfilechooser/config".text =
+        let
+          wrapper = pkgs.writeShellApplication {
+            name = "yazi-wrapper";
+            runtimeInputs = with pkgs; [
+              yazi
+              gnused
+              bash
+            ];
+            text = builtins.readFile "${chooser}/share/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh";
+          };
+          # no single instance: the wrapper blocks until the terminal exits
+          term = "${config.home.sessionVariables.TERMCMD} --gtk-single-instance=false -e";
+        in
+        # ini
+        ''
+          [filechooser]
+          cmd=${lib.getExe wrapper}
+          default_dir=$HOME/Downloads
+          env=TERMCMD=${term}
+        '';
+    };
 
   xdg = {
     portal = {
