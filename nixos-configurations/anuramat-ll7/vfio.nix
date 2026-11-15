@@ -118,7 +118,7 @@ in
             ];
             text = ''
               niri msg -j event-stream |
-                jq --unbuffered '.KeyboardShortcutsInhibitChanged.is_inhibiting // empty' |
+                jq --unbuffered '.KeyboardShortcutsInhibitChanged | values | .is_inhibiting' |
                 while read -r inhibiting; do
                   if [ "$inhibiting" = true ]; then
                     keyd bind reset ${
