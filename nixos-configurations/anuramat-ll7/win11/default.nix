@@ -1,6 +1,11 @@
 # windows 11 VM with the passed-through 4070, installed unattended on the
 # first boot without its disk; only the Windows ISO is provided by hand, see iso
-{ config, pkgs, ... }:
+{
+  config,
+  inputs,
+  pkgs,
+  ...
+}:
 let
   images = "/var/lib/libvirt/images";
 
@@ -21,8 +26,14 @@ let
     '';
   };
 
-  # must match the client version
-  lgHost = fetchzip "https://looking-glass.io/artifact/${pkgs.looking-glass-client.version}/host" "sha256-u6HTpiWrfY0u4y39YFzL/Ok/pvY++tixfRo92a4zJZw=";
+  # looking glass host version installed in the guest, which the client must
+  # match; like stateVersion, it's bumped by hand: install the new host in the
+  # guest (https://looking-glass.io/artifact/VERSION/host), then update this
+  # and the hash below
+  lgVersion = "B7";
+  lgClient =
+    config.home-manager.users.${inputs.self.consts.user.username}.programs.looking-glass-client.package;
+  lgHost = fetchzip "https://looking-glass.io/artifact/${lgVersion}/host" "sha256-u6HTpiWrfY0u4y39YFzL/Ok/pvY++tixfRo92a4zJZw=";
   nvidia = pkgs.fetchurl {
     url = "https://us.download.nvidia.com/Windows/621.14/621.14-notebook-win10-win11-64bit-international-dch-whql.exe";
     hash = "sha256-mGewyGiZcsQZiFk1uzhtmZr/+jOv1RTK2zhO6E7809M=";
@@ -76,6 +87,13 @@ let
   ];
 in
 {
+  assertions = [
+    {
+      assertion = lgClient.version == lgVersion;
+      message = "looking-glass-client is ${lgClient.version}, but the win11 guest's host is ${lgVersion}; see lgVersion in nixos-configurations/anuramat-ll7/win11/default.nix";
+    }
+  ];
+
   systemd.services = {
     # (re)define the VM from the repo, or install it if there's no disk
     win11-define = {
