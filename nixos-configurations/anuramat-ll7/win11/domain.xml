@@ -74,11 +74,10 @@
       <target dev="vda" bus="virtio"/>
       <boot order="1"/>
     </disk>
-    <!-- install media; the Windows ISO is put there by hand, and is
-         dropped from the domain when it's missing -->
+    <!-- install media -->
     <disk type="file" device="cdrom">
       <driver name="qemu" type="raw"/>
-      <source file="/var/lib/libvirt/images/win11.iso" startupPolicy="optional"/>
+      <source file="@iso@"/>
       <target dev="sda" bus="sata"/>
       <readonly/>
       <boot order="2"/>

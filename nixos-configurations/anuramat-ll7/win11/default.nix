@@ -1,6 +1,5 @@
 # windows 11 VM with the passed-through 4070, installed unattended on the
-# first boot without its disk; only the Windows ISO is provided by hand, at
-# /var/lib/libvirt/images/win11.iso
+# first boot without its disk; only the Windows ISO is provided by hand, see iso
 { config, pkgs, ... }:
 let
   images = "/var/lib/libvirt/images";
@@ -12,6 +11,16 @@ let
       extension = "zip"; # the looking glass URL doesn't end in .zip
       stripRoot = false;
     };
+  iso = pkgs.requireFile {
+    name = "win11.iso";
+    hash = "sha256-vUMH3zK8ivM7OczssRdK6zRThmMPiaK4bHpONrVeplA=";
+    message = ''
+      Download the Windows 11 (multi-edition, English, x64) ISO from
+      https://www.microsoft.com/software-download/windows11, rename it to
+      win11.iso, and add it with `nix-store --add-fixed sha256 win11.iso`
+    '';
+  };
+
   # must match the client version
   lgHost = fetchzip "https://looking-glass.io/artifact/${pkgs.looking-glass-client.version}/host" "sha256-u6HTpiWrfY0u4y39YFzL/Ok/pvY++tixfRo92a4zJZw=";
   nvidia = pkgs.fetchurl {
@@ -57,7 +66,7 @@ let
   domain =
     video:
     pkgs.replaceVars ./domain.xml {
-      inherit unattend video;
+      inherit iso unattend video;
       virtio = pkgs.virtio-win.src;
     };
 
@@ -95,10 +104,6 @@ in
       };
       script = ''
         img=${images}/win11.qcow2
-        if [ ! -e ${images}/win11.iso ]; then
-          echo "put the Windows 11 ISO at ${images}/win11.iso, then restart win11-define"
-          exit 1
-        fi
         qemu-img create -f qcow2 "$img" 512G
         virsh define ${domain vga}
 
