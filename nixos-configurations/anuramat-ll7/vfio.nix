@@ -57,6 +57,8 @@ in
       };
     };
     programs.virt-manager.enable = true;
+    # the VM is in the system instance; virsh would default to the user's
+    environment.sessionVariables.LIBVIRT_DEFAULT_URI = "qemu:///system";
     users.users.${inputs.self.consts.user.username}.extraGroups = [
       "libvirtd"
       "kvm"
