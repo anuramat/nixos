@@ -80,9 +80,14 @@ in
   };
   # they need the nvidia driver, which is unloaded while the VM runs; skip
   # them instead of failing, e.g. when a switch starts them then
-  systemd.services = lib.genAttrs [ "nvidia-powerd" "nvidia-container-toolkit-cdi-generator" ] (_: {
-    unitConfig.ConditionPathExists = "/sys/module/nvidia";
-  });
+  systemd.services =
+    lib.genAttrs [ "nvidia-powerd" "nvidia-container-toolkit-cdi-generator" ] (_: {
+      unitConfig.ConditionPathExists = "/sys/module/nvidia";
+    })
+    // {
+      # to switch to the keyd group, which the module's hardening doesn't allow
+      keyd.serviceConfig.CapabilityBoundingSet = [ "CAP_SETGID" ];
+    };
   # gtk4 opens every GPU, see hideNvidia
   systemd.user.services.polkit-soteria.environment = hideNvidia;
   programs.virt-manager.enable = true;
@@ -93,7 +98,7 @@ in
     "kvm"
     "keyd" # for keyd-application-mapper
   ];
-  users.groups.keyd = { }; # keyd gives it its socket
+  users.groups.keyd = { }; # keyd gives it its socket, see CAP_SETGID
   home-manager.users.${user} = {
     # no keyd remaps while looking glass is focused: the guest gets plain keys
     xdg.configFile."keyd/app.conf".text = ''
