@@ -3,7 +3,9 @@
 # patch adds an `above-lock` layer rule, which can keep an on-screen keyboard
 # over the lock screen; another lets an edge swipe fire while locked, like a
 # bind's `allow-when-locked`. smithay forwards virtual keyboard keys straight
-# to the focused client (niri#2212), so a third matches them against binds
+# to the focused client (niri#2212), so a third matches them against binds.
+# niri takes 3- and 4-finger touchpad swipes even from a client that inhibits
+# shortcuts, like looking glass holding the input; a fourth passes them on
 { inputs, lib, ... }:
 _final: prev: {
   niri = prev.niri.overrideAttrs (old: {
@@ -16,6 +18,7 @@ _final: prev: {
         ./niri-above-lock.patch
         ./niri-edge-swipe-when-locked.patch
         ./niri-virtual-keyboard-binds.patch
+        ./niri-inhibit-gestures.patch
       ];
   });
 }

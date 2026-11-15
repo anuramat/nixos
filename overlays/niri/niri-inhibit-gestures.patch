@@ -1,0 +1,16 @@
+diff --git a/src/input/mod.rs b/src/input/mod.rs
+index 4be9386..402cdee 100644
+--- a/src/input/mod.rs
++++ b/src/input/mod.rs
+@@ -3855,7 +3855,10 @@ impl State {
+             return;
+         }
+ 
+-        if event.fingers() == 3 {
++        // A client inhibiting shortcuts, e.g. a VM viewer holding the input,
++        // gets the gestures that niri would otherwise take.
++        if self.is_inhibiting_shortcuts() {
++        } else if event.fingers() == 3 {
+             self.niri.gesture_swipe_3f_cumulative = Some((0., 0.));
+ 
+             // We handled this event.
