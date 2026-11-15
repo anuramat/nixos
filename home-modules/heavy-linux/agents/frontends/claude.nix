@@ -118,7 +118,7 @@ in
   xdg.configFile = {
     "claude/CLAUDE.md".text = agents.instructions.claude;
   }
-  // agents.mkSkillLinks "claude/skills";
+  // agents.mkSkillLinks "claude";
   home = {
     sessionVariables = {
       CLAUDE_CONFIG_DIR = cfgDir;

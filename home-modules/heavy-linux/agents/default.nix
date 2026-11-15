@@ -29,11 +29,12 @@ in
   lib.agents = {
     # where the user drops files for agents to read
     userSharedDir = "${config.home.homeDirectory}/shared";
-    # xdg.configFile entries linking each skill's directory into DIR; agents
-    # skip a symlinked SKILL.md, but follow a symlinked skill directory
+    # xdg.configFile entries linking each of AGENT's skill directories into
+    # AGENT/skills; agents skip a symlinked SKILL.md, but follow a symlinked
+    # skill directory
     mkSkillLinks =
-      dir:
-      config.lib.agents.skills
+      agent:
+      config.lib.agents.skills.${agent}
       |> lib.mapAttrs' (
         name: v:
         let
@@ -48,7 +49,7 @@ in
           );
         in
         # files are copied rather than linked, for the same reason
-        lib.nameValuePair "${dir}/${name}" {
+        lib.nameValuePair "${agent}/skills/${name}" {
           source = pkgs.runCommand "skill-${name}" { } ''
             mkdir $out
             cp ${skillFile} $out/SKILL.md

@@ -6,7 +6,7 @@
   ...
 }:
 let
-  inherit (inputs.self.consts.agent) username sharedDir;
+  inherit (inputs.self.consts.agent) sharedDir;
   inherit (config.lib.agents) userSharedDir;
   # unknown under standalone Home Manager
   currentHost = lib.optionalString (osConfig != null) (
@@ -18,11 +18,6 @@ let
 
     ''
   );
-  agentHosts =
-    inputs.self.hosts
-    |> lib.filterAttrs (_: v: v.agent)
-    |> lib.mapAttrsToList (n: v: "- `${n}` -- ${v.description}")
-    |> lib.concatStringsSep "\n";
 
   mkInstructions =
     agent:
@@ -177,41 +172,8 @@ let
         {
           name = "Sandbox";
           body = ''
-            You are running in a sandbox.
-
-            Some commands may not work as expected. If a command can't work in
-            the sandbox (e.g. it needs the user's SSH keys or user services, or
-            writes outside the bound paths), you MAY ask the user to approve
-            running it outside the sandbox with `hostrun -d DESC [-r] -c CMD`, where
-            CMD is a single argument, run with `bash -c`, or `hostrun -d DESC
-            -f FILE`, which runs FILE's content the same way; FILE is read
-            inside the sandbox, so it can be in your scratchpad, or
-            `/dev/stdin` with a heredoc. DESC is a short one-line description
-            of what the command does, e.g. `list the files in X's wine prefix`:
-            the user's notification shows only DESC, and the review shows it
-            next to the command. hostrun blocks until the user answers, then
-            runs the command as the user on this host, in the current
-            directory, or, with `-h HOST`, over ssh as the user on HOST, in the
-            user's home there (unlike your own `ssh HOST`, which logs in as
-            `agent`); with `-r`, as root, through sudo, which the user
-            authenticates in the review, so don't use `sudo` in CMD itself.
-            stdout, stderr and the exit status are passed through,
-            stdin is `/dev/null`, and exit status 77 means the user denied it.
-            Paths that only exist in the sandbox, such as anything under
-            `/tmp`, don't exist outside it.
-          ''
-          + (for [ "claude" ] ''
-            Approval can take minutes: run `hostrun` with Bash `run_in_background`.
-          '')
-          + ''
-
-            The user reviews every `hostrun` command (with `-f`, the file's
-            content) before approving it, and sees nothing else, so you MUST
-            NOT make it run files you wrote (e.g. `hostrun -c 'bash x.sh'`),
-            and you SHOULD write it for readability: e.g. use `-h HOST` instead
-            of `ssh HOST` in the command, and organize long commands as `-f`
-            scripts with comments and descriptive names instead of huge
-            one-liners or layers of quoting.
+            You are running in a sandbox. Some commands may not work as
+            expected.
 
             Important: `/tmp`, `$TMPDIR`, and XDG cache/data/state home directories
             are bind mounted to tmpfs, so files created there will not persist
@@ -222,15 +184,6 @@ let
             The user gives you ad-hoc read-only access to files by putting
             them in `${userSharedDir}`; if the user mentions a shared file
             without a path, look there, not in `${sharedDir}`.
-
-            A process can only trace its own descendants (`kernel.yama.ptrace_scope=1`,
-            in and outside the sandbox), so attaching to a running process
-            (`py-spy dump --pid`, `gdb -p`, `strace -p`) fails: start it under
-            the tool instead, e.g. `py-spy record -- python ...`.
-
-            Kernel callchains need `kernel.perf_event_paranoid` <= 1 (it's 2,
-            in and outside the sandbox), so `perf record -g` and
-            `--call-graph dwarf` fail: add `--user-callchains`.
           '';
         }
         {
@@ -258,63 +211,6 @@ let
             on, and it doesn't replace telling the user what matters for the
             current task.
           '';
-        }
-        {
-          name = "SSH and long-running jobs";
-          body = ''
-            You have SSH access to the following machines as the unprivileged `${username}` user:
-
-            ${agentHosts}
-
-            Its home directory persists across sessions. Anything you start over
-            ssh is killed when the ssh command returns.
-
-            Anything that should outlive your session, or runs longer than ~10
-            minutes, MUST be run as a job:
-
-            - `job run HOST:NAME -d DESC [-e WHEN] -- CMD...` runs CMD as
-              `${username}` on HOST, in `D=${sharedDir}/jobs/NAME` on HOST; output
-              goes to `D/log`. NAME is `[a-z0-9-]+` and can't be reused.
-            - DESC and the ETA are shown to the user next to the job. DESC is
-              required: about 40 characters, what is run on what, e.g.
-              `smoke test of A on B` or `full training run of C with D`.
-            - `-e WHEN` sets the ETA, in `date -d` syntax: `'90 min'`, `'2 hours'`,
-              `'1 hour 30 min'`. You SHOULD always set it, estimated from a smoke
-              test's throughput times the total work, or a previous run's duration.
-            - `job eta HOST:NAME WHEN` updates the ETA; like `-e`, WHEN is the time
-              left from now, not the total duration since the job started. When
-              the job's progress shows that the estimate is off by more than ~20%,
-              you SHOULD update it.
-            - `job wait [-f] HOST:NAME` blocks until the job ends and prints
-              `job NAME: RESULT`. Exit 0 = success, 1 = failed or cancelled,
-              2 = no such job, 3 = lost (e.g. reboot), 4 = ssh failed (retry).
-              `-f` also streams new log lines.
-            - `job stop HOST:NAME` cancels it.
-
-            `${username}` can't read the user's home, so you MUST stage everything the
-            job needs in D first. The sandbox can read `${sharedDir}` but
-            not write it: write to D only through ssh, using `HOST:` paths even
-            for this host (`$HOSTNAME`). Example, from the root of a flake repo:
-
-            ```sh
-            H=$HOSTNAME # or another host from the list above
-            D=${sharedDir}/jobs/NAME
-            # just the flake files, so that nix doesn't copy the repo into the store
-            rsync -t --mkpath flake.nix flake.lock "$H:$D/flake/"
-            git ls-files -z -co --exclude-standard |
-              rsync -rlpt --from0 --files-from=- --mkpath ./ "$H:$D/src/"
-            job run "$H:NAME" -d 'full training run of C with D' -e '2 hours' -- \
-              sh -c "cd src && nix develop path:$D/flake -c python train.py"
-            ```
-
-            - If the flake reads other repo files (e.g. `src = ./.`), copy those to `D/flake` too.
-            - Big data (datasets, caches) SHOULD live in `${sharedDir}/data/PROJECT` on the host, symlinked into D: `ssh $H ln -s ${sharedDir}/data/PROJECT/cache $D/src/cache`.
-            - Results: read D directly on this host; on another host, use `ssh $H tail $D/log` or `rsync -rlpt "$H:$D/src/out/" out/`.
-            - Record `HOST:NAME` wherever the run is documented, so a later session can re-attach with `job wait`.
-          ''
-          + (for [ "claude" ] ''
-            - Right after launching, run `job wait HOST:NAME` with Bash `run_in_background` -- you get notified when it ends. For progress, run `job wait -f HOST:NAME | grep --line-buffered -E 'PATTERN|^job '` in the Monitor tool, filtered to lines you'd act on, e.g. errors and progress (to update the ETA). You MUST NOT poll with foreground `sleep`.
-          '');
         }
       ];
     in

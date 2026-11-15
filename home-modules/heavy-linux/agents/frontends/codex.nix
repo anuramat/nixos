@@ -128,6 +128,6 @@ in
         text = config.lib.agents.instructions.codex;
       };
     }
-    // agents.mkSkillLinks "codex/skills";
+    // agents.mkSkillLinks "codex";
   };
 }
