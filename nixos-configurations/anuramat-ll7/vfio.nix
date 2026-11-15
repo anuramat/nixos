@@ -2,7 +2,6 @@
   config,
   inputs,
   lib,
-  pkgs,
   ...
 }:
 let
@@ -62,6 +61,20 @@ in
       "libvirtd"
       "kvm"
     ];
-    environment.systemPackages = [ pkgs.looking-glass-client ];
+    home-manager.users.${inputs.self.consts.user.username}.programs.looking-glass-client = {
+      enable = true; # the version must match the guest's host, see ./win11
+      settings = {
+        win = {
+          fullScreen = true;
+          showFPS = false;
+          noScreensaver = true;
+        };
+        input = {
+          escapeKey = "KEY_INSERT"; # scroll lock needs fn on this keyboard
+          rawMouse = true;
+          captureOnFocus = true;
+        };
+      };
+    };
   };
 }
