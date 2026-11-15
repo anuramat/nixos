@@ -6,9 +6,10 @@
 # `session<TAB>WRAPPER<TAB>CWD`, `zellij<TAB>SESSION<TAB>CLIENTS`, plus the
 # bgm5powerctl profile (bgm5 only) as `power<TAB>MODE`, the battery charge
 # (laptops only) as `battery<TAB>PERCENT` and the runtime PM state of nvidia
-# GPUs as `gpu<TAB>STATUS`; units are read from the world-readable cgroupfs, so
-# it needs neither the agent's user bus nor its ssh key; the current host is
-# queried directly instead of over ssh
+# GPUs as `gpu<TAB>STATUS`, or `gpu<TAB>vm` for a GPU passed through to a VM;
+# units are read from the world-readable cgroupfs, so it needs neither the
+# agent's user bus nor its ssh key; the current host is queried directly
+# instead of over ssh
 {
   pkgs,
   lib,
@@ -42,6 +43,11 @@ let
     # reading this, unlike nvidia-smi, doesn't wake a suspended GPU
     for g in /sys/bus/pci/drivers/nvidia/*/power/runtime_status; do
       [ ! -e "$g" ] || printf 'gpu\t%s\n' "$(<"$g")"
+    done
+    # libvirt binds vfio-pci to a passed-through device while the VM runs; 0x03
+    # is the display class, unlike the GPU's HDMI audio function
+    for c in /sys/bus/pci/drivers/vfio-pci/*/class; do
+      [[ ! -e $c || $(<"$c") != 0x03* ]] || printf 'gpu\tvm\n'
     done
     # zellij sessions, minus the exited (resurrectable) ones; a hung session
     # would block the script, and over ssh nothing kills it once the poll gives up
