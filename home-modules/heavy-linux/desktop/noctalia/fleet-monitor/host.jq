@@ -13,7 +13,7 @@ include "etime";
 | {
     offline: false,
     cells: [
-      (kind("power") | select(.[0] == "quiet") | {text: "quiet", style: "outline"}),
+      (kind("power") | select(.[0] == "quiet") | {text: "quiet", style: "error"}),
       (kind("gpu") | .[0] | select(. == "active" or . == "vm")
         | {text: (if . == "vm" then "dgpu(vm)" else "dgpu" end), style: "error"}),
       (kind("battery") | {text: "\(.[0])%", style: "outline"}),

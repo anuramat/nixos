@@ -17,10 +17,11 @@
 # the color roles, by their meaning in the monitor:
 #   primary             title: section names
 #   outline             muted: metadata (times, battery, groups) and inactive
-#                       states (offline hosts' sections, quiet profile)
+#                       states (offline hosts' sections)
 #   on_surface_variant  secondary: descriptions and side details
 #   on_surface          body: plain cells
-#   error               alert: errors, overdue ETAs, an awake dGPU
+#   error               alert: errors, overdue ETAs, an awake dGPU, the quiet
+#                       profile
 {
   lib,
   config,
