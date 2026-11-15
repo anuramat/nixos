@@ -227,6 +227,10 @@ let
             in and outside the sandbox), so attaching to a running process
             (`py-spy dump --pid`, `gdb -p`, `strace -p`) fails: start it under
             the tool instead, e.g. `py-spy record -- python ...`.
+
+            Kernel callchains need `kernel.perf_event_paranoid` <= 1 (it's 2,
+            in and outside the sandbox), so `perf record -g` and
+            `--call-graph dwarf` fail: add `--user-callchains`.
           '';
         }
         {
