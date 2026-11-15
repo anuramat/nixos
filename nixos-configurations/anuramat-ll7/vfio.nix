@@ -78,6 +78,11 @@ in
       '';
     };
   };
+  # they need the nvidia driver, which is unloaded while the VM runs; skip
+  # them instead of failing, e.g. when a switch starts them then
+  systemd.services = lib.genAttrs [ "nvidia-powerd" "nvidia-container-toolkit-cdi-generator" ] (_: {
+    unitConfig.ConditionPathExists = "/sys/module/nvidia";
+  });
   # gtk4 opens every GPU, see hideNvidia
   systemd.user.services.polkit-soteria.environment = hideNvidia;
   programs.virt-manager.enable = true;
