@@ -32,6 +32,7 @@ in
   "decision-bot-config.age" # its chat and categories
   "ctrlsn.age"
   "syncthing-gui.age" # GUI password, plaintext or bcrypt hash
+  "github-token.age" # `access-tokens = github.com=...` line for nix.conf
 ]
 |> map (x: {
   name = x;

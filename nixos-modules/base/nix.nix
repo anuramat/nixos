@@ -50,6 +50,9 @@ in
 
     channel.enable = false;
 
+    # lets the `github:` fetcher access private repos; read errors are ignored
+    extraOptions = "!include ${config.age.secrets.github-token.path}";
+
     # add all inputs to registry
     registry = lib.mapAttrs (_: flake: { inherit flake; }) inputs;
     # and then to nixpath (required by haskell stack)
