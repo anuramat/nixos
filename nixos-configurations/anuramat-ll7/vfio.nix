@@ -7,9 +7,7 @@
 }:
 let
   user = inputs.self.consts.user.username;
-  # RTX 4070 Mobile and its HDMI audio, IOMMU group 13
-  gpuIds = "10de:2860,10de:22bd";
-  gpu = "0000:01:00.0";
+  gpu = "0000:01:00.0"; # RTX 4070 Mobile, with its HDMI audio in IOMMU group 13
   # for programs that would open the dGPU, through nvidia's vulkan or EGL
   # driver, while rendering on the iGPU
   hideNvidia = {
@@ -18,8 +16,8 @@ let
   };
 in
 {
-  # windows VM with the dGPU passed through; in the default boot entry,
-  # libvirt takes the dGPU from the nvidia driver while the VM runs
+  # windows VM with the dGPU passed through; libvirt takes the dGPU from the
+  # nvidia driver while the VM runs
   imports = [ ./win11 ];
 
   boot = {
@@ -51,7 +49,7 @@ in
     # unbinding the nvidia driver hangs while anything has the GPU open, so
     # unload it instead, which fails right away; libvirt binds vfio-pci to the
     # freed GPU, and gives it back unbound
-    hooks.qemu = lib.mkIf (lib.elem "nvidia" config.services.xserver.videoDrivers) {
+    hooks.qemu = {
       win11-gpu = pkgs.writeShellScript "win11-gpu" ''
         PATH=${
           lib.makeBinPath [
@@ -110,26 +108,6 @@ in
       };
       # niri would keep the nvidia driver in use
       niri.settings.debug.ignore-drm-device = "/dev/dri/by-path/pci-${gpu}-render";
-    };
-  };
-
-  # separate boot entry with the dGPU bound to vfio-pci from boot, so the
-  # nvidia driver never touches it
-  specialisation.vfio.configuration = {
-    system.nixos.tags = [ "vfio" ];
-    environment.etc.specialisation.text = "vfio"; # for `just nixos`
-
-    # the panel stays on the iGPU
-    services.xserver.videoDrivers = lib.mkForce [ "modesetting" ];
-    boot = {
-      blacklistedKernelModules = [ "nouveau" ];
-      # bind before snd_hda_intel grabs the audio function
-      initrd.kernelModules = [
-        "vfio_pci"
-        "vfio"
-        "vfio_iommu_type1"
-      ];
-      kernelParams = [ "vfio-pci.ids=${gpuIds}" ];
     };
   };
 }

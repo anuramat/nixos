@@ -97,7 +97,7 @@
       <readonly/>
     </disk>
 
-    <!-- RTX 4070 Mobile, bound to vfio-pci at boot -->
+    <!-- RTX 4070 Mobile; libvirt takes it from the nvidia driver, see vfio.nix -->
     <hostdev mode="subsystem" type="pci" managed="yes">
       <source>
         <address domain="0x0000" bus="0x01" slot="0x00" function="0x0"/>
