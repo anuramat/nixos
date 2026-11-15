@@ -27,7 +27,10 @@ in
         "vfio"
         "vfio_iommu_type1"
       ];
-      kernelParams = [ "vfio-pci.ids=${gpuIds}" ];
+      kernelParams = [
+        "intel_iommu=on" # don't depend on the kernel's default
+        "vfio-pci.ids=${gpuIds}"
+      ];
 
       # looking glass shared memory: 2560x1600 SDR frames need ~42MB, rounded up
       extraModulePackages = [ config.boot.kernelPackages.kvmfr ];
