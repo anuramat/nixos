@@ -109,8 +109,8 @@
       </source>
     </hostdev>
 
-    <!-- raws for lightroom, read-only, served by virtiofsd; the guest needs
-         WinFsp and the VirtioFsSvc service from the guest tools to mount it -->
+    <!-- raws for lightroom, read-only, served by virtiofsd; mounted in the
+         guest by the guest tools' VirtioFsSvc, set up by setup.ps1 -->
     <filesystem type="mount" accessmode="passthrough">
       <driver type="virtiofs"/>
       <source dir="@home@/img/photo"/>

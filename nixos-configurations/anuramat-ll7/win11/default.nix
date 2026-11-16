@@ -38,6 +38,11 @@ let
     url = "https://us.download.nvidia.com/Windows/621.14/621.14-notebook-win10-win11-64bit-international-dch-whql.exe";
     hash = "sha256-mGewyGiZcsQZiFk1uzhtmZr/+jOv1RTK2zhO6E7809M=";
   };
+  # for the guest tools' virtiofs service, which mounts the host's shared folder
+  winfsp = pkgs.fetchurl {
+    url = "https://github.com/winfsp/winfsp/releases/download/v2.1/winfsp-2.1.25156.msi";
+    hash = "sha256-Bzpw4A93Qj40vtmLhuYA3vkzk7pYIiBPrFeikyTbn3o=";
+  };
   # virtual display driver; despite the name, the driver is amd64
   vdd = fetchzip "https://github.com/VirtualDrivers/Virtual-Display-Driver/releases/download/25.7.23/VirtualDisplayDriver-x86.Driver.Only.zip" "sha256-TTEeagtnEAoUiFZqFog183NAGIOe8kCmTm1p5wVIfa0=";
   # creates the root device that the virtual display driver binds to
@@ -57,6 +62,7 @@ let
         cp ${./setup.ps1} d/setup.ps1
         cp ${lgHost}/looking-glass-host-setup.exe ${nefcon}/x64/nefconc.exe d/
         cp ${nvidia} d/nvidia.exe
+        cp ${winfsp} d/winfsp.msi
         cp ${vdd}/VirtualDisplayDriver/{MttVDD.inf,MttVDD.dll,mttvdd.cat} d/vdd/
         # the panel's 3200x2000@165 as the only mode, so that windows uses it;
         # the global refresh rates apply to every resolution

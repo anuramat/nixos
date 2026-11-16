@@ -13,6 +13,12 @@ if (!(Get-Service QEMU-GA -EA 0)) {
   Start-Process -Wait $tools '/install /quiet /norestart'
 }
 
+# the host's shared folder, mounted as a drive on every boot
+if (!(Test-Path "${env:ProgramFiles(x86)}\WinFsp")) {
+  Start-Process -Wait msiexec "/i `"$d\winfsp.msi`" /qn /norestart"
+}
+Set-Service VirtioFsSvc -StartupType Automatic
+
 # looking glass host, with the IVSHMEM driver
 if (!(Get-Service 'Looking Glass (host)' -EA 0)) {
   Start-Process -Wait "$d\looking-glass-host-setup.exe" /S
