@@ -170,6 +170,7 @@ in
           input = {
             escapeKey = "KEY_INSERT"; # scroll lock needs fn on this keyboard
             rawMouse = true;
+            captureOnly = true; # no input to the guest unless captured, e.g. niri binds with the win key
           };
         };
       };
