@@ -1,0 +1,26 @@
+--- a/kvmfr.c
++++ b/kvmfr.c
+@@ -361,9 +361,23 @@
+   }
+ }
+ 
++// lets size checks that seek to the end work, e.g. vhost-user backends
++// mapping guest memory, which includes the ivshmem region
++static loff_t device_llseek(struct file * filp, loff_t offset, int whence)
++{
++  struct kvmfr_dev * kdev;
++
++  kdev = (struct kvmfr_dev *)idr_find(&kvmfr_idr, iminor(filp->f_inode));
++  if (!kdev)
++    return -EINVAL;
++
++  return fixed_size_llseek(filp, offset, whence, kdev->size);
++}
++
+ static struct file_operations fops =
+ {
+   .owner          = THIS_MODULE,
++  .llseek         = device_llseek,
+   .unlocked_ioctl = device_ioctl,
+   .mmap           = device_mmap,
+ };

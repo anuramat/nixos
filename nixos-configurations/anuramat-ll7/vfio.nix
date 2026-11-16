@@ -24,7 +24,13 @@ in
   boot = {
     kernelParams = [ "intel_iommu=on" ]; # don't depend on the kernel's default
     # looking glass shared memory: 3200x2000 SDR frames need ~59MB, rounded up
-    extraModulePackages = [ config.boot.kernelPackages.kvmfr ];
+    extraModulePackages = [
+      # virtiofsd checks the size of each guest memory region by seeking to
+      # its end, and kvmfr backs one of them; see win11/domain.xml
+      (config.boot.kernelPackages.kvmfr.overrideAttrs {
+        patches = [ ./kvmfr-llseek.patch ];
+      })
+    ];
     kernelModules = [ "kvmfr" ];
     extraModprobeConfig = "options kvmfr static_size_mb=64";
   };
