@@ -36,6 +36,7 @@ in
     enable = true;
     qemu = {
       swtpm.enable = true; # windows 11
+      vhostUserPackages = [ pkgs.virtiofsd ]; # win11's shared folders
       # libvirt's default ACL plus the looking glass device
       verbatimConfig = ''
         namespaces = []

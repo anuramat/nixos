@@ -78,6 +78,7 @@ let
     video:
     pkgs.replaceVars ./domain.xml {
       inherit iso unattend video;
+      inherit (config.users.users.${inputs.self.consts.user.username}) home;
       virtio = pkgs.virtio-win.src;
     };
 
