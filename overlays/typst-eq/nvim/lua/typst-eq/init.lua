@@ -58,13 +58,15 @@ local function sync(buf)
           -- snacks takes the image to be bigger than this, and fits it into these
           max_width = math.min(doc.max_width, math.ceil(size.width / OVERSAMPLE / term.cell_width)),
           max_height = math.min(doc.max_height, math.ceil(size.height / OVERSAMPLE / term.cell_height)),
-          -- show the source instead, while the cursor is on it
+          -- show the source instead, while the cursor is on it; without conceal, it is visible anyway
           on_update_pre = function(p)
             local from, to = vim.fn.line("v"), vim.fn.line(".")
             local on_cursor = vim.api.nvim_get_current_buf() == buf
               and p.opts.range[1] <= math.max(from, to)
               and p.opts.range[3] >= math.min(from, to)
-            p.hidden = on_cursor and not vim.wo.concealcursor:find(vim.fn.mode():sub(1, 1):lower())
+            p.hidden = on_cursor
+              and vim.wo.conceallevel > 0
+              and not vim.wo.concealcursor:find(vim.fn.mode():sub(1, 1):lower())
           end,
         })
       end
@@ -100,7 +102,8 @@ function request(buf)
   busy, s.sent = { buf = buf, tick = tick }, tick
   if not daemon then
     local rest = ""
-    daemon = vim.system({ "typst-eq", vim.fn.stdpath("cache") .. "/typst-eq" }, {
+    -- the images go where neovim deletes them on exit
+    daemon = vim.system({ "typst-eq", vim.fn.tempname() }, {
       stdin = true,
       stdout = function(_, data)
         local lines = vim.split(rest .. (data or ""), "\n")

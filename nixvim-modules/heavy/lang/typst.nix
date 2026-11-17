@@ -3,9 +3,10 @@
   autoCmd = [
     {
       # NOTE autocmd because after/ftplugin is too early
+      # conceallevel: the typst-eq images replace the source, except on the cursor line
       event = "FileType";
       pattern = "typst";
-      command = "setlocal indentexpr= formatoptions+=n";
+      command = "setlocal indentexpr= formatoptions+=n conceallevel=2";
     }
   ];
   # equations as inline images; replaces the math rendering of snacks (image.nix)
