@@ -219,6 +219,7 @@ lib.composeManyExtensions [
   flakes
   upstreamOnly
   inputs.self.overlays.ancs4linux
+  inputs.self.overlays.facet
   inputs.self.overlays.figtree
   inputs.self.overlays.niri
   inputs.self.overlays.nx-studio

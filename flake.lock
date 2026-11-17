@@ -451,6 +451,23 @@
         "type": "github"
       }
     },
+    "facet": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1794336024,
+        "narHash": "sha256-h4vFUDcn9oT2l4TvjkhEImqRyq2em/svY9ONAzSXjBQ=",
+        "owner": "ncoevoet",
+        "repo": "facet",
+        "rev": "0e2a480899dfe05f9835a6da9c6d4c521ec47fdd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ncoevoet",
+        "ref": "v1.29.0",
+        "repo": "facet",
+        "type": "github"
+      }
+    },
     "fastflowlm": {
       "flake": false,
       "locked": {
@@ -2023,6 +2040,7 @@
         "codex": "codex",
         "crane": "crane_2",
         "deadnix": "deadnix",
+        "facet": "facet",
         "flake-parts": "flake-parts",
         "ghostty": "ghostty",
         "git-hooks-nix": "git-hooks-nix",

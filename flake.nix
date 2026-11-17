@@ -114,6 +114,10 @@
       url = "github:shouryan01/Nikon-Recipes";
       flake = false;
     };
+    facet = {
+      url = "github:ncoevoet/facet/v1.29.0";
+      flake = false;
+    };
 
     # nixvim plugins not packaged in nixpkgs (pinned; tree-climber's patch
     # is rev-sensitive, so update deliberately)
