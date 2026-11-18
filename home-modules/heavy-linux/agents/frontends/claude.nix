@@ -15,14 +15,13 @@ let
       let
         script = ''
           input=$(cat)
-          model_display=$(echo "$input" | jq -r '.model.display_name')
-          output_style=$(echo "$input" | jq -r '.output_style.name')
 
           starship module directory
           starship module git_branch
           starship module git_state
           starship module git_status
-          echo " $model_display ($output_style)"
+          # tokens in the context window, out of its size
+          echo "$input" | jq -r '" \(.model.display_name) (\(.output_style.name)) \(.context_window | "\(.total_input_tokens / 1000 | round)/\(.context_window_size / 1000 | round) kT")"'
         '';
       in
       pkgs.writeShellScript "statusline.sh" script;
