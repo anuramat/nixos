@@ -49,6 +49,7 @@ in
         };
         keywords.FUCK = {
           icon = "💢";
+          alt = [ "OOPS" ];
           color = "warning";
         };
         signs = false;
