@@ -1,6 +1,6 @@
 # facet: scores, culls and organises a photo library, with a web gallery (`facet-viewer`);
-# the database and the weights in pretrained_models/ are relative to the working directory, and
-# $FACET_CONFIG names the config, which defaults to the read-only shipped one
+# patched to keep the database and the downloaded weights in $XDG_DATA_HOME/facet, and the
+# config and the server secret in $XDG_CONFIG_HOME/facet, rather than in the working directory
 { inputs, lib, ... }:
 _final: prev:
 let
@@ -230,8 +230,10 @@ let
     inherit (project) version;
     pyproject = true;
     inherit src;
-    patches = [ ./pretrained-models-cwd.patch ];
+    patches = [ ./xdg.patch ];
     build-system = [ python.pkgs.setuptools ];
+    # for pythonImportsCheck: the import creates the XDG directories
+    nativeBuildInputs = [ prev.writableTmpDirAsHomeHook ];
     # pyproject's dependencies and its `all` extra, plus torch, which it leaves to install.sh
     dependencies = with python.pkgs; [
       accelerate
@@ -281,19 +283,19 @@ let
       "api.agent.server"
     ];
   };
+
+  # so that the steps facet runs as `sys.executable facet.py ...` see the dependencies
+  env = python.buildEnv.override {
+    extraLibs = [ facet-photo ];
+    makeWrapperArgs = [
+      "--prefix PATH : ${lib.makeBinPath [ prev.exiftool ]}"
+    ];
+  };
 in
 {
-  # an env, so that the steps facet runs as `sys.executable facet.py ...` see the dependencies
-  facet =
-    (python.buildEnv.override {
-      extraLibs = [ facet-photo ];
-      makeWrapperArgs = [
-        "--prefix PATH : ${lib.makeBinPath [ prev.exiftool ]}"
-      ];
-    }).overrideAttrs
-      (o: {
-        meta = o.meta // {
-          mainProgram = "facet";
-        };
-      });
+  # the env's commands, without those of the dependencies (python3, accelerate, ...)
+  facet = prev.runCommand "facet-${project.version}" { meta.mainProgram = "facet"; } ''
+    mkdir -p $out/bin
+    ln -s ${env}/bin/facet* $out/bin
+  '';
 }

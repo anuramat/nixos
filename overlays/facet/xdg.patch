@@ -1,0 +1,255 @@
+diff --git a/analyzers/face.py b/analyzers/face.py
+index d744f6b..838b58e 100644
+--- a/analyzers/face.py
++++ b/analyzers/face.py
+@@ -49,6 +49,7 @@ class FaceAnalyzer:
+         self.enable_3d_landmarks = enable_3d_landmarks
+         try:
+             from insightface.app import FaceAnalysis
++            from models.weights import PRETRAINED_MODELS_DIR
+             # IMPORTANT: We include 'recognition' for face embeddings used in clustering
+             allowed = ['detection', 'landmark_2d_106', 'recognition']
+             if enable_3d_landmarks:
+@@ -65,7 +66,7 @@ class FaceAnalyzer:
+                     )
+                     self.face_app = FaceAnalysis(
+                         name='buffalo_l',
+-                        root='~/.insightface',
++                        root=str(PRETRAINED_MODELS_DIR / 'insightface'),
+                         allowed_modules=allowed,
+                         providers=providers
+                     )
+diff --git a/config_resolve.py b/config_resolve.py
+index 241eb8c..8fa7ebe 100644
+--- a/config_resolve.py
++++ b/config_resolve.py
+@@ -47,6 +47,20 @@ DEFAULTS_FILENAME = 'scoring_config.default.json'
+ _REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
+ 
+ 
++def _xdg_dir(var, fallback):
++    path = os.path.join(os.environ.get(var) or os.path.expanduser(fallback), 'facet')
++    os.makedirs(path, exist_ok=True)
++    return path
++
++
++# The install root is read-only. Relative paths -- the database's, the weights',
++# the ones in the config -- resolve against DATA_DIR rather than the process
++# working directory; the config, and the server secret next to it, default to
++# CONFIG_DIR.
++DATA_DIR = _xdg_dir('XDG_DATA_HOME', '~/.local/share')
++CONFIG_DIR = _xdg_dir('XDG_CONFIG_HOME', '~/.config')
++
++
+ def defaults_path():
+     """Absolute path to the shipped defaults, which travel with the config package.
+ 
+@@ -57,9 +71,9 @@ def defaults_path():
+ 
+ 
+ def default_config_path():
+-    """Absolute path to the operator's config — $FACET_CONFIG, else the repo-root file."""
++    """Absolute path to the operator's config — $FACET_CONFIG, else the one in CONFIG_DIR."""
+     env_path = os.environ.get(CONFIG_PATH_ENV_VAR, '').strip()
+-    return env_path or os.path.join(_REPO_ROOT, CONFIG_FILENAME)
++    return env_path or os.path.join(CONFIG_DIR, CONFIG_FILENAME)
+ 
+ 
+ def path_is_named(config_path=None):
+diff --git a/database.py b/database.py
+index dcbcc04..7391b34 100644
+--- a/database.py
++++ b/database.py
+@@ -48,7 +48,7 @@ from db import (
+     backup_database,
+ )
+ from config import default_config_path
+-from config_resolve import load_resolved, write_user_config
++from config_resolve import DATA_DIR, load_resolved, write_user_config
+ 
+ CONFIG_PATH = default_config_path()
+ 
+@@ -582,14 +582,14 @@ def main():
+     elif args.migrate_storage_fs:
+         from storage.migrate import migrate_to_filesystem
+         config = _load_config()
+-        fs_path = config.get("storage", {}).get("filesystem_path", "./storage")
++        fs_path = os.path.join(DATA_DIR, config.get("storage", {}).get("filesystem_path", "./storage"))
+         count = migrate_to_filesystem(args.db, fs_path)
+         logger.info("Exported %d thumbnails to %s", count, fs_path)
+         logger.info("Set storage.mode to \"filesystem\" in scoring_config.json to use filesystem storage.")
+     elif args.migrate_storage_db:
+         from storage.migrate import migrate_to_database
+         config = _load_config()
+-        fs_path = config.get("storage", {}).get("filesystem_path", "./storage")
++        fs_path = os.path.join(DATA_DIR, config.get("storage", {}).get("filesystem_path", "./storage"))
+         count = migrate_to_database(args.db, fs_path)
+         logger.info("Imported %d thumbnails to database", count)
+         logger.info("Set storage.mode to \"database\" in scoring_config.json to use database storage.")
+diff --git a/db/connection.py b/db/connection.py
+index e070a5d..5a735ca 100644
+--- a/db/connection.py
++++ b/db/connection.py
+@@ -10,9 +10,9 @@ import sqlite3
+ from pathlib import Path
+ from contextlib import contextmanager
+ 
+-from config_resolve import default_config_path, load_resolved
++from config_resolve import DATA_DIR, default_config_path, load_resolved
+ 
+-DEFAULT_DB_PATH = os.environ.get('DB_PATH', 'photo_scores_pro.db')
++DEFAULT_DB_PATH = os.environ.get('DB_PATH', os.path.join(DATA_DIR, 'photo_scores_pro.db'))
+ 
+ 
+ # ``config_resolve`` rather than ``config``: the latter's ``__init__`` imports
+diff --git a/diagnostics.py b/diagnostics.py
+index 26eef06..fe9fd7f 100644
+--- a/diagnostics.py
++++ b/diagnostics.py
+@@ -630,7 +630,8 @@ def run_doctor(config_path=None, db_path=None, simulate_gpu=None, simulate_vram=
+     """
+     from config.scoring_config import resolve_scoring_config_path
+     config_path = resolve_scoring_config_path(config_path)
+-    db_path = db_path or 'photo_scores_pro.db'
++    from db import DEFAULT_DB_PATH
++    db_path = db_path or DEFAULT_DB_PATH
+     simulating = simulate_gpu is not None
+     torch = None
+     selected_device = None
+@@ -1083,7 +1084,7 @@ def main():
+     parser = argparse.ArgumentParser(description='Facet diagnostic tool')
+     parser.add_argument('--config', type=str, default=None,
+                         help='Path to scoring config JSON file')
+-    parser.add_argument('--db', type=str, default='photo_scores_pro.db',
++    parser.add_argument('--db', type=str, default=None,
+                         help='Path to database file')
+     parser.add_argument('--simulate-gpu', type=str, default=None, metavar='NAME',
+                         help='Simulate GPU (e.g., "RTX 5070 Ti")')
+diff --git a/models/piaa_prior.py b/models/piaa_prior.py
+index 967f524..9e4d711 100644
+--- a/models/piaa_prior.py
++++ b/models/piaa_prior.py
+@@ -18,6 +18,8 @@ import os
+ 
+ import numpy as np
+ 
++from config_resolve import DATA_DIR
++
+ logger = logging.getLogger("facet.piaa_prior")
+ 
+ DEFAULT_MODELS_DIR = "pretrained_models"
+@@ -25,7 +27,7 @@ DEFAULT_MODELS_DIR = "pretrained_models"
+ 
+ def prior_path(dim, models_dir=DEFAULT_MODELS_DIR):
+     """Canonical on-disk path for a per-dim prior."""
+-    return os.path.join(models_dir, f"piaa_prior_{int(dim)}.npz")
++    return os.path.join(DATA_DIR, models_dir, f"piaa_prior_{int(dim)}.npz")
+ 
+ 
+ def save_prior(path, weights, bias, head_names, meta, default_mix=None):
+diff --git a/models/samp_net.py b/models/samp_net.py
+index d6b4a59..fa0aaf8 100644
+--- a/models/samp_net.py
++++ b/models/samp_net.py
+@@ -21,6 +21,7 @@ import torchvision.models as models
+ from PIL import Image
+ 
+ import licensing
++from config_resolve import DATA_DIR
+ from models.composition_patterns import COMPOSITION_PATTERNS
+ from models.weights import download_weights
+ 
+@@ -392,7 +393,7 @@ class SaliencyDetector:
+     def __init__(self, device='cuda', weights_path='pretrained_models/u2netp.pth'):
+         from utils.device import is_device_available
+         self.device = device if is_device_available(device, torch_module=torch) else 'cpu'
+-        self.weights_path = weights_path
++        self.weights_path = os.path.join(DATA_DIR, weights_path)
+         self.model = None
+         self._initialized = False
+ 
+@@ -869,7 +870,7 @@ class SAMPNetScorer:
+         if device is None:
+             device = get_device()
+         self.device = device if is_device_available(device, torch_module=torch) else 'cpu'
+-        self.model_path = model_path or 'pretrained_models/samp_net.pth'
++        self.model_path = os.path.join(DATA_DIR, model_path or 'pretrained_models/samp_net.pth')
+ 
+         # Image preprocessing (224x224 for SAMP-Net)
+         self.transform = transforms.Compose([
+diff --git a/models/weights.py b/models/weights.py
+index b4b701f..dc06073 100644
+--- a/models/weights.py
++++ b/models/weights.py
+@@ -1,9 +1,7 @@
+ """Filesystem home for auto-downloaded model weights.
+ 
+-``pretrained_models/`` is resolved against the repository root rather than the
+-process working directory: ``facet.py`` and ``viewer.py`` are launched from
+-different directories, and the Docker image's working directory is not a mounted
+-volume, so a CWD-relative destination re-downloads the same file over and over.
++``pretrained_models/`` lives in ``config_resolve.DATA_DIR``: the install root is
++read-only.
+ """
+ 
+ import hashlib
+@@ -17,6 +15,8 @@ import urllib.request
+ from pathlib import Path
+ from typing import Optional
+ 
++from config_resolve import DATA_DIR
++
+ logger = logging.getLogger("facet.models")
+ 
+ # Seconds a socket operation (connect, or waiting for the next chunk) may block.
+@@ -30,7 +30,7 @@ DOWNLOAD_TIMEOUT_SECONDS = 60
+ DOWNLOAD_ATTEMPTS = 3
+ DOWNLOAD_RETRY_BACKOFF_SECONDS = 2
+ 
+-PRETRAINED_MODELS_DIR = Path(__file__).resolve().parent.parent / 'pretrained_models'
++PRETRAINED_MODELS_DIR = Path(DATA_DIR) / 'pretrained_models'
+ 
+ # Pinned to the commit that added the file (the only one that has ever touched
+ # it) rather than `main`, so the download can't silently change out from under
+diff --git a/optimization/model_eval.py b/optimization/model_eval.py
+index c22ae61..6e807d0 100644
+--- a/optimization/model_eval.py
++++ b/optimization/model_eval.py
+@@ -51,11 +51,12 @@ from optimization.eval_common import (
+ )
+ from optimization.face_labels import load_labels
+ from utils.image_bounds import bound_to_inference_size
++from config_resolve import DATA_DIR
+ 
+ logger = logging.getLogger("facet.model_eval")
+ 
+ DEFAULT_SEED = 42
+-DEFAULT_OUT_DIR = os.path.join('.facet_cache', 'eval')
++DEFAULT_OUT_DIR = os.path.join(DATA_DIR, '.facet_cache', 'eval')
+ 
+ # Slot -> the ``photos`` column a candidate's value replaces in the end-to-end
+ # aggregate recompute. ``quality_score`` carries no aggregate weight (it is
+@@ -2026,7 +2027,8 @@ def _ort_providers(device):
+ 
+ def _insightface_app(device, modules):
+     from insightface.app import FaceAnalysis
+-    app = FaceAnalysis(name='buffalo_l', root='~/.insightface', allowed_modules=modules,
++    from models.weights import PRETRAINED_MODELS_DIR
++    app = FaceAnalysis(name='buffalo_l', root=str(PRETRAINED_MODELS_DIR / 'insightface'), allowed_modules=modules,
+                        providers=_ort_providers(device))
+     app.prepare(ctx_id=0 if device == 'cuda' else -1, det_size=(640, 640))
+     return app
+diff --git a/tag_existing.py b/tag_existing.py
+index e388f61..3badea9 100644
+--- a/tag_existing.py
++++ b/tag_existing.py
+@@ -162,7 +162,8 @@ def main():
+     configure_cli_logging()
+ 
+     parser = argparse.ArgumentParser(description='Tag existing photos using stored CLIP embeddings')
+-    parser.add_argument('--db', default='photo_scores_pro.db', help='Database path')
++    from db import DEFAULT_DB_PATH
++    parser.add_argument('--db', default=DEFAULT_DB_PATH, help='Database path')
+     parser.add_argument('--config', default=None, help='Config file path')
+     parser.add_argument('--threshold', type=float, default=None, help='Override similarity threshold')
+     parser.add_argument('--max-tags', type=int, default=None, help='Override max tags per image')
