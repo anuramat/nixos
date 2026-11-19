@@ -49,8 +49,6 @@ in
       # WARN here order matters for sure
       source ${./git.sh}
 
-      source ${./bashrc.sh}
-
       set +H            # turn off ! history bullshit
 
       # flush each command to $HISTFILE immediately (histappend alone writes on exit); starship evals it via STARSHIP_PROMPT_COMMAND

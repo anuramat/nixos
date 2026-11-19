@@ -110,28 +110,18 @@ Keep the `# auto start on 1st tty` comment and the `niri` script with its TODO c
 - **(a)** Delete lines 8-10. This removes the quoted rationale comment and the TODO; the `podman` attrset keeps `enable` and `dockerCompat`. -- Containers on the rootful default `podman` network lose name resolution, which affects the multi-network compose case above and plain `podman run`, and UDP 53 closes on podman0. This is fine if you only use rootless podman or compose files that don't hit that case. To verify after a rebuild: run `podman-compose up -d` on a two-service project with no `networks:`, then check that `podman exec <svc1> getent hosts <svc2>` resolves and that `podman network inspect <project>_default` shows `dns_enabled: true`.
 - **(b)** Keep the setting and replace the TODO with `# still needed for rootful podman-compose projects that declare several networks but no 'default' one (podman-compose then falls back to the 'podman' bridge)`. -- Behaviour does not change, and the comment records why the setting is there.
 
-### H5. Linux/Wayland-only shell helpers in the cross-platform base layer
+### H5. Linux/Wayland-only bits left in the cross-platform base layer
 
-**Where:** `home-modules/base/bash/bashrc.sh:3-7`, `home-modules/base/bash/bashrc.nix:9-16`, `home-modules/base/bash/bashrc.nix:42`, `home-modules/heavy-linux/packages.nix:8`, `home-modules/heavy-linux/packages.nix:37`, `home-modules/base/yazi.nix:98`, `nixvim-modules/heavy/custom.nix:11`
+**Where:** `home-modules/base/bash/bashrc.nix:9-16`, `home-modules/base/bash/bashrc.nix:42`, `home-modules/base/yazi.nix:98`, `nixvim-modules/heavy/custom.nix:11`
 
 **Context:**
 
-- The base bashrc.sh defines `brexit` (`ddcutil setvcp 10 "$1" --display 1`), which needs a Linux-only tool.
-- `ddcutil` and `wl-clipboard` are installed only in heavy-linux/packages.nix (lines 8 and 37), so `brexit` is dead on darwin and on root. AGENTS.md says Linux-only additions belong in the `-linux` layers.
-- The `orphans` package (bashrc.nix:10-16, installed at :42) relies on `ps -o unit` and `session-1.scope` (Linux/systemd). Its comment, `# either orphans or launched with \`swaymsg exec\``, refers to sway, which niri has replaced.
-- Neither `brexit` nor `orphans` needs shell state.
-- The leak is wider than this helper: base/yazi.nix:98 and nixvim heavy/custom.nix:11 also call `wl-copy`.
-- Runtime impact is limited to a dead function on darwin and root, and evaluation is unaffected.
-- heavy-linux has no `bin/` directory, so any move needs a new place to put it.
-- One piece is straightforward whatever you choose: move `orphans` from base/bash/bashrc.nix to `home.packages` in home-modules/linux.nix, and reword its comment to `# processes reparented to PID 1 inside the tty login session (session-1.scope)`.
+- AGENTS.md says Linux-only additions belong in the `-linux` layers. `brexit` already moved to a heavy-linux alias, and the other Linux-only bashrc helpers were dropped.
+- The `orphans` package (bashrc.nix:10-16, installed at :42) relies on `ps -o unit` and `session-1.scope` (Linux/systemd). Its comment, `# either orphans or launched with \`swaymsg exec\``, refers to sway, which niri has replaced. Its fix is straightforward: move it to `home.packages` in home-modules/linux.nix, and reword its comment to `# processes reparented to PID 1 inside the tty login session (session-1.scope)`.
+- base/yazi.nix:98 and nixvim heavy/custom.nix:11 call `wl-copy`, but `wl-clipboard` is installed only in heavy-linux/packages.nix, so those bindings are dead on darwin and on root.
+- Runtime impact is limited to dead code on darwin and root, and evaluation is unaffected.
 
-**Options for brexit:**
-
-- **(a)** Make it a heavy-linux package: a `writeShellApplication` with `runtimeInputs = [ ddcutil ]`, removed from bashrc.sh (which then becomes empty). -- It becomes a binary on PATH instead of an interactive function, with its dependency pinned. To verify: the anuramat-darwin home config evaluates, `command -v brexit orphans` resolves in a new shell on f12, and `just lint` passes.
-- **(b)** Move it as a function into a bash snippet in heavy-linux, for example via `programs.bash.initExtra`. -- They keep their function semantics, but there is now a second bashrc fragment.
-- **(c)** Leave it in base. -- No change; it stays dead on darwin and root.
-
-None of these options covers the `wl-copy` calls in yazi.nix and nixvim custom.nix.
+**Decision:** whether, and how, to make the `wl-copy` calls in yazi.nix and nixvim custom.nix platform-aware (for example, move them to a `-linux` layer, or pick the clipboard command per platform).
 
 ### H6. Sort the `# misc TODO categorize` packages
 
@@ -278,6 +268,7 @@ The build or eval side can be checked, but the real effect needs the user.
 One piece of an H item has one fix whatever is decided for the rest:
 
 - H5: moving `orphans` to `home-modules/linux.nix`, checkable by eval.
+
 
 The rest of H and the open TODO markers need a decision or runtime testing.
 

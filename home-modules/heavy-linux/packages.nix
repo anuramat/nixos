@@ -43,4 +43,6 @@
     wine
     songrec # cli shazam, `songrec recognize file.mp3`
   ];
+  # set brightness for an external monitor (0-100), e.g. `brexit 69`
+  home.shellAliases.brexit = "ddcutil --display 1 setvcp 10";
 }
