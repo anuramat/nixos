@@ -104,6 +104,7 @@ in
         config.xdg.configHome
         config.home.sessionVariables.XDG_BIN_HOME
         config.lib.agents.userSharedDir
+        "${config.home.homeDirectory}/Zotero"
       ]
       ++ homePaths;
   };

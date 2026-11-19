@@ -245,6 +245,46 @@ let
           `--call-graph dwarf` fail: add `--user-callchains`.
         '';
       };
+      zotero = {
+        description = "read the user's Zotero library: collections, items and PDFs; use when the user mentions Zotero, their papers or their library";
+        text = ''
+          The Zotero data directory `~/Zotero` is bound read-only: PDFs are in
+          `~/Zotero/storage/KEY/`, everything else is in `~/Zotero/zotero.sqlite`.
+          Zotero holds an exclusive lock on the database while it runs, so you
+          MUST open it as `file:$HOME/Zotero/zotero.sqlite?immutable=1`, e.g.
+          `nix run nixpkgs#sqlite -- "file:$HOME/Zotero/zotero.sqlite?immutable=1" QUERY`
+          or Python's `sqlite3.connect(URI, uri=True)`.
+
+          Schema essentials:
+
+          - `collections(collectionID, parentCollectionID, collectionName)`:
+            the tree, with NULL parents at the root;
+            `collectionItems(collectionID, itemID)`: membership
+          - `items(itemID, key)`; fields are `itemData(itemID, fieldID,
+            valueID)` joined with `fields(fieldID, fieldName)` (`title`, `DOI`,
+            `date`, ...) and `itemDataValues(valueID, value)`
+          - `itemAttachments(itemID, parentItemID, contentType, path)`: a
+            stored file has `path = 'storage:NAME'` and lives at
+            `~/Zotero/storage/KEY/NAME`, where KEY is the attachment's own
+            `items.key`, not the parent's
+          - trashed items are in `deletedItems(itemID)`
+
+          PDFs in a collection, with their parent's title:
+
+          ```sql
+          select v.value as title, 'storage/' || i.key || '/' || substr(a.path, 9) as file
+          from collections c
+          join collectionItems ci on ci.collectionID = c.collectionID
+          join itemAttachments a on a.parentItemID = ci.itemID
+          join items i on i.itemID = a.itemID
+          join itemData d on d.itemID = a.parentItemID
+          join fields f on f.fieldID = d.fieldID and f.fieldName = 'title'
+          join itemDataValues v on v.valueID = d.valueID
+          where c.collectionName = 'NAME' and a.contentType = 'application/pdf'
+            and a.path like 'storage:%'
+          ```
+        '';
+      };
       decision-model = {
         description = "the user's decision model, which answers yes/no, multiple-choice and scale questions about text and images with probabilities; it's much cheaper than reading the text or image yourself, but much dumber, so use it for simple judgments made many times or unattended, e.g. watching a GUI app until a download finishes or a game is ready, classifying chat messages in a bot, screening commands for danger, or triaging logs; read before using it";
         text = ''
