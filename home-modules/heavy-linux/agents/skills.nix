@@ -267,7 +267,8 @@ let
             stored file has `path = 'storage:NAME'` and lives at
             `~/Zotero/storage/KEY/NAME`, where KEY is the attachment's own
             `items.key`, not the parent's
-          - trashed items are in `deletedItems(itemID)`
+          - trashed items are in `deletedItems(itemID)`, trashed collections in
+            `deletedCollections(collectionID)`; skip both unless asked
 
           PDFs in a collection, with their parent's title:
 
