@@ -177,6 +177,19 @@ let
             patches = (old.patches or [ ]) ++ [ ./darktable-lua-info-rows.patch ];
           });
 
+      # `trash empty` asserts that every info file's payload exists, following symlinks, so it
+      # panics on an orphaned info file or a trashed dangling symlink
+      trashy = prev.trashy.overrideAttrs {
+        postPatch = ''
+          substituteInPlace $cargoDepsCopy/source-registry-0/trash-2.1.5/src/freedesktop.rs \
+            --replace-fail 'assert!(file.exists());' \
+            'if file.symlink_metadata().is_err() {
+              std::fs::remove_file(info_file).map_err(|e| fsys_err_to_unknown(&info_file, e))?;
+              continue;
+            }'
+        '';
+      };
+
       nirimap = prev.rustPlatform.buildRustPackage {
         pname = "nirimap";
         version = "0.3.0";
