@@ -112,12 +112,11 @@ Keep the `# auto start on 1st tty` comment and the `niri` script with its TODO c
 
 ### H5. Linux/Wayland-only bits left in the cross-platform base layer
 
-**Where:** `home-modules/base/bash/bashrc.nix:9-16`, `home-modules/base/bash/bashrc.nix:42`, `home-modules/base/yazi.nix:98`, `nixvim-modules/heavy/custom.nix:11`
+**Where:** `home-modules/base/yazi.nix:98`, `nixvim-modules/heavy/custom.nix:11`
 
 **Context:**
 
-- AGENTS.md says Linux-only additions belong in the `-linux` layers. `brexit` already moved to a heavy-linux alias, and the other Linux-only bashrc helpers were dropped.
-- The `orphans` package (bashrc.nix:10-16, installed at :42) relies on `ps -o unit` and `session-1.scope` (Linux/systemd). Its comment, `# either orphans or launched with \`swaymsg exec\``, refers to sway, which niri has replaced. Its fix is straightforward: move it to `home.packages` in home-modules/linux.nix, and reword its comment to `# processes reparented to PID 1 inside the tty login session (session-1.scope)`.
+- AGENTS.md says Linux-only additions belong in the `-linux` layers. `brexit` and `orphans` already moved to the `-linux` layers, and the other Linux-only bashrc helpers were dropped.
 - base/yazi.nix:98 and nixvim heavy/custom.nix:11 call `wl-copy`, but `wl-clipboard` is installed only in heavy-linux/packages.nix, so those bindings are dead on darwin and on root.
 - Runtime impact is limited to dead code on darwin and root, and evaluation is unaffected.
 
@@ -262,13 +261,6 @@ The build or eval side can be checked, but the real effect needs the user.
 - D12 (hotdoc): it builds, and a stubbed zathura gets killed on SIGINT; the real zathura window is not testable.
 - D13 (Firefox engines): eval shows the engines hidden; whether Firefox hides them shows only after a restart.
 - F13 (autologin profile): eval shows the new block; niri starting on tty1 needs a login.
-
-### Unambiguous parts of H
-
-One piece of an H item has one fix whatever is decided for the rest:
-
-- H5: moving `orphans` to `home-modules/linux.nix`, checkable by eval.
-
 
 The rest of H and the open TODO markers need a decision or runtime testing.
 

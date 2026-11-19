@@ -16,6 +16,15 @@
 
     parted
     trashy # `trash`
+
+    # processes reparented to PID 1 inside the tty login session (session-1.scope)
+    (writeShellApplication {
+      name = "orphans";
+      text = # bash
+        ''
+          ps -o unit,ppid,pid,cmd --ppid 1 | awk '$1=="session-1.scope" {print substr($0, index($0, $3))}'
+        '';
+    })
   ];
 
   services.pss.enable = true; # secret service api -- exposes password-store over dbus

@@ -5,16 +5,6 @@
   ...
 }:
 let
-
-  # either orphans or launched with `swaymsg exec`
-  orphans = pkgs.writeShellApplication {
-    name = "orphans";
-    text = # bash
-      ''
-        ps -o unit,ppid,pid,cmd --ppid 1 | awk '$1=="session-1.scope" {print substr($0, index($0, $3))}'
-      '';
-  };
-
   # edit a home-manager link
   hack = pkgs.writeShellApplication {
     name = "hack";
@@ -39,7 +29,6 @@ in
 
 {
   home.packages = [
-    orphans
     hack
   ];
   programs.bash.bashrcExtra =
