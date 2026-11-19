@@ -10,7 +10,6 @@
     shellWrapperName = "y";
     initLua = # lua
       ''
-        require("toggle-pane"):entry("min-preview")
         require("exif"):setup()
       '';
     plugins = {
