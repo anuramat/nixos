@@ -74,7 +74,9 @@ gclone() {
 		}
 	}
 
-	for repo in "${repos[@]}"; do
+	local -a list
+	mapfile -t list <<<"$repos"
+	for repo in "${list[@]}"; do
 		local owner
 		owner=$(gh repo view "$repo" --json owner --jq '.owner.login') || return 1
 		__cd_gh_owner "$owner" || return 1
@@ -182,40 +184,4 @@ __gitgud_git_prompt() {
 
 	# dirty => non-zero return code:
 	printf %s "$status" | ansifilter | grep -qv '\S'
-}
-
-gwt() {
-	local reponame
-	reponame=$(basename "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")")
-	local worktrees_dir
-	worktrees_dir="${XDG_DATA_HOME:-$HOME/.local/share}/git/worktrees/$reponame/"
-
-	case "$#" in
-		0)
-			cd "$(git worktree list --porcelain -z | grep -z '^worktree' | cut -z -d ' ' -f 2 | fzf --read0)" || return
-			;;
-		1)
-			cd "$(git worktree list --porcelain -z | grep -z '^worktree' | cut -z -d ' ' -f 2 | fzf --read0 -q "$1" -1)" || return
-			;;
-		2)
-			local name
-			name="$2"
-			local worktree
-			case "$1" in
-				new)
-					worktree="$worktrees_dir/$name"
-					mkdir -p "$(dirname "$worktree")"
-					git worktree add "$worktree"
-					;;
-				rm)
-					worktree="$(git worktree list --porcelain -z | grep -z worktree | cut -z -d ' ' -f 2 | fzf --read0 -q "$name" -1)" || return
-					gum confirm "delete $worktree" && rm -rf "${worktree:?}/$2"
-					;;
-				*)
-					exit 1
-					;;
-			esac
-			;;
-		*) echo "usage: ..." && return 1 ;;
-	esac
 }

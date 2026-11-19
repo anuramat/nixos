@@ -2,75 +2,14 @@
 
 Refactoring opportunities and straightforward TODOs, from an audit of the repo at commit 9d347469 (2026-10-09). Each item was reported by an auditor and then checked against the code by an independent verifier; line numbers refer to that commit, and some have shifted since, so apply fixes by content.
 
-Items are numbered per section (A4, D12, ...). Sections A, D and F are confirmed and need no decision from you; section H collects everything that does; section I lists proposals that were rejected. Sections B (dead code), C (defaults and deprecated options), E (stale docs) and G (nixvim refactors) are done and were removed, as were the A, D and F items an agent could fully verify on its own; the ones left there need the user to check their effect (see Verifiability).
+Items are numbered per section (A4, D12, ...). Sections D and F are confirmed and need no decision from you; section H collects everything that does; section I lists proposals that were rejected. Sections A (bugs), B (dead code), C (defaults and deprecated options), E (stale docs) and G (nixvim refactors) are done and were removed, as were the A, D and F items an agent could fully verify on its own; the ones left there need the user to check their effect (see Verifiability).
 
-- A. Bugs and broken tooling
 - D. TODOs that can be resolved now
 - F. Refactors: flake, NixOS, Home Manager
 - H. Needs your decision
 - I. Considered and rejected
 - J. From the 2026-10-28 maintainability review
 - Verifiability: what an agent can and cannot check for the remaining items
-
-## A. Bugs and broken tooling
-
-### A4. gwt: `exit 1` kills the interactive shell; `gwt rm` deletes the wrong path
-
-**Where:** `home-modules/base/bash/git.sh:196`, `home-modules/base/bash/git.sh:199`, `home-modules/base/bash/git.sh:212`, `home-modules/base/bash/git.sh:213`, `home-modules/base/bash/git.sh:216`, `home-modules/base/bash/bashrc.sh:4`
-**Effort:** small -- **Risk:** low
-
-**Problem:**
-- git.sh is sourced into interactive bash (`bashrc.nix:50`), so `*) exit 1 ;;` (line 216) closes the terminal on any bad subcommand. Reproduced: `gwt bogus x` terminates the shell.
-- Line 213 `rm -rf "${worktree:?}/$2"` deletes `<picked worktree>/<query>`. For `gwt rm x` that is `.../worktrees/REPO/x/x`, which normally does not exist, so `rm -rf` silently does nothing. Even with the right path it would leave stale `.git/worktrees` metadata behind.
-- The pipeline `git worktree list --porcelain -z | grep -z ... | cut -zd ' ' -f 2` is copied 4 times (gwt x3, gwipe in `bashrc.sh:4`). Line 212 and `bashrc.sh:4` use an unanchored `grep -z worktree`, which also matches records like `branch refs/heads/worktree-foo`, and `cut -f 2` truncates paths that contain spaces.
-
-**Fix:**
-- In git.sh, add a helper before gwt: `__worktrees() { git worktree list --porcelain -z | grep -z '^worktree ' | cut -zd ' ' -f 2-; }`.
-- Lines 196/199: `cd "$(__worktrees | fzf --read0 ...)" || return` (keeping each line's fzf flags).
-- Line 212: `worktree="$(__worktrees | fzf --read0 -q "$name" -1)" || return`.
-- Line 213: `gum confirm "delete $worktree" && git worktree remove --force "$worktree"`. `git worktree remove` also refuses to remove the main worktree, which is safer than `rm -rf`; `--force` keeps the original destructive intent, which is already guarded by `gum confirm`.
-- Line 216: `return 1`.
-- `bashrc.sh:4` (gwipe; bashrc.sh is sourced after git.sh, `bashrc.nix:52`): `__worktrees | grep -vzxF "$PWD" | xargs -0I{} git worktree remove '{}'`.
-
-**Verify:** In a scratch repo: `gwt new x` creates the worktree; `gwt rm x` removes it and `git worktree list` no longer shows it; `gwt bogus x` returns 1 and the shell survives; `gwipe` still removes the other worktrees. shellcheck stays clean.
-
-### A5. gclone: a multi-selection from the picker is iterated as one string
-
-**Where:** `home-modules/base/bash/git.sh:67`, `home-modules/base/bash/git.sh:71`, `home-modules/base/bash/git.sh:77`
-**Effort:** trivial -- **Risk:** none
-
-**Problem:** `local repos=$1 ... repos=$(gh repo list | cut -f 1 | __gitgud_picker "") ... for repo in "${repos[@]}"`. `FZF_DEFAULT_OPTS` includes `--multi` (`home-modules/base/search.nix:174`), and `__gitgud_picker` echoes the NL-separated fzf output (git.sh:39-40), so several repos can come back. `repos` is a scalar, though, so the loop runs once with the whole `a<NL>b` string and `gh repo view` fails. The loop over an array expansion shows that multiple repos were intended.
-
-**Fix:** Just before the loop (line 77), add `local -a list; mapfile -t list <<<"$repos"`, and iterate `for repo in "${list[@]}"; do`. Leave everything else unchanged: the trailing `cd "$(basename "${repo%/}")"` uses the last element and runs inside the last owner's directory.
-
-**Verify:** `gclone` with two repos tab-selected clones both; `gclone owner/name` still works; shellcheck stays clean.
-
-### A13. niri shortcuts: shared builder for the iOS shortcut scripts (fixes open-link's missing coreutils)
-
-**Where:** `home-modules/heavy-linux/desktop/niri/shortcuts.nix:21`, `home-modules/heavy-linux/desktop/niri/shortcuts.nix:25`, `home-modules/heavy-linux/desktop/niri/shortcuts.nix:27`
-**Effort:** small -- **Risk:** low
-
-**Problem:** Lines 22-66 repeat the same `writeShellApplication { name; inherit excludeShellChecks; runtimeInputs = [ pkgs.findutils ... ]; text = ''${niriEnv} ...''; }` boilerplate three times. `niriEnv` calls `basename` and `cut` (line 15), but open-link's `runtimeInputs` (`pkgs.findutils pkgs.niri pkgs.firefox`) omit coreutils, so it relies on the ambient PATH -- a real undeclared dependency (get-clipboard and set-clipboard do list coreutils). open-link also uses `pkgs.niri` instead of `config.programs.niri.package`, unlike `zsa-tap.nix:26`; the two are equal today (`niri/default.nix:104` sets `package = pkgs.niri`), so that swap is consistency only.
-
-**Fix:**
-- Add to the `let`:
-
-```nix
-mkShortcut =
-  name: deps: body:
-  writeShellApplication {
-    inherit name excludeShellChecks;
-    runtimeInputs = [
-      pkgs.findutils
-      pkgs.coreutils
-    ] ++ deps;
-    text = "${niriEnv}\n${body}";
-  };
-```
-
-- Set `home.packages = [ (mkShortcut "open-link" [ config.programs.niri.package pkgs.firefox ] ''...'') (mkShortcut "get-clipboard" [ pkgs.wl-clipboard ] "wl-paste --no-newline 2>/dev/null || true") (mkShortcut "set-clipboard" [ pkgs.wl-clipboard ] "wl-copy") ];`, where open-link's body is the existing 3-line firefox-PATH comment followed by `niri msg action spawn -- "$(command -v firefox)" "$1"` (keep the comment inside the body).
-
-**Verify:** The three packages build (which runs shellcheck). Over ssh, `open-link https://example.com` opens the page in the niri session, and `echo hi | set-clipboard; get-clipboard` prints `hi`.
 
 ## D. TODOs that can be resolved now
 
@@ -301,7 +240,7 @@ Nontrivial:
 
 - `nixos-modules/base/net.nix:58` -- `# dnssec = "true"; # TODO breaks sometimes, try again with captive` -- This needs a runtime test on captive-portal networks. If you revisit it, note that the commented-out option has been renamed to `services.resolved.settings.Resolve.DNSSEC` (mkRenamedOptionModule in resolved.nix).
 - `home-modules/base/bash/git.sh:4` -- `# TODO more local/readonly` -- Vague and applies to the whole file. The concrete leaking globals in `gcreate` are fixed; the rest belongs to the rewrite.
-- `home-modules/base/bash/git.sh:5` -- `# TODO total rehaul, then move` -- A large rewrite with no defined target. The concrete bugs are split out as A4 and A5 (the `gcreate` one is fixed).
+- `home-modules/base/bash/git.sh:5` -- `# TODO total rehaul, then move` -- A large rewrite with no defined target. The concrete bugs (gwt, gclone, gcreate) are fixed.
 - `home-modules/heavy/packages.nix:3` -- `# TODO euporie (tui jupyter notebooks)` -- `pkgs.euporie` does not exist in the pinned nixpkgs, so it needs packaging, for example as a `buildPythonApplication` in its own overlay under overlays/.
 
 ## I. Considered and rejected
@@ -333,8 +272,6 @@ What an agent can check on its own for the remaining items, using an eval, a bui
 
 The build or eval side can be checked, but the real effect needs the user.
 
-- A4 (`gwt`), A5 (`gclone`): testable only with fzf, gum and gh stubbed; real picker use is not.
-- A13 (niri shortcuts): the scripts build and open-link's PATH has coreutils; opening a link in the niri session is not testable.
 - D12 (hotdoc): it builds, and a stubbed zathura gets killed on SIGINT; the real zathura window is not testable.
 - D13 (Firefox engines): eval shows the engines hidden; whether Firefox hides them shows only after a restart.
 - F13 (autologin profile): eval shows the new block; niri starting on tty1 needs a login.
