@@ -267,23 +267,45 @@ let
             stored file has `path = 'storage:NAME'` and lives at
             `~/Zotero/storage/KEY/NAME`, where KEY is the attachment's own
             `items.key`, not the parent's
-          - trashed items are in `deletedItems(itemID)`, trashed collections in
-            `deletedCollections(collectionID)`; skip both unless asked
 
-          PDFs in a collection, with their parent's title:
+          Trashed collections and items stay in `collections`,
+          `collectionItems` and `items`: the trash only adds their IDs to
+          `deletedCollections(collectionID)` and `deletedItems(itemID)`. Unless
+          the user asks about the trash, you MUST exclude them yourself: skip
+          items listed in `deletedItems`, and collections listed in
+          `deletedCollections` together with all their subcollections, whether
+          or not those are listed too.
+
+          Papers in a collection and its subcollections, with their stored
+          PDFs, excluding the trash:
 
           ```sql
-          select v.value as title, 'storage/' || i.key || '/' || substr(a.path, 9) as file
-          from collections c
-          join collectionItems ci on ci.collectionID = c.collectionID
-          join itemAttachments a on a.parentItemID = ci.itemID
-          join items i on i.itemID = a.itemID
-          join itemData d on d.itemID = a.parentItemID
+          with recursive tree(id, path) as (
+            select collectionID, collectionName from collections
+            where collectionName = 'NAME'
+              and collectionID not in (select collectionID from deletedCollections)
+            union all
+            select c.collectionID, tree.path || ' / ' || c.collectionName
+            from collections c join tree on c.parentCollectionID = tree.id
+            where c.collectionID not in (select collectionID from deletedCollections)
+          )
+          select tree.path, v.value as title,
+            'storage/' || ai.key || '/' || substr(a.path, 9) as file
+          from tree
+          join collectionItems ci on ci.collectionID = tree.id
+          join itemData d on d.itemID = ci.itemID
           join fields f on f.fieldID = d.fieldID and f.fieldName = 'title'
           join itemDataValues v on v.valueID = d.valueID
-          where c.collectionName = 'NAME' and a.contentType = 'application/pdf'
-            and a.path like 'storage:%'
+          left join itemAttachments a on a.parentItemID = ci.itemID
+            and a.contentType = 'application/pdf' and a.path like 'storage:%'
+            and a.itemID not in (select itemID from deletedItems)
+          left join items ai on ai.itemID = a.itemID
+          where ci.itemID not in (select itemID from deletedItems)
+          order by tree.path, title
           ```
+
+          The database is per host (only `storage/` is synced between hosts),
+          and is only as current as Zotero's last sync on this host.
         '';
       };
       decision-model = {
