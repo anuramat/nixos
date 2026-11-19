@@ -68,6 +68,27 @@ let
     deny = [ ];
   };
 
+  claude = pkgs.writeShellApplication {
+    name = "claude";
+    text = ''
+      # `-m X` and `-e X` are short for `--model X` and `--effort X`; only
+      # leading ones, as subcommands have short flags of their own
+      flags=()
+      while :; do
+        case ''${1-} in
+          -m) flags+=(--model "$2") ;;
+          -e) flags+=(--effort "$2") ;;
+          *) break ;;
+        esac
+        shift 2
+      done
+      # /model and /effort save their picks to settings.json; the flags
+      # outrank it, so every new session starts from these
+      exec ${lib.getExe pkgs.claude-code} --dangerously-skip-permissions \
+        --model fable --effort xhigh "''${flags[@]}" "$@"
+    '';
+  };
+
   # `claude-teleport HOST [SID]`: copy a session of $PWD to the same path on
   # HOST, to be picked up there with `claude -r`; fzf picker if SID is omitted
   teleport = pkgs.writeShellApplication {
@@ -129,16 +150,7 @@ in
           config.lib.agents.mkPackages (
             {
               agentDir = "claude";
-              package = pkgs.claude-code;
-              # /model and /effort save their picks to settings.json; the
-              # flags outrank it, so every new session starts from these
-              args = [
-                "--dangerously-skip-permissions"
-                "--model"
-                "fable"
-                "--effort"
-                "xhigh"
-              ];
+              package = claude;
               extraRwDirs = [ config.home.sessionVariables.CODEX_HOME ];
             }
             // overrides
