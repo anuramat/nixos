@@ -16,6 +16,9 @@ let
     pkgs.writeShellScript "image-protocol"
       # bash
       ''
+        # images are too slow over ssh; inside zellij the environment is that of the client that
+        # created the session, but zellij answers the query for the attached ones
+        [[ -n $SSH_CONNECTION && -z $ZELLIJ ]] && exit
         s=$(stty -g 2>/dev/null </dev/tty) || exit
         exec <>/dev/tty
         stty -echo -icanon
@@ -42,12 +45,10 @@ let
 
         # shows image from stdin; adapted from fzf's bin/fzf-preview.sh
         img() {
-          local cols=$FZF_PREVIEW_COLUMNS rows=$FZF_PREVIEW_LINES mode=memory
+          local cols=$FZF_PREVIEW_COLUMNS rows=$FZF_PREVIEW_LINES
           if [[ $fmt == kitty ]]; then
-            # memory transfer is local only
-            [[ -n $SSH_CONNECTION ]] && mode=stream
             # unicode placeholders get cleared/redrawn by fzf like text
-            ${lib.getExe' pkgs.kitty.kitten "kitten"} icat --clear --scale-up --transfer-mode="$mode" --unicode-placeholder \
+            ${lib.getExe' pkgs.kitty.kitten "kitten"} icat --clear --scale-up --transfer-mode=memory --unicode-placeholder \
               --stdin=yes --place="''${cols}x$rows@0x0"
             return
           fi

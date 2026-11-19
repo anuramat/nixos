@@ -83,6 +83,9 @@ let
       # inside zellij, yazi trusts the environment, which names the terminal zellij was first
       # started from, and only tries sixel; zellij 0.45 answers the image queries for the
       # attached terminals, and has kitty graphics, but no unicode placeholders;
+      # yazi looks for terminal names in all the replies, and takes zellij's "kitty graphics not
+      # supported" for kitty;
+      # over plain ssh images are too slow, so they're drawn as text blocks;
       # previewers also run when the preview pane is hidden, drawing to an empty area;
       # plugins can't sort files, so the `sort exif-*` modes order them by whatever the exif
       # plugin puts in the directory size map, the only per-file data plugins can hand to the sorter
@@ -90,10 +93,15 @@ let
         postPatch = ''
           substituteInPlace yazi-emulator/src/emulator.rs --replace-fail \
             'let resort = Brand::from_env();' \
-            'let resort = if yazi_shared::env_exists("ZELLIJ_SESSION_NAME") { None } else { Brand::from_env() };'
+            'let resort = if yazi_shared::env_exists("ZELLIJ_SESSION_NAME") { None } else { Brand::from_env() };' --replace-fail \
+            'Brand::from_csi(&resp).or(resort)' \
+            'Brand::from_csi(&resp).filter(|_| !yazi_shared::env_exists("ZELLIJ_SESSION_NAME")).or(resort)'
           substituteInPlace yazi-adapter/src/adapter.rs --replace-fail \
             'adapters.retain(|p| *p == Self::Sixel);' \
-            'adapters.retain(|p| *p != Self::Kgp);'
+            'adapters.retain(|p| *p != Self::Kgp);' --replace-fail \
+            'let mut adapters: Adapters = emulator.into();' \
+            'if yazi_shared::in_ssh_connection() && !env_exists("ZELLIJ_SESSION_NAME") { return Self::Chafa; }
+            let mut adapters: Adapters = emulator.into();'
           substituteInPlace yazi-core/src/tab/preview.rs --replace-fail \
             'YAZI.plugin.previewers.matches(&file, &mime) else {' \
             'YAZI.plugin.previewers.matches(&file, &mime).filter(|_| !LAYOUT.get().preview.is_empty()) else {'
@@ -114,7 +122,11 @@ let
       };
 
       # compact-bar takes the "Zellij" text before the session name from a `prefix` config key;
-      # zellij embeds its default plugins prebuilt, and only trusts embedded ones
+      # zellij embeds its default plugins prebuilt, and only trusts embedded ones;
+      # images are too slow over ssh, so a client attached over ssh reports no image support:
+      # zellij answers the image queries for the attached clients, and sends images only to
+      # the ones that support them; panes made by a plain, floating or stacked NewPane aren't
+      # told what the attached clients support, and answer as if they supported everything
       zellij-unwrapped =
         let
           compactBar = prev.pkgsCross.wasi32.rustPlatform.buildRustPackage {
@@ -131,6 +143,25 @@ let
         unstable.zellij-unwrapped.overrideAttrs (old: {
           postPatch = old.postPatch + ''
             cp ${compactBar}/compact-bar.wasm zellij-utils/assets/plugins/
+            substituteInPlace zellij-client/src/lib.rs --replace-fail \
+              'let support_kitty_graphics_protocol = config_options' \
+              'let support_kitty_graphics_protocol = std::env::var_os("SSH_CONNECTION").is_none() && config_options'
+            substituteInPlace zellij-client/src/stdin_ansi_parser.rs --replace-fail \
+              '.any(|attribute| attribute == "4")' \
+              '.any(|attribute| attribute == "4") && std::env::var_os("SSH_CONNECTION").is_none()'
+            substituteInPlace zellij-server/src/tab/mod.rs --replace-fail \
+              ')) as Box<dyn Pane>
+                        },
+                    };' \
+              ')) as Box<dyn Pane>
+                        },
+                    };
+                    if let Some(supported) = self.kitty_host_support {
+                        new_pane.update_kitty_host_support(supported);
+                    }
+                    if let Some(supported) = self.sixel_host_support {
+                        new_pane.update_sixel_host_support(supported);
+                    }'
           '';
         });
       zellij = unstable.zellij.override { inherit (final) zellij-unwrapped; };
