@@ -112,27 +112,24 @@ Keep the `# auto start on 1st tty` comment and the `niri` script with its TODO c
 
 ### H5. Linux/Wayland-only shell helpers in the cross-platform base layer
 
-**Where:** `home-modules/base/bash/bashrc.sh:7-12`, `home-modules/base/bash/bashrc.sh:14-21`, `home-modules/base/bash/bashrc.sh:23-27`, `home-modules/base/bash/bashrc.nix:9-16`, `home-modules/base/bash/bashrc.nix:42`, `home-modules/heavy-linux/packages.nix:8`, `home-modules/heavy-linux/packages.nix:37`, `home-modules/base/yazi.nix:98`, `nixvim-modules/heavy/custom.nix:11`
+**Where:** `home-modules/base/bash/bashrc.sh:3-7`, `home-modules/base/bash/bashrc.nix:9-16`, `home-modules/base/bash/bashrc.nix:42`, `home-modules/heavy-linux/packages.nix:8`, `home-modules/heavy-linux/packages.nix:37`, `home-modules/base/yazi.nix:98`, `nixvim-modules/heavy/custom.nix:11`
 
 **Context:**
 
-- The base bashrc.sh defines three helpers that need Linux-only tools:
-  - `upload`: `curl -F "file=@$filename" https://0x0.st | tee >(wl-copy)`;
-  - `take`: `echo "${paths[@]}" | wl-copy -n`;
-  - `brexit`: `ddcutil setvcp 10 "$1" --display 1`.
-- `ddcutil` and `wl-clipboard` are installed only in heavy-linux/packages.nix (lines 8 and 37), so the helpers are dead on darwin and on root. AGENTS.md says Linux-only additions belong in the `-linux` layers.
+- The base bashrc.sh defines `brexit` (`ddcutil setvcp 10 "$1" --display 1`), which needs a Linux-only tool.
+- `ddcutil` and `wl-clipboard` are installed only in heavy-linux/packages.nix (lines 8 and 37), so `brexit` is dead on darwin and on root. AGENTS.md says Linux-only additions belong in the `-linux` layers.
 - The `orphans` package (bashrc.nix:10-16, installed at :42) relies on `ps -o unit` and `session-1.scope` (Linux/systemd). Its comment, `# either orphans or launched with \`swaymsg exec\``, refers to sway, which niri has replaced.
-- Unlike `nai`, which must stay a function because it `cd`s, none of these four need shell state.
-- The leak is wider than these helpers: base/yazi.nix:98 and nixvim heavy/custom.nix:11 also call `wl-copy`.
-- Runtime impact is limited to dead functions on darwin and root, and evaluation is unaffected.
-- heavy-linux has no `bin/` directory, so any move needs a new place to put these.
+- Neither `brexit` nor `orphans` needs shell state.
+- The leak is wider than this helper: base/yazi.nix:98 and nixvim heavy/custom.nix:11 also call `wl-copy`.
+- Runtime impact is limited to a dead function on darwin and root, and evaluation is unaffected.
+- heavy-linux has no `bin/` directory, so any move needs a new place to put it.
 - One piece is straightforward whatever you choose: move `orphans` from base/bash/bashrc.nix to `home.packages` in home-modules/linux.nix, and reword its comment to `# processes reparented to PID 1 inside the tty login session (session-1.scope)`.
 
-**Options for upload/take/brexit:**
+**Options for brexit:**
 
-- **(a)** Make them heavy-linux packages: `writeShellApplication`s with `runtimeInputs` (curl + wl-clipboard, coreutils + wl-clipboard, ddcutil), removed from bashrc.sh. -- They become binaries on PATH instead of interactive functions, with their dependencies pinned. To verify: the anuramat-darwin home config evaluates, `command -v upload take brexit orphans` resolves in a new shell on f12, and `just lint` passes.
-- **(b)** Move them as functions into a bash snippet in heavy-linux, for example via `programs.bash.initExtra`. -- They keep their function semantics, but there is now a second bashrc fragment.
-- **(c)** Leave them in base. -- No change; they stay dead on darwin and root.
+- **(a)** Make it a heavy-linux package: a `writeShellApplication` with `runtimeInputs = [ ddcutil ]`, removed from bashrc.sh (which then becomes empty). -- It becomes a binary on PATH instead of an interactive function, with its dependency pinned. To verify: the anuramat-darwin home config evaluates, `command -v brexit orphans` resolves in a new shell on f12, and `just lint` passes.
+- **(b)** Move it as a function into a bash snippet in heavy-linux, for example via `programs.bash.initExtra`. -- They keep their function semantics, but there is now a second bashrc fragment.
+- **(c)** Leave it in base. -- No change; it stays dead on darwin and root.
 
 None of these options covers the `wl-copy` calls in yazi.nix and nixvim custom.nix.
 
