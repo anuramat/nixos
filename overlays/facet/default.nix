@@ -29,11 +29,19 @@ let
   python = unstable.python313.override {
     self = python;
     packageOverrides = pfinal: psuper: {
-      # config.rocmSupport (bgm5) would build both from source
-      torch = psuper.torch.override { rocmSupport = false; };
-      onnxruntime = psuper.onnxruntime.override (a: {
-        onnxruntime = a.onnxruntime.override { rocmSupport = false; };
-      });
+      # nixpkgs builds torchvision's GPU ops only for CUDA, and BiRefNet needs deform_conv2d on
+      # ROCm (bgm5) too; clr for hipcc's setup hook
+      torchvision = psuper.torchvision.overridePythonAttrs (
+        o:
+        lib.optionalAttrs pfinal.torch.rocmSupport {
+          nativeBuildInputs = o.nativeBuildInputs ++ [ pfinal.torch.rocmPackages.clr ];
+          env = o.env // {
+            FORCE_CUDA = 1;
+            ROCM_PATH = pfinal.torch.rocmtoolkit_joined;
+            PYTORCH_ROCM_ARCH = pfinal.torch.gpuTargetString;
+          };
+        }
+      );
 
       mcp-types = pfinal.buildPythonPackage rec {
         pname = "mcp_types";
