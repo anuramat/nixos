@@ -130,7 +130,15 @@ in
             {
               agentDir = "claude";
               package = pkgs.claude-code;
-              args = [ "--dangerously-skip-permissions" ];
+              # /model and /effort save their picks to settings.json; the
+              # flags outrank it, so every new session starts from these
+              args = [
+                "--dangerously-skip-permissions"
+                "--model"
+                "fable"
+                "--effort"
+                "xhigh"
+              ];
               extraRwDirs = [ config.home.sessionVariables.CODEX_HOME ];
             }
             // overrides
