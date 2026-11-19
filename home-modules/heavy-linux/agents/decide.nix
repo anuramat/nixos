@@ -18,4 +18,5 @@ let
 in
 {
   home.packages = [ decide ];
+  lib.agents.decide = decide;
 }

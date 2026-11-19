@@ -133,5 +133,7 @@ let
   };
 in
 {
-  home.packages = [ job ];
+  # installed for the agent user only (nixos-modules/base/agent.nix), for the
+  # call over ssh; the jobs skill runs it by its store path
+  lib.agents.job = job;
 }

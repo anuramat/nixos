@@ -178,8 +178,9 @@ let
   '';
 in
 {
+  # the hostrun skill runs the client by its store path
+  lib.agents.hostrun = client;
   home.packages = [
-    client
     prompt # found in PATH over ssh
     review
   ];

@@ -1,4 +1,9 @@
-{ lib, inputs, ... }:
+{
+  config,
+  lib,
+  inputs,
+  ...
+}:
 let
   inherit (inputs.self.consts.agent) username sharedDir;
   agentHosts =
@@ -7,6 +12,12 @@ let
     |> lib.mapAttrsToList (n: v: "- `${n}` -- ${v.description}")
     |> lib.concatStringsSep "\n";
   decisionUrl = with inputs.self.consts.llama; "http://${host}:${toString decisionPort}";
+  # skills run their commands by store path, so a skill can't refer to a
+  # command that is missing from PATH
+  standsFor = pkg: ''
+    In this skill, `${pkg.meta.mainProgram}` stands for `${lib.getExe pkg}`:
+    you MUST run it by that path.
+  '';
 
   mkSkills =
     agent:
@@ -139,98 +150,104 @@ let
       };
       hostrun = {
         description = "run a command outside the sandbox, as the user or as root, on this or another host, after the user approves it; use when a command can't work in the sandbox, e.g. it needs the user's SSH keys or user services, or writes outside the bound paths";
-        text = ''
-          If a command can't work in the sandbox (e.g. it needs the user's SSH
-          keys or user services, or writes outside the bound paths), you MAY
-          ask the user to approve running it outside the sandbox with `hostrun
-          -d DESC [-r] -c CMD`, where CMD is a single argument, run with `bash
-          -c`, or `hostrun -d DESC -f FILE`, which runs FILE's content the same
-          way; FILE is read inside the sandbox, so it can be in your
-          scratchpad, or `/dev/stdin` with a heredoc. DESC is a short one-line
-          description of what the command does, e.g. `list the files in X's
-          wine prefix`: the user's notification shows only DESC, and the review
-          shows it next to the command. hostrun blocks until the user answers,
-          then runs the command as the user on this host, in the current
-          directory, or, with `-h HOST`, over ssh as the user on HOST, in the
-          user's home there (unlike your own `ssh HOST`, which logs in as
-          `agent`); with `-r`, as root, through sudo, which the user
-          authenticates in the review, so don't use `sudo` in CMD itself.
-          stdout, stderr and the exit status are passed through, stdin is
-          `/dev/null`, and exit status 77 means the user denied it. Paths that
-          only exist in the sandbox, such as anything under `/tmp`, don't exist
-          outside it.
-        ''
-        + (for [ "claude" ] ''
-          Approval can take minutes: run `hostrun` with Bash `run_in_background`.
-        '')
-        + ''
+        text =
+          standsFor config.lib.agents.hostrun
+          + ''
 
-          The user reviews every `hostrun` command (with `-f`, the file's
-          content) before approving it, and sees nothing else, so you MUST NOT
-          make it run files you wrote (e.g. `hostrun -c 'bash x.sh'`), and you
-          SHOULD write it for readability: e.g. use `-h HOST` instead of `ssh
-          HOST` in the command, and organize long commands as `-f` scripts with
-          comments and descriptive names instead of huge one-liners or layers
-          of quoting.
-        '';
+            If a command can't work in the sandbox (e.g. it needs the user's SSH
+            keys or user services, or writes outside the bound paths), you MAY
+            ask the user to approve running it outside the sandbox with `hostrun
+            -d DESC [-r] -c CMD`, where CMD is a single argument, run with `bash
+            -c`, or `hostrun -d DESC -f FILE`, which runs FILE's content the same
+            way; FILE is read inside the sandbox, so it can be in your
+            scratchpad, or `/dev/stdin` with a heredoc. DESC is a short one-line
+            description of what the command does, e.g. `list the files in X's
+            wine prefix`: the user's notification shows only DESC, and the review
+            shows it next to the command. hostrun blocks until the user answers,
+            then runs the command as the user on this host, in the current
+            directory, or, with `-h HOST`, over ssh as the user on HOST, in the
+            user's home there (unlike your own `ssh HOST`, which logs in as
+            `agent`); with `-r`, as root, through sudo, which the user
+            authenticates in the review, so don't use `sudo` in CMD itself.
+            stdout, stderr and the exit status are passed through, stdin is
+            `/dev/null`, and exit status 77 means the user denied it. Paths that
+            only exist in the sandbox, such as anything under `/tmp`, don't exist
+            outside it.
+          ''
+          + (for [ "claude" ] ''
+            Approval can take minutes: run `hostrun` with Bash `run_in_background`.
+          '')
+          + ''
+
+            The user reviews every `hostrun` command (with `-f`, the file's
+            content) before approving it, and sees nothing else, so you MUST NOT
+            make it run files you wrote (e.g. `hostrun -c 'bash x.sh'`), and you
+            SHOULD write it for readability: e.g. use `-h HOST` instead of `ssh
+            HOST` in the command, and organize long commands as `-f` scripts with
+            comments and descriptive names instead of huge one-liners or layers
+            of quoting.
+          '';
       };
       jobs = {
         description = "SSH access to the user's machines, and long-running jobs on them; read before using ssh, and before running anything that takes longer than ~10 minutes or should outlive your session";
-        text = ''
-          You have SSH access to the following machines as the unprivileged `${username}` user:
+        text =
+          standsFor config.lib.agents.job
+          + ''
 
-          ${agentHosts}
+            You have SSH access to the following machines as the unprivileged `${username}` user:
 
-          Its home directory persists across sessions. Anything you start over
-          ssh is killed when the ssh command returns.
+            ${agentHosts}
 
-          Anything that should outlive your session, or runs longer than ~10
-          minutes, MUST be run as a job:
+            Its home directory persists across sessions. Anything you start over
+            ssh is killed when the ssh command returns.
 
-          - `job run HOST:NAME -d DESC [-e WHEN] -- CMD...` runs CMD as
-            `${username}` on HOST, in `D=${sharedDir}/jobs/NAME/work` on HOST;
-            output goes to `D/../log`, next to job's own files. NAME is
-            `[a-z0-9-]+` and can't be reused.
-          - DESC and the ETA are shown to the user next to the job. DESC is
-            required: about 40 characters, what is run on what, e.g.
-            `smoke test of A on B` or `full training run of C with D`.
-          - `-e WHEN` sets the ETA, in `date -d` syntax: `'90 min'`, `'2 hours'`,
-            `'1 hour 30 min'`. You SHOULD always set it, estimated from a smoke
-            test's throughput times the total work, or a previous run's duration.
-          - `job eta HOST:NAME WHEN` updates the ETA; like `-e`, WHEN is the time
-            left from now, not the total duration since the job started. When
-            the job's progress shows that the estimate is off by more than ~20%,
-            you SHOULD update it.
-          - `job wait [-f] HOST:NAME` blocks until the job ends and prints
-            `job NAME: RESULT`. Exit 0 = success, 1 = failed or cancelled,
-            2 = no such job, 3 = lost (e.g. reboot), 4 = ssh failed (retry).
-            `-f` also streams new log lines.
-          - `job stop HOST:NAME` cancels it.
+            Anything that should outlive your session, or runs longer than ~10
+            minutes, MUST be run as a job:
 
-          `${username}` can't read the user's home, so you MUST stage everything the
-          job needs in D first. The sandbox can read `${sharedDir}` but
-          not write it: write to D only through ssh, using `HOST:` paths even
-          for this host (`$HOSTNAME`). Example, from the root of a flake repo:
+            - `job run HOST:NAME -d DESC [-e WHEN] -- CMD...` runs CMD as
+              `${username}` on HOST, in `D=${sharedDir}/jobs/NAME/work` on HOST;
+              output goes to `D/../log`, next to job's own files. NAME is
+              `[a-z0-9-]+` and can't be reused.
+            - DESC and the ETA are shown to the user next to the job. DESC is
+              required: about 40 characters, what is run on what, e.g.
+              `smoke test of A on B` or `full training run of C with D`.
+            - `-e WHEN` sets the ETA, in `date -d` syntax: `'90 min'`, `'2 hours'`,
+              `'1 hour 30 min'`. You SHOULD always set it, estimated from a smoke
+              test's throughput times the total work, or a previous run's duration.
+            - `job eta HOST:NAME WHEN` updates the ETA; like `-e`, WHEN is the time
+              left from now, not the total duration since the job started. When
+              the job's progress shows that the estimate is off by more than ~20%,
+              you SHOULD update it.
+            - `job wait [-f] HOST:NAME` blocks until the job ends and prints
+              `job NAME: RESULT`. Exit 0 = success, 1 = failed or cancelled,
+              2 = no such job, 3 = lost (e.g. reboot), 4 = ssh failed (retry).
+              `-f` also streams new log lines.
+            - `job stop HOST:NAME` cancels it.
 
-          ```sh
-          H=$HOSTNAME # or another host from the list above
-          D=${sharedDir}/jobs/NAME/work
-          # just the flake files, so that nix doesn't copy the repo into the store
-          rsync -t --mkpath flake.nix flake.lock "$H:$D/flake/"
-          git ls-files -z -co --exclude-standard |
-            rsync -rlpt --from0 --files-from=- --mkpath ./ "$H:$D/src/"
-          job run "$H:NAME" -d 'full training run of C with D' -e '2 hours' -- \
-            sh -c "cd src && nix develop path:$D/flake -c python train.py"
-          ```
+            `${username}` can't read the user's home, so you MUST stage everything the
+            job needs in D first. The sandbox can read `${sharedDir}` but
+            not write it: write to D only through ssh, using `HOST:` paths even
+            for this host (`$HOSTNAME`). Example, from the root of a flake repo:
 
-          - If the flake reads other repo files (e.g. `src = ./.`), copy those to `D/flake` too.
-          - Big data (datasets, caches) SHOULD live in `${sharedDir}/data/PROJECT` on the host, symlinked into D: `ssh $H ln -s ${sharedDir}/data/PROJECT/cache $D/src/cache`.
-          - Results: read D directly on this host; on another host, use `ssh $H tail $D/../log` or `rsync -rlpt "$H:$D/src/out/" out/`.
-          - Record `HOST:NAME` wherever the run is documented, so a later session can re-attach with `job wait`.
-        ''
-        + (for [ "claude" ] ''
-          - Right after launching, run `job wait HOST:NAME` with Bash `run_in_background` -- you get notified when it ends. For progress, run `job wait -f HOST:NAME | grep --line-buffered -E 'PATTERN|^job '` in the Monitor tool, filtered to lines you'd act on, e.g. errors and progress (to update the ETA). You MUST NOT poll with foreground `sleep`.
-        '');
+            ```sh
+            H=$HOSTNAME # or another host from the list above
+            D=${sharedDir}/jobs/NAME/work
+            # just the flake files, so that nix doesn't copy the repo into the store
+            rsync -t --mkpath flake.nix flake.lock "$H:$D/flake/"
+            git ls-files -z -co --exclude-standard |
+              rsync -rlpt --from0 --files-from=- --mkpath ./ "$H:$D/src/"
+            job run "$H:NAME" -d 'full training run of C with D' -e '2 hours' -- \
+              sh -c "cd src && nix develop path:$D/flake -c python train.py"
+            ```
+
+            - If the flake reads other repo files (e.g. `src = ./.`), copy those to `D/flake` too.
+            - Big data (datasets, caches) SHOULD live in `${sharedDir}/data/PROJECT` on the host, symlinked into D: `ssh $H ln -s ${sharedDir}/data/PROJECT/cache $D/src/cache`.
+            - Results: read D directly on this host; on another host, use `ssh $H tail $D/../log` or `rsync -rlpt "$H:$D/src/out/" out/`.
+            - Record `HOST:NAME` wherever the run is documented, so a later session can re-attach with `job wait`.
+          ''
+          + (for [ "claude" ] ''
+            - Right after launching, run `job wait HOST:NAME` with Bash `run_in_background` -- you get notified when it ends. For progress, run `job wait -f HOST:NAME | grep --line-buffered -E 'PATTERN|^job '` in the Monitor tool, filtered to lines you'd act on, e.g. errors and progress (to update the ETA). You MUST NOT poll with foreground `sleep`.
+          '');
       };
       profiling = {
         description = "sandbox limits on debuggers, tracers and profilers; read before attaching to a process (py-spy, gdb, strace) or recording call graphs with perf";
@@ -247,15 +264,29 @@ let
       };
       zotero = {
         description = "read the user's Zotero library: collections, items and PDFs; use when the user mentions Zotero, their papers or their library";
-        text = ''
+        text = standsFor config.lib.agents.zotero + ''
+
           The Zotero data directory `~/Zotero` is bound read-only: PDFs are in
           `~/Zotero/storage/KEY/`, everything else is in `~/Zotero/zotero.sqlite`.
-          Zotero holds an exclusive lock on the database while it runs, so you
-          MUST open it as `file:$HOME/Zotero/zotero.sqlite?immutable=1`, e.g.
-          `nix run nixpkgs#sqlite -- "file:$HOME/Zotero/zotero.sqlite?immutable=1" QUERY`
-          or Python's `sqlite3.connect(URI, uri=True)`.
+          The database is per host (only `storage/` is synced between hosts),
+          and is only as current as Zotero's last sync on this host.
 
-          Schema essentials:
+          `zotero-db` reads it, leaving out the trash, with tab-separated
+          output:
+
+          - `zotero-db tree` prints the path of every collection, e.g.
+            `papers / diffusion`, with ` / ` between the levels
+          - `zotero-db ls PATH` prints `PATH, title, PDF` for every item in
+            the collection with that path and in its subcollections, one line
+            per stored PDF; the PDF is an absolute path, empty if the item has
+            none
+          - `zotero-db sql [QUERY...]` runs SQL, from stdin without a QUERY,
+            for anything else
+
+          ## SQL
+
+          You MUST NOT open the database directly: Zotero holds an exclusive
+          lock on it while it runs, which `zotero-db sql` bypasses.
 
           - `collections(collectionID, parentCollectionID, collectionName)`:
             the tree, with NULL parents at the root;
@@ -274,38 +305,8 @@ let
           the user asks about the trash, you MUST exclude them yourself: skip
           items listed in `deletedItems`, and collections listed in
           `deletedCollections` together with all their subcollections, whether
-          or not those are listed too.
-
-          Papers in a collection and its subcollections, with their stored
-          PDFs, excluding the trash:
-
-          ```sql
-          with recursive tree(id, path) as (
-            select collectionID, collectionName from collections
-            where collectionName = 'NAME'
-              and collectionID not in (select collectionID from deletedCollections)
-            union all
-            select c.collectionID, tree.path || ' / ' || c.collectionName
-            from collections c join tree on c.parentCollectionID = tree.id
-            where c.collectionID not in (select collectionID from deletedCollections)
-          )
-          select tree.path, v.value as title,
-            'storage/' || ai.key || '/' || substr(a.path, 9) as file
-          from tree
-          join collectionItems ci on ci.collectionID = tree.id
-          join itemData d on d.itemID = ci.itemID
-          join fields f on f.fieldID = d.fieldID and f.fieldName = 'title'
-          join itemDataValues v on v.valueID = d.valueID
-          left join itemAttachments a on a.parentItemID = ci.itemID
-            and a.contentType = 'application/pdf' and a.path like 'storage:%'
-            and a.itemID not in (select itemID from deletedItems)
-          left join items ai on ai.itemID = a.itemID
-          where ci.itemID not in (select itemID from deletedItems)
-          order by tree.path, title
-          ```
-
-          The database is per host (only `storage/` is synced between hosts),
-          and is only as current as Zotero's last sync on this host.
+          or not those are listed too; `zotero-db` itself (`cat` it) does this
+          with a recursive query.
         '';
       };
       decision-model = {
@@ -319,7 +320,8 @@ let
           served (`decision` in `nixos-configurations/anuramat-bgm5/llama.nix`).
 
           For a single yes/no question about text, `decide QUESTION... < STATE`
-          prints the probability of yes.
+          prints the probability of yes, where `decide` is
+          `${lib.getExe config.lib.agents.decide}`.
 
           ## requests
 

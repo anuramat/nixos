@@ -24,6 +24,7 @@ in
     ./sandbox.nix
     ./skills.nix
     ./uc3
+    ./zotero.nix
   ];
 
   lib.agents = {
