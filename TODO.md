@@ -110,18 +110,6 @@ Keep the `# auto start on 1st tty` comment and the `niri` script with its TODO c
 - **(a)** Delete lines 8-10. This removes the quoted rationale comment and the TODO; the `podman` attrset keeps `enable` and `dockerCompat`. -- Containers on the rootful default `podman` network lose name resolution, which affects the multi-network compose case above and plain `podman run`, and UDP 53 closes on podman0. This is fine if you only use rootless podman or compose files that don't hit that case. To verify after a rebuild: run `podman-compose up -d` on a two-service project with no `networks:`, then check that `podman exec <svc1> getent hosts <svc2>` resolves and that `podman network inspect <project>_default` shows `dns_enabled: true`.
 - **(b)** Keep the setting and replace the TODO with `# still needed for rootful podman-compose projects that declare several networks but no 'default' one (podman-compose then falls back to the 'podman' bridge)`. -- Behaviour does not change, and the comment records why the setting is there.
 
-### H5. Linux/Wayland-only bits left in the cross-platform base layer
-
-**Where:** `home-modules/base/yazi.nix:98`, `nixvim-modules/heavy/custom.nix:11`
-
-**Context:**
-
-- AGENTS.md says Linux-only additions belong in the `-linux` layers. `brexit` and `orphans` already moved to the `-linux` layers, and the other Linux-only bashrc helpers were dropped.
-- base/yazi.nix:98 and nixvim heavy/custom.nix:11 call `wl-copy`, but `wl-clipboard` is installed only in heavy-linux/packages.nix, so those bindings are dead on darwin and on root.
-- Runtime impact is limited to dead code on darwin and root, and evaluation is unaffected.
-
-**Decision:** whether, and how, to make the `wl-copy` calls in yazi.nix and nixvim custom.nix platform-aware (for example, move them to a `-linux` layer, or pick the clipboard command per platform).
-
 ### H6. Sort the `# misc TODO categorize` packages
 
 **Where:** `home-modules/heavy/lang/packages.nix:48-58`, `home-modules/heavy/lang/nix.nix:12`, `home-modules/heavy/jupyter.nix:8`
