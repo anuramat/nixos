@@ -3,6 +3,7 @@
     # cons: medium startup time; bloated
     enable = true;
     settings = {
+      shell = "bash -l";
       confirm_os_window_close = 0;
       tab_bar_edge = "top";
       tab_bar_style = "powerline";

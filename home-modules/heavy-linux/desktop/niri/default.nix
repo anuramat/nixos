@@ -51,6 +51,7 @@
       xwayland-satellite.path = lib.getExe pkgs.xwayland-satellite;
       prefer-no-csd = true;
       hotkey-overlay.skip-at-startup = true;
+      environment.NIXOS_OZONE_WL = "1"; # wayland chromium/electron
 
       window-rules = [
         {

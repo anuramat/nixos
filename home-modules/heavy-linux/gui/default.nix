@@ -19,8 +19,6 @@ in
     ./theme.nix
   ];
 
-  home.sessionVariables.NIXOS_OZONE_WL = "1"; # wayland chromium/electron
-
   programs = {
     spicetify = {
       enable = true;
