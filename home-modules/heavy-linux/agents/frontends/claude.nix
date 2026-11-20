@@ -123,8 +123,10 @@ let
       src=("$dir/$sid.jsonl")
       [[ -d $dir/$sid ]] && src+=("$dir/$sid")
       rsync -a --mkpath "''${src[@]}" "$host:$dir/"
+      # HOST may be an ssh alias
+      to=$(ssh -G "$host" | sed -n 's/^hostname //p')
       # shellcheck disable=SC2029 # $dir is the same on both hosts
-      jq -cs --arg from "$HOSTNAME" --arg to "$host" --arg uuid "$(cat /proc/sys/kernel/random/uuid)" '
+      jq -cs --arg from "$HOSTNAME" --arg to "$to" --arg uuid "$(cat /proc/sys/kernel/random/uuid)" '
         map(select(.uuid and (.isSidechain | not))) | last
         | {parentUuid: .uuid, isSidechain, type: "user", uuid: $uuid, timestamp: (now | todate),
           userType, entrypoint, cwd, sessionId, version, gitBranch,
