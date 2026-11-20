@@ -61,10 +61,11 @@ expect({ "2:9 $norm(x) <= 1$ hidden", "4:0 $ e^(i pi) + 1 = 0 $ shown" })
 vim.api.nvim_buf_set_lines(buf, 4, 5, false, { "and $a^2$" })
 expect({ "2:9 $norm(x) <= 1$ hidden", "4:4 $a^2$ shown" })
 
--- without conceal, the source is visible anyway, so the image stays
+-- without conceal there are no images, and they come back with it
 vim.wo.conceallevel = 0
-vim.api.nvim_exec_autocmds("CursorMoved", { buffer = buf })
-expect({ "2:9 $norm(x) <= 1$ shown", "4:4 $a^2$ shown" })
+expect({})
+vim.wo.conceallevel = 2
+expect({ "2:9 $norm(x) <= 1$ hidden", "4:4 $a^2$ shown" })
 
 -- match_colors: the ink is the foreground color
 local pngs = vim.fn.glob(vim.fs.dirname(vim.fn.tempname()) .. "/*/*.png", false, true)

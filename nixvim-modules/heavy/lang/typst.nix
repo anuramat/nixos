@@ -3,7 +3,7 @@
   autoCmd = [
     {
       # NOTE autocmd because after/ftplugin is too early
-      # conceallevel: the typst-eq images replace the source, except on the cursor line
+      # conceallevel: the typst-eq images replace the source, except on the cursor line; 0 turns them off
       event = "FileType";
       pattern = "typst";
       command = "setlocal indentexpr= formatoptions+=n conceallevel=2";

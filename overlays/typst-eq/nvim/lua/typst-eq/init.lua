@@ -26,9 +26,16 @@ local function sync(buf)
   if s.tick ~= vim.api.nvim_buf_get_changedtick(buf) then
     return -- the equations are those of an older text; the pending answer will get us here again
   end
-  local wins = vim.tbl_map(function(win)
-    return vim.fn.getwininfo(win)[1]
-  end, vim.fn.win_findbuf(buf))
+  -- without conceal, the source stays as it is, with no images
+  local wins = vim
+    .iter(vim.fn.win_findbuf(buf))
+    :filter(function(win)
+      return vim.wo[win].conceallevel > 0
+    end)
+    :map(function(win)
+      return vim.fn.getwininfo(win)[1]
+    end)
+    :totable()
   local term, doc = Snacks.image.terminal.size(), Snacks.image.config.doc
   local old, new = s.imgs, {}
   for _, eq in ipairs(s.eqs) do
@@ -58,15 +65,13 @@ local function sync(buf)
           -- snacks takes the image to be bigger than this, and fits it into these
           max_width = math.min(doc.max_width, math.ceil(size.width / OVERSAMPLE / term.cell_width)),
           max_height = math.min(doc.max_height, math.ceil(size.height / OVERSAMPLE / term.cell_height)),
-          -- show the source instead, while the cursor is on it; without conceal, it is visible anyway
+          -- show the source instead, while the cursor is on it
           on_update_pre = function(p)
             local from, to = vim.fn.line("v"), vim.fn.line(".")
             local on_cursor = vim.api.nvim_get_current_buf() == buf
               and p.opts.range[1] <= math.max(from, to)
               and p.opts.range[3] >= math.min(from, to)
-            p.hidden = on_cursor
-              and vim.wo.conceallevel > 0
-              and not vim.wo.concealcursor:find(vim.fn.mode():sub(1, 1):lower())
+            p.hidden = on_cursor and not vim.wo.concealcursor:find(vim.fn.mode():sub(1, 1):lower())
           end,
         })
       end
@@ -145,6 +150,13 @@ function M.attach(buf)
     vim.api.nvim_create_autocmd({ "WinScrolled", "BufWinEnter" }, {
       group = group,
       buffer = buf,
+      callback = function()
+        sync(buf)
+      end,
+    })
+    vim.api.nvim_create_autocmd("OptionSet", {
+      group = group,
+      pattern = "conceallevel",
       callback = function()
         sync(buf)
       end,
