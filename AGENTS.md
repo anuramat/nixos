@@ -69,6 +69,7 @@ only meaningful on top of `base`.
 
 - `nixos-modules/base/`: every NixOS host. `nixos-modules/local/`: hosts
   flagged `local`. `nixos-modules/laptop/`: imported by laptop hosts.
+  `nixos-modules/facet.nix`: imported by the hosts with a GPU.
 - `home-modules/` layers: `base` (CLI, cross-platform), `linux` (Linux-only
   CLI), `local` (physical machines, cross-platform), `local-linux`, `heavy`
   (editor, toolchains, cross-platform GUI apps), `heavy-linux` (Niri desktop,

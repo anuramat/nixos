@@ -55,6 +55,7 @@
 
   imports = [
     inputs.self.nixosModules.base
+    inputs.self.nixosModules.facet
     ./hardware-configuration.nix
     ./decision-bot.nix
     ./llama.nix
