@@ -74,6 +74,8 @@ in
 
           f = "nvim";
           z = "zellij attach --create";
+          # over ssh, the zellij client reports no image support; this one does
+          zi = "env -u SSH_CONNECTION zellij attach --create";
           ".." = "cd ..";
           "..." = "cd ../..";
           "...." = "cd ../../..";

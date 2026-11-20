@@ -126,7 +126,9 @@ let
       # images are too slow over ssh, so a client attached over ssh reports no image support:
       # zellij answers the image queries for the attached clients, and sends images only to
       # the ones that support them; panes made by a plain, floating or stacked NewPane aren't
-      # told what the attached clients support, and answer as if they supported everything
+      # told what the attached clients support, and answer as if they supported everything;
+      # 0.45 has no unicode placeholders, which neovim places its images with: the patch is
+      # https://github.com/zellij-org/zellij/pull/5531, rebased for 0.46 in pull/5878
       zellij-unwrapped =
         let
           compactBar = prev.pkgsCross.wasi32.rustPlatform.buildRustPackage {
@@ -141,6 +143,12 @@ let
           };
         in
         unstable.zellij-unwrapped.overrideAttrs (old: {
+          patches = old.patches or [ ] ++ [
+            (final.fetchpatch {
+              url = "https://github.com/zellij-org/zellij/compare/b0bd3e1e7f530db8879e8cbde79de245e6101a8a...3a1af548d857aaafa428e97df59003a1dcc28f8b.diff";
+              hash = "sha256-0EBd1tFOyYLu116Eavauh8VbHeKCzgus3e8XCI/tnms=";
+            })
+          ];
           postPatch = old.postPatch + ''
             cp ${compactBar}/compact-bar.wasm zellij-utils/assets/plugins/
             substituteInPlace zellij-client/src/lib.rs --replace-fail \
