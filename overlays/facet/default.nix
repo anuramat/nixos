@@ -114,6 +114,37 @@ let
           pythonImportsCheck = [ "mcp.server.mcpserver" ];
         };
 
+      # eyes-open and smile blendshapes; with opencv-python, as facet installs it, since its
+      # own opencv-contrib-python would clash with that over cv2
+      mediapipe = pfinal.buildPythonPackage rec {
+        pname = "mediapipe";
+        version = "0.10.35";
+        format = "wheel";
+        src = pfinal.fetchPypi {
+          inherit pname version format;
+          dist = "py3";
+          python = "py3";
+          platform = "manylinux_2_28_x86_64";
+          hash = "sha256-25pXnfSM/+lXDNPpP2pdLdCJoRA7hGxgxbXeiiHDjbA=";
+        };
+        nativeBuildInputs = [ unstable.autoPatchelfHook ];
+        buildInputs = [ unstable.libGL ];
+        # sounddevice is only for recording audio
+        pythonRemoveDeps = [
+          "opencv-contrib-python"
+          "sounddevice"
+        ];
+        dependencies = with pfinal; [
+          absl-py
+          certifi
+          flatbuffers
+          matplotlib
+          numpy
+          opencv-python
+        ];
+        pythonImportsCheck = [ "mediapipe.tasks.python.vision" ];
+      };
+
       reverse-geocoder = pfinal.buildPythonPackage rec {
         pname = "reverse_geocoder";
         version = "1.5.1";
@@ -242,44 +273,54 @@ let
     build-system = [ python.pkgs.setuptools ];
     # for pythonImportsCheck: the import creates the XDG directories
     nativeBuildInputs = [ prev.writableTmpDirAsHomeHook ];
-    # pyproject's dependencies and its `all` extra, plus torch, which it leaves to install.sh
-    dependencies = with python.pkgs; [
-      accelerate
-      aiosqlite
-      einops
-      exifread
-      fastapi
-      hdbscan
-      httpx
-      imagecodecs
-      imagehash
-      insightface
-      jsonschema
-      kornia
-      mcp
-      numpy
-      onnxruntime
-      open-clip-torch
-      opencv-python
-      pillow
-      pillow-heif
-      psutil
-      pyiqa
-      pyjwt
-      rawpy
-      reverse-geocoder
-      scipy
-      send2trash
-      sqlite-vec
-      tifffile
-      torch
-      torchvision
-      tqdm
-      transformers
-      uvicorn
-      watchdog
-      websockets
-    ];
+    # pyproject's dependencies and its `all` extra, plus torch and mediapipe, which it leaves
+    # to install.sh
+    dependencies =
+      with python.pkgs;
+      [
+        accelerate
+        aiosqlite
+        einops
+        exifread
+        fastapi
+        hdbscan
+        httpx
+        imagecodecs
+        imagehash
+        insightface
+        jsonschema
+        kornia
+        mcp
+        mediapipe
+        numpy
+        onnxruntime
+        open-clip-torch
+        opencv-python
+        pillow
+        pillow-heif
+        psutil
+        pyiqa
+        pyjwt
+        rawpy
+        reverse-geocoder
+        scipy
+        send2trash
+        sqlite-vec
+        tifffile
+        torch
+        torchvision
+        tqdm
+        transformers
+        uvicorn
+        watchdog
+        websockets
+      ]
+      # the kernels of Q-ReAlign's backbone, which transformers otherwise replaces with slow
+      # reference code; causal-conv1d builds only for a GPU
+      ++ lib.optionals (torch.cudaSupport || torch.rocmSupport) [
+        causal-conv1d
+        flash-linear-attention
+      ];
     # api/ serves the client from <install root>/client/dist/client/browser
     postInstall = ''
       mkdir -p $out/${python.sitePackages}/client/dist/client
@@ -297,6 +338,8 @@ let
     extraLibs = [ facet-photo ];
     makeWrapperArgs = [
       "--prefix PATH : ${lib.makeBinPath [ prev.exiftool ]}"
+      # ROCm's profiler exports GLOG_v=2 unless it's set, and mediapipe's glog would obey that
+      "--set-default GLOG_v 0"
     ];
   };
 in
