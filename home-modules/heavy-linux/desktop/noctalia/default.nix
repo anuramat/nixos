@@ -78,6 +78,7 @@ in
         telemetry_enabled = false;
         offline_mode = false;
         niri_overview_type_to_launch_enabled = true;
+        launch_apps_as_systemd_services = true;
         keyboard_layout.custom_labels = {
           "English (US)" = "EN";
           "Russian" = "RU";
