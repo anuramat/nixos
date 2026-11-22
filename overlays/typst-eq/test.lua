@@ -13,14 +13,17 @@ vim.cmd.edit(dir .. "/main.typ")
 vim.wo.conceallevel = 2
 local buf = vim.api.nvim_get_current_buf()
 
+local function marks()
+  local ns = vim.api.nvim_create_namespace("snacks.image")
+  return vim.iter(vim.api.nvim_buf_get_extmarks(buf, ns, 0, -1, { details = true }))
+end
+
 -- where the images are, the text they stand for, and whether they are shown
 local function images()
-  local ns = vim.api.nvim_create_namespace("snacks.image")
-  local marks = vim.api.nvim_buf_get_extmarks(buf, ns, 0, -1, { details = true })
-  return vim
-    .iter(marks)
+  return marks()
     :filter(function(mark)
-      return mark[4].end_col -- the others stand for images that are still loading
+      -- the others stand for images that are still loading, or for the further lines of one
+      return (mark[4].end_col or 0) > 0
     end)
     :map(function(mark)
       local row, col, details = mark[2], mark[3], mark[4]
@@ -67,9 +70,23 @@ expect({})
 vim.wo.conceallevel = 2
 expect({ "2:9 $norm(x) <= 1$ hidden", "4:4 $a^2$ shown" })
 
+-- an image with fewer rows than its source hides the other lines, but not under the cursor
+local function hides_lines()
+  return marks():any(function(mark)
+    return mark[4].conceal_lines
+  end)
+end
+vim.api.nvim_buf_set_lines(buf, 4, 5, false, { "$", "  a", "$" })
+expect({ "2:9 $norm(x) <= 1$ hidden", "4:0 $ shown" })
+assert(hides_lines())
+vim.api.nvim_win_set_cursor(0, { 5, 0 })
+vim.api.nvim_exec_autocmds("CursorMoved", { buffer = buf })
+expect({ "2:9 $norm(x) <= 1$ shown", "4:0 $ hidden" })
+assert(not hides_lines())
+
 -- match_colors: the ink is the foreground color
 local pngs = vim.fn.glob(vim.fs.dirname(vim.fn.tempname()) .. "/*/*.png", false, true)
-assert(#pngs == 4, vim.inspect(pngs))
+assert(#pngs == 5, vim.inspect(pngs))
 for _, png in ipairs(pngs) do
   local channels = vim.fn.system({ "magick", png, "-format", "%[fx:maxima.r] %[fx:maxima.g]", "info:" })
   assert(channels == "1 0", png .. ": " .. channels)

@@ -225,6 +225,14 @@ let
           tinted-nvim
           rustaceanvim
           ;
+        # an image gives way to its source under the cursor, but kept the lines it had no rows
+        # for hidden
+        snacks-nvim = prev.vimPlugins.snacks-nvim.overrideAttrs (old: {
+          postPatch = old.postPatch or "" + ''
+            substituteInPlace lua/snacks/image/placement.lua \
+              --replace-fail 'e.conceal = nil' 'e.conceal, e.conceal_lines = nil, nil'
+          '';
+        });
       };
     };
 
