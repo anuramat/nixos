@@ -1,8 +1,18 @@
-{ inputs, ... }:
+{ inputs, pkgs, ... }:
 {
   imports = [
     inputs.nixos-hardware.nixosModules.common-gpu-nvidia
   ];
+
+  # fuser that sees every user's processes, for the fleet monitor's list of
+  # the processes that have the dGPU open
+  security.wrappers.fuser-all = {
+    source = "${pkgs.psmisc}/bin/fuser";
+    capabilities = "cap_dac_read_search,cap_sys_ptrace+ep";
+    owner = "root";
+    group = "wheel";
+    permissions = "u+rx,g+x";
+  };
 
   nixpkgs.config.cudaSupport = true;
 
