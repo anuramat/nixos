@@ -1,8 +1,8 @@
 # fleet-probe's lines (read with -R) -> a host section: power profile, battery,
 # an awake dGPU (`dgpu(vm)` while passed through to a VM) and zellij sessions
-# in the header; jobs, then a `dgpu` row with the processes that have the dGPU
-# open as its children, then sandboxed sessions grouped by project dir
-# basename, as rows
+# in the header; jobs, then a `dgpu` row with the processes that have the
+# awake dGPU open as its children, then sandboxed sessions grouped by project
+# dir basename, as rows
 
 include "etime";
 

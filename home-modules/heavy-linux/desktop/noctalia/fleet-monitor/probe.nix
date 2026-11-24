@@ -7,7 +7,7 @@
 # bgm5powerctl profile (bgm5 only) as `power<TAB>MODE`, the battery charge
 # (laptops only) as `battery<TAB>PERCENT` and the runtime PM state of nvidia
 # GPUs as `gpu<TAB>STATUS`, or `gpu<TAB>vm` for a GPU passed through to a VM,
-# and the processes that have them open as `gpuproc<TAB>NAME`;
+# and the processes that have an awake one open as `gpuproc<TAB>NAME`;
 # units are read from the world-readable cgroupfs, so it needs neither the
 # agent's user bus nor its ssh key; the current host is queried directly
 # instead of over ssh
@@ -41,14 +41,21 @@ let
     for b in /sys/class/power_supply/BAT*/capacity; do
       [ ! -e "$b" ] || printf 'battery\t%s\n' "$(<"$b")"
     done
-    # reading this, unlike nvidia-smi, doesn't wake a suspended GPU; fuser-all
-    # (see ll7's nvidia.nix) sees every user's processes, and nvidia-powerd
-    # has the GPU open all the time
+    # reading this, unlike nvidia-smi, doesn't wake a suspended GPU; having the
+    # GPU open doesn't keep it awake (the driver suspends it once it's idle),
+    # and only nvidia-smi, which itself keeps it awake when polled, tells which
+    # process keeps it busy, so the processes that have it open are listed only
+    # while it's awake, as the suspects; fuser-all (see ll7's nvidia.nix) sees
+    # every user's processes, and nvidia-powerd and openrgb (whose comm is the
+    # wrapped binary's name, cut at 15 characters) have the GPU open all the
+    # time
     for g in /sys/bus/pci/drivers/nvidia/*:*; do
       [ -e "$g" ] || continue
-      printf 'gpu\t%s\n' "$(<"$g/power/runtime_status")"
+      s=$(<"$g/power/runtime_status")
+      printf 'gpu\t%s\n' "$s"
+      [ "$s" = active ] || continue
       fuser-all /dev/nvidia* "/dev/dri/by-path/pci-''${g##*/}"-* 2>/dev/null |
-        xargs -r ps -o comm= -p | sort -u | grep -vx nvidia-powerd |
+        xargs -r ps -o comm= -p | sort -u | grep -vxFe nvidia-powerd -e .openrgb-wrappe |
         xargs -rd '\n' printf 'gpuproc\t%s\n'
     done
     # libvirt binds vfio-pci to a passed-through device while the VM runs; 0x03
