@@ -6,8 +6,8 @@
 # `session<TAB>WRAPPER<TAB>CWD`, `zellij<TAB>SESSION<TAB>CLIENTS`, plus the
 # bgm5powerctl profile (bgm5 only) as `power<TAB>MODE`, the battery charge
 # (laptops only) as `battery<TAB>PERCENT` and the runtime PM state of nvidia
-# GPUs, with the comma-separated names of the processes that have them open, as
-# `gpu<TAB>STATUS<TAB>USERS`, or `gpu<TAB>vm` for a GPU passed through to a VM;
+# GPUs as `gpu<TAB>STATUS`, or `gpu<TAB>vm` for a GPU passed through to a VM,
+# and the processes that have them open as `gpuproc<TAB>NAME`;
 # units are read from the world-readable cgroupfs, so it needs neither the
 # agent's user bus nor its ssh key; the current host is queried directly
 # instead of over ssh
@@ -46,9 +46,10 @@ let
     # has the GPU open all the time
     for g in /sys/bus/pci/drivers/nvidia/*:*; do
       [ -e "$g" ] || continue
-      users=$(fuser-all /dev/nvidia* "/dev/dri/by-path/pci-''${g##*/}"-* 2>/dev/null |
-        xargs -r ps -o comm= -p | sort -u | grep -vx nvidia-powerd | paste -sd,)
-      printf 'gpu\t%s\t%s\n' "$(<"$g/power/runtime_status")" "$users"
+      printf 'gpu\t%s\n' "$(<"$g/power/runtime_status")"
+      fuser-all /dev/nvidia* "/dev/dri/by-path/pci-''${g##*/}"-* 2>/dev/null |
+        xargs -r ps -o comm= -p | sort -u | grep -vx nvidia-powerd |
+        xargs -rd '\n' printf 'gpuproc\t%s\n'
     done
     # libvirt binds vfio-pci to a passed-through device while the VM runs; 0x03
     # is the display class, unlike the GPU's HDMI audio function
